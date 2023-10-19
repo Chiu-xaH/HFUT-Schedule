@@ -25,8 +25,8 @@ class MainActivity : ComponentActivity() {
 
             //开启协程同时进行加密转换和传入转换后的数据
             val cookies : String = "0"
-            val AESoutput = AESEncrypt.encrypt(AESinput,cookies)
-            vm.login(username,AESoutput)
+            //val AESoutput = AESEncrypt.encrypt(AESinput,cookies)
+            vm.login(username,AESinput)
             //传入数据
         }
 
