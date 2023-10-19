@@ -10,20 +10,22 @@ import java.util.concurrent.TimeUnit
 
 
 object ServiceCreator {
-    const val URL = "http://jxglstu.hfut.edu.cn/"
+    const val URL = "https://cas.hfut.edu.cn/"
 
-    private val client by lazy {
-        OkHttpClient.Builder().apply {
-            connectTimeout(5L, TimeUnit.SECONDS)
-            addInterceptor(AddCookiesInterceptor(MyApplication.context))
-            addInterceptor(SaveCookiesInterceptor(MyApplication.context))
-        }.build()
-    }
+   // private val client by lazy {
+       // OkHttpClient.Builder().apply {
+         //   connectTimeout(5L, TimeUnit.SECONDS)
+          //  addInterceptor(AddCookiesInterceptor(MyApplication.context))
+           // addInterceptor(SaveCookiesInterceptor(MyApplication.context))
+      //  }.build()
+  //  }
 
     val retrofit = Retrofit.Builder()
         .baseUrl(URL)
-        .client(client)
+       // .client(client)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
+
+    fun <T> create(service: Class<T>):T = retrofit.create(service)
 
 }
