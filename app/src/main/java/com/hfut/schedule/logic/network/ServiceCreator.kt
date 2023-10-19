@@ -1,31 +1,24 @@
 package com.hfut.schedule.logic.network
 
+import com.chiuxah.weather.MyApplication
+import com.hfut.schedule.logic.network.OkHttp.AddCookiesInterceptor
+import com.hfut.schedule.logic.network.OkHttp.SaveCookiesInterceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
+
 
 object ServiceCreator {
-
-
-    val client = OkHttpClient.Builder()
-        .addInterceptor { chain ->
-            val request = chain.request()
-            val response = chain.proceed(request)
-            val cookies = response.headers("Set-Cookie")
-            // Do something with cookies
-            response
-        }
-        .addInterceptor { chain ->
-            val originalRequest = chain.request()
-            val requestWithCookies = originalRequest.newBuilder()
-                .header("Cookie", cookies.joinToString(";"))
-                .build()
-            chain.proceed(requestWithCookies)
-        }
-        .build()
-
-
     const val URL = "http://jxglstu.hfut.edu.cn/"
+
+    private val client by lazy {
+        OkHttpClient.Builder().apply {
+            connectTimeout(5L, TimeUnit.SECONDS)
+            addInterceptor(AddCookiesInterceptor(MyApplication.context))
+            addInterceptor(SaveCookiesInterceptor(MyApplication.context))
+        }.build()
+    }
 
     val retrofit = Retrofit.Builder()
         .baseUrl(URL)
@@ -33,7 +26,4 @@ object ServiceCreator {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-
-    val response = retrofit.create(LoginService::class.java).getCookies()
-    val cookies = response.headers()
 }
