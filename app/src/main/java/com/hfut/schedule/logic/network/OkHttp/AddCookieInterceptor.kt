@@ -1,12 +1,8 @@
 package com.hfut.schedule.logic.network.OkHttp
 
-import android.content.Context
 import android.preference.PreferenceManager
-import android.text.TextUtils
-import com.chiuxah.weather.MyApplication
-
-import java.io.IOException
-
+import android.util.Log
+import com.hfut.schedule.MyApplication.Companion.context
 import okhttp3.Interceptor
 import okhttp3.Response
 
@@ -21,8 +17,9 @@ class AddCookieInterceptor : Interceptor {
         // 获取请求对象
         val request = chain.request()
         // 从SharedPreferences中获取保存的cookie值
-        val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
+        val sp = PreferenceManager.getDefaultSharedPreferences(context)
         val cookieValue = sp.getString("cookie", "")
+        cookieValue?.let { Log.d("测试3", it) }
         // 如果cookie值不为空，就将其添加到请求头中的Cookie字段
         if (cookieValue != null) {
             if (cookieValue.isNotEmpty()) {

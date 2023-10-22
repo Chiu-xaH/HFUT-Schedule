@@ -1,33 +1,33 @@
 package com.hfut.schedule.logic.network
 
-import android.content.Context
-import com.chiuxah.weather.MyApplication
-import com.hfut.schedule.logic.network.OkHttp.AddCookiesInterceptor
-import com.hfut.schedule.logic.network.OkHttp.SaveCookiesInterceptor
+
+import com.hfut.cookiedemo.LoggingInterceptor
+import com.hfut.schedule.logic.network.OkHttp.AddCookieInterceptor
+import com.hfut.schedule.logic.network.OkHttp.PersistenceCookieJar
+import com.hfut.schedule.logic.network.OkHttp.ReceiveCookieInterceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.TimeUnit
+
 
 
 object ServiceCreator {
     const val URL = "https://cas.hfut.edu.cn/"
 
-    private val client by lazy {
-        OkHttpClient.Builder().apply {
-            connectTimeout(5L, TimeUnit.SECONDS)
-            addInterceptor(AddCookiesInterceptor(MyApplication.context))
-            addInterceptor(SaveCookiesInterceptor(MyApplication.context))
-        }.build()
-    }
-    //lateinit property context has not been initialized问题
+    val Client = OkHttpClient.Builder()
+        .cookieJar(PersistenceCookieJar())
+        .addNetworkInterceptor(LoggingInterceptor())
+        .build()
+
 
     val retrofit = Retrofit.Builder()
         .baseUrl(URL)
-        .client(client)
+        .client(Client)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    fun <T> create(service: Class<T>):T = retrofit.create(service)
+
+
+    fun <T> create(service: Class<T>): T = retrofit.create(service)
 
 }
