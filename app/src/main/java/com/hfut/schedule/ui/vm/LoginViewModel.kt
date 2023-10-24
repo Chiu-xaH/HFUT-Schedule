@@ -36,9 +36,9 @@ class LoginViewModel : ViewModel() {
             })
     }
 
-    fun getCookie() {
+    fun getKey() {
 
-        val call = api.getCookie()
+        val call = api.getKey()
         // 在子线程中执行请求，并在回调中处理响应结果
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -46,7 +46,7 @@ class LoginViewModel : ViewModel() {
                 val body = response.body()
                 // 将响应体转换为字符串，并赋值给livedata
                 livedata.value = body?.string()
-                if(response.isSuccessful()) Log.d("测试","成功，${response.code()} ${response.headers()}")
+                if(response.isSuccessful()) Log.d("测试","成功，${response.headers()} ${response.code()}")
                 else Log.d("测试","失败，${response.code()},${response.message()}")
             }
 
@@ -55,6 +55,8 @@ class LoginViewModel : ViewModel() {
                 t.printStackTrace()
             }
         })
+
+        //写函数，传递Key到Mainactivity
     }
     }
 

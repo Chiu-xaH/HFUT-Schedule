@@ -1,10 +1,7 @@
 package com.hfut.schedule.logic.network
 
 
-import com.hfut.cookiedemo.LoggingInterceptor
-import com.hfut.schedule.logic.network.OkHttp.AddCookieInterceptor
 import com.hfut.schedule.logic.network.OkHttp.PersistenceCookieJar
-import com.hfut.schedule.logic.network.OkHttp.ReceiveCookieInterceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -16,7 +13,7 @@ object ServiceCreator {
 
     val Client = OkHttpClient.Builder()
         .cookieJar(PersistenceCookieJar())
-        .addNetworkInterceptor(LoggingInterceptor())
+       // .addNetworkInterceptor(LoggingInterceptor())
         .build()
 
 

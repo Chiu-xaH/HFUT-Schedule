@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.EditText
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.ViewModelProvider
+import com.hfut.schedule.logic.network.OkHttp.PersistenceCookieJar
 import com.hfut.schedule.ui.vm.LoginViewModel
 import okhttp3.Call
 import okhttp3.Callback
@@ -34,27 +35,16 @@ class MainActivity : ComponentActivity() {
         val AESinput = PasswordET.editableText.toString()
         val username = AccountET.editableText.toString()
 
+        vm.getKey()
+
+        val key = PersistenceCookieJar().get()
+
+        Log.d("传送",key)
+
         LoginButton.setOnClickListener {
-
-            //开启协程同时进行加密转换和传入转换后的数据
-            //val cookies : String = "0"
-            //val AESoutput = AESEncrypt.encrypt(AESinput,cookies)
-
-            vm.login(username,AESinput)
-
-            //vm.getCookie()
-
-            //传入数据
+            val AESoutput = AESEncrypt.encrypt(AESinput,key)
+            vm.login(username,AESoutput)
         }
-
-
-
-                 //获取Cookies并作为password
-
-
-
-
         }
-
 }
 

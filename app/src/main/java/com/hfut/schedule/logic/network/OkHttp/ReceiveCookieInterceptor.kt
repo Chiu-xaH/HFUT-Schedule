@@ -13,7 +13,7 @@ class ReceiveCookieInterceptor : Interceptor {
         // 获取响应对象
         val response = chain.proceed(chain.request())
         // 获取响应头中的Set-Cookie字段
-        val cookies = response.headers("Cookie")
+        val cookies = response.headers("Set-Cookie")
         // 定义一个变量用于存储LOGIN_FLAVORING
         var cookieValue = ""
         // 遍历cookies列表，找到LOGIN_FLAVORING

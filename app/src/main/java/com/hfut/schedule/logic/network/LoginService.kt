@@ -12,9 +12,9 @@ import retrofit2.http.Headers
 import retrofit2.http.POST
 
 interface LoginService {
-
-    @GET("cas/vercode")
-    fun getCookie() : Call<ResponseBody>
+//获取AES加密的Key
+    @GET("cas/checkInitParams")
+    fun getKey() : Call<ResponseBody>
 //教务系统登录
     @FormUrlEncoded
     @POST("cas/login?service=http%3A%2F%2Fjxglstu.hfut.edu.cn%2Feams5-student%2Fneusoft-sso%2Flogin")
