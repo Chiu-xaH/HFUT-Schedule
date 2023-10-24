@@ -25,7 +25,7 @@ class LoginViewModel : ViewModel() {
                 val body = response.body()
                 // 将响应体转换为字符串，并赋值给livedata
                 livedata.value = body?.string()
-                if(response.isSuccessful()) Log.d("测试","成功，${response.code()}")
+                if(response.isSuccessful()) Log.d("测试","成功，${response.code()}${response.headers()}${response.message()} ${response.body()}")
                  else Log.d("测试","失败，${response.code()},${response.message()}")
             }
 
