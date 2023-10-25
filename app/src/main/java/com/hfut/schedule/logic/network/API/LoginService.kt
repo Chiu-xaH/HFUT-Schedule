@@ -1,4 +1,4 @@
-package com.hfut.schedule.logic.network
+package com.hfut.schedule.logic.network.API
 
 import okhttp3.Cookie
 import okhttp3.ResponseBody

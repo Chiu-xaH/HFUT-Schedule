@@ -1,4 +1,4 @@
-package com.hfut.schedule
+package com.hfut.schedule.Activity
 
 import android.content.Context
 import android.os.Build
@@ -9,22 +9,11 @@ import android.widget.Button
 import android.widget.EditText
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.ViewModelProvider
-import com.hfut.schedule.logic.network.OkHttp.PersistenceCookieJar
-import com.hfut.schedule.ui.vm.LoginViewModel
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
-import java.io.IOException
-import java.util.Timer
-import java.util.TimerTask
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
+import com.hfut.schedule.logic.AESEncrypt
+import com.hfut.schedule.R
+import com.hfut.schedule.ui.ViewModel.LoginViewModel
 
-class MainActivity : ComponentActivity() {
+class LoginActivity : ComponentActivity() {
     val vm by lazy { ViewModelProvider(this).get(LoginViewModel::class.java) }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +41,7 @@ class MainActivity : ComponentActivity() {
             LoginButton.setOnClickListener {
                 val AESinput = PasswordET.editableText.toString()
                 val username = AccountET.editableText.toString()
-                val AESoutput = AESEncrypt.encrypt(AESinput,key!!)
+                val AESoutput = AESEncrypt.encrypt(AESinput, key!!)
                 Log.d("测试s",AESinput)
                 Log.d("密钥",key)
                 Log.d("加密后",AESoutput)

@@ -1,4 +1,4 @@
-package com.hfut.schedule.logic.network.OkHttp
+package com.hfut.schedule.logic.network.OkHttp.Interceptor
 
 import android.preference.PreferenceManager
 import android.util.Log

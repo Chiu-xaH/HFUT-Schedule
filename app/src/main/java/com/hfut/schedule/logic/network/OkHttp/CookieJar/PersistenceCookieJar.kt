@@ -1,8 +1,7 @@
-package com.hfut.schedule.logic.network.OkHttp
+package com.hfut.schedule.logic.network.OkHttp.CookieJar
 
 import android.util.Log
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import okhttp3.Cookie

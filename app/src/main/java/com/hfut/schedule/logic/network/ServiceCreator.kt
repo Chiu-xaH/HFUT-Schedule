@@ -1,8 +1,8 @@
 package com.hfut.schedule.logic.network
 
 
-import com.hfut.schedule.logic.network.OkHttp.PersistenceCookieJar
-import com.hfut.schedule.logic.network.OkHttp.ReceiveCookieInterceptor
+import com.hfut.schedule.logic.network.OkHttp.CookieJar.PersistenceCookieJar
+import com.hfut.schedule.logic.network.OkHttp.Interceptor.ReceiveCookieInterceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
