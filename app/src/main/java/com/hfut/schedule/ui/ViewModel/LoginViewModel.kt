@@ -3,7 +3,7 @@ package com.hfut.schedule.ui.ViewModel
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.hfut.schedule.logic.network.API.LoginService
+import com.hfut.schedule.logic.network.api.LoginService
 import com.hfut.schedule.logic.network.ServiceCreator
 import okhttp3.ResponseBody
 import retrofit2.Call

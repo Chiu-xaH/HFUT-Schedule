@@ -1,4 +1,4 @@
-package com.hfut.schedule.logic.network.OkHttp.CookieJar
+package com.hfut.schedule.logic.network.okHttp.cookieJar
 
 import android.util.Log
 import okhttp3.Cookie
@@ -11,11 +11,7 @@ class GETCookieJar : CookieJar {
 
     private val cookieMap = mutableMapOf<String, MutableList<Cookie>>()
 
-
-
-
     // 从响应中获取Cookie并存储到本地
-
     override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
 
         val host = url.host

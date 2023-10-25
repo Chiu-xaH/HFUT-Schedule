@@ -1,4 +1,4 @@
-package com.hfut.schedule.logic.network.OkHttp.CookieJar
+package com.hfut.schedule.logic.network.okHttp.cookieJar
 
 import android.util.Log
 import kotlinx.coroutines.GlobalScope
@@ -9,9 +9,9 @@ import okhttp3.CookieJar
 import okhttp3.HttpUrl
 
 class PersistenceCookieJar : CookieJar {
-    val cookieMap = mutableMapOf<String, MutableList<Cookie>>()
+    private val cookieMap = mutableMapOf<String, MutableList<Cookie>>()
     // 从响应中获取Cookie并存储到本地
-    var aeskey : String = ""
+    private var aeskey : String = ""
     override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
 
         val job = GlobalScope.launch {
