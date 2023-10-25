@@ -39,8 +39,7 @@ class MainActivity : ComponentActivity() {
         val PasswordET: EditText = findViewById(R.id.PasswordET)
         val LoginButton: Button = findViewById(R.id.LoginButton)
 
-        val AESinput = PasswordET.editableText.toString()
-        val username = AccountET.editableText.toString()
+
 
         //得到AESKey
         vm.getKey()
@@ -51,8 +50,14 @@ class MainActivity : ComponentActivity() {
         key?.let { Log.d("传送", it) }
 
             LoginButton.setOnClickListener {
-                val AESoutput = key?.let { it1 -> AESEncrypt.encrypt(AESinput, it1) }
-                AESoutput?.let { it1 -> vm.login(username, it1) }
+                val AESinput = PasswordET.editableText.toString()
+                val username = AccountET.editableText.toString()
+                val AESoutput = AESEncrypt.encrypt(AESinput,key!!)
+                Log.d("测试s",AESinput)
+                Log.d("密钥",key)
+                Log.d("加密后",AESoutput)
+                Log.d("加密和",username)
+                vm.login(username,AESoutput)
             }
         }
     }

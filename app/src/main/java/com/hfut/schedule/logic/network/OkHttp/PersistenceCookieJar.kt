@@ -21,13 +21,13 @@ class PersistenceCookieJar : CookieJar {
             Log.d("就1",oldCookies.toString())
              cookieMap[host] = cookies.toMutableList()
            // Log.d("判断3", cookies.toMutableList().toString())
-            //Log.d("测试55",cookies.joinToString("; ") { "${it.name}=${it.value}" })
+            Log.d("测试55",cookies.joinToString("; ") { "${it.name}=${it.value}" })
         }
         runBlocking {
             job.join()
             val cook = cookies.joinToString(";")
              aeskey = cook.substring(16,32)
-            Log.d("密钥",aeskey)
+            Log.d("密钥5555555",aeskey)
         }
 
     }

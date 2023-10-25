@@ -17,9 +17,12 @@ interface LoginService {
     fun getKey() : Call<ResponseBody>
 //教务系统登录
     @FormUrlEncoded
+    //@POST("cas/login?service=https%3A%2F%2Fcas.hfut.edu.cn%2Fcas%2Foauth2.0%2FcallbackAuthorize%3Fclient_id%3DBsHfutEduPortal%26redirect_uri%3Dhttps%253A%252F%252Fone.hfut.edu.cn%252Fhome%252Findex%26response_type%3Dcode%26client_name%3DCasOAuthClient")
     @POST("cas/login?service=http%3A%2F%2Fjxglstu.hfut.edu.cn%2Feams5-student%2Fneusoft-sso%2Flogin")
     fun login(@Field("username") username : String,
               @Field("password") password : String,
+              @Field("execution") execution : String,
+              @Field("_eventId") eventId : String
               )
             : Call<ResponseBody>
 }

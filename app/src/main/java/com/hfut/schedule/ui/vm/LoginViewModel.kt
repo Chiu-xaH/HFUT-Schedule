@@ -17,7 +17,9 @@ class LoginViewModel : ViewModel() {
     val api = ServiceCreator.create(LoginService::class.java)
 
     fun login(username : String,password : String) {// 创建一个Call对象，用于发送异步请求
-        val call = api.login(username, password)
+        val call = api.login(username, password,"e1s1","submit")
+        Log.d("账号",username)
+        Log.d("密码",password)
         // 在子线程中执行请求，并在回调中处理响应结果
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -25,7 +27,13 @@ class LoginViewModel : ViewModel() {
                 val body = response.body()
                 // 将响应体转换为字符串，并赋值给livedata
                 livedata.value = body?.string()
-                if(response.isSuccessful()) Log.d("测试","成功，${response.code()}${response.headers()}${response.message()} ${response.body()}")
+                if(response.isSuccessful()) {
+                    val Result = response.body()?.toString()
+                    Log.d("测试","成功，${response.code()}")
+                    Log.d("响应头", response.headers().toString())
+                    Log.d("响应信息",response.message())
+                    Log.d("响应主体",Result!!)
+                }
                  else Log.d("测试","失败，${response.code()},${response.message()}")
             }
 
