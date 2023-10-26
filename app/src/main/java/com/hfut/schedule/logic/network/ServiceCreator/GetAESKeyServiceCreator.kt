@@ -1,25 +1,26 @@
 package com.hfut.schedule.logic.network.ServiceCreator
 
-import com.hfut.schedule.logic.network.interceptor.ReceiveInterceptor
+import com.hfut.schedule.logic.network.interceptor.AESKeyInterceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-object GetCookieServiceCreator {
+object GetAESKeyServiceCreator {
     const val URL = "https://cas.hfut.edu.cn/"
 
-  //  val Client = OkHttpClient.Builder()
-       // .addInterceptor(ReceiveInterceptor())//获取响应,解析出Cookie
-        //.build()
+    val Client = OkHttpClient.Builder()
+        .addInterceptor(AESKeyInterceptor())//提取密钥
+        .build()
 
 
     val retrofit = Retrofit.Builder()
         .baseUrl(URL)
-      //  .client(Client)
+        .client(Client)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
 
 
     fun <T> create(service: Class<T>): T = retrofit.create(service)
+
 }

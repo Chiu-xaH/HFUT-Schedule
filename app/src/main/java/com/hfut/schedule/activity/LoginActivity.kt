@@ -40,16 +40,13 @@ class LoginActivity : ComponentActivity() {
 
 
 
-       // key?.let { Log.d("传送", it) }
+        key?.let { Log.d("传送", it) }
 
             loginButton.setOnClickListener {
                 val inputAES = passwordET.editableText.toString()
                 val username = accountET.editableText.toString()
                 val outputAES = key?.let { it1 -> AESEncrypt.encrypt(inputAES, it1) }
-                      Log.d("测试s",inputAES)
-                      key?.let { it1 -> Log.d("密钥", it1) }
-                      outputAES?.let { it1 -> Log.d("加密后", it1) }
-                      Log.d("加密和",username)
+
                 outputAES?.let { it1 -> vm.login(username, it1) }
 
               //  val it =Intent(this,UIAcitivity::class.java)
