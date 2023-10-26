@@ -5,14 +5,10 @@ import android.util.Log
 import com.hfut.schedule.MyApplication.Companion.context
 import okhttp3.Interceptor
 import okhttp3.Response
-
-
-// 创建一个接收拦截器，实现Interceptor接口，重写intercept方法
-class ReceiveCookieInterceptor : Interceptor {
+//获取AESKey保存到SharedPreferences
+class AESKeyInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        // 获取响应对象
         val response = chain.proceed(chain.request())
-        // 获取响应头中的Set-Cookie字段
         val cookies = response.headers("Set-Cookie")
         var cookieValue = ""
         var cookiekey = ""

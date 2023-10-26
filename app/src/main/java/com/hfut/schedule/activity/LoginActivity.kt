@@ -1,5 +1,6 @@
 package com.hfut.schedule.activity
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -13,6 +14,7 @@ import com.hfut.schedule.ui.ViewModel.LoginViewModel
 
 class LoginActivity : ComponentActivity() {
     private val vm by lazy { ViewModelProvider(this).get(LoginViewModel::class.java) }
+    @SuppressLint("SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.login)
@@ -28,24 +30,30 @@ class LoginActivity : ComponentActivity() {
 
 
 
+        vm.getCookie()
 
         //得到AESKey
         vm.getKey()
         Thread.sleep(3000)
-        val prefs = getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
+       val prefs = getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
         val key = prefs.getString("cookie", "")
 
-        key?.let { Log.d("传送", it) }
+
+
+       // key?.let { Log.d("传送", it) }
 
             loginButton.setOnClickListener {
                 val inputAES = passwordET.editableText.toString()
                 val username = accountET.editableText.toString()
-                val outputAES = AESEncrypt.encrypt(inputAES, key!!)
-                Log.d("测试s",inputAES)
-                Log.d("密钥",key)
-                Log.d("加密后",outputAES)
-                Log.d("加密和",username)
-                vm.login(username,outputAES)
+                val outputAES = key?.let { it1 -> AESEncrypt.encrypt(inputAES, it1) }
+                      Log.d("测试s",inputAES)
+                      key?.let { it1 -> Log.d("密钥", it1) }
+                      outputAES?.let { it1 -> Log.d("加密后", it1) }
+                      Log.d("加密和",username)
+                outputAES?.let { it1 -> vm.login(username, it1) }
+
+              //  val it =Intent(this,UIAcitivity::class.java)
+              //  startActivity(it)
             }
         }
     }

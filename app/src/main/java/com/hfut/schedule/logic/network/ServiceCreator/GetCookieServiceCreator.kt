@@ -1,20 +1,15 @@
-package com.hfut.schedule.logic.network
+package com.hfut.schedule.logic.network.ServiceCreator
 
-
-import com.hfut.schedule.logic.network.okHttp.cookieJar.PersistenceCookieJar
-import com.hfut.schedule.logic.network.okHttp.interceptor.ReceiveCookieInterceptor
+import com.hfut.schedule.logic.network.okHttp.interceptor.ReceiveInterceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-
-
-object ServiceCreator {
+object GetCookieServiceCreator {
     const val URL = "https://cas.hfut.edu.cn/"
 
     val Client = OkHttpClient.Builder()
-        .addNetworkInterceptor(ReceiveCookieInterceptor())
-        .cookieJar(PersistenceCookieJar())
+        .addNetworkInterceptor(ReceiveInterceptor())//获取响应,解析出Cookie
         .build()
 
 
@@ -27,5 +22,4 @@ object ServiceCreator {
 
 
     fun <T> create(service: Class<T>): T = retrofit.create(service)
-
 }
