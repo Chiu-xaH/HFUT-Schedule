@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    >
+
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="107dp"
+        android:src="@drawable/logo" />
 
     <EditText
         android:layout_width="match_parent"
@@ -13,8 +21,11 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:maxLines="1"
         android:id="@+id/PasswordET"
         android:hint="密码" />
+
 
     <Button
         android:layout_gravity="center_horizontal"
@@ -23,5 +34,6 @@
         android:text="登录"
         android:textSize="15dp"
         android:id="@+id/LoginButton"/>
+
 
 </LinearLayout>

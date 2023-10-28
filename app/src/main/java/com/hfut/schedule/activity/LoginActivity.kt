@@ -3,8 +3,10 @@ package com.hfut.schedule.activity
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -12,13 +14,19 @@ import androidx.activity.ComponentActivity
 import androidx.lifecycle.ViewModelProvider
 import com.hfut.schedule.logic.AESEncrypt
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.network.ServiceCreator.JxglstuServiceCreator
 import com.hfut.schedule.ui.ViewModel.LoginViewModel
 
 class LoginActivity : ComponentActivity() {
     private val vm by lazy { ViewModelProvider(this).get(LoginViewModel::class.java) }
-    @SuppressLint("SuspiciousIndentation")
+    @SuppressLint("SuspiciousIndentation", "MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val decorView = window.decorView
+        decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        window.statusBarColor = Color.TRANSPARENT
+
         setContentView(R.layout.login)
 
         //if (Build.VERSION.SDK_INT > 9) {
@@ -29,6 +37,7 @@ class LoginActivity : ComponentActivity() {
         val accountET: EditText = findViewById(R.id.AccountET)
         val passwordET: EditText = findViewById(R.id.PasswordET)
         val loginButton: Button = findViewById(R.id.LoginButton)
+
 
         Toast.makeText(this,"请稍等，正在获取登录所需信息",Toast.LENGTH_SHORT).show()
 
@@ -44,7 +53,7 @@ class LoginActivity : ComponentActivity() {
 
         key?.let { Log.d("传送", it) }
 
-            loginButton.setOnClickListener {
+        loginButton.setOnClickListener {
                 val inputAES = passwordET.editableText.toString()
                 val username = accountET.editableText.toString()
                 val outputAES = key?.let { it1 -> AESEncrypt.encrypt(inputAES, it1) }
@@ -52,19 +61,26 @@ class LoginActivity : ComponentActivity() {
                 outputAES?.let { it1 -> vm.login(username, it1,"LOGIN_FLAVORING=" + key) }
 
 
-                Log.d("传回",vm.location.value.toString())
-                if (vm.location.value.toString() == "https://cas.hfut.edu.cn/cas/login?service=http%3A%2F%2Fjxglstu.hfut.edu.cn%2Feams5-student%2Fneusoft-sso%2Flogin")
-                    Toast.makeText(this,"登陆失败", Toast.LENGTH_SHORT ).show()
-                 else {
-                    Toast.makeText(this,"登陆成功",Toast.LENGTH_SHORT).show()
-                    val it = Intent(this,UIAcitivity::class.java)
-                    startActivity(it)
-                 }
-
-
-
+            if (vm.location.value.toString() == "https://cas.hfut.edu.cn/cas/login?service=http%3A%2F%2Fjxglstu.hfut.edu.cn%2Feams5-student%2Fneusoft-sso%2Flogin")
+                Toast.makeText(this,"登陆失败", Toast.LENGTH_SHORT ).show()
+            else {
+                Toast.makeText(this,"登陆成功",Toast.LENGTH_SHORT).show()
+                val it = Intent(this,UIAcitivity::class.java)
+                startActivity(it)
             }
         }
-    }
+
+
+          //  var location = vm.location.value.toString()
+
+
+         //   Log.d("第二个",location)
+
+         //   JxglstuServiceCreator.baseURL = location + "/"
+
+
+        }
+
+        }
 
 
