@@ -2,10 +2,12 @@ package com.hfut.schedule.activity
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.ViewModelProvider
 import com.hfut.schedule.logic.AESEncrypt
@@ -49,8 +51,18 @@ class LoginActivity : ComponentActivity() {
 
                 outputAES?.let { it1 -> vm.login(username, it1,"LOGIN_FLAVORING=" + key) }
 
-              //  val it =Intent(this,UIAcitivity::class.java)
-              //  startActivity(it)
+
+                Log.d("传回",vm.location.value.toString())
+                if (vm.location.value.toString() == "https://cas.hfut.edu.cn/cas/login?service=http%3A%2F%2Fjxglstu.hfut.edu.cn%2Feams5-student%2Fneusoft-sso%2Flogin")
+                    Toast.makeText(this,"登陆失败", Toast.LENGTH_SHORT ).show()
+                 else {
+                    Toast.makeText(this,"登陆成功",Toast.LENGTH_SHORT).show()
+                    val it = Intent(this,UIAcitivity::class.java)
+                    startActivity(it)
+                 }
+
+
+
             }
         }
     }

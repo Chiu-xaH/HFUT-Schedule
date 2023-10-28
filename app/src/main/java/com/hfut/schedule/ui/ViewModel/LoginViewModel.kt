@@ -16,6 +16,8 @@ class LoginViewModel : ViewModel() {
     var livedata = MutableLiveData<String>()
     var sessionLiveData = MutableLiveData<String>()
     var cookie2 = MutableLiveData<String>()
+    var location = MutableLiveData<String>()
+
     val api = LoginServiceCreator.create(LoginService::class.java)
     val api2 = GetCookieServiceCreator.create(LoginService::class.java)
     val api3 = GetAESKeyServiceCreator.create(LoginService::class.java)
@@ -34,19 +36,20 @@ class LoginViewModel : ViewModel() {
                 // 将响应体转换为字符串，并赋值给livedata
                 livedata.value = body?.string()
                 if(response.isSuccessful()) {
-
                     Log.d("响应码", response.code().toString())
-                   // Log.d("响应头", response.headers().toString())
-                   // Log.d("响应信息",response.message())
-                   // Log.d("响应主体",response.body()?.toString()!!)
+                    Log.d("响应头", response.headers().toString())
+                    Log.d("响应信息",response.message())
+                    Log.d("响应主体",response.body()?.toString()!!)
 
                 }
                  else {
+                     location.value = response.headers()["Location"].toString()
+                    Log.d("地址",location.value.toString())
                     Log.d("测试","失败")
                     Log.d("响应码", response.code().toString())
-                  //  Log.d("响应头", response.headers().toString())
-                    Log.d("响应信息",response.message())
-                    Log.d("响应主体",response.body().toString())
+                   // Log.d("响应头", response.headers().toString())
+                  //  Log.d("响应信息",response.message())
+                   // Log.d("响应主体",response.body().toString())
                  }
 
             }
