@@ -8,6 +8,7 @@ import okhttp3.Response
 //本拦截器是解析SESSION的，解析后将其通过拦截器添加到POST请求头
 class ReceiveInterceptor : Interceptor {
     var SESSION : String = ""
+   // var LoginFlav : String = ""
     override fun intercept(chain: Interceptor.Chain): Response {
         val response = chain.proceed(chain.request())
         SESSION = response.headers("Set-Cookie").toString()

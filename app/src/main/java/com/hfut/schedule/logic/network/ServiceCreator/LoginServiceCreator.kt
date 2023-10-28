@@ -15,7 +15,7 @@ object LoginServiceCreator {
 
     val Client = OkHttpClient.Builder()
         //.addInterceptor(AddInterceptor())//提交解析出的Cookie到POST
-        .followRedirects(false)
+        .followRedirects(true)
         .build()
 
 

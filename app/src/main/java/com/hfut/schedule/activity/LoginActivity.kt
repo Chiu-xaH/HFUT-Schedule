@@ -47,7 +47,7 @@ class LoginActivity : ComponentActivity() {
                 val username = accountET.editableText.toString()
                 val outputAES = key?.let { it1 -> AESEncrypt.encrypt(inputAES, it1) }
 
-                outputAES?.let { it1 -> vm.login(username, it1) }
+                outputAES?.let { it1 -> vm.login(username, it1,"LOGIN_FLAVORING=" + key) }
 
               //  val it =Intent(this,UIAcitivity::class.java)
               //  startActivity(it)

@@ -21,7 +21,6 @@ interface LoginService {
 
 //教务系统登录
     @FormUrlEncoded
-    //cas/login?service=http%3A%2F%2Fjxglstu.hfut.edu.cn%2Feams5-student%2Fneusoft-sso%2Flogin
     @POST("cas/login?service=http%3A%2F%2Fjxglstu.hfut.edu.cn%2Feams5-student%2Fneusoft-sso%2Flogin")
     fun login(
         @Header("Cookie") Cookie : String,

@@ -10,6 +10,7 @@ class AESKeyInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val response = chain.proceed(chain.request())
         val cookies = response.headers("Set-Cookie")
+        Log.d("cookieAES",cookies.toString())
         var cookieValue = ""
         var cookiekey = ""
         // 遍历cookies列表，找到LOGIN_FLAVORING

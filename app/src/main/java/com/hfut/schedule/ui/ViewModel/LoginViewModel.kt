@@ -15,12 +15,13 @@ import retrofit2.Response
 class LoginViewModel : ViewModel() {
     var livedata = MutableLiveData<String>()
     var sessionLiveData = MutableLiveData<String>()
+    var cookie2 = MutableLiveData<String>()
     val api = LoginServiceCreator.create(LoginService::class.java)
     val api2 = GetCookieServiceCreator.create(LoginService::class.java)
     val api3 = GetAESKeyServiceCreator.create(LoginService::class.java)
 
-    fun login(username : String,password : String) {// 创建一个Call对象，用于发送异步请求
-        var Cookies : String? = sessionLiveData.value
+    fun login(username : String,password : String,keys : String) {// 创建一个Call对象，用于发送异步请求
+        var Cookies : String? = sessionLiveData.value  + cookie2.value +";" + keys
         Log.d("验证",Cookies!!)
         val call = api.login(Cookies!!,username, password,"e1s1","submit")
         Log.d("账号",username)
@@ -44,8 +45,8 @@ class LoginViewModel : ViewModel() {
                     Log.d("测试","失败")
                     Log.d("响应码", response.code().toString())
                   //  Log.d("响应头", response.headers().toString())
-                    //Log.d("响应信息",response.message())
-                  //  Log.d("响应主体",response.body().toString())
+                    Log.d("响应信息",response.message())
+                    Log.d("响应主体",response.body().toString())
                  }
 
             }
@@ -60,6 +61,7 @@ class LoginViewModel : ViewModel() {
 
     fun getKey() {
 
+
         val call = api3.getKey()
 
         call.enqueue(object : Callback<ResponseBody> {
@@ -67,7 +69,8 @@ class LoginViewModel : ViewModel() {
                 val body = response.body()
                 livedata.value = body?.string()
                 if(response.isSuccessful()){
-
+                    cookie2.value  = response.headers()["Set-Cookie"].toString()
+                    //Log.d("截获",cookie2.value.toString())
                     //Log.d("响应头", response.headers().toString())
                     Log.d("测试","成功")
 
@@ -92,7 +95,7 @@ class LoginViewModel : ViewModel() {
                 livedata.value = body?.string()
                 if(response.isSuccessful()) {
 
-                    sessionLiveData.value  = response.headers()["Set-Cookie"].toString().substringBefore(";")
+                    sessionLiveData.value  = response.headers()["Set-Cookie"].toString().substringBefore(";").plus(";")
                     Log.d("getCookie","成功")
                   //  Log.d("Cookie",SESSION)
 
