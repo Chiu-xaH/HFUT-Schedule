@@ -28,4 +28,15 @@ interface LoginService {
         @Field("execution") execution: String,
         @Field("_eventId") eventId: String
     ) : Call<ResponseBody>
+//信息门户登录
+    @FormUrlEncoded
+    //@Headers("User-Agent:Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.17")
+    @POST("cas/login")
+    fun login2(
+        @Header("Cookie") Cookie : String,
+        @Field("username") username: String,
+        @Field("password") password: String,
+        @Field("execution") execution: String,
+        @Field("_eventId") eventId: String
+    ) : Call<ResponseBody>
 }

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.widget.Button
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import com.hfut.schedule.R
 
@@ -14,6 +15,7 @@ class UIAcitivity : ComponentActivity() {
         setContentView(R.layout.ui)
         val DatuButton : Button = findViewById(R.id.DatumButton)
         DatuButton.setOnClickListener {
+            Toast.makeText(this,"待开发，别急别急",Toast.LENGTH_SHORT ).show()
             //待开发//待开发//待开发
         }
        //待开发//待开发//待开发

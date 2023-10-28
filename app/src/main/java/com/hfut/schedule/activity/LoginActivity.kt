@@ -30,10 +30,10 @@ class LoginActivity : ComponentActivity() {
         val passwordET: EditText = findViewById(R.id.PasswordET)
         val loginButton: Button = findViewById(R.id.LoginButton)
 
+        Toast.makeText(this,"请稍等，正在获取登录所需信息",Toast.LENGTH_SHORT).show()
 
 
         vm.getCookie()
-
         //得到AESKey
         vm.getKey()
         Thread.sleep(3000)
