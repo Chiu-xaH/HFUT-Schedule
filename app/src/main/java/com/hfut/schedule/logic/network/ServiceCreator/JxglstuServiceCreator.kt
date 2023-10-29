@@ -10,7 +10,7 @@ object JxglstuServiceCreator {
     var baseURL : String = "http://jxglstu.hfut.edu.cn/"
 
     val Client = OkHttpClient.Builder()
-        .followRedirects(false)
+       // .followRedirects(false)
         .build()
 
 

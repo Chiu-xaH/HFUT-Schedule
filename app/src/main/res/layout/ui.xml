@@ -8,5 +8,23 @@
         android:id="@+id/DatumButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="获取" />
+        android:text="获取课程表" />
+
+    <Button
+        android:id="@+id/TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="获取课程表2" />
+
+    <Button
+        android:id="@+id/GetButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="获取课程表3" />
+
+    <Button
+        android:id="@+id/Get2Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="获取课程表4" />
 </LinearLayout>

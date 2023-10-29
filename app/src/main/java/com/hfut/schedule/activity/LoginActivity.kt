@@ -96,12 +96,7 @@ class LoginActivity : ComponentActivity() {
 
             }
         }
-          //  val ticket = vm.location.value.toString()
-           // val it = Intent(this,UIAcitivity::class.java).apply {
-            //    putExtra("ticket",ticket)
-           // }
-          //  startActivity(it)
-          //  Log.d("票",ticket)
+
         }
 
 
