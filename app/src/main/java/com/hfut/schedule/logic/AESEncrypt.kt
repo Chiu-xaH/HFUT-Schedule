@@ -3,11 +3,9 @@ package com.hfut.schedule.logic
 import android.util.Base64
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
-
 object AESEncrypt {
 
     fun encrypt(input:String,password:String): String{
-
         val cipher = Cipher.getInstance("AES")
         val keySpec:SecretKeySpec? = SecretKeySpec(password.toByteArray(),"AES")
         cipher.init(Cipher.ENCRYPT_MODE,keySpec)

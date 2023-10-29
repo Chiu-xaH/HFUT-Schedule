@@ -17,20 +17,23 @@ import java.net.URL
 
 class UIAcitivity : ComponentActivity() {
     private val vm by lazy { ViewModelProvider(this).get(JxglstuViewModel::class.java) }
+    //private val vm2 by lazy { ViewModelProvider(this).get(LoginViewModel::class.java) }
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.ui)
         val DatumButton : Button = findViewById(R.id.DatumButton)
 
-
+       val ticket =  "?ticket=" + intent.getStringExtra("ticket")
+        ticket?.let { Log.d("传递过来", it) }
 
         DatumButton.setOnClickListener {
-            vm.jxglstu()
-            //待开发//待开发//待开发
+           ///var ticket = vm2.location.value.toString()
+            Log.d("y",ticket)
+           // vm.jxglstu(ticket!!)
         }
 
-       //待开发//待开发//待开发
+
     }
 }
 
