@@ -3,7 +3,9 @@ package com.hfut.schedule.ui.ViewModel
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import com.google.gson.JsonPrimitive
 import com.hfut.schedule.logic.network.ServiceCreator.JxglstuServiceCreator
 import com.hfut.schedule.logic.network.api.JxglstuService
 import okhttp3.ResponseBody
@@ -12,82 +14,65 @@ import retrofit2.Callback
 import retrofit2.Response
 class JxglstuViewModel : ViewModel() {
     val api = JxglstuServiceCreator.create(JxglstuService::class.java)
-    var livedata = MutableLiveData<String>()
+    var studentId = MutableLiveData<Int>()
 
-    fun getDatum(cookie : String) {
-
-        val call = api.getDatum(cookie)
-
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val body = response.body()
-                livedata.value = body?.string()
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                Log.d("测试","失")
-                t.printStackTrace()
-            }
-        })
-    }
-
-
-    fun jxglstulogin(cookie : String) {
+    fun Jxglstulogin(cookie : String) {
 
         val call = api.jxglstulogin(cookie)
 
         call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val body = response.body()
-                livedata.value = body?.string()
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {}
 
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                Log.d("测试","失")
-                t.printStackTrace()
-            }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
 
-    fun getCourse(cookie : String) {
+    fun getStudentId(cookie : String) {
+
+        val call = api.getStudentId(cookie)
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                studentId.value = response.headers()["Location"].toString().substringAfter("/eams5-student/for-std/course-table/info/").toInt()
+
+                Log.d("学生ID", studentId.value.toString())
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
+
+    fun getLessonIds(cookie : String,bizTypeId : String) {
+        //bizTypeId为年级数，例如23  //dataId为学生ID  //semesterId为学期Id，例如23-24第一学期为234
+        //这里先固定学期，每半年进行版本推送更新参数
+        val call = api.getLessonIds(cookie,bizTypeId,studentId.value.toString())
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {}
+             //响应为JSON需要解析###################################################
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
+    fun getDatum(cookie : String) {
+
+        val lessonIds = listOf(420743,420869,420610,420579,424192,423169,420783,420812,420557,420811,423955,420444,423229,421016)//课程ID
+        val lessonIdsArray = JsonArray()
+        lessonIds.forEach {lessonIdsArray.add(JsonPrimitive(it))}
 
         val jsonObject = JsonObject().apply {
-            addProperty("lessonIds", "[420743,420869,420610,420579,424192,423169,420783,420812,420557,420811,423955,420444,423229,421016]")
-            addProperty("studentId", 170317)
+            add("lessonIds", lessonIdsArray)
+            addProperty("studentId", studentId.value)//学生ID
             addProperty("weekIndex", "")
         }
-        val call = api.getCourse(cookie,jsonObject)
+
+        val call = api.getDatum(cookie,jsonObject)
 
 
         call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val body = response.body()
-                livedata.value = body?.string()
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {}
 
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                Log.d("测试","失")
-                t.printStackTrace()
-            }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
 
-    fun getDatum2(cookie : String) {
-
-        val call = api.getDatum2(cookie)
-
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val body = response.body()
-                livedata.value = body?.string()
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                Log.d("测试","失")
-                t.printStackTrace()
-            }
-        })
-    }
 }

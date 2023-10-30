@@ -2,16 +2,12 @@ package com.hfut.schedule.activity
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
-import android.os.StrictMode
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
@@ -23,7 +19,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.logic.AESEncrypt
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.network.ServiceCreator.JxglstuServiceCreator
 import com.hfut.schedule.ui.ViewModel.LoginViewModel
 
 class LoginActivity : ComponentActivity() {
@@ -84,8 +79,9 @@ class LoginActivity : ComponentActivity() {
                 setMessage("提交成功，点击验证")
                 setTitle("提示")
                 setPositiveButton("验证") { dialog, which ->
-                    Log.d("检查",vm.location.value.toString())
-                    Log.d("检查20",vm.code.value.toString())
+                    //Log.d("检查",vm.location.value.toString())
+                    //Log.d("检查20",vm.code.value.toString())
+                    Thread.sleep(1000)
                     if (vm.code.value.toString() == null )
                         Toast.makeText(MyApplication.context,"请检查是否点击了登录或输入账密",Toast.LENGTH_SHORT).show()
                     if (vm.code.value.toString() =="XXX")
@@ -99,7 +95,9 @@ class LoginActivity : ComponentActivity() {
                             Toast.makeText(MyApplication.context,"重定向失败，请重新进入App登录",Toast.LENGTH_SHORT).show()
                         else {
                             Toast.makeText(MyApplication.context,"登陆成功",Toast.LENGTH_SHORT).show()
-                            val it = Intent(MyApplication.context,UIAcitivity::class.java)
+                            val it = Intent(MyApplication.context,LoginSuccessAcitivity::class.java).apply {
+                                putExtra("Grade",username.substring(2,4))
+                            }
                             startActivity(it)
                         }
 

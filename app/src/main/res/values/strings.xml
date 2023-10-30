@@ -4,4 +4,5 @@
     <string name="title_activity_schedule">ScheduleActivity</string>
     <string name="title_activity_self">SelfActivity</string>
     <string name="title_activity_urlactivity">URLActivity</string>
+    <string name="title_activity_jxglstu">JxglstuActivity</string>
 </resources>
