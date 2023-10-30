@@ -18,15 +18,13 @@ class LoginViewModel : ViewModel() {
     var cookie2 = MutableLiveData<String>()
     var code = MutableLiveData<String>()
     var location = MutableLiveData<String>()
-    //var ticket = MutableLiveData<String>()
 
 
     val api = LoginServiceCreator.create(LoginService::class.java)
     val api2 = GetCookieServiceCreator.create(LoginService::class.java)
     val api3 = GetAESKeyServiceCreator.create(LoginService::class.java)
-   // val api4 = JxglstuServiceCreator.create(JxglstuService::class.java)
 
-    fun login(username : String,password : String,keys : String) {// 创建一个Call对象，用于发送异步请求
+    fun login(username : String,password : String,keys : String)  {// 创建一个Call对象，用于发送异步请求
         var Cookies : String? = sessionLiveData.value  + cookie2.value +";" + keys
         Log.d("验证",Cookies!!)
         val call = api.login(Cookies!!,username, password,"e1s1","submit")
@@ -68,6 +66,7 @@ class LoginViewModel : ViewModel() {
                 t.printStackTrace()
             }
             })
+
 
     }
 

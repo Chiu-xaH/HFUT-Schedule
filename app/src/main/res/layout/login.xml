@@ -42,7 +42,13 @@
             android:id="@+id/SavePskCheckBox"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="记住密码" />
+            android:text="记住密码     " />
+
+        <ProgressBar
+            android:id="@+id/Loading"
+            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
 
     </LinearLayout>
@@ -59,14 +65,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="登录"
-            android:textSize="15dp" />
-
-        <Button
-            android:id="@+id/CheckButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="验证"
             android:textSize="15dp" />
 
     </LinearLayout>
