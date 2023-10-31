@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.viewmodel
+package com.hfut.schedule.ui.ViewModel
 
 import android.preference.PreferenceManager
 import android.util.Log
@@ -10,7 +10,7 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.logic.datamodel.lessonIdsResponse
-import com.hfut.schedule.logic.network.Servicecreator.JxglstuServiceCreator
+import com.hfut.schedule.logic.network.ServiceCreator.JxglstuServiceCreator
 import com.hfut.schedule.logic.network.api.JxglstuService
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -47,7 +47,7 @@ class JxglstuViewModel : ViewModel() {
         })
     }
 
-    fun getLessonIds(cookie : String,bizTypeId : String) {
+     fun getLessonIds(cookie : String,bizTypeId : String) {
         //bizTypeId为年级数，例如23  //dataId为学生ID  //semesterId为学期Id，例如23-24第一学期为234
         //这里先固定学期，每半年进行版本推送更新参数
         val call = api.getLessonIds(cookie,bizTypeId,studentId.value.toString())

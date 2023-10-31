@@ -1,4 +1,4 @@
-package com.hfut.schedule.logic.network.Servicecreator
+package com.hfut.schedule.logic.network.ServiceCreator
 
 import com.hfut.schedule.MyApplication
 import retrofit2.Retrofit

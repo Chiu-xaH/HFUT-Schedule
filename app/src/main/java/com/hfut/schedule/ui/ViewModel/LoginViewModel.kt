@@ -1,12 +1,12 @@
-package com.hfut.schedule.ui.viewmodel
+package com.hfut.schedule.ui.ViewModel
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.hfut.schedule.logic.network.api.LoginService
-import com.hfut.schedule.logic.network.Servicecreator.GetAESKeyServiceCreator
-import com.hfut.schedule.logic.network.Servicecreator.GetCookieServiceCreator
-import com.hfut.schedule.logic.network.Servicecreator.LoginServiceCreator
+import com.hfut.schedule.logic.network.ServiceCreator.GetAESKeyServiceCreator
+import com.hfut.schedule.logic.network.ServiceCreator.GetCookieServiceCreator
+import com.hfut.schedule.logic.network.ServiceCreator.LoginServiceCreator
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback

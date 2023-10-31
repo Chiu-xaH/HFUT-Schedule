@@ -5,23 +5,16 @@
     android:layout_height="match_parent">
 
     <Button
-        android:id="@+id/LoginJxglstuButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="登录教务系统" />
-
-    <Button
         android:id="@+id/DatumButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="获取JSON" />
+        android:text="获取课程表JSON" />
 
-    <Button
-    android:id="@+id/CourseButton"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center_horizontal"
-    android:text="课程表"
-    android:textSize="15dp" />
+    <ProgressBar
+        android:layout_width="120dp"
+        android:id="@+id/prgressbar"
+        android:visibility="invisible"
+        android:layout_height="80dp"
+        android:layout_gravity="center_horizontal"/>
 
 </LinearLayout>

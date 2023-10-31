@@ -6,59 +6,70 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
+import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.ViewModelProvider
+import com.hfut.schedule.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.ui.viewmodel.JxglstuViewModel
+import com.hfut.schedule.ui.ViewModel.JxglstuViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class LoginSuccessAcitivity : ComponentActivity() {
-    private val vm by lazy { ViewModelProvider(this).get(JxglstuViewModel::class.java) }
 
+    private val vm by lazy { ViewModelProvider(this).get(JxglstuViewModel::class.java) }
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.login_success)
-        val loginJxglstuButton : Button = findViewById(R.id.LoginJxglstuButton)
         val datumButton : Button = findViewById(R.id.DatumButton)
-        val courseButton : Button =findViewById(R.id.CourseButton)
+        val progressBar: ProgressBar = findViewById(R.id.prgressbar)
 
-
-        loginJxglstuButton.setOnClickListener {
             val prefs = getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
             val cookie = prefs.getString("redirect", "")
             cookie?.let { it1 -> Log.d("传送", it1) }
             vm.Jxglstulogin(cookie!!)
-        }
 
         datumButton.setOnClickListener {
+
+            progressBar.visibility = View.VISIBLE
+            datumButton.isClickable = false
+
+            Toast.makeText(this,"正在请求网络数据，请等待",Toast.LENGTH_SHORT).show()
+
+            Thread {
+                Thread.sleep(4500)
+                runOnUiThread { progressBar.visibility = View.GONE }
+            }.start()
+
             val prefs = getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
             val cookie = prefs.getString("redirect", "")
-            //vm.getDatum(cookie!!)
             vm.getStudentId(cookie!!)
-
             val grade = intent.getStringExtra("Grade")
 
-            ////////////////////////////////////////////////////////////////////////////
-            AlertDialog.Builder(this).apply {
-                setMessage("点击获取第一个JSON")
-                setTitle("测试开发用")
-                setPositiveButton("好") { dialog, which ->
-                    Thread.sleep(1000)
+
+            val job = Job()
+            val scope = CoroutineScope(job)
+            scope.apply {
+                launch {
+                    delay(1500)
                     vm.getLessonIds(cookie,grade!!)
                 }
-                show()
+                launch {
+                    delay(3000)
+                    vm.getDatum(cookie!!)
+                    val it = Intent(MyApplication.context,DatumActivity::class.java)
+                    startActivity(it)
+                }
             }
-            ////////////////////////////////////////////////////////////////////////////
         }
 
-        courseButton.setOnClickListener {
-            val prefs = getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
-            val cookie = prefs.getString("redirect", "")
-            vm.getDatum(cookie!!)
-            val it = Intent(this,DatumActivity::class.java)
-            startActivity(it)
-        }
+
     }
 }
 

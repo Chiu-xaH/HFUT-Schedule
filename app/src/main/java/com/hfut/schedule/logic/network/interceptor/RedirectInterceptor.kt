@@ -32,8 +32,6 @@ import java.io.IOException
                 if(sp.getString("redirect","") != redirectcookie){
                     sp.edit().putString("redirect", redirectcookie).apply()
                 }
-                Log.d("拦截",sb.toString())
-
             }
             return response
         }

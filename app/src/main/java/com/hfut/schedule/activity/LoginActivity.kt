@@ -1,11 +1,11 @@
 package com.hfut.schedule.activity
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Looper
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
 import android.view.View
@@ -19,11 +19,20 @@ import androidx.lifecycle.ViewModelProvider
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.logic.AESEncrypt
 import com.hfut.schedule.R
-import com.hfut.schedule.ui.viewmodel.LoginViewModel
+import com.hfut.schedule.ui.ViewModel.LoginViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class LoginActivity : ComponentActivity() {
     private val vm by lazy { ViewModelProvider(this).get(LoginViewModel::class.java) }
     @SuppressLint("SuspiciousIndentation", "MissingInflatedId")
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -46,22 +55,29 @@ class LoginActivity : ComponentActivity() {
         val savePskCheckBox : CheckBox = findViewById(R.id.SavePskCheckBox)
         val loading : ProgressBar = findViewById(R.id.Loading)
 
-        vm.getCookie()
+        val job = Job()
+        val scope = CoroutineScope(job)
 
-        vm.getKey()
+        scope.apply {
+            launch { vm.getCookie() }
+            launch {  vm.getKey() }
+        }//协程并行执行，提高效率
+
 
         showPskCheckBox.setOnCheckedChangeListener{_, isChecked ->
             if (isChecked)  passwordET.transformationMethod = HideReturnsTransformationMethod.getInstance()
                       else  passwordET.transformationMethod = PasswordTransformationMethod.getInstance()
         }//显示密码开关
 
-        savePskCheckBox.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) Toast.makeText(this,"待开发，敬请期待",Toast.LENGTH_SHORT).show()
-            else Toast.makeText(this,"待开发，敬请期待",Toast.LENGTH_SHORT).show()
-        }
+        savePskCheckBox.setOnCheckedChangeListener { _, isChecked -> Toast.makeText(this,"待开发，敬请期待",Toast.LENGTH_SHORT).show() }
 
         loginButton.setOnClickListener {
-            loading.visibility == View.VISIBLE
+            loading.visibility = View.VISIBLE
+
+            Thread {
+                Thread.sleep(1000)
+                runOnUiThread { loading.visibility = View.GONE }
+            }.start()
 
             val prefs = getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
             val key = prefs.getString("cookie", "")
@@ -72,36 +88,39 @@ class LoginActivity : ComponentActivity() {
 
                 outputAES?.let { it1 -> vm.login(username, it1,"LOGIN_FLAVORING=" + key) }
 
-              AlertDialog.Builder(this).apply {
-                setMessage("提交成功，点击验证")
-                setTitle("提示")
-                setPositiveButton("验证") { dialog, which ->
-                    //Log.d("检查",vm.location.value.toString())
-                    //Log.d("检查20",vm.code.value.toString())
-                    Thread.sleep(1000)
-                    if (vm.code.value.toString() == null )
-                        Toast.makeText(MyApplication.context,"请检查是否点击了登录或输入账密",Toast.LENGTH_SHORT).show()
-                    if (vm.code.value.toString() =="XXX")
-                        Toast.makeText(MyApplication.context,"网络连接失败",Toast.LENGTH_SHORT).show()
-                    if (vm.code.value.toString() == "401")
-                        Toast.makeText(MyApplication.context,"密码错误",Toast.LENGTH_SHORT).show()
-                    if (vm.code.value.toString() == "200")
-                        Toast.makeText(MyApplication.context,"请输入正确的账号",Toast.LENGTH_SHORT).show()
-                    if (vm.code.value.toString() == "302" ) {
-                        if (vm.location.value.toString() == "https://cas.hfut.edu.cn/cas/login?service=http%3A%2F%2Fjxglstu.hfut.edu.cn%2Feams5-student%2Fneusoft-sso%2Flogin&exception.message=A+problem+occurred+restoring+the+flow+execution+with+key+%27e1s1%27")
-                            Toast.makeText(MyApplication.context,"重定向失败，请重新进入App登录",Toast.LENGTH_SHORT).show()
-                        else {
-                            Toast.makeText(MyApplication.context,"登陆成功",Toast.LENGTH_SHORT).show()
-                            val it = Intent(MyApplication.context,LoginSuccessAcitivity::class.java).apply {
-                                putExtra("Grade",username.substring(2,4))
-                            }
+            val job = Job()
+            CoroutineScope(job).launch {
+
+                delay(1000)
+
+                if (vm.code.value.toString() == null)
+                    withContext(Dispatchers.Main) { Toast.makeText(MyApplication.context, "请检查是否点击了登录或输入账密", Toast.LENGTH_SHORT).show() }
+
+                if (vm.code.value.toString() == "XXX")
+                    withContext(Dispatchers.Main) { Toast.makeText(MyApplication.context, "网络连接失败", Toast.LENGTH_SHORT).show() }
+
+                if (vm.code.value.toString() == "401")
+                    withContext(Dispatchers.Main) { Toast.makeText(MyApplication.context, "密码错误", Toast.LENGTH_SHORT).show() }
+
+                if (vm.code.value.toString() == "200")
+                    withContext(Dispatchers.Main) { Toast.makeText(MyApplication.context, "请输入正确的账号", Toast.LENGTH_SHORT) .show()}
+
+                if (vm.code.value.toString() == "302") {
+
+                    if (vm.location.value.toString() == MyApplication.RedirectURL)
+                        withContext(Dispatchers.Main) { Toast.makeText(MyApplication.context, "重定向失败，请重新进入App登录", Toast.LENGTH_SHORT).show() }
+
+                    else {
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(MyApplication.context, "登陆成功", Toast.LENGTH_SHORT).show()
+                            val it = Intent(MyApplication.context, LoginSuccessAcitivity::class.java).apply { putExtra("Grade", username.substring(2, 4)) }
                             startActivity(it)
                         }
-
                     }
                 }
-                show()
             }
+
+
 
         }
 
