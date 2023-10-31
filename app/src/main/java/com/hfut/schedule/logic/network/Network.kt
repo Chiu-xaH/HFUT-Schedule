@@ -1,10 +1,10 @@
 package com.hfut.schedule.logic.network
 
 import com.google.gson.JsonObject
-import com.hfut.schedule.logic.network.ServiceCreator.GetAESKeyServiceCreator
-import com.hfut.schedule.logic.network.ServiceCreator.GetCookieServiceCreator
-import com.hfut.schedule.logic.network.ServiceCreator.JxglstuServiceCreator
-import com.hfut.schedule.logic.network.ServiceCreator.LoginServiceCreator
+import com.hfut.schedule.logic.network.Servicecreator.GetAESKeyServiceCreator
+import com.hfut.schedule.logic.network.Servicecreator.GetCookieServiceCreator
+import com.hfut.schedule.logic.network.Servicecreator.JxglstuServiceCreator
+import com.hfut.schedule.logic.network.Servicecreator.LoginServiceCreator
 import com.hfut.schedule.logic.network.api.JxglstuService
 import com.hfut.schedule.logic.network.api.LoginService
 import retrofit2.Call

@@ -1,4 +1,4 @@
-package com.hfut.schedule.logic.network.ServiceCreator
+package com.hfut.schedule.logic.network.Servicecreator
 
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.logic.network.interceptor.RedirectInterceptor

@@ -22,7 +22,7 @@ interface JxglstuService {
     @Headers("User-Agent:MQQBrowser/26 Mozilla/5.0 (Linux; U; Android 2.3.7; zh-cn; MB200 Build/GRJ22; CyanogenMod-7) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1")
     fun getStudentId(@Header("Cookie") Cookie : String) : Call<ResponseBody>
 
-    //获取需要POST的lessonsId
+    //获取需要POST的lessonsId数组
     //eams5-student/for-std/course-table/get-data?bizTypeId=23&semesterId=234&dataId=170317
     @GET("for-std/course-table/get-data?semesterId=234")
     @Headers("User-Agent:MQQBrowser/26 Mozilla/5.0 (Linux; U; Android 2.3.7; zh-cn; MB200 Build/GRJ22; CyanogenMod-7) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1")
@@ -32,7 +32,7 @@ interface JxglstuService {
                      @Query("dataId") dataId : String
                      ) : Call<ResponseBody>
 
-    //获取课程表JSON
+    //获取课程表JSON,需要提交前面获取到的数据才可以，否则返回500错误
     @POST("ws/schedule-table/datum")
     @Headers("User-Agent:MQQBrowser/26 Mozilla/5.0 (Linux; U; Android 2.3.7; zh-cn; MB200 Build/GRJ22; CyanogenMod-7) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1",
         "Content-Type: application/json")

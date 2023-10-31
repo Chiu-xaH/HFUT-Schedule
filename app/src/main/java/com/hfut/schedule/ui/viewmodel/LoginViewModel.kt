@@ -1,12 +1,12 @@
-package com.hfut.schedule.ui.ViewModel
+package com.hfut.schedule.ui.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.hfut.schedule.logic.network.ServiceCreator.GetAESKeyServiceCreator
-import com.hfut.schedule.logic.network.ServiceCreator.GetCookieServiceCreator
 import com.hfut.schedule.logic.network.api.LoginService
-import com.hfut.schedule.logic.network.ServiceCreator.LoginServiceCreator
+import com.hfut.schedule.logic.network.Servicecreator.GetAESKeyServiceCreator
+import com.hfut.schedule.logic.network.Servicecreator.GetCookieServiceCreator
+import com.hfut.schedule.logic.network.Servicecreator.LoginServiceCreator
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -19,14 +19,14 @@ class LoginViewModel : ViewModel() {
     var location = MutableLiveData<String>()
 
 
-    val api = LoginServiceCreator.create(LoginService::class.java)
-    val api2 = GetCookieServiceCreator.create(LoginService::class.java)
-    val api3 = GetAESKeyServiceCreator.create(LoginService::class.java)
+    private val api = LoginServiceCreator.create(LoginService::class.java)
+    private val api2 = GetCookieServiceCreator.create(LoginService::class.java)
+    private val api3 = GetAESKeyServiceCreator.create(LoginService::class.java)
 
     fun login(username : String,password : String,keys : String)  {// 创建一个Call对象，用于发送异步请求
-        var Cookies : String? = sessionLiveData.value  + cookie2.value +";" + keys
-        Log.d("验证",Cookies!!)
-        val call = api.login(Cookies!!,username, password,"e1s1","submit")
+        val cookies : String = sessionLiveData.value  + cookie2.value +";" + keys
+        Log.d("验证",cookies)
+        val call = api.login(cookies,username, password,"e1s1","submit")
         Log.d("账号",username)
         Log.d("密码",password)
 
@@ -47,9 +47,6 @@ class LoginViewModel : ViewModel() {
                     Log.d("地址",location.value.toString())
                     Log.d("测试","失败")
                     Log.d("响应码", response.code().toString())
-                   // Log.d("响应头", response.headers().toString())
-                  //  Log.d("响应信息",response.message())
-                   // Log.d("响应主体",response.body().toString())
                     code.value = response.code().toString()
                  }
 

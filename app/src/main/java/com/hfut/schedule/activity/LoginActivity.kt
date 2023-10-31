@@ -19,7 +19,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.logic.AESEncrypt
 import com.hfut.schedule.R
-import com.hfut.schedule.ui.ViewModel.LoginViewModel
+import com.hfut.schedule.ui.viewmodel.LoginViewModel
 
 class LoginActivity : ComponentActivity() {
     private val vm by lazy { ViewModelProvider(this).get(LoginViewModel::class.java) }
@@ -46,12 +46,9 @@ class LoginActivity : ComponentActivity() {
         val savePskCheckBox : CheckBox = findViewById(R.id.SavePskCheckBox)
         val loading : ProgressBar = findViewById(R.id.Loading)
 
-
         vm.getCookie()
-        //得到AESKey
-        vm.getKey()
-      //  Thread.sleep(3000)
 
+        vm.getKey()
 
         showPskCheckBox.setOnCheckedChangeListener{_, isChecked ->
             if (isChecked)  passwordET.transformationMethod = HideReturnsTransformationMethod.getInstance()
