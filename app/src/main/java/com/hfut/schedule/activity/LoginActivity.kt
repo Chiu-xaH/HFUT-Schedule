@@ -1,11 +1,11 @@
 package com.hfut.schedule.activity
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Looper
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
 import android.view.View
@@ -22,11 +22,12 @@ import com.hfut.schedule.R
 import com.hfut.schedule.ui.ViewModel.LoginViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.Date
 
 class LoginActivity : ComponentActivity() {
     private val vm by lazy { ViewModelProvider(this).get(LoginViewModel::class.java) }
@@ -58,6 +59,9 @@ class LoginActivity : ComponentActivity() {
         val job = Job()
         val scope = CoroutineScope(job)
 
+
+        checkDate("2023-09-01","2024-02-01") // 定义一个函数，超出日期不允许使用
+
         scope.apply {
             launch { vm.getCookie() }
             launch {  vm.getKey() }
@@ -88,8 +92,7 @@ class LoginActivity : ComponentActivity() {
 
                 outputAES?.let { it1 -> vm.login(username, it1,"LOGIN_FLAVORING=" + key) }
 
-            val job = Job()
-            CoroutineScope(job).launch {
+            CoroutineScope(Job()).launch {
 
                 delay(1000)
 
@@ -125,7 +128,21 @@ class LoginActivity : ComponentActivity() {
         }
 
         }
+
+    fun checkDate(startDate: String, endDate: String) {
+        val currentDate = SimpleDateFormat("yyyy-MM-dd").format(Date())
+
+        if (currentDate < startDate || currentDate > endDate) {
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("提示")
+                .setMessage("您的应用已过期，请更新到最新版本")
+                .setPositiveButton("确定") { dialog, which -> finish() }
+                .setCancelable(false)
+            builder.show()
+        }
     }
+
+}
 
 
 
