@@ -10,7 +10,7 @@ class AESKeyInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val response = chain.proceed(chain.request())
         val cookies = response.headers("Set-Cookie")
-        Log.d("cookieAES",cookies.toString())
+        //Log.d("cookieAES",cookies.toString())
         var cookieValue = ""
         var cookiekey = ""
         // 遍历cookies列表，找到LOGIN_FLAVORING
@@ -22,7 +22,7 @@ class AESKeyInterceptor : Interceptor {
                 break
             }
         }
-      Log.d("测试2",cookiekey)
+     // Log.d("测试2",cookiekey)
         // 如果cookieValue不为空，就将其保存到SharedPreferences中
 
             val sp = PreferenceManager.getDefaultSharedPreferences(context)

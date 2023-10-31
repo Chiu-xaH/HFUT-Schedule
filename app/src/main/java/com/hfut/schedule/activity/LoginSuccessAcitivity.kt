@@ -32,7 +32,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
 
             val prefs = getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
             val cookie = prefs.getString("redirect", "")
-            cookie?.let { it1 -> Log.d("传送", it1) }
+            //cookie?.let { it1 -> Log.d("传送", it1) }
             vm.Jxglstulogin(cookie!!)
 
         datumButton.setOnClickListener {

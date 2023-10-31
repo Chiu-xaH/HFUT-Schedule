@@ -40,7 +40,7 @@ class JxglstuViewModel : ViewModel() {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 studentId.value = response.headers()["Location"].toString().substringAfter("/eams5-student/for-std/course-table/info/").toInt()
 
-                Log.d("学生ID", studentId.value.toString())
+                //Log.d("学生ID", studentId.value.toString())
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -55,7 +55,7 @@ class JxglstuViewModel : ViewModel() {
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 val json = response.body()?.string()
-                Log.d("检验",json!!)
+                //Log.d("检验",json!!)
 
                 val id = Gson().fromJson(json,lessonIdsResponse::class.java)
                 lessonIds.value =  id.lessonIds

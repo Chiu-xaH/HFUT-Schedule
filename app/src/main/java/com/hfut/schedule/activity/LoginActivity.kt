@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
 import android.view.View
@@ -62,6 +63,23 @@ class LoginActivity : ComponentActivity() {
 
         checkDate("2023-09-01","2024-02-01") // 定义一个函数，超出日期不允许使用
 
+
+        val prefs = getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
+        val username = prefs.getString("Username", "")
+        val password = prefs.getString("Password","")
+
+        //填充密码账号
+      //  if (prefs.getString("状态","") == "0") {
+        //    savePskCheckBox.isChecked
+       ////      accountET.setText(username)
+       //      passwordET.setText(password)
+      //  }else {
+     //       accountET.setText(null)
+     //       passwordET.setText(null)
+     //   }
+
+
+
         scope.apply {
             launch { vm.getCookie() }
             launch {  vm.getKey() }
@@ -73,10 +91,16 @@ class LoginActivity : ComponentActivity() {
                       else  passwordET.transformationMethod = PasswordTransformationMethod.getInstance()
         }//显示密码开关
 
-        savePskCheckBox.setOnCheckedChangeListener { _, isChecked -> Toast.makeText(this,"待开发，敬请期待",Toast.LENGTH_SHORT).show() }
+         //保存密码
+        savePskCheckBox.setOnCheckedChangeListener { _, isChecked ->
+            val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
+          //  if (isChecked) { sp.edit().putString("状态","0").apply() }
+         //   else { sp.edit().putString("状态","1").apply() }
+        }
 
         loginButton.setOnClickListener {
             loading.visibility = View.VISIBLE
+            loginButton.isClickable = false
 
             Thread {
                 Thread.sleep(1000)
@@ -90,7 +114,14 @@ class LoginActivity : ComponentActivity() {
                 val username = accountET.editableText.toString()
                 val outputAES = key?.let { it1 -> AESEncrypt.encrypt(inputAES, it1) }
 
+            val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
+            if(sp.getString("Username","") != username){ sp.edit().putString("Username", username).apply() }
+            if(sp.getString("Password","") != inputAES){ sp.edit().putString("Password", inputAES).apply() }
+
                 outputAES?.let { it1 -> vm.login(username, it1,"LOGIN_FLAVORING=" + key) }
+
+
+
 
             CoroutineScope(Job()).launch {
 
@@ -135,8 +166,10 @@ class LoginActivity : ComponentActivity() {
         if (currentDate < startDate || currentDate > endDate) {
             val builder = AlertDialog.Builder(this)
             builder.setTitle("提示")
-                .setMessage("您的应用已过期，请更新到最新版本")
-                .setPositiveButton("确定") { dialog, which -> finish() }
+                .setMessage("请保证日期在2023-2024第一学期内，否则应用已过期，请更新")
+                .setPositiveButton("获取更新") { dialog, which ->
+                    //跳转至浏览器打开URL
+                    finish() }
                 .setCancelable(false)
             builder.show()
         }

@@ -25,28 +25,19 @@ class LoginViewModel : ViewModel() {
 
     fun login(username : String,password : String,keys : String)  {// 创建一个Call对象，用于发送异步请求
         val cookies : String = sessionLiveData.value  + cookie2.value +";" + keys
-        Log.d("验证",cookies)
+
         val call = api.login(cookies,username, password,"e1s1","submit")
-        Log.d("账号",username)
-        Log.d("密码",password)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
 
                 if(response.isSuccessful()) {
-                    Log.d("响应码", response.code().toString())
-                    Log.d("响应头", response.headers().toString())
-                    Log.d("响应信息",response.message())
-                    response.body()?.toString()?.let { Log.d("响应主体", it) }
                     code.value = response.code().toString()
                     location.value = response.headers()["Location"].toString()
 
                 }
                  else {
                     location.value = response.headers()["Location"].toString()
-                    Log.d("地址",location.value.toString())
-                    Log.d("测试","失败")
-                    Log.d("响应码", response.code().toString())
                     code.value = response.code().toString()
                  }
 
@@ -72,7 +63,7 @@ class LoginViewModel : ViewModel() {
 
                 if(response.isSuccessful()){
                     cookie2.value  = response.headers()["Set-Cookie"].toString()
-                    Log.d("测试","成功")
+                   // Log.d("测试","成功")
 
                 }
                 else Log.d("测试","失败，${response.code()},${response.message()}")
@@ -94,7 +85,7 @@ class LoginViewModel : ViewModel() {
 
                 if(response.isSuccessful()) {
                     sessionLiveData.value  = response.headers()["Set-Cookie"].toString().substringBefore(";").plus(";")
-                    Log.d("getCookie","成功")
+                    //Log.d("getCookie","成功")
 
                 }
                 else Log.d("测试q","失败，${response.code()},${response.message()}")
