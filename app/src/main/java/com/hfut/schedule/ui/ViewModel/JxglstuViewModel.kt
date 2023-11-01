@@ -8,8 +8,13 @@ import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
-import com.hfut.schedule.MyApplication
+import com.google.gson.JsonSyntaxException
+import com.google.gson.reflect.TypeToken
+import com.hfut.schedule.logic.datamodel.data
+
 import com.hfut.schedule.logic.datamodel.lessonIdsResponse
+import com.hfut.schedule.logic.datamodel.result
+import com.hfut.schedule.logic.datamodel.scheduleList
 import com.hfut.schedule.logic.network.ServiceCreator.JxglstuServiceCreator
 import com.hfut.schedule.logic.network.api.JxglstuService
 import okhttp3.ResponseBody
@@ -57,21 +62,20 @@ class JxglstuViewModel : ViewModel() {
                 val json = response.body()?.string()
                 //Log.d("检验",json!!)
 
-                val id = Gson().fromJson(json,lessonIdsResponse::class.java)
+                val id = Gson().fromJson(json, lessonIdsResponse::class.java)
                 lessonIds.value =  id.lessonIds
-
+            //    Log.d("测试",id.toString())
             }
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
     fun getDatum(cookie : String) {
 
-       // val lessonIds = listOf(420743,420869,420610,420579,424192,423169,420783,420812,420557,420811,423955,420444,423229,421016)//课程ID
         val lessonIdsArray = JsonArray()
         lessonIds.value?.forEach {lessonIdsArray.add(JsonPrimitive(it))}
 
         val jsonObject = JsonObject().apply {
-            add("lessonIds", lessonIdsArray)
+            add("lessonIds", lessonIdsArray)//课程ID
             addProperty("studentId", studentId.value)//学生ID
             addProperty("weekIndex", "")
         }
@@ -81,19 +85,37 @@ class JxglstuViewModel : ViewModel() {
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+
+
                 val json = response.body()?.string()
 
-                val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-                if(sp.getString("datumjson","") != json){
-                    sp.edit().putString("datumjson", json).apply()
-                }
+                    val data = Gson().fromJson(json, data::class.java)
+                   // Log.d("结果",data.result.scheduleList.toString())
+                val scheduleList = data.result.scheduleList
+                val lessonList = data.result.lessonList
+                val scheduleGroupList = data.result.scheduleGroupList
+                Log.d("lessonList",lessonList.toString())
 
-                Log.d("检验成果",json!!)
+
+                // val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
+                //if(sp.getString("datumjson","") != json){
+                  //  sp.edit().putString("datumjson", json).apply() }
+
+
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
+    fun Self(cookie : String) {
 
+        val call = api.Self(cookie,studentId.value.toString())
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {}
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
 
 }

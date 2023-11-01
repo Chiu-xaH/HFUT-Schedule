@@ -8,6 +8,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 
@@ -39,6 +40,12 @@ interface JxglstuService {
     fun getDatum(@Header("Cookie") Cookie : String,
                  @Body json: JsonObject
     ) : Call<ResponseBody>
+
+    //预留接口，个人中心
+    @GET("for-std/student-info/info/{studentId}")
+    @Headers("User-Agent:MQQBrowser/26 Mozilla/5.0 (Linux; U; Android 2.3.7; zh-cn; MB200 Build/GRJ22; CyanogenMod-7) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1",)
+    fun Self(@Header("Cookie") Cookie : String,
+             @Path("studentId") studentId : String) : Call<ResponseBody>
 }
 
 

@@ -29,6 +29,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
         setContentView(R.layout.login_success)
         val datumButton : Button = findViewById(R.id.DatumButton)
         val progressBar: ProgressBar = findViewById(R.id.prgressbar)
+        val selfButton : Button = findViewById(R.id.SelfButton)
 
             val prefs = getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
             val cookie = prefs.getString("redirect", "")
@@ -67,6 +68,13 @@ class LoginSuccessAcitivity : ComponentActivity() {
                     startActivity(it)
                 }
             }
+        }
+
+        selfButton.setOnClickListener {
+            val prefs = getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
+            val cookie = prefs.getString("redirect", "")
+            vm.Self(cookie!!)
+            Toast.makeText(this,"获取成功，但是我还没写界面，憋着",Toast.LENGTH_SHORT).show()
         }
 
 

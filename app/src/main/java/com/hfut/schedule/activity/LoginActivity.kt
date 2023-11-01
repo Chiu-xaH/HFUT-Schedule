@@ -93,7 +93,7 @@ class LoginActivity : ComponentActivity() {
 
          //保存密码
         savePskCheckBox.setOnCheckedChangeListener { _, isChecked ->
-            val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
+          //  val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
           //  if (isChecked) { sp.edit().putString("状态","0").apply() }
          //   else { sp.edit().putString("状态","1").apply() }
         }
@@ -127,11 +127,8 @@ class LoginActivity : ComponentActivity() {
 
                 delay(1000)
 
-                if (vm.code.value.toString() == null)
-                    withContext(Dispatchers.Main) { Toast.makeText(MyApplication.context, "请检查是否点击了登录或输入账密", Toast.LENGTH_SHORT).show() }
-
-                if (vm.code.value.toString() == "XXX")
-                    withContext(Dispatchers.Main) { Toast.makeText(MyApplication.context, "网络连接失败", Toast.LENGTH_SHORT).show() }
+                //if (vm.code.value.toString() == "XXX")
+                   // withContext(Dispatchers.Main) { Toast.makeText(MyApplication.context, "连接失败，可更换网络尝试", Toast.LENGTH_SHORT).show() }
 
                 if (vm.code.value.toString() == "401")
                     withContext(Dispatchers.Main) { Toast.makeText(MyApplication.context, "密码错误", Toast.LENGTH_SHORT).show() }

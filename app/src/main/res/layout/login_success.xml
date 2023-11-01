@@ -10,6 +10,12 @@
         android:layout_height="wrap_content"
         android:text="获取课程表JSON" />
 
+    <Button
+        android:id="@+id/SelfButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="个人中心(待开发)" />
+
     <ProgressBar
         android:layout_width="120dp"
         android:id="@+id/prgressbar"
