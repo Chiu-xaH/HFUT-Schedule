@@ -110,11 +110,13 @@
             <Button
                 android:id="@+id/Table_1_1"
                 android:layout_width="50dp"
+                android:textSize="13dp"
                 android:layout_gravity="center"
                 android:layout_height="125dp"
                 android:gravity="center" />
 
             <Button
+                android:textSize="13dp"
                 android:layout_width="50dp"
                 android:id="@+id/Table_1_2"
                 android:layout_gravity="center"
@@ -123,6 +125,7 @@
                  />
 
             <Button
+                android:textSize="13dp"
                 android:layout_height="125dp"
                 android:layout_gravity="center"
                 android:id="@+id/Table_1_3"
@@ -131,6 +134,7 @@
                  />
 
             <Button
+                android:textSize="13dp"
                 android:id="@+id/Table_1_4"
                 android:layout_width="50dp"
                 android:layout_gravity="center"
@@ -139,6 +143,7 @@
                  />
 
             <Button
+                android:textSize="13dp"
                 android:id="@+id/Table_1_5"
                 android:layout_height="125dp"
                 android:layout_gravity="center"
@@ -150,14 +155,25 @@
         <TableRow>
 
             <Button
+                android:textSize="13dp"
                 android:layout_width="50dp"
                 android:layout_gravity="center"
-                android:id="@+id/Table_2_2"
+                android:id="@+id/Table_2_1"
                 android:layout_height="125dp"
                 android:gravity="center"
                 />
 
             <Button
+                android:textSize="13dp"
+                android:layout_width="50dp"
+                android:id="@+id/Table_2_2"
+                android:layout_height="125dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                 />
+
+            <Button
+                android:textSize="13dp"
                 android:layout_width="50dp"
                 android:id="@+id/Table_2_3"
                 android:layout_height="125dp"
@@ -166,6 +182,7 @@
                  />
 
             <Button
+                android:textSize="13dp"
                 android:layout_width="50dp"
                 android:id="@+id/Table_2_4"
                 android:layout_height="125dp"
@@ -174,16 +191,9 @@
                  />
 
             <Button
+                android:textSize="13dp"
                 android:layout_width="50dp"
                 android:id="@+id/Table_2_5"
-                android:layout_height="125dp"
-                android:layout_gravity="center"
-                android:gravity="center"
-                 />
-
-            <Button
-                android:layout_width="50dp"
-                android:id="@+id/Table_2_1"
                 android:layout_gravity="center"
                 android:layout_height="125dp"
                 android:gravity="center"
@@ -193,6 +203,7 @@
         <TableRow>
 
             <Button
+                android:textSize="13dp"
                 android:layout_width="50dp"
                 android:id="@+id/Table_3_1"
                 android:layout_gravity="center"
@@ -201,6 +212,7 @@
                  />
 
             <Button
+                android:textSize="13dp"
                 android:layout_width="50dp"
                 android:id="@+id/Table_3_2"
                 android:layout_gravity="center"
@@ -209,6 +221,7 @@
                  />
 
             <Button
+                android:textSize="13dp"
                 android:layout_width="50dp"
                 android:id="@+id/Table_3_3"
                 android:layout_height="125dp"
@@ -217,6 +230,7 @@
                 />
 
             <Button
+                android:textSize="13dp"
                 android:layout_width="50dp"
                 android:id="@+id/Table_3_4"
                 android:layout_height="125dp"
@@ -225,6 +239,7 @@
                  />
 
             <Button
+                android:textSize="13dp"
                 android:layout_width="50dp"
                 android:id="@+id/Table_3_5"
                 android:layout_height="125dp"
@@ -236,6 +251,7 @@
         <TableRow>
 
             <Button
+                android:textSize="13dp"
                 android:layout_width="50dp"
                 android:id="@+id/Table_4_1"
                 android:layout_gravity="center"
@@ -244,6 +260,7 @@
                />
 
             <Button
+                android:textSize="13dp"
                 android:layout_width="50dp"
                 android:id="@+id/Table_4_2"
                 android:layout_height="125dp"
@@ -252,6 +269,7 @@
                />
 
             <Button
+                android:textSize="13dp"
                 android:layout_width="50dp"
                 android:id="@+id/Table_4_3"
                 android:layout_height="125dp"
@@ -260,6 +278,7 @@
                />
 
             <Button
+                android:textSize="13dp"
                 android:layout_width="50dp"
                 android:id="@+id/Table_4_4"
                 android:layout_height="125dp"
@@ -268,6 +287,7 @@
                  />
 
             <Button
+                android:textSize="13dp"
                 android:layout_width="50dp"
                 android:id="@+id/Table_4_5"
                 android:layout_height="125dp"
@@ -275,6 +295,7 @@
                 android:gravity="center"
                  />
         </TableRow>
+
 
     </TableLayout>
 

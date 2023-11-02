@@ -86,18 +86,15 @@ class DatumActivity : ComponentActivity() {
         val Benweeks = week + 1   //固定本周
 
         val Date = SimpleDateFormat("yyyy-MM-dd").format(Date())
-        // 打印结果
-        //*****Date与2023-09-11相差几周，则week++*****//
 
         helloTv.setText("   你好，本周第 ${Benweeks} 周，${Date}")//显示日期周数
-
         centerTv.setText("  第 ${Bianhuaweeks} 周  ")//显示切换到的周数
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Thread.sleep(1000)
+
+       // Thread.sleep(1000)
         val prefs = getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
         val json = prefs.getString("json", "")
-        Log.d("传送",json!!)
+        //Log.d("传送",json!!)
 
 
         val data = Gson().fromJson(json, data::class.java)
@@ -105,22 +102,38 @@ class DatumActivity : ComponentActivity() {
         val lessonList = data.result.lessonList
         val scheduleGroupList = data.result.scheduleGroupList
 
-        for (lesson in lessonList) {
-            val courseName = lesson.courseName
-            val id = lesson.id
-            val suggestscheduleList = lesson.suggestScheduleWeeks
-        }
 
-        for (scheduleGroup in scheduleGroupList) {
-            val lessonId = scheduleGroup.lessonId
-            val stdCount = scheduleGroup.stdCount
-        }
 
-        for (i in 0 until scheduleList.size) {//本周
 
-          //  var starttime = scheduleList[i].startTime.toString()
-            //starttime.substring(0,starttime.length - 2) + ":" + starttime.substring(starttime.length - 2)
-            val text = scheduleList[i].room.nameZh + "\n" +  scheduleList[i].startTime.toString() + "\n" + scheduleList[i].personName + "\n" + scheduleList[i].endTime
+        for (i in 0 until scheduleList.size) {
+
+            var starttime = scheduleList[i].startTime.toString()
+            starttime = starttime.substring(0,starttime.length - 2) + ":" + starttime.substring(starttime.length - 2)
+            var endtime = scheduleList[i].endTime.toString()
+            endtime = endtime.substring(0,endtime.length - 2) + ":" + endtime.substring(endtime.length - 2)
+            val room = scheduleList[i].room.nameZh
+            var id = scheduleList[i].lessonId.toString()
+
+            for (j in 0 until lessonList.size) {
+                val idj = lessonList[j].id
+                val name = lessonList[j].courseName
+                if (id == idj)
+                    id = name
+
+            }
+
+            for (k in 0 until scheduleGroupList.size) {
+                val count = scheduleGroupList[k].stdCount
+                val idk = scheduleGroupList[k].lessonId.toString()
+                if (id == idk) {}
+                    //未写下操作
+
+            }
+
+            val text = id +  "\n"+ room + "\n" +  starttime
+            //+ "\n"  + endtime
+
+
 
             if ( scheduleList[i].weekIndex == Bianhuaweeks.toInt()) {
                 if (scheduleList[i].weekday == 1) {
@@ -189,29 +202,53 @@ class DatumActivity : ComponentActivity() {
                     if (scheduleList[i].startTime == 1400) {
                         table_3_5.text = text
                     }
-                    if (scheduleList[i].startTime == 1600) {
-                        table_4_5.text = text
-                    }
                 }
-            }
-        }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//优化写法
+          //  if (scheduleList[i].weekIndex == Bianhuaweeks.toInt()) {
+               // val table = arrayOf(
+                //    arrayOf(table_1_1, table_1_2, table_1_3, table_1_4, table_1_5),
+                 //   arrayOf(table_2_1, table_2_2, table_2_3, table_2_4, table_2_5),
+                 //   arrayOf(table_3_1, table_3_2, table_3_3, table_3_4, table_3_5),
+                 //   arrayOf(table_4_1, table_4_2, table_4_3, table_4_4, table_4_5)
+              //  )
+             //   val startTimeMap = mapOf(800 to 0, 1010 to 1, 1400 to 2, 1600 to 3)
+
+             //   for (weekday in 1..5) {
+
+                //    if (scheduleList[i].weekday == weekday) {
+
+                   //     val index = startTimeMap.getOrDefault(scheduleList[i].startTime, -1)
+
+                     //   if (index != -1) {
+                      //      table[index][weekday - 1].text = text
+                     //   }
+                 //   }
+              //  }
+            }
+
+        }
 
 
 
         centerTv.setOnClickListener { //跳转回当前周
             Bianhuaweeks = Benweeks
             centerTv.setText("  第 ${Benweeks} 周  ")
+
              }
         rightButton.setOnClickListener { //切换下周
-            if (Bianhuaweeks <= 20)
+            if (Bianhuaweeks <= 20) {
                 centerTv.setText("  第 ${Bianhuaweeks++} 周  ")
+                Toast.makeText(this, "正在开发", Toast.LENGTH_SHORT).show()
+            }
             else Toast.makeText(this,"已经是第二十周",Toast.LENGTH_SHORT).show()
              }
         leftButton.setOnClickListener { //切换上周
-            if (Bianhuaweeks > 0)
-                 centerTv.setText("  第 ${Bianhuaweeks--} 周  ")
+            if (Bianhuaweeks > 0) {
+                centerTv.setText("  第 ${Bianhuaweeks--} 周  ")
+                Toast.makeText(this, "正在开发", Toast.LENGTH_SHORT).show()
+            }
             else Toast.makeText(this,"已经是第一周",Toast.LENGTH_SHORT).show()
         }
         refreshButton.setOnClickListener { //刷新操作
@@ -234,6 +271,7 @@ class DatumActivity : ComponentActivity() {
 
         //待开发
     }
+
 
 }
 
