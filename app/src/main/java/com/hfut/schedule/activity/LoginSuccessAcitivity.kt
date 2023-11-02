@@ -39,7 +39,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
         datumButton.setOnClickListener {
 
             progressBar.visibility = View.VISIBLE
-            datumButton.isClickable = false
+           // datumButton.isClickable = false
 
             Toast.makeText(this,"正在请求网络数据，请等待",Toast.LENGTH_SHORT).show()
 
@@ -64,6 +64,9 @@ class LoginSuccessAcitivity : ComponentActivity() {
                 launch {
                     delay(3000)
                     vm.getDatum(cookie!!)
+                }
+                launch {
+                    delay(4000)
                     val it = Intent(MyApplication.context,DatumActivity::class.java)
                     startActivity(it)
                 }

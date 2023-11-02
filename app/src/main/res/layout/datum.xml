@@ -5,16 +5,37 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <Toolbar
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:title="课程表" />
+    <LinearLayout
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal">
+
+        <Toolbar
+            android:layout_width="211dp"
+            android:layout_height="wrap_content"
+            android:title="课程表" />
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_gravity="center"
+            android:visibility="invisible"
+            android:id="@+id/RefreshLoaging"/>
+
+        <Button
+            android:id="@+id/RefreshButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="刷新" />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/helloTv"
         android:layout_width="match_parent"
         android:layout_height="46dp"
-        android:text="   你好，本周第X周，今天是周X"
+        android:text="   你好，本周第X周，2023-XX-XX"
         android:textSize="20dp" />
 
     <TableLayout
@@ -86,134 +107,173 @@
 
         <TableRow>
 
-            <TextView
+            <Button
                 android:id="@+id/Table_1_1"
+                android:layout_width="50dp"
+                android:layout_gravity="center"
                 android:layout_height="125dp"
-                android:gravity="center"
-                android:text="1.1" />
+                android:gravity="center" />
 
-            <TextView
+            <Button
+                android:layout_width="50dp"
                 android:id="@+id/Table_1_2"
+                android:layout_gravity="center"
                 android:layout_height="125dp"
                 android:gravity="center"
-                android:text="1.2" />
+                 />
 
-            <TextView
+            <Button
+                android:layout_height="125dp"
+                android:layout_gravity="center"
                 android:id="@+id/Table_1_3"
-                android:layout_height="125dp"
+                android:layout_width="50dp"
                 android:gravity="center"
-                android:text="1.3" />
+                 />
 
-            <TextView
+            <Button
                 android:id="@+id/Table_1_4"
+                android:layout_width="50dp"
+                android:layout_gravity="center"
                 android:layout_height="125dp"
                 android:gravity="center"
-                android:text="1.4" />
+                 />
 
-            <TextView
+            <Button
                 android:id="@+id/Table_1_5"
                 android:layout_height="125dp"
+                android:layout_gravity="center"
+                android:layout_width="50dp"
                 android:gravity="center"
-                android:text="1.5" />
+                 />
         </TableRow>
 
         <TableRow>
 
-            <TextView
+            <Button
+                android:layout_width="50dp"
+                android:layout_gravity="center"
                 android:id="@+id/Table_2_2"
                 android:layout_height="125dp"
                 android:gravity="center"
-                android:text="2.1" />
+                />
 
-            <TextView
+            <Button
+                android:layout_width="50dp"
                 android:id="@+id/Table_2_3"
                 android:layout_height="125dp"
+                android:layout_gravity="center"
                 android:gravity="center"
-                android:text="2.2" />
+                 />
 
-            <TextView
+            <Button
+                android:layout_width="50dp"
                 android:id="@+id/Table_2_4"
                 android:layout_height="125dp"
+                android:layout_gravity="center"
                 android:gravity="center"
-                android:text="2.3" />
+                 />
 
-            <TextView
+            <Button
+                android:layout_width="50dp"
                 android:id="@+id/Table_2_5"
                 android:layout_height="125dp"
+                android:layout_gravity="center"
                 android:gravity="center"
-                android:text="2.4" />
+                 />
 
-            <TextView
+            <Button
+                android:layout_width="50dp"
                 android:id="@+id/Table_2_1"
+                android:layout_gravity="center"
                 android:layout_height="125dp"
                 android:gravity="center"
-                android:text="2.5" />
+                 />
         </TableRow>
 
         <TableRow>
 
-            <TextView
+            <Button
+                android:layout_width="50dp"
                 android:id="@+id/Table_3_1"
+                android:layout_gravity="center"
                 android:layout_height="125dp"
                 android:gravity="center"
-                android:text="3.1" />
+                 />
 
-            <TextView
+            <Button
+                android:layout_width="50dp"
                 android:id="@+id/Table_3_2"
+                android:layout_gravity="center"
                 android:layout_height="125dp"
                 android:gravity="center"
-                android:text="3.2" />
+                 />
 
-            <TextView
+            <Button
+                android:layout_width="50dp"
                 android:id="@+id/Table_3_3"
                 android:layout_height="125dp"
                 android:gravity="center"
-                android:text="3.3" />
+                android:layout_gravity="center"
+                />
 
-            <TextView
+            <Button
+                android:layout_width="50dp"
                 android:id="@+id/Table_3_4"
                 android:layout_height="125dp"
                 android:gravity="center"
-                android:text="3.4" />
+                android:layout_gravity="center"
+                 />
 
-            <TextView
+            <Button
+                android:layout_width="50dp"
                 android:id="@+id/Table_3_5"
                 android:layout_height="125dp"
+                android:layout_gravity="center"
                 android:gravity="center"
-                android:text="3.5" />
+               />
         </TableRow>
 
         <TableRow>
 
-            <TextView
+            <Button
+                android:layout_width="50dp"
                 android:id="@+id/Table_4_1"
+                android:layout_gravity="center"
                 android:layout_height="125dp"
                 android:gravity="center"
-                android:text="4.1" />
+               />
 
-            <TextView
+            <Button
+                android:layout_width="50dp"
                 android:id="@+id/Table_4_2"
                 android:layout_height="125dp"
+                android:layout_gravity="center"
                 android:gravity="center"
-                android:text="4.2" />
+               />
 
-            <TextView
+            <Button
+                android:layout_width="50dp"
                 android:id="@+id/Table_4_3"
                 android:layout_height="125dp"
+                android:layout_gravity="center"
                 android:gravity="center"
-                android:text="4.3" />
+               />
 
-            <TextView
+            <Button
+                android:layout_width="50dp"
                 android:id="@+id/Table_4_4"
                 android:layout_height="125dp"
+                android:layout_gravity="center"
                 android:gravity="center"
-                android:text="4.4" />
+                 />
 
-            <TextView
+            <Button
+                android:layout_width="50dp"
                 android:id="@+id/Table_4_5"
                 android:layout_height="125dp"
+                android:layout_gravity="center"
                 android:gravity="center"
-                android:text="4.5" />
+                 />
         </TableRow>
 
     </TableLayout>
@@ -243,6 +303,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="下一周" />
+
 
     </LinearLayout>
 

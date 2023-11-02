@@ -13,9 +13,9 @@
         android:src="@drawable/logo" />
 
     <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:id="@+id/AccountET"
+        android:layout_width="411dp"
+        android:layout_height="wrap_content"
         android:hint="学号" />
 
     <EditText
@@ -49,6 +49,7 @@
             android:visibility="invisible"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
+
 
 
     </LinearLayout>

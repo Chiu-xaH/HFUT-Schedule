@@ -71,8 +71,8 @@ class LoginActivity : ComponentActivity() {
         //填充密码账号
       //  if (prefs.getString("状态","") == "0") {
         //    savePskCheckBox.isChecked
-       ////      accountET.setText(username)
-       //      passwordET.setText(password)
+             accountET.setText(username)
+             passwordET.setText(password)
       //  }else {
      //       accountET.setText(null)
      //       passwordET.setText(null)
@@ -103,7 +103,7 @@ class LoginActivity : ComponentActivity() {
             loginButton.isClickable = false
 
             Thread {
-                Thread.sleep(1000)
+                Thread.sleep(2000)
                 runOnUiThread { loading.visibility = View.GONE }
             }.start()
 

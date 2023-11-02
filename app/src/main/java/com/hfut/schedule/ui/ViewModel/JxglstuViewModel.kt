@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.ViewModel
 
+import android.content.Context
 import android.preference.PreferenceManager
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
@@ -10,10 +11,13 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
+import com.hfut.schedule.MyApplication
 import com.hfut.schedule.logic.datamodel.data
 
 import com.hfut.schedule.logic.datamodel.lessonIdsResponse
+import com.hfut.schedule.logic.datamodel.lessonList
 import com.hfut.schedule.logic.datamodel.result
+import com.hfut.schedule.logic.datamodel.room
 import com.hfut.schedule.logic.datamodel.scheduleList
 import com.hfut.schedule.logic.network.ServiceCreator.JxglstuServiceCreator
 import com.hfut.schedule.logic.network.api.JxglstuService
@@ -25,6 +29,7 @@ class JxglstuViewModel : ViewModel() {
     private val api = JxglstuServiceCreator.create(JxglstuService::class.java)
     var studentId = MutableLiveData<Int>()
     var lessonIds = MutableLiveData<List<Int>>()
+  //  var body : String = ""
 
     fun Jxglstulogin(cookie : String) {
 
@@ -88,18 +93,33 @@ class JxglstuViewModel : ViewModel() {
 
 
                 val json = response.body()?.string()
-
-                    val data = Gson().fromJson(json, data::class.java)
-                   // Log.d("结果",data.result.scheduleList.toString())
-                val scheduleList = data.result.scheduleList
-                val lessonList = data.result.lessonList
-                val scheduleGroupList = data.result.scheduleGroupList
-                Log.d("lessonList",lessonList.toString())
+                json?.let { Log.d("下", it) }
+                val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
+                if(sp.getString("json","") != json){ sp.edit().putString("json", json).apply() }
+                json?.let { Log.d("下", it) }
 
 
-                // val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-                //if(sp.getString("datumjson","") != json){
-                  //  sp.edit().putString("datumjson", json).apply() }
+               // if (json != null) { body = json }
+
+
+
+
+
+
+
+//                val list = Gson().fromJson(lessonList.toString(),lessonList::class.java)
+              //  Log.d("lIst",list.toString())
+
+               // Log.d("data",data.toString())
+               // Log.d("result",data.result.toString())
+               // Log.d("scheduleList",scheduleList.toString())
+             //   Log.d("lessonList",lessonList.toString())
+               // Log.d("scheduleGroupList",scheduleGroupList.toString())
+
+
+                 //val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
+              //  if(sp.getString("scheduleList","") != scheduleList.toString()){
+                   // sp.edit().putString("scheduleList", scheduleList.toString()).apply() }
 
 
             }

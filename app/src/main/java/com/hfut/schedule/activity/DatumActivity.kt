@@ -1,20 +1,39 @@
 package com.hfut.schedule.activity
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
+import android.widget.ProgressBar
 
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.annotation.RequiresApi
+import androidx.lifecycle.ViewModelProvider
+import com.google.gson.Gson
 
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.datamodel.data
+import com.hfut.schedule.ui.ViewModel.JxglstuViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.Period
+import java.time.format.DateTimeFormatter
 import java.util.Date
 
 
 class DatumActivity : ComponentActivity() {
+
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,64 +45,195 @@ class DatumActivity : ComponentActivity() {
         val date_Thur : TextView = findViewById(R.id.Date_Thur)
         val date_Fri : TextView = findViewById(R.id.Date_Fri)
 
-        val table_1_1 : TextView = findViewById(R.id.Table_1_1)
-        val table_1_2 : TextView = findViewById(R.id.Table_1_2)
-        val table_1_3 : TextView = findViewById(R.id.Table_1_3)
-        val table_1_4 : TextView = findViewById(R.id.Table_1_4)
-        val table_1_5 : TextView = findViewById(R.id.Table_1_5)
-        val table_2_1 : TextView = findViewById(R.id.Table_2_1)
-        val table_2_2 : TextView = findViewById(R.id.Table_2_2)
-        val table_2_3 : TextView = findViewById(R.id.Table_2_3)
-        val table_2_4 : TextView = findViewById(R.id.Table_2_4)
-        val table_2_5 : TextView = findViewById(R.id.Table_2_5)
-        val table_3_1 : TextView = findViewById(R.id.Table_3_1)
-        val table_3_2 : TextView = findViewById(R.id.Table_3_2)
-        val table_3_3 : TextView = findViewById(R.id.Table_3_3)
-        val table_3_4 : TextView = findViewById(R.id.Table_3_4)
-        val table_3_5 : TextView = findViewById(R.id.Table_3_5)
-        val table_4_1 : TextView = findViewById(R.id.Table_4_1)
-        val table_4_2 : TextView = findViewById(R.id.Table_4_2)
-        val table_4_3 : TextView = findViewById(R.id.Table_4_3)
-        val table_4_4 : TextView = findViewById(R.id.Table_4_4)
-        val table_4_5 : TextView = findViewById(R.id.Table_4_5)
+        val table_1_1 : Button = findViewById(R.id.Table_1_1)
+        val table_1_2 : Button = findViewById(R.id.Table_1_2)
+        val table_1_3 : Button = findViewById(R.id.Table_1_3)
+        val table_1_4 : Button = findViewById(R.id.Table_1_4)
+        val table_1_5 : Button = findViewById(R.id.Table_1_5)
+        val table_2_1 : Button = findViewById(R.id.Table_2_1)
+        val table_2_2 : Button = findViewById(R.id.Table_2_2)
+        val table_2_3 : Button = findViewById(R.id.Table_2_3)
+        val table_2_4 : Button = findViewById(R.id.Table_2_4)
+        val table_2_5 : Button = findViewById(R.id.Table_2_5)
+        val table_3_1 : Button = findViewById(R.id.Table_3_1)
+        val table_3_2 : Button = findViewById(R.id.Table_3_2)
+        val table_3_3 : Button = findViewById(R.id.Table_3_3)
+        val table_3_4 : Button = findViewById(R.id.Table_3_4)
+        val table_3_5 : Button = findViewById(R.id.Table_3_5)
+        val table_4_1 : Button = findViewById(R.id.Table_4_1)
+        val table_4_2 : Button = findViewById(R.id.Table_4_2)
+        val table_4_3 : Button = findViewById(R.id.Table_4_3)
+        val table_4_4 : Button = findViewById(R.id.Table_4_4)
+        val table_4_5 : Button = findViewById(R.id.Table_4_5)
 
         val helloTv : TextView = findViewById(R.id.helloTv)
         val leftButton : Button = findViewById(R.id.LeftButton)
         val rightButton : Button = findViewById(R.id.RightButton)
         val centerTv : TextView = findViewById(R.id.CenterTV)
+        val refreshLoading : ProgressBar = findViewById(R.id.RefreshLoaging)
+        val refreshButton : Button = findViewById(R.id.RefreshButton)
 
 
 
-        //Thread.sleep(1000)
-        //val prefs = getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
-       // val json = prefs.getString("datumjson", "")
-        var week = 1
+        val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val startDate = LocalDate.parse("2023-09-11", dateFormatter)
+        val currentDate = LocalDate.now()
+        val period = Period.between(startDate, currentDate)
+        val week = period.toTotalMonths() * 4 + period.days / 7
+
+
+        var Bianhuaweeks = week + 1  //切换周数
+        val Benweeks = week + 1   //固定本周
 
         val Date = SimpleDateFormat("yyyy-MM-dd").format(Date())
         // 打印结果
-        //*****伪代码Date与2023-09-11相差几周，则week++*****//
+        //*****Date与2023-09-11相差几周，则week++*****//
 
-        helloTv.setText("   你好，本周第 ${week} 周，${Date}")//显示日期周数
+        helloTv.setText("   你好，本周第 ${Benweeks} 周，${Date}")//显示日期周数
 
-        centerTv.setText("  第 ${week} 周  ")//显示切换到的周数
+        centerTv.setText("  第 ${Bianhuaweeks} 周  ")//显示切换到的周数
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        Thread.sleep(1000)
+        val prefs = getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
+        val json = prefs.getString("json", "")
+        Log.d("传送",json!!)
+
+
+        val data = Gson().fromJson(json, data::class.java)
+        val scheduleList = data.result.scheduleList
+        val lessonList = data.result.lessonList
+        val scheduleGroupList = data.result.scheduleGroupList
+
+        for (lesson in lessonList) {
+            val courseName = lesson.courseName
+            val id = lesson.id
+            val suggestscheduleList = lesson.suggestScheduleWeeks
+        }
+
+        for (scheduleGroup in scheduleGroupList) {
+            val lessonId = scheduleGroup.lessonId
+            val stdCount = scheduleGroup.stdCount
+        }
+
+        for (i in 0 until scheduleList.size) {//本周
+
+          //  var starttime = scheduleList[i].startTime.toString()
+            //starttime.substring(0,starttime.length - 2) + ":" + starttime.substring(starttime.length - 2)
+            val text = scheduleList[i].room.nameZh + "\n" +  scheduleList[i].startTime.toString() + "\n" + scheduleList[i].personName + "\n" + scheduleList[i].endTime
+
+            if ( scheduleList[i].weekIndex == Bianhuaweeks.toInt()) {
+                if (scheduleList[i].weekday == 1) {
+                    if (scheduleList[i].startTime == 800) {
+                        table_1_1.text = text
+                    }
+                    if (scheduleList[i].startTime == 1010) {
+                        table_2_1.text = text
+                    }
+                    if (scheduleList[i].startTime == 1400) {
+                        table_3_1.text = text
+                    }
+                    if (scheduleList[i].startTime == 1600) {
+                        table_4_1.text = text
+                    }
+                }
+                if (scheduleList[i].weekday == 2) {
+                    if (scheduleList[i].startTime == 800) {
+                        table_1_2.text = text
+                    }
+                    if (scheduleList[i].startTime == 1010) {
+                        table_2_2.text = text
+                    }
+                    if (scheduleList[i].startTime == 1400) {
+                        table_3_2.text = text
+                    }
+                    if (scheduleList[i].startTime == 1600) {
+                        table_4_2.text = text
+                    }
+                }
+                if (scheduleList[i].weekday == 3) {
+                    if (scheduleList[i].startTime == 800) {
+                        table_1_3.text = text
+                    }
+                    if (scheduleList[i].startTime == 1010) {
+                        table_2_3.text = text
+                    }
+                    if (scheduleList[i].startTime == 1400) {
+                        table_3_3.text = text
+                    }
+                    if (scheduleList[i].startTime == 1600) {
+                        table_4_3.text = text
+                    }
+                }
+                if (scheduleList[i].weekday == 4) {
+                    if (scheduleList[i].startTime == 800) {
+                        table_1_4.text = text
+                    }
+                    if (scheduleList[i].startTime == 1010) {
+                        table_2_4.text = text
+                    }
+                    if (scheduleList[i].startTime == 1400) {
+                        table_3_4.text = text
+                    }
+                    if (scheduleList[i].startTime == 1600) {
+                        table_4_4.text = text
+                    }
+                }
+                if (scheduleList[i].weekday == 5) {
+                    if (scheduleList[i].startTime == 800) {
+                        table_1_5.text = text
+                    }
+                    if (scheduleList[i].startTime == 1010) {
+                        table_2_5.text = text
+                    }
+                    if (scheduleList[i].startTime == 1400) {
+                        table_3_5.text = text
+                    }
+                    if (scheduleList[i].startTime == 1600) {
+                        table_4_5.text = text
+                    }
+                }
+            }
+        }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 
         centerTv.setOnClickListener { //跳转回当前周
+            Bianhuaweeks = Benweeks
+            centerTv.setText("  第 ${Benweeks} 周  ")
              }
         rightButton.setOnClickListener { //切换下周
+            if (Bianhuaweeks <= 20)
+                centerTv.setText("  第 ${Bianhuaweeks++} 周  ")
+            else Toast.makeText(this,"已经是第二十周",Toast.LENGTH_SHORT).show()
              }
         leftButton.setOnClickListener { //切换上周
-             }
+            if (Bianhuaweeks > 0)
+                 centerTv.setText("  第 ${Bianhuaweeks--} 周  ")
+            else Toast.makeText(this,"已经是第一周",Toast.LENGTH_SHORT).show()
+        }
+        refreshButton.setOnClickListener { //刷新操作
+            Toast.makeText(this,"正在开发",Toast.LENGTH_SHORT).show()
+            refreshLoading.visibility = View.VISIBLE
+
+
+            Thread {
+                Thread.sleep(2000)
+                runOnUiThread { refreshLoading.visibility = View.INVISIBLE }
+            }.start()
+        }
+
+        //val json = vm.body.value
 
 
 
-       //待开发
+
+
+
+        //待开发
     }
 
-    private fun show() {
-        //界面填充
-    }
-    private fun refresh() {
-        //刷新
-    }
 }
 

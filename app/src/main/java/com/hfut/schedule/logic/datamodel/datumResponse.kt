@@ -7,13 +7,16 @@ data class result(val lessonList : List<lessonList>,
                   val scheduleGroupList: List<scheduleGroupList>)
 
 data class lessonList(val courseName : String,
+                      val id : String,
                       val suggestScheduleWeeks : List<Int>)
 
 data class scheduleList(val lessonId: Int,
                         val room : room,
                         val weekday : Int,
                         val personName : String,
-                        val weekIndex : Int)
+                        val weekIndex : Int,
+                        val startTime : Int,
+                        val endTime : Int)
 
 data class room(val nameZh : String)
 
