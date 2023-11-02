@@ -132,7 +132,9 @@ class DatumActivity : ComponentActivity() {
             var endtime = scheduleList[i].endTime.toString()
             endtime = endtime.substring(0,endtime.length - 2) + ":" + endtime.substring(endtime.length - 2)
             val room = scheduleList[i].room.nameZh
+            val person = scheduleList[i].personName
             var id = scheduleList[i].lessonId.toString()
+           // var std = scheduleList[i].endTime
 
             for (j in 0 until lessonList.size) {
                 val idj = lessonList[j].id
@@ -145,7 +147,9 @@ class DatumActivity : ComponentActivity() {
             for (k in 0 until scheduleGroupList.size) {
                 val count = scheduleGroupList[k].stdCount
                 val idk = scheduleGroupList[k].lessonId.toString()
-                if (id == idk) {}
+                if (id == idk){}
+                  //   std = count
+
                     //未写下操作
 
             }
@@ -169,6 +173,11 @@ class DatumActivity : ComponentActivity() {
                         val index = startTimeMap.getOrDefault(scheduleList[i].startTime, -1)
                         if (index != -1) {
                             table[index][weekday - 1].text = text
+                            table[index][weekday - 1].setOnClickListener {
+                                Toast.makeText(this,"课程：${id},任课教师：${person},时间：${starttime} - ${endtime},地点：${room}",Toast.LENGTH_SHORT).show()
+                            }
+                         //   table[index][weekday - 1].background
+
                         }
                     }
                 }
