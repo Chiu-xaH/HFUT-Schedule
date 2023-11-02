@@ -90,38 +90,10 @@ class JxglstuViewModel : ViewModel() {
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-
-
                 val json = response.body()?.string()
-                json?.let { Log.d("下", it) }
+
                 val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
                 if(sp.getString("json","") != json){ sp.edit().putString("json", json).apply() }
-                json?.let { Log.d("下", it) }
-
-
-               // if (json != null) { body = json }
-
-
-
-
-
-
-
-//                val list = Gson().fromJson(lessonList.toString(),lessonList::class.java)
-              //  Log.d("lIst",list.toString())
-
-               // Log.d("data",data.toString())
-               // Log.d("result",data.result.toString())
-               // Log.d("scheduleList",scheduleList.toString())
-             //   Log.d("lessonList",lessonList.toString())
-               // Log.d("scheduleGroupList",scheduleGroupList.toString())
-
-
-                 //val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-              //  if(sp.getString("scheduleList","") != scheduleList.toString()){
-                   // sp.edit().putString("scheduleList", scheduleList.toString()).apply() }
-
-
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }

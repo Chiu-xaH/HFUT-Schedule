@@ -8,26 +8,18 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
-
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.annotation.RequiresApi
-import androidx.lifecycle.ViewModelProvider
 import com.google.gson.Gson
-
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.datamodel.data
-import com.hfut.schedule.ui.ViewModel.JxglstuViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.Period
 import java.time.format.DateTimeFormatter
+import java.util.Calendar
 import java.util.Date
 
 
@@ -86,12 +78,40 @@ class DatumActivity : ComponentActivity() {
         val Benweeks = week + 1   //固定本周
 
         val Date = SimpleDateFormat("yyyy-MM-dd").format(Date())
+        val Date2 = SimpleDateFormat("MM-dd").format(Date())
+        val calendar = Calendar.getInstance()
+        val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
+        val dayweek = dayOfWeek - 1
 
-        helloTv.setText("   你好，本周第 ${Benweeks} 周，${Date}")//显示日期周数
+
+        //calendar.add(Calendar.DAY_OF_MONTH, 1)
+        //val day = SimpleDateFormat("MM-dd").format(calendar.time)
+        var chinesenumber  = ""
+
+        when (dayweek) {
+            1 -> { date_Mon.setText(Date2)
+                   chinesenumber = "一"
+            }
+            2 -> { date_Tue.setText(Date2)
+                   chinesenumber = "二"
+            }
+            3 -> { date_Wed.setText(Date2)
+                   chinesenumber = "三"
+            }
+            4 -> { date_Thur.setText(Date2)
+                   chinesenumber = "四"
+            }
+            5 -> { date_Fri.setText(Date2)
+                   chinesenumber = "五"
+            }
+            6 -> { chinesenumber = "六" }
+            7 -> { chinesenumber = "日" }
+        }
+
+        helloTv.setText("   你好，本周第 ${Benweeks} 周，星期${chinesenumber}")//显示日期周数
         centerTv.setText("  第 ${Bianhuaweeks} 周  ")//显示切换到的周数
 
 
-       // Thread.sleep(1000)
         val prefs = getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
         val json = prefs.getString("json", "")
         //Log.d("传送",json!!)
@@ -133,100 +153,102 @@ class DatumActivity : ComponentActivity() {
             val text = id +  "\n"+ room + "\n" +  starttime
             //+ "\n"  + endtime
 
+            if (scheduleList[i].weekIndex == Bianhuaweeks.toInt()) {
+                val table = arrayOf(
+                    arrayOf(table_1_1, table_1_2, table_1_3, table_1_4, table_1_5),
+                    arrayOf(table_2_1, table_2_2, table_2_3, table_2_4, table_2_5),
+                    arrayOf(table_3_1, table_3_2, table_3_3, table_3_4, table_3_5),
+                    arrayOf(table_4_1, table_4_2, table_4_3, table_4_4, table_4_5)
+                )
+                val startTimeMap = mapOf(800 to 0, 1010 to 1, 1400 to 2, 1600 to 3)
 
+                for (weekday in 1..5) {
 
-            if ( scheduleList[i].weekIndex == Bianhuaweeks.toInt()) {
-                if (scheduleList[i].weekday == 1) {
-                    if (scheduleList[i].startTime == 800) {
-                        table_1_1.text = text
-                    }
-                    if (scheduleList[i].startTime == 1010) {
-                        table_2_1.text = text
-                    }
-                    if (scheduleList[i].startTime == 1400) {
-                        table_3_1.text = text
-                    }
-                    if (scheduleList[i].startTime == 1600) {
-                        table_4_1.text = text
+                    if (scheduleList[i].weekday == weekday) {
+
+                        val index = startTimeMap.getOrDefault(scheduleList[i].startTime, -1)
+                        if (index != -1) {
+                            table[index][weekday - 1].text = text
+                        }
                     }
                 }
-                if (scheduleList[i].weekday == 2) {
-                    if (scheduleList[i].startTime == 800) {
-                        table_1_2.text = text
-                    }
-                    if (scheduleList[i].startTime == 1010) {
-                        table_2_2.text = text
-                    }
-                    if (scheduleList[i].startTime == 1400) {
-                        table_3_2.text = text
-                    }
-                    if (scheduleList[i].startTime == 1600) {
-                        table_4_2.text = text
-                    }
-                }
-                if (scheduleList[i].weekday == 3) {
-                    if (scheduleList[i].startTime == 800) {
-                        table_1_3.text = text
-                    }
-                    if (scheduleList[i].startTime == 1010) {
-                        table_2_3.text = text
-                    }
-                    if (scheduleList[i].startTime == 1400) {
-                        table_3_3.text = text
-                    }
-                    if (scheduleList[i].startTime == 1600) {
-                        table_4_3.text = text
-                    }
-                }
-                if (scheduleList[i].weekday == 4) {
-                    if (scheduleList[i].startTime == 800) {
-                        table_1_4.text = text
-                    }
-                    if (scheduleList[i].startTime == 1010) {
-                        table_2_4.text = text
-                    }
-                    if (scheduleList[i].startTime == 1400) {
-                        table_3_4.text = text
-                    }
-                    if (scheduleList[i].startTime == 1600) {
-                        table_4_4.text = text
-                    }
-                }
-                if (scheduleList[i].weekday == 5) {
-                    if (scheduleList[i].startTime == 800) {
-                        table_1_5.text = text
-                    }
-                    if (scheduleList[i].startTime == 1010) {
-                        table_2_5.text = text
-                    }
-                    if (scheduleList[i].startTime == 1400) {
-                        table_3_5.text = text
-                    }
-                }
+            }//填充界面
+//旧写法
+          //  if ( scheduleList[i].weekIndex == Bianhuaweeks.toInt()) {
+               // if (scheduleList[i].weekday == 1) {
+                  //  if (scheduleList[i].startTime == 800) {
+                  //      table_1_1.text = text
+                  //  }
+                  //  if (scheduleList[i].startTime == 1010) {
+                  //      table_2_1.text = text
+                  //  }
+                  //  if (scheduleList[i].startTime == 1400) {
+                  //      table_3_1.text = text
+                  //  }
+                 //   if (scheduleList[i].startTime == 1600) {
+                  //      table_4_1.text = text
+                 //   }
+               // }
+               // if (scheduleList[i].weekday == 2) {
+                 //   if (scheduleList[i].startTime == 800) {
+                   //     table_1_2.text = text
+                   // }
+                   // if (scheduleList[i].startTime == 1010) {
+                   //     table_2_2.text = text
+                 //   }
+                   // if (scheduleList[i].startTime == 1400) {
+                   //     table_3_2.text = text
+                  //  }
+                  //  if (scheduleList[i].startTime == 1600) {
+                   //     table_4_2.text = text
+                  //  }
+              //  }
+               // if (scheduleList[i].weekday == 3) {
+                //    if (scheduleList[i].startTime == 800) {
+                 //       table_1_3.text = text
+                //    }
+               //     if (scheduleList[i].startTime == 1010) {
+                 //       table_2_3.text = text
+                //    }
+                //    if (scheduleList[i].startTime == 1400) {
+                //        table_3_3.text = text
+                 //   }
+                 //   if (scheduleList[i].startTime == 1600) {
+                 //       table_4_3.text = text
+                 //   }
+              //  }
+              ///  if (scheduleList[i].weekday == 4) {
+                  //  if (scheduleList[i].startTime == 800) {
+                 //       table_1_4.text = text
+                 //   }
+                //    if (scheduleList[i].startTime == 1010) {
+                //        table_2_4.text = text
+                //    }
+                //    if (scheduleList[i].startTime == 1400) {
+                //        table_3_4.text = text
+                 //   }
+               //    if (scheduleList[i].startTime == 1600) {
+               //         table_4_4.text = text
+              //      }
+              //  }
+             //   if (scheduleList[i].weekday == 5) {
+               //     if (scheduleList[i].startTime == 800) {
+                 //       table_1_5.text = text
+               //     }
+                 //   if (scheduleList[i].startTime == 1010) {
+                //        table_2_5.text = text
+                 //   }
+                //    if (scheduleList[i].startTime == 1400) {
+                //        table_3_5.text = text
+                //    }
+                //    if (scheduleList[i].startTime == 1400) {
+                 //       table_4_5.text = text
+                //    }
+              //  }
 
 
 //优化写法
-          //  if (scheduleList[i].weekIndex == Bianhuaweeks.toInt()) {
-               // val table = arrayOf(
-                //    arrayOf(table_1_1, table_1_2, table_1_3, table_1_4, table_1_5),
-                 //   arrayOf(table_2_1, table_2_2, table_2_3, table_2_4, table_2_5),
-                 //   arrayOf(table_3_1, table_3_2, table_3_3, table_3_4, table_3_5),
-                 //   arrayOf(table_4_1, table_4_2, table_4_3, table_4_4, table_4_5)
-              //  )
-             //   val startTimeMap = mapOf(800 to 0, 1010 to 1, 1400 to 2, 1600 to 3)
 
-             //   for (weekday in 1..5) {
-
-                //    if (scheduleList[i].weekday == weekday) {
-
-                   //     val index = startTimeMap.getOrDefault(scheduleList[i].startTime, -1)
-
-                     //   if (index != -1) {
-                      //      table[index][weekday - 1].text = text
-                     //   }
-                 //   }
-              //  }
-            }
 
         }
 
@@ -262,14 +284,7 @@ class DatumActivity : ComponentActivity() {
             }.start()
         }
 
-        //val json = vm.body.value
 
-
-
-
-
-
-        //待开发
     }
 
 

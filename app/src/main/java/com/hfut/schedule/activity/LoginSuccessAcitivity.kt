@@ -30,12 +30,13 @@ class LoginSuccessAcitivity : ComponentActivity() {
         val datumButton : Button = findViewById(R.id.DatumButton)
         val progressBar: ProgressBar = findViewById(R.id.prgressbar)
         val selfButton : Button = findViewById(R.id.SelfButton)
+        val examButton : Button = findViewById(R.id.ExamButton)
 
             val prefs = getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
             val cookie = prefs.getString("redirect", "")
             //cookie?.let { it1 -> Log.d("传送", it1) }
             vm.Jxglstulogin(cookie!!)
-
+        //课程表
         datumButton.setOnClickListener {
 
             progressBar.visibility = View.VISIBLE
@@ -58,26 +59,30 @@ class LoginSuccessAcitivity : ComponentActivity() {
             val scope = CoroutineScope(job)
             scope.apply {
                 launch {
-                    delay(1500)
+                    delay(1000)
                     vm.getLessonIds(cookie,grade!!)
                 }
                 launch {
-                    delay(3000)
+                    delay(2500)
                     vm.getDatum(cookie!!)
                 }
                 launch {
-                    delay(4000)
+                    delay(3500)
                     val it = Intent(MyApplication.context,DatumActivity::class.java)
                     startActivity(it)
                 }
             }
         }
-
+        //个人主页
         selfButton.setOnClickListener {
             val prefs = getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
             val cookie = prefs.getString("redirect", "")
             vm.Self(cookie!!)
             Toast.makeText(this,"获取成功，但是我还没写界面，憋着",Toast.LENGTH_SHORT).show()
+        }
+        //考试安排
+        examButton.setOnClickListener {
+            Toast.makeText(this,"等啥时候有考试再开发",Toast.LENGTH_SHORT).show()
         }
 
 

@@ -49,31 +49,31 @@
                 android:id="@+id/Date_Mon"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="0.1" />
+                />
 
             <TextView
                 android:id="@+id/Date_Tue"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="0.2" />
+                 />
 
             <TextView
                 android:id="@+id/Date_Wed"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="0.3" />
+                 />
 
             <TextView
                 android:id="@+id/Date_Thur"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="0.4" />
+                 />
 
             <TextView
                 android:id="@+id/Date_Fri"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="0.5" />
+                 />
         </TableRow>
 
         <TableRow>
