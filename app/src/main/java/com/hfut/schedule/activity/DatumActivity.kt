@@ -174,7 +174,7 @@ class DatumActivity : ComponentActivity() {
                         if (index != -1) {
                             table[index][weekday - 1].text = text
                             table[index][weekday - 1].setOnClickListener {
-                                Toast.makeText(this,"课程：${id},任课教师：${person},时间：${starttime} - ${endtime},地点：${room}",Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this,"课程:${id},任课教师:${person},时间:${starttime} - ${endtime},地点:${room}",Toast.LENGTH_SHORT).show()
                             }
                          //   table[index][weekday - 1].background
 

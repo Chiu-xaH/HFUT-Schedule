@@ -50,6 +50,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
+        <Button
+            android:id="@+id/BackButton"
+            android:layout_width="55dp"
+            android:layout_height="40dp"
+            android:text="反馈" />
+
+
+        <Button
+            android:layout_width="55dp"
+            android:layout_height="40dp"
+            android:id="@+id/AboutButton"
+            android:text="关于"/>
+
 
 
     </LinearLayout>
@@ -69,7 +82,14 @@
             android:textSize="15dp" />
 
     </LinearLayout>
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
 
+
+
+</LinearLayout>
 
 
 </LinearLayout>

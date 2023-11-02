@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.text.method.HideReturnsTransformationMethod
@@ -56,12 +57,16 @@ class LoginActivity : ComponentActivity() {
         val showPskCheckBox : CheckBox = findViewById(R.id.ShowPskCheckBox)
         val savePskCheckBox : CheckBox = findViewById(R.id.SavePskCheckBox)
         val loading : ProgressBar = findViewById(R.id.Loading)
+        val aboutButton : Button = findViewById(R.id.AboutButton)
+        val backButton : Button = findViewById(R.id.BackButton)
 
         val job = Job()
         val scope = CoroutineScope(job)
 
 
         checkDate("2023-09-01","2024-02-01") // 定义一个函数，超出日期不允许使用
+
+        Toast.makeText(this,"本应用为预览版，不代表最终正式版本！",Toast.LENGTH_SHORT).show()
 
 
         val prefs = getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
@@ -96,6 +101,25 @@ class LoginActivity : ComponentActivity() {
           //  val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
           //  if (isChecked) { sp.edit().putString("状态","0").apply() }
          //   else { sp.edit().putString("状态","1").apply() }
+        }
+
+
+        aboutButton.setOnClickListener {
+             AlertDialog.Builder(this).apply {
+                setTitle("关于本应用")
+                setMessage("本应用是本人练手项目，开发原因是课表会发生变动，本地课表无法满足实时性，如果你有更好的建议或有问题，请从反馈联系我")
+                setPositiveButton("好") { dialog, which ->
+                    //操作
+                }
+                 show()
+            }
+
+        }
+
+        backButton.setOnClickListener {
+            Toast.makeText(this,"电子邮件:zsh0908@outlook.com",Toast.LENGTH_SHORT).show()
+            val it = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:zsh0908@outlook.com"))
+            startActivity(it)
         }
 
         loginButton.setOnClickListener {
