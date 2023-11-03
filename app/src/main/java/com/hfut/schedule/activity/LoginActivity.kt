@@ -7,6 +7,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.os.Looper
 import android.preference.PreferenceManager
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
@@ -15,6 +16,7 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.ViewModelProvider
@@ -55,10 +57,12 @@ class LoginActivity : ComponentActivity() {
         val passwordET: EditText = findViewById(R.id.PasswordET)
         val loginButton: Button = findViewById(R.id.LoginButton)
         val showPskCheckBox : CheckBox = findViewById(R.id.ShowPskCheckBox)
-        val savePskCheckBox : CheckBox = findViewById(R.id.SavePskCheckBox)
+       // val savePskCheckBox : CheckBox = findViewById(R.id.SavePskCheckBox)
         val loading : ProgressBar = findViewById(R.id.Loading)
         val aboutButton : Button = findViewById(R.id.AboutButton)
         val backButton : Button = findViewById(R.id.BackButton)
+        val tv : TextView = findViewById(R.id.tv)
+        val noIntButton : Button = findViewById(R.id.NoIntButton)
 
         val job = Job()
         val scope = CoroutineScope(job)
@@ -91,18 +95,25 @@ class LoginActivity : ComponentActivity() {
         }//协程并行执行，提高效率
 
 
+
         showPskCheckBox.setOnCheckedChangeListener{_, isChecked ->
             if (isChecked)  passwordET.transformationMethod = HideReturnsTransformationMethod.getInstance()
                       else  passwordET.transformationMethod = PasswordTransformationMethod.getInstance()
         }//显示密码开关
 
          //保存密码
-        savePskCheckBox.setOnCheckedChangeListener { _, isChecked ->
+       // savePskCheckBox.setOnCheckedChangeListener { _, isChecked ->
           //  val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
           //  if (isChecked) { sp.edit().putString("状态","0").apply() }
          //   else { sp.edit().putString("状态","1").apply() }
-        }
+      //  }
 
+
+        noIntButton.setOnClickListener {
+            Toast.makeText(this,"读取上一次登录保存的数据",Toast.LENGTH_SHORT).show()
+            val it = Intent(MyApplication.context,DatumActivity::class.java)
+            startActivity(it)
+        }
 
         aboutButton.setOnClickListener {
              AlertDialog.Builder(this).apply {
@@ -124,11 +135,11 @@ class LoginActivity : ComponentActivity() {
 
         loginButton.setOnClickListener {
             loading.visibility = View.VISIBLE
-            loginButton.isClickable = false
+           //
 
             Thread {
                 Thread.sleep(2000)
-                runOnUiThread { loading.visibility = View.GONE }
+                runOnUiThread { loading.visibility = View.INVISIBLE }
             }.start()
 
             val prefs = getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
@@ -151,19 +162,29 @@ class LoginActivity : ComponentActivity() {
 
                 delay(1000)
 
-                //if (vm.code.value.toString() == "XXX")
-                   // withContext(Dispatchers.Main) { Toast.makeText(MyApplication.context, "连接失败，可更换网络尝试", Toast.LENGTH_SHORT).show() }
+             //   if (vm.code.value == null)
 
+                if (vm.code.value.toString() == "XXX" || vm.code.value == null) {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(MyApplication.context, "连接Host失败,请检查网络配置", Toast.LENGTH_SHORT).show()
+                        tv.setText("可能网络未连接或使用代理\n也可能为DNS问题,请更换网络")
+                    }
+
+                }
                 if (vm.code.value.toString() == "401")
                     withContext(Dispatchers.Main) { Toast.makeText(MyApplication.context, "密码错误", Toast.LENGTH_SHORT).show() }
+
 
                 if (vm.code.value.toString() == "200")
                     withContext(Dispatchers.Main) { Toast.makeText(MyApplication.context, "请输入正确的账号", Toast.LENGTH_SHORT) .show()}
 
                 if (vm.code.value.toString() == "302") {
 
-                    if (vm.location.value.toString() == MyApplication.RedirectURL)
-                        withContext(Dispatchers.Main) { Toast.makeText(MyApplication.context, "重定向失败，请重新进入App登录", Toast.LENGTH_SHORT).show() }
+                    if (vm.location.value.toString() == MyApplication.RedirectURL) {
+                        Toast.makeText(MyApplication.context, "重定向失败，请重新进入App登录", Toast.LENGTH_SHORT).show()
+                        tv.setText("登录按钮已不可用，请从新进入App")
+                        loginButton.isClickable = false
+                    }
 
                     else {
                         withContext(Dispatchers.Main) {
@@ -195,8 +216,8 @@ class LoginActivity : ComponentActivity() {
             builder.show()
         }
     }
-
 }
+
 
 
 

@@ -15,20 +15,6 @@
             android:layout_height="wrap_content"
             android:title="课程表" />
 
-        <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:layout_gravity="center"
-            android:visibility="invisible"
-            android:id="@+id/RefreshLoaging"/>
-
-        <Button
-            android:id="@+id/RefreshButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="刷新" />
-
     </LinearLayout>
 
     <TextView

@@ -26,6 +26,7 @@ import java.io.IOException
                     val cookie = match.groupValues[1]
                     sb.append(cookie).append("; ")
                 }
+                //优化代码
                 sb.delete(sb.length - 2, sb.length)
                 val redirectcookie = sb.toString()
                 val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)

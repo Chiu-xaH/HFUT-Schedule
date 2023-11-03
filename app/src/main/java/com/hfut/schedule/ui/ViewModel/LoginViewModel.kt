@@ -34,17 +34,19 @@ class LoginViewModel : ViewModel() {
                 if(response.isSuccessful()) {
                     code.value = response.code().toString()
                     location.value = response.headers()["Location"].toString()
+                 //   Log.d("成功","login")
 
                 }
                  else {
                     location.value = response.headers()["Location"].toString()
                     code.value = response.code().toString()
+                 //   Log.d("失败",code.value.toString())
                  }
 
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                 Log.d("VM","失败")
+                 //Log.d("VM","失败")
                 code.value = "XXX"
                 t.printStackTrace()
             }
@@ -70,7 +72,8 @@ class LoginViewModel : ViewModel() {
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                Log.d("测试","失")
+                code.value = "XXX"
+                //Log.d("测试","失")
                 t.printStackTrace()
             }
         })
@@ -85,14 +88,16 @@ class LoginViewModel : ViewModel() {
 
                 if(response.isSuccessful()) {
                     sessionLiveData.value  = response.headers()["Set-Cookie"].toString().substringBefore(";").plus(";")
+                  //  Log.d("成功","getKry")
                     //Log.d("getCookie","成功")
 
                 }
-                else Log.d("测试q","失败，${response.code()},${response.message()}")
+                else Log.d("失败","getKey，${response.code()},${response.message()}")
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                Log.d("测试q","失")
+               // Log.d("测试q","失")
+                code.value = "XXX"
                 t.printStackTrace()
             }
         })

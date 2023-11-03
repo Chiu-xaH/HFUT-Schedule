@@ -1,6 +1,7 @@
 package com.hfut.schedule.activity
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
@@ -62,8 +63,6 @@ class DatumActivity : ComponentActivity() {
         val leftButton : Button = findViewById(R.id.LeftButton)
         val rightButton : Button = findViewById(R.id.RightButton)
         val centerTv : TextView = findViewById(R.id.CenterTV)
-        val refreshLoading : ProgressBar = findViewById(R.id.RefreshLoaging)
-        val refreshButton : Button = findViewById(R.id.RefreshButton)
 
 
 
@@ -134,25 +133,26 @@ class DatumActivity : ComponentActivity() {
             val room = scheduleList[i].room.nameZh
             val person = scheduleList[i].personName
             var id = scheduleList[i].lessonId.toString()
-           // var std = scheduleList[i].endTime
+          //  var std = scheduleList[i].periods
 
             for (j in 0 until lessonList.size) {
                 val idj = lessonList[j].id
                 val name = lessonList[j].courseName
+                //val suggestScheduleWeekInfo = lessonList[i].suggestScheduleWeekInfo
                 if (id == idj)
                     id = name
 
             }
 
-            for (k in 0 until scheduleGroupList.size) {
-                val count = scheduleGroupList[k].stdCount
-                val idk = scheduleGroupList[k].lessonId.toString()
-                if (id == idk){}
-                  //   std = count
-
+            //for (k in 0 until scheduleGroupList.size) {
+              //  val count = scheduleGroupList[k].stdCount
+             //   val idk = scheduleGroupList[k].lessonId.toString()
+               // if (id == idk)
+                    //std = count
                     //未写下操作
 
-            }
+          //  }
+           // Log.d("测试",std.toString())
 
             val text = id +  "\n"+ room + "\n" +  starttime
             //+ "\n"  + endtime
@@ -174,7 +174,20 @@ class DatumActivity : ComponentActivity() {
                         if (index != -1) {
                             table[index][weekday - 1].text = text
                             table[index][weekday - 1].setOnClickListener {
-                                Toast.makeText(this,"课程:${id},任课教师:${person},时间:${starttime} - ${endtime},地点:${room}",Toast.LENGTH_SHORT).show()
+                                AlertDialog.Builder(this).apply {
+                                    setTitle(id)
+                                    setMessage(
+                                            "任课教师:${person}\n" +
+                                            "时间:${starttime} - ${endtime}\n" +
+                                            "地点:${room}\n"// +
+                                            //"周数:${lessonList[i].suggestScheduleWeekInfo}"
+                                    )
+                                    setPositiveButton("好") { dialog, which ->
+                                        //操作
+                                    }
+                                    show()
+                                }
+
                             }
                          //   table[index][weekday - 1].background
 
@@ -281,16 +294,6 @@ class DatumActivity : ComponentActivity() {
                 Toast.makeText(this, "正在开发", Toast.LENGTH_SHORT).show()
             }
             else Toast.makeText(this,"已经是第一周",Toast.LENGTH_SHORT).show()
-        }
-        refreshButton.setOnClickListener { //刷新操作
-            Toast.makeText(this,"正在开发",Toast.LENGTH_SHORT).show()
-            refreshLoading.visibility = View.VISIBLE
-
-
-            Thread {
-                Thread.sleep(2000)
-                runOnUiThread { refreshLoading.visibility = View.INVISIBLE }
-            }.start()
         }
 
 

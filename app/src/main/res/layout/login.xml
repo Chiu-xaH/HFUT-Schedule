@@ -36,13 +36,7 @@
             android:id="@+id/ShowPskCheckBox"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="显示密码     " />
-
-        <CheckBox
-            android:id="@+id/SavePskCheckBox"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="记住密码     " />
+            android:text="显示密码  " />
 
         <ProgressBar
             android:id="@+id/Loading"
@@ -50,39 +44,64 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
-        <Button
-            android:id="@+id/BackButton"
-            android:layout_width="55dp"
-            android:layout_height="40dp"
-            android:text="反馈" />
-
-
-        <Button
-            android:layout_width="55dp"
-            android:layout_height="40dp"
-            android:id="@+id/AboutButton"
-            android:text="关于"/>
-
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:id="@+id/tv"
+            android:text="    密码为信息门户密码\n    请不要重复点击登录    " />
 
 
     </LinearLayout>
+
+
 
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center">
+        android:layout_gravity="center_horizontal">
 
         <Button
             android:id="@+id/LoginButton"
-            android:layout_width="wrap_content"
+            android:layout_width="131dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="登录"
-            android:textSize="15dp" />
+            android:textSize="20dp" />
+
 
     </LinearLayout>
-<LinearLayout
+
+   <LinearLayout
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_gravity="center_horizontal"
+       android:orientation="horizontal">
+
+       <Button
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:id="@+id/BackButton"
+           android:text="反馈"/>
+
+       <Button
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:id="@+id/NoIntButton"
+           android:text="离线课表"/>
+
+       <Button
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:id="@+id/AboutButton"
+           android:text="关于"/>
+
+
+
+   </LinearLayout>
+
+    <LinearLayout
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="horizontal">
