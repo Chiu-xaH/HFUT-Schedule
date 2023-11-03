@@ -5,21 +5,27 @@ import android.app.AlertDialog
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import android.widget.Toolbar
 import androidx.activity.ComponentActivity
 import androidx.annotation.RequiresApi
 import com.google.gson.Gson
+import com.hfut.schedule.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.datamodel.data
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.Period
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
+import java.time.temporal.WeekFields
 import java.util.Calendar
 import java.util.Date
 
@@ -63,18 +69,25 @@ class DatumActivity : ComponentActivity() {
         val leftButton : Button = findViewById(R.id.LeftButton)
         val rightButton : Button = findViewById(R.id.RightButton)
         val centerTv : TextView = findViewById(R.id.CenterTV)
+        val toolbar : Toolbar = findViewById(R.id.toolbar)
 
 
 
         val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        val startDate = LocalDate.parse("2023-09-11", dateFormatter)
+        val startDate = LocalDate.parse("2023-09-17", dateFormatter)
         val currentDate = LocalDate.now()
         val period = Period.between(startDate, currentDate)
         val week = period.toTotalMonths() * 4 + period.days / 7
 
+        val firstWeekStart = LocalDate.parse("2023-09-11")
+        val today = LocalDate.now()
+        val weeksBetween = ChronoUnit.WEEKS.between(firstWeekStart, today) + 1
+        Log.d("d","今天是第 $weeksBetween 周")
 
-        var Bianhuaweeks = week + 1  //切换周数
-        val Benweeks = week + 1   //固定本周
+
+        var Bianhuaweeks = weeksBetween  //切换周数
+        val Benweeks = weeksBetween  //固定本周
+        Log.d("测试",Benweeks.toString())
 
         val Date = SimpleDateFormat("yyyy-MM-dd").format(Date())
         val Date2 = SimpleDateFormat("MM-dd").format(Date())
@@ -160,7 +173,7 @@ class DatumActivity : ComponentActivity() {
             if (scheduleList[i].weekIndex == Bianhuaweeks.toInt()) {
                 val table = arrayOf(
                     arrayOf(table_1_1, table_1_2, table_1_3, table_1_4, table_1_5),
-                    arrayOf(table_2_1, table_2_2, table_2_3, table_2_4, table_2_5),
+                   arrayOf(table_2_1, table_2_2, table_2_3, table_2_4, table_2_5),
                     arrayOf(table_3_1, table_3_2, table_3_3, table_3_4, table_3_5),
                     arrayOf(table_4_1, table_4_2, table_4_3, table_4_4, table_4_5)
                 )
@@ -272,6 +285,47 @@ class DatumActivity : ComponentActivity() {
 //优化写法
 
 
+            centerTv.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+
+                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                    val table = arrayOf(
+                        arrayOf(table_1_1, table_1_2, table_1_3, table_1_4, table_1_5),
+                        arrayOf(table_2_1, table_2_2, table_2_3, table_2_4, table_2_5),
+                        arrayOf(table_3_1, table_3_2, table_3_3, table_3_4, table_3_5),
+                        arrayOf(table_4_1, table_4_2, table_4_3, table_4_4, table_4_5)
+                    )
+
+                    for (i in 0 until table.size) {
+                        for (j in 0 until table[i].size) {
+                            table[i][j].setText("")
+                        }
+                    }
+                }
+
+                override fun afterTextChanged(s: Editable) {
+                    if (scheduleList[i].weekIndex == Bianhuaweeks.toInt()) {
+                        val table = arrayOf(
+                            arrayOf(table_1_1, table_1_2, table_1_3, table_1_4, table_1_5),
+                            arrayOf(table_2_1, table_2_2, table_2_3, table_2_4, table_2_5),
+                            arrayOf(table_3_1, table_3_2, table_3_3, table_3_4, table_3_5),
+                            arrayOf(table_4_1, table_4_2, table_4_3, table_4_4, table_4_5)
+                        )
+                        val startTimeMap = mapOf(800 to 0, 1010 to 1, 1400 to 2, 1600 to 3)
+
+                        for (weekday in 1..5) {
+
+                            if (scheduleList[i].weekday == weekday) {
+                                val index = startTimeMap.getOrDefault(scheduleList[i].startTime, -1)
+                                if (index != -1) { table[index][weekday - 1].setText(text) }
+                            }
+                        }
+                    }//填充界面
+                    // Do something after the text has been changed
+                }
+            })
+
+
         }
 
 
@@ -282,20 +336,16 @@ class DatumActivity : ComponentActivity() {
 
              }
         rightButton.setOnClickListener { //切换下周
-            if (Bianhuaweeks <= 20) {
-                centerTv.setText("  第 ${Bianhuaweeks++} 周  ")
-                Toast.makeText(this, "正在开发", Toast.LENGTH_SHORT).show()
-            }
+            if (Bianhuaweeks <= 19) { centerTv.setText("  第 ${Bianhuaweeks++ + 1} 周  ") }
             else Toast.makeText(this,"已经是第二十周",Toast.LENGTH_SHORT).show()
              }
         leftButton.setOnClickListener { //切换上周
-            if (Bianhuaweeks > 0) {
-                centerTv.setText("  第 ${Bianhuaweeks--} 周  ")
-                Toast.makeText(this, "正在开发", Toast.LENGTH_SHORT).show()
-            }
+            if (Bianhuaweeks > 1) { centerTv.setText("  第 ${Bianhuaweeks-- - 1} 周  ") }
             else Toast.makeText(this,"已经是第一周",Toast.LENGTH_SHORT).show()
         }
 
+       // toolbar.setTitle("专业")
+//////设置姓名
 
     }
 

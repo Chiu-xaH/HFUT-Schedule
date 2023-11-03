@@ -64,7 +64,7 @@
 
         <Button
             android:id="@+id/LoginButton"
-            android:layout_width="131dp"
+            android:layout_width="130dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="登录"
@@ -86,10 +86,10 @@
            android:text="反馈"/>
 
        <Button
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
            android:id="@+id/NoIntButton"
-           android:text="离线课表"/>
+           android:layout_width="130dp"
+           android:layout_height="wrap_content"
+           android:text="离线课表" />
 
        <Button
            android:layout_width="wrap_content"

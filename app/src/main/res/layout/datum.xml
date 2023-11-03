@@ -12,6 +12,7 @@
 
         <Toolbar
             android:layout_width="211dp"
+            android:id="@+id/toolbar"
             android:layout_height="wrap_content"
             android:title="课程表" />
 

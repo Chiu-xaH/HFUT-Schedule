@@ -118,7 +118,7 @@ class LoginActivity : ComponentActivity() {
         aboutButton.setOnClickListener {
              AlertDialog.Builder(this).apply {
                 setTitle("关于本应用")
-                setMessage("本应用是本人练手项目，开发原因是课表会发生变动，本地课表无法满足实时性，如果你有更好的建议或有问题，请从反馈联系我")
+                setMessage("本应用开发原因是课表会发生变动,本地无法满足实时性\n本应用既可获取教务的课表,也会获取之后会自动保存本地,使用离线课表\n我的能力有限,如果你有更好的建议或有问题,可反馈联系我(•ิ_•ิ)")
                 setPositiveButton("好") { dialog, which ->
                     //操作
                 }
