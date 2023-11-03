@@ -7,6 +7,10 @@
 
 本项目采用纯Kotlin语言，第一版使用XML布局UI，后续会替换为Jetpack Compose布局
 
+Material You 预告：
+![e1eba1f2918a93f69c5c855bbe89aee](https://github.com/Chiu-xaH/HFUT-Schedule/assets/116127902/83955625-3fc6-4edb-87e8-573a55506bbf)
+
+
 目前这个软件只着重编写逻辑层，对于界面仍然没美化，不过我会在稳定后采用Material You风格进行重绘，接近主流UI水平。
 （问：为什么不一开始使用MD3风格？
 答：我还在学习JC和MD3，在写软件初版时水平尚不足）
@@ -24,4 +28,5 @@
 ⑨Material You 风格设计
 （稳定后会大改UI设计，预计第三版）
 ....目前就这些，后续会补充
+
 
