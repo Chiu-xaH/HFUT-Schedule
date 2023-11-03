@@ -10,7 +10,7 @@
 （问：为什么不一开始使用MD3风格？答：我还在学习JC和MD3，水平尚不足）
 
 Material You 预告：
-![e1eba1f2918a93f69c5c855bbe89aee](https://github.com/Chiu-xaH/HFUT-Schedule/assets/116127902/83955625-3fc6-4edb-87e8-573a55506bbf)
+![微信图片_20231103210827](https://github.com/Chiu-xaH/HFUT-Schedule/assets/116127902/628594f6-1544-4207-81d2-4ac41ee6ef94)
 
 关于功能和界面，刚开始会觉得太过于简陋，在开发时已留下预置接口，后续会更新功能
 
