@@ -61,14 +61,27 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/BackButton"
+
+            android:text="反馈与关于"/>
 
         <Button
             android:id="@+id/LoginButton"
-            android:layout_width="130dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="登录"
-            android:textSize="20dp" />
+          />
+
+        <Button
+            android:id="@+id/NoIntButton"
+            android:layout_width="105dp"
+
+            android:layout_height="wrap_content"
+            android:text="离线课表" />
 
 
     </LinearLayout>
@@ -79,23 +92,7 @@
        android:layout_gravity="center_horizontal"
        android:orientation="horizontal">
 
-       <Button
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:id="@+id/BackButton"
-           android:text="反馈"/>
 
-       <Button
-           android:id="@+id/NoIntButton"
-           android:layout_width="130dp"
-           android:layout_height="wrap_content"
-           android:text="离线课表" />
-
-       <Button
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:id="@+id/AboutButton"
-           android:text="关于"/>
 
 
 

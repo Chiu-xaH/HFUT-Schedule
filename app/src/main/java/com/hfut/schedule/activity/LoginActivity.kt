@@ -57,9 +57,7 @@ class LoginActivity : ComponentActivity() {
         val passwordET: EditText = findViewById(R.id.PasswordET)
         val loginButton: Button = findViewById(R.id.LoginButton)
         val showPskCheckBox : CheckBox = findViewById(R.id.ShowPskCheckBox)
-       // val savePskCheckBox : CheckBox = findViewById(R.id.SavePskCheckBox)
         val loading : ProgressBar = findViewById(R.id.Loading)
-        val aboutButton : Button = findViewById(R.id.AboutButton)
         val backButton : Button = findViewById(R.id.BackButton)
         val tv : TextView = findViewById(R.id.tv)
         val noIntButton : Button = findViewById(R.id.NoIntButton)
@@ -70,7 +68,7 @@ class LoginActivity : ComponentActivity() {
 
         checkDate("2023-09-01","2024-02-01") // 定义一个函数，超出日期不允许使用
 
-        Toast.makeText(this,"本应用为预览版，不代表最终正式版本！",Toast.LENGTH_SHORT).show()
+       // Toast.makeText(this,"本应用为预览版，不代表最终正式版本！",Toast.LENGTH_SHORT).show()
 
 
         val prefs = getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
@@ -115,23 +113,22 @@ class LoginActivity : ComponentActivity() {
             startActivity(it)
         }
 
-        aboutButton.setOnClickListener {
+        backButton.setOnClickListener {
              AlertDialog.Builder(this).apply {
                 setTitle("关于本应用")
-                setMessage("本应用开发原因是课表会发生变动,本地无法满足实时性\n本应用既可获取教务的课表,也会获取之后会自动保存本地,使用离线课表\n我的能力有限,如果你有更好的建议或有问题,可反馈联系我(•ิ_•ิ)")
-                setPositiveButton("好") { dialog, which ->
-                    //操作
+                setMessage("本应用既可获取教务的课表,也会获取之后会自动保存本地,使用离线课表\n我的能力有限,如果你有更好的建议或有问题,可反馈联系我(•ิ_•ิ)\nzsh0908@outlook.com")
+                setPositiveButton("我要反馈") { dialog, which ->
+                    val it = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:zsh0908@outlook.com"))
+                    startActivity(it)
                 }
+                 setNegativeButton("好") { dialog, which ->
+                     //操作
+                 }
                  show()
             }
 
         }
 
-        backButton.setOnClickListener {
-            Toast.makeText(this,"电子邮件:zsh0908@outlook.com",Toast.LENGTH_SHORT).show()
-            val it = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:zsh0908@outlook.com"))
-            startActivity(it)
-        }
 
         loginButton.setOnClickListener {
             loading.visibility = View.VISIBLE
