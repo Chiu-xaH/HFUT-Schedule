@@ -82,12 +82,12 @@ class DatumActivity : ComponentActivity() {
         val firstWeekStart = LocalDate.parse("2023-09-11")
         val today = LocalDate.now()
         val weeksBetween = ChronoUnit.WEEKS.between(firstWeekStart, today) + 1
-        Log.d("d","今天是第 $weeksBetween 周")
+       // Log.d("d","今天是第 $weeksBetween 周")
 
 
         var Bianhuaweeks = weeksBetween  //切换周数
         val Benweeks = weeksBetween  //固定本周
-        Log.d("测试",Benweeks.toString())
+       // Log.d("测试",Benweeks.toString())
 
         val Date = SimpleDateFormat("yyyy-MM-dd").format(Date())
         val Date2 = SimpleDateFormat("MM-dd").format(Date())
@@ -208,81 +208,7 @@ class DatumActivity : ComponentActivity() {
                     }
                 }
             }//填充界面
-//旧写法
-          //  if ( scheduleList[i].weekIndex == Bianhuaweeks.toInt()) {
-               // if (scheduleList[i].weekday == 1) {
-                  //  if (scheduleList[i].startTime == 800) {
-                  //      table_1_1.text = text
-                  //  }
-                  //  if (scheduleList[i].startTime == 1010) {
-                  //      table_2_1.text = text
-                  //  }
-                  //  if (scheduleList[i].startTime == 1400) {
-                  //      table_3_1.text = text
-                  //  }
-                 //   if (scheduleList[i].startTime == 1600) {
-                  //      table_4_1.text = text
-                 //   }
-               // }
-               // if (scheduleList[i].weekday == 2) {
-                 //   if (scheduleList[i].startTime == 800) {
-                   //     table_1_2.text = text
-                   // }
-                   // if (scheduleList[i].startTime == 1010) {
-                   //     table_2_2.text = text
-                 //   }
-                   // if (scheduleList[i].startTime == 1400) {
-                   //     table_3_2.text = text
-                  //  }
-                  //  if (scheduleList[i].startTime == 1600) {
-                   //     table_4_2.text = text
-                  //  }
-              //  }
-               // if (scheduleList[i].weekday == 3) {
-                //    if (scheduleList[i].startTime == 800) {
-                 //       table_1_3.text = text
-                //    }
-               //     if (scheduleList[i].startTime == 1010) {
-                 //       table_2_3.text = text
-                //    }
-                //    if (scheduleList[i].startTime == 1400) {
-                //        table_3_3.text = text
-                 //   }
-                 //   if (scheduleList[i].startTime == 1600) {
-                 //       table_4_3.text = text
-                 //   }
-              //  }
-              ///  if (scheduleList[i].weekday == 4) {
-                  //  if (scheduleList[i].startTime == 800) {
-                 //       table_1_4.text = text
-                 //   }
-                //    if (scheduleList[i].startTime == 1010) {
-                //        table_2_4.text = text
-                //    }
-                //    if (scheduleList[i].startTime == 1400) {
-                //        table_3_4.text = text
-                 //   }
-               //    if (scheduleList[i].startTime == 1600) {
-               //         table_4_4.text = text
-              //      }
-              //  }
-             //   if (scheduleList[i].weekday == 5) {
-               //     if (scheduleList[i].startTime == 800) {
-                 //       table_1_5.text = text
-               //     }
-                 //   if (scheduleList[i].startTime == 1010) {
-                //        table_2_5.text = text
-                 //   }
-                //    if (scheduleList[i].startTime == 1400) {
-                //        table_3_5.text = text
-                //    }
-                //    if (scheduleList[i].startTime == 1400) {
-                 //       table_4_5.text = text
-                //    }
-              //  }
 
-
-//优化写法
 
 
             centerTv.addTextChangedListener(object : TextWatcher {

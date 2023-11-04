@@ -24,6 +24,7 @@ class LoginViewModel : ViewModel() {
     private val api3 = GetAESKeyServiceCreator.create(LoginService::class.java)
 
     fun login(username : String,password : String,keys : String)  {// 创建一个Call对象，用于发送异步请求
+
         val cookies : String = sessionLiveData.value  + cookie2.value +";" + keys
 
         val call = api.login(cookies,username, password,"e1s1","submit")
