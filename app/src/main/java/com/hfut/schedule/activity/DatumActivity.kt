@@ -69,27 +69,16 @@ class DatumActivity : ComponentActivity() {
         val leftButton : Button = findViewById(R.id.LeftButton)
         val rightButton : Button = findViewById(R.id.RightButton)
         val centerTv : TextView = findViewById(R.id.CenterTV)
-        val toolbar : Toolbar = findViewById(R.id.toolbar)
-
-
-
-        val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        val startDate = LocalDate.parse("2023-09-17", dateFormatter)
-        val currentDate = LocalDate.now()
-        val period = Period.between(startDate, currentDate)
-        val week = period.toTotalMonths() * 4 + period.days / 7
 
         val firstWeekStart = LocalDate.parse("2023-09-11")
         val today = LocalDate.now()
         val weeksBetween = ChronoUnit.WEEKS.between(firstWeekStart, today) + 1
-       // Log.d("d","今天是第 $weeksBetween 周")
-
 
         var Bianhuaweeks = weeksBetween  //切换周数
         val Benweeks = weeksBetween  //固定本周
-       // Log.d("测试",Benweeks.toString())
 
-        val Date = SimpleDateFormat("yyyy-MM-dd").format(Date())
+
+       // val Date = SimpleDateFormat("yyyy-MM-dd").format(Date())
         val Date2 = SimpleDateFormat("MM-dd").format(Date())
         val calendar = Calendar.getInstance()
         val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
@@ -117,10 +106,10 @@ class DatumActivity : ComponentActivity() {
                    chinesenumber = "五"
             }
             6 -> { chinesenumber = "六" }
-            7 -> { chinesenumber = "日" }
+            0 -> { chinesenumber = "日" }
         }
 
-        helloTv.setText("   你好，本周第 ${Benweeks} 周，星期${chinesenumber}")//显示日期周数
+        helloTv.setText("   你好  第${Benweeks}周  星期${chinesenumber}  ${Date2}")//显示日期周数
         centerTv.setText("  第 ${Bianhuaweeks} 周  ")//显示切换到的周数
 
 
