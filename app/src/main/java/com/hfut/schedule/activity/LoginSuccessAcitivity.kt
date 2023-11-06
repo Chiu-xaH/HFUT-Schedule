@@ -59,6 +59,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -69,6 +70,9 @@ import com.hfut.schedule.R
 import com.hfut.schedule.activity.ui.theme.肥工课程表Theme
 import com.hfut.schedule.logic.datamodel.NavigationBarItemData
 import com.hfut.schedule.logic.datamodel.data
+import com.hfut.schedule.ui.PersonScreen
+import com.hfut.schedule.ui.SearchScreen
+import com.hfut.schedule.ui.SettingsScreen
 import com.hfut.schedule.ui.ViewModel.JxglstuViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -87,7 +91,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+      //  WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             肥工课程表Theme {
                 Surface(
@@ -222,6 +226,144 @@ class LoginSuccessAcitivity : ComponentActivity() {
             6 ->  chinesenumber = "六"
             0 ->  chinesenumber = "日"
         }
+        //填充UI与更新
+        fun Update() {
+            table_1_1 = ""
+            table_1_2 = ""
+            table_1_3 = ""
+            table_1_4 = ""
+            table_1_5 = ""
+            table_2_1 = ""
+            table_2_2 = ""
+            table_2_3 = ""
+            table_2_4 = ""
+            table_2_5 = ""
+            table_3_1 = ""
+            table_3_2 = ""
+            table_3_3 = ""
+            table_3_4 = ""
+            table_3_5 = ""
+            table_4_1 = ""
+            table_4_2 = ""
+            table_4_3 = ""
+            table_4_4 = ""
+            table_4_5 = ""
+            //////////////////////////////////////////////////////////////////////////////////
+            val prefs = getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
+            val json = prefs.getString("json", "")
+            // Log.d("测试",json!!)
+            val data = Gson().fromJson(json, data::class.java)
+            val scheduleList = data.result.scheduleList
+            val lessonList = data.result.lessonList
+            val scheduleGroupList = data.result.scheduleGroupList
+
+            for (i in 0 until scheduleList.size) {
+                var starttime = scheduleList[i].startTime.toString()
+                starttime =
+                    starttime.substring(0, starttime.length - 2) + ":" + starttime.substring(
+                        starttime.length - 2
+                    )
+                var endtime = scheduleList[i].endTime.toString()
+                endtime = endtime.substring(
+                    0,
+                    endtime.length - 2
+                ) + ":" + endtime.substring(endtime.length - 2)
+                var room = scheduleList[i].room.nameZh
+                val person = scheduleList[i].personName
+                var id = scheduleList[i].lessonId.toString()
+
+                room = room.replace("学堂","")
+
+                for (j in 0 until lessonList.size) {
+                    val idj = lessonList[j].id
+                    val name = lessonList[j].courseName
+                    if (id == idj)
+                        id = name
+                }
+
+
+
+                val text = starttime + "\n" + id + "\n" + room
+
+                if (scheduleList[i].weekIndex == Bianhuaweeks.toInt()) {
+                    if (scheduleList[i].weekday == 1) {
+                        if (scheduleList[i].startTime == 800) {
+                            table_1_1 = text
+                        }
+                        if (scheduleList[i].startTime == 1010) {
+                            table_2_1 = text
+                        }
+                        if (scheduleList[i].startTime == 1400) {
+                            table_3_1 = text
+                        }
+                        if (scheduleList[i].startTime == 1600) {
+                            table_4_1 = text
+                        }
+                    }
+                    if (scheduleList[i].weekday == 2) {
+                        if (scheduleList[i].startTime == 800) {
+                            table_1_2 = text
+                        }
+                        if (scheduleList[i].startTime == 1010) {
+                            table_2_2 = text
+                        }
+                        if (scheduleList[i].startTime == 1400) {
+                            table_3_2 = text
+                        }
+                        if (scheduleList[i].startTime == 1600) {
+                            table_4_2 = text
+                        }
+                    }
+                    if (scheduleList[i].weekday == 3) {
+                        if (scheduleList[i].startTime == 800) {
+                            table_1_3 = text
+                        }
+                        if (scheduleList[i].startTime == 1010) {
+                            table_2_3 = text
+                        }
+                        if (scheduleList[i].startTime == 1400) {
+                            table_3_3 = text
+                        }
+                        if (scheduleList[i].startTime == 1600) {
+                            table_4_3 = text
+                        }
+                    }
+                    if (scheduleList[i].weekday == 4) {
+                        if (scheduleList[i].startTime == 800) {
+                            table_1_4 = text
+                        }
+                        if (scheduleList[i].startTime == 1010) {
+                            table_2_4 = text
+                        }
+                        if (scheduleList[i].startTime == 1400) {
+                            table_3_4 = text
+                        }
+                        if (scheduleList[i].startTime == 1600) {
+                            table_4_4 = text
+                        }
+                    }
+                    if (scheduleList[i].weekday == 5) {
+                        if (scheduleList[i].startTime == 800) {
+                            table_1_5 = text
+                        }
+                        if (scheduleList[i].startTime == 1010) {
+                            table_2_5 = text
+                        }
+                        if (scheduleList[i].startTime == 1400) {
+                            table_3_5 = text
+                        }
+                        if (scheduleList[i].startTime == 1400) {
+                            table_4_5 = text
+                        }
+                    }
+
+
+                }
+
+            }
+
+            //////////////////////////////////////////////////////////////////////////////////
+        }
 
 
 
@@ -230,123 +372,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
                 delay(3000)
                 //在此插入课程表的布局，加载完成后显示//在此插入课程表的UI填充操作
                 loading = false
-                //////////////////////////////////////////////////////////////////////////////////
-                val prefs = getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
-                val json = prefs.getString("json", "")
-               // Log.d("测试",json!!)
-                val data = Gson().fromJson(json, data::class.java)
-                val scheduleList = data.result.scheduleList
-                val lessonList = data.result.lessonList
-                val scheduleGroupList = data.result.scheduleGroupList
-
-                for (i in 0 until scheduleList.size) {
-                    var starttime = scheduleList[i].startTime.toString()
-                    starttime =
-                        starttime.substring(0, starttime.length - 2) + ":" + starttime.substring(
-                            starttime.length - 2
-                        )
-                    var endtime = scheduleList[i].endTime.toString()
-                    endtime = endtime.substring(
-                        0,
-                        endtime.length - 2
-                    ) + ":" + endtime.substring(endtime.length - 2)
-                    var room = scheduleList[i].room.nameZh
-                    val person = scheduleList[i].personName
-                    var id = scheduleList[i].lessonId.toString()
-
-                    room = room.replace("学堂","")
-
-                    for (j in 0 until lessonList.size) {
-                        val idj = lessonList[j].id
-                        val name = lessonList[j].courseName
-                        if (id == idj)
-                            id = name
-
-
-                    }
-
-
-
-                    val text = starttime + "\n" + id + "\n" + room
-
-                    if (scheduleList[i].weekIndex == Bianhuaweeks.toInt()) {
-                        if (scheduleList[i].weekday == 1) {
-                            if (scheduleList[i].startTime == 800) {
-                                table_1_1 = text
-                            }
-                            if (scheduleList[i].startTime == 1010) {
-                                table_2_1 = text
-                            }
-                            if (scheduleList[i].startTime == 1400) {
-                                table_3_1 = text
-                            }
-                            if (scheduleList[i].startTime == 1600) {
-                                table_4_1 = text
-                            }
-                        }
-                        if (scheduleList[i].weekday == 2) {
-                            if (scheduleList[i].startTime == 800) {
-                                table_1_2 = text
-                            }
-                            if (scheduleList[i].startTime == 1010) {
-                                table_2_2 = text
-                            }
-                            if (scheduleList[i].startTime == 1400) {
-                                table_3_2 = text
-                            }
-                            if (scheduleList[i].startTime == 1600) {
-                                table_4_2 = text
-                            }
-                        }
-                        if (scheduleList[i].weekday == 3) {
-                            if (scheduleList[i].startTime == 800) {
-                                table_1_3 = text
-                            }
-                            if (scheduleList[i].startTime == 1010) {
-                                table_2_3 = text
-                            }
-                            if (scheduleList[i].startTime == 1400) {
-                                table_3_3 = text
-                            }
-                            if (scheduleList[i].startTime == 1600) {
-                                table_4_3 = text
-                            }
-                        }
-                        if (scheduleList[i].weekday == 4) {
-                            if (scheduleList[i].startTime == 800) {
-                                table_1_4 = text
-                            }
-                            if (scheduleList[i].startTime == 1010) {
-                                table_2_4 = text
-                            }
-                            if (scheduleList[i].startTime == 1400) {
-                                table_3_4 = text
-                            }
-                            if (scheduleList[i].startTime == 1600) {
-                                table_4_4 = text
-                            }
-                        }
-                        if (scheduleList[i].weekday == 5) {
-                            if (scheduleList[i].startTime == 800) {
-                                table_1_5 = text
-                            }
-                            if (scheduleList[i].startTime == 1010) {
-                                table_2_5 = text
-                            }
-                            if (scheduleList[i].startTime == 1400) {
-                                table_3_5 = text
-                            }
-                            if (scheduleList[i].startTime == 1400) {
-                                table_4_5 = text
-                            }
-                        }
-
-
-                    }
-
-                }
-
-                //////////////////////////////////////////////////////////////////////////////////
+                Update()//填充UI与更新
             }
         }
 
@@ -480,7 +506,9 @@ class LoginSuccessAcitivity : ComponentActivity() {
 
                              FilledTonalButton(
                                  onClick = {
-
+                                     if (Bianhuaweeks > 1) {
+                                           Bianhuaweeks-- - 1}
+                                     Update()
                              },modifier = Modifier.scale(scale.value),
                                  interactionSource = interactionSource
                              ) {
@@ -491,19 +519,24 @@ class LoginSuccessAcitivity : ComponentActivity() {
 
                                 FilledTonalButton(
                                     onClick = {
-
+                                              Bianhuaweeks = Benweeks
+                                       Update()
                                 },modifier = Modifier.scale(scale2.value),
                                     interactionSource = interactionSource2
                                 ) {
-                                    Text(text = "第${Bianhuaweeks}周")
+                                    Text(
+                                        text = "第${Bianhuaweeks}周",
+
+                                    )
                                 }
                            Spacer(modifier = Modifier.width(20.dp))
                         //显示第几周
 
                           FilledTonalButton(
                               onClick = {
-                             // if (Bianhuaweeks <= 19) { centerTv.setText("  第 ${Bianhuaweeks++ + 1} 周  ") }
-                            //  else Toast.makeText(this,"已经是第二十周", Toast.LENGTH_SHORT).show()
+                                  if (Bianhuaweeks < 20) {
+                                      Bianhuaweeks++ + 1}
+                                  Update()
                           },modifier = Modifier.scale(scale3.value),
                               interactionSource = interactionSource3
                           ) {
@@ -535,49 +568,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
                 vm.getDatum(cookie!!)
             }
         }
-
             }
-    @Composable
-    fun SettingsScreen() {
-
-
-        //待开发
-        //退出登录 //壁纸取色 //获取更新
-    }
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    fun PersonScreen() {
-
-        Scaffold(
-            modifier = Modifier.fillMaxSize(),
-            topBar = {
-                androidx.compose.material3.TopAppBar(
-                    colors = TopAppBarDefaults.mediumTopAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        titleContentColor = MaterialTheme.colorScheme.primary,
-                    ),
-                    title = { Text("嗨  亲爱的学子") }
-                )
-            },) {innerPadding ->
-            Column(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()
-                    //.background()插入背景
-            ) {
-                Text(//text = "姓名 班级 学院 学号 今日课程",
-                modifier = Modifier.padding(25.dp),
-                fontSize = 25.sp,
-                    text = "")
-            }
-        }
-       //待开发
-    }
-    @Composable
-    fun SearchScreen() {
-       //待开发
-    // 考试安排 //培养方案 //空教室 //一卡通
-    }
 
 }
 

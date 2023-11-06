@@ -66,9 +66,10 @@ class JxglstuViewModel : ViewModel() {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 val json = response.body()?.string()
                 //Log.d("检验",json!!)
-
-                val id = Gson().fromJson(json, lessonIdsResponse::class.java)
-                lessonIds.value =  id.lessonIds
+                if (json != null) {
+                    val id = Gson().fromJson(json, lessonIdsResponse::class.java)
+                    lessonIds.value = id.lessonIds
+                }
             //    Log.d("测试",id.toString())
             }
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }

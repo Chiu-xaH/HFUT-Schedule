@@ -8,6 +8,7 @@ import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.net.Uri
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -208,20 +209,18 @@ class LoginActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun TwoTextField(vm : LoginViewModel) {
-        var username by rememberSaveable { mutableStateOf("") }
-        var inputAES by rememberSaveable { mutableStateOf("") }
+
         var hidden by rememberSaveable { mutableStateOf(true) }
 
         val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
-         val Savedusername = prefs.getString("Username", "")
-         val Savedpassword = prefs.getString("Password","")
-         // if (Savedpassword != null) { inputAES =  Savedpassword }
-          // if (Savedusername != null) { username = Savedusername }
-        //*****保存账密暂时下线，待整改*****//
+        val Savedusername = prefs.getString("Username", "")
+        val Savedpassword = prefs.getString("Password","")
 
+        var username by remember { mutableStateOf(Savedusername ?: "") }
+        var inputAES by remember { mutableStateOf(Savedpassword ?: "") }
+        var execution by rememberSaveable { mutableStateOf("e1s1") }
 
         // 创建一个动画值，根据按钮的按下状态来改变阴影的大小
-
 
         Column(modifier = Modifier.fillMaxWidth()) {
             val interactionSource = remember { MutableInteractionSource() }
@@ -244,7 +243,7 @@ class LoginActivity : ComponentActivity() {
             Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
                 TextField(
                     value = username,
-                    onValueChange = {username = it},
+                    onValueChange = {username = it },
                     label = { Text("学号" ) },
                     singleLine = true,
                     // placeholder = { Text("请输入正确格式")},
@@ -253,7 +252,16 @@ class LoginActivity : ComponentActivity() {
                         focusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent, // 有焦点时的颜色，透明
                         unfocusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent, // 无焦点时的颜色，绿色
                     ),
-                    leadingIcon = { Icon(Icons.Filled.Person, contentDescription = "Localized description") }
+                    leadingIcon = { Icon(Icons.Filled.Person, contentDescription = "Localized description") },
+
+                    trailingIcon = {
+                        IconButton(onClick = {
+                            username = ""
+                            inputAES = ""
+                        }) {
+                            Icon(painter = painterResource(R.drawable.close), contentDescription = "description")
+                        }
+                    }
                 )
             }
 
@@ -261,7 +269,7 @@ class LoginActivity : ComponentActivity() {
             Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
                 TextField(
                     value = inputAES,
-                    onValueChange = {inputAES = it},
+                    onValueChange = { inputAES = it },
                     label = { Text("密码") },
                     singleLine = true,
                     colors = TextFieldDefaults.textFieldColors(
@@ -304,15 +312,20 @@ class LoginActivity : ComponentActivity() {
 
                         val outputAES = key?.let { it1 -> AESEncrypt.encrypt(inputAES, it1) }
 
+
+
                         val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
                         if(sp.getString("Username","") != username){ sp.edit().putString("Username", username).apply() }
                         if(sp.getString("Password","") != inputAES){ sp.edit().putString("Password", inputAES).apply() }
 
-                        outputAES?.let { it1 -> vm.login(username, it1,"LOGIN_FLAVORING=" + key) }
+                        outputAES?.let { it1 -> vm.login(username, it1,"LOGIN_FLAVORING=" + key,execution) }
 
                         CoroutineScope(Job()).launch {
 
                             delay(1000)
+
+
+                           // vm.code.value?.let { Log.d("代码", it) }
 
                             if (vm.code.value.toString() == "XXX" || vm.code.value == null) {
                                 withContext(Dispatchers.Main) {
@@ -321,10 +334,13 @@ class LoginActivity : ComponentActivity() {
 
                             }
                             if (vm.code.value.toString() == "401")
-                                withContext(Dispatchers.Main) { Toast.makeText(MyApplication.context, "密码错误", Toast.LENGTH_SHORT).show() }
+                                withContext(Dispatchers.Main) {
+                                    Toast.makeText(MyApplication.context, "账号或密码错误", Toast.LENGTH_SHORT).show()
+                                    execution = "e1s2"
+                                }
 
 
-                            if (vm.code.value.toString() == "200")
+                            if (vm.code.value.toString() == "200" || username.length != 10)
                                 withContext(Dispatchers.Main) { Toast.makeText(MyApplication.context, "请输入正确的账号", Toast.LENGTH_SHORT) .show()}
 
                             if (vm.code.value.toString() == "302") {
@@ -349,6 +365,7 @@ class LoginActivity : ComponentActivity() {
                     interactionSource = interactionSource
 
                 ) {
+                    //Icon(painterResource(R.drawable.login),null)
                     Text("登录")
 
                 }
@@ -360,9 +377,10 @@ class LoginActivity : ComponentActivity() {
                         it.addFlags(FLAG_ACTIVITY_NEW_TASK)
                         MyApplication.context.startActivity(it)
                     },modifier = Modifier.scale(scale2.value),
-                    interactionSource = interactionSource2
+                    interactionSource = interactionSource2,
 
                     ) {
+
                     Text("离线课表")
 
                 }

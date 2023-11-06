@@ -23,11 +23,11 @@ class LoginViewModel : ViewModel() {
     private val api2 = GetCookieServiceCreator.create(LoginService::class.java)
     private val api3 = GetAESKeyServiceCreator.create(LoginService::class.java)
 
-    fun login(username : String,password : String,keys : String)  {// 创建一个Call对象，用于发送异步请求
+    fun login(username : String,password : String,keys : String,execution : String)  {// 创建一个Call对象，用于发送异步请求
 
         val cookies : String = sessionLiveData.value  + cookie2.value +";" + keys
 
-        val call = api.login(cookies,username, password,"e1s1","submit")
+        val call = api.login(cookies,username, password, execution,"submit")
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -35,19 +35,19 @@ class LoginViewModel : ViewModel() {
                 if(response.isSuccessful()) {
                     code.value = response.code().toString()
                     location.value = response.headers()["Location"].toString()
-                 //   Log.d("成功","login")
+                //    Log.d("成功","login")
 
                 }
                  else {
                     location.value = response.headers()["Location"].toString()
                     code.value = response.code().toString()
-                 //   Log.d("失败",code.value.toString())
+                    Log.d("失败",code.value.toString())
                  }
 
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                 //Log.d("VM","失败")
+              //   Log.d("VM","失败")
                 code.value = "XXX"
                 t.printStackTrace()
             }
@@ -66,7 +66,7 @@ class LoginViewModel : ViewModel() {
 
                 if(response.isSuccessful()){
                     cookie2.value  = response.headers()["Set-Cookie"].toString()
-                   // Log.d("测试","成功")
+                //    Log.d("测试","成功")
 
                 }
                 else Log.d("测试","失败，${response.code()},${response.message()}")
@@ -74,7 +74,7 @@ class LoginViewModel : ViewModel() {
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                 code.value = "XXX"
-                //Log.d("测试","失")
+             //  Log.d("测试","失")
                 t.printStackTrace()
             }
         })
@@ -90,14 +90,14 @@ class LoginViewModel : ViewModel() {
                 if(response.isSuccessful()) {
                     sessionLiveData.value  = response.headers()["Set-Cookie"].toString().substringBefore(";").plus(";")
                   //  Log.d("成功","getKry")
-                    //Log.d("getCookie","成功")
+              //      Log.d("getCookie","成功")
 
                 }
                 else Log.d("失败","getKey，${response.code()},${response.message()}")
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-               // Log.d("测试q","失")
+            //    Log.d("测试q","失")
                 code.value = "XXX"
                 t.printStackTrace()
             }
