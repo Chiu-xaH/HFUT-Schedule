@@ -1,13 +1,13 @@
 # HFUT-Schedule
 这是一个入门学习安卓开发后的第二个练手项目，目标是实现对接学校教务系统，实时获取课程表（也因为我喜欢用原生程序而不是小程序……）
 
-目前已完成1.0开发，可以日用，但仍存在部分Bug
+目前已完成2.0开发，可以日用，但仍存在部分Bug
 
 
 本项目采用纯Kotlin语言，2.0已经替换为Jetpack Compose布局
 
-Material You 预告：
-![微信图片_20231103210827](https://github.com/Chiu-xaH/HFUT-Schedule/assets/116127902/628594f6-1544-4207-81d2-4ac41ee6ef94)
+![微信图片_20231106163207](https://github.com/Chiu-xaH/HFUT-Schedule/assets/116127902/78d69230-4e22-436b-a464-3d725aab8c67)
+
 
 关于功能，刚开始会觉得太过于简陋，在开发时已留下预置接口，后续会添加
 
