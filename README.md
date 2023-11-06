@@ -3,11 +3,10 @@
 
 目前已完成2.0开发，可以日用，但仍存在部分Bug，其中最影响体验的也是我研究不透的是偶尔会出现登陆时获取Host失败（有Toast提示，这时别再重复提交了，会闪退），打印日志显示连接不到主机地址，我在更换网络后就解决问题，emmm很疑惑，不过我在登录入口处放置了离线课表，如果切换网络仍无法登录还有备用方法
 
+截图：
 
-本项目采用纯Kotlin语言，2.0已经替换为Jetpack Compose布局
-
-![微信图片_20231106163207](https://github.com/Chiu-xaH/HFUT-Schedule/assets/116127902/78d69230-4e22-436b-a464-3d725aab8c67)
-
+![微信图片_20231106181037](https://github.com/Chiu-xaH/HFUT-Schedule/assets/116127902/b19f3fd1-a16e-45ea-ba08-7cd3cb2a6b93)
+![微信图片_20231106181044](https://github.com/Chiu-xaH/HFUT-Schedule/assets/116127902/ef102211-0d4f-4257-9f01-d228712ad14f)
 
 关于功能，刚开始会觉得太过于简陋，在开发时已留下预置接口，后续会添加
 
