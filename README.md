@@ -4,8 +4,6 @@
 目前已完成1.0开发，可以日用，但仍存在部分Bug
 
 
-![6a5265b5c9e0c2e8eedf1061d4805a3](https://github.com/Chiu-xaH/HFUT-Schedule/assets/116127902/8f10be63-e1d0-4fed-a9f8-97e97d627ded)
-
 本项目采用纯Kotlin语言，2.0已经替换为Jetpack Compose布局
 
 Material You 预告：
