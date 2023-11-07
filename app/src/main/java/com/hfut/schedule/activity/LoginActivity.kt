@@ -236,7 +236,7 @@ class LoginActivity : ComponentActivity() {
                         focusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent, // 有焦点时的颜色，透明
                         unfocusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent, // 无焦点时的颜色，绿色
                     ),
-                    supportingText = { Text("密码为信息门户,不要重复提交登录")},
+                    supportingText = { Text("密码为信息门户,不要重复点击登录!")},
                     visualTransformation = if (hidden) PasswordVisualTransformation()
                     else VisualTransformation.None,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -291,7 +291,7 @@ class LoginActivity : ComponentActivity() {
 
                             if (vm.code.value.toString() == "XXX" || vm.code.value == null) {
                                 withContext(Dispatchers.Main) {
-                                    Toast.makeText(MyApplication.context, "连接Host失败,请检查网络配置", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(MyApplication.context, "连接Host失败,请检查网络,或者更换校园网尝试", Toast.LENGTH_SHORT).show()
                                     execution = "e1s2"
                                 }
 
@@ -312,7 +312,7 @@ class LoginActivity : ComponentActivity() {
                                     Toast.makeText(MyApplication.context, "重定向失败，请重新进入App登录", Toast.LENGTH_SHORT).show()
                                 }
 
-                                else {
+                                if (vm.location.value.toString().contains("ticket")) {
                                     withContext(Dispatchers.Main) {
                                         Toast.makeText(MyApplication.context, "登陆成功", Toast.LENGTH_SHORT).show()
                                         val it = Intent(MyApplication.context, LoginSuccessAcitivity::class.java).apply {
@@ -321,6 +321,11 @@ class LoginActivity : ComponentActivity() {
                                         }
                                         MyApplication.context.startActivity(it)
                                     }
+                                }
+
+                                else {
+                                    withContext(Dispatchers.Main) {
+                                    Toast.makeText(MyApplication.context, "重定向失败，请重新进入App登录", Toast.LENGTH_SHORT).show()}
                                 }
                             }
                         }
