@@ -48,8 +48,12 @@ class JxglstuViewModel : ViewModel() {
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                studentId.value = response.headers()["Location"].toString().substringAfter("/eams5-student/for-std/course-table/info/").toInt()
-
+                if (response.headers()["Location"].toString().contains("/eams5-student/for-std/course-table/info/")) {
+                    studentId.value = response.headers()["Location"].toString()
+                        .substringAfter("/eams5-student/for-std/course-table/info/").toInt()
+                } else {
+                    studentId.value = 99999
+                }
                 //Log.d("学生ID", studentId.value.toString())
             }
 

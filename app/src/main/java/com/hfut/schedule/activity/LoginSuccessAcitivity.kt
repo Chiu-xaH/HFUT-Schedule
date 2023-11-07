@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
@@ -59,7 +58,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -70,9 +68,9 @@ import com.hfut.schedule.R
 import com.hfut.schedule.activity.ui.theme.肥工课程表Theme
 import com.hfut.schedule.logic.datamodel.NavigationBarItemData
 import com.hfut.schedule.logic.datamodel.data
-import com.hfut.schedule.ui.PersonScreen
-import com.hfut.schedule.ui.SearchScreen
-import com.hfut.schedule.ui.SettingsScreen
+import com.hfut.schedule.ui.ComposeUI.PersonScreen
+import com.hfut.schedule.ui.ComposeUI.SearchScreen
+import com.hfut.schedule.ui.ComposeUI.SettingsScreen
 import com.hfut.schedule.ui.ViewModel.JxglstuViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -154,9 +152,9 @@ class LoginSuccessAcitivity : ComponentActivity() {
         ) { innerPadding ->
             NavHost(navController = navController, startDestination = "calendar") {
                 composable("calendar") { CalendarScreen()}
-                composable("search") {SearchScreen()}
-                composable("person") {PersonScreen()}
-                composable("settings") {SettingsScreen()}
+                composable("search") { SearchScreen() }
+                composable("person") { PersonScreen() }
+                composable("settings") { SettingsScreen() }
             }
 
             Column(

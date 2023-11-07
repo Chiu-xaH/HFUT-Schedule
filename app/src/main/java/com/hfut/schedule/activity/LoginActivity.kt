@@ -36,6 +36,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -67,6 +68,8 @@ import com.hfut.schedule.MyApplication
 import com.hfut.schedule.logic.AESEncrypt
 import com.hfut.schedule.R
 import com.hfut.schedule.activity.ui.theme.肥工课程表Theme
+import com.hfut.schedule.ui.ComposeUI.AboutAlertDialog
+import com.hfut.schedule.ui.ComposeUI.checkDate
 import com.hfut.schedule.ui.ViewModel.LoginViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -107,50 +110,7 @@ class LoginActivity : ComponentActivity() {
         }//协程并行执行，提高效率
 
         }
-    @Composable
-    fun AboutAlertDialog(
-        onDismissRequest: () -> Unit,
-        onConfirmation: () -> Unit,
-        dialogTitle: String,
-        dialogText: String,
-        icon: ImageVector,
-    ) {
-        AlertDialog(
-            icon = {
-                Icon(icon, contentDescription = "Example Icon")
-            },
-            title = {
-                Text(text = dialogTitle)
-            },
-            text = {
-                Text(text = dialogText)
-            },
-            onDismissRequest = {
-                onDismissRequest()
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        onConfirmation()
-                    }
-                ) {
-                    Text("好")
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = {
-                        onDismissRequest()
-                        val it = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:zsh0908@outlook.com"))
-                        it.addFlags(FLAG_ACTIVITY_NEW_TASK)
-                        MyApplication.context.startActivity(it)
-                    }
-                ) {
-                    Text("我要反馈")
-                }
-            }
-        )
-    }
+
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
@@ -307,6 +267,8 @@ class LoginActivity : ComponentActivity() {
 
                 Button(
                     onClick = {
+
+
                         val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
                         val key = prefs.getString("cookie", "")
 
@@ -365,9 +327,7 @@ class LoginActivity : ComponentActivity() {
                     interactionSource = interactionSource
 
                 ) {
-                    //Icon(painterResource(R.drawable.login),null)
                     Text("登录")
-
                 }
                 Spacer(modifier = Modifier.width(15.dp))
 
@@ -391,25 +351,6 @@ class LoginActivity : ComponentActivity() {
 
 
     }
-
-    fun checkDate(startDate: String, endDate: String) {
-        val currentDate = SimpleDateFormat("yyyy-MM-dd").format(Date())
-        if (currentDate < startDate || currentDate > endDate) {
-            val builder = AlertDialog.Builder(MyApplication.context)
-            builder.setTitle("提示")
-                .setMessage("请保证日期在2023-2024第一学期内，否则应用已过期，请更新")
-                .setPositiveButton("获取更新") { dialog, which ->
-                    //跳转至浏览器打开URL
-                    LoginActivity().finish() }
-                .setCancelable(false)
-            builder.show()
-        }
-    }
-
-
-
-
-
 
 
 }
