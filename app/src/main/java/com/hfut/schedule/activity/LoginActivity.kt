@@ -292,6 +292,7 @@ class LoginActivity : ComponentActivity() {
                             if (vm.code.value.toString() == "XXX" || vm.code.value == null) {
                                 withContext(Dispatchers.Main) {
                                     Toast.makeText(MyApplication.context, "连接Host失败,请检查网络配置", Toast.LENGTH_SHORT).show()
+                                    execution = "e1s2"
                                 }
 
                             }
