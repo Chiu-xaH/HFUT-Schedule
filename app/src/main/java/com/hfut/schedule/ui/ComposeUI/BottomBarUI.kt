@@ -207,7 +207,7 @@ fun PersonScreen() {
                           //
                       }
                   ) {
-                      Text(text = "姓名，班级，专业，学院，学号")
+                      //Text(text = "姓名，班级，专业，学院，学号")
                   }
               }
 
@@ -225,7 +225,7 @@ fun PersonScreen() {
                           //
                       }
                   ) {
-                      Text(text = "临近课程")
+                     // Text(text = "临近课程")
                   }
               }
           }
