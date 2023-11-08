@@ -58,6 +58,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -71,6 +72,7 @@ import com.hfut.schedule.logic.datamodel.data
 import com.hfut.schedule.ui.ComposeUI.PersonScreen
 import com.hfut.schedule.ui.ComposeUI.SearchScreen
 import com.hfut.schedule.ui.ComposeUI.SettingsScreen
+import com.hfut.schedule.ui.ComposeUI.TransparentSystemBars
 import com.hfut.schedule.ui.ViewModel.JxglstuViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -89,13 +91,14 @@ class LoginSuccessAcitivity : ComponentActivity() {
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-      //  WindowCompat.setDecorFitsSystemWindows(window, false)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             肥工课程表Theme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    TransparentSystemBars()
                     SuccessUI()
                 }
             }
@@ -460,7 +463,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
                                     Text(
                                         text = "    周${chinese[columnIndex]} ",
                                         textAlign = TextAlign.Center,
-                                        fontSize = 15.sp
+                                        fontSize = 15.sp,
                                     )
 
                                     LazyColumn(
@@ -486,6 +489,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
                                                     text = table[rowIndex][columnIndex],
                                                     fontSize = 14.sp,
                                                     textAlign = TextAlign.Center
+                                                 //   ,color = MaterialTheme.colorScheme.primary
 
                                                 )
                                             }
@@ -524,7 +528,6 @@ class LoginSuccessAcitivity : ComponentActivity() {
                                 ) {
                                     Text(
                                         text = "第${Bianhuaweeks}周",
-
                                     )
                                 }
                            Spacer(modifier = Modifier.width(20.dp))

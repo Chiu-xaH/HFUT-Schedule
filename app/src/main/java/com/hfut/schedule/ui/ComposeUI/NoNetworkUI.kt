@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -261,7 +262,7 @@ fun NoNet() {
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
-                title = { Text("第${Benweeks}周  星期${chinesenumber}  ${Date2}") }
+                title = { Text("离线课表  第${Benweeks}周  星期${chinesenumber}  ${Date2}") }
             )
         },) {innerPadding ->
         Column(
@@ -323,7 +324,8 @@ fun NoNet() {
                             Text(
                                 text = "    周${chinese[columnIndex]} ",
                                 textAlign = TextAlign.Center,
-                                fontSize = 15.sp
+                                fontSize = 15.sp,
+                               // color = MaterialTheme.colorScheme.primary
                             )
 
                             LazyColumn(
@@ -338,8 +340,12 @@ fun NoNet() {
                                         elevation = CardDefaults.cardElevation(
                                             defaultElevation = 3.dp
                                         ),
+                                     //   colors = CardDefaults.cardColors(
+                                      //      containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                                      //  ),
                                         modifier = Modifier
-                                            .size(width = 63.dp, height = 100.dp),
+                                            .size(width = 63.dp, height = 100.dp)
+                                            ,
                                         shape = MaterialTheme.shapes.extraSmall,
                                         onClick = {
                                             //
@@ -348,8 +354,8 @@ fun NoNet() {
                                         Text(
                                             text = table[rowIndex][columnIndex],
                                             fontSize = 14.sp,
-                                            textAlign = TextAlign.Center
-
+                                            textAlign = TextAlign.Center,
+                                          //  color = MaterialTheme.colorScheme.primary
                                         )
                                     }
 
@@ -371,9 +377,12 @@ fun NoNet() {
                                 Bianhuaweeks-- - 1}
                             Update()
                         },modifier = Modifier.scale(scale.value),
-                        interactionSource = interactionSource
+                        interactionSource = interactionSource,
+
                     ) {
-                        Text(text = "上一周")
+                        Text(text = "上一周"
+                            ///,color = MaterialTheme.colorScheme.primary
+                    )
                     }
 
                     Spacer(modifier = Modifier.width(20.dp))
@@ -383,11 +392,12 @@ fun NoNet() {
                             Bianhuaweeks = Benweeks
                             Update()
                         },modifier = Modifier.scale(scale2.value),
-                        interactionSource = interactionSource2
+                        interactionSource = interactionSource2,
+
                     ) {
                         Text(
                             text = "第${Bianhuaweeks}周",
-
+                           // color = MaterialTheme.colorScheme.primary
                             )
                     }
                     Spacer(modifier = Modifier.width(20.dp))
@@ -399,9 +409,12 @@ fun NoNet() {
                                 Bianhuaweeks++ + 1}
                             Update()
                         },modifier = Modifier.scale(scale3.value),
-                        interactionSource = interactionSource3
+                        interactionSource = interactionSource3,
+
                     ) {
-                        Text(text = "下一周")
+                        Text(text = "下一周"
+                            //,color = MaterialTheme.colorScheme.primary
+                    )
                     }
                 }
             }
