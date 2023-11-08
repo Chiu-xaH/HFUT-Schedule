@@ -14,7 +14,8 @@
             android:layout_width="211dp"
             android:id="@+id/toolbar"
             android:layout_height="wrap_content"
-            android:title="离线课程表" />
+            android:title="离线课程表"
+       />
 
     </LinearLayout>
 

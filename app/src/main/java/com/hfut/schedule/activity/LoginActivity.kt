@@ -33,6 +33,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -120,9 +121,9 @@ class LoginActivity : ComponentActivity() {
             AboutAlertDialog(
                 onDismissRequest = { openAlertDialog.value = false },
                 onConfirmation = { openAlertDialog.value = false },
-                dialogTitle = "关于本应用",
-                dialogText = "本应用既可获取教务的课表,也会获取之后会自动保存本地,使用离线课表;\n如果你有更好的建议或有问题,可反馈联系我(•ิ_•ิ)\nzsh0908@outlook.com",
-                icon = Icons.Default.Info
+                dialogTitle = "使用注意",
+                dialogText = "不要重复点击登录,否则崩溃闪退\n离线课表需要登陆过一次后才可使用,自动保存\n连接Host失败可更换hfut-wlan,大概率会成功\n我对登录按钮做出了限制,只可点击两次,超过三次提示重定向失败,不过应该没人不记得密码吧\n如果你有更好的建议或有问题,可反馈联系我(•ิ_•ิ)\nzsh0908@outlook.com",
+                icon = Icons.Default.Warning
             )
         }
 
