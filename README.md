@@ -5,7 +5,7 @@
 
 截图：
 
-![微信图片_20231107195757](https://github.com/Chiu-xaH/HFUT-Schedule/assets/116127902/cefcc89d-b7c2-462e-bebc-a7306c725ca7)
+![微信图片_20231108194250](https://github.com/Chiu-xaH/HFUT-Schedule/assets/116127902/f3c02842-4ede-4bfb-a707-e27440effa21)
 
 关于功能，刚开始会觉得太过于简陋，在开发时已留下预置接口，后续会添加
 
