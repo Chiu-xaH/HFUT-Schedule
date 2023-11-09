@@ -29,11 +29,11 @@ interface LoginService {
         @Field("execution") execution: String,
         @Field("_eventId") eventId: String
     ) : Call<ResponseBody>
+
 //信息门户登录
     @FormUrlEncoded
-    //@Headers("User-Agent:Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.17")
     @POST("cas/login?service=https%3A%2F%2Fcas.hfut.edu.cn%2Fcas%2Foauth2.0%2FcallbackAuthorize%3Fclient_id%3DBsHfutEduPortal%26redirect_uri%3Dhttps%253A%252F%252Fone.hfut.edu.cn%252Fhome%252Findex%26response_type%3Dcode%26client_name%3DCasOAuthClient")
-    fun login2(
+    fun Onelogin(
         @Header("Cookie") Cookie : String,
         @Field("username") username: String,
         @Field("password") password: String,

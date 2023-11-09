@@ -97,7 +97,7 @@ class JxglstuViewModel : ViewModel() {
     }
     fun Self(cookie : String) {
 
-        val call = api.Self(cookie,studentId.value.toString())
+        val call = api.getInfo(cookie,studentId.value.toString())
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {}

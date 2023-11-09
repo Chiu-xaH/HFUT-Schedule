@@ -34,6 +34,7 @@ interface JxglstuService {
                      ) : Call<ResponseBody>
 
     //获取课程表JSON,需要提交前面获取到的数据才可以，否则返回500错误
+    //课程表  JSON
     @POST("ws/schedule-table/datum")
     @Headers("User-Agent:MQQBrowser/26 Mozilla/5.0 (Linux; U; Android 2.3.7; zh-cn; MB200 Build/GRJ22; CyanogenMod-7) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1",
         "Content-Type: application/json")
@@ -41,11 +42,27 @@ interface JxglstuService {
                  @Body json: JsonObject
     ) : Call<ResponseBody>
 
-    //预留接口，个人中心
+    //学生信息  XML
     @GET("for-std/student-info/info/{studentId}")
     @Headers("User-Agent:MQQBrowser/26 Mozilla/5.0 (Linux; U; Android 2.3.7; zh-cn; MB200 Build/GRJ22; CyanogenMod-7) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1",)
-    fun Self(@Header("Cookie") Cookie : String,
-             @Path("studentId") studentId : String) : Call<ResponseBody>
+    fun getInfo(@Header("Cookie") Cookie : String,
+                @Path("studentId") studentId : String) : Call<ResponseBody>
+    //培养方案 XML
+    @GET("for-std/program/info/{studentId}")
+    @Headers("User-Agent:MQQBrowser/26 Mozilla/5.0 (Linux; U; Android 2.3.7; zh-cn; MB200 Build/GRJ22; CyanogenMod-7) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1",)
+    fun getProgram(@Header("Cookie") Cookie : String,
+                @Path("studentId") studentId : String) : Call<ResponseBody>
+
+    //成绩单  XML
+    @GET("for-std/grade/sheet/semester-index/{studentId}")
+    @Headers("User-Agent:MQQBrowser/26 Mozilla/5.0 (Linux; U; Android 2.3.7; zh-cn; MB200 Build/GRJ22; CyanogenMod-7) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1",)
+    fun getGrade(@Header("Cookie") Cookie : String,
+                @Path("studentId") studentId : String) : Call<ResponseBody>
+    //考试查询   XML
+    @GET("for-std/exam-arrange/info/{studentId}")
+    @Headers("User-Agent:MQQBrowser/26 Mozilla/5.0 (Linux; U; Android 2.3.7; zh-cn; MB200 Build/GRJ22; CyanogenMod-7) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1",)
+    fun getExam(@Header("Cookie") Cookie : String,
+                @Path("studentId") studentId : String) : Call<ResponseBody>
 }
 
 
