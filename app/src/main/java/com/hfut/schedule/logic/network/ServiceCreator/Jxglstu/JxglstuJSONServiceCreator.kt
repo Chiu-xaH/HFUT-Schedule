@@ -1,24 +1,22 @@
-package com.hfut.schedule.logic.network.ServiceCreator
+package com.hfut.schedule.logic.network.ServiceCreator.Jxglstu
 
 import com.hfut.schedule.MyApplication
-import com.hfut.schedule.logic.network.interceptor.AESKeyInterceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-object GetAESKeyServiceCreator {
+object JxglstuJSONServiceCreator {
 
     val Client = OkHttpClient.Builder()
-        .addInterceptor(AESKeyInterceptor())//提取密钥
+        .followRedirects(false)
         .build()
-
 
     val retrofit = Retrofit.Builder()
-        .baseUrl(MyApplication.LoginURL)
+        .baseUrl(MyApplication.JxglstuURL)
         .client(Client)
+       // .addConverterFactory()
         .addConverterFactory(GsonConverterFactory.create())
         .build()
-
 
 
     fun <T> create(service: Class<T>): T = retrofit.create(service)

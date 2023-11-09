@@ -22,7 +22,7 @@
             android:label="@string/title_activity_no_net"
             android:theme="@style/Theme.肥工课程表" />
         <activity
-            android:name=".activity.DatumActivity"
+            android:name=".activity.SavedCoursesActivity"
             android:exported="false"
             android:label="@string/title_activity_schedule"
             android:theme="@style/Theme.肥工课程表" />

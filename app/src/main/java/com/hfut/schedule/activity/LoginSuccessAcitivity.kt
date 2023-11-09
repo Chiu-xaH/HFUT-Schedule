@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
@@ -65,13 +66,19 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.gson.Gson
+import com.hfut.schedule.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.activity.ui.theme.肥工课程表Theme
+import com.hfut.schedule.logic.GetDate
+import com.hfut.schedule.logic.GetDate.Benweeks
+import com.hfut.schedule.logic.GetDate.Date2
+import com.hfut.schedule.logic.GetDate.weeksBetween
+import com.hfut.schedule.logic.SharePrefs
 import com.hfut.schedule.logic.datamodel.NavigationBarItemData
 import com.hfut.schedule.logic.datamodel.data
-import com.hfut.schedule.ui.ComposeUI.PersonScreen
-import com.hfut.schedule.ui.ComposeUI.SearchScreen
-import com.hfut.schedule.ui.ComposeUI.SettingsScreen
+import com.hfut.schedule.ui.ComposeUI.BottomBar.PersonScreen
+import com.hfut.schedule.ui.ComposeUI.BottomBar.SearchScreen
+import com.hfut.schedule.ui.ComposeUI.BottomBar.SettingsScreen
 import com.hfut.schedule.ui.ComposeUI.TransparentSystemBars
 import com.hfut.schedule.ui.ViewModel.JxglstuViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -199,24 +206,39 @@ class LoginSuccessAcitivity : ComponentActivity() {
         var table_4_4 by rememberSaveable { mutableStateOf("") }
         var table_4_5 by rememberSaveable { mutableStateOf("") }
 
+        var sheet_1_1 by rememberSaveable { mutableStateOf("") }
+        var sheet_1_2 by rememberSaveable { mutableStateOf("") }
+        var sheet_1_3 by rememberSaveable { mutableStateOf("") }
+        var sheet_1_4 by rememberSaveable { mutableStateOf("") }
+        var sheet_1_5 by rememberSaveable { mutableStateOf("") }
+        var sheet_2_1 by rememberSaveable { mutableStateOf("") }
+        var sheet_2_2 by rememberSaveable { mutableStateOf("") }
+        var sheet_2_3 by rememberSaveable { mutableStateOf("") }
+        var sheet_2_4 by rememberSaveable { mutableStateOf("") }
+        var sheet_2_5 by rememberSaveable { mutableStateOf("") }
+        var sheet_3_1 by rememberSaveable { mutableStateOf("") }
+        var sheet_3_2 by rememberSaveable { mutableStateOf("") }
+        var sheet_3_3 by rememberSaveable { mutableStateOf("") }
+        var sheet_3_4 by rememberSaveable { mutableStateOf("") }
+        var sheet_3_5 by rememberSaveable { mutableStateOf("") }
+        var sheet_4_1 by rememberSaveable { mutableStateOf("") }
+        var sheet_4_2 by rememberSaveable { mutableStateOf("") }
+        var sheet_4_3 by rememberSaveable { mutableStateOf("") }
+        var sheet_4_4 by rememberSaveable { mutableStateOf("") }
+        var sheet_4_5 by rememberSaveable { mutableStateOf("") }
 
 
-        val firstWeekStart = LocalDate.parse("2023-09-11")
-        val today = LocalDate.now()
-        val weeksBetween = ChronoUnit.WEEKS.between(firstWeekStart, today) + 1
+
+
 
         var Bianhuaweeks = weeksBetween  //切换周数
-        val Benweeks = weeksBetween  //固定本周
 
 
-        val Date2 = SimpleDateFormat("MM-dd").format(Date())
 
-        val calendar = Calendar.getInstance()
-        val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
-        val dayweek = dayOfWeek - 1
+        val dayweek = GetDate.dayweek
 
 
-        var chinesenumber  = ""
+        var chinesenumber  = GetDate.chinesenumber
 
         when (dayweek) {
             1 -> chinesenumber = "一"
@@ -264,97 +286,144 @@ class LoginSuccessAcitivity : ComponentActivity() {
                     starttime.substring(0, starttime.length - 2) + ":" + starttime.substring(
                         starttime.length - 2
                     )
-                var endtime = scheduleList[i].endTime.toString()
-                endtime = endtime.substring(
-                    0,
-                    endtime.length - 2
-                ) + ":" + endtime.substring(endtime.length - 2)
+                // var endtime = scheduleList[i].endTime.toString()
+                //   endtime = endtime.substring(
+                //      0,
+                //     endtime.length - 2
+                //  ) + ":" + endtime.substring(endtime.length - 2)
                 var room = scheduleList[i].room.nameZh
                 val person = scheduleList[i].personName
-                var id = scheduleList[i].lessonId.toString()
+                var scheduleid = scheduleList[i].lessonId.toString()
+                var endtime = scheduleList[i].endTime.toString()
+                var periods = scheduleList[i].periods
 
                 room = room.replace("学堂","")
 
+                for (k in 0 until scheduleGroupList.size) {
+
+                    val id = scheduleGroupList[k].lessonId.toString()
+                    val std = scheduleGroupList[k].stdCount
+                    if ( scheduleid == id) {
+                        periods = std
+
+                    }
+                }
+
                 for (j in 0 until lessonList.size) {
-                    val idj = lessonList[j].id
+                    val lessonlist_id = lessonList[j].id
+                    val INFO = lessonList[j].suggestScheduleWeekInfo
                     val name = lessonList[j].courseName
-                    if (id == idj)
-                        id = name
+                    if (scheduleid == lessonlist_id) {
+                        scheduleid = name
+                        endtime = INFO
+                    }
+
                 }
 
 
 
-                val text = starttime + "\n" + id + "\n" + room
+
+
+                val text = starttime + "\n" + scheduleid + "\n" + room
+                val info =
+                //"课程:${id}"+ "\n"+
+                //"时间:${starttime}-${endtime}"+ "\n" +
+                    //  "教室:${room}" + "\n"+
+                    "教师:${person}"+ "  "+
+                            "周数:${endtime}"+ "  "+
+                            "人数:${periods}"
+
+
 
                 if (scheduleList[i].weekIndex == Bianhuaweeks.toInt()) {
                     if (scheduleList[i].weekday == 1) {
                         if (scheduleList[i].startTime == 800) {
                             table_1_1 = text
+                            sheet_1_1 = info
                         }
                         if (scheduleList[i].startTime == 1010) {
                             table_2_1 = text
+                            sheet_2_1 = info
                         }
                         if (scheduleList[i].startTime == 1400) {
                             table_3_1 = text
+                            sheet_3_1 = info
                         }
                         if (scheduleList[i].startTime == 1600) {
                             table_4_1 = text
+                            sheet_4_1 = info
                         }
                     }
                     if (scheduleList[i].weekday == 2) {
                         if (scheduleList[i].startTime == 800) {
                             table_1_2 = text
+                            sheet_1_2 = info
                         }
                         if (scheduleList[i].startTime == 1010) {
                             table_2_2 = text
+                            sheet_2_2 = info
                         }
                         if (scheduleList[i].startTime == 1400) {
                             table_3_2 = text
+                            sheet_3_2 = info
                         }
                         if (scheduleList[i].startTime == 1600) {
                             table_4_2 = text
+                            sheet_4_2 = info
                         }
                     }
                     if (scheduleList[i].weekday == 3) {
                         if (scheduleList[i].startTime == 800) {
                             table_1_3 = text
+                            sheet_1_3 = info
                         }
                         if (scheduleList[i].startTime == 1010) {
                             table_2_3 = text
+                            sheet_2_3 = info
                         }
                         if (scheduleList[i].startTime == 1400) {
                             table_3_3 = text
+                            sheet_3_3 = info
                         }
                         if (scheduleList[i].startTime == 1600) {
                             table_4_3 = text
+                            sheet_4_3 = info
                         }
                     }
                     if (scheduleList[i].weekday == 4) {
                         if (scheduleList[i].startTime == 800) {
                             table_1_4 = text
+                            sheet_1_4 = info
                         }
                         if (scheduleList[i].startTime == 1010) {
                             table_2_4 = text
+                            sheet_2_4 = info
                         }
                         if (scheduleList[i].startTime == 1400) {
                             table_3_4 = text
+                            sheet_3_4 = info
                         }
                         if (scheduleList[i].startTime == 1600) {
                             table_4_4 = text
+                            sheet_4_4 = info
                         }
                     }
                     if (scheduleList[i].weekday == 5) {
                         if (scheduleList[i].startTime == 800) {
                             table_1_5 = text
+                            sheet_1_5 = info
                         }
                         if (scheduleList[i].startTime == 1010) {
                             table_2_5 = text
+                            sheet_2_5 = info
                         }
                         if (scheduleList[i].startTime == 1400) {
                             table_3_5 = text
+                            sheet_3_5 = info
                         }
                         if (scheduleList[i].startTime == 1400) {
                             table_4_5 = text
+                            sheet_4_5 = info
                         }
                     }
 
@@ -373,7 +442,14 @@ class LoginSuccessAcitivity : ComponentActivity() {
                 delay(3000)
                 //在此插入课程表的布局，加载完成后显示//在此插入课程表的UI填充操作
                 loading = false
-                Update()//填充UI与更新
+
+
+
+                if (SharePrefs.prefs_json?.contains("result") == true) {
+                    Update()//填充UI与更新
+                } else Toast.makeText(MyApplication.context,"数据为空,检查是否操作正确", Toast.LENGTH_SHORT).show()
+
+
             }
         }
 
@@ -418,6 +494,13 @@ class LoginSuccessAcitivity : ComponentActivity() {
                         arrayOf(table_2_1, table_2_2, table_2_3, table_2_4, table_2_5),
                         arrayOf(table_3_1, table_3_2, table_3_3, table_3_4, table_3_5),
                         arrayOf(table_4_1, table_4_2, table_4_3, table_4_4, table_4_5)
+                    )
+
+                    val sheet = arrayOf(
+                        arrayOf(sheet_1_1, sheet_1_2, sheet_1_3, sheet_1_4, sheet_1_5),
+                        arrayOf(sheet_2_1, sheet_2_2, sheet_2_3, sheet_2_4, sheet_2_5),
+                        arrayOf(sheet_3_1, sheet_3_2, sheet_3_3, sheet_3_4, sheet_3_5),
+                        arrayOf(sheet_4_1, sheet_4_2, sheet_4_3, sheet_4_4, sheet_4_5)
                     )
 
                     Column{
@@ -482,7 +565,8 @@ class LoginSuccessAcitivity : ComponentActivity() {
                                                     .size(width = 63.dp, height = 100.dp),
                                                 shape = MaterialTheme.shapes.extraSmall,
                                                 onClick = {
-                                                    //
+                                                    if (sheet[rowIndex][columnIndex].contains("人数")) Toast.makeText(MyApplication.context, sheet[rowIndex][columnIndex], Toast.LENGTH_SHORT).show()
+                                                    else Toast.makeText(MyApplication.context,"空数据", Toast.LENGTH_SHORT).show()
                                                 }
                                             ) {
                                                 Text(

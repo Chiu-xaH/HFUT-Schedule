@@ -1,32 +1,23 @@
 package com.hfut.schedule.ui.ViewModel
 
-import android.content.Context
 import android.preference.PreferenceManager
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
-import com.google.gson.JsonSyntaxException
-import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.MyApplication
-import com.hfut.schedule.logic.datamodel.data
 
 import com.hfut.schedule.logic.datamodel.lessonIdsResponse
-import com.hfut.schedule.logic.datamodel.lessonList
-import com.hfut.schedule.logic.datamodel.result
-import com.hfut.schedule.logic.datamodel.room
-import com.hfut.schedule.logic.datamodel.scheduleList
-import com.hfut.schedule.logic.network.ServiceCreator.JxglstuServiceCreator
+import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuJSONServiceCreator
 import com.hfut.schedule.logic.network.api.JxglstuService
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 class JxglstuViewModel : ViewModel() {
-    private val api = JxglstuServiceCreator.create(JxglstuService::class.java)
+    private val api = JxglstuJSONServiceCreator.create(JxglstuService::class.java)
     var studentId = MutableLiveData<Int>()
     var lessonIds = MutableLiveData<List<Int>>()
   //  var body : String = ""

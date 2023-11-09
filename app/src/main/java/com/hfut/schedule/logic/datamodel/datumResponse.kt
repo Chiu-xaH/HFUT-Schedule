@@ -17,7 +17,7 @@ data class scheduleList(val lessonId: Int,
                         val personName : String,
                         val weekIndex : Int,
                         val startTime : Int,
-                        //val periods : Int,
+                        val periods : Int,
                         var endTime : Int)
 
 data class room(val nameZh : String)

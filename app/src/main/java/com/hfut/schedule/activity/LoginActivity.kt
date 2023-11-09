@@ -1,26 +1,20 @@
 package com.hfut.schedule.activity
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
-import android.net.Uri
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,17 +22,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -47,7 +36,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
@@ -60,7 +48,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -72,6 +59,9 @@ import com.hfut.schedule.MyApplication
 import com.hfut.schedule.logic.AESEncrypt
 import com.hfut.schedule.R
 import com.hfut.schedule.activity.ui.theme.肥工课程表Theme
+import com.hfut.schedule.logic.SharePrefs.prefs_Savedpassword
+import com.hfut.schedule.logic.SharePrefs.prefs_Savedusername
+import com.hfut.schedule.logic.SharePrefs.prefs_key
 import com.hfut.schedule.ui.ComposeUI.AboutAlertDialog
 import com.hfut.schedule.ui.ComposeUI.TransparentSystemBars
 import com.hfut.schedule.ui.ComposeUI.checkDate
@@ -82,8 +72,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.text.SimpleDateFormat
-import java.util.Date
 
 class LoginActivity : ComponentActivity() {
     private val vm by lazy { ViewModelProvider(this).get(LoginViewModel::class.java) }
@@ -168,12 +156,12 @@ class LoginActivity : ComponentActivity() {
 
         var hidden by rememberSaveable { mutableStateOf(true) }
 
-        val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
-        val Savedusername = prefs.getString("Username", "")
-        val Savedpassword = prefs.getString("Password","")
+        //val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
+        //val Savedusername = prefs.getString("Username", "")
+        //val Savedpassword = prefs.getString("Password","")
 
-        var username by remember { mutableStateOf(Savedusername ?: "") }
-        var inputAES by remember { mutableStateOf(Savedpassword ?: "") }
+        var username by remember { mutableStateOf(prefs_Savedusername ?: "") }
+        var inputAES by remember { mutableStateOf(prefs_Savedpassword ?: "") }
         var execution by rememberSaveable { mutableStateOf("e1s1") }
 
         // 创建一个动画值，根据按钮的按下状态来改变阴影的大小
@@ -265,10 +253,10 @@ class LoginActivity : ComponentActivity() {
                     onClick = {
 
 
-                        val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
-                        val key = prefs.getString("cookie", "")
+                       // val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
+                        //val key = prefs.getString("cookie", "")
 
-                        val outputAES = key?.let { it1 -> AESEncrypt.encrypt(inputAES, it1) }
+                        val outputAES = prefs_key?.let { it1 -> AESEncrypt.encrypt(inputAES, it1) }
 
 
 
@@ -276,7 +264,7 @@ class LoginActivity : ComponentActivity() {
                         if(sp.getString("Username","") != username){ sp.edit().putString("Username", username).apply() }
                         if(sp.getString("Password","") != inputAES){ sp.edit().putString("Password", inputAES).apply() }
 
-                        outputAES?.let { it1 -> vm.login(username, it1,"LOGIN_FLAVORING=" + key,execution) }
+                        outputAES?.let { it1 -> vm.login(username, it1,"LOGIN_FLAVORING=" + prefs_key,execution) }
 
                         CoroutineScope(Job()).launch {
 
@@ -335,7 +323,7 @@ class LoginActivity : ComponentActivity() {
 
                 FilledTonalButton(
                     onClick = {
-                        val it = Intent(MyApplication.context,DatumActivity::class.java)
+                        val it = Intent(MyApplication.context,SavedCoursesActivity::class.java)
                         it.addFlags(FLAG_ACTIVITY_NEW_TASK)
                         MyApplication.context.startActivity(it)
                     },modifier = Modifier.scale(scale2.value),
