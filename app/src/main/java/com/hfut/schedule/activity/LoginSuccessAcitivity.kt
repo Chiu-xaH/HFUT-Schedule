@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -106,7 +107,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     TransparentSystemBars()
-                    SuccessUI()
+                    SuccessUI(vm)
                 }
             }
         }
@@ -122,7 +123,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    fun SuccessUI() {
+    fun SuccessUI(vm : JxglstuViewModel) {
         val navController = rememberNavController()
 
         Scaffold(
@@ -162,8 +163,8 @@ class LoginSuccessAcitivity : ComponentActivity() {
         ) { innerPadding ->
             NavHost(navController = navController, startDestination = "calendar") {
                 composable("calendar") { CalendarScreen()}
-                composable("search") { SearchScreen() }
-                composable("person") { PersonScreen() }
+                composable("search") { SearchScreen(vm) }
+                composable("person") { PersonScreen(vm) }
                 composable("settings") { SettingsScreen() }
             }
 
@@ -444,8 +445,9 @@ class LoginSuccessAcitivity : ComponentActivity() {
                 loading = false
 
 
-
-                if (SharePrefs.prefs_json?.contains("result") == true) {
+                val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
+                val json = prefs.getString("json", "")
+                if (json?.contains("result") == true) {
                     Update()//填充UI与更新
                 } else Toast.makeText(MyApplication.context,"数据为空,检查是否操作正确", Toast.LENGTH_SHORT).show()
 
@@ -640,6 +642,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
         val cookie = prefs.getString("redirect", "")
         vm.getStudentId(cookie!!)
         val grade = intent.getStringExtra("Grade")
+
 
         val job = Job()
         val scope = CoroutineScope(job)

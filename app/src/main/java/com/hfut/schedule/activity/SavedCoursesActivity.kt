@@ -12,7 +12,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import com.hfut.schedule.activity.ui.theme.肥工课程表Theme
-import com.hfut.schedule.ui.ComposeUI.BottomSheetDemo
 import com.hfut.schedule.ui.ComposeUI.NoNet
 import com.hfut.schedule.ui.ComposeUI.TransparentSystemBars
 

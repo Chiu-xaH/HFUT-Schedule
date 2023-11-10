@@ -1,6 +1,7 @@
 package com.hfut.schedule.ui.ComposeUI
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Build
 import android.util.Log
 import android.widget.Toast
@@ -148,10 +149,10 @@ fun NoNet() {
         table_4_4 = ""
         table_4_5 = ""
         //////////////////////////////////////////////////////////////////////////////////
-       // val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
-        //val json = prefs.getString("json", "")
+        val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
+        val json = prefs.getString("json", "")
         // Log.d("测试",json!!)
-        val data = Gson().fromJson(prefs_json, data::class.java)
+        val data = Gson().fromJson(json, data::class.java)
         val scheduleList = data.result.scheduleList
         val lessonList = data.result.lessonList
         val scheduleGroupList = data.result.scheduleGroupList
@@ -308,8 +309,9 @@ fun NoNet() {
 
     }
 
-
-if (prefs_json?.contains("result") == true) {
+    val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
+    val json = prefs.getString("json", "")
+if (json?.contains("result") == true) {
         Update()//填充UI与更新
 } else Toast.makeText(MyApplication.context,"本地数据为空",Toast.LENGTH_SHORT).show()
 

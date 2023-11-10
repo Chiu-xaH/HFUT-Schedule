@@ -4,6 +4,7 @@ import com.hfut.schedule.MyApplication
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.simplexml.SimpleXmlConverterFactory
 
 object JxglstuXMLServiceCreator {
 
@@ -12,10 +13,9 @@ object JxglstuXMLServiceCreator {
         .build()
 
     val retrofit = Retrofit.Builder()
-    //    .baseUrl(MyApplication.JxglstuURL)
+       .baseUrl(MyApplication.JxglstuURL)
         .client(Client)
-        // .addConverterFactory()
-      //  .addConverterFactory(GsonConverterFactory.create())
+         .addConverterFactory(SimpleXmlConverterFactory.create())
         .build()
 
 

@@ -37,12 +37,16 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.activity.LoginActivity
-
+import com.hfut.schedule.ui.ViewModel.JxglstuViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PersonScreen() {
+fun PersonScreen(vm : JxglstuViewModel) {
+
+    val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
+    val cookie = prefs.getString("redirect", "")
+    vm.getInfo(cookie!!)
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),

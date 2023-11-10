@@ -1,6 +1,7 @@
 package com.hfut.schedule.ui.ViewModel
 
 import android.preference.PreferenceManager
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
@@ -95,12 +96,60 @@ class JxglstuViewModel : ViewModel() {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
-    fun Self(cookie : String) {
+    fun getInfo(cookie : String) {
 
         val call = api.getInfo(cookie,studentId.value.toString())
 
         call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {}
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                val info = response.body()?.string()
+                val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
+                if(sp.getString("info","") !=info ){ sp.edit().putString("info", info).apply() }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
+
+    fun getExam(cookie: String) {
+        val call = api.getExam(cookie,studentId.value.toString())
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                val exam = response.body()?.string()
+                val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
+                if(sp.getString("exam","") !=exam ){ sp.edit().putString("exam", exam).apply() }
+                Log.d("考试",exam!!)
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
+
+    fun getProgram(cookie: String) {
+        val call = api.getProgram(cookie,studentId.value.toString())
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                val program = response.body()?.string()
+                val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
+                if(sp.getString("program","") !=program ){ sp.edit().putString("program", program).apply() }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
+
+    fun getGrade(cookie: String) {
+        val call = api.getGrade(cookie,studentId.value.toString())
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                val grade = response.body()?.string()
+                val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
+                if(sp.getString("grade","") !=grade ){ sp.edit().putString("grade", grade).apply() }
+
+            }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })

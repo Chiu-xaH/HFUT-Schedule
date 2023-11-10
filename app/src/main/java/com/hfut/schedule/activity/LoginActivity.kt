@@ -1,6 +1,7 @@
 package com.hfut.schedule.activity
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.Bundle
@@ -156,12 +157,12 @@ class LoginActivity : ComponentActivity() {
 
         var hidden by rememberSaveable { mutableStateOf(true) }
 
-        //val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
-        //val Savedusername = prefs.getString("Username", "")
-        //val Savedpassword = prefs.getString("Password","")
+        val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
+        val Savedusername = prefs.getString("Username", "")
+        val Savedpassword = prefs.getString("Password","")
 
-        var username by remember { mutableStateOf(prefs_Savedusername ?: "") }
-        var inputAES by remember { mutableStateOf(prefs_Savedpassword ?: "") }
+        var username by remember { mutableStateOf(Savedusername ?: "") }
+        var inputAES by remember { mutableStateOf(Savedpassword ?: "") }
         var execution by rememberSaveable { mutableStateOf("e1s1") }
 
         // 创建一个动画值，根据按钮的按下状态来改变阴影的大小
@@ -331,7 +332,7 @@ class LoginActivity : ComponentActivity() {
 
                     ) {
 
-                    Text("离线课表")
+                    Text("离线模式")
 
                 }
             }
