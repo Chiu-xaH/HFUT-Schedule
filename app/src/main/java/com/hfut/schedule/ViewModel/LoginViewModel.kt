@@ -8,6 +8,7 @@ import com.hfut.schedule.logic.network.ServiceCreator.Login.GetAESKeyServiceCrea
 import com.hfut.schedule.logic.network.ServiceCreator.Login.GetCookieServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Login.LoginServiceCreator
 import okhttp3.ResponseBody
+import org.jsoup.Jsoup
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -17,17 +18,18 @@ class LoginViewModel : ViewModel() {
     var cookie2 = MutableLiveData<String>()
     var code = MutableLiveData<String>()
     var location = MutableLiveData<String>()
+    var execution = MutableLiveData<String>()
 
 
     private val api = LoginServiceCreator.create(LoginService::class.java)
     private val api2 = GetCookieServiceCreator.create(LoginService::class.java)
     private val api3 = GetAESKeyServiceCreator.create(LoginService::class.java)
 
-    fun login(username : String,password : String,keys : String,execution : String)  {// 创建一个Call对象，用于发送异步请求
+    fun login(username : String,password : String,keys : String)  {// 创建一个Call对象，用于发送异步请求
 
         val cookies : String = sessionLiveData.value  + cookie2.value +";" + keys
 
-        val call = api.login(cookies,username, password, execution,"submit")
+        val call = api.login(cookies,username, password, execution.value!!,"submit")
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -86,6 +88,12 @@ class LoginViewModel : ViewModel() {
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+
+               // response.body()?.let { Log.d("主体", it.string()) }
+
+                val doc = Jsoup.parse( response.body()?.string())
+                execution.value = doc.select("input[name=execution]").first()?.attr("value")
+                execution.value?.let { Log.d("赵思涵", it) }
 
                 if(response.isSuccessful()) {
                     sessionLiveData.value  = response.headers()["Set-Cookie"].toString().substringBefore(";").plus(";")

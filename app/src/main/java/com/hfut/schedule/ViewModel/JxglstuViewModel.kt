@@ -123,7 +123,6 @@ class JxglstuViewModel : ViewModel() {
                 val exam = response.body()?.string()
                 val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
                 if(sp.getString("exam","") !=exam ){ sp.edit().putString("exam", exam).apply() }
-                Log.d("考试",exam!!)
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }

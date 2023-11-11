@@ -449,7 +449,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
                 val json = prefs.getString("json", "")
                 if (json?.contains("result") == true) {
                     Update()//填充UI与更新
-                } else Toast.makeText(MyApplication.context,"数据为空,检查是否操作正确", Toast.LENGTH_SHORT).show()
+                } else Toast.makeText(MyApplication.context,"数据为空,尝试刷新", Toast.LENGTH_SHORT).show()
 
 
             }

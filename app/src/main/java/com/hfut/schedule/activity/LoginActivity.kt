@@ -116,7 +116,7 @@ class LoginActivity : ComponentActivity() {
                 onDismissRequest = { openAlertDialog.value = false },
                 onConfirmation = { openAlertDialog.value = false },
                 dialogTitle = "使用注意",
-                dialogText = "不要重复点击登录,否则崩溃闪退\n离线课表需要登陆过一次后才可使用,自动保存\n连接Host失败可更换hfut-wlan,大概率会成功\n我对登录按钮做出了限制,只可点击两次,超过三次提示重定向失败,不过应该没人不记得密码吧\n如果你有更好的建议或有问题,可反馈联系我(•ิ_•ิ)\nzsh0908@outlook.com",
+                dialogText = "连接Host失败是偶然响应问题,更换网络重进或再点登录\n\n本地课表需登陆过一次后可使用,自动保存\n\n尽量不要重复点击登录,如果仍无法登录,可联系我",
                 icon = Icons.Default.Warning
             )
         }
@@ -163,7 +163,6 @@ class LoginActivity : ComponentActivity() {
 
         var username by remember { mutableStateOf(Savedusername ?: "") }
         var inputAES by remember { mutableStateOf(Savedpassword ?: "") }
-        var execution by rememberSaveable { mutableStateOf("e1s1") }
 
         // 创建一个动画值，根据按钮的按下状态来改变阴影的大小
 
@@ -221,7 +220,7 @@ class LoginActivity : ComponentActivity() {
                         focusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent, // 有焦点时的颜色，透明
                         unfocusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent, // 无焦点时的颜色，绿色
                     ),
-                    supportingText = { Text("密码为信息门户,不要重复点击登录!")},
+                    supportingText = { Text("密码为信息门户,请勿频繁点击登录!")},
                     visualTransformation = if (hidden) PasswordVisualTransformation()
                     else VisualTransformation.None,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -265,36 +264,39 @@ class LoginActivity : ComponentActivity() {
                         if(sp.getString("Username","") != username){ sp.edit().putString("Username", username).apply() }
                         if(sp.getString("Password","") != inputAES){ sp.edit().putString("Password", inputAES).apply() }
 
-                        outputAES?.let { it1 -> vm.login(username, it1,"LOGIN_FLAVORING=" + prefs_key,execution) }
+                        outputAES?.let { it1 -> vm.login(username, it1,"LOGIN_FLAVORING=" + prefs_key) }
 
                         CoroutineScope(Job()).launch {
 
-                            delay(1500)
+                            delay(1250)
 
 
                            // vm.code.value?.let { Log.d("代码", it) }
 
                             if (vm.code.value.toString() == "XXX" || vm.code.value == null) {
                                 withContext(Dispatchers.Main) {
-                                    Toast.makeText(MyApplication.context, "连接Host失败,请检查网络,或者更换校园网尝试", Toast.LENGTH_SHORT).show()
-                                    execution = "e1s2"
+                                    Toast.makeText(MyApplication.context, "连接Host失败,请查看右上角选项", Toast.LENGTH_SHORT).show()
+                                    vm.getCookie()
                                 }
 
                             }
                             if (vm.code.value.toString() == "401")
                                 withContext(Dispatchers.Main) {
                                     Toast.makeText(MyApplication.context, "账号或密码错误", Toast.LENGTH_SHORT).show()
-                                    execution = "e1s2"
+                                    vm.getCookie()
                                 }
 
 
                             if (vm.code.value.toString() == "200" || username.length != 10)
-                                withContext(Dispatchers.Main) { Toast.makeText(MyApplication.context, "请输入正确的账号", Toast.LENGTH_SHORT) .show()}
+                                withContext(Dispatchers.Main) { Toast.makeText(MyApplication.context, "请输入正确的账号", Toast.LENGTH_SHORT) .show()
+
+                                }
 
                             if (vm.code.value.toString() == "302") {
 
                                 if (vm.location.value.toString() == MyApplication.RedirectURL) {
-                                    Toast.makeText(MyApplication.context, "重定向失败，请重新进入App登录", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(MyApplication.context, "重定向失败,请重新登录", Toast.LENGTH_SHORT).show()
+                                    vm.getCookie()
                                 }
 
                                 if (vm.location.value.toString().contains("ticket")) {
@@ -310,7 +312,8 @@ class LoginActivity : ComponentActivity() {
 
                                 else {
                                     withContext(Dispatchers.Main) {
-                                    Toast.makeText(MyApplication.context, "重定向失败，请重新进入App登录", Toast.LENGTH_SHORT).show()}
+                                    Toast.makeText(MyApplication.context, "重定向失败,请重新登录", Toast.LENGTH_SHORT).show()
+                                        vm.getCookie()}
                                 }
                             }
                         }
@@ -332,7 +335,7 @@ class LoginActivity : ComponentActivity() {
 
                     ) {
 
-                    Text("离线模式")
+                    Text("本地课表")
 
                 }
             }

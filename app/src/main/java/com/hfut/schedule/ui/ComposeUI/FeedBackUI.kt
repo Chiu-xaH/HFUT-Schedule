@@ -49,7 +49,7 @@ fun AboutAlertDialog(
                     MyApplication.context.startActivity(it)
                 }
             ) {
-                Text("我要反馈")
+                Text("联系")
             }
         }
     )

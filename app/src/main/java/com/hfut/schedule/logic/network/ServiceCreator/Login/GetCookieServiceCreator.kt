@@ -3,16 +3,13 @@ package com.hfut.schedule.logic.network.ServiceCreator.Login
 import com.hfut.schedule.MyApplication
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.scalars.ScalarsConverterFactory
 
 object GetCookieServiceCreator {
 
     val retrofit = Retrofit.Builder()
         .baseUrl(MyApplication.LoginURL)
-      //  .client(OkHttpClient.Builder()
-          //  .connectTimeout(1, TimeUnit.SECONDS)
-          //  .readTimeout(1,TimeUnit.SECONDS)
-          //  .build()
-      //  )
+        .addConverterFactory(ScalarsConverterFactory.create())
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 

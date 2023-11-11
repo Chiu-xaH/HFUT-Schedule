@@ -313,7 +313,7 @@ fun NoNet() {
     val json = prefs.getString("json", "")
 if (json?.contains("result") == true) {
         Update()//填充UI与更新
-} else Toast.makeText(MyApplication.context,"本地数据为空",Toast.LENGTH_SHORT).show()
+} else Toast.makeText(MyApplication.context,"本地数据为空,请登录以更新数据",Toast.LENGTH_SHORT).show()
 
 
     Scaffold(
@@ -324,7 +324,7 @@ if (json?.contains("result") == true) {
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
-                title = { Text("离线课表  第${Benweeks}周  星期${chinesenumber}  ${Date2}") }
+                title = { Text("今天  第${Benweeks}周  星期${chinesenumber}  ${Date2}") }
             )
         },) {innerPadding ->
         Column(
