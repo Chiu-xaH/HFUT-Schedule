@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -37,7 +38,12 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.activity.LoginActivity
-import com.hfut.schedule.ui.ViewModel.JxglstuViewModel
+import com.hfut.schedule.ViewModel.JxglstuViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import org.jsoup.Jsoup
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,8 +51,34 @@ import com.hfut.schedule.ui.ViewModel.JxglstuViewModel
 fun PersonScreen(vm : JxglstuViewModel) {
 
     val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
-    val cookie = prefs.getString("redirect", "")
-    vm.getInfo(cookie!!)
+
+            val info = prefs.getString("info","")
+            val doc = Jsoup.parse(info)
+            val studentnumber = doc.select("li.list-group-item.text-right:contains(学号) span").last()?.text()
+            val name = doc.select("li.list-group-item.text-right:contains(中文姓名) span").last()?.text()
+            val chineseid = doc.select("li.list-group-item.text-right:contains(证件号) span").last()?.text()
+    val elements = doc.select("dl dt, dl dd")
+
+    val infoMap = mutableMapOf<String, String>()
+    for (i in 0 until elements.size step 2) {
+        val key = elements[i].text()
+        val value = elements[i+1].text()
+        infoMap[key] = value
+        Log.d(i.toString(),value)
+    }
+
+
+    val benorsshuo =infoMap[elements[8].text()]
+    val yuanxi =infoMap[elements[10].text()]
+    val zhuanye =infoMap[elements[12].text()]
+    val classes =infoMap[elements[16].text()]
+    val school =infoMap[elements[18].text()]
+    val home =infoMap[elements[80].text()]
+
+
+
+
+
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -56,7 +88,7 @@ fun PersonScreen(vm : JxglstuViewModel) {
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
-                title = { Text("嗨  工大人") }
+                title = { Text("嗨  亲爱的 ${name} 同学") }
             )
         },) {innerPadding ->
         Column(
@@ -67,40 +99,131 @@ fun PersonScreen(vm : JxglstuViewModel) {
         ) {
           Column(modifier = Modifier
               .fillMaxWidth()) {
-              Spacer(modifier = Modifier.height(15.dp))
-              Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
-                  Card(
-                      elevation = CardDefaults.cardElevation(
-                          defaultElevation = 8.dp
-                      ),
-                      modifier = Modifier
-                          .size(width = 350.dp, height = 150.dp),
-                      shape = MaterialTheme.shapes.medium,
-                      onClick = {
-                          //
-                      }
-                  ) {
-                      //Text(text = "姓名，班级，专业，学院，学号")
-                  }
-              }
+             // Spacer(modifier = Modifier.height(15.dp))
 
-              Spacer(modifier = Modifier.height(15.dp))
+              ListItem(
+                  headlineContent = { Text(text = "姓名   ${name}") },
+                  leadingContent = {
+                      Icon(
+                          painterResource(R.drawable.signature),
+                          contentDescription = "Localized description",
+                      )
+                  },
+                  modifier = Modifier.clickable {
 
-              Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
-                  Card(
-                      elevation = CardDefaults.cardElevation(
-                          defaultElevation = 10.dp
-                      ),
-                      modifier = Modifier
-                          .size(width = 350.dp, height = 150.dp),
-                      shape = MaterialTheme.shapes.medium,
-                      onClick = {
-                          //
-                      }
-                  ) {
-                     // Text(text = "临近课程")
                   }
-              }
+              )
+
+              ListItem(
+                  headlineContent = { Text(text = "学号   ${studentnumber}") },
+                  leadingContent = {
+                      Icon(
+                          painterResource(R.drawable.badge),
+                          contentDescription = "Localized description",
+                      )
+                  },
+                  modifier = Modifier.clickable {
+
+                  }
+              )
+
+
+
+
+              ListItem(
+                  headlineContent = { Text(text = "学生类别   ${benorsshuo}") },
+                  leadingContent = {
+                      Icon(
+                          painterResource(R.drawable.school),
+                          contentDescription = "Localized description",
+                      )
+                  },
+                  modifier = Modifier.clickable {
+
+                  }
+              )
+
+              ListItem(
+                  headlineContent = { Text(text = "校区   ${school}") },
+                  leadingContent = {
+                      Icon(
+                          painterResource(R.drawable.near_me),
+                          contentDescription = "Localized description",
+                      )
+                  },
+                  modifier = Modifier.clickable {
+
+                  }
+              )
+
+
+              ListItem(
+                  headlineContent = { Text(text = "院系   ${yuanxi}") },
+                  leadingContent = {
+                      Icon(
+                          painterResource(R.drawable.location_city),
+                          contentDescription = "Localized description",
+                      )
+                  },
+                  modifier = Modifier.clickable {
+
+                  }
+              )
+
+
+              ListItem(
+                  headlineContent = { Text(text = "专业   ${zhuanye}") },
+                  leadingContent = {
+                      Icon(
+                          painterResource(R.drawable.local_library),
+                          contentDescription = "Localized description",
+                      )
+                  },
+                  modifier = Modifier.clickable {
+
+                  }
+              )
+
+              ListItem(
+                  headlineContent = { Text(text = "班级   ${classes}") },
+                  leadingContent = {
+                      Icon(
+                          painterResource(R.drawable.sensor_door),
+                          contentDescription = "Localized description",
+                      )
+                  },
+                  modifier = Modifier.clickable {
+
+                  }
+              )
+
+
+              ListItem(
+                  headlineContent = { Text(text = "来源地   ${home}") },
+                  leadingContent = {
+                      Icon(
+                          painterResource(R.drawable.home),
+                          contentDescription = "Localized description",
+                      )
+                  },
+                  modifier = Modifier.clickable {
+
+                  }
+              )
+
+              ListItem(
+                  headlineContent = { Text(text = "身份证号   ${chineseid}") },
+                  leadingContent = {
+                      Icon(
+                          painterResource(R.drawable.tag),
+                          contentDescription = "Localized description",
+                      )
+                  },
+                  modifier = Modifier.clickable {
+
+                  }
+              )
+
           }
         }
     }

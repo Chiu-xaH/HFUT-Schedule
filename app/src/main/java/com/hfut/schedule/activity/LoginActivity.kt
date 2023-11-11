@@ -66,7 +66,7 @@ import com.hfut.schedule.logic.SharePrefs.prefs_key
 import com.hfut.schedule.ui.ComposeUI.AboutAlertDialog
 import com.hfut.schedule.ui.ComposeUI.TransparentSystemBars
 import com.hfut.schedule.ui.ComposeUI.checkDate
-import com.hfut.schedule.ui.ViewModel.LoginViewModel
+import com.hfut.schedule.ViewModel.LoginViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -128,7 +128,7 @@ class LoginActivity : ComponentActivity() {
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         titleContentColor = MaterialTheme.colorScheme.primary,
                     ),
-                    title = { Text("肥工课程表") },
+                    title = { Text("我的肥工") },
 
                     actions = {
                         IconButton(onClick = {openAlertDialog.value = true}) {
@@ -269,7 +269,7 @@ class LoginActivity : ComponentActivity() {
 
                         CoroutineScope(Job()).launch {
 
-                            delay(1000)
+                            delay(1500)
 
 
                            // vm.code.value?.let { Log.d("代码", it) }

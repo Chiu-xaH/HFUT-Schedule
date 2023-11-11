@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.ViewModel
+package com.hfut.schedule.ViewModel
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData

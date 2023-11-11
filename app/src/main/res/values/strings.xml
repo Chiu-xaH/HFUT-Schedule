@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">肥工课程表</string>
+    <string name="app_name">我的肥工</string>
     <string name="title_activity_uiacitivity">UIAcitivity</string>
     <string name="title_activity_schedule">ScheduleActivity</string>
     <string name="title_activity_self">SelfActivity</string>

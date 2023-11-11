@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.ViewModel
+package com.hfut.schedule.ViewModel
 
 import android.preference.PreferenceManager
 import android.util.Log
@@ -12,6 +12,7 @@ import com.hfut.schedule.MyApplication
 
 import com.hfut.schedule.logic.datamodel.lessonIdsResponse
 import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuJSONServiceCreator
+import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuXMLServiceCreator
 import com.hfut.schedule.logic.network.api.JxglstuService
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -19,6 +20,7 @@ import retrofit2.Callback
 import retrofit2.Response
 class JxglstuViewModel : ViewModel() {
     private val api = JxglstuJSONServiceCreator.create(JxglstuService::class.java)
+    private val api2 = JxglstuXMLServiceCreator.create(JxglstuService::class.java)
     var studentId = MutableLiveData<Int>()
     var lessonIds = MutableLiveData<List<Int>>()
   //  var body : String = ""
@@ -98,11 +100,13 @@ class JxglstuViewModel : ViewModel() {
     }
     fun getInfo(cookie : String) {
 
-        val call = api.getInfo(cookie,studentId.value.toString())
+        val call = api2.getInfo(cookie,studentId.value.toString())
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 val info = response.body()?.string()
+
+               // info?.let { Log.d("细腻些", it) }
                 val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
                 if(sp.getString("info","") !=info ){ sp.edit().putString("info", info).apply() }
             }

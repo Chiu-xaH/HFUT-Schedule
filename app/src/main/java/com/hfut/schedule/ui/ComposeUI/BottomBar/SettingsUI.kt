@@ -44,7 +44,7 @@ fun SettingsScreen() {
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
-                title = { Text("肥工课程表") }
+                title = { Text("我的肥工") }
             )
         },) {innerPadding ->
         Column(

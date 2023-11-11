@@ -81,7 +81,7 @@ import com.hfut.schedule.ui.ComposeUI.BottomBar.PersonScreen
 import com.hfut.schedule.ui.ComposeUI.BottomBar.SearchScreen
 import com.hfut.schedule.ui.ComposeUI.BottomBar.SettingsScreen
 import com.hfut.schedule.ui.ComposeUI.TransparentSystemBars
-import com.hfut.schedule.ui.ViewModel.JxglstuViewModel
+import com.hfut.schedule.ViewModel.JxglstuViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -133,8 +133,8 @@ class LoginSuccessAcitivity : ComponentActivity() {
                 NavigationBar() {
                     val items = listOf(
                         NavigationBarItemData("calendar", "课程表", painterResource(R.drawable.calendar)),
-                        NavigationBarItemData("person", "个人主页", painterResource(R.drawable.person)),
-                        NavigationBarItemData("search","信息查询",painterResource(R.drawable.search)),
+                        NavigationBarItemData("person", "个人信息", painterResource(R.drawable.person)),
+                        NavigationBarItemData("search","查询中心",painterResource(R.drawable.search)),
                         NavigationBarItemData("settings", "选项", painterResource(R.drawable.cube))
                     )
                     items.forEach { item ->
@@ -464,7 +464,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         titleContentColor = MaterialTheme.colorScheme.primary,
                     ),
-                    title = { Text("第${Benweeks}周  星期${chinesenumber}  ${Date2}") }
+                    title = { Text("今天  第${Benweeks}周  星期${chinesenumber}  ${Date2}") }
                 )
             },) {innerPadding ->
             Column(
@@ -650,6 +650,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
             launch {
                 delay(1000)
                 vm.getLessonIds(cookie,grade!!)
+                vm.getInfo(cookie!!)
             }
             launch {
                 delay(2500)

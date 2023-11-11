@@ -2,8 +2,10 @@ package com.hfut.schedule.logic.network.ServiceCreator.Jxglstu
 
 import com.hfut.schedule.MyApplication
 import okhttp3.OkHttpClient
+import org.jsoup.Jsoup
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory
 
 object JxglstuXMLServiceCreator {
@@ -15,7 +17,7 @@ object JxglstuXMLServiceCreator {
     val retrofit = Retrofit.Builder()
        .baseUrl(MyApplication.JxglstuURL)
         .client(Client)
-         .addConverterFactory(SimpleXmlConverterFactory.create())
+         .addConverterFactory(ScalarsConverterFactory.create())
         .build()
 
 
