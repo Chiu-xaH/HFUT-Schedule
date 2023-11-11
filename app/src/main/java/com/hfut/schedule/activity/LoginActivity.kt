@@ -275,7 +275,7 @@ class LoginActivity : ComponentActivity() {
 
                             if (vm.code.value.toString() == "XXX" || vm.code.value == null) {
                                 withContext(Dispatchers.Main) {
-                                    Toast.makeText(MyApplication.context, "连接Host失败,请查看右上角选项", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(MyApplication.context, "连接Host失败,请再次尝试登录", Toast.LENGTH_SHORT).show()
                                     vm.getCookie()
                                 }
 
