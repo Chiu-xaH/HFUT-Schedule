@@ -1,5 +1,6 @@
 package com.hfut.schedule.ViewModel
 
+import android.content.Context
 import android.preference.PreferenceManager
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
@@ -13,7 +14,10 @@ import com.hfut.schedule.MyApplication
 import com.hfut.schedule.logic.datamodel.lessonIdsResponse
 import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuJSONServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuXMLServiceCreator
+import com.hfut.schedule.logic.network.ServiceCreator.Login.LoginServiceCreator
+import com.hfut.schedule.logic.network.ServiceCreator.Login.OneServiceCreator
 import com.hfut.schedule.logic.network.api.JxglstuService
+import com.hfut.schedule.logic.network.api.LoginService
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -21,6 +25,7 @@ import retrofit2.Response
 class JxglstuViewModel : ViewModel() {
     private val api = JxglstuJSONServiceCreator.create(JxglstuService::class.java)
     private val api2 = JxglstuXMLServiceCreator.create(JxglstuService::class.java)
+    private val api3 = OneServiceCreator.create(LoginService::class.java)
     var studentId = MutableLiveData<Int>()
     var lessonIds = MutableLiveData<List<Int>>()
   //  var body : String = ""
@@ -156,6 +161,30 @@ class JxglstuViewModel : ViewModel() {
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
+    }
+
+
+    fun Onelogin(cookie : String)  {// 创建一个Call对象，用于发送异步请求
+
+        val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
+        val ticket = prefs.getString("ticket", "")
+
+        val call = api3.Onelogin(ticket!!,cookie)
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                response.body()?.let { Log.d("响应", it.string()) }
+
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                //   Log.d("VM","失败")
+                //   code.value = "XXX"
+                t.printStackTrace()
+            }
+        })
+
+
     }
 
 }

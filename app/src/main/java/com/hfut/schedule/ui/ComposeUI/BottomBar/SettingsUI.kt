@@ -44,7 +44,7 @@ fun SettingsScreen() {
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
-                title = { Text("我的肥工") }
+                title = { Text("肥工教务通") }
             )
         },) {innerPadding ->
         Column(
@@ -71,7 +71,8 @@ fun SettingsScreen() {
                     Switch(
                         checked = checked,
                         onCheckedChange = {
-                            checked = it
+                          //  checked = it
+                                          Toast.makeText(MyApplication.context,"Android 12及以上默认开启,无需修改",Toast.LENGTH_SHORT).show()
                         },
                         //   thumbContent = if (checked) {
                         //      {
@@ -85,7 +86,7 @@ fun SettingsScreen() {
                 }
             )
             ListItem(
-                headlineContent = { Text(text = "前往主页") },
+                headlineContent = { Text(text = "获取更新") },
                 // supportingText =
                 leadingContent = {
                     Icon(
@@ -94,13 +95,13 @@ fun SettingsScreen() {
                     )
                 },
                 modifier = Modifier.clickable{
-                    val it = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Chiu-xaH/HFUT-Schedule"))
+                    val it = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Chiu-xaH/HFUT-Schedule/releases/tag/Android"))
                     it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     MyApplication.context.startActivity(it)
                 }
             )
             ListItem(
-                headlineContent = { Text(text = "关于与反馈") },
+                headlineContent = { Text(text = "向我反馈") },
                 // supportingText =
                 leadingContent = {
                     Icon(
@@ -109,13 +110,13 @@ fun SettingsScreen() {
                     )
                 },
                 modifier = Modifier.clickable{
-                    if (openAlertDialog.value) {
-                        //
-                    }
+                    val it = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:zsh0908@outlook.com"))
+                    it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    MyApplication.context.startActivity(it)
                 }
             )
             ListItem(
-                headlineContent = { Text(text = "清除缓存") },
+                headlineContent = { Text(text = "清除数据") },
                 // supportingText =
                 leadingContent = {
                     Icon(
@@ -130,7 +131,7 @@ fun SettingsScreen() {
                 }
             )
             ListItem(
-                headlineContent = { Text(text = "退出登录") },
+                headlineContent = { Text(text = "切换账号") },
                 // supportingText =
                 leadingContent = {
                     Icon(

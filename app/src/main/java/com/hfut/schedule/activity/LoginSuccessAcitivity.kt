@@ -649,12 +649,12 @@ class LoginSuccessAcitivity : ComponentActivity() {
         scope.apply {
             launch {
                 delay(1000)
-                vm.getLessonIds(cookie,grade!!)
-                vm.getInfo(cookie!!)
+                grade?.let { vm.getLessonIds(cookie, it) }
+                vm.getInfo(cookie)
             }
             launch {
                 delay(2500)
-                vm.getDatum(cookie!!)
+                vm.getDatum(cookie)
             }
         }
             }

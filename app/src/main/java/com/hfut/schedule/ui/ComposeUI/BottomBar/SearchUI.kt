@@ -1,6 +1,7 @@
 package com.hfut.schedule.ui.ComposeUI.BottomBar
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -47,11 +48,13 @@ fun SearchScreen(vm : JxglstuViewModel) {
     // 考试安排 //培养方案 //空教室 //一卡通
     val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
     val cookie = prefs.getString("redirect", "")
-
+    val ONE = prefs.getString("ONE","")
+    val TGC = prefs.getString("TGC","")
     CoroutineScope(Job()).apply {
         launch { vm.getExam(cookie!!) }
         launch { vm.getProgram(cookie!!) }
         launch { vm.getGrade(cookie!!) }
+        launch { vm.Onelogin(ONE + ";" + TGC) }
     }
 
 
@@ -163,6 +166,9 @@ fun SearchScreen(vm : JxglstuViewModel) {
                     }
                 )
 
+
+
+
                 ListItem(
                     headlineContent = { Text(text = "图书服务   借阅X本   预约X本") },
                     leadingContent = {
@@ -177,17 +183,47 @@ fun SearchScreen(vm : JxglstuViewModel) {
                 )
 
                 ListItem(
-                    headlineContent = { Text(text = "更多") },
+                    headlineContent = { Text(text = "本学期课程") },
                     leadingContent = {
                         Icon(
-                            painterResource(R.drawable.more_horiz),
+                            painterResource(R.drawable.calendar_view_month),
                             contentDescription = "Localized description",
                         )
                     },
                     modifier = Modifier.clickable {
-                        Toast.makeText(MyApplication.context,"没有更多了,如果有更多点子可告诉我哦",Toast.LENGTH_SHORT).show()
+                        showBottomSheet = true
+                        view = "暂未开发"
                     }
                 )
+
+                ListItem(
+                    headlineContent = { Text(text = "全校课表查询") },
+                    leadingContent = {
+                        Icon(
+                            painterResource(R.drawable.travel_explore),
+                            contentDescription = "Localized description",
+                        )
+                    },
+                    modifier = Modifier.clickable {
+                       Toast.makeText(MyApplication.context,"暂未开发",Toast.LENGTH_SHORT).show()
+                    }
+                )
+
+                ListItem(
+                    headlineContent = { Text(text = "服务大厅") },
+                    leadingContent = {
+                        Icon(
+                            painterResource(R.drawable.redeem),
+                            contentDescription = "Localized description",
+                        )
+                    },
+                    modifier = Modifier.clickable {
+                        Toast.makeText(MyApplication.context,"暂未开发",Toast.LENGTH_SHORT).show()
+                    }
+                )
+
+
+
 
 
                 if (showBottomSheet) {

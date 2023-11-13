@@ -128,7 +128,7 @@ class LoginActivity : ComponentActivity() {
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         titleContentColor = MaterialTheme.colorScheme.primary,
                     ),
-                    title = { Text("我的肥工") },
+                    title = { Text("肥工教务通") },
 
                     actions = {
                         IconButton(onClick = {openAlertDialog.value = true}) {
@@ -263,8 +263,12 @@ class LoginActivity : ComponentActivity() {
                         val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
                         if(sp.getString("Username","") != username){ sp.edit().putString("Username", username).apply() }
                         if(sp.getString("Password","") != inputAES){ sp.edit().putString("Password", inputAES).apply() }
+                        val ONE = "LOGIN_FLAVORING=" + prefs_key
+                        outputAES?.let { it1 -> vm.login(username, it1,ONE) }
 
-                        outputAES?.let { it1 -> vm.login(username, it1,"LOGIN_FLAVORING=" + prefs_key) }
+
+
+
 
                         CoroutineScope(Job()).launch {
 
@@ -275,7 +279,7 @@ class LoginActivity : ComponentActivity() {
 
                             if (vm.code.value.toString() == "XXX" || vm.code.value == null) {
                                 withContext(Dispatchers.Main) {
-                                    Toast.makeText(MyApplication.context, "连接Host失败,请查看右上角选项", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(MyApplication.context, "连接Host失败,请再次尝试登录", Toast.LENGTH_SHORT).show()
                                     vm.getCookie()
                                 }
 
@@ -302,6 +306,7 @@ class LoginActivity : ComponentActivity() {
                                 if (vm.location.value.toString().contains("ticket")) {
                                     withContext(Dispatchers.Main) {
                                         Toast.makeText(MyApplication.context, "登陆成功", Toast.LENGTH_SHORT).show()
+
                                         val it = Intent(MyApplication.context, LoginSuccessAcitivity::class.java).apply {
                                             addFlags(FLAG_ACTIVITY_NEW_TASK)
                                             putExtra("Grade", username.substring(2, 4))

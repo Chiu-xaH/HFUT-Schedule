@@ -50,30 +50,46 @@ import org.jsoup.Jsoup
 @Composable
 fun PersonScreen(vm : JxglstuViewModel) {
 
+
     val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
 
-            val info = prefs.getString("info","")
-            val doc = Jsoup.parse(info)
-            val studentnumber = doc.select("li.list-group-item.text-right:contains(学号) span").last()?.text()
-            val name = doc.select("li.list-group-item.text-right:contains(中文姓名) span").last()?.text()
-            val chineseid = doc.select("li.list-group-item.text-right:contains(证件号) span").last()?.text()
-    val elements = doc.select("dl dt, dl dd")
 
-    val infoMap = mutableMapOf<String, String>()
-    for (i in 0 until elements.size step 2) {
-        val key = elements[i].text()
-        val value = elements[i+1].text()
-        infoMap[key] = value
-        Log.d(i.toString(),value)
+            val info = prefs.getString("info","")
+
+
+    if (info == null) {
+        val cookie = prefs.getString("redirect", "")
+        vm.getInfo(cookie!!)
+        Toast.makeText(MyApplication.context, "数据为空,刷新尝试", Toast.LENGTH_SHORT).show()
     }
 
+    val doc = info?.let { Jsoup.parse(it) }
+            val studentnumber = doc?.select("li.list-group-item.text-right:contains(学号) span")?.last()?.text()
+            val name = doc?.select("li.list-group-item.text-right:contains(中文姓名) span")?.last()?.text()
+            val chineseid = doc?.select("li.list-group-item.text-right:contains(证件号) span")?.last()?.text()
+    val elements = doc?.select("dl dt, dl dd")
 
-    val benorsshuo =infoMap[elements[8].text()]
-    val yuanxi =infoMap[elements[10].text()]
-    val zhuanye =infoMap[elements[12].text()]
-    val classes =infoMap[elements[16].text()]
-    val school =infoMap[elements[18].text()]
-    val home =infoMap[elements[80].text()]
+    val infoMap = mutableMapOf<String, String>()
+    if (elements != null) {
+        for (i in 0 until elements.size step 2) {
+            val key = elements[i].text()
+            val value = elements[i+1].text()
+            infoMap[key] = value
+           // Log.d(i.toString(),value)
+        }
+    }
+   // var benorsshuo by remember { mutableStateOf(infoMap[elements?.get(8)?.text()] ?: "") }
+    //var yuanxi by remember { mutableStateOf(infoMap[elements?.get(10)?.text()] ?: "") }
+    //var zhuanye by remember { mutableStateOf(infoMap[elements?.get(12)?.text()] ?: "") }
+   // var classes by remember { mutableStateOf(infoMap[elements?.get(16)?.text()] ?: "") }
+   // var school by remember { mutableStateOf(infoMap[elements?.get(18)?.text()] ?: "") }
+   // var home by remember { mutableStateOf(infoMap[elements?.get(80)?.text()] ?: "") }
+    val benorsshuo =infoMap[elements?.get(8)?.text()]
+    val yuanxi =infoMap[elements?.get(10)?.text()]
+    val zhuanye =infoMap[elements?.get(12)?.text()]
+    val classes =infoMap[elements?.get(16)?.text()]
+    val school =infoMap[elements?.get(18)?.text()]
+    val home =infoMap[elements?.get(80)?.text()]
 
 
 
@@ -131,7 +147,7 @@ fun PersonScreen(vm : JxglstuViewModel) {
 
 
               ListItem(
-                  headlineContent = { Text(text = "学生类别   ${benorsshuo}") },
+                  headlineContent = { Text(text = "类别   ${benorsshuo}") },
                   leadingContent = {
                       Icon(
                           painterResource(R.drawable.school),
@@ -147,7 +163,7 @@ fun PersonScreen(vm : JxglstuViewModel) {
                   headlineContent = { Text(text = "校区   ${school}") },
                   leadingContent = {
                       Icon(
-                          painterResource(R.drawable.near_me),
+                          painterResource(R.drawable.location_city),
                           contentDescription = "Localized description",
                       )
                   },
@@ -161,7 +177,7 @@ fun PersonScreen(vm : JxglstuViewModel) {
                   headlineContent = { Text(text = "院系   ${yuanxi}") },
                   leadingContent = {
                       Icon(
-                          painterResource(R.drawable.location_city),
+                          painterResource(R.drawable.local_library),
                           contentDescription = "Localized description",
                       )
                   },
@@ -175,7 +191,7 @@ fun PersonScreen(vm : JxglstuViewModel) {
                   headlineContent = { Text(text = "专业   ${zhuanye}") },
                   leadingContent = {
                       Icon(
-                          painterResource(R.drawable.local_library),
+                          painterResource(R.drawable.square_foot),
                           contentDescription = "Localized description",
                       )
                   },
@@ -199,7 +215,7 @@ fun PersonScreen(vm : JxglstuViewModel) {
 
 
               ListItem(
-                  headlineContent = { Text(text = "来源地   ${home}") },
+                  headlineContent = { Text(text = "归属地   ${home}") },
                   leadingContent = {
                       Icon(
                           painterResource(R.drawable.home),
