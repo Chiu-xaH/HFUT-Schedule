@@ -16,7 +16,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.肥工课程表"
         tools:targetApi="31">
-
+        <activity
+            android:name=".activity.FWDTLoginActivity"
+            android:exported="false"
+            android:label="@string/title_activity_fwdtlogin"
+            android:theme="@style/Theme.肥工课程表" />
         <activity
             android:name=".activity.SavedCoursesActivity"
             android:exported="false"

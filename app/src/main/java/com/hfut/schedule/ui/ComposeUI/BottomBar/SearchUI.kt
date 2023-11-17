@@ -1,6 +1,7 @@
 package com.hfut.schedule.ui.ComposeUI.BottomBar
 
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
@@ -45,6 +46,8 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.JxglstuViewModel
+import com.hfut.schedule.activity.FWDTLoginActivity
+import com.hfut.schedule.activity.LoginSuccessAcitivity
 import com.hfut.schedule.ui.ComposeUI.emptyRoomUI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -328,6 +331,10 @@ fun SearchScreen(vm : JxglstuViewModel) {
                         modifier = Modifier.clickable {
                             Toast.makeText(MyApplication.context, "暂未开发", Toast.LENGTH_SHORT)
                                 .show()
+                            val it = Intent(MyApplication.context, FWDTLoginActivity::class.java).apply {
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            }
+                            MyApplication.context.startActivity(it)
                         }
                     )
 

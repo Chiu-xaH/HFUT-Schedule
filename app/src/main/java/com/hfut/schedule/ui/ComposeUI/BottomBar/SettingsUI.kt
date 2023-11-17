@@ -26,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.core.content.ContextCompat
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.activity.LoginActivity
@@ -102,7 +103,8 @@ fun SettingsScreen(showlable : Boolean,showlablechanged: (Boolean) -> Unit) {
                     Switch(
                         checked = checked,
                         onCheckedChange = {
-                          //  checked = it
+                          // checked = it
+
                                           Toast.makeText(MyApplication.context,"Android 12及以上默认开启,无需修改",Toast.LENGTH_SHORT).show()
                         },
                         //   thumbContent = if (checked) {

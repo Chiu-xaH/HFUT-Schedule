@@ -6,4 +6,5 @@
     <string name="title_activity_urlactivity">URLActivity</string>
     <string name="title_activity_jxglstu">JxglstuActivity</string>
     <string name="title_activity_no_net">NoNetActivity</string>
+    <string name="title_activity_fwdtlogin">FWDTLoginActivity</string>
 </resources>
