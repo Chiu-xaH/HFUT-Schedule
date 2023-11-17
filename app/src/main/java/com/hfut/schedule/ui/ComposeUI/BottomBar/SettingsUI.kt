@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.preference.PreferenceManager
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -32,8 +33,9 @@ import com.hfut.schedule.activity.LoginActivity
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(showlable : Boolean,showlablechanged: (Boolean) -> Unit) {
     var checked by remember { mutableStateOf(true) }
+    var checked2 by remember { mutableStateOf(true) }
     val openAlertDialog = remember { mutableStateOf(false) }
 
     Scaffold(
@@ -53,7 +55,36 @@ fun SettingsScreen() {
                 .fillMaxSize()
             //.background()插入背景
         ) {
-
+            ListItem(
+                headlineContent = { Text(text = "显示标签") },
+                // supportingText =
+                leadingContent = {
+                    Icon(
+                        painterResource(R.drawable.label),
+                        contentDescription = "Localized description",
+                    )
+                },
+                //  modifier = Modifier.clickable{
+                //          Toast.makeText(MyApplication.context,"暂未开发,敬请期待",Toast.LENGTH_SHORT).show()
+                //  },
+                //    shadowElevation = 100.dp,
+                trailingContent = {
+                    Switch(
+                        checked = showlable,
+                        onCheckedChange = showlablechanged
+                            //showlable
+                        ,
+                        //   thumbContent = if (checked) {
+                        //      {
+                        //        Icon(imageVector = Icons.Filled.Check,
+                        //           contentDescription = null,
+                        //          modifier = Modifier.size(SwitchDefaults.IconSize),
+                        //     )
+                        //  }
+                        // }else null
+                    )
+                }
+            )
             ListItem(
                 headlineContent = { Text(text = "壁纸取色") },
                 // supportingText =
@@ -145,7 +176,11 @@ fun SettingsScreen() {
                     MyApplication.context.startActivity(it)
                 }
             )
-
+            val sp =
+                PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
+            if (sp.getBoolean("SWITCH", true) != showlable) {
+                sp.edit().putBoolean("SWITCH", showlable).apply()
+            }
         }
     }
     //待开发

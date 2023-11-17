@@ -120,12 +120,25 @@ class LoginSuccessAcitivity : ComponentActivity() {
     }
 
 
+    @SuppressLint("CoroutineCreationDuringComposition")
     @RequiresApi(Build.VERSION_CODES.O)
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun SuccessUI(vm : JxglstuViewModel) {
+        val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
+        val switch = prefs.getBoolean("SWITCH",true)
+
         val navController = rememberNavController()
 
+        var isEnabled by remember { mutableStateOf(false) }
+
+        var showlable by remember { mutableStateOf(switch) }
+
+        CoroutineScope(Job()).launch {
+            delay(3000)
+            isEnabled = true
+        }
+       // Toast.makeText(MyApplication.context,"请等待加载完成再切换页面",Toast.LENGTH_SHORT).show()
         Scaffold(
             modifier = Modifier.fillMaxSize(),
 
@@ -142,6 +155,8 @@ class LoginSuccessAcitivity : ComponentActivity() {
                         val selected = navController.currentBackStackEntryAsState().value?.destination?.route == route
                         NavigationBarItem(
                             selected = selected,
+                           alwaysShowLabel = showlable,
+                            enabled = isEnabled,
                             onClick = {
                                 if (!selected) {
                                     navController.navigate(route) {
@@ -162,10 +177,10 @@ class LoginSuccessAcitivity : ComponentActivity() {
             }
         ) { innerPadding ->
             NavHost(navController = navController, startDestination = "calendar") {
-                composable("calendar") { CalendarScreen()}
+                composable("calendar") { CalendarScreen(isEnabled,enabledchanged = {isEnabledch -> isEnabled = isEnabledch})}
                 composable("search") { SearchScreen(vm) }
                 composable("person") { PersonScreen(vm) }
-                composable("settings") { SettingsScreen() }
+                composable("settings") { SettingsScreen(showlable, showlablechanged = {showlablech -> showlable = showlablech}) }
             }
 
             Column(
@@ -182,7 +197,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     @SuppressLint("SuspiciousIndentation")
     @Composable
-    fun CalendarScreen() {
+    fun CalendarScreen(isEnabled:Boolean,enabledchanged : (Boolean) -> Unit) {
        // val navController = rememberNavController()
         var loading by remember { mutableStateOf(true) }
 
@@ -297,6 +312,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
                 var scheduleid = scheduleList[i].lessonId.toString()
                 var endtime = scheduleList[i].endTime.toString()
                 var periods = scheduleList[i].periods
+                var lessonType = scheduleList[i].lessonType
 
                 room = room.replace("学堂","")
 
@@ -314,9 +330,11 @@ class LoginSuccessAcitivity : ComponentActivity() {
                     val lessonlist_id = lessonList[j].id
                     val INFO = lessonList[j].suggestScheduleWeekInfo
                     val name = lessonList[j].courseName
+                    val courseTypeName = lessonList[j].courseTypeName
                     if (scheduleid == lessonlist_id) {
                         scheduleid = name
                         endtime = INFO
+                        lessonType = courseTypeName
                     }
 
                 }
@@ -327,12 +345,10 @@ class LoginSuccessAcitivity : ComponentActivity() {
 
                 val text = starttime + "\n" + scheduleid + "\n" + room
                 val info =
-                //"课程:${id}"+ "\n"+
-                //"时间:${starttime}-${endtime}"+ "\n" +
-                    //  "教室:${room}" + "\n"+
-                    "教师:${person}"+ "  "+
+                           "教师:${person}"+ "  "+
                             "周数:${endtime}"+ "  "+
-                            "人数:${periods}"
+                            "人数:${periods}"+ "  "+
+                            "类型:${lessonType}"
 
 
 
@@ -440,13 +456,17 @@ class LoginSuccessAcitivity : ComponentActivity() {
 
         if (loading) {
             LaunchedEffect(Unit) {
+
                 delay(3000)
+                val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
+                val json = prefs.getString("json", "")
+              //  enabledchanged = {isEnabled}
+
                 //在此插入课程表的布局，加载完成后显示//在此插入课程表的UI填充操作
                 loading = false
 
 
-                val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
-                val json = prefs.getString("json", "")
+
                 if (json?.contains("result") == true) {
                     Update()//填充UI与更新
                 } else Toast.makeText(MyApplication.context,"数据为空,尝试刷新", Toast.LENGTH_SHORT).show()
@@ -479,7 +499,10 @@ class LoginSuccessAcitivity : ComponentActivity() {
                     exit = fadeOut()
                 ) {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Column() { CircularProgressIndicator() }
+                        Column() {
+                            CircularProgressIndicator()
+
+                        }
 
                     }
                 }//加载动画居中，3s后消失
@@ -642,7 +665,8 @@ class LoginSuccessAcitivity : ComponentActivity() {
         val cookie = prefs.getString("redirect", "")
         vm.getStudentId(cookie!!)
         val grade = intent.getStringExtra("Grade")
-
+        val ONE = prefs.getString("ONE","")
+        val TGC = prefs.getString("TGC","")
 
         val job = Job()
         val scope = CoroutineScope(job)
@@ -656,7 +680,29 @@ class LoginSuccessAcitivity : ComponentActivity() {
                 delay(2500)
                 vm.getDatum(cookie)
             }
+
+
+            launch {
+              //  delay(3000)
+                vm.OneGoto(ONE + ";" + TGC)
+            }
+
+            launch {
+                delay(1000)
+                vm.getToken()
+            }
+
+
         }
+
+
+
+
+
+
+
+
+
             }
 
 }

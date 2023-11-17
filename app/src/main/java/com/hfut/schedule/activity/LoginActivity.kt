@@ -67,6 +67,7 @@ import com.hfut.schedule.ui.ComposeUI.AboutAlertDialog
 import com.hfut.schedule.ui.ComposeUI.TransparentSystemBars
 import com.hfut.schedule.ui.ComposeUI.checkDate
 import com.hfut.schedule.ViewModel.LoginViewModel
+import com.hfut.schedule.ui.ComposeUI.emptyRoomUI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -90,6 +91,7 @@ class LoginActivity : ComponentActivity() {
                 ) {
                     TransparentSystemBars()
                     LoginUI(vm)
+
                 }
             }
         }

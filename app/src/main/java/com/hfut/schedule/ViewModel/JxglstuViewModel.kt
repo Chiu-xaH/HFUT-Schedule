@@ -10,14 +10,21 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import com.hfut.schedule.MyApplication
+import com.hfut.schedule.logic.datamodel.BorrowBooksResponse
+import com.hfut.schedule.logic.datamodel.CardResponse
+import com.hfut.schedule.logic.datamodel.SubBooksResponse
+import com.hfut.schedule.logic.datamodel.data2
+import com.hfut.schedule.logic.datamodel.getTokenResponse
 
 import com.hfut.schedule.logic.datamodel.lessonIdsResponse
 import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuJSONServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuXMLServiceCreator
-import com.hfut.schedule.logic.network.ServiceCreator.Login.LoginServiceCreator
+import com.hfut.schedule.logic.network.ServiceCreator.Login.OneGotoServiceCreator
+//import com.hfut.schedule.logic.network.ServiceCreator.Login.OneGetNewTicketServiceCreator.client
 import com.hfut.schedule.logic.network.ServiceCreator.Login.OneServiceCreator
 import com.hfut.schedule.logic.network.api.JxglstuService
 import com.hfut.schedule.logic.network.api.LoginService
+import com.hfut.schedule.logic.network.api.OneService
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -25,10 +32,13 @@ import retrofit2.Response
 class JxglstuViewModel : ViewModel() {
     private val api = JxglstuJSONServiceCreator.create(JxglstuService::class.java)
     private val api2 = JxglstuXMLServiceCreator.create(JxglstuService::class.java)
-    private val api3 = OneServiceCreator.create(LoginService::class.java)
+    private val api3 = OneGotoServiceCreator.create(LoginService::class.java)
+    private val api4 = OneServiceCreator.create(OneService::class.java)
     var studentId = MutableLiveData<Int>()
     var lessonIds = MutableLiveData<List<Int>>()
+    var token = MutableLiveData<String>()
   //  var body : String = ""
+    //var Authorization ="Bearer" + token.value
 
     fun Jxglstulogin(cookie : String) {
 
@@ -164,17 +174,17 @@ class JxglstuViewModel : ViewModel() {
     }
 
 
-    fun Onelogin(cookie : String)  {// 创建一个Call对象，用于发送异步请求
 
-        val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
-        val ticket = prefs.getString("ticket", "")
 
-        val call = api3.Onelogin(ticket!!,cookie)
+    fun OneGoto(cookie : String)  {// 创建一个Call对象，用于发送异步请求
+
+        val call = api3.OneGoto(cookie)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                response.body()?.let { Log.d("响应", it.string()) }
-
+                     // response.headers()["Location"]?.let { Log.d("响应", it.toString()) }
+               // val finalUrl = (client.eventListener() as RedirectListener).getResponseUrl()
+                // response.headers()["Location"]
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
@@ -186,5 +196,200 @@ class JxglstuViewModel : ViewModel() {
 
 
     }
+
+    fun getToken()  {// 创建一个Call对象，用于发送异步请求
+        val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
+        val codehttp = prefs.getString("code", "")
+        var code = codehttp
+        if (code != null) {
+            code = code.substringAfter("=")
+        }
+        if (code != null) {
+            code = code.substringBefore("]")
+        }
+        val http = codehttp?.substringAfter("[")?.substringBefore("]")
+
+
+        val call = http?.let { code?.let { it1 -> api4.getToken(it, it1) } }
+
+        if (call != null) {
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                         // response.body()?.let { Log.d("响应", it.string()) }
+                    val json = response.body()?.string()
+               //     json?.let { Log.d("json", it) }
+                    val data = Gson().fromJson(json,getTokenResponse::class.java)
+                    // response.headers()["Location"]
+               //     data?.let { Log.d("JSON", it.toString()) }
+                    if (data.msg == "success") {
+                        token.value = data.data.access_token
+                        Log.d("token",token.value.toString())
+                    }
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    //   Log.d("VM","失败")
+                    //   code.value = "XXX"
+                    t.printStackTrace()
+                }
+            })
+        }
+
+
+    }
+
+
+    fun getCard()  {
+
+        val call = api4.getCard("Bearer " + token.value)
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                val json = response.body()?.string()
+                if (json != null) {
+                    if (json.contains("--")) {
+                        val sp =
+                            PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
+
+                        sp.edit().putString("card", "--").apply()
+
+                    } else {
+                        val data = Gson().fromJson(json, CardResponse::class.java)
+                        val code = data.msg
+                        if (code == "success") {
+                            val card = data.data.toString()
+                            val sp =
+                                PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
+                            if (sp.getString("card", "") != card) {
+                                sp.edit().putString("card", card).apply()
+                            }
+                        }
+                    }
+                } else {
+                    val sp =
+                        PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
+
+                    sp.edit().putString("card", "XX").apply()
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                //   Log.d("VM","失败")
+                //   code.value = "XXX"
+                t.printStackTrace()
+            }
+        })
+
+
+    }
+    fun getBorrowBooks()  {
+
+        val call = api4.getBorrowBooks("Bearer " + token.value)
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                val json = response.body()?.string()
+                val data = Gson().fromJson(json, BorrowBooksResponse::class.java)
+                val code = data.msg
+                if (code == "success") {
+                    val borrow = data.data.toString()
+                    val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
+                    if(sp.getString("borrow","") !=borrow ){ sp.edit().putString("borrow",borrow).apply() }
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                //   Log.d("VM","失败")
+                //   code.value = "XXX"
+                t.printStackTrace()
+            }
+        })
+
+
+    }
+    fun getSubBooks()  {
+
+        val call = api4.getSubBooks("Bearer " + token.value)
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                val json = response.body()?.string()
+                val data = Gson().fromJson(json,SubBooksResponse::class.java)
+                val code = data.msg
+                if (code == "success") {
+                    val sub = data.data.toString()
+                    val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
+                    if(sp.getString("sub","") !=sub ){ sp.edit().putString("sub", sub).apply() }
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                //   Log.d("VM","失败")
+                //   code.value = "XXX"
+                t.printStackTrace()
+            }
+        })
+
+
+    }
+
+
+    fun selectBuilding()  {
+
+        val call = api4.selectBuilding("03","Bearer " + token.value)
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                val json = response.body()?.string()
+
+                //val data = Gson().fromJson(json, BorrowBooksResponse::class.java)
+              //  val code = data.msg
+              //  if (code == "success") {
+               //     val borrow = data.data.toString()
+                //    val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
+                //    if(sp.getString("borrow","") !=borrow ){ sp.edit().putString("borrow",borrow).apply() }
+              //  }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                //   Log.d("VM","失败")
+                //   code.value = "XXX"
+                t.printStackTrace()
+            }
+        })
+
+
+    }
+
+    fun searchEmptyRoom(building_code : String)  {
+
+        val call = api4.searchEmptyRoom(building_code,"Bearer " + token.value)
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+               val emptyjson = response.body()?.string()
+                val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
+                if(sp.getString("emptyjson","") !=emptyjson ){ sp.edit().putString("emptyjson", emptyjson).apply() }
+            //    json?.let { Log.d("空教室", it) }
+                //val data = Gson().fromJson(json, BorrowBooksResponse::class.java)
+                //  val code = data.msg
+                //  if (code == "success") {
+                //     val borrow = data.data.toString()
+                //    val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
+                //    if(sp.getString("borrow","") !=borrow ){ sp.edit().putString("borrow",borrow).apply() }
+                //  }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                //   Log.d("VM","失败")
+                //   code.value = "XXX"
+                t.printStackTrace()
+            }
+        })
+
+
+    }
+
+
 
 }

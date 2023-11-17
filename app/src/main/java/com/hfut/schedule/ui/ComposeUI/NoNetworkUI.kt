@@ -173,6 +173,7 @@ fun NoNet() {
             var scheduleid = scheduleList[i].lessonId.toString()
             var endtime = scheduleList[i].endTime.toString()
             var periods = scheduleList[i].periods
+            var lessonType = scheduleList[i].lessonType
 
             room = room.replace("学堂","")
 
@@ -189,10 +190,12 @@ fun NoNet() {
             for (j in 0 until lessonList.size) {
                 val lessonlist_id = lessonList[j].id
                 val INFO = lessonList[j].suggestScheduleWeekInfo
+                val courseTypeName = lessonList[j].courseTypeName
                 val name = lessonList[j].courseName
                 if (scheduleid == lessonlist_id) {
                     scheduleid = name
                     endtime = INFO
+                    lessonType = courseTypeName
                 }
 
             }
@@ -208,7 +211,8 @@ fun NoNet() {
                       //  "教室:${room}" + "\n"+
                         "教师:${person}"+ "  "+
                         "周数:${endtime}"+ "  "+
-                        "人数:${periods}"
+                        "人数:${periods}"+ "  "+
+                        "类型:${lessonType}"
 
                         if (scheduleList[i].weekIndex == Bianhuaweeks.toInt()) {
                 if (scheduleList[i].weekday == 1) {

@@ -107,7 +107,7 @@ class LoginViewModel : ViewModel() {
 
                 val doc = Jsoup.parse( response.body()?.string())
                 execution.value = doc.select("input[name=execution]").first()?.attr("value")
-                execution.value?.let { Log.d("赵思涵", it) }
+               // execution.value?.let { Log.d("赵思涵", it) }
 
                 if(response.isSuccessful()) {
                     sessionLiveData.value  = response.headers()["Set-Cookie"].toString().substringBefore(";").plus(";")

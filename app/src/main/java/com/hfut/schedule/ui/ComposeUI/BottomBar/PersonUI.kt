@@ -215,7 +215,7 @@ fun PersonScreen(vm : JxglstuViewModel) {
 
 
               ListItem(
-                  headlineContent = { Text(text = "归属地   ${home}") },
+                  headlineContent = { Text(text = "生源地   ${home}") },
                   leadingContent = {
                       Icon(
                           painterResource(R.drawable.home),
