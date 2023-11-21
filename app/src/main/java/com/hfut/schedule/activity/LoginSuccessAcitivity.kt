@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -67,6 +68,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.gson.Gson
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
+import com.google.gson.JsonPrimitive
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.activity.ui.theme.肥工课程表Theme
@@ -84,6 +88,7 @@ import com.hfut.schedule.ui.ComposeUI.TransparentSystemBars
 import com.hfut.schedule.ViewModel.JxglstuViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -133,11 +138,11 @@ class LoginSuccessAcitivity : ComponentActivity() {
         var isEnabled by remember { mutableStateOf(false) }
 
         var showlable by remember { mutableStateOf(switch) }
-
         CoroutineScope(Job()).launch {
             delay(3000)
             isEnabled = true
         }
+
        // Toast.makeText(MyApplication.context,"请等待加载完成再切换页面",Toast.LENGTH_SHORT).show()
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -309,12 +314,15 @@ class LoginSuccessAcitivity : ComponentActivity() {
                 //  ) + ":" + endtime.substring(endtime.length - 2)
                 var room = scheduleList[i].room.nameZh
                 val person = scheduleList[i].personName
+                var date = scheduleList[i].date
                 var scheduleid = scheduleList[i].lessonId.toString()
                 var endtime = scheduleList[i].endTime.toString()
                 var periods = scheduleList[i].periods
                 var lessonType = scheduleList[i].lessonType
 
                 room = room.replace("学堂","")
+                date = date.replace("2023-","")
+                date = date.replace("2024-","")
 
                 for (k in 0 until scheduleGroupList.size) {
 
@@ -345,6 +353,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
 
                 val text = starttime + "\n" + scheduleid + "\n" + room
                 val info =
+                           "日期:${date}" + "  " +
                            "教师:${person}"+ "  "+
                             "周数:${endtime}"+ "  "+
                             "人数:${periods}"+ "  "+
@@ -438,7 +447,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
                             table_3_5 = text
                             sheet_3_5 = info
                         }
-                        if (scheduleList[i].startTime == 1400) {
+                        if (scheduleList[i].startTime == 1600) {
                             table_4_5 = text
                             sheet_4_5 = info
                         }
@@ -452,27 +461,73 @@ class LoginSuccessAcitivity : ComponentActivity() {
             //////////////////////////////////////////////////////////////////////////////////
         }
 
+        val prefs = getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
+        val cookie = prefs.getString("redirect", "")
+
+        val grade = intent.getStringExtra("Grade")
+        val ONE = prefs.getString("ONE","")
+        val TGC = prefs.getString("TGC","")
+
+        val job = Job()
+        val scope = CoroutineScope(job)
+        scope.apply {
+            launch {
+
+                launch {
+                    async { vm.OneGoto(ONE + ";" + TGC) }.await()
+                    async { vm.getToken() }.await()
+                 //   async { vm.getCard() }
+                   // async { vm.getBorrowBooks() }
+                    //async { vm.getSubBooks() }
+
+                }
+
+                launch{
+                    async {
+                        vm.getStudentId(cookie!!)
+                    }.await()
+
+                    async {
+                        delay(500)
+                        grade?.let { vm.getLessonIds(cookie!!, it) }
+                    }.await()
+
+                    async {
+                        delay(500)
+                        val lessonIdsArray = JsonArray()
+                        vm.lessonIds.value?.forEach {lessonIdsArray.add(JsonPrimitive(it))}
+                        val jsonObject = JsonObject().apply {
+                            add("lessonIds", lessonIdsArray)//课程ID
+                            addProperty("studentId", vm.studentId.value)//学生ID
+                            addProperty("weekIndex", "")
+                        }
 
 
-        if (loading) {
-            LaunchedEffect(Unit) {
+                            vm.getDatum(cookie!!,jsonObject)
 
-                delay(3000)
-                val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
-                val json = prefs.getString("json", "")
-              //  enabledchanged = {isEnabled}
-
-                //在此插入课程表的布局，加载完成后显示//在此插入课程表的UI填充操作
-                loading = false
+                    }.await()
 
 
+                    async {
+                        delay(500)
+                        val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
+                        val json = prefs.getString("json", "")
+                        loading = false
+                        if (json?.contains("result") == true) {
+                            Update()//填充UI与更新
+                        } else{
+                            Looper.prepare()
+                            Toast.makeText(MyApplication.context,"数据为空,尝试刷新", Toast.LENGTH_SHORT).show()
+                        }
 
-                if (json?.contains("result") == true) {
-                    Update()//填充UI与更新
-                } else Toast.makeText(MyApplication.context,"数据为空,尝试刷新", Toast.LENGTH_SHORT).show()
-
+                    }.await()
+                }
+                launch {
+                    async { vm.getInfo(cookie!!) }.await()
+                }
 
             }
+
         }
 
 
@@ -590,7 +645,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
                                                     .size(width = 63.dp, height = 100.dp),
                                                 shape = MaterialTheme.shapes.extraSmall,
                                                 onClick = {
-                                                    if (sheet[rowIndex][columnIndex].contains("人数")) Toast.makeText(MyApplication.context, sheet[rowIndex][columnIndex], Toast.LENGTH_SHORT).show()
+                                                    if (sheet[rowIndex][columnIndex].contains("课")) Toast.makeText(MyApplication.context, sheet[rowIndex][columnIndex], Toast.LENGTH_SHORT).show()
                                                     else Toast.makeText(MyApplication.context,"空数据", Toast.LENGTH_SHORT).show()
                                                 }
                                             ) {
@@ -659,43 +714,6 @@ class LoginSuccessAcitivity : ComponentActivity() {
 
             }
         }
-
-
-        val prefs = getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
-        val cookie = prefs.getString("redirect", "")
-        vm.getStudentId(cookie!!)
-        val grade = intent.getStringExtra("Grade")
-        val ONE = prefs.getString("ONE","")
-        val TGC = prefs.getString("TGC","")
-
-        val job = Job()
-        val scope = CoroutineScope(job)
-        scope.apply {
-            launch {
-                delay(1000)
-                grade?.let { vm.getLessonIds(cookie, it) }
-                vm.getInfo(cookie)
-            }
-            launch {
-                delay(2500)
-                vm.getDatum(cookie)
-            }
-
-
-            launch {
-              //  delay(3000)
-                vm.OneGoto(ONE + ";" + TGC)
-            }
-
-            launch {
-                delay(1000)
-                vm.getToken()
-            }
-
-
-        }
-
-
 
 
 

@@ -25,6 +25,7 @@ import com.hfut.schedule.logic.network.ServiceCreator.Login.OneServiceCreator
 import com.hfut.schedule.logic.network.api.JxglstuService
 import com.hfut.schedule.logic.network.api.LoginService
 import com.hfut.schedule.logic.network.api.OneService
+import kotlinx.coroutines.delay
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -70,7 +71,7 @@ class JxglstuViewModel : ViewModel() {
         })
     }
 
-     fun getLessonIds(cookie : String,bizTypeId : String) {
+    fun getLessonIds(cookie : String, bizTypeId : String) {
         //bizTypeId为年级数，例如23  //dataId为学生ID  //semesterId为学期Id，例如23-24第一学期为234
         //这里先固定学期，每半年进行版本推送更新参数
         val call = api.getLessonIds(cookie,bizTypeId,studentId.value.toString())
@@ -82,13 +83,14 @@ class JxglstuViewModel : ViewModel() {
                 if (json != null) {
                     val id = Gson().fromJson(json, lessonIdsResponse::class.java)
                     lessonIds.value = id.lessonIds
+
                 }
             //    Log.d("测试",id.toString())
             }
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
-    fun getDatum(cookie : String) {
+    fun getDatum(cookie : String,lessonid: JsonObject) {
 
         val lessonIdsArray = JsonArray()
         lessonIds.value?.forEach {lessonIdsArray.add(JsonPrimitive(it))}
@@ -99,7 +101,7 @@ class JxglstuViewModel : ViewModel() {
             addProperty("weekIndex", "")
         }
 
-        val call = api.getDatum(cookie,jsonObject)
+        val call = api.getDatum(cookie,lessonid)
 
 
         call.enqueue(object : Callback<ResponseBody> {

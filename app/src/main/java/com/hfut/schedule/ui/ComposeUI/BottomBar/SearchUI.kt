@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.ComposeUI.BottomBar
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.util.Log
@@ -51,10 +52,12 @@ import com.hfut.schedule.activity.LoginSuccessAcitivity
 import com.hfut.schedule.ui.ComposeUI.emptyRoomUI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jsoup.Jsoup
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(vm : JxglstuViewModel) {
@@ -76,21 +79,18 @@ fun SearchScreen(vm : JxglstuViewModel) {
     val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
     val cookie = prefs.getString("redirect", "")
 
-    CoroutineScope(Job()).apply {
+    CoroutineScope(Job()).launch {
+
+        async { vm.getProgram(cookie!!) }
+
+        async{ vm.getExam(cookie!!) }
 
         launch {
-            vm.getProgram(cookie!!)
-            vm.getExam(cookie!!)
-        }
-        launch {
         delay(500)
-            if (vm.token.value != null) {
-            vm.getCard()
-            vm.getBorrowBooks()
-            vm.getSubBooks()
-         //   vm.selectBuilding()
-            }
-            else Toast.makeText(MyApplication.context,"超时,再试一次",Toast.LENGTH_SHORT).show()
+
+           async { vm.getCard() }
+           async { vm.getBorrowBooks() }
+           async { vm.getSubBooks() }
 
         }
 
@@ -117,12 +117,6 @@ fun SearchScreen(vm : JxglstuViewModel) {
     val scope3 = rememberCoroutineScope()
     var showBottomSheet3 by remember { mutableStateOf(false) }
 
-
-
-
- //  var examcourseNmae by rememberSaveable { mutableStateOf("") }
- //   var examtime by rememberSaveable { mutableStateOf("") }
-    //var examroom by rememberSaveable { mutableStateOf("") }
 
 
     fun ExamGet() : List<Map<String,String>>{

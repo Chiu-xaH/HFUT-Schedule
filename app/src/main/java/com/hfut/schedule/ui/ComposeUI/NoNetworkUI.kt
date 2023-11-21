@@ -174,8 +174,14 @@ fun NoNet() {
             var endtime = scheduleList[i].endTime.toString()
             var periods = scheduleList[i].periods
             var lessonType = scheduleList[i].lessonType
+            var date = scheduleList[i].date
 
             room = room.replace("学堂","")
+
+            date = date.replace("2023-","")
+            date = date.replace("2024-","")
+
+
 
             for (k in 0 until scheduleGroupList.size) {
 
@@ -209,10 +215,13 @@ fun NoNet() {
                         //"课程:${id}"+ "\n"+
                         //"时间:${starttime}-${endtime}"+ "\n" +
                       //  "教室:${room}" + "\n"+
+                "日期:${date}" + "  " +
                         "教师:${person}"+ "  "+
                         "周数:${endtime}"+ "  "+
                         "人数:${periods}"+ "  "+
                         "类型:${lessonType}"
+
+           // Log.d("信息",info)
 
                         if (scheduleList[i].weekIndex == Bianhuaweeks.toInt()) {
                 if (scheduleList[i].weekday == 1) {
@@ -300,7 +309,7 @@ fun NoNet() {
                         table_3_5 = text
                         sheet_3_5 = info
                     }
-                    if (scheduleList[i].startTime == 1400) {
+                    if (scheduleList[i].startTime == 1600) {
                         table_4_5 = text
                         sheet_4_5 = info
                     }
@@ -435,7 +444,8 @@ if (json?.contains("result") == true) {
                                            // .clickable {},
                                         shape = MaterialTheme.shapes.extraSmall,
                                         onClick = {
-                                            if (sheet[rowIndex][columnIndex].contains("人数")) Toast.makeText(MyApplication.context, sheet[rowIndex][columnIndex], Toast.LENGTH_SHORT).show()
+                                          //  Log.d("测试",sheet[rowIndex][columnIndex])
+                                            if (sheet[rowIndex][columnIndex].contains("课")) Toast.makeText(MyApplication.context, sheet[rowIndex][columnIndex], Toast.LENGTH_SHORT).show()
                                             else Toast.makeText(MyApplication.context,"空数据", Toast.LENGTH_SHORT).show()
 
                                        }

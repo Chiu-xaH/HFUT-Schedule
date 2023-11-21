@@ -20,6 +20,7 @@ data class scheduleList(val lessonId: Int,
                         val startTime : Int,
                         val periods : Int,
                         var endTime : Int,
+                        val date : String,
                         var lessonType : String)
 
 data class room(val nameZh : String)
