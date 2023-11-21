@@ -49,6 +49,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.JxglstuViewModel
 import com.hfut.schedule.activity.FWDTLoginActivity
 import com.hfut.schedule.activity.LoginSuccessAcitivity
+import com.hfut.schedule.ui.ComposeUI.Person
 import com.hfut.schedule.ui.ComposeUI.emptyRoomUI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -81,18 +82,11 @@ fun SearchScreen(vm : JxglstuViewModel) {
 
     CoroutineScope(Job()).launch {
 
-        async { vm.getProgram(cookie!!) }
-
-        async{ vm.getExam(cookie!!) }
-
-        launch {
         delay(500)
 
            async { vm.getCard() }
            async { vm.getBorrowBooks() }
            async { vm.getSubBooks() }
-
-        }
 
     }
 
@@ -103,20 +97,19 @@ fun SearchScreen(vm : JxglstuViewModel) {
 
 
     val sheetState = rememberModalBottomSheetState()
-    val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
 
     var view by rememberSaveable { mutableStateOf("") }
 
     val sheetState2 = rememberModalBottomSheetState()
-    val scope2 = rememberCoroutineScope()
     var showBottomSheet2 by remember { mutableStateOf(false) }
 
 
     val sheetState3 = rememberModalBottomSheetState()
-    val scope3 = rememberCoroutineScope()
     var showBottomSheet3 by remember { mutableStateOf(false) }
 
+    val sheetState4 = rememberModalBottomSheetState()
+    var showBottomSheet4 by remember { mutableStateOf(false) }
 
 
     fun ExamGet() : List<Map<String,String>>{
@@ -145,6 +138,9 @@ fun SearchScreen(vm : JxglstuViewModel) {
         return data
     }
 
+    val info = prefs.getString("info","")
+    val doc = info?.let { Jsoup.parse(it) }
+    val name = doc?.select("li.list-group-item.text-right:contains(中文姓名) span")?.last()?.text()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -154,7 +150,7 @@ fun SearchScreen(vm : JxglstuViewModel) {
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
-                title = { Text("查询中心") }
+                title = { Text("嗨  亲爱的 ${name} 同学") }
             )
         },) {innerPadding ->
         Column(
@@ -258,6 +254,19 @@ fun SearchScreen(vm : JxglstuViewModel) {
                     )
 
                     ListItem(
+                        headlineContent = { Text(text = "个人信息") },
+                        leadingContent = {
+                            Icon(
+                                painterResource(R.drawable.person),
+                                contentDescription = "Localized description",
+                            )
+                        },
+                        modifier = Modifier.clickable {
+                            showBottomSheet4 = true
+                        }
+                    )
+
+                    ListItem(
                         headlineContent = { Text(text = "一卡通余额   ${card} 元") },
                         leadingContent = {
                             Icon(
@@ -269,7 +278,6 @@ fun SearchScreen(vm : JxglstuViewModel) {
 
                         }
                     )
-
 
 
 
@@ -315,7 +323,7 @@ fun SearchScreen(vm : JxglstuViewModel) {
                     )
 
                     ListItem(
-                        headlineContent = { Text(text = "服务大厅") },
+                        headlineContent = { Text(text = "费用查询") },
                         leadingContent = {
                             Icon(
                                 painterResource(R.drawable.redeem),
@@ -331,6 +339,7 @@ fun SearchScreen(vm : JxglstuViewModel) {
                             MyApplication.context.startActivity(it)
                         }
                     )
+
 
 
 
@@ -411,6 +420,20 @@ fun SearchScreen(vm : JxglstuViewModel) {
                                    }
                                }
                            }
+                        }
+                    }
+
+
+
+                    if (showBottomSheet4) {
+
+                        ModalBottomSheet(
+                            onDismissRequest = {
+                                showBottomSheet4 = false
+                            },
+                            sheetState = sheetState4
+                        ) {
+                           Person()
                         }
                     }
 

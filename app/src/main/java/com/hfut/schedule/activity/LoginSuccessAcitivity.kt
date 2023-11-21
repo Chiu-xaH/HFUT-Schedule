@@ -81,11 +81,11 @@ import com.hfut.schedule.logic.GetDate.weeksBetween
 import com.hfut.schedule.logic.SharePrefs
 import com.hfut.schedule.logic.datamodel.NavigationBarItemData
 import com.hfut.schedule.logic.datamodel.data
-import com.hfut.schedule.ui.ComposeUI.BottomBar.PersonScreen
 import com.hfut.schedule.ui.ComposeUI.BottomBar.SearchScreen
 import com.hfut.schedule.ui.ComposeUI.BottomBar.SettingsScreen
 import com.hfut.schedule.ui.ComposeUI.TransparentSystemBars
 import com.hfut.schedule.ViewModel.JxglstuViewModel
+import com.hfut.schedule.ui.ComposeUI.BottomBar.TodayScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -151,9 +151,10 @@ class LoginSuccessAcitivity : ComponentActivity() {
                 NavigationBar() {
                     val items = listOf(
                         NavigationBarItemData("calendar", "课程表", painterResource(R.drawable.calendar)),
-                        NavigationBarItemData("person", "个人信息", painterResource(R.drawable.person)),
+                        NavigationBarItemData("today","聚焦",painterResource(R.drawable.timeline)),
                         NavigationBarItemData("search","查询中心",painterResource(R.drawable.search)),
                         NavigationBarItemData("settings", "选项", painterResource(R.drawable.cube))
+
                     )
                     items.forEach { item ->
                         val route = item.route
@@ -184,8 +185,8 @@ class LoginSuccessAcitivity : ComponentActivity() {
             NavHost(navController = navController, startDestination = "calendar") {
                 composable("calendar") { CalendarScreen(isEnabled,enabledchanged = {isEnabledch -> isEnabled = isEnabledch})}
                 composable("search") { SearchScreen(vm) }
-                composable("person") { PersonScreen(vm) }
                 composable("settings") { SettingsScreen(showlable, showlablechanged = {showlablech -> showlable = showlablech}) }
+                composable("today") {TodayScreen()}
             }
 
             Column(
@@ -502,8 +503,9 @@ class LoginSuccessAcitivity : ComponentActivity() {
                             addProperty("weekIndex", "")
                         }
 
-
                             vm.getDatum(cookie!!,jsonObject)
+                            vm.getExam(cookie!!)
+                            vm.getProgram(cookie!!)
 
                     }.await()
 
@@ -539,7 +541,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         titleContentColor = MaterialTheme.colorScheme.primary,
                     ),
-                    title = { Text("今天  第${Benweeks}周  星期${chinesenumber}  ${Date2}") }
+                    title = { Text("今天  第${Benweeks}周  周${chinesenumber}  ${Date2}") }
                 )
             },) {innerPadding ->
             Column(

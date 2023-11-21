@@ -24,12 +24,19 @@ object GetDate {
 
     val Date2 = SimpleDateFormat("MM-dd").format(Date())
 
+
+    val Date = SimpleDateFormat("yyyy-MM-dd").format(Date())
+
     val calendar = Calendar.getInstance()
     val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
     val dayweek = dayOfWeek - 1
 
 
+
+
+
     var chinesenumber  = ""
+
 
 
 }

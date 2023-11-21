@@ -337,7 +337,7 @@ if (json?.contains("result") == true) {
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
-                title = { Text("今天  第${Benweeks}周  星期${chinesenumber}  ${Date2}") }
+                title = { Text("今天  第${Benweeks}周  周${chinesenumber}  ${Date2}") }
             )
         },) {innerPadding ->
         Column(

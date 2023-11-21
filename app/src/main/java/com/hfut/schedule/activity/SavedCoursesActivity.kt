@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import com.hfut.schedule.activity.ui.theme.肥工课程表Theme
 import com.hfut.schedule.ui.ComposeUI.NoNet
+import com.hfut.schedule.ui.ComposeUI.NoNetWork
 import com.hfut.schedule.ui.ComposeUI.TransparentSystemBars
 
 
@@ -32,7 +33,7 @@ class SavedCoursesActivity : ComponentActivity() {
                 ) {
                    TransparentSystemBars()
                   //  Text(text = "首页\r\n首页1\r\n首页2\r\n首页3")
-                         NoNet()
+                        NoNetWork()
                     //BottomSheetDemo()
                 }
             }
