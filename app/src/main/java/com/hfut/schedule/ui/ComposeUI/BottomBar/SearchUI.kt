@@ -78,7 +78,6 @@ fun SearchScreen(vm : JxglstuViewModel) {
     //待开发
     // 考试安排 //培养方案 //空教室 //一卡通
     val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
-    val cookie = prefs.getString("redirect", "")
 
     CoroutineScope(Job()).launch {
 
@@ -91,9 +90,9 @@ fun SearchScreen(vm : JxglstuViewModel) {
     }
 
 
-    val card =prefs.getString("card","未获取到")
-    val borrow =prefs.getString("borrow","未获取到")
-    val sub =prefs.getString("sub","未获取到")
+    val card =prefs.getString("card","正在获取")
+    val borrow =prefs.getString("borrow","正在获取")
+    val sub =prefs.getString("sub","正在获取")
 
 
     val sheetState = rememberModalBottomSheetState()
@@ -114,15 +113,8 @@ fun SearchScreen(vm : JxglstuViewModel) {
 
     fun ExamGet() : List<Map<String,String>>{
         //考试JSON解析
-        val nulls = "        <tbody>\n" +
-                "          <tr>\n" +
-                "            <td>空</td>\n" +
-                "            <td class=\"time\">空</td>\n" +
-                "            <td>空</td>\n" +
-                "          </tr>\n" +
-                "        </tbody>"
 
-        val examjson = prefs.getString("exam", nulls)
+        val examjson = prefs.getString("exam",MyApplication.NullExam)
 
         val doc = Jsoup.parse(examjson).select("tbody tr")
 
@@ -236,6 +228,19 @@ fun SearchScreen(vm : JxglstuViewModel) {
                     )
 
                     ListItem(
+                        headlineContent = { Text(text = "个人信息") },
+                        leadingContent = {
+                            Icon(
+                                painterResource(R.drawable.person),
+                                contentDescription = "Localized description",
+                            )
+                        },
+                        modifier = Modifier.clickable {
+                            showBottomSheet4 = true
+                        }
+                    )
+
+                    ListItem(
                         headlineContent = { Text(text = "空教室") },
                         leadingContent = {
                             Icon(
@@ -253,18 +258,7 @@ fun SearchScreen(vm : JxglstuViewModel) {
                         }
                     )
 
-                    ListItem(
-                        headlineContent = { Text(text = "个人信息") },
-                        leadingContent = {
-                            Icon(
-                                painterResource(R.drawable.person),
-                                contentDescription = "Localized description",
-                            )
-                        },
-                        modifier = Modifier.clickable {
-                            showBottomSheet4 = true
-                        }
-                    )
+
 
                     ListItem(
                         headlineContent = { Text(text = "一卡通余额   ${card} 元") },

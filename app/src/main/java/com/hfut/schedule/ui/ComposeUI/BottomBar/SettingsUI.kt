@@ -26,18 +26,35 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.core.content.ContextCompat
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.activity.LoginActivity
+import com.hfut.schedule.ViewModel.MainViewModel
+import com.hfut.schedule.ui.ComposeUI.PaletteDialogScreen
 
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(showlable : Boolean,showlablechanged: (Boolean) -> Unit) {
+fun SettingsScreen(showlable : Boolean,
+                   showlablechanged: (Boolean) -> Unit,
+                   mainViewModel: MainViewModel,
+                   dynamicColorEnabled: Boolean,
+                   onChangeDynamicColorEnabled: (Boolean) -> Unit) {
+
     var checked by remember { mutableStateOf(true) }
     var checked2 by remember { mutableStateOf(true) }
-    val openAlertDialog = remember { mutableStateOf(false) }
+    var openAlertDialog by remember { mutableStateOf(false) }
+
+
+    if (openAlertDialog) {
+        PaletteDialogScreen(
+            mainViewModel = mainViewModel,
+            dynamicColorEnabled = dynamicColorEnabled,
+            onChangeDynamicColorEnabled = onChangeDynamicColorEnabled,
+            onDismissed = { openAlertDialog = false }
+        )
+    }
+
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -56,6 +73,15 @@ fun SettingsScreen(showlable : Boolean,showlablechanged: (Boolean) -> Unit) {
                 .fillMaxSize()
             //.background()插入背景
         ) {
+
+          //  if (openAlertDialog) {
+            //    PaletteDialogScreen(
+              //      mainViewModel = mainViewModel,
+                //    dynamicColorEnabled = dynamicColorEnabled,
+                  //  onChangeDynamicColorEnabled = onChangeDynamicColorEnabled,
+                   // onDismissed = { openAlertDialog = false }
+                //)
+          //  }
             ListItem(
                 headlineContent = { Text(text = "显示标签") },
                 // supportingText =
@@ -87,7 +113,7 @@ fun SettingsScreen(showlable : Boolean,showlablechanged: (Boolean) -> Unit) {
                 }
             )
             ListItem(
-                headlineContent = { Text(text = "壁纸取色") },
+                headlineContent = { Text(text = "取色设置") },
                 // supportingText =
                 leadingContent = {
                     Icon(
@@ -95,28 +121,10 @@ fun SettingsScreen(showlable : Boolean,showlablechanged: (Boolean) -> Unit) {
                         contentDescription = "Localized description",
                     )
                 },
-                //  modifier = Modifier.clickable{
-                //          Toast.makeText(MyApplication.context,"暂未开发,敬请期待",Toast.LENGTH_SHORT).show()
-                //  },
+                  modifier = Modifier.clickable{
+                      openAlertDialog = true
+                  },
                 //    shadowElevation = 100.dp,
-                trailingContent = {
-                    Switch(
-                        checked = checked,
-                        onCheckedChange = {
-                          // checked = it
-
-                                          Toast.makeText(MyApplication.context,"Android 12及以上默认开启,无需修改",Toast.LENGTH_SHORT).show()
-                        },
-                        //   thumbContent = if (checked) {
-                        //      {
-                        //        Icon(imageVector = Icons.Filled.Check,
-                        //           contentDescription = null,
-                        //          modifier = Modifier.size(SwitchDefaults.IconSize),
-                        //     )
-                        //  }
-                        // }else null
-                    )
-                }
             )
             ListItem(
                 headlineContent = { Text(text = "获取更新") },

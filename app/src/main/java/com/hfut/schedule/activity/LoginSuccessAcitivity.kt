@@ -5,10 +5,10 @@ import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.os.Looper
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
@@ -48,7 +48,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -73,12 +72,10 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.activity.ui.theme.肥工课程表Theme
 import com.hfut.schedule.logic.GetDate
 import com.hfut.schedule.logic.GetDate.Benweeks
 import com.hfut.schedule.logic.GetDate.Date2
 import com.hfut.schedule.logic.GetDate.weeksBetween
-import com.hfut.schedule.logic.SharePrefs
 import com.hfut.schedule.logic.datamodel.NavigationBarItemData
 import com.hfut.schedule.logic.datamodel.data
 import com.hfut.schedule.ui.ComposeUI.BottomBar.SearchScreen
@@ -86,18 +83,18 @@ import com.hfut.schedule.ui.ComposeUI.BottomBar.SettingsScreen
 import com.hfut.schedule.ui.ComposeUI.TransparentSystemBars
 import com.hfut.schedule.ViewModel.JxglstuViewModel
 import com.hfut.schedule.ui.ComposeUI.BottomBar.TodayScreen
+import com.hfut.schedule.ViewModel.MainViewModel
+import com.hfut.schedule.ui.theme.DynamicColr
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.temporal.ChronoUnit
-import java.util.Calendar
-import java.util.Date
 
+@AndroidEntryPoint
 class LoginSuccessAcitivity : ComponentActivity() {
+    private val mainViewModel: MainViewModel by viewModels()
 
     private val vm by lazy { ViewModelProvider(this).get(JxglstuViewModel::class.java) }
     @RequiresApi(Build.VERSION_CODES.O)
@@ -106,13 +103,19 @@ class LoginSuccessAcitivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
-            肥工课程表Theme {
+            var dynamicColorEnabled by remember { mutableStateOf(true) }
+            val currentTheme by mainViewModel.currentTheme
+            DynamicColr( context = applicationContext,
+                currentTheme = currentTheme,
+                dynamicColor = dynamicColorEnabled){
+                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
                     TransparentSystemBars()
-                    SuccessUI(vm)
+                    SuccessUI(vm,dynamicColorEnabled = dynamicColorEnabled,
+                        onChangeDynamicColorEnabled = { dynamicColorEnabled = it })
                 }
             }
         }
@@ -129,7 +132,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    fun SuccessUI(vm : JxglstuViewModel) {
+    fun SuccessUI(vm : JxglstuViewModel,dynamicColorEnabled : Boolean,onChangeDynamicColorEnabled: (Boolean) -> Unit,) {
         val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
         val switch = prefs.getBoolean("SWITCH",true)
 
@@ -185,7 +188,13 @@ class LoginSuccessAcitivity : ComponentActivity() {
             NavHost(navController = navController, startDestination = "calendar") {
                 composable("calendar") { CalendarScreen(isEnabled,enabledchanged = {isEnabledch -> isEnabled = isEnabledch})}
                 composable("search") { SearchScreen(vm) }
-                composable("settings") { SettingsScreen(showlable, showlablechanged = {showlablech -> showlable = showlablech}) }
+                composable("settings") { SettingsScreen(
+                    showlable,
+                    showlablechanged = {showlablech -> showlable = showlablech},
+                    mainViewModel,
+                    dynamicColorEnabled,
+                    onChangeDynamicColorEnabled
+                ) }
                 composable("today") {TodayScreen()}
             }
 
@@ -477,6 +486,11 @@ class LoginSuccessAcitivity : ComponentActivity() {
                 launch {
                     async { vm.OneGoto(ONE + ";" + TGC) }.await()
                     async { vm.getToken() }.await()
+                   launch {
+                       // async { vm.getCard() }
+                       // async { vm.getBorrowBooks() }
+                       // async { vm.getSubBooks() }
+                    }
                  //   async { vm.getCard() }
                    // async { vm.getBorrowBooks() }
                     //async { vm.getSubBooks() }

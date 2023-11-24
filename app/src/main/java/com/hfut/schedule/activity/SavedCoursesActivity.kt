@@ -5,20 +5,26 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
-import com.hfut.schedule.activity.ui.theme.肥工课程表Theme
-import com.hfut.schedule.ui.ComposeUI.NoNet
+import com.hfut.schedule.ViewModel.MainViewModel
 import com.hfut.schedule.ui.ComposeUI.NoNetWork
 import com.hfut.schedule.ui.ComposeUI.TransparentSystemBars
+import com.hfut.schedule.ui.theme.DynamicColr
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class SavedCoursesActivity : ComponentActivity() {
-
+    private val mainViewModel: MainViewModel by viewModels()
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,7 +32,12 @@ class SavedCoursesActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
 
-            肥工课程表Theme {
+            var dynamicColorEnabled by remember { mutableStateOf(true) }
+            val currentTheme by mainViewModel.currentTheme
+            DynamicColr( context = applicationContext,
+                currentTheme = currentTheme,
+                dynamicColor = dynamicColorEnabled){
+                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background

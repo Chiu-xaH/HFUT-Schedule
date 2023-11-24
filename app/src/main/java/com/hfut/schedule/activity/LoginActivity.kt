@@ -9,6 +9,7 @@ import android.preference.PreferenceManager
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -56,27 +57,28 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.logic.AESEncrypt
 import com.hfut.schedule.R
-import com.hfut.schedule.activity.ui.theme.肥工课程表Theme
-import com.hfut.schedule.logic.SharePrefs.prefs_Savedpassword
-import com.hfut.schedule.logic.SharePrefs.prefs_Savedusername
 import com.hfut.schedule.logic.SharePrefs.prefs_key
 import com.hfut.schedule.ui.ComposeUI.AboutAlertDialog
 import com.hfut.schedule.ui.ComposeUI.TransparentSystemBars
 import com.hfut.schedule.ui.ComposeUI.checkDate
 import com.hfut.schedule.ViewModel.LoginViewModel
-import com.hfut.schedule.ui.ComposeUI.emptyRoomUI
+import com.hfut.schedule.ViewModel.MainViewModel
+import com.hfut.schedule.ui.theme.DynamicColr
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
+@AndroidEntryPoint
 class LoginActivity : ComponentActivity() {
     private val vm by lazy { ViewModelProvider(this).get(LoginViewModel::class.java) }
+    private val mainViewModel: MainViewModel by viewModels()
     @SuppressLint("SuspiciousIndentation", "MissingInflatedId")
 
 
@@ -84,24 +86,26 @@ class LoginActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
-            肥工课程表Theme {
+            var dynamicColorEnabled by remember { mutableStateOf(true) }
+            val currentTheme by mainViewModel.currentTheme
+            DynamicColr( context = applicationContext,
+                currentTheme = currentTheme,
+                dynamicColor = dynamicColorEnabled){
+                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
                     TransparentSystemBars()
-                    LoginUI(vm)
-
+                   LoginUI(vm)
+                   // test()
                 }
             }
         }
 
-        val job = Job()
-        val scope = CoroutineScope(job)
-
         checkDate("2023-09-01","2024-02-01") // 定义一个函数，超出日期不允许使用
 
-        scope.apply {
+        lifecycleScope.apply {
             launch { vm.getCookie() }
             launch {  vm.getKey() }
         }//协程并行执行，提高效率

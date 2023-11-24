@@ -440,7 +440,9 @@ if (json?.contains("result") == true) {
                                       //      containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                                       //  ),
                                         modifier = Modifier
+                                            //.padding(horizontal = 0.dp, vertical = 0.dp)
                                             .size(width = 63.dp, height = 100.dp),
+
                                            // .clickable {},
                                         shape = MaterialTheme.shapes.extraSmall,
                                         onClick = {

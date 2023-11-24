@@ -32,6 +32,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -40,10 +41,8 @@ import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.JxglstuViewModel
 import com.hfut.schedule.logic.GetDate
-import com.hfut.schedule.logic.GetDate.chinesenumber
-import com.hfut.schedule.logic.datamodel.Course
+import com.hfut.schedule.logic.datamodel.course
 import com.hfut.schedule.logic.datamodel.data
 import org.jsoup.Jsoup
 import java.time.LocalDate
@@ -102,15 +101,8 @@ fun TodayScreen() {
 
     fun ExamGet() : List<Map<String,String>>{
         //考试JSON解析
-        val nulls = "        <tbody>\n" +
-                "          <tr>\n" +
-                "            <td>空</td>\n" +
-                "            <td class=\"time\">空</td>\n" +
-                "            <td>空</td>\n" +
-                "          </tr>\n" +
-                "        </tbody>"
 
-        val examjson = prefs.getString("exam", nulls)
+        val examjson = prefs.getString("exam", MyApplication.NullExam)
 
         val doc = Jsoup.parse(examjson).select("tbody tr")
 
@@ -131,13 +123,11 @@ fun TodayScreen() {
     }
 
 
-    fun Datum(): Int {
+    fun Datum(): MutableList<course> {
 
-
-        var number : Int = 0
-
+        var TodayCourse = mutableListOf<course>()
         val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
-        val json = prefs.getString("json", "")
+        val json = prefs.getString("json", MyApplication.NullDatum)
         // Log.d("测试",json!!)
         val data = Gson().fromJson(json, data::class.java)
         val scheduleList = data.result.scheduleList
@@ -191,7 +181,7 @@ fun TodayScreen() {
 
 
             if (date == GetDate.Date) {
-                number++
+
                 when(scheduleList[i].startTime) {
                     800 -> {
                         time_1 = time
@@ -217,28 +207,34 @@ fun TodayScreen() {
             }
 
         }
-        val courses = arrayOf(
-            Course(time_1,room_1,table_1),
-            Course(time_2,room_2,table_2),
-            Course(time_3,room_3,table_2),
-            Course(time_4,room_4,table_4)
+            //去除空数组，重新组成顺序课表
+        val Course = arrayOf(
+            course(time_1,table_1,room_1),
+            course(time_2,table_2,room_2),
+            course(time_3,table_3,room_3),
+            course(time_4,table_4,room_4)
         )
-        //Log.d("打印",courses.toString())
-            return number
+
+//遍历数组，如果存在非空集合，则添加到新的数组中
+        Course.forEach { if (it.time.contains("-") ) TodayCourse.add(it) }
+
+        return TodayCourse
     }
 
 
 
 
-    fun Datum2(): Int {
+    fun DatumTomorrow(): MutableList<course> {
 
         var number2 : Int = 0
 
         val today = LocalDate.now() // 获取当前日期
         val tomorrow = today.plusDays(1) // 获取下一天的日期
 
+        var TomorrowCourse = mutableListOf<course>()
+
         val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
-        val json = prefs.getString("json", "")
+        val json = prefs.getString("json", MyApplication.NullDatum)
         // Log.d("测试",json!!)
         val data = Gson().fromJson(json, data::class.java)
         val scheduleList = data.result.scheduleList
@@ -263,6 +259,7 @@ fun TodayScreen() {
             room = room.replace("学堂", "")
 
 
+
             for (j in 0 until lessonList.size) {
                 val lessonlist_id = lessonList[j].id
                 val INFO = lessonList[j].suggestScheduleWeekInfo
@@ -278,7 +275,7 @@ fun TodayScreen() {
             val time = starttime + "-" + endtime
 
             if (date == tomorrow.toString()) {
-                number2++
+
                 when(scheduleList[i].startTime) {
                     800 -> {
                         tomorrow_time_1 = time
@@ -307,8 +304,23 @@ fun TodayScreen() {
 
 
         }
-        return number2
+
+        val Course = arrayOf(
+            course(tomorrow_time_1,tomorrow_table_1,tomorrow_room_1),
+            course(tomorrow_time_2,tomorrow_table_2,tomorrow_room_2),
+            course(tomorrow_time_3,tomorrow_table_3,tomorrow_room_3),
+            course(tomorrow_time_4,tomorrow_table_4,tomorrow_room_4)
+        )
+
+
+        Course.forEach { if (it.time.contains("-") ) TomorrowCourse.add(it) }
+
+        return TomorrowCourse
+
     }
+
+
+
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -329,18 +341,18 @@ fun TodayScreen() {
         ){
 
 
-            Datum()
+
+            val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
+            val json = prefs.getString("json", "")
+            if (json?.contains("result") == true) {
+                Datum()
+                DatumTomorrow()
+            } else Toast.makeText(MyApplication.context,"本地数据为空,请登录以更新数据",Toast.LENGTH_SHORT).show()
+
 
             ExamGet()
 
-            val table = arrayOf(table_1,table_2,table_3,table_4)
-            val room = arrayOf(room_1,room_2,room_3,room_4)
-            val time = arrayOf(time_1,time_2,time_3,time_4)
-
-            val table2 = arrayOf(tomorrow_table_1,tomorrow_table_2,tomorrow_table_3,tomorrow_table_4)
-            val room2 = arrayOf(tomorrow_room_1,tomorrow_room_2,tomorrow_room_3,tomorrow_room_4)
-            val time2 = arrayOf(tomorrow_time_1,tomorrow_time_2,tomorrow_time_3,tomorrow_time_4)
-
+            var expand by remember { mutableStateOf(false) }
 
             Spacer(modifier = Modifier.height(10.dp))
 
@@ -353,8 +365,8 @@ fun TodayScreen() {
                             elevation = CardDefaults.cardElevation(
                                 defaultElevation = 3.dp
                             ),
-                            modifier = Modifier
-                                .size(width = 350.dp, height = 90.dp),
+                            modifier = Modifier.fillMaxWidth()
+                                .padding(horizontal = 15.dp, vertical = 5.dp),
                             shape = MaterialTheme.shapes.medium
 
                         )  {
@@ -376,7 +388,9 @@ fun TodayScreen() {
                     }
                 }
 
-               items(Datum()) { item ->
+
+
+               items(Datum().size) { item ->
                    Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)
                    {
                        Spacer(modifier = Modifier.height(100.dp))
@@ -384,30 +398,29 @@ fun TodayScreen() {
                            elevation = CardDefaults.cardElevation(
                                defaultElevation = 3.dp
                            ),
-                           modifier = Modifier
-                               .size(width = 350.dp, height = 90.dp),
+                           modifier = Modifier.fillMaxWidth()
+                               .padding(horizontal = 15.dp, vertical = 5.dp)
+                               //.size(width = 350.dp, height = 90.dp)
+                               .clickable { expand = !expand },
                            shape = MaterialTheme.shapes.medium
 
                        ) {
                            ListItem(
-                               headlineContent = {  Text(text = table[item]) },
-                               overlineContent = {Text(text = time[item])},
-                               supportingContent = { Text(text = room[item])},
+                               headlineContent = {  Text(text = Datum()[item].name) },
+                               overlineContent = {Text(text = Datum()[item].time)},
+                               supportingContent = { Text(text = Datum()[item].room)},
                                leadingContent = {
                                    Icon(
                                        painterResource(R.drawable.schedule),
                                        contentDescription = "Localized description",
                                    )
-                               },
-                               modifier = Modifier.clickable {
-
                                }
                            )
                        }
                    }
                }
 
-                items(Datum2()) { item ->
+                items(DatumTomorrow().size) { item ->
                     Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)
                     {
                         Spacer(modifier = Modifier.height(100.dp))
@@ -415,15 +428,15 @@ fun TodayScreen() {
                             elevation = CardDefaults.cardElevation(
                                 defaultElevation = 3.dp
                             ),
-                            modifier = Modifier
-                                .size(width = 350.dp, height = 90.dp),
+                            modifier = Modifier.fillMaxWidth()
+                                .padding(horizontal = 15.dp, vertical = 5.dp),
                             shape = MaterialTheme.shapes.medium
 
                         ) {
                             ListItem(
-                                headlineContent = {  Text(text = table2[item]) },
-                                overlineContent = {Text(text = time2[item])},
-                                supportingContent = { Text(text = room2[item])},
+                                headlineContent = {  Text(text = DatumTomorrow()[item].name) },
+                                overlineContent = {Text(text = DatumTomorrow()[item].time)},
+                                supportingContent = { Text(text = DatumTomorrow()[item].room)},
                                 leadingContent = {
                                     Icon(
                                         painterResource(R.drawable.exposure_plus_1),

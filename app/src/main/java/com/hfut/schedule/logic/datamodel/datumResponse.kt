@@ -9,7 +9,6 @@ data class result(val lessonList : List<lessonList>,
 data class lessonList(val courseName : String,
                       val id : String,
                       val suggestScheduleWeekInfo : String,
-                      val suggestScheduleWeeks : List<Int>,
                       val courseTypeName : String)
 
 data class scheduleList(val lessonId: Int,

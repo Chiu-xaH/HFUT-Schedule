@@ -47,6 +47,7 @@ fun NoNetWork() {
                     NavigationBarItemData("1", "课程", painterResource(R.drawable.calendar)),
                     NavigationBarItemData("2","聚焦", painterResource(R.drawable.timeline))
 
+
                 )
                 items.forEach { item ->
                     val route = item.route
@@ -75,9 +76,11 @@ fun NoNetWork() {
         }
     ) { innerPadding ->
         NavHost(navController = navController, startDestination = "1") {
-            composable("1") { NoNet() }
 
+            composable("1") { NoNet() }
             composable("2") { TodayScreen() }
+
+
         }
 
         Column(
