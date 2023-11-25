@@ -29,7 +29,7 @@ import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.activity.LoginActivity
-import com.hfut.schedule.ViewModel.MainViewModel
+import com.hfut.schedule.ui.DynamicColor.DynamicColorViewModel
 import com.hfut.schedule.ui.ComposeUI.PaletteDialogScreen
 
 @SuppressLint("SuspiciousIndentation")
@@ -37,7 +37,7 @@ import com.hfut.schedule.ui.ComposeUI.PaletteDialogScreen
 @Composable
 fun SettingsScreen(showlable : Boolean,
                    showlablechanged: (Boolean) -> Unit,
-                   mainViewModel: MainViewModel,
+                   dynamicColorViewModel: DynamicColorViewModel,
                    dynamicColorEnabled: Boolean,
                    onChangeDynamicColorEnabled: (Boolean) -> Unit) {
 
@@ -48,7 +48,7 @@ fun SettingsScreen(showlable : Boolean,
 
     if (openAlertDialog) {
         PaletteDialogScreen(
-            mainViewModel = mainViewModel,
+            dynamicColorViewModel = dynamicColorViewModel,
             dynamicColorEnabled = dynamicColorEnabled,
             onChangeDynamicColorEnabled = onChangeDynamicColorEnabled,
             onDismissed = { openAlertDialog = false }

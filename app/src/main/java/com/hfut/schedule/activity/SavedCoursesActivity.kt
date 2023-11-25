@@ -16,7 +16,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
-import com.hfut.schedule.ViewModel.MainViewModel
+import androidx.lifecycle.ViewModelProvider
+import com.hfut.schedule.ViewModel.JxglstuViewModel
+import com.hfut.schedule.ui.DynamicColor.DynamicColorViewModel
 import com.hfut.schedule.ui.ComposeUI.NoNetWork
 import com.hfut.schedule.ui.ComposeUI.TransparentSystemBars
 import com.hfut.schedule.ui.theme.DynamicColr
@@ -24,7 +26,8 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class SavedCoursesActivity : ComponentActivity() {
-    private val mainViewModel: MainViewModel by viewModels()
+    private val dynamicColorViewModel: DynamicColorViewModel by viewModels()
+    private val vm by lazy { ViewModelProvider(this).get(JxglstuViewModel::class.java) }
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,7 +36,7 @@ class SavedCoursesActivity : ComponentActivity() {
         setContent {
 
             var dynamicColorEnabled by remember { mutableStateOf(true) }
-            val currentTheme by mainViewModel.currentTheme
+            val currentTheme by dynamicColorViewModel.currentTheme
             DynamicColr( context = applicationContext,
                 currentTheme = currentTheme,
                 dynamicColor = dynamicColorEnabled){
@@ -44,7 +47,7 @@ class SavedCoursesActivity : ComponentActivity() {
                 ) {
                    TransparentSystemBars()
                   //  Text(text = "首页\r\n首页1\r\n首页2\r\n首页3")
-                        NoNetWork()
+                        NoNetWork(vm)
                     //BottomSheetDemo()
                 }
             }

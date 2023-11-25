@@ -2,6 +2,8 @@ package com.hfut.schedule.ui.ComposeUI.BottomBar
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.util.Log
 import android.widget.Toast
@@ -21,7 +23,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -41,9 +45,14 @@ import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.ViewModel.JxglstuViewModel
+import com.hfut.schedule.activity.LoginActivity
 import com.hfut.schedule.logic.GetDate
 import com.hfut.schedule.logic.datamodel.course
 import com.hfut.schedule.logic.datamodel.data
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import org.jsoup.Jsoup
 import java.time.LocalDate
 
@@ -51,7 +60,7 @@ import java.time.LocalDate
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TodayScreen() {
+fun TodayScreen(vm : JxglstuViewModel) {
 
 
     val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
@@ -319,8 +328,12 @@ fun TodayScreen() {
 
     }
 
+    val token = prefs.getString("bearer","")
 
+        if (token  != null && token.contains("AT"))
+            vm.getCard("Bearer $token")
 
+    val card =prefs.getString("card","正在获取")
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -353,10 +366,49 @@ fun TodayScreen() {
             ExamGet()
 
             var expand by remember { mutableStateOf(false) }
-
             Spacer(modifier = Modifier.height(10.dp))
 
+
+
+
+          //  Spacer(modifier = Modifier.height(10.dp))
+
             LazyColumn {
+                item {
+                    Card(
+                        elevation = CardDefaults.cardElevation(
+                            defaultElevation = 3.dp
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 15.dp, vertical = 5.dp),
+                        shape = MaterialTheme.shapes.medium
+
+                    ){
+                        ListItem(
+                            headlineContent = { Text(text = "一卡通余额   ${card} 元") },
+                            leadingContent = {
+                                Icon(
+                                    painterResource(R.drawable.credit_card),
+                                    contentDescription = "Localized description",
+                                )
+                            },
+                            trailingContent={
+                                FilledTonalIconButton(onClick = {
+                                                val it = Intent(Intent.ACTION_DEFAULT, Uri.parse(MyApplication.AlipayURL) )
+                                                it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                                MyApplication.context.startActivity(it)
+                                            }) {
+                                                Icon( painterResource(R.drawable.add),
+                                                    contentDescription = "Localized description",)
+                                            }
+                            },
+
+                            modifier = Modifier.clickable {}
+                        )
+                    }
+                }
+
                 items(ExamGet()) {item ->
 
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
@@ -365,7 +417,8 @@ fun TodayScreen() {
                             elevation = CardDefaults.cardElevation(
                                 defaultElevation = 3.dp
                             ),
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
                                 .padding(horizontal = 15.dp, vertical = 5.dp),
                             shape = MaterialTheme.shapes.medium
 
@@ -398,7 +451,8 @@ fun TodayScreen() {
                            elevation = CardDefaults.cardElevation(
                                defaultElevation = 3.dp
                            ),
-                           modifier = Modifier.fillMaxWidth()
+                           modifier = Modifier
+                               .fillMaxWidth()
                                .padding(horizontal = 15.dp, vertical = 5.dp)
                                //.size(width = 350.dp, height = 90.dp)
                                .clickable { expand = !expand },
@@ -428,7 +482,8 @@ fun TodayScreen() {
                             elevation = CardDefaults.cardElevation(
                                 defaultElevation = 3.dp
                             ),
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
                                 .padding(horizontal = 15.dp, vertical = 5.dp),
                             shape = MaterialTheme.shapes.medium
 
@@ -443,13 +498,14 @@ fun TodayScreen() {
                                         contentDescription = "Localized description",
                                     )
                                 },
-                                modifier = Modifier.clickable {
-
-                                }
+                                modifier = Modifier.clickable {}
                             )
                         }
                     }
                 }
+             item {
+                 Spacer(modifier = Modifier.height(100.dp))
+             }
             }
 
         }

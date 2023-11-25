@@ -43,6 +43,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -60,6 +62,12 @@ import com.hfut.schedule.logic.datamodel.data
 @SuppressLint("SuspiciousIndentation", "CoroutineCreationDuringComposition")
 @Composable
 fun NoNet() {
+
+    var Mon by rememberSaveable { mutableStateOf("") }
+    var Tue by rememberSaveable { mutableStateOf("") }
+    var Wed by rememberSaveable { mutableStateOf("") }
+    var Thur by rememberSaveable { mutableStateOf("") }
+    var Fri by rememberSaveable { mutableStateOf("") }
 
     var table_1_1 by rememberSaveable { mutableStateOf("") }
     var table_1_2 by rememberSaveable { mutableStateOf("") }
@@ -215,7 +223,6 @@ fun NoNet() {
                         //"课程:${id}"+ "\n"+
                         //"时间:${starttime}-${endtime}"+ "\n" +
                       //  "教室:${room}" + "\n"+
-                "日期:${date}" + "  " +
                         "教师:${person}"+ "  "+
                         "周数:${endtime}"+ "  "+
                         "人数:${periods}"+ "  "+
@@ -225,6 +232,7 @@ fun NoNet() {
 
                         if (scheduleList[i].weekIndex == Bianhuaweeks.toInt()) {
                 if (scheduleList[i].weekday == 1) {
+                    Mon = date
                     if (scheduleList[i].startTime == 800) {
                         table_1_1 = text
                         sheet_1_1 = info
@@ -243,6 +251,7 @@ fun NoNet() {
                     }
                 }
                 if (scheduleList[i].weekday == 2) {
+                    Tue = date
                     if (scheduleList[i].startTime == 800) {
                         table_1_2 = text
                         sheet_1_2 = info
@@ -261,6 +270,7 @@ fun NoNet() {
                     }
                 }
                 if (scheduleList[i].weekday == 3) {
+                    Wed = date
                     if (scheduleList[i].startTime == 800) {
                         table_1_3 = text
                         sheet_1_3 = info
@@ -279,6 +289,7 @@ fun NoNet() {
                     }
                 }
                 if (scheduleList[i].weekday == 4) {
+                    Thur = date
                     if (scheduleList[i].startTime == 800) {
                         table_1_4 = text
                         sheet_1_4 = info
@@ -297,6 +308,7 @@ fun NoNet() {
                     }
                 }
                 if (scheduleList[i].weekday == 5) {
+                    Fri = date
                     if (scheduleList[i].startTime == 800) {
                         table_1_5 = text
                         sheet_1_5 = info
@@ -363,6 +375,8 @@ if (json?.contains("result") == true) {
                 arrayOf(sheet_4_1, sheet_4_2, sheet_4_3, sheet_4_4, sheet_4_5)
             )
 
+            val week = arrayOf(Mon,Tue,Wed,Thur,Fri)
+
 
 
             Column{
@@ -379,24 +393,21 @@ if (json?.contains("result") == true) {
 
                 val scale = animateFloatAsState(
                     targetValue = if (isPressed) 0.9f else 1f, // 按下时为0.9，松开时为1
-                    animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy) // 使用弹簧动画
+                    animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
+                    label = "" // 使用弹簧动画
                 )
 
                 val scale2 = animateFloatAsState(
                     targetValue = if (isPressed2) 0.9f else 1f, // 按下时为0.9，松开时为1
-                    animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy) // 使用弹簧动画
+                    animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
+                    label = "" // 使用弹簧动画
                 )
 
                 val scale3 = animateFloatAsState(
                     targetValue = if (isPressed3) 0.9f else 1f, // 按下时为0.9，松开时为1
-                    animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy) // 使用弹簧动画
+                    animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
+                    label = "" // 使用弹簧动画
                 )
-
-
-
-
-
-
 
 
 
@@ -418,11 +429,21 @@ if (json?.contains("result") == true) {
                             Spacer(modifier = Modifier.height(10.dp))
 
                             Text(
-                                text = "    周${chinese[columnIndex]} ",
+                                text = "    周${chinese[columnIndex]}",
                                 textAlign = TextAlign.Center,
                                 fontSize = 15.sp,
-                               // color = MaterialTheme.colorScheme.primary
                             )
+
+                            Spacer(modifier = Modifier.height(1.dp))
+
+                            Text(
+                                text = "     ${week[columnIndex]}",
+                                textAlign = TextAlign.Center,
+                                fontSize = 11.sp,
+                                color = Color.Gray
+                            )
+
+
 
                             LazyColumn(
                                 modifier = Modifier
@@ -430,7 +451,7 @@ if (json?.contains("result") == true) {
                                     .padding(2.dp)
                             ) {
                                 items(4) { rowIndex ->
-                                    Spacer(modifier = Modifier.height(10.dp))
+                                    Spacer(modifier = Modifier.height(8.dp))
 
                                     Card(
                                         elevation = CardDefaults.cardElevation(

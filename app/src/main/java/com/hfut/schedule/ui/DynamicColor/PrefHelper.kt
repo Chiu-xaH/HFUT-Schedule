@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui
+package com.hfut.schedule.ui.DynamicColor
 
 import android.content.Context
 import android.content.SharedPreferences

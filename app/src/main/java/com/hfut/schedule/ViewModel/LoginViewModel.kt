@@ -9,6 +9,8 @@ import com.hfut.schedule.logic.network.api.LoginService
 import com.hfut.schedule.logic.network.ServiceCreator.Login.GetAESKeyServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Login.GetCookieServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Login.LoginServiceCreator
+import com.hfut.schedule.logic.network.ServiceCreator.Login.MyServiceCreator
+import com.hfut.schedule.logic.network.api.MyService
 import okhttp3.ResponseBody
 import org.jsoup.Jsoup
 import retrofit2.Call
@@ -27,6 +29,7 @@ class LoginViewModel : ViewModel() {
     private val api = LoginServiceCreator.create(LoginService::class.java)
     private val api2 = GetCookieServiceCreator.create(LoginService::class.java)
     private val api3 = GetAESKeyServiceCreator.create(LoginService::class.java)
+    private val api4 = MyServiceCreator.create(MyService::class.java)
 
 
     fun login(username : String,password : String,keys : String)  {// 创建一个Call对象，用于发送异步请求
@@ -126,6 +129,18 @@ class LoginViewModel : ViewModel() {
         })
     }
 
+
+    fun My() {
+        val call = api4.my()
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
 
 
 

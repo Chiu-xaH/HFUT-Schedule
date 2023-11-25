@@ -3,6 +3,7 @@ package com.hfut.schedule.ui.ComposeUI.BottomBar
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
@@ -23,7 +24,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -62,37 +67,28 @@ import org.jsoup.Jsoup
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(vm : JxglstuViewModel) {
-    var loading by remember { mutableStateOf(true) }
 
-
-
-
-    if (loading) {
-        LaunchedEffect(Unit) {
-            delay(500)
-           //在此插入课程表的布局，加载完成后显示//在此插入课程表的UI填充操作
-            loading = false
-
-        }
-    }
-    //待开发
-    // 考试安排 //培养方案 //空教室 //一卡通
     val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
 
-    CoroutineScope(Job()).launch {
-
-        delay(500)
-
-           async { vm.getCard() }
-           async { vm.getBorrowBooks() }
-           async { vm.getSubBooks() }
-
-    }
 
 
     val card =prefs.getString("card","正在获取")
     val borrow =prefs.getString("borrow","正在获取")
     val sub =prefs.getString("sub","正在获取")
+
+
+    if (card == "正在获取" && vm.token.value?.contains("AT") == true) {
+        CoroutineScope(Job()).apply {
+            async { vm.getCard("Bearer " + vm.token.value) }
+            async { vm.getBorrowBooks("Bearer " + vm.token.value) }
+            async { vm.getSubBooks("Bearer " + vm.token.value) }
+            async {
+                delay(500)
+
+            }
+        }
+    }
+
 
 
     val sheetState = rememberModalBottomSheetState()
@@ -151,32 +147,6 @@ fun SearchScreen(vm : JxglstuViewModel) {
                 .fillMaxSize()
             //.background()插入背景
         ) {
-
-
-            AnimatedVisibility(
-                visible = loading,
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Column() { CircularProgressIndicator() }
-
-                }
-            }//加载动画居中，3s后消失
-
-            AnimatedVisibility(
-                visible = !loading,
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    // Spacer(modifier = Modifier.height(15.dp))
-
                     ListItem(
                         headlineContent = { Text(text = "成绩单") },
                         leadingContent = {
@@ -250,7 +220,7 @@ fun SearchScreen(vm : JxglstuViewModel) {
                         },
                         modifier = Modifier.clickable {
                             showBottomSheet2 = true
-                            vm.searchEmptyRoom("XC001")
+                            vm.searchEmptyRoom("XC001",)
                             vm.searchEmptyRoom("XC002")
                            // view = "待开发"
 
@@ -267,6 +237,16 @@ fun SearchScreen(vm : JxglstuViewModel) {
                                 painterResource(R.drawable.credit_card),
                                 contentDescription = "Localized description",
                             )
+                        },
+                        trailingContent={
+                            FilledTonalIconButton(onClick = {
+                                val it = Intent(Intent.ACTION_DEFAULT, Uri.parse(MyApplication.AlipayURL) )
+                                it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                MyApplication.context.startActivity(it)
+                            }) {
+                                Icon( painterResource(R.drawable.add),
+                                    contentDescription = "Localized description",)
+                            }
                         },
                         modifier = Modifier.clickable {
 
@@ -333,10 +313,6 @@ fun SearchScreen(vm : JxglstuViewModel) {
                             MyApplication.context.startActivity(it)
                         }
                     )
-
-
-
-
 
 
                     if (showBottomSheet) {
@@ -430,9 +406,6 @@ fun SearchScreen(vm : JxglstuViewModel) {
                            Person()
                         }
                     }
-
-                }
-            }
         }
     }
 

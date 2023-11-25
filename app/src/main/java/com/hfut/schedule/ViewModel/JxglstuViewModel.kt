@@ -225,7 +225,11 @@ class JxglstuViewModel : ViewModel() {
                //     data?.let { Log.d("JSON", it.toString()) }
                     if (data.msg == "success") {
                         token.value = data.data.access_token
-                        Log.d("token",token.value.toString())
+                        val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
+                        if(sp.getString("bearer","") != data.data.access_token){ sp.edit().putString("bearer", data.data.access_token).apply() }
+
+
+                       // Log.d("token",token.value.toString())
                     }
                 }
 
@@ -241,9 +245,9 @@ class JxglstuViewModel : ViewModel() {
     }
 
 
-    fun getCard()  {
+    fun getCard(token : String)  {
 
-        val call = api4.getCard("Bearer " + token.value)
+        val call = api4.getCard(token)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -284,19 +288,24 @@ class JxglstuViewModel : ViewModel() {
 
 
     }
-    fun getBorrowBooks()  {
+    fun getBorrowBooks(token : String)  {
 
-        val call = api4.getBorrowBooks("Bearer " + token.value)
+        val call = api4.getBorrowBooks(token)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 val json = response.body()?.string()
-                val data = Gson().fromJson(json, BorrowBooksResponse::class.java)
-                val code = data.msg
-                if (code == "success") {
-                    val borrow = data.data.toString()
+                if (json.toString().contains("success")) {
+                    val data = Gson().fromJson(json, BorrowBooksResponse::class.java)
+
+                        val borrow = data.data.toString()
+                        val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
+                        if(sp.getString("borrow","") !=borrow ){ sp.edit().putString("borrow",borrow).apply() }
+
+                }
+                 else {
                     val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-                    if(sp.getString("borrow","") !=borrow ){ sp.edit().putString("borrow",borrow).apply() }
+                     sp.edit().putString("borrow","未获取到").apply()
                 }
             }
 
@@ -309,19 +318,24 @@ class JxglstuViewModel : ViewModel() {
 
 
     }
-    fun getSubBooks()  {
+    fun getSubBooks(token : String)  {
 
-        val call = api4.getSubBooks("Bearer " + token.value)
+        val call = api4.getSubBooks(token)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 val json = response.body()?.string()
-                val data = Gson().fromJson(json,SubBooksResponse::class.java)
-                val code = data.msg
-                if (code == "success") {
-                    val sub = data.data.toString()
+                if (json.toString().contains("success")) {
+                    val data = Gson().fromJson(json,SubBooksResponse::class.java)
+
+                        val sub = data.data.toString()
+                        val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
+                        if(sp.getString("sub","") !=sub ){ sp.edit().putString("sub", sub).apply() }
+
+                }
+                else {
                     val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-                    if(sp.getString("sub","") !=sub ){ sp.edit().putString("sub", sub).apply() }
+                    sp.edit().putString("borrow","未获取到").apply()
                 }
             }
 
@@ -373,6 +387,35 @@ class JxglstuViewModel : ViewModel() {
                 val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
                 if(sp.getString("emptyjson","") !=emptyjson ){ sp.edit().putString("emptyjson", emptyjson).apply() }
             //    json?.let { Log.d("空教室", it) }
+                //val data = Gson().fromJson(json, BorrowBooksResponse::class.java)
+                //  val code = data.msg
+                //  if (code == "success") {
+                //     val borrow = data.data.toString()
+                //    val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
+                //    if(sp.getString("borrow","") !=borrow ){ sp.edit().putString("borrow",borrow).apply() }
+                //  }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                //   Log.d("VM","失败")
+                //   code.value = "XXX"
+                t.printStackTrace()
+            }
+        })
+
+
+    }
+
+    fun searchEmptyRoom2(building_code : String,token : String)  {
+
+        val call = api4.searchEmptyRoom(building_code,token)
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                val emptyjson = response.body()?.string()
+                val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
+                if(sp.getString("emptyjson","") !=emptyjson ){ sp.edit().putString("emptyjson", emptyjson).apply() }
+                //    json?.let { Log.d("空教室", it) }
                 //val data = Gson().fromJson(json, BorrowBooksResponse::class.java)
                 //  val code = data.msg
                 //  if (code == "success") {

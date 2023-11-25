@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.os.Looper
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -56,6 +57,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -83,7 +85,7 @@ import com.hfut.schedule.ui.ComposeUI.BottomBar.SettingsScreen
 import com.hfut.schedule.ui.ComposeUI.TransparentSystemBars
 import com.hfut.schedule.ViewModel.JxglstuViewModel
 import com.hfut.schedule.ui.ComposeUI.BottomBar.TodayScreen
-import com.hfut.schedule.ViewModel.MainViewModel
+import com.hfut.schedule.ui.DynamicColor.DynamicColorViewModel
 import com.hfut.schedule.ui.theme.DynamicColr
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -94,7 +96,7 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class LoginSuccessAcitivity : ComponentActivity() {
-    private val mainViewModel: MainViewModel by viewModels()
+    private val dynamicColorViewModel: DynamicColorViewModel by viewModels()
 
     private val vm by lazy { ViewModelProvider(this).get(JxglstuViewModel::class.java) }
     @RequiresApi(Build.VERSION_CODES.O)
@@ -104,7 +106,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             var dynamicColorEnabled by remember { mutableStateOf(true) }
-            val currentTheme by mainViewModel.currentTheme
+            val currentTheme by dynamicColorViewModel.currentTheme
             DynamicColr( context = applicationContext,
                 currentTheme = currentTheme,
                 dynamicColor = dynamicColorEnabled){
@@ -191,11 +193,11 @@ class LoginSuccessAcitivity : ComponentActivity() {
                 composable("settings") { SettingsScreen(
                     showlable,
                     showlablechanged = {showlablech -> showlable = showlablech},
-                    mainViewModel,
+                    dynamicColorViewModel,
                     dynamicColorEnabled,
                     onChangeDynamicColorEnabled
                 ) }
-                composable("today") {TodayScreen()}
+                composable("today") {TodayScreen(vm)}
             }
 
             Column(
@@ -215,6 +217,12 @@ class LoginSuccessAcitivity : ComponentActivity() {
     fun CalendarScreen(isEnabled:Boolean,enabledchanged : (Boolean) -> Unit) {
        // val navController = rememberNavController()
         var loading by remember { mutableStateOf(true) }
+
+        var Mon by rememberSaveable { mutableStateOf("") }
+        var Tue by rememberSaveable { mutableStateOf("") }
+        var Wed by rememberSaveable { mutableStateOf("") }
+        var Thur by rememberSaveable { mutableStateOf("") }
+        var Fri by rememberSaveable { mutableStateOf("") }
 
         var table_1_1 by rememberSaveable { mutableStateOf("") }
         var table_1_2 by rememberSaveable { mutableStateOf("") }
@@ -373,6 +381,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
 
                 if (scheduleList[i].weekIndex == Bianhuaweeks.toInt()) {
                     if (scheduleList[i].weekday == 1) {
+                        Mon = date
                         if (scheduleList[i].startTime == 800) {
                             table_1_1 = text
                             sheet_1_1 = info
@@ -391,6 +400,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
                         }
                     }
                     if (scheduleList[i].weekday == 2) {
+                        Tue = date
                         if (scheduleList[i].startTime == 800) {
                             table_1_2 = text
                             sheet_1_2 = info
@@ -409,6 +419,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
                         }
                     }
                     if (scheduleList[i].weekday == 3) {
+                        Wed = date
                         if (scheduleList[i].startTime == 800) {
                             table_1_3 = text
                             sheet_1_3 = info
@@ -427,6 +438,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
                         }
                     }
                     if (scheduleList[i].weekday == 4) {
+                        Thur = date
                         if (scheduleList[i].startTime == 800) {
                             table_1_4 = text
                             sheet_1_4 = info
@@ -445,6 +457,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
                         }
                     }
                     if (scheduleList[i].weekday == 5) {
+                        Fri = date
                         if (scheduleList[i].startTime == 800) {
                             table_1_5 = text
                             sheet_1_5 = info
@@ -484,16 +497,33 @@ class LoginSuccessAcitivity : ComponentActivity() {
             launch {
 
                 launch {
-                    async { vm.OneGoto(ONE + ";" + TGC) }.await()
-                    async { vm.getToken() }.await()
-                   launch {
-                       // async { vm.getCard() }
-                       // async { vm.getBorrowBooks() }
-                       // async { vm.getSubBooks() }
+                    val token = prefs.getString("bearer","")
+                   // token?.let { Log.d("token", it) }
+                    if (token != null) {
+                        if (token.contains("AT")) {
+                            async { vm.getCard("Bearer $token") }
+                            async { vm.getSubBooks("Bearer $token") }
+                            async { vm.getBorrowBooks("Bearer $token") }
+
+                        } else {
+                            async { vm.OneGoto(ONE + ";" + TGC) }.await()
+                            async {
+                                delay(500)
+                                vm.getToken()
+                            }.await()
+                            launch {
+                                delay(2900)
+                                async { vm.getCard("Bearer " + vm.token.value) }
+                                async { vm.getBorrowBooks("Bearer " + vm.token.value) }
+                                async { vm.getSubBooks("Bearer " + vm.token.value) }
+                            }
+
+                        }
                     }
-                 //   async { vm.getCard() }
-                   // async { vm.getBorrowBooks() }
-                    //async { vm.getSubBooks() }
+
+
+
+
 
                 }
 
@@ -546,6 +576,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
 
         }
 
+        val week = arrayOf(Mon,Tue,Wed,Thur,Fri)
 
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -609,17 +640,20 @@ class LoginSuccessAcitivity : ComponentActivity() {
 
                         val scale = animateFloatAsState(
                             targetValue = if (isPressed) 0.9f else 1f, // 按下时为0.9，松开时为1
-                            animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy) // 使用弹簧动画
+                            animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
+                            label = "" // 使用弹簧动画
                         )
 
                         val scale2 = animateFloatAsState(
                             targetValue = if (isPressed2) 0.9f else 1f, // 按下时为0.9，松开时为1
-                            animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy) // 使用弹簧动画
+                            animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
+                            label = "" // 使用弹簧动画
                         )
 
                         val scale3 = animateFloatAsState(
                             targetValue = if (isPressed3) 0.9f else 1f, // 按下时为0.9，松开时为1
-                            animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy) // 使用弹簧动画
+                            animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
+                            label = "" // 使用弹簧动画
                         )
 
                         LazyRow(
@@ -640,10 +674,21 @@ class LoginSuccessAcitivity : ComponentActivity() {
                                     Spacer(modifier = Modifier.height(10.dp))
 
                                     Text(
-                                        text = "    周${chinese[columnIndex]} ",
+                                        text = "    周${chinese[columnIndex]}",
                                         textAlign = TextAlign.Center,
                                         fontSize = 15.sp,
                                     )
+
+                                    Spacer(modifier = Modifier.height(1.dp))
+
+                                    Text(
+                                        text = "     ${week[columnIndex]}",
+                                        textAlign = TextAlign.Center,
+                                        fontSize = 11.sp,
+                                        color = Color.Gray
+                                    )
+
+
 
                                     LazyColumn(
                                         modifier = Modifier
@@ -651,7 +696,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
                                             .padding(2.dp)
                                     ) {
                                         items(4) { rowIndex ->
-                                            Spacer(modifier = Modifier.height(10.dp))
+                                            Spacer(modifier = Modifier.height(8.dp))
 
                                             Card(
                                                 elevation = CardDefaults.cardElevation(

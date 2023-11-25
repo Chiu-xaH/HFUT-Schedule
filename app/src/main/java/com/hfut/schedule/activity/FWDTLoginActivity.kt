@@ -15,21 +15,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
-import com.hfut.schedule.ViewModel.MainViewModel
+import com.hfut.schedule.ui.DynamicColor.DynamicColorViewModel
 import com.hfut.schedule.ui.ComposeUI.TransparentSystemBars
 import com.hfut.schedule.ui.theme.DynamicColr
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class FWDTLoginActivity : ComponentActivity() {
-    private val mainViewModel: MainViewModel by viewModels()
+    private val dynamicColorViewModel: DynamicColorViewModel by viewModels()
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             var dynamicColorEnabled by remember { mutableStateOf(true) }
-            val currentTheme by mainViewModel.currentTheme
+            val currentTheme by dynamicColorViewModel.currentTheme
             DynamicColr( context = applicationContext,
                 currentTheme = currentTheme,
                 dynamicColor = dynamicColorEnabled){

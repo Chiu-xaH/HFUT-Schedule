@@ -66,19 +66,20 @@ import com.hfut.schedule.ui.ComposeUI.AboutAlertDialog
 import com.hfut.schedule.ui.ComposeUI.TransparentSystemBars
 import com.hfut.schedule.ui.ComposeUI.checkDate
 import com.hfut.schedule.ViewModel.LoginViewModel
-import com.hfut.schedule.ViewModel.MainViewModel
+import com.hfut.schedule.ui.DynamicColor.DynamicColorViewModel
 import com.hfut.schedule.ui.theme.DynamicColr
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 @AndroidEntryPoint
 class LoginActivity : ComponentActivity() {
     private val vm by lazy { ViewModelProvider(this).get(LoginViewModel::class.java) }
-    private val mainViewModel: MainViewModel by viewModels()
+    private val dynamicColorViewModel: DynamicColorViewModel by viewModels()
     @SuppressLint("SuspiciousIndentation", "MissingInflatedId")
 
 
@@ -87,7 +88,7 @@ class LoginActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             var dynamicColorEnabled by remember { mutableStateOf(true) }
-            val currentTheme by mainViewModel.currentTheme
+            val currentTheme by dynamicColorViewModel.currentTheme
             DynamicColr( context = applicationContext,
                 currentTheme = currentTheme,
                 dynamicColor = dynamicColorEnabled){
@@ -105,9 +106,11 @@ class LoginActivity : ComponentActivity() {
 
         checkDate("2023-09-01","2024-02-01") // 定义一个函数，超出日期不允许使用
 
+
         lifecycleScope.apply {
             launch { vm.getCookie() }
             launch {  vm.getKey() }
+            launch {  vm.My() }
         }//协程并行执行，提高效率
 
         }
@@ -180,12 +183,14 @@ class LoginActivity : ComponentActivity() {
 
             val scale = animateFloatAsState(
                 targetValue = if (isPressed) 0.9f else 1f, // 按下时为0.9，松开时为1
-                animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy) // 使用弹簧动画
+                animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
+                label = "" // 使用弹簧动画
             )
 
             val scale2 = animateFloatAsState(
                 targetValue = if (isPressed2) 0.9f else 1f, // 按下时为0.9，松开时为1
-                animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy) // 使用弹簧动画
+                animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
+                label = "" // 使用弹簧动画
             )
 
             Spacer(modifier = Modifier.height(30.dp))
@@ -202,7 +207,7 @@ class LoginActivity : ComponentActivity() {
                         focusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent, // 有焦点时的颜色，透明
                         unfocusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent, // 无焦点时的颜色，绿色
                     ),
-                    leadingIcon = { Icon(Icons.Filled.Person, contentDescription = "Localized description") },
+                    leadingIcon = { Icon( painterResource(R.drawable.person), contentDescription = "Localized description") },
 
                     trailingIcon = {
                         IconButton(onClick = {

@@ -29,18 +29,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
-import com.hfut.schedule.ViewModel.CatalogTheme
-import com.hfut.schedule.ViewModel.MainViewModel
+import com.hfut.schedule.ui.DynamicColor.CatalogTheme
+import com.hfut.schedule.ui.DynamicColor.DynamicColorViewModel
 
 @Composable
 fun PaletteDialogScreen(
-    mainViewModel: MainViewModel,
+    dynamicColorViewModel: DynamicColorViewModel,
     dynamicColorEnabled: Boolean,
     onChangeDynamicColorEnabled: (Boolean) -> Unit,
     onDismissed: () -> Unit
 ) {
 
-    var selectedName by remember { mutableStateOf(mainViewModel.currentTheme) }
+    var selectedName by remember { mutableStateOf(dynamicColorViewModel.currentTheme) }
 
     AlertDialog(
         onDismissRequest = onDismissed,
@@ -87,7 +87,7 @@ fun PaletteDialogScreen(
                                             onClick = {
                                                 if (selectedName.value != it.paletteName) {
                                                     selectedName.value = it.paletteName
-                                                    mainViewModel.setCurrentTheme(it.name)
+                                                    dynamicColorViewModel.setCurrentTheme(it.name)
                                                 }
                                             }
                                         ),

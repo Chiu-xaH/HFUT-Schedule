@@ -15,9 +15,9 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import com.hfut.schedule.ui.PrefHelper
-import com.hfut.schedule.ViewModel.CatalogTheme
-import com.hfut.schedule.ViewModel.DEFAULT_THEME
+import com.hfut.schedule.MyApplication.Companion.DEFAULT_THEME
+import com.hfut.schedule.ui.DynamicColor.PrefHelper
+import com.hfut.schedule.ui.DynamicColor.CatalogTheme
 import com.hfut.schedule.ui.theme.blue.BlueDarkColors
 import com.hfut.schedule.ui.theme.blue.BlueLightColors
 import com.hfut.schedule.ui.theme.deeporange.DeepOrangeDarkColors
