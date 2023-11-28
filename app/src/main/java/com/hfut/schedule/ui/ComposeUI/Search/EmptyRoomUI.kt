@@ -1,7 +1,6 @@
-package com.hfut.schedule.ui.ComposeUI
+package com.hfut.schedule.ui.ComposeUI.Search
 
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,12 +13,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -37,13 +33,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.ViewModel.JxglstuViewModel
-import com.hfut.schedule.logic.GetDate
 import com.hfut.schedule.logic.datamodel.EmptyRoomResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -161,7 +155,9 @@ fun emptyRoomUI(vm : JxglstuViewModel) {
                     onClick = {
                         selected5 = !selected5
                         if (selected5) {
-                        vm.searchEmptyRoom("XC002")
+                            val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
+                            val token = prefs.getString("bearer","")
+                            token?.let { vm.searchEmptyRoom("XC001", it) }
                         CoroutineScope(Job()).launch {
                             delay(500)
                             search()
@@ -188,7 +184,9 @@ fun emptyRoomUI(vm : JxglstuViewModel) {
                     onClick = {
                         selected4 = !selected4
                         if (selected4) {
-                        vm.searchEmptyRoom("XC001")
+                            val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
+                            val token = prefs.getString("bearer","")
+                            token?.let { vm.searchEmptyRoom("XC001", it) }
                         CoroutineScope(Job()).launch {
                             delay(500)
                             search() }

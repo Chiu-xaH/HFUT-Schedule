@@ -2,16 +2,8 @@ package com.hfut.schedule.ui.ComposeUI.BottomBar
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import android.util.Log
-import android.widget.Toast
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,14 +13,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledIconButton
-import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -38,29 +24,27 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.JxglstuViewModel
-import com.hfut.schedule.activity.FWDTLoginActivity
-import com.hfut.schedule.activity.LoginSuccessAcitivity
-import com.hfut.schedule.ui.ComposeUI.Person
-import com.hfut.schedule.ui.ComposeUI.emptyRoomUI
+import com.hfut.schedule.ui.ComposeUI.Search.FWDT
+import com.hfut.schedule.ui.ComposeUI.Search.Library
+import com.hfut.schedule.ui.ComposeUI.Search.Person
+import com.hfut.schedule.ui.ComposeUI.Search.SchoolCard
+import com.hfut.schedule.ui.ComposeUI.Search.emptyRoomUI
+
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.jsoup.Jsoup
 
 @SuppressLint("CoroutineCreationDuringComposition")
@@ -70,14 +54,16 @@ fun SearchScreen(vm : JxglstuViewModel) {
 
     val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
 
-
-
     val card =prefs.getString("card","正在获取")
     val borrow =prefs.getString("borrow","正在获取")
     val sub =prefs.getString("sub","正在获取")
 
+//解析图书数据//////////////////////////////////////////////////////////////////
 
-    if (card == "正在获取" && vm.token.value?.contains("AT") == true) {
+
+  /////////////////////////////////////////////////////////////////@#$%^&*()
+
+    if (card == "请登录刷新" && vm.token.value?.contains("AT") == true) {
         CoroutineScope(Job()).apply {
             async { vm.getCard("Bearer " + vm.token.value) }
             async { vm.getBorrowBooks("Bearer " + vm.token.value) }
@@ -90,22 +76,7 @@ fun SearchScreen(vm : JxglstuViewModel) {
     }
 
 
-
-    val sheetState = rememberModalBottomSheetState()
-    var showBottomSheet by remember { mutableStateOf(false) }
-
     var view by rememberSaveable { mutableStateOf("") }
-
-    val sheetState2 = rememberModalBottomSheetState()
-    var showBottomSheet2 by remember { mutableStateOf(false) }
-
-
-    val sheetState3 = rememberModalBottomSheetState()
-    var showBottomSheet3 by remember { mutableStateOf(false) }
-
-    val sheetState4 = rememberModalBottomSheetState()
-    var showBottomSheet4 by remember { mutableStateOf(false) }
-
 
     fun ExamGet() : List<Map<String,String>>{
         //考试JSON解析
@@ -147,7 +118,11 @@ fun SearchScreen(vm : JxglstuViewModel) {
                 .fillMaxSize()
             //.background()插入背景
         ) {
-                    ListItem(
+/////////////////////////////////////////////////////////////////////////////////////
+            val sheetState_Grade = rememberModalBottomSheetState()
+            var showBottomSheet_Grade by remember { mutableStateOf(false) }
+
+            ListItem(
                         headlineContent = { Text(text = "成绩单") },
                         leadingContent = {
                             Icon(
@@ -157,11 +132,35 @@ fun SearchScreen(vm : JxglstuViewModel) {
                         },
                         modifier = Modifier.clickable {
                             val grade = prefs.getString("grade", "")
-                            showBottomSheet = true
+                            showBottomSheet_Grade = true
                             view = "空"
                         }
                     )
 
+
+            if (showBottomSheet_Grade ) {
+                ModalBottomSheet(
+                    onDismissRequest = {
+                        showBottomSheet_Grade = false
+                    },
+                    sheetState = sheetState_Grade
+                ) {
+                    Column() {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(text = "暂未开发")
+                        }
+                        Spacer(modifier = Modifier.height(20.dp))
+                    }
+
+
+                }
+            }
+//////////////////////////////////////////////////////////////////////////////////
+            val sheetState_Exam = rememberModalBottomSheetState()
+            var showBottomSheet_Exam by remember { mutableStateOf(false) }
                     ListItem(
                         headlineContent = { Text(text = "考试查询") },
                         leadingContent = {
@@ -172,16 +171,56 @@ fun SearchScreen(vm : JxglstuViewModel) {
                         },
                         modifier = Modifier.clickable {
 
-                            showBottomSheet3 = true
+                            showBottomSheet_Exam = true
 
                          ExamGet()
                         }
                     )
 
+            if (showBottomSheet_Exam) {
+
+                ModalBottomSheet(
+                    onDismissRequest = {
+                        showBottomSheet_Exam = false
+                    },
+                    sheetState = sheetState_Exam
+                ) {
+                    LazyColumn {
+                        items(ExamGet()) {item ->
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Column() {
+                                    ListItem(
+                                        headlineContent = {  Text(text = "${item["课程名称"]}") },
+                                        overlineContent = {Text(text = "${item["日期时间"]}")},
+                                        supportingContent = { Text(text = "${item["考场"]}")},
+                                        leadingContent = {
+                                            Icon(
+                                                painterResource(R.drawable.schedule),
+                                                contentDescription = "Localized description",
+                                            )
+                                        },
+                                        modifier = Modifier.clickable {
+
+                                        }
+                                    )
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+////////////////////////////////////////////////////////////////////////////////
+            val sheetState_Program = rememberModalBottomSheetState()
+            var showBottomSheet_Program by remember { mutableStateOf(false) }
 
 
-
-                    ListItem(
+            ListItem(
                         headlineContent = { Text(text = "培养方案") },
                         leadingContent = {
                             Icon(
@@ -191,13 +230,39 @@ fun SearchScreen(vm : JxglstuViewModel) {
                         },
                         modifier = Modifier.clickable {
                             val program = prefs.getString("program", " <h2 class=\"info-title\"><i style=\"color: #ffa200;\" class=\"fa fa-warning highlight\"></i>未获取到</h2>")
-                            showBottomSheet = true
+                            showBottomSheet_Program = true
                             val doc = Jsoup.parse(program)
                             view = doc.select("h2.info-title").text()
                         }
                     )
 
-                    ListItem(
+
+
+            if (showBottomSheet_Program ) {
+                ModalBottomSheet(
+                    onDismissRequest = {
+                        showBottomSheet_Program = false
+                    },
+                    sheetState = sheetState_Program
+                ) {
+                    Column() {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(text = view)
+                        }
+                        Spacer(modifier = Modifier.height(20.dp))
+                    }
+
+
+                }
+            }
+/////////////////////////////////////////////////////////////////////////////////////
+            val sheetState_Person = rememberModalBottomSheetState()
+            var showBottomSheet_Person by remember { mutableStateOf(false) }
+
+            ListItem(
                         headlineContent = { Text(text = "个人信息") },
                         leadingContent = {
                             Icon(
@@ -205,10 +270,23 @@ fun SearchScreen(vm : JxglstuViewModel) {
                                 contentDescription = "Localized description",
                             )
                         },
-                        modifier = Modifier.clickable {
-                            showBottomSheet4 = true
-                        }
+                        modifier = Modifier.clickable { showBottomSheet_Person = true }
                     )
+
+            if (showBottomSheet_Person) {
+
+                ModalBottomSheet(
+                    onDismissRequest = {
+                        showBottomSheet_Person = false
+                    },
+                    sheetState = sheetState_Person
+                ) {
+                    Person()
+                }
+            }
+///////////////////////////////////////////////////////////////空教室//////////////////
+            val sheetState_EmptyRoom = rememberModalBottomSheetState()
+            var showBottomSheet_EmptyRoom by remember { mutableStateOf(false) }
 
                     ListItem(
                         headlineContent = { Text(text = "空教室") },
@@ -219,54 +297,47 @@ fun SearchScreen(vm : JxglstuViewModel) {
                             )
                         },
                         modifier = Modifier.clickable {
-                            showBottomSheet2 = true
-                            vm.searchEmptyRoom("XC001",)
-                            vm.searchEmptyRoom("XC002")
+                            val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
+                            val token = prefs.getString("bearer","")
+                            showBottomSheet_EmptyRoom = true
+                            token?.let { vm.searchEmptyRoom("XC001", it) }
+                            token?.let { vm.searchEmptyRoom("XC002", it) }
                            // view = "待开发"
 
 
                         }
                     )
 
-
-
-                    ListItem(
-                        headlineContent = { Text(text = "一卡通余额   ${card} 元") },
-                        leadingContent = {
-                            Icon(
-                                painterResource(R.drawable.credit_card),
-                                contentDescription = "Localized description",
-                            )
-                        },
-                        trailingContent={
-                            FilledTonalIconButton(onClick = {
-                                val it = Intent(Intent.ACTION_DEFAULT, Uri.parse(MyApplication.AlipayURL) )
-                                it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                MyApplication.context.startActivity(it)
-                            }) {
-                                Icon( painterResource(R.drawable.add),
-                                    contentDescription = "Localized description",)
-                            }
-                        },
-                        modifier = Modifier.clickable {
-
+            if (showBottomSheet_EmptyRoom) {
+                ModalBottomSheet(
+                    onDismissRequest = {
+                        showBottomSheet_EmptyRoom = false
+                    },
+                    sheetState = sheetState_EmptyRoom
+                ) {
+                    Column() {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            emptyRoomUI(vm)
                         }
-                    )
+                        Spacer(modifier = Modifier.height(20.dp))
+                    }
 
 
+                }
+            }
 
-                    ListItem(
-                        headlineContent = { Text(text = "图书服务   借阅 ${borrow} 本   预约 ${sub} 本") },
-                        leadingContent = {
-                            Icon(
-                                painterResource(R.drawable.book),
-                                contentDescription = "Localized description",
-                            )
-                        },
-                        modifier = Modifier.clickable {
+///////////////////////////////////////////////////////////////一卡通//////////////////
 
-                        }
-                    )
+                    SchoolCard()
+
+/////////////////////////////////////////////////////////////////////////////////////////
+          Library(vm)
+//////////////////////////////////////////////////////////////////////////////////////
+            val sheetState_Total = rememberModalBottomSheetState()
+            var showBottomSheet_Total by remember { mutableStateOf(false) }
 
                     ListItem(
                         headlineContent = { Text(text = "本学期课程") },
@@ -276,136 +347,33 @@ fun SearchScreen(vm : JxglstuViewModel) {
                                 contentDescription = "Localized description",
                             )
                         },
-                        modifier = Modifier.clickable {
-                            showBottomSheet = true
-                            view = "暂未开发"
-                        }
+                        modifier = Modifier.clickable { showBottomSheet_Total = true }
                     )
 
-                    ListItem(
-                        headlineContent = { Text(text = "全校课表查询") },
-                        leadingContent = {
-                            Icon(
-                                painterResource(R.drawable.travel_explore),
-                                contentDescription = "Localized description",
-                            )
-                        },
-                        modifier = Modifier.clickable {
-                            Toast.makeText(MyApplication.context, "暂未开发", Toast.LENGTH_SHORT)
-                                .show()
-                        }
-                    )
-
-                    ListItem(
-                        headlineContent = { Text(text = "费用查询") },
-                        leadingContent = {
-                            Icon(
-                                painterResource(R.drawable.redeem),
-                                contentDescription = "Localized description",
-                            )
-                        },
-                        modifier = Modifier.clickable {
-                            Toast.makeText(MyApplication.context, "暂未开发", Toast.LENGTH_SHORT)
-                                .show()
-                            val it = Intent(MyApplication.context, FWDTLoginActivity::class.java).apply {
-                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            }
-                            MyApplication.context.startActivity(it)
-                        }
-                    )
-
-
-                    if (showBottomSheet) {
-                        ModalBottomSheet(
-                            onDismissRequest = {
-                                showBottomSheet = false
-                            },
-                            sheetState = sheetState
+            if (showBottomSheet_Total) {
+                ModalBottomSheet(
+                    onDismissRequest = {
+                        showBottomSheet_Total = false
+                    },
+                    sheetState = sheetState_Total
+                ) {
+                    Column() {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center
                         ) {
-                            Column() {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.Center
-                                ) {
-                                    Text(text = view)
-                                }
-                                Spacer(modifier = Modifier.height(20.dp))
-                            }
-
-
+                            Text(text = "暂未开发")
                         }
-                    }
-                    if (showBottomSheet2) {
-                        ModalBottomSheet(
-                            onDismissRequest = {
-                                showBottomSheet2 = false
-                            },
-                            sheetState = sheetState2
-                        ) {
-                            Column() {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.Center
-                                ) {
-                                    emptyRoomUI(vm)
-                                }
-                                Spacer(modifier = Modifier.height(20.dp))
-                            }
-
-
-                        }
-                    }
-                    if (showBottomSheet3) {
-
-                        ModalBottomSheet(
-                            onDismissRequest = {
-                                showBottomSheet3 = false
-                            },
-                            sheetState = sheetState3
-                        ) {
-                           LazyColumn {
-                               items(ExamGet()) {item ->
-
-                                   Row(
-                                       modifier = Modifier.fillMaxWidth(),
-                                       horizontalArrangement = Arrangement.Center
-                                   ) {
-                                       Column() {
-                                           ListItem(
-                                               headlineContent = {  Text(text = "${item["课程名称"]}") },
-                                               overlineContent = {Text(text = "${item["日期时间"]}")},
-                                               supportingContent = { Text(text = "${item["考场"]}")},
-                                               leadingContent = {
-                                                   Icon(
-                                                       painterResource(R.drawable.schedule),
-                                                       contentDescription = "Localized description",
-                                                   )
-                                               },
-                                               modifier = Modifier.clickable {
-
-                                               }
-                                           )
-
-                                       }
-                                   }
-                               }
-                           }
-                        }
+                        Spacer(modifier = Modifier.height(20.dp))
                     }
 
 
+                }
+            }
 
-                    if (showBottomSheet4) {
-
-                        ModalBottomSheet(
-                            onDismissRequest = {
-                                showBottomSheet4 = false
-                            },
-                            sheetState = sheetState4
-                        ) {
-                           Person()
-                        }
-                    }
+////////////////////////////////////////////////////////////////////////////////
+           FWDT()
+//////////////////////////////////////////////////////////////////////////////////
         }
     }
 

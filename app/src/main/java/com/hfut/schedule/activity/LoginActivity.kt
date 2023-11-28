@@ -25,16 +25,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -42,6 +39,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -62,17 +60,16 @@ import com.hfut.schedule.MyApplication
 import com.hfut.schedule.logic.AESEncrypt
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.SharePrefs.prefs_key
-import com.hfut.schedule.ui.ComposeUI.AboutAlertDialog
 import com.hfut.schedule.ui.ComposeUI.TransparentSystemBars
 import com.hfut.schedule.ui.ComposeUI.checkDate
 import com.hfut.schedule.ViewModel.LoginViewModel
+import com.hfut.schedule.ui.ComposeUI.Settings.FirstCube
 import com.hfut.schedule.ui.DynamicColor.DynamicColorViewModel
 import com.hfut.schedule.ui.theme.DynamicColr
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -87,7 +84,11 @@ class LoginActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
-            var dynamicColorEnabled by remember { mutableStateOf(true) }
+            val prefs = getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
+            val dyswitch = prefs.getBoolean("dyswitch",true)
+            var dynamicColorEnabled by remember { mutableStateOf(dyswitch) }
+
+
             val currentTheme by dynamicColorViewModel.currentTheme
             DynamicColr( context = applicationContext,
                 currentTheme = currentTheme,
@@ -98,7 +99,11 @@ class LoginActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     TransparentSystemBars()
-                   LoginUI(vm)
+                   LoginUI(vm,
+                       dynamicColorEnabled = dynamicColorEnabled,
+                       dynamicColorViewModel = dynamicColorViewModel,
+                       onChangeDynamicColorEnabled = { dynamicColorEnabledch -> dynamicColorEnabled = dynamicColorEnabledch },
+                      )
                    // test()
                 }
             }
@@ -118,16 +123,30 @@ class LoginActivity : ComponentActivity() {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    fun LoginUI(vm : LoginViewModel) {
-        val openAlertDialog = remember { mutableStateOf(false) }
-        if (openAlertDialog.value) {
-            AboutAlertDialog(
-                onDismissRequest = { openAlertDialog.value = false },
-                onConfirmation = { openAlertDialog.value = false },
-                dialogTitle = "使用注意",
-                dialogText = "连接Host失败是偶然响应问题,更换网络重进或再点登录\n\n本地课表需登陆过一次后可使用,自动保存\n\n尽量不要重复点击登录,如果仍无法登录,可联系我",
-                icon = Icons.Default.Warning
-            )
+    fun LoginUI(vm : LoginViewModel,
+                dynamicColorViewModel : DynamicColorViewModel,
+                dynamicColorEnabled : Boolean,
+                onChangeDynamicColorEnabled: (Boolean) -> Unit,
+               ) {
+        
+        val sheetState = rememberModalBottomSheetState()
+        var showBottomSheet by remember { mutableStateOf(false) }
+        
+        if (showBottomSheet) {
+            ModalBottomSheet(
+                onDismissRequest = {
+                    showBottomSheet = false
+                },
+                sheetState = sheetState
+            ) {
+                Column() {
+                    FirstCube( dynamicColorViewModel, dynamicColorEnabled, onChangeDynamicColorEnabled)
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
+
+
+            }
+
         }
 
         Scaffold(
@@ -140,8 +159,8 @@ class LoginActivity : ComponentActivity() {
                     title = { Text("肥工教务通") },
 
                     actions = {
-                        IconButton(onClick = {openAlertDialog.value = true}) {
-                            Icon(imageVector = Icons.Filled.Menu, contentDescription = "主页")
+                        IconButton(onClick = {showBottomSheet = true}) {
+                            Icon(painterResource(id = R.drawable.cube), contentDescription = "主页")
                         }
                     }
                 )
@@ -231,7 +250,7 @@ class LoginActivity : ComponentActivity() {
                         focusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent, // 有焦点时的颜色，透明
                         unfocusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent, // 无焦点时的颜色，绿色
                     ),
-                    supportingText = { Text("密码为信息门户,请勿频繁点击登录!")},
+                    supportingText = { Text("密码为信息门户")},
                     visualTransformation = if (hidden) PasswordVisualTransformation()
                     else VisualTransformation.None,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -343,15 +362,20 @@ class LoginActivity : ComponentActivity() {
 
                 FilledTonalButton(
                     onClick = {
-                        val it = Intent(MyApplication.context,SavedCoursesActivity::class.java)
-                        it.addFlags(FLAG_ACTIVITY_NEW_TASK)
-                        MyApplication.context.startActivity(it)
+                        val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
+                        val json = prefs.getString("json", "")
+                        if (json?.contains("result") == true) {
+                            val it = Intent(MyApplication.context,SavedCoursesActivity::class.java)
+                            it.addFlags(FLAG_ACTIVITY_NEW_TASK)
+                            MyApplication.context.startActivity(it)
+                        } else Toast.makeText(MyApplication.context,"本地数据为空,请登录以更新数据",Toast.LENGTH_SHORT).show()
+
                     },modifier = Modifier.scale(scale2.value),
                     interactionSource = interactionSource2,
 
                     ) {
 
-                    Text("本地课表")
+                    Text("本地速览")
 
                 }
             }

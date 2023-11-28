@@ -13,6 +13,7 @@ import com.hfut.schedule.logic.network.ServiceCreator.Login.MyServiceCreator
 import com.hfut.schedule.logic.network.api.MyService
 import okhttp3.ResponseBody
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -135,7 +136,11 @@ class LoginViewModel : ViewModel() {
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-
+                val body = response.body()?.string()
+                val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
+                if (sp.getString("my", "") !=body ) {
+                    sp.edit().putString("my", body).apply()
+                }
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }

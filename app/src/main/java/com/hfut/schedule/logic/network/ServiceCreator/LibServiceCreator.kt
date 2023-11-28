@@ -1,20 +1,16 @@
-package com.hfut.schedule.logic.network.ServiceCreator.Login
+package com.hfut.schedule.logic.network.ServiceCreator
 
 import com.hfut.schedule.MyApplication
-import com.hfut.schedule.logic.network.interceptor.RedirectInterceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.converter.scalars.ScalarsConverterFactory
 
-object MyServiceCreator {
-
+object LibServiceCreator {
 
     val retrofit = Retrofit.Builder()
-        .baseUrl(MyApplication.MyURL)
+        .baseUrl(MyApplication.LibURL)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
-
 
 
     fun <T> create(service: Class<T>): T = retrofit.create(service)

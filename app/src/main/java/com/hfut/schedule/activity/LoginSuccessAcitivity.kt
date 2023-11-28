@@ -93,6 +93,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 
 @AndroidEntryPoint
 class LoginSuccessAcitivity : ComponentActivity() {
@@ -105,7 +107,9 @@ class LoginSuccessAcitivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
-            var dynamicColorEnabled by remember { mutableStateOf(true) }
+            val prefs = getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
+            val dyswitch = prefs.getBoolean("dyswitch",true)
+            var dynamicColorEnabled by remember { mutableStateOf(dyswitch) }
             val currentTheme by dynamicColorViewModel.currentTheme
             DynamicColr( context = applicationContext,
                 currentTheme = currentTheme,
@@ -117,7 +121,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
                 ) {
                     TransparentSystemBars()
                     SuccessUI(vm,dynamicColorEnabled = dynamicColorEnabled,
-                        onChangeDynamicColorEnabled = { dynamicColorEnabled = it })
+                        onChangeDynamicColorEnabled = { dynamicColorEnabledch -> dynamicColorEnabled = dynamicColorEnabledch })
                 }
             }
         }
@@ -137,15 +141,25 @@ class LoginSuccessAcitivity : ComponentActivity() {
     fun SuccessUI(vm : JxglstuViewModel,dynamicColorEnabled : Boolean,onChangeDynamicColorEnabled: (Boolean) -> Unit,) {
         val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
         val switch = prefs.getBoolean("SWITCH",true)
-
+        val apiswitch = prefs.getBoolean("apiswitch",true)
         val navController = rememberNavController()
 
         var isEnabled by remember { mutableStateOf(false) }
 
         var showlable by remember { mutableStateOf(switch) }
         CoroutineScope(Job()).launch {
-            delay(3000)
-            isEnabled = true
+            val prefs = getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
+            val card = prefs.getString("card", "")
+            val json = prefs.getString("json","")
+            if (json != null) {
+                if (card == "请登录刷新" ||  json.contains("课") == false ) {
+                    delay(3000)
+                    isEnabled = true
+                } else {
+                    delay(1000)
+                    isEnabled = true
+                }
+            }
         }
 
        // Toast.makeText(MyApplication.context,"请等待加载完成再切换页面",Toast.LENGTH_SHORT).show()
@@ -191,11 +205,13 @@ class LoginSuccessAcitivity : ComponentActivity() {
                 composable("calendar") { CalendarScreen(isEnabled,enabledchanged = {isEnabledch -> isEnabled = isEnabledch})}
                 composable("search") { SearchScreen(vm) }
                 composable("settings") { SettingsScreen(
+                    vm,
+                    showItem = false,
                     showlable,
                     showlablechanged = {showlablech -> showlable = showlablech},
                     dynamicColorViewModel,
                     dynamicColorEnabled,
-                    onChangeDynamicColorEnabled
+                    onChangeDynamicColorEnabled,
                 ) }
                 composable("today") {TodayScreen(vm)}
             }
@@ -270,8 +286,9 @@ class LoginSuccessAcitivity : ComponentActivity() {
 
 
 
-        var Bianhuaweeks = weeksBetween  //切换周数
+        //var Bianhuaweeks = weeksBetween  //切换周数
 
+       var Bianhuaweeks by rememberSaveable { mutableStateOf(weeksBetween) }
 
 
         val dayweek = GetDate.dayweek
@@ -371,13 +388,13 @@ class LoginSuccessAcitivity : ComponentActivity() {
 
                 val text = starttime + "\n" + scheduleid + "\n" + room
                 val info =
-                           "日期:${date}" + "  " +
                            "教师:${person}"+ "  "+
                             "周数:${endtime}"+ "  "+
                             "人数:${periods}"+ "  "+
                             "类型:${lessonType}"
 
 
+              //  Log.d("变化",Bianhuaweeks.toString())
 
                 if (scheduleList[i].weekIndex == Bianhuaweeks.toInt()) {
                     if (scheduleList[i].weekday == 1) {
@@ -490,6 +507,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
         val grade = intent.getStringExtra("Grade")
         val ONE = prefs.getString("ONE","")
         val TGC = prefs.getString("TGC","")
+        val cardvalue = prefs.getString("card","")
 
         val job = Job()
         val scope = CoroutineScope(job)
@@ -500,7 +518,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
                     val token = prefs.getString("bearer","")
                    // token?.let { Log.d("token", it) }
                     if (token != null) {
-                        if (token.contains("AT")) {
+                        if (token.contains("AT") && cardvalue != "请登录刷新") {
                             async { vm.getCard("Bearer $token") }
                             async { vm.getSubBooks("Bearer $token") }
                             async { vm.getBorrowBooks("Bearer $token") }
@@ -547,6 +565,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
                             addProperty("weekIndex", "")
                         }
 
+                         //Log.d("xxx",jsonObject2.toString())
                             vm.getDatum(cookie!!,jsonObject)
                             vm.getExam(cookie!!)
                             vm.getProgram(cookie!!)
@@ -561,7 +580,8 @@ class LoginSuccessAcitivity : ComponentActivity() {
                         loading = false
                         if (json?.contains("result") == true) {
                             Update()//填充UI与更新
-                        } else{
+                        }
+                        else{
                             Looper.prepare()
                             Toast.makeText(MyApplication.context,"数据为空,尝试刷新", Toast.LENGTH_SHORT).show()
                         }
@@ -761,6 +781,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
                           FilledTonalButton(
                               onClick = {
                                   if (Bianhuaweeks < 20) {
+
                                       Bianhuaweeks++ + 1}
                                   Update()
                           },modifier = Modifier.scale(scale3.value),

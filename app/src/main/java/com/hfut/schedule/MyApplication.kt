@@ -10,6 +10,8 @@ class MyApplication : Application() {
     companion object {
         val DEFAULT_THEME = CatalogTheme.BLUE_THEME.name
         lateinit var context: Context
+        const val version = "2.3.3"
+        const val LibURL = "http://210.45.242.5:8080/"
         const val AlipayURL = "alipays://platformapi/startapp?appId=20000067&url=https://ur.alipay.com/_4kQhV32216tp7bzlDc3E1k"
         const val OneURL = "https://one.hfut.edu.cn/"
         const val LoginURL = "https://cas.hfut.edu.cn/"
@@ -57,6 +59,30 @@ class MyApplication : Application() {
                 "    }\n" +
                 "}\n" +
                 "\n"
+
+        const val NullMy = "{\n" +
+                "    \"Lessons\" : {\n" +
+                "        \"MyList\" : [],\n" +
+                "        \"Schedule\" : []\n" +
+                "},\n" +
+                "    \"SettingsInfo\" : {\n" +
+                "        \"title\" : \"网络接口\",\n" +
+                "        \"info\" : \"本接口在不用更新APP前提下可实时更新信息\"\n" +
+                "    }\n" +
+                "}"
+
+        const val NullLib = "{\n" +
+                "    \"total\":9,\n" +
+                "    \"content\":[\n" +
+                "        {\n" +
+                "            \"author\":\"\",\n" +
+                "            \"callNo\":\"\",\n" +
+                "            \"pubYear\":\"\",\n" +
+                "            \"publisher\":\"\",\n" +
+                "            \"title\":\"\"\n" +
+                "            }\n" +
+                "           ]\n" +
+                "}"
     }
 
     override fun onCreate() {

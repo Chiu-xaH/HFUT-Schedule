@@ -2,12 +2,10 @@ package com.hfut.schedule.ui.ComposeUI.BottomBar
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import android.os.Build
-import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
@@ -25,11 +22,12 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -46,15 +44,24 @@ import com.google.gson.Gson
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.JxglstuViewModel
-import com.hfut.schedule.activity.LoginActivity
 import com.hfut.schedule.logic.GetDate
 import com.hfut.schedule.logic.datamodel.course
 import com.hfut.schedule.logic.datamodel.data
+import com.hfut.schedule.logic.OpenAlipay
+import com.hfut.schedule.logic.datamodel.MyList
+import com.hfut.schedule.logic.datamodel.Schedule
+import com.hfut.schedule.logic.datamodel.data4
+import com.hfut.schedule.ui.ComposeUI.Search.Library
+import com.hfut.schedule.ui.ComposeUI.Search.SchoolCard
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+
+
 import org.jsoup.Jsoup
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @SuppressLint("SuspiciousIndentation")
 @RequiresApi(Build.VERSION_CODES.O)
@@ -98,6 +105,12 @@ fun TodayScreen(vm : JxglstuViewModel) {
     var tomorrow_time_3 by rememberSaveable { mutableStateOf("") }
     var tomorrow_time_4 by rememberSaveable { mutableStateOf("") }
 
+
+
+
+
+
+
     when (dayweek) {
         1 -> chinesenumber = "一"
         2 -> chinesenumber = "二"
@@ -131,6 +144,28 @@ fun TodayScreen(vm : JxglstuViewModel) {
         return data
     }
 
+
+    fun MySchedule() : MutableList<Schedule> {
+
+        val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
+        val my = prefs.getString("my",MyApplication.NullMy)
+        val data = Gson().fromJson(my, data4::class.java).Lessons
+        val list = data.Schedule
+        var Schedule = mutableListOf<Schedule>()
+        list.forEach { Schedule.add(it) }
+        return Schedule
+    }
+
+    fun MyWangKe() : MutableList<MyList> {
+
+        val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
+        val my = prefs.getString("my",MyApplication.NullMy)
+        val data = Gson().fromJson(my, data4::class.java).Lessons
+        val list = data.MyList
+        var Wabgke = mutableListOf<MyList>()
+        list.forEach {  Wabgke.add(it) }
+        return Wabgke
+    }
 
     fun Datum(): MutableList<course> {
 
@@ -235,8 +270,6 @@ fun TodayScreen(vm : JxglstuViewModel) {
 
     fun DatumTomorrow(): MutableList<course> {
 
-        var number2 : Int = 0
-
         val today = LocalDate.now() // 获取当前日期
         val tomorrow = today.plusDays(1) // 获取下一天的日期
 
@@ -328,12 +361,32 @@ fun TodayScreen(vm : JxglstuViewModel) {
 
     }
 
+    var card =prefs.getString("card","正在获取")
+
     val token = prefs.getString("bearer","")
 
-        if (token  != null && token.contains("AT"))
+        if (token  != null && token.contains("AT") && card != "请登录刷新")
             vm.getCard("Bearer $token")
+    else {
+        Toast.makeText(MyApplication.context,"信息门户已超时,需重新登录",Toast.LENGTH_SHORT).show()
+            vm.getCard("Bearer " + vm.token.value)
+    }
 
-    val card =prefs.getString("card","正在获取")
+
+    CoroutineScope(Job()).apply {
+        async {
+            val json = prefs.getString("json", "")
+            if (json?.contains("result") == true) {
+                Datum()
+                DatumTomorrow()
+            } else Toast.makeText(MyApplication.context,"本地数据为空,请登录以更新数据",Toast.LENGTH_SHORT).show()
+        }
+        async{ ExamGet() }
+        async{ MyWangKe() }
+        async{ MySchedule() }
+    }
+
+
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -346,73 +399,97 @@ fun TodayScreen(vm : JxglstuViewModel) {
                 title = { Text("今天  第${GetDate.Benweeks}周  周${chinesenumber}  ${GetDate.Date2}") }
             )
         },) {innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-            //.background()插入背景
-        ){
+        Column(modifier = Modifier
+            .padding(innerPadding)
+            .fillMaxSize()){
+            var state by remember { mutableStateOf(0) }
+            val titles = listOf("重要安排","其他事项")
+            Column {
+                TabRow(selectedTabIndex = state) {
+                    titles.forEachIndexed { index, title ->
+                        Tab(
+                            selected = state == index,
+                            onClick = { state = index },
+                            text = { Text(text = title) },
+                            modifier = Modifier.background(MaterialTheme.colorScheme.primaryContainer)
+                        )
+                    }
+                }
+            }
 
-
-
-            val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
-            val json = prefs.getString("json", "")
-            if (json?.contains("result") == true) {
-                Datum()
-                DatumTomorrow()
-            } else Toast.makeText(MyApplication.context,"本地数据为空,请登录以更新数据",Toast.LENGTH_SHORT).show()
-
-
-            ExamGet()
 
             var expand by remember { mutableStateOf(false) }
             Spacer(modifier = Modifier.height(10.dp))
 
-
-
-
-          //  Spacer(modifier = Modifier.height(10.dp))
-
             LazyColumn {
-                item {
-                    Card(
-                        elevation = CardDefaults.cardElevation(
-                            defaultElevation = 3.dp
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 15.dp, vertical = 5.dp),
-                        shape = MaterialTheme.shapes.medium
 
-                    ){
-                        ListItem(
-                            headlineContent = { Text(text = "一卡通余额   ${card} 元") },
-                            leadingContent = {
-                                Icon(
-                                    painterResource(R.drawable.credit_card),
-                                    contentDescription = "Localized description",
+    fun Tomorrow() {
+     items(DatumTomorrow().size) { item ->
+            Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
+                Spacer(modifier = Modifier.height(100.dp))
+             Card(
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 3.dp
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 15.dp, vertical = 5.dp),
+                    shape = MaterialTheme.shapes.medium,
+
+
+                    ) {
+                    ListItem(
+                        headlineContent = {  Text(text = DatumTomorrow()[item].name) },
+                        overlineContent = {Text(text = DatumTomorrow()[item].time)},
+                        supportingContent = { Text(text = DatumTomorrow()[item].room)},
+                        leadingContent = {
+                            Icon(
+                                painterResource(R.drawable.exposure_plus_1),
+                                contentDescription = "Localized description",
+                            )
+                        },
+                        modifier = Modifier.clickable {}
+                    )
+                }
+            }
+        }
+    }
+
+                fun Today() {
+
+                    items(Datum().size) { item ->
+                        Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)
+                        {
+                            Spacer(modifier = Modifier.height(100.dp))
+                            Card(
+                                elevation = CardDefaults.cardElevation(
+                                    defaultElevation = 3.dp
+                                ),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 15.dp, vertical = 5.dp),
+                                shape = MaterialTheme.shapes.medium
+
+                            ) {
+                                ListItem(
+                                    headlineContent = {  Text(text = Datum()[item].name) },
+                                    overlineContent = {Text(text = Datum()[item].time)},
+                                    supportingContent = { Text(text = Datum()[item].room)},
+                                    leadingContent = {
+                                        Icon(
+                                            painterResource(R.drawable.schedule),
+                                            contentDescription = "Localized description",
+                                        )
+                                    }, modifier = Modifier.clickable {  }
                                 )
-                            },
-                            trailingContent={
-                                FilledTonalIconButton(onClick = {
-                                                val it = Intent(Intent.ACTION_DEFAULT, Uri.parse(MyApplication.AlipayURL) )
-                                                it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                                MyApplication.context.startActivity(it)
-                                            }) {
-                                                Icon( painterResource(R.drawable.add),
-                                                    contentDescription = "Localized description",)
-                                            }
-                            },
-
-                            modifier = Modifier.clickable {}
-                        )
+                            }
+                        }
                     }
                 }
 
-                items(ExamGet()) {item ->
+                if (state == 0) {
 
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                        Spacer(modifier = Modifier.height(100.dp))
+                    item {
                         Card(
                             elevation = CardDefaults.cardElevation(
                                 defaultElevation = 3.dp
@@ -422,90 +499,194 @@ fun TodayScreen(vm : JxglstuViewModel) {
                                 .padding(horizontal = 15.dp, vertical = 5.dp),
                             shape = MaterialTheme.shapes.medium
 
-                        )  {
-                            ListItem(
-                                headlineContent = {  Text(text = "${item["课程名称"]}") },
-                                overlineContent = {Text(text = "${item["日期时间"]}")},
-                                supportingContent = { Text(text = "${item["考场"]}")},
-                                leadingContent = {
-                                    Icon(
-                                        painterResource(R.drawable.draw),
-                                        contentDescription = "Localized description",
-                                    )
-                                },
-                                modifier = Modifier.clickable {},
-                                colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
-                            )
-
-                        }
+                        ){ SchoolCard() }
                     }
+
+                    items(ExamGet()) {item ->
+
+                        var date = GetDate.Date2
+                        val todaydate = (date?.substring(0, 2) ) + date?.substring(3, 5)
+                        val get = item["日期时间"]
+                        val examdate = (get?.substring(0, 2) ) + get?.substring(3, 5)
+                        //判断考完试不显示信息
+                        if(examdate.toInt() >= todaydate.toInt()) {
+                            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                                Spacer(modifier = Modifier.height(100.dp))
+                                Card(
+                                    elevation = CardDefaults.cardElevation(
+                                        defaultElevation = 3.dp
+                                    ),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 15.dp, vertical = 5.dp),
+                                    shape = MaterialTheme.shapes.medium
+
+                                )  {
+                                    ListItem(
+                                        headlineContent = {  Text(text = "${item["课程名称"]}") },
+                                        overlineContent = {Text(text = "${item["日期时间"]}")},
+                                        supportingContent = { Text(text = "${item["考场"]}")},
+                                        leadingContent = {
+                                            Icon(
+                                                painterResource(R.drawable.draw),
+                                                contentDescription = "Localized description",
+                                            )
+                                        },
+                                        modifier = Modifier.clickable {},
+                                        colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
+                                    )
+
+                                }
+                            }
+                        }
+
+                    }
+
+                    items(MySchedule().size) { item ->
+
+                        var date = GetDate.Date2
+                        val todaydate = (date?.substring(0, 2) ) + date?.substring(3, 5)
+                        val get = MySchedule()[item].time
+                        val examdate = (get?.substring(0, 2) ) + get?.substring(3, 5)
+                        //判断考完试不显示信息
+                        if (examdate.toInt() == todaydate.toInt()) {
+                            Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)
+                            {
+                                Spacer(modifier = Modifier.height(100.dp))
+                                Card(
+                                    elevation = CardDefaults.cardElevation(
+                                        defaultElevation = 3.dp
+                                    ),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 15.dp, vertical = 5.dp)
+                                    //.size(width = 350.dp, height = 90.dp)
+                                    ,shape = MaterialTheme.shapes.medium
+
+                                ) {
+                                    ListItem(
+                                        headlineContent = {  Text(text = MySchedule()[item].title) },
+                                        overlineContent = {Text(text = MySchedule()[item].time)},
+                                        supportingContent = { Text(text = MySchedule()[item].info)},
+                                        leadingContent = {
+                                            if (MySchedule()[item].title.contains("实验"))
+                                                Icon(painterResource(R.drawable.science), contentDescription = "Localized description",)
+                                            else
+                                                Icon(painterResource(R.drawable.calendar), contentDescription = "Localized description",)
+                                        },
+                                        modifier = Modifier.clickable {}
+                                    )
+                                }
+                            }
+                        }
+
+                    }
+
+
+                    val currentTime = LocalDateTime.now()
+
+                    val formatter = DateTimeFormatter.ofPattern("HH")
+                    val formattedTime = currentTime.format(formatter)
+
+
+
+                    if (formattedTime.toInt() >= 18) Tomorrow()
+                    else Today()
+
                 }
 
+                if (state == 1) {
+                    val currentTime = LocalDateTime.now()
+
+                    val formatter = DateTimeFormatter.ofPattern("HH")
+                    val formattedTime = currentTime.format(formatter)
 
 
-               items(Datum().size) { item ->
-                   Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)
-                   {
-                       Spacer(modifier = Modifier.height(100.dp))
-                       Card(
-                           elevation = CardDefaults.cardElevation(
-                               defaultElevation = 3.dp
-                           ),
-                           modifier = Modifier
-                               .fillMaxWidth()
-                               .padding(horizontal = 15.dp, vertical = 5.dp)
-                               //.size(width = 350.dp, height = 90.dp)
-                               .clickable { expand = !expand },
-                           shape = MaterialTheme.shapes.medium
+                    items(MySchedule().size) { item ->
 
-                       ) {
-                           ListItem(
-                               headlineContent = {  Text(text = Datum()[item].name) },
-                               overlineContent = {Text(text = Datum()[item].time)},
-                               supportingContent = { Text(text = Datum()[item].room)},
-                               leadingContent = {
-                                   Icon(
-                                       painterResource(R.drawable.schedule),
-                                       contentDescription = "Localized description",
-                                   )
-                               }
-                           )
-                       }
-                   }
-               }
+                        var date = GetDate.Date2
+                        val todaydate = (date?.substring(0, 2) ) + date?.substring(3, 5)
+                        val get = MySchedule()[item].time
+                        val examdate = (get?.substring(0, 2) ) + get?.substring(3, 5)
+                        //判断考完试不显示信息
+                        if (examdate.toInt() > todaydate.toInt()) {
+                            Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)
+                            {
+                                Spacer(modifier = Modifier.height(100.dp))
+                                Card(
+                                    elevation = CardDefaults.cardElevation(
+                                        defaultElevation = 3.dp
+                                    ),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 15.dp, vertical = 5.dp)
+                                    //.size(width = 350.dp, height = 90.dp)
+                                    ,shape = MaterialTheme.shapes.medium
 
-                items(DatumTomorrow().size) { item ->
-                    Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)
-                    {
-                        Spacer(modifier = Modifier.height(100.dp))
-                        Card(
-                            elevation = CardDefaults.cardElevation(
-                                defaultElevation = 3.dp
-                            ),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 15.dp, vertical = 5.dp),
-                            shape = MaterialTheme.shapes.medium
-
-                        ) {
-                            ListItem(
-                                headlineContent = {  Text(text = DatumTomorrow()[item].name) },
-                                overlineContent = {Text(text = DatumTomorrow()[item].time)},
-                                supportingContent = { Text(text = DatumTomorrow()[item].room)},
-                                leadingContent = {
-                                    Icon(
-                                        painterResource(R.drawable.exposure_plus_1),
-                                        contentDescription = "Localized description",
+                                ) {
+                                    ListItem(
+                                        headlineContent = {  Text(text = MySchedule()[item].title) },
+                                        overlineContent = {Text(text = MySchedule()[item].time)},
+                                        supportingContent = { Text(text = MySchedule()[item].info)},
+                                        leadingContent = {
+                                            if (MySchedule()[item].title.contains("实验"))
+                                                Icon(painterResource(R.drawable.science), contentDescription = "Localized description",)
+                                            else
+                                                Icon(painterResource(R.drawable.calendar), contentDescription = "Localized description",)
+                                        },
+                                        modifier = Modifier.clickable {}
                                     )
-                                },
-                                modifier = Modifier.clickable {}
-                            )
+                                }
+                            }
                         }
+
                     }
+                    
+                    items(MyWangKe().size) { item ->
+
+                        var date = GetDate.Date2
+                        val todaydate = (date?.substring(0, 2) ) + date?.substring(3, 5)
+                        val get = MyWangKe()[item].time
+                        val Wangkedate = (get?.substring(0, 2) ) + get?.substring(3, 5)
+                        //判断过期不显示信息
+                        if(Wangkedate.toInt() >= todaydate.toInt()) {
+                            Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)
+                            {
+                                Spacer(modifier = Modifier.height(100.dp))
+                                Card(
+                                    elevation = CardDefaults.cardElevation(
+                                        defaultElevation = 3.dp
+                                    ),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 15.dp, vertical = 5.dp),
+
+                                    shape = MaterialTheme.shapes.medium
+
+                                ) {
+                                    ListItem(
+                                        headlineContent = {  Text(text = MyWangKe()[item].title) },
+                                        overlineContent = {Text(text = MyWangKe()[item].time)},
+                                        supportingContent = { Text(text = MyWangKe()[item].info)},
+                                        leadingContent = {
+                                            Icon(
+                                                painterResource(R.drawable.net),
+                                                contentDescription = "Localized description",
+                                            )
+                                        },
+                                        modifier = Modifier.clickable {}
+                                    )
+                                }
+                            }
+                        }
+
+                    }
+
+                    if (formattedTime.toInt() < 18) { Tomorrow() }
+
                 }
-             item {
-                 Spacer(modifier = Modifier.height(100.dp))
-             }
+
+             item { Spacer(modifier = Modifier.height(100.dp)) }
             }
 
         }

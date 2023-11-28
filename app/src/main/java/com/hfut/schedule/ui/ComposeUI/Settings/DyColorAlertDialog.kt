@@ -1,5 +1,6 @@
-package com.hfut.schedule.ui.ComposeUI
+package com.hfut.schedule.ui.ComposeUI.Settings
 
+import android.content.Context
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -29,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
+import com.hfut.schedule.MyApplication
 import com.hfut.schedule.ui.DynamicColor.CatalogTheme
 import com.hfut.schedule.ui.DynamicColor.DynamicColorViewModel
 
@@ -59,7 +61,7 @@ fun PaletteDialogScreen(
                     Spacer(modifier = Modifier.padding(horizontal = 6.dp))
                     Switch(
                         checked = dynamicColorEnabled,
-                        onCheckedChange = onChangeDynamicColorEnabled
+                        onCheckedChange =  onChangeDynamicColorEnabled
                     )
                 }
                 if (!dynamicColorEnabled) {

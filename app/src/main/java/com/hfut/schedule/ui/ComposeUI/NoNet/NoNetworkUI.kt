@@ -1,9 +1,8 @@
-package com.hfut.schedule.ui.ComposeUI
+package com.hfut.schedule.ui.ComposeUI.NoNet
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
-import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.Spring
@@ -44,7 +43,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -54,7 +52,6 @@ import com.hfut.schedule.logic.GetDate
 import com.hfut.schedule.logic.GetDate.Benweeks
 import com.hfut.schedule.logic.GetDate.Date2
 import com.hfut.schedule.logic.GetDate.weeksBetween
-import com.hfut.schedule.logic.SharePrefs.prefs_json
 import com.hfut.schedule.logic.datamodel.data
 
 @RequiresApi(Build.VERSION_CODES.O)

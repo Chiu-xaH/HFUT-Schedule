@@ -19,11 +19,13 @@ import com.hfut.schedule.logic.datamodel.getTokenResponse
 import com.hfut.schedule.logic.datamodel.lessonIdsResponse
 import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuJSONServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuXMLServiceCreator
+import com.hfut.schedule.logic.network.ServiceCreator.LibServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Login.OneGotoServiceCreator
 //import com.hfut.schedule.logic.network.ServiceCreator.Login.OneGetNewTicketServiceCreator.client
 import com.hfut.schedule.logic.network.ServiceCreator.Login.OneServiceCreator
 import com.hfut.schedule.logic.network.api.JxglstuService
 import com.hfut.schedule.logic.network.api.LoginService
+import com.hfut.schedule.logic.network.api.MyService
 import com.hfut.schedule.logic.network.api.OneService
 import kotlinx.coroutines.delay
 import okhttp3.ResponseBody
@@ -35,6 +37,7 @@ class JxglstuViewModel : ViewModel() {
     private val api2 = JxglstuXMLServiceCreator.create(JxglstuService::class.java)
     private val api3 = OneGotoServiceCreator.create(LoginService::class.java)
     private val api4 = OneServiceCreator.create(OneService::class.java)
+    private val api5 = LibServiceCreator.create(MyService::class.java)
     var studentId = MutableLiveData<Int>()
     var lessonIds = MutableLiveData<List<Int>>()
     var token = MutableLiveData<String>()
@@ -100,6 +103,7 @@ class JxglstuViewModel : ViewModel() {
             addProperty("studentId", studentId.value)//学生ID
             addProperty("weekIndex", "")
         }
+        //Log.d("xes",lessonid)
 
         val call = api.getDatum(cookie,lessonid)
 
@@ -275,7 +279,7 @@ class JxglstuViewModel : ViewModel() {
                     val sp =
                         PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
 
-                    sp.edit().putString("card", "XX").apply()
+                    sp.edit().putString("card", "请登录刷新").apply()
                 }
             }
 
@@ -350,50 +354,16 @@ class JxglstuViewModel : ViewModel() {
     }
 
 
-    fun selectBuilding()  {
 
-        val call = api4.selectBuilding("03","Bearer " + token.value)
+    fun searchEmptyRoom(building_code : String,token : String)  {
 
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val json = response.body()?.string()
-
-                //val data = Gson().fromJson(json, BorrowBooksResponse::class.java)
-              //  val code = data.msg
-              //  if (code == "success") {
-               //     val borrow = data.data.toString()
-                //    val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-                //    if(sp.getString("borrow","") !=borrow ){ sp.edit().putString("borrow",borrow).apply() }
-              //  }
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                //   Log.d("VM","失败")
-                //   code.value = "XXX"
-                t.printStackTrace()
-            }
-        })
-
-
-    }
-
-    fun searchEmptyRoom(building_code : String)  {
-
-        val call = api4.searchEmptyRoom(building_code,"Bearer " + token.value)
+        val call = api4.searchEmptyRoom(building_code,"Bearer " + token)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                val emptyjson = response.body()?.string()
                 val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
                 if(sp.getString("emptyjson","") !=emptyjson ){ sp.edit().putString("emptyjson", emptyjson).apply() }
-            //    json?.let { Log.d("空教室", it) }
-                //val data = Gson().fromJson(json, BorrowBooksResponse::class.java)
-                //  val code = data.msg
-                //  if (code == "success") {
-                //     val borrow = data.data.toString()
-                //    val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-                //    if(sp.getString("borrow","") !=borrow ){ sp.edit().putString("borrow",borrow).apply() }
-                //  }
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
@@ -405,36 +375,23 @@ class JxglstuViewModel : ViewModel() {
 
 
     }
+    fun LibSearch(json : JsonObject)  {
 
-    fun searchEmptyRoom2(building_code : String,token : String)  {
-
-        val call = api4.searchEmptyRoom(building_code,token)
+        val call = api5.LibSearch(json)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val emptyjson = response.body()?.string()
+                val library = response.body()?.string()
                 val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-                if(sp.getString("emptyjson","") !=emptyjson ){ sp.edit().putString("emptyjson", emptyjson).apply() }
-                //    json?.let { Log.d("空教室", it) }
-                //val data = Gson().fromJson(json, BorrowBooksResponse::class.java)
-                //  val code = data.msg
-                //  if (code == "success") {
-                //     val borrow = data.data.toString()
-                //    val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-                //    if(sp.getString("borrow","") !=borrow ){ sp.edit().putString("borrow",borrow).apply() }
-                //  }
+                if(sp.getString("library","") !=library){ sp.edit().putString("library", library).apply() }
+               // response.body()?.let { Log.d("响应", it.string()) }
             }
 
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                //   Log.d("VM","失败")
-                //   code.value = "XXX"
-                t.printStackTrace()
-            }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
 
 
     }
-
 
 
 }

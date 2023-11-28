@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.ComposeUI
+package com.hfut.schedule.ui.ComposeUI.Search
 
 import android.content.Context
 import androidx.compose.foundation.clickable

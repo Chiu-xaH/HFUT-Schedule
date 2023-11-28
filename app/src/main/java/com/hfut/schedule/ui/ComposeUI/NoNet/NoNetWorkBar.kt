@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.ComposeUI
+package com.hfut.schedule.ui.ComposeUI.NoNet
 
 import android.content.Context
 import android.os.Build
@@ -26,15 +26,20 @@ import com.hfut.schedule.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.JxglstuViewModel
 import com.hfut.schedule.logic.datamodel.NavigationBarItemData
+import com.hfut.schedule.ui.ComposeUI.BottomBar.SettingsScreen
 import com.hfut.schedule.ui.ComposeUI.BottomBar.TodayScreen
+import com.hfut.schedule.ui.DynamicColor.DynamicColorViewModel
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun NoNetWork(vm : JxglstuViewModel) {
+fun NoNetWork(vm : JxglstuViewModel,dynamicColorViewModel : DynamicColorViewModel,dynamicColorEnabled : Boolean,onChangeDynamicColorEnabled: (Boolean) -> Unit) {
     val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
     val switch = prefs.getBoolean("SWITCH",true)
+    val apiswitch = prefs.getBoolean("apiswitch",true)
     val navController = rememberNavController()
     var isEnabled by remember { mutableStateOf(true) }
     var showlable by remember { mutableStateOf(switch) }
+    var showapi by remember { mutableStateOf(apiswitch) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -44,6 +49,7 @@ fun NoNetWork(vm : JxglstuViewModel) {
                 val items = listOf(
                     NavigationBarItemData("1", "课程", painterResource(R.drawable.calendar)),
                     NavigationBarItemData("2","聚焦", painterResource(R.drawable.timeline)),
+                    NavigationBarItemData("3","选项", painterResource(id = R.drawable.cube))
                 )
                 items.forEach { item ->
                     val route = item.route
@@ -74,6 +80,19 @@ fun NoNetWork(vm : JxglstuViewModel) {
         NavHost(navController = navController, startDestination = "1") {
             composable("1") { NoNet() }
             composable("2") { TodayScreen(vm) }
+            composable("3") { SettingsScreen(
+                vm,
+                showItem = true,
+                showlable,
+                showlablechanged = {showlablech -> showlable = showlablech},
+                dynamicColorViewModel,
+                dynamicColorEnabled,
+                onChangeDynamicColorEnabled,
+
+            )
+
+            }
+
         }
 
         Column(
