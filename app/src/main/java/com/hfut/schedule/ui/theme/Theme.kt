@@ -2,7 +2,6 @@ package com.hfut.schedule.ui.theme
 
 import android.app.Activity
 import android.app.WallpaperManager
-import android.content.Context
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -11,27 +10,22 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import com.hfut.schedule.MyApplication.Companion.DEFAULT_THEME
-import com.hfut.schedule.ui.DynamicColor.PrefHelper
-import com.hfut.schedule.ui.DynamicColor.CatalogTheme
-import com.hfut.schedule.ui.theme.blue.BlueDarkColors
-import com.hfut.schedule.ui.theme.blue.BlueLightColors
-import com.hfut.schedule.ui.theme.deeporange.DeepOrangeDarkColors
-import com.hfut.schedule.ui.theme.deeporange.DeepOrangeLightColors
-import com.hfut.schedule.ui.theme.green.GreenDarkColors
-import com.hfut.schedule.ui.theme.green.GreenLightColors
-import com.hfut.schedule.ui.theme.red.RedDarkColors
-import com.hfut.schedule.ui.theme.red.RedLightColors
-import com.hfut.schedule.ui.theme.teal.TealDarkColors
-import com.hfut.schedule.ui.theme.teal.TealLightColors
+import com.hfut.schedule.ui.MonetColor.LocalCustomPrimaryColor
+import com.hfut.schedule.ui.MonetColor.LocalThemeName
+import com.hfut.schedule.ui.MonetColor.ThemeNamePreference
+import com.hfut.schedule.ui.MonetColor.toColorOrNull
+import com.kyant.monet.LocalTonalPalettes
+import com.kyant.monet.PaletteStyle
 import com.kyant.monet.TonalPalettes
 import com.kyant.monet.TonalPalettes.Companion.toTonalPalettes
+import com.kyant.monet.dynamicColorScheme
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
@@ -79,48 +73,6 @@ fun 肥工课程表Theme(
 }
 
 
-
-
-@Composable
-fun DynamicColr(
-    context: Context,
-    currentTheme: String? = PrefHelper.prefs(context).getString(PrefHelper.KEY_CURRENT_THEME, DEFAULT_THEME),
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
-    content: @Composable () -> Unit
-) {
-
-
-    val colorScheme = if(dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        val context = LocalContext.current
-        if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-    }else{
-        when(currentTheme){
-            CatalogTheme.BLUE_THEME.name->{ if(darkTheme) BlueDarkColors else BlueLightColors }
-            CatalogTheme.RED_THEME.name->{ if(darkTheme) RedDarkColors else RedLightColors }
-            CatalogTheme.TEAL_THEME.name->{ if(darkTheme) TealDarkColors else TealLightColors }
-            CatalogTheme.DEEP_ORANGE_THEME.name->{ if(darkTheme) DeepOrangeDarkColors else DeepOrangeLightColors}
-            CatalogTheme.GREEN_THEME.name-> { if(darkTheme) GreenDarkColors else GreenLightColors}
-            else->{ if(darkTheme) DarkColorScheme else LightColorScheme }
-        }
-    }
-    /*    val view = LocalView.current
-        if (!view.isInEditMode) {
-            SideEffect {
-                (view.context as Activity).window.statusBarColor = colorScheme.primary.toArgb()
-                ViewCompat.getWindowInsetsController(view)?.isAppearanceLightStatusBars = darkTheme
-            }
-        }*/
-
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
-}
-
-
 @Composable
 fun extractTonalPalettesFromWallpaper(): Map<String, TonalPalettes> {
     val context = LocalContext.current
@@ -143,4 +95,55 @@ fun extractTonalPalettesFromWallpaper(): Map<String, TonalPalettes> {
         if (tertiary != null) preset["WallpaperTertiary"] = Color(tertiary).toTonalPalettes()
     }
     return preset
+}
+
+@Composable
+fun extractTonalPalettes(): Map<String, TonalPalettes> {
+    return ThemeNamePreference.values.associate { it.name to it.keyColor.toTonalPalettes() }
+        .toMutableMap().also { map ->
+            val customPrimaryColor =
+                LocalCustomPrimaryColor.current.toColorOrNull() ?: Color.Transparent
+            map[ThemeNamePreference.CUSTOM_THEME_NAME] = customPrimaryColor.toTonalPalettes()
+        }
+}
+@Composable
+fun extractAllTonalPalettes(): Map<String, TonalPalettes> {
+    return extractTonalPalettes() + extractTonalPalettesFromWallpaper()
+}
+@Composable
+fun RaysTheme(
+    darkTheme: Int,
+    content: @Composable () -> Unit
+) {
+    RaysTheme(
+      //  darkTheme = DarkModePreference.isInDark(darkTheme),
+        content = content
+    )
+}
+
+@Composable
+fun RaysTheme(
+    wallpaperPalettes: Map<String, TonalPalettes> = extractAllTonalPalettes(),
+    content: @Composable () -> Unit
+) {
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            //setSystemBarsColor(view, darkTheme)
+        }
+    }
+
+    val tonalPalettes = wallpaperPalettes.getOrElse(LocalThemeName.current) {
+        ThemeNamePreference.values[0].keyColor.toTonalPalettes(style = PaletteStyle.Content)
+    }
+
+    CompositionLocalProvider(
+        LocalTonalPalettes provides tonalPalettes,
+    ) {
+        MaterialTheme(
+            colorScheme = dynamicColorScheme(),
+            typography = Typography,
+            content = content
+        )
+    }
 }

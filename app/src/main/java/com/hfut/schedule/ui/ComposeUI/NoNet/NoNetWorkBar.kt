@@ -28,18 +28,15 @@ import com.hfut.schedule.ViewModel.JxglstuViewModel
 import com.hfut.schedule.logic.datamodel.NavigationBarItemData
 import com.hfut.schedule.ui.ComposeUI.BottomBar.SettingsScreen
 import com.hfut.schedule.ui.ComposeUI.BottomBar.TodayScreen
-import com.hfut.schedule.ui.DynamicColor.DynamicColorViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun NoNetWork(vm : JxglstuViewModel,dynamicColorViewModel : DynamicColorViewModel,dynamicColorEnabled : Boolean,onChangeDynamicColorEnabled: (Boolean) -> Unit) {
+fun NoNetWork(vm : JxglstuViewModel) {
     val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
     val switch = prefs.getBoolean("SWITCH",true)
-    val apiswitch = prefs.getBoolean("apiswitch",true)
     val navController = rememberNavController()
     var isEnabled by remember { mutableStateOf(true) }
     var showlable by remember { mutableStateOf(switch) }
-    var showapi by remember { mutableStateOf(apiswitch) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -85,9 +82,6 @@ fun NoNetWork(vm : JxglstuViewModel,dynamicColorViewModel : DynamicColorViewMode
                 showItem = true,
                 showlable,
                 showlablechanged = {showlablech -> showlable = showlablech},
-                dynamicColorViewModel,
-                dynamicColorEnabled,
-                onChangeDynamicColorEnabled,
 
             )
 

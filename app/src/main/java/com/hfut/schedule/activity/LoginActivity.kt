@@ -41,6 +41,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -64,8 +65,11 @@ import com.hfut.schedule.ui.ComposeUI.TransparentSystemBars
 import com.hfut.schedule.ui.ComposeUI.checkDate
 import com.hfut.schedule.ViewModel.LoginViewModel
 import com.hfut.schedule.ui.ComposeUI.Settings.FirstCube
-import com.hfut.schedule.ui.DynamicColor.DynamicColorViewModel
-import com.hfut.schedule.ui.theme.DynamicColr
+import com.hfut.schedule.ui.MonetColor.LocalCurrentStickerUuid
+import com.hfut.schedule.ui.MonetColor.MainIntent
+import com.hfut.schedule.ui.MonetColor.MainViewModel
+import com.hfut.schedule.ui.MonetColor.SettingsProvider
+import com.hfut.schedule.ui.theme.RaysTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -76,7 +80,7 @@ import kotlinx.coroutines.withContext
 @AndroidEntryPoint
 class LoginActivity : ComponentActivity() {
     private val vm by lazy { ViewModelProvider(this).get(LoginViewModel::class.java) }
-    private val dynamicColorViewModel: DynamicColorViewModel by viewModels()
+    private val viewModel: MainViewModel by viewModels()
     @SuppressLint("SuspiciousIndentation", "MissingInflatedId")
 
 
@@ -89,24 +93,28 @@ class LoginActivity : ComponentActivity() {
             var dynamicColorEnabled by remember { mutableStateOf(dyswitch) }
 
 
-            val currentTheme by dynamicColorViewModel.currentTheme
-            DynamicColr( context = applicationContext,
-                currentTheme = currentTheme,
-                dynamicColor = dynamicColorEnabled){
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    TransparentSystemBars()
-                   LoginUI(vm,
-                       dynamicColorEnabled = dynamicColorEnabled,
-                       dynamicColorViewModel = dynamicColorViewModel,
-                       onChangeDynamicColorEnabled = { dynamicColorEnabledch -> dynamicColorEnabled = dynamicColorEnabledch },
-                      )
-                   // test()
+          //  val currentTheme by dynamicColorViewModel.currentTheme
+
+            SettingsProvider {
+                // 更新主题色
+                val stickerUuid = LocalCurrentStickerUuid.current
+                LaunchedEffect(stickerUuid) {
+                    viewModel.sendUiIntent(MainIntent.UpdateThemeColor(stickerUuid))
                 }
+
+                RaysTheme {
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = MaterialTheme.colorScheme.background
+                    ) {
+                        TransparentSystemBars()
+                        LoginUI(vm)
+                    }
+                }
+
+
             }
+
         }
 
         checkDate("2023-09-01","2024-02-01") // 定义一个函数，超出日期不允许使用
@@ -123,11 +131,7 @@ class LoginActivity : ComponentActivity() {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    fun LoginUI(vm : LoginViewModel,
-                dynamicColorViewModel : DynamicColorViewModel,
-                dynamicColorEnabled : Boolean,
-                onChangeDynamicColorEnabled: (Boolean) -> Unit,
-               ) {
+    fun LoginUI(vm : LoginViewModel) {
         
         val sheetState = rememberModalBottomSheetState()
         var showBottomSheet by remember { mutableStateOf(false) }
@@ -140,7 +144,7 @@ class LoginActivity : ComponentActivity() {
                 sheetState = sheetState
             ) {
                 Column() {
-                    FirstCube( dynamicColorViewModel, dynamicColorEnabled, onChangeDynamicColorEnabled)
+                    FirstCube()
                     Spacer(modifier = Modifier.height(20.dp))
                 }
 

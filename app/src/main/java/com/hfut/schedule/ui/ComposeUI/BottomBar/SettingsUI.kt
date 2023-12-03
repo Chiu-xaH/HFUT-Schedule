@@ -32,7 +32,6 @@ import com.hfut.schedule.ui.ComposeUI.Search.SchoolCard
 import com.hfut.schedule.ui.ComposeUI.Search.XuanquItem
 import com.hfut.schedule.ui.ComposeUI.Settings.CardItem
 import com.hfut.schedule.ui.ComposeUI.Settings.DyColorItem
-import com.hfut.schedule.ui.DynamicColor.DynamicColorViewModel
 import com.hfut.schedule.ui.ComposeUI.Settings.SettingsItems
 
 @SuppressLint("SuspiciousIndentation")
@@ -42,14 +41,10 @@ fun SettingsScreen(vm : JxglstuViewModel,
                    showItem : Boolean,
                    showlable : Boolean,
                    showlablechanged: (Boolean) -> Unit,
-                   dynamicColorViewModel: DynamicColorViewModel,
-                   dynamicColorEnabled: Boolean,
-                   onChangeDynamicColorEnabled: (Boolean) -> Unit,
                    ) {
     val sp =
         PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
     if (sp.getBoolean("SWITCH", true) != showlable) { sp.edit().putBoolean("SWITCH", showlable).apply() }
-    if (sp.getBoolean("dyswitch", true) != dynamicColorEnabled) { sp.edit().putBoolean("dyswitch", dynamicColorEnabled).apply() }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -83,7 +78,7 @@ fun SettingsScreen(vm : JxglstuViewModel,
                 trailingContent = { Switch(checked = showlable, onCheckedChange = showlablechanged) }
             )
 
-            DyColorItem(dynamicColorViewModel,dynamicColorEnabled, onChangeDynamicColorEnabled )
+            DyColorItem()
 
             SettingsItems()
 

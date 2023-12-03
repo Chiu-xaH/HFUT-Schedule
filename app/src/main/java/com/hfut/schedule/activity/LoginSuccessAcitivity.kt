@@ -5,7 +5,6 @@ import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.os.Looper
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -49,6 +48,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -85,21 +85,21 @@ import com.hfut.schedule.ui.ComposeUI.BottomBar.SettingsScreen
 import com.hfut.schedule.ui.ComposeUI.TransparentSystemBars
 import com.hfut.schedule.ViewModel.JxglstuViewModel
 import com.hfut.schedule.ui.ComposeUI.BottomBar.TodayScreen
-import com.hfut.schedule.ui.DynamicColor.DynamicColorViewModel
-import com.hfut.schedule.ui.theme.DynamicColr
+import com.hfut.schedule.ui.MonetColor.LocalCurrentStickerUuid
+import com.hfut.schedule.ui.MonetColor.MainIntent
+import com.hfut.schedule.ui.MonetColor.MainViewModel
+import com.hfut.schedule.ui.MonetColor.SettingsProvider
+import com.hfut.schedule.ui.theme.RaysTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.temporal.ChronoUnit
 
 @AndroidEntryPoint
 class LoginSuccessAcitivity : ComponentActivity() {
-    private val dynamicColorViewModel: DynamicColorViewModel by viewModels()
-
+    private val viewModel: MainViewModel by viewModels()
     private val vm by lazy { ViewModelProvider(this).get(JxglstuViewModel::class.java) }
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("MissingInflatedId")
@@ -107,22 +107,26 @@ class LoginSuccessAcitivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
-            val prefs = getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
-            val dyswitch = prefs.getBoolean("dyswitch",true)
-            var dynamicColorEnabled by remember { mutableStateOf(dyswitch) }
-            val currentTheme by dynamicColorViewModel.currentTheme
-            DynamicColr( context = applicationContext,
-                currentTheme = currentTheme,
-                dynamicColor = dynamicColorEnabled){
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    TransparentSystemBars()
-                    SuccessUI(vm,dynamicColorEnabled = dynamicColorEnabled,
-                        onChangeDynamicColorEnabled = { dynamicColorEnabledch -> dynamicColorEnabled = dynamicColorEnabledch })
+
+
+            SettingsProvider {
+                // 更新主题色
+                val stickerUuid = LocalCurrentStickerUuid.current
+                LaunchedEffect(stickerUuid) {
+                    viewModel.sendUiIntent(MainIntent.UpdateThemeColor(stickerUuid))
                 }
+                RaysTheme {
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = MaterialTheme.colorScheme.background
+                    ) {
+                        TransparentSystemBars()
+                        SuccessUI(vm)
+
+                    }
+                }
+
+
             }
         }
 
@@ -138,7 +142,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    fun SuccessUI(vm : JxglstuViewModel,dynamicColorEnabled : Boolean,onChangeDynamicColorEnabled: (Boolean) -> Unit,) {
+    fun SuccessUI(vm : JxglstuViewModel) {
         val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
         val switch = prefs.getBoolean("SWITCH",true)
         val apiswitch = prefs.getBoolean("apiswitch",true)
@@ -209,9 +213,6 @@ class LoginSuccessAcitivity : ComponentActivity() {
                     showItem = false,
                     showlable,
                     showlablechanged = {showlablech -> showlable = showlablech},
-                    dynamicColorViewModel,
-                    dynamicColorEnabled,
-                    onChangeDynamicColorEnabled,
                 ) }
                 composable("today") {TodayScreen(vm)}
             }

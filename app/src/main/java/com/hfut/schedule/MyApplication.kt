@@ -2,15 +2,13 @@ package com.hfut.schedule
 
 import android.app.Application
 import android.content.Context
-import com.hfut.schedule.ui.DynamicColor.CatalogTheme
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
 class MyApplication : Application() {
     companion object {
-        val DEFAULT_THEME = CatalogTheme.BLUE_THEME.name
         lateinit var context: Context
-        const val version = "2.3.6"
+        const val version = "2.4"
         const val CardURL = "http://121.251.19.62/"
         const val LibURL = "http://210.45.242.5:8080/"
         const val AlipayURL = "alipays://platformapi/startapp?appId=20000067&url=https://ur.alipay.com/_4kQhV32216tp7bzlDc3E1k"

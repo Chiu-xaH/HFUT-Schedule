@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui
+package com.hfut.schedule.ui.MonetColor
 
 import android.content.Context
 import androidx.compose.ui.graphics.Color

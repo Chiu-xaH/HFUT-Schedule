@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui
+package com.hfut.schedule.ui.MonetColor
 
 import androidx.datastore.preferences.core.Preferences
 

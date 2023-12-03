@@ -28,13 +28,12 @@ import com.google.gson.Gson
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.datamodel.data4
-import com.hfut.schedule.ui.DynamicColor.DynamicColorViewModel
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun FirstCube(dynamicColorViewModel: DynamicColorViewModel, dynamicColorEnabled: Boolean, onChangeDynamicColorEnabled: (Boolean) -> Unit, ) {
+fun FirstCube( ) {
     CardItem()
     Spacer(modifier = Modifier.height(5.dp))
-    DyColorItem(dynamicColorViewModel,dynamicColorEnabled, onChangeDynamicColorEnabled )
+    DyColorItem()
     SettingsItems()
 }
