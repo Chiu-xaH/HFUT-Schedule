@@ -22,14 +22,14 @@ object OpenAlipay {
         val alipayPackageName = "com.eg.android.AlipayGphone"
         val isAlipayInstalled = isAppInstalled(MyApplication.context, alipayPackageName)
 
-        if (isAlipayInstalled) {
+        //if (isAlipayInstalled) {
             // 打开支付宝应用
             val intent = Intent(Intent.ACTION_DEFAULT, Uri.parse(MyApplication.AlipayURL))
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             MyApplication.context.startActivity(intent)
-        } else {
-            Toast.makeText(MyApplication.context, "未安装支付宝", Toast.LENGTH_SHORT).show()
-        }
+      //  } else {
+          //  Toast.makeText(MyApplication.context, "未安装支付宝", Toast.LENGTH_SHORT).show()
+      //  }
     }
 }
 

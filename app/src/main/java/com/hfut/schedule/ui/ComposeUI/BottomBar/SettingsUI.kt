@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -27,6 +29,7 @@ import com.hfut.schedule.ViewModel.JxglstuViewModel
 import com.hfut.schedule.ui.ComposeUI.Search.FWDT
 import com.hfut.schedule.ui.ComposeUI.Search.Library
 import com.hfut.schedule.ui.ComposeUI.Search.SchoolCard
+import com.hfut.schedule.ui.ComposeUI.Search.XuanquItem
 import com.hfut.schedule.ui.ComposeUI.Settings.CardItem
 import com.hfut.schedule.ui.ComposeUI.Settings.DyColorItem
 import com.hfut.schedule.ui.DynamicColor.DynamicColorViewModel
@@ -45,12 +48,8 @@ fun SettingsScreen(vm : JxglstuViewModel,
                    ) {
     val sp =
         PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-    if (sp.getBoolean("SWITCH", true) != showlable) {
-        sp.edit().putBoolean("SWITCH", showlable).apply()
-    }
-    if (sp.getBoolean("dyswitch", true) != dynamicColorEnabled) {
-        sp.edit().putBoolean("dyswitch", dynamicColorEnabled).apply()
-    }
+    if (sp.getBoolean("SWITCH", true) != showlable) { sp.edit().putBoolean("SWITCH", showlable).apply() }
+    if (sp.getBoolean("dyswitch", true) != dynamicColorEnabled) { sp.edit().putBoolean("dyswitch", dynamicColorEnabled).apply() }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -65,33 +64,30 @@ fun SettingsScreen(vm : JxglstuViewModel,
         },) {innerPadding ->
         Column(modifier = Modifier
             .padding(innerPadding)
+            .verticalScroll(rememberScrollState())
             .fillMaxSize()) {
             Spacer(modifier = Modifier.height(10.dp))
 
             CardItem()
 
             if(showItem) {
-
                 Library(vm)
-                FWDT()
+                XuanquItem(vm)
+               // FWDT()
                 Divider()
             }
+
             ListItem(
                 headlineContent = { Text(text = "显示标签") },
                 leadingContent = { Icon(painterResource(R.drawable.label), contentDescription = "Localized description",) },
-                trailingContent = {
-                    Switch(
-                        checked = showlable,
-                        onCheckedChange = showlablechanged
-                    )
-                }
+                trailingContent = { Switch(checked = showlable, onCheckedChange = showlablechanged) }
             )
 
             DyColorItem(dynamicColorViewModel,dynamicColorEnabled, onChangeDynamicColorEnabled )
 
             SettingsItems()
 
-
+            Spacer(modifier = Modifier.height(90.dp))
 
         }
     }

@@ -2,7 +2,6 @@ package com.hfut.schedule.ViewModel
 
 import android.content.Context
 import android.preference.PreferenceManager
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
@@ -13,21 +12,24 @@ import com.hfut.schedule.MyApplication
 import com.hfut.schedule.logic.datamodel.BorrowBooksResponse
 import com.hfut.schedule.logic.datamodel.CardResponse
 import com.hfut.schedule.logic.datamodel.SubBooksResponse
-import com.hfut.schedule.logic.datamodel.data2
 import com.hfut.schedule.logic.datamodel.getTokenResponse
 
 import com.hfut.schedule.logic.datamodel.lessonIdsResponse
+import com.hfut.schedule.logic.network.ServiceCreator.HomeXuanquServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuJSONServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuXMLServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.LibServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Login.OneGotoServiceCreator
 //import com.hfut.schedule.logic.network.ServiceCreator.Login.OneGetNewTicketServiceCreator.client
 import com.hfut.schedule.logic.network.ServiceCreator.Login.OneServiceCreator
+import com.hfut.schedule.logic.network.ServiceCreator.OneCardServiceCreator
+import com.hfut.schedule.logic.network.ServiceCreator.OneGotoCardServiceCreator
+import com.hfut.schedule.logic.network.api.HomeXuanquService
 import com.hfut.schedule.logic.network.api.JxglstuService
 import com.hfut.schedule.logic.network.api.LoginService
 import com.hfut.schedule.logic.network.api.MyService
+import com.hfut.schedule.logic.network.api.LiushuiService
 import com.hfut.schedule.logic.network.api.OneService
-import kotlinx.coroutines.delay
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -38,6 +40,10 @@ class JxglstuViewModel : ViewModel() {
     private val api3 = OneGotoServiceCreator.create(LoginService::class.java)
     private val api4 = OneServiceCreator.create(OneService::class.java)
     private val api5 = LibServiceCreator.create(MyService::class.java)
+    private val api6 = OneGotoCardServiceCreator.create(LoginService::class.java)
+    private val api7 = OneCardServiceCreator.create(LiushuiService::class.java)
+    private val api8 = HomeXuanquServiceCreator.create(HomeXuanquService::class.java)
+
     var studentId = MutableLiveData<Int>()
     var lessonIds = MutableLiveData<List<Int>>()
     var token = MutableLiveData<String>()
@@ -203,6 +209,113 @@ class JxglstuViewModel : ViewModel() {
 
     }
 
+    fun OneGotoCard(cookie : String)  {// 创建一个Call对象，用于发送异步请求
+
+        val call = api6.OneGotoCard(cookie)
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                // response.headers()["Location"]?.let { Log.d("响应", it.toString()) }
+                // val finalUrl = (client.eventListener() as RedirectListener).getResponseUrl()
+                // response.headers()["Location"]
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                //   Log.d("VM","失败")
+                //   code.value = "XXX"
+                t.printStackTrace()
+            }
+        })
+
+
+    }
+
+
+    fun CardGet(auth : String,page : Int) {// 创建一个Call对象，用于发送异步请求
+
+        val call = api7.Cardget(auth,page)
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                //response.body()?.let { Log.d("流水", it.string()) }
+                val liushui = response.body()?.string()
+                val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
+                if(sp.getString("cardliushui","") !=liushui ){ sp.edit().putString("cardliushui", liushui).apply() }
+
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                //   Log.d("VM","失败")
+                //   code.value = "XXX"
+                t.printStackTrace()
+            }
+        })
+
+
+    }
+
+    fun getyue(auth : String) {
+        val call = api7.getYue(auth)
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                //response.body()?.let { Log.d("流水", it.string()) }
+                val yue = response.body()?.string()
+                val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
+                if(sp.getString("cardyue","") !=yue ){ sp.edit().putString("cardyue", yue).apply() }
+
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                //   Log.d("VM","失败")
+                //   code.value = "XXX"
+                t.printStackTrace()
+            }
+        })
+
+
+    }
+
+    fun searchDate(auth : String, timeFrom : String, timeTo : String) {
+        val call = api7.searchDate(auth,timeFrom,timeTo)
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                //response.body()?.let { Log.d("流水", it.string()) }
+                val yue = response.body()?.string()
+                val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
+                if(sp.getString("searchyue","") !=yue ){ sp.edit().putString("searchyue", yue).apply() }
+
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                //   Log.d("VM","失败")
+                //   code.value = "XXX"
+                t.printStackTrace()
+            }
+        })
+    }
+
+
+    fun getMonthYue(auth : String, dateStr: String) {
+        val call = api7.getMonthYue(auth,dateStr)
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                //response.body()?.let { Log.d("流水", it.string()) }
+                val yue = response.body()?.string()
+                val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
+                if(sp.getString("monthbalance","") !=yue ){ sp.edit().putString("monthbalance", yue).apply() }
+
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                //   Log.d("VM","失败")
+                //   code.value = "XXX"
+                t.printStackTrace()
+            }
+        })
+    }
     fun getToken()  {// 创建一个Call对象，用于发送异步请求
         val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
         val codehttp = prefs.getString("code", "")
@@ -392,6 +505,24 @@ class JxglstuViewModel : ViewModel() {
 
 
     }
+
+    fun SearchXuanqu(code : String) {
+
+        val call = api8.SearchXuanqu(code)
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                val xuanqu = response.body()?.string()
+                val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
+                if(sp.getString("xuanqu","") !=xuanqu){ sp.edit().putString("xuanqu", xuanqu).apply() }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+
+
+    }
+
 
 
 }

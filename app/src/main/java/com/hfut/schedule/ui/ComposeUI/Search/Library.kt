@@ -1,12 +1,18 @@
 package com.hfut.schedule.ui.ComposeUI.Search
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.preference.PreferenceManager
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -48,6 +54,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -70,6 +77,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Library(vm : JxglstuViewModel) {
@@ -79,6 +87,14 @@ fun Library(vm : JxglstuViewModel) {
     val borrow =prefs.getString("borrow","正在获取")
     val sub =prefs.getString("sub","正在获取")
 
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+
+    val scale = animateFloatAsState(
+        targetValue = if (isPressed) 0.9f else 1f, // 按下时为0.9，松开时为1
+        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
+        label = "" // 使用弹簧动画
+    )
 
     ListItem(
         headlineContent = { Text(text = "图书  借阅 ${borrow} 本") },
@@ -90,9 +106,11 @@ fun Library(vm : JxglstuViewModel) {
             )
         },
         trailingContent={
-            FilledTonalIconButton(onClick = {
-                showBottomSheet_Library = true
-            }) {
+            FilledTonalIconButton(
+                modifier = Modifier.scale(scale.value),
+                interactionSource = interactionSource,
+                onClick = { showBottomSheet_Library = true }
+            ) {
                 Icon( painterResource(R.drawable.search),
                     contentDescription = "Localized description",)
             }
@@ -133,6 +151,7 @@ fun Library(vm : JxglstuViewModel) {
                     horizontalArrangement = Arrangement.Center
                 ) {
                     TextField(
+                        modifier = Modifier.weight(1f).padding(horizontal = 15.dp),
                         value = input,
                         onValueChange = {
                             input = it

@@ -3,6 +3,8 @@ package com.hfut.schedule.ui.ComposeUI.BottomBar
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
+import android.preference.PreferenceManager
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
@@ -20,7 +22,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
@@ -47,15 +48,16 @@ import com.hfut.schedule.ViewModel.JxglstuViewModel
 import com.hfut.schedule.logic.GetDate
 import com.hfut.schedule.logic.datamodel.course
 import com.hfut.schedule.logic.datamodel.data
-import com.hfut.schedule.logic.OpenAlipay
 import com.hfut.schedule.logic.datamodel.MyList
 import com.hfut.schedule.logic.datamodel.Schedule
+import com.hfut.schedule.logic.datamodel.ZJGD.CardBlanceResponse
 import com.hfut.schedule.logic.datamodel.data4
-import com.hfut.schedule.ui.ComposeUI.Search.Library
 import com.hfut.schedule.ui.ComposeUI.Search.SchoolCard
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 import org.jsoup.Jsoup
@@ -77,6 +79,31 @@ fun TodayScreen(vm : JxglstuViewModel) {
 
     var chinesenumber  = GetDate.chinesenumber
 
+
+//使用指尖工大接口获取一卡通余额
+fun zjgdcard() {
+    CoroutineScope(Job()).apply {
+        launch {
+            async {
+                val auth = prefs.getString("auth","")
+                vm.getyue("bearer " + auth)
+            }.await()
+            async {
+                delay(500)
+                val yue = prefs.getString("cardyue",MyApplication.NullCardblance)
+                val yuedata = Gson().fromJson(yue,CardBlanceResponse::class.java)
+                var num = yuedata.data.card[0].db_balance.toString()
+
+
+                var num_float = num.toFloat()
+                num_float = num_float / 100
+               // Log.d("Log",num_float.toString())
+                val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
+                if(sp.getString("card","") !=num ){ sp.edit().putString("card", num_float.toString()).apply() }
+            }
+        }
+    }
+}
 
     var table_1 by rememberSaveable { mutableStateOf("") }
     var table_2 by rememberSaveable { mutableStateOf("") }
@@ -365,15 +392,26 @@ fun TodayScreen(vm : JxglstuViewModel) {
 
     val token = prefs.getString("bearer","")
 
-        if (token  != null && token.contains("AT") && card != "请登录刷新")
-            vm.getCard("Bearer $token")
-    else {
-        Toast.makeText(MyApplication.context,"信息门户已超时,需重新登录",Toast.LENGTH_SHORT).show()
-            vm.getCard("Bearer " + vm.token.value)
-    }
 
 
+
+    //Today操作区///////////////////////////////////////////////////////////////////////////////////////////////////
     CoroutineScope(Job()).apply {
+
+        async {
+            if (token  != null && token.contains("AT") && card != "请登录刷新") {
+                    async {   vm.getCard("Bearer $token") }.await()
+                    async {
+                        delay(400)
+                        if (card!!.contains("-")) zjgdcard()
+                    }
+            } else {
+                Toast.makeText(MyApplication.context,"信息门户已超时,需重新登录",Toast.LENGTH_SHORT).show()
+                    async { vm.getCard("Bearer " + vm.token.value) }
+                    async { zjgdcard()  }
+            }
+        }
+
         async {
             val json = prefs.getString("json", "")
             if (json?.contains("result") == true) {
@@ -381,12 +419,13 @@ fun TodayScreen(vm : JxglstuViewModel) {
                 DatumTomorrow()
             } else Toast.makeText(MyApplication.context,"本地数据为空,请登录以更新数据",Toast.LENGTH_SHORT).show()
         }
+
         async{ ExamGet() }
         async{ MyWangKe() }
         async{ MySchedule() }
     }
 
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -499,7 +538,7 @@ fun TodayScreen(vm : JxglstuViewModel) {
                                 .padding(horizontal = 15.dp, vertical = 5.dp),
                             shape = MaterialTheme.shapes.medium
 
-                        ){ SchoolCard() }
+                        ){ SchoolCard(vm) }
                     }
 
                     items(ExamGet()) {item ->
@@ -641,8 +680,9 @@ fun TodayScreen(vm : JxglstuViewModel) {
                         }
 
                     }
-                    
+
                     items(MyWangKe().size) { item ->
+
 
                         var date = GetDate.Date2
                         val todaydate = (date?.substring(0, 2) ) + date?.substring(3, 5)
@@ -650,34 +690,37 @@ fun TodayScreen(vm : JxglstuViewModel) {
                         val Wangkedate = (get?.substring(0, 2) ) + get?.substring(3, 5)
                         //判断过期不显示信息
                         if(Wangkedate.toInt() >= todaydate.toInt()) {
-                            Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)
-                            {
-                                Spacer(modifier = Modifier.height(100.dp))
-                                Card(
-                                    elevation = CardDefaults.cardElevation(
-                                        defaultElevation = 3.dp
-                                    ),
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 15.dp, vertical = 5.dp),
 
-                                    shape = MaterialTheme.shapes.medium
+                                    Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)
+                                    {
+                                        Spacer(modifier = Modifier.height(100.dp))
+                                        Card(
+                                            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(horizontal = 15.dp, vertical = 5.dp),
+                                            shape = MaterialTheme.shapes.medium,
 
-                                ) {
-                                    ListItem(
-                                        headlineContent = {  Text(text = MyWangKe()[item].title) },
-                                        overlineContent = {Text(text = MyWangKe()[item].time)},
-                                        supportingContent = { Text(text = MyWangKe()[item].info)},
-                                        leadingContent = {
-                                            Icon(
-                                                painterResource(R.drawable.net),
-                                                contentDescription = "Localized description",
+                                            ) {
+
+                                            ListItem(
+                                                headlineContent = {  Text(text = MyWangKe()[item].title) },
+                                                overlineContent = {Text(text = MyWangKe()[item].time)},
+                                                supportingContent = { Text(text = MyWangKe()[item].info)},
+                                                leadingContent = {
+                                                    Icon(
+                                                        painterResource(R.drawable.net),
+                                                        contentDescription = "Localized description",
+                                                    )
+                                                },
+                                                modifier = Modifier.clickable {}
                                             )
-                                        },
-                                        modifier = Modifier.clickable {}
-                                    )
-                                }
-                            }
+                                        }
+                                    }
+
+
+
+
                         }
 
                     }

@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -39,7 +41,9 @@ import com.hfut.schedule.ui.ComposeUI.Search.FWDT
 import com.hfut.schedule.ui.ComposeUI.Search.Library
 import com.hfut.schedule.ui.ComposeUI.Search.Person
 import com.hfut.schedule.ui.ComposeUI.Search.SchoolCard
+import com.hfut.schedule.ui.ComposeUI.Search.XuanquItem
 import com.hfut.schedule.ui.ComposeUI.Search.emptyRoomUI
+import com.hfut.schedule.ui.ComposeUI.XuanquUI
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -68,12 +72,9 @@ fun SearchScreen(vm : JxglstuViewModel) {
             async { vm.getCard("Bearer " + vm.token.value) }
             async { vm.getBorrowBooks("Bearer " + vm.token.value) }
             async { vm.getSubBooks("Bearer " + vm.token.value) }
-            async {
-                delay(500)
-
-            }
         }
     }
+
 
 
     var view by rememberSaveable { mutableStateOf("") }
@@ -116,6 +117,7 @@ fun SearchScreen(vm : JxglstuViewModel) {
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
             //.background()插入背景
         ) {
 /////////////////////////////////////////////////////////////////////////////////////
@@ -330,17 +332,18 @@ fun SearchScreen(vm : JxglstuViewModel) {
             }
 
 ///////////////////////////////////////////////////////////////一卡通//////////////////
-
-                    SchoolCard()
-
+                    SchoolCard(vm)
 /////////////////////////////////////////////////////////////////////////////////////////
           Library(vm)
+ //////////////////////////////////////////////////////////////////////////////////
+           XuanquItem(vm)
 //////////////////////////////////////////////////////////////////////////////////////
             val sheetState_Total = rememberModalBottomSheetState()
             var showBottomSheet_Total by remember { mutableStateOf(false) }
 
                     ListItem(
-                        headlineContent = { Text(text = "本学期课程") },
+                        headlineContent = { Text(text = "课程汇总") },
+                        supportingContent = { Text(text = "暂未开发")},
                         leadingContent = {
                             Icon(
                                 painterResource(R.drawable.calendar_view_month),
@@ -371,9 +374,88 @@ fun SearchScreen(vm : JxglstuViewModel) {
                 }
             }
 
+
+
 ////////////////////////////////////////////////////////////////////////////////
            FWDT()
 //////////////////////////////////////////////////////////////////////////////////
+
+            val sheetState_Second = rememberModalBottomSheetState()
+            var showBottomSheet_Second by remember { mutableStateOf(false) }
+
+            ListItem(
+                headlineContent = { Text(text = "第二课堂") },
+                supportingContent = { Text(text = "暂未开发")},
+                leadingContent = {
+                    Icon(
+                        painterResource(R.drawable.school),
+                        contentDescription = "Localized description",
+                    )
+                },
+                modifier = Modifier.clickable { showBottomSheet_Second = true }
+            )
+
+            if (showBottomSheet_Second) {
+                ModalBottomSheet(
+                    onDismissRequest = {
+                        showBottomSheet_Second = false
+                    },
+                    sheetState = sheetState_Second
+                ) {
+                    Column() {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(text = "暂未开发")
+                        }
+                        Spacer(modifier = Modifier.height(20.dp))
+                    }
+
+
+                }
+            }
+
+//////////////////////////////////////////////////////////////////////////////////
+
+            val sheetState_Bus = rememberModalBottomSheetState()
+            var showBottomSheet_Bus by remember { mutableStateOf(false) }
+
+            ListItem(
+                headlineContent = { Text(text = "往返校车") },
+                supportingContent = { Text(text = "暂未开发")},
+                leadingContent = {
+                    Icon(
+                        painterResource(R.drawable.directions_bus),
+                        contentDescription = "Localized description",
+                    )
+                },
+                modifier = Modifier.clickable { showBottomSheet_Bus = true }
+            )
+
+            if (showBottomSheet_Bus) {
+                ModalBottomSheet(
+                    onDismissRequest = {
+                        showBottomSheet_Bus = false
+                    },
+                    sheetState = sheetState_Bus
+                ) {
+                    Column() {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(text = "不想开发")
+                        }
+                        Spacer(modifier = Modifier.height(20.dp))
+                    }
+
+
+                }
+            }
+//////////////////////////////////////////////////////////////////////////////////
+
+            Spacer(modifier = Modifier.height(90.dp))
         }
     }
 

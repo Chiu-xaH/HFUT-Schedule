@@ -517,6 +517,16 @@ class LoginSuccessAcitivity : ComponentActivity() {
                 launch {
                     val token = prefs.getString("bearer","")
                    // token?.let { Log.d("token", it) }
+
+                    val liushui = prefs.getString("cardliushui",MyApplication.NullLiushui)
+                    if (liushui != null) {
+                        if (prefs.getString("auth","") == null || liushui.contains("操作成功") == false) {
+                            val ONE = prefs.getString("ONE","")
+                            val TGC = prefs.getString("TGC","")
+                            vm.OneGotoCard(ONE + ";" + TGC)
+                        }
+                    }
+
                     if (token != null) {
                         if (token.contains("AT") && cardvalue != "请登录刷新") {
                             async { vm.getCard("Bearer $token") }
@@ -540,10 +550,8 @@ class LoginSuccessAcitivity : ComponentActivity() {
                     }
 
 
-
-
-
                 }
+
 
                 launch{
                     async {

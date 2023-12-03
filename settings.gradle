@@ -2,7 +2,10 @@ pluginManagement {
     repositories {
         google()
         mavenCentral()
+      //  maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://jitpack.io' }
         gradlePluginPortal()
+        //jcenter()
     }
 }
 dependencyResolutionManagement {
@@ -10,6 +13,9 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+       // maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://jitpack.io'}
+       // jcenter()
     }
 }
 rootProject.name = "肥工课程表"

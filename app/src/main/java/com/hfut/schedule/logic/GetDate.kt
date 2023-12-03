@@ -20,7 +20,7 @@ object GetDate {
     var Bianhuaweeks = weeksBetween  //切换周数
     @RequiresApi(Build.VERSION_CODES.O)
     val Benweeks = weeksBetween  //固定本周
-
+    val Date3 = SimpleDateFormat("yyyy-MM").format(Date())
 
     val Date2 = SimpleDateFormat("MM-dd").format(Date())
 

@@ -216,6 +216,7 @@ class LoginActivity : ComponentActivity() {
 
             Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
                 TextField(
+                    modifier = Modifier.weight(1f).padding(horizontal = 40.dp),
                     value = username,
                     onValueChange = {username = it },
                     label = { Text("学号" ) },
@@ -242,15 +243,16 @@ class LoginActivity : ComponentActivity() {
             Spacer(modifier = Modifier.height(30.dp))
             Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
                 TextField(
+                    modifier = Modifier.weight(1f).padding(horizontal = 40.dp),
                     value = inputAES,
                     onValueChange = { inputAES = it },
-                    label = { Text("密码") },
+                    label = { Text("信息门户密码") },
                     singleLine = true,
                     colors = TextFieldDefaults.textFieldColors(
                         focusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent, // 有焦点时的颜色，透明
                         unfocusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent, // 无焦点时的颜色，绿色
                     ),
-                    supportingText = { Text("密码为信息门户")},
+                  //  supportingText = { Text("密码为信息门户")},
                     visualTransformation = if (hidden) PasswordVisualTransformation()
                     else VisualTransformation.None,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),

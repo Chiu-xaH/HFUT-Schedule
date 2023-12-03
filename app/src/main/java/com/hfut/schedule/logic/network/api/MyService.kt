@@ -17,7 +17,4 @@ interface MyService {
     @Headers("Accept: application/json, text/javascript, */*; q=0.01")
     fun LibSearch(@Body json: JsonObject) : Call<ResponseBody>
 
-    @GET ("opac/presearch.php")
-    @Headers("Accept: application/json, text/javascript, */*; q=0.01")
-    fun LibSearch2() : Call<ResponseBody>
 }

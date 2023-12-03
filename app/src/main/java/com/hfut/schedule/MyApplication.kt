@@ -10,14 +10,25 @@ class MyApplication : Application() {
     companion object {
         val DEFAULT_THEME = CatalogTheme.BLUE_THEME.name
         lateinit var context: Context
-        const val version = "2.3.3"
+        const val version = "2.3.6"
+        const val CardURL = "http://121.251.19.62/"
         const val LibURL = "http://210.45.242.5:8080/"
         const val AlipayURL = "alipays://platformapi/startapp?appId=20000067&url=https://ur.alipay.com/_4kQhV32216tp7bzlDc3E1k"
         const val OneURL = "https://one.hfut.edu.cn/"
         const val LoginURL = "https://cas.hfut.edu.cn/"
         const val JxglstuURL = "http://jxglstu.hfut.edu.cn/eams5-student/"
         const val MyURL = "https://chiu-xah.github.io/"
+        const val HomeXuanquURL = "http://39.106.82.121/"
         const val RedirectURL = "https://cas.hfut.edu.cn/cas/login?service=http%3A%2F%2Fjxglstu.hfut.edu.cn%2Feams5-student%2Fneusoft-sso%2Flogin&exception.message=A+problem+occurred+restoring+the+flow+execution+with+key+%27e1s1%27"
+        const val NullCardblance = "{\"data\":{\"card\":[{ \"db_balance\":0000}]}}"
+        const val NullMonthYue = "{\"data\":{ \"income\":0.0, \"expenses\":0.0 },}"
+        const val NullSearch = "{\"data\":{\"未查找到数据,输入格式是否正确?\":0.0} }"
+        const val NullLiushui = "{\n" +
+                "    \"data\":{\n" +
+                "        \"records\":[],\n" +
+                "        \"pages\":0\n" +
+                "        }\n" +
+                "    }"
         const val NullExam =  "        <tbody>\n" +
                 "          <tr>\n" +
                 "            <td>空</td>\n" +
@@ -62,8 +73,20 @@ class MyApplication : Application() {
 
         const val NullMy = "{\n" +
                 "    \"Lessons\" : {\n" +
-                "        \"MyList\" : [],\n" +
-                "        \"Schedule\" : []\n" +
+                "        \"MyList\" : [\n" +
+                "        {\n" +
+                "            \"title\" : \"\",\n" +
+                "            \"time\" : \"01-01\",\n" +
+                "            \"info\" : \"\"\n" +
+                "        }\n" +
+                "    ],\n" +
+                "        \"Schedule\" : [\n" +
+                "        {\n" +
+                "            \"title\" : \"\",\n" +
+                "            \"time\" : \"01-01\",\n" +
+                "            \"info\" : \"\"\n" +
+                "        }\n" +
+                "]\n" +
                 "},\n" +
                 "    \"SettingsInfo\" : {\n" +
                 "        \"title\" : \"网络接口\",\n" +

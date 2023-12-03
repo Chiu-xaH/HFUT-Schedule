@@ -25,9 +25,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.core.view.WindowCompat
-import com.hfut.schedule.ui.ComposeUI.Test
+import com.hfut.schedule.ui.ComposeUI.TestUI
 import com.hfut.schedule.ui.DynamicColor.DynamicColorViewModel
 import com.hfut.schedule.ui.ComposeUI.TransparentSystemBars
+import com.hfut.schedule.ui.ComposeUI.search
 import com.hfut.schedule.ui.theme.DynamicColr
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -51,7 +52,7 @@ class FWDTLoginActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     TransparentSystemBars()
-                    Test()
+                   TestUI()
                 }
             }
         }

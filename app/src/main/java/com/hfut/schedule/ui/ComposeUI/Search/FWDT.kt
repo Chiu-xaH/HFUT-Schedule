@@ -16,7 +16,7 @@ import com.hfut.schedule.activity.FWDTLoginActivity
 fun FWDT() {
     ListItem(
         headlineContent = { Text(text = "服务大厅") },
-        supportingContent = { Text(text = "需接入校园网")},
+        supportingContent = { Text(text = "暂未开发")},
         leadingContent = {
             Icon(
                 painterResource(R.drawable.redeem),
