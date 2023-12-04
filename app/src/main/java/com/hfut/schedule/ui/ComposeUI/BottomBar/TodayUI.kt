@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.preference.PreferenceManager
-import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
@@ -44,15 +43,15 @@ import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.JxglstuViewModel
+import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.GetDate
-import com.hfut.schedule.logic.datamodel.course
-import com.hfut.schedule.logic.datamodel.data
+import com.hfut.schedule.logic.datamodel.FocusCourse
+import com.hfut.schedule.logic.datamodel.Jxglstu.data
 import com.hfut.schedule.logic.datamodel.MyList
 import com.hfut.schedule.logic.datamodel.Schedule
-import com.hfut.schedule.logic.datamodel.ZJGD.CardBlanceResponse
+import com.hfut.schedule.logic.datamodel.zjgd.BalanceResponse
 import com.hfut.schedule.logic.datamodel.data4
-import com.hfut.schedule.ui.ComposeUI.Search.SchoolCard
+import com.hfut.schedule.ui.ComposeUI.Search.SchoolCard.SchoolCardItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -69,7 +68,7 @@ import java.time.format.DateTimeFormatter
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TodayScreen(vm : JxglstuViewModel) {
+fun TodayScreen(vm : LoginSuccessViewModel) {
 
 
     val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
@@ -91,7 +90,7 @@ fun zjgdcard() {
             async {
                 delay(500)
                 val yue = prefs.getString("cardyue",MyApplication.NullCardblance)
-                val yuedata = Gson().fromJson(yue,CardBlanceResponse::class.java)
+                val yuedata = Gson().fromJson(yue,BalanceResponse::class.java)
                 var num = yuedata.data.card[0].db_balance.toString()
 
 
@@ -194,9 +193,9 @@ fun zjgdcard() {
         return Wabgke
     }
 
-    fun Datum(): MutableList<course> {
+    fun Datum(): MutableList<FocusCourse> {
 
-        var TodayCourse = mutableListOf<course>()
+        var TodayCourse = mutableListOf<FocusCourse>()
         val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
         val json = prefs.getString("json", MyApplication.NullDatum)
         // Log.d("测试",json!!)
@@ -251,7 +250,7 @@ fun zjgdcard() {
 
 
 
-            if (date == GetDate.Date) {
+            if (date == GetDate.Date_yyyy_MM_dd) {
 
                 when(scheduleList[i].startTime) {
                     800 -> {
@@ -280,10 +279,10 @@ fun zjgdcard() {
         }
             //去除空数组，重新组成顺序课表
         val Course = arrayOf(
-            course(time_1,table_1,room_1),
-            course(time_2,table_2,room_2),
-            course(time_3,table_3,room_3),
-            course(time_4,table_4,room_4)
+            FocusCourse(time_1,table_1,room_1),
+            FocusCourse(time_2,table_2,room_2),
+            FocusCourse(time_3,table_3,room_3),
+            FocusCourse(time_4,table_4,room_4)
         )
 
 //遍历数组，如果存在非空集合，则添加到新的数组中
@@ -295,12 +294,12 @@ fun zjgdcard() {
 
 
 
-    fun DatumTomorrow(): MutableList<course> {
+    fun DatumTomorrow(): MutableList<FocusCourse> {
 
         val today = LocalDate.now() // 获取当前日期
         val tomorrow = today.plusDays(1) // 获取下一天的日期
 
-        var TomorrowCourse = mutableListOf<course>()
+        var TomorrowCourse = mutableListOf<FocusCourse>()
 
         val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
         val json = prefs.getString("json", MyApplication.NullDatum)
@@ -375,10 +374,10 @@ fun zjgdcard() {
         }
 
         val Course = arrayOf(
-            course(tomorrow_time_1,tomorrow_table_1,tomorrow_room_1),
-            course(tomorrow_time_2,tomorrow_table_2,tomorrow_room_2),
-            course(tomorrow_time_3,tomorrow_table_3,tomorrow_room_3),
-            course(tomorrow_time_4,tomorrow_table_4,tomorrow_room_4)
+            FocusCourse(tomorrow_time_1,tomorrow_table_1,tomorrow_room_1),
+            FocusCourse(tomorrow_time_2,tomorrow_table_2,tomorrow_room_2),
+            FocusCourse(tomorrow_time_3,tomorrow_table_3,tomorrow_room_3),
+            FocusCourse(tomorrow_time_4,tomorrow_table_4,tomorrow_room_4)
         )
 
 
@@ -435,7 +434,7 @@ fun zjgdcard() {
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
-                title = { Text("今天  第${GetDate.Benweeks}周  周${chinesenumber}  ${GetDate.Date2}") }
+                title = { Text("今天  第${GetDate.Benweeks}周  周${chinesenumber}  ${GetDate.Date_MM_dd}") }
             )
         },) {innerPadding ->
         Column(modifier = Modifier
@@ -538,12 +537,12 @@ fun zjgdcard() {
                                 .padding(horizontal = 15.dp, vertical = 5.dp),
                             shape = MaterialTheme.shapes.medium
 
-                        ){ SchoolCard(vm) }
+                        ){ SchoolCardItem(vm) }
                     }
 
                     items(ExamGet()) {item ->
 
-                        var date = GetDate.Date2
+                        var date = GetDate.Date_MM_dd
                         val todaydate = (date?.substring(0, 2) ) + date?.substring(3, 5)
                         val get = item["日期时间"]
                         val examdate = (get?.substring(0, 2) ) + get?.substring(3, 5)
@@ -583,7 +582,7 @@ fun zjgdcard() {
 
                     items(MySchedule().size) { item ->
 
-                        var date = GetDate.Date2
+                        var date = GetDate.Date_MM_dd
                         val todaydate = (date?.substring(0, 2) ) + date?.substring(3, 5)
                         val get = MySchedule()[item].time
                         val examdate = (get?.substring(0, 2) ) + get?.substring(3, 5)
@@ -643,7 +642,7 @@ fun zjgdcard() {
 
                     items(MySchedule().size) { item ->
 
-                        var date = GetDate.Date2
+                        var date = GetDate.Date_MM_dd
                         val todaydate = (date?.substring(0, 2) ) + date?.substring(3, 5)
                         val get = MySchedule()[item].time
                         val examdate = (get?.substring(0, 2) ) + get?.substring(3, 5)
@@ -684,7 +683,7 @@ fun zjgdcard() {
                     items(MyWangKe().size) { item ->
 
 
-                        var date = GetDate.Date2
+                        var date = GetDate.Date_MM_dd
                         val todaydate = (date?.substring(0, 2) ) + date?.substring(3, 5)
                         val get = MyWangKe()[item].time
                         val Wangkedate = (get?.substring(0, 2) ) + get?.substring(3, 5)

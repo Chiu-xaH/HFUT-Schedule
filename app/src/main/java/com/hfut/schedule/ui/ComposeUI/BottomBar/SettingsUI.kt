@@ -25,19 +25,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.JxglstuViewModel
-import com.hfut.schedule.ui.ComposeUI.Search.FWDT
-import com.hfut.schedule.ui.ComposeUI.Search.Library
-import com.hfut.schedule.ui.ComposeUI.Search.SchoolCard
+import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ui.ComposeUI.Search.LibraryItem
 import com.hfut.schedule.ui.ComposeUI.Search.XuanquItem
-import com.hfut.schedule.ui.ComposeUI.Settings.CardItem
-import com.hfut.schedule.ui.ComposeUI.Settings.DyColorItem
+import com.hfut.schedule.ui.ComposeUI.Settings.MyAPIItem
+import com.hfut.schedule.ui.ComposeUI.Settings.MonetColorItem
 import com.hfut.schedule.ui.ComposeUI.Settings.SettingsItems
+import com.hfut.schedule.ui.ComposeUI.Search.WebUI
 
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(vm : JxglstuViewModel,
+fun SettingsScreen(vm : LoginSuccessViewModel,
                    showItem : Boolean,
                    showlable : Boolean,
                    showlablechanged: (Boolean) -> Unit,
@@ -63,13 +62,16 @@ fun SettingsScreen(vm : JxglstuViewModel,
             .fillMaxSize()) {
             Spacer(modifier = Modifier.height(10.dp))
 
-            CardItem()
+            MyAPIItem()
 
             if(showItem) {
-                Library(vm)
+                LibraryItem(vm)
                 XuanquItem(vm)
+                WebUI()
+                Spacer(modifier = Modifier.height(5.dp))
                // FWDT()
                 Divider()
+                Spacer(modifier = Modifier.height(5.dp))
             }
 
             ListItem(
@@ -78,7 +80,7 @@ fun SettingsScreen(vm : JxglstuViewModel,
                 trailingContent = { Switch(checked = showlable, onCheckedChange = showlablechanged) }
             )
 
-            DyColorItem()
+            MonetColorItem()
 
             SettingsItems()
 

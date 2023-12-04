@@ -13,19 +13,25 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Check
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -41,7 +47,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.hfut.schedule.R
+import com.hfut.schedule.ui.theme.extractTonalPalettes
 import com.hfut.schedule.ui.theme.extractTonalPalettesFromWallpaper
 import com.kyant.monet.TonalPalettes
 import com.kyant.monet.TonalPalettes.Companion.toTonalPalettes
@@ -51,7 +60,36 @@ import java.lang.Long
 @Composable
 fun MonetUI() {
     val tonalPalettesFromWallpaper = extractTonalPalettesFromWallpaper()
-    Palettes(palettes = tonalPalettesFromWallpaper)
+    val tonalPalettes = extractTonalPalettes()
+
+    Card(
+
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 3.dp
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 15.dp, vertical = 5.dp),
+            shape = MaterialTheme.shapes.medium
+
+        ) {
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(text = "      壁纸色彩")
+
+            Spacer(modifier = Modifier.height(10.dp))
+            Palettes(palettes = tonalPalettesFromWallpaper)
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Text(text = "      预设色彩")
+            Spacer(modifier = Modifier.height(10.dp))
+            Palettes(palettes = tonalPalettes)
+            Spacer(modifier = Modifier.height(10.dp))
+
+
+        }
+
+
+
 }
 
 @Composable
@@ -63,7 +101,6 @@ fun Palettes(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val tonalPalettes = (customPrimaryColor.toColorOrNull() ?: Color.Transparent).toTonalPalettes()
-    var addDialogVisible by rememberSaveable { mutableStateOf(false) }
     var customColorValue by rememberSaveable { mutableStateOf(customPrimaryColor) }
 
     if (palettes.isEmpty()) {
@@ -79,7 +116,7 @@ fun Palettes(
         ) {
             Text(
                 text = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1)
-                    "无调色板"
+                    "不支持动态壁纸"
                 else "8.1 +",
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.inverseSurface,
@@ -100,7 +137,6 @@ fun Palettes(
                     onClick = {
                         if (isCustom) {
                             customColorValue = customPrimaryColor
-                            addDialogVisible = true
                         } else {
                             ThemeNamePreference.put(context, scope, t)
                         }

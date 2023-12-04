@@ -14,19 +14,19 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
-import com.hfut.schedule.ViewModel.JxglstuViewModel
+import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ui.ComposeUI.NoNet.NoNetWork
 import com.hfut.schedule.ui.ComposeUI.TransparentSystemBars
 import com.hfut.schedule.ui.MonetColor.LocalCurrentStickerUuid
 import com.hfut.schedule.ui.MonetColor.MainIntent
 import com.hfut.schedule.ui.MonetColor.MainViewModel
 import com.hfut.schedule.ui.MonetColor.SettingsProvider
-import com.hfut.schedule.ui.theme.RaysTheme
+import com.hfut.schedule.ui.theme.MonetColor
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class SavedCoursesActivity : ComponentActivity() {
-    private val vm by lazy { ViewModelProvider(this).get(JxglstuViewModel::class.java) }
+    private val vm by lazy { ViewModelProvider(this).get(LoginSuccessViewModel::class.java) }
     private val viewModel: MainViewModel by viewModels()
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("MissingInflatedId")
@@ -41,7 +41,7 @@ class SavedCoursesActivity : ComponentActivity() {
                     viewModel.sendUiIntent(MainIntent.UpdateThemeColor(stickerUuid))
                 }
 
-                RaysTheme {
+                MonetColor {
                     Surface(
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.background

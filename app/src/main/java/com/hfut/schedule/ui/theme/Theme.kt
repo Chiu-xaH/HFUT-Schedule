@@ -111,18 +111,18 @@ fun extractAllTonalPalettes(): Map<String, TonalPalettes> {
     return extractTonalPalettes() + extractTonalPalettesFromWallpaper()
 }
 @Composable
-fun RaysTheme(
+fun MonetColor(
     darkTheme: Int,
     content: @Composable () -> Unit
 ) {
-    RaysTheme(
+    MonetColor(
       //  darkTheme = DarkModePreference.isInDark(darkTheme),
         content = content
     )
 }
 
 @Composable
-fun RaysTheme(
+fun MonetColor(
     wallpaperPalettes: Map<String, TonalPalettes> = extractAllTonalPalettes(),
     content: @Composable () -> Unit
 ) {

@@ -37,8 +37,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.hfut.schedule.MyApplication
-import com.hfut.schedule.ViewModel.JxglstuViewModel
-import com.hfut.schedule.logic.datamodel.EmptyRoomResponse
+import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.logic.datamodel.One.EmptyRoomResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -46,7 +46,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun emptyRoomUI(vm : JxglstuViewModel) {
+fun emptyRoomUI(vm : LoginSuccessViewModel) {
     var selected1 by remember { mutableStateOf(true) }
     var selected2 by remember { mutableStateOf(false) }
     var selected3 by remember { mutableStateOf(false) }
@@ -57,7 +57,7 @@ fun emptyRoomUI(vm : JxglstuViewModel) {
       val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
       val Roomjson = prefs.getString("emptyjson", "{\"data\": {\"records\": [{ \"nameZh\": \"请选择楼栋\"}] }}")
     //  if (Roomjson != null) {
-      val data = Gson().fromJson(Roomjson,EmptyRoomResponse::class.java)
+      val data = Gson().fromJson(Roomjson, EmptyRoomResponse::class.java)
       val record = data.data.records
       var rooms = mutableListOf<String>()
       //val room =  data.data.

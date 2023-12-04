@@ -76,20 +76,20 @@ import com.hfut.schedule.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.GetDate
 import com.hfut.schedule.logic.GetDate.Benweeks
-import com.hfut.schedule.logic.GetDate.Date2
+import com.hfut.schedule.logic.GetDate.Date_MM_dd
 import com.hfut.schedule.logic.GetDate.weeksBetween
 import com.hfut.schedule.logic.datamodel.NavigationBarItemData
-import com.hfut.schedule.logic.datamodel.data
+import com.hfut.schedule.logic.datamodel.Jxglstu.data
 import com.hfut.schedule.ui.ComposeUI.BottomBar.SearchScreen
 import com.hfut.schedule.ui.ComposeUI.BottomBar.SettingsScreen
 import com.hfut.schedule.ui.ComposeUI.TransparentSystemBars
-import com.hfut.schedule.ViewModel.JxglstuViewModel
+import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ui.ComposeUI.BottomBar.TodayScreen
 import com.hfut.schedule.ui.MonetColor.LocalCurrentStickerUuid
 import com.hfut.schedule.ui.MonetColor.MainIntent
 import com.hfut.schedule.ui.MonetColor.MainViewModel
 import com.hfut.schedule.ui.MonetColor.SettingsProvider
-import com.hfut.schedule.ui.theme.RaysTheme
+import com.hfut.schedule.ui.theme.MonetColor
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -100,7 +100,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class LoginSuccessAcitivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
-    private val vm by lazy { ViewModelProvider(this).get(JxglstuViewModel::class.java) }
+    private val vm by lazy { ViewModelProvider(this).get(LoginSuccessViewModel::class.java) }
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -115,7 +115,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
                 LaunchedEffect(stickerUuid) {
                     viewModel.sendUiIntent(MainIntent.UpdateThemeColor(stickerUuid))
                 }
-                RaysTheme {
+                MonetColor {
                     Surface(
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.background
@@ -142,7 +142,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    fun SuccessUI(vm : JxglstuViewModel) {
+    fun SuccessUI(vm : LoginSuccessViewModel) {
         val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
         val switch = prefs.getBoolean("SWITCH",true)
         val apiswitch = prefs.getBoolean("apiswitch",true)
@@ -519,7 +519,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
                     val token = prefs.getString("bearer","")
                    // token?.let { Log.d("token", it) }
 
-                    val liushui = prefs.getString("cardliushui",MyApplication.NullLiushui)
+                    val liushui = prefs.getString("cardliushui",MyApplication.NullBill)
                     if (liushui != null) {
                         if (prefs.getString("auth","") == null || liushui.contains("操作成功") == false) {
                             val ONE = prefs.getString("ONE","")
@@ -615,7 +615,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         titleContentColor = MaterialTheme.colorScheme.primary,
                     ),
-                    title = { Text("今天  第${Benweeks}周  周${chinesenumber}  ${Date2}") }
+                    title = { Text("今天  第${Benweeks}周  周${chinesenumber}  ${Date_MM_dd}") }
                 )
             },) {innerPadding ->
             Column(

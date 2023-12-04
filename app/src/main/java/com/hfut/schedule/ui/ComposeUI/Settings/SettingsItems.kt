@@ -13,6 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.StartUri
+import com.hfut.schedule.logic.StartUri.StartUri
+
 @Composable
 fun SettingsItems() {
 
@@ -25,11 +28,7 @@ fun SettingsItems() {
                 contentDescription = "Localized description",
             )
         },
-        modifier = Modifier.clickable{
-            val it = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Chiu-xaH/HFUT-Schedule/releases/tag/Android"))
-            it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            MyApplication.context.startActivity(it)
-        }
+        modifier = Modifier.clickable{ StartUri("https://github.com/Chiu-xaH/HFUT-Schedule/releases/tag/Android") }
     )
 
     ListItem(

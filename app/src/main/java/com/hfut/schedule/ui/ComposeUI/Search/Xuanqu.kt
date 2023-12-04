@@ -22,12 +22,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.JxglstuViewModel
+import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ui.ComposeUI.XuanquUI
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun XuanquItem(vm : JxglstuViewModel) {
+fun XuanquItem(vm : LoginSuccessViewModel) {
     val sheetState_Xuanqu = rememberModalBottomSheetState()
     var showBottomSheet_Xuanqu by remember { mutableStateOf(false) }
 

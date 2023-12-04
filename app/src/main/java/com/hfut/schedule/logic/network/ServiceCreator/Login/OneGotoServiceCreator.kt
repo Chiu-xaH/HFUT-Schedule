@@ -8,9 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object OneGotoServiceCreator {
     val Client = OkHttpClient.Builder()
-      //  .followRedirects(false)
         .addNetworkInterceptor(GotoInterceptor())
-       // .eventListener(RedirectListener())
         .build()
 
 

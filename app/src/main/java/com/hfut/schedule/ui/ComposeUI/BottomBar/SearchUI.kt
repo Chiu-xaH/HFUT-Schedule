@@ -36,25 +36,24 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.JxglstuViewModel
+import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ui.ComposeUI.Search.FWDT
-import com.hfut.schedule.ui.ComposeUI.Search.Library
+import com.hfut.schedule.ui.ComposeUI.Search.LibraryItem
 import com.hfut.schedule.ui.ComposeUI.Search.Person
-import com.hfut.schedule.ui.ComposeUI.Search.SchoolCard
+import com.hfut.schedule.ui.ComposeUI.Search.SchoolCard.SchoolCardItem
 import com.hfut.schedule.ui.ComposeUI.Search.XuanquItem
 import com.hfut.schedule.ui.ComposeUI.Search.emptyRoomUI
-import com.hfut.schedule.ui.ComposeUI.XuanquUI
+import com.hfut.schedule.ui.ComposeUI.Search.WebUI
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import org.jsoup.Jsoup
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchScreen(vm : JxglstuViewModel) {
+fun SearchScreen(vm : LoginSuccessViewModel) {
 
     val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
 
@@ -332,11 +331,13 @@ fun SearchScreen(vm : JxglstuViewModel) {
             }
 
 ///////////////////////////////////////////////////////////////一卡通//////////////////
-                    SchoolCard(vm)
+                    SchoolCardItem(vm)
 /////////////////////////////////////////////////////////////////////////////////////////
-          Library(vm)
+          LibraryItem(vm)
  //////////////////////////////////////////////////////////////////////////////////
            XuanquItem(vm)
+ //////////////////////////////////////////////////////////////////////////////////
+           WebUI()
 //////////////////////////////////////////////////////////////////////////////////////
             val sheetState_Total = rememberModalBottomSheetState()
             var showBottomSheet_Total by remember { mutableStateOf(false) }
@@ -453,9 +454,9 @@ fun SearchScreen(vm : JxglstuViewModel) {
 
                 }
             }
-//////////////////////////////////////////////////////////////////////////////////
 
-            Spacer(modifier = Modifier.height(90.dp))
+//////////////////////////////////////////////////////////////////////////////////
+        Spacer(modifier = Modifier.height(90.dp))
         }
     }
 

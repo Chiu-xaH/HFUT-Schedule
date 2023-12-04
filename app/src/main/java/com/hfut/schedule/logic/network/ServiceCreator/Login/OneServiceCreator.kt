@@ -7,18 +7,12 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object OneServiceCreator {
-    val Client = OkHttpClient.Builder()
-        //  .followRedirects(false)
-        //.addInterceptor(RedirectInterceptor())
-        .build()
 
 
     val retrofit = Retrofit.Builder()
         .baseUrl(MyApplication.OneURL)
-        .client(Client)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
-
 
 
     fun <T> create(service: Class<T>): T = retrofit.create(service)

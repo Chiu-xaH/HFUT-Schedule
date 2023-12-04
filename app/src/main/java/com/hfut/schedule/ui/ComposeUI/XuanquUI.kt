@@ -2,7 +2,6 @@ package com.hfut.schedule.ui.ComposeUI
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -14,8 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -38,16 +35,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.JxglstuViewModel
+import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.datamodel.XuanquResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
-import org.jsoup.select.Elements
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
@@ -58,7 +52,7 @@ fun space(space : Boolean) {
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun XuanquUI(vm : JxglstuViewModel) {
+fun XuanquUI(vm : LoginSuccessViewModel) {
     var code by remember { mutableStateOf("") }
     val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
     var clicked by remember { mutableStateOf(false) }

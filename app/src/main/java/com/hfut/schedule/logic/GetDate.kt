@@ -20,23 +20,17 @@ object GetDate {
     var Bianhuaweeks = weeksBetween  //切换周数
     @RequiresApi(Build.VERSION_CODES.O)
     val Benweeks = weeksBetween  //固定本周
-    val Date3 = SimpleDateFormat("yyyy-MM").format(Date())
+    val Date_yyyy_MM = SimpleDateFormat("yyyy-MM").format(Date())
 
-    val Date2 = SimpleDateFormat("MM-dd").format(Date())
+    val Date_MM_dd = SimpleDateFormat("MM-dd").format(Date())
 
 
-    val Date = SimpleDateFormat("yyyy-MM-dd").format(Date())
+    val Date_yyyy_MM_dd = SimpleDateFormat("yyyy-MM-dd").format(Date())
 
     val calendar = Calendar.getInstance()
     val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
     val dayweek = dayOfWeek - 1
 
-
-
-
-
     var chinesenumber  = ""
-
-
 
 }

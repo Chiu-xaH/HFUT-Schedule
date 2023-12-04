@@ -69,7 +69,7 @@ import com.hfut.schedule.ui.MonetColor.LocalCurrentStickerUuid
 import com.hfut.schedule.ui.MonetColor.MainIntent
 import com.hfut.schedule.ui.MonetColor.MainViewModel
 import com.hfut.schedule.ui.MonetColor.SettingsProvider
-import com.hfut.schedule.ui.theme.RaysTheme
+import com.hfut.schedule.ui.theme.MonetColor
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -88,13 +88,6 @@ class LoginActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
-            val prefs = getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
-            val dyswitch = prefs.getBoolean("dyswitch",true)
-            var dynamicColorEnabled by remember { mutableStateOf(dyswitch) }
-
-
-          //  val currentTheme by dynamicColorViewModel.currentTheme
-
             SettingsProvider {
                 // 更新主题色
                 val stickerUuid = LocalCurrentStickerUuid.current
@@ -102,7 +95,7 @@ class LoginActivity : ComponentActivity() {
                     viewModel.sendUiIntent(MainIntent.UpdateThemeColor(stickerUuid))
                 }
 
-                RaysTheme {
+                MonetColor {
                     Surface(
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.background
@@ -111,8 +104,6 @@ class LoginActivity : ComponentActivity() {
                         LoginUI(vm)
                     }
                 }
-
-
             }
 
         }
