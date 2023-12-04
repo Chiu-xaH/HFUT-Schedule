@@ -79,7 +79,7 @@ fun emptyRoomUI(vm : LoginSuccessViewModel) {
                     containerColor = Color.Transparent,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
-                title = { Text(" 筛选条件") }
+                title = { Text(" 空教室 筛选") }
             )
         },) {innerPadding ->
         Column(

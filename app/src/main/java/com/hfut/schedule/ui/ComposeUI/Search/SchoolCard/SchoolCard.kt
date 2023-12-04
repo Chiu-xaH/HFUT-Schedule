@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -37,9 +38,12 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -188,214 +192,234 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
             sheetState = sheetState_Bills
         ) {
 
-            AnimatedVisibility(
-                visible = loading,
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-                Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)  {
-                    Spacer(modifier = Modifier.height(5.dp))
-                    CircularProgressIndicator()
-                    Spacer(modifier = Modifier.height(50.dp))
-                }
-            }
-
-            AnimatedVisibility(
-                visible = !loading,
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-                Column() {
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                        var todaypay = 0.0
-                        var date = GetDate.Date_yyyy_MM_dd
-                        for (item in 0 until BillItem().size) {
-                            val get = BillItem()[item].effectdateStr
-                            val name = BillItem()[item].resume
-                            val todaydate = get?.substringBefore(" ")
-                            var num = BillItem()[item].tranamt.toString()
-
-                            num = num.substring(0, num.length - 2) + "." + num.substring(num.length - 2)
-
-                           val num_float = num.toFloat()
-
-                            if (date == todaydate) {
-                                if (name.contains("充值") == false) todaypay += num_float
-                            }
-
-                        }
-
-                        Column {
-                            Row(modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.End){
-
-                                AssistChip(
-                                    onClick = { showBottomSheet_Range = true },
-                                    label = { Text(text = "范围支出") },
-                                    leadingIcon = { Icon(painter = painterResource(R.drawable.calendar), contentDescription = "description")}
-                                )
-                                Spacer(modifier = Modifier.width(10.dp))
-
-                                AssistChip(
-                                    onClick = { showBottomSheet_Month = true },
-                                    label = { Text(text = "月份查询") },
-                                    leadingIcon = { Icon(painter = painterResource(R.drawable.calendar_view_month), contentDescription = "description")}
-                                )
-
-                                Spacer(modifier = Modifier.width(10.dp))
-
-                                AssistChip(
-                                    onClick = { showBottomSheet_Search = true },
-                                    label = { Text(text = "搜索") },
-                                    leadingIcon = { Icon(painter = painterResource(R.drawable.search), contentDescription = "description")}
-                                )
-
-                            }
-
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        title = { Text("一卡通 流水") }
+                    )
+                },) {innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                ) {
+                    AnimatedVisibility(
+                        visible = loading,
+                        enter = fadeIn(),
+                        exit = fadeOut()
+                    ) {
+                        Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)  {
                             Spacer(modifier = Modifier.height(5.dp))
+                            CircularProgressIndicator()
+                            Spacer(modifier = Modifier.height(50.dp))
+                        }
+                    }
 
-                            LazyColumn {
-                                if (page == 1){
-                                    val num = todaypay.toString()
-                                    val bd = BigDecimal(num)
-                                    val str = bd.setScale(2, RoundingMode.HALF_UP).toString()
-                                    item {
-                                        Card(
-                                            elevation = CardDefaults.cardElevation(
-                                                defaultElevation = 3.dp
-                                            ),
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(horizontal = 15.dp, vertical = 5.dp),
-                                            shape = MaterialTheme.shapes.medium
-                                        ) {
-                                            ListItem(
-                                                headlineContent = { Text(text = "今日消费  ${str} 元") },
-                                                leadingContent = {
-                                                    Icon(
-                                                        painterResource(R.drawable.paid),
-                                                        contentDescription = "Localized description",
-                                                    )
-                                                },
-                                                colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
-                                            )
-                                        }
-                                    }
-                                }
-                                items(BillItem().size) { item ->
+                    AnimatedVisibility(
+                        visible = !loading,
+                        enter = fadeIn(),
+                        exit = fadeOut()
+                    ) {
+                        Column() {
+                            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                                var todaypay = 0.0
+                                var date = GetDate.Date_yyyy_MM_dd
+                                for (item in 0 until BillItem().size) {
+                                    val get = BillItem()[item].effectdateStr
+                                    val name = BillItem()[item].resume
+                                    val todaydate = get?.substringBefore(" ")
                                     var num = BillItem()[item].tranamt.toString()
+
                                     num = num.substring(0, num.length - 2) + "." + num.substring(num.length - 2)
-                                    val big = BigDecimal(num)
-                                    val num_float = big.toFloat()
 
-                                    var name = BillItem()[item].resume
-                                    if (name.contains("有限公司")) name = name.replace("有限公司","")
+                                    val num_float = num.toFloat()
 
-                                    var pay = "$num_float 元"
-                                    if (name.contains("充值") || name.contains("补助")) pay = "+" + pay
-                                    else pay = "-" + pay
+                                    if (date == todaydate) {
+                                        if (name.contains("充值") == false) todaypay += num_float
+                                    }
 
-                                    Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)
-                                    {
-                                        Card(
-                                            elevation = CardDefaults.cardElevation(
-                                                defaultElevation = 3.dp
-                                            ),
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(horizontal = 15.dp, vertical = 5.dp),
-                                            shape = MaterialTheme.shapes.medium
-                                        ) {
-                                            ListItem(
-                                                headlineContent = { Text(text = name) },
-                                                supportingContent = {Text(text = pay)},
-                                                overlineContent = {Text(text = BillItem()[item].effectdateStr)},
-                                                leadingContent = {
-                                                    when {
-                                                        name.contains("淋浴") ->  Icon(painterResource(R.drawable.bathtub), contentDescription = "")
-                                                        name.contains("网") -> Icon(painterResource(R.drawable.net), contentDescription = "")
-                                                        name.contains("餐饮") -> Icon(painterResource(R.drawable.restaurant), contentDescription = "")
-                                                        name.contains("电") -> Icon(painterResource(R.drawable.flash_on), contentDescription = "")
-                                                        name.contains("超市") || name.contains("贸易") || name.contains("商店") -> Icon(painterResource(R.drawable.storefront), contentDescription = "",)
-                                                        name.contains("打印") -> Icon(painterResource(R.drawable.print), contentDescription = "",)
-                                                        name.contains("充值") -> Icon(painterResource(R.drawable.add_card), contentDescription = "",)
-                                                        name.contains("补助") -> Icon(painterResource(R.drawable.payments), contentDescription = "",)
-                                                        else ->  Icon(painterResource(R.drawable.paid), contentDescription = "")
-                                                    }
+                                }
+
+                                Column {
+                                    Row(modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 15.dp, vertical = 0.dp), horizontalArrangement = Arrangement.Start){
+
+                                        AssistChip(
+                                            onClick = { showBottomSheet_Range = true },
+                                            label = { Text(text = "范围支出") },
+                                            leadingIcon = { Icon(painter = painterResource(R.drawable.calendar), contentDescription = "description")}
+                                        )
+                                        Spacer(modifier = Modifier.width(10.dp))
+
+                                        AssistChip(
+                                            onClick = { showBottomSheet_Month = true },
+                                            label = { Text(text = "月份查询") },
+                                            leadingIcon = { Icon(painter = painterResource(R.drawable.calendar_view_month), contentDescription = "description")}
+                                        )
+
+                                        Spacer(modifier = Modifier.width(10.dp))
+
+                                        AssistChip(
+                                            onClick = { showBottomSheet_Search = true },
+                                            label = { Text(text = "搜索") },
+                                            leadingIcon = { Icon(painter = painterResource(R.drawable.search), contentDescription = "description")}
+                                        )
+
+                                    }
+
+                                    Spacer(modifier = Modifier.height(5.dp))
+
+                                    LazyColumn {
+                                        if (page == 1){
+                                            val num = todaypay.toString()
+                                            val bd = BigDecimal(num)
+                                            val str = bd.setScale(2, RoundingMode.HALF_UP).toString()
+                                            item {
+                                                Card(
+                                                    elevation = CardDefaults.cardElevation(
+                                                        defaultElevation = 3.dp
+                                                    ),
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(horizontal = 15.dp, vertical = 5.dp),
+                                                    shape = MaterialTheme.shapes.medium
+                                                ) {
+                                                    ListItem(
+                                                        headlineContent = { Text(text = "今日消费  ${str} 元") },
+                                                        leadingContent = {
+                                                            Icon(
+                                                                painterResource(R.drawable.paid),
+                                                                contentDescription = "Localized description",
+                                                            )
+                                                        },
+                                                        colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
+                                                    )
                                                 }
-                                            )
+                                            }
+                                        }
+                                        items(BillItem().size) { item ->
+                                            var num = BillItem()[item].tranamt.toString()
+                                            num = num.substring(0, num.length - 2) + "." + num.substring(num.length - 2)
+                                            val big = BigDecimal(num)
+                                            val num_float = big.toFloat()
+
+                                            var name = BillItem()[item].resume
+                                            if (name.contains("有限公司")) name = name.replace("有限公司","")
+
+                                            var pay = "$num_float 元"
+                                            if (name.contains("充值") || name.contains("补助")) pay = "+" + pay
+                                            else pay = "-" + pay
+
+                                            Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)
+                                            {
+                                                Card(
+                                                    elevation = CardDefaults.cardElevation(
+                                                        defaultElevation = 3.dp
+                                                    ),
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(horizontal = 15.dp, vertical = 5.dp),
+                                                    shape = MaterialTheme.shapes.medium
+                                                ) {
+                                                    ListItem(
+                                                        headlineContent = { Text(text = name) },
+                                                        supportingContent = {Text(text = pay)},
+                                                        overlineContent = {Text(text = BillItem()[item].effectdateStr)},
+                                                        leadingContent = {
+                                                            when {
+                                                                name.contains("淋浴") ->  Icon(painterResource(R.drawable.bathtub), contentDescription = "")
+                                                                name.contains("网") -> Icon(painterResource(R.drawable.net), contentDescription = "")
+                                                                name.contains("餐饮") -> Icon(painterResource(R.drawable.restaurant), contentDescription = "")
+                                                                name.contains("电") -> Icon(painterResource(R.drawable.flash_on), contentDescription = "")
+                                                                name.contains("超市") || name.contains("贸易") || name.contains("商店") -> Icon(painterResource(R.drawable.storefront), contentDescription = "",)
+                                                                name.contains("打印") -> Icon(painterResource(R.drawable.print), contentDescription = "",)
+                                                                name.contains("充值") -> Icon(painterResource(R.drawable.add_card), contentDescription = "",)
+                                                                name.contains("补助") -> Icon(painterResource(R.drawable.payments), contentDescription = "",)
+                                                                else ->  Icon(painterResource(R.drawable.paid), contentDescription = "")
+                                                            }
+                                                        }
+                                                    )
 
 
 
+                                                }
+                                            }
+                                        }
+                                        item {
+                                            Spacer(modifier = Modifier.height(10.dp))
+                                            Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
+
+                                                OutlinedButton(
+                                                    onClick = {
+                                                        CoroutineScope(Job()).apply {
+                                                            launch {
+                                                                async {
+                                                                    if(page > 1) {
+                                                                        page--
+                                                                        loading = true
+                                                                        get()
+                                                                    }
+                                                                }.await()
+                                                                async {
+                                                                    delay(500)
+                                                                    loading = false
+                                                                    BillItem()
+                                                                }
+                                                            }
+                                                        }
+
+                                                    }) { Text(text = "上一页") }
+
+                                                Spacer(modifier = Modifier.width(15.dp))
+
+                                                OutlinedButton(
+                                                    onClick = {
+                                                        page = 1
+                                                        loading = true
+                                                        get() }
+                                                ) { Text(text = "${page} / ${prefs.getInt("totalpage",1)}") }
+
+                                                Spacer(modifier = Modifier.width(15.dp))
+
+                                                OutlinedButton(
+                                                    onClick = {
+                                                        CoroutineScope(Job()).apply {
+                                                            launch {
+                                                                async {
+                                                                    if ( page < prefs.getInt("totalpage",1)) {
+                                                                        page++
+                                                                        loading = true
+                                                                        get()
+                                                                    }
+
+                                                                }.await()
+                                                                async {
+                                                                    delay(500)
+                                                                    loading = false
+                                                                    BillItem()
+                                                                }
+                                                            }
+                                                        }
+
+                                                    }) { Text(text = "下一页") }
+                                            }
+                                            Spacer(modifier = Modifier.height(10.dp))
                                         }
                                     }
-                                }
-                                item {
-                                    Spacer(modifier = Modifier.height(10.dp))
-                                    Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
-
-                                        OutlinedButton(
-                                            onClick = {
-                                                CoroutineScope(Job()).apply {
-                                                    launch {
-                                                        async {
-                                                            if(page > 1) {
-                                                                page--
-                                                                loading = true
-                                                                get()
-                                                            }
-                                                        }.await()
-                                                        async {
-                                                            delay(500)
-                                                            loading = false
-                                                            BillItem()
-                                                        }
-                                                    }
-                                                }
-
-                                            }) { Text(text = "上一页") }
-
-                                        Spacer(modifier = Modifier.width(15.dp))
-
-                                        OutlinedButton(
-                                            onClick = {
-                                                page = 1
-                                                loading = true
-                                                get() }
-                                        ) { Text(text = "${page} / ${prefs.getInt("totalpage",1)}") }
-
-                                        Spacer(modifier = Modifier.width(15.dp))
-
-                                        OutlinedButton(
-                                            onClick = {
-                                                CoroutineScope(Job()).apply {
-                                                    launch {
-                                                        async {
-                                                            if ( page < prefs.getInt("totalpage",1)) {
-                                                                page++
-                                                                loading = true
-                                                                get()
-                                                            }
-
-                                                        }.await()
-                                                        async {
-                                                            delay(500)
-                                                            loading = false
-                                                            BillItem()
-                                                        }
-                                                    }
-                                                }
-
-                                            }) { Text(text = "下一页") }
-                                    }
-                                    Spacer(modifier = Modifier.height(10.dp))
                                 }
                             }
                         }
                     }
                 }
             }
+
+
         }
     }
 

@@ -2,16 +2,26 @@ package com.hfut.schedule.ui.ComposeUI.Search
 
 import android.content.Context
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.R
 import org.jsoup.Jsoup
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Person() {
 
@@ -43,108 +53,128 @@ fun Person() {
     val school =infoMap[elements?.get(18)?.text()]
     val home =infoMap[elements?.get(80)?.text()]
 
-    ListItem(
-        headlineContent = { Text(text = "姓名   ${name}") },
-        leadingContent = {
-            Icon(
-                painterResource(R.drawable.signature),
-                contentDescription = "Localized description",
+
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                colors = TopAppBarDefaults.mediumTopAppBarColors(
+                    containerColor = Color.Transparent,
+                    titleContentColor = MaterialTheme.colorScheme.primary,
+                ),
+                title = { Text("个人信息") }
             )
-        },
-        modifier = Modifier.clickable {}
-    )
-
-    ListItem(
-        headlineContent = { Text(text = "学号   ${studentnumber}") },
-        leadingContent = {
-            Icon(
-                painterResource(R.drawable.badge),
-                contentDescription = "Localized description",
+        },) {innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+        ) {
+            ListItem(
+                headlineContent = { Text(text = "姓名   ${name}") },
+                leadingContent = {
+                    Icon(
+                        painterResource(R.drawable.signature),
+                        contentDescription = "Localized description",
+                    )
+                },
+                modifier = Modifier.clickable {}
             )
-        },
-        modifier = Modifier.clickable {}
-    )
 
-
-
-
-    ListItem(
-        headlineContent = { Text(text = "类别   ${benorsshuo}") },
-        leadingContent = {
-            Icon(
-                painterResource(R.drawable.school),
-                contentDescription = "Localized description",
+            ListItem(
+                headlineContent = { Text(text = "学号   ${studentnumber}") },
+                leadingContent = {
+                    Icon(
+                        painterResource(R.drawable.badge),
+                        contentDescription = "Localized description",
+                    )
+                },
+                modifier = Modifier.clickable {}
             )
-        },
-        modifier = Modifier.clickable {}
-    )
 
-    ListItem(
-        headlineContent = { Text(text = "校区   ${school}") },
-        leadingContent = {
-            Icon(
-                painterResource(R.drawable.location_city),
-                contentDescription = "Localized description",
+
+
+
+            ListItem(
+                headlineContent = { Text(text = "类别   ${benorsshuo}") },
+                leadingContent = {
+                    Icon(
+                        painterResource(R.drawable.school),
+                        contentDescription = "Localized description",
+                    )
+                },
+                modifier = Modifier.clickable {}
             )
-        },
-        modifier = Modifier.clickable {}
-    )
 
-
-    ListItem(
-        headlineContent = { Text(text = "院系   ${yuanxi}") },
-        leadingContent = {
-            Icon(
-                painterResource(R.drawable.local_library),
-                contentDescription = "Localized description",
+            ListItem(
+                headlineContent = { Text(text = "校区   ${school}") },
+                leadingContent = {
+                    Icon(
+                        painterResource(R.drawable.location_city),
+                        contentDescription = "Localized description",
+                    )
+                },
+                modifier = Modifier.clickable {}
             )
-        },
-        modifier = Modifier.clickable {}
-    )
 
 
-    ListItem(
-        headlineContent = { Text(text = "专业   ${zhuanye}") },
-        leadingContent = {
-            Icon(
-                painterResource(R.drawable.square_foot),
-                contentDescription = "Localized description",
+            ListItem(
+                headlineContent = { Text(text = "院系   ${yuanxi}") },
+                leadingContent = {
+                    Icon(
+                        painterResource(R.drawable.local_library),
+                        contentDescription = "Localized description",
+                    )
+                },
+                modifier = Modifier.clickable {}
             )
-        },
-        modifier = Modifier.clickable {}
-    )
 
-    ListItem(
-        headlineContent = { Text(text = "班级   ${classes}") },
-        leadingContent = {
-            Icon(
-                painterResource(R.drawable.sensor_door),
-                contentDescription = "Localized description",
+
+            ListItem(
+                headlineContent = { Text(text = "专业   ${zhuanye}") },
+                leadingContent = {
+                    Icon(
+                        painterResource(R.drawable.square_foot),
+                        contentDescription = "Localized description",
+                    )
+                },
+                modifier = Modifier.clickable {}
             )
-        },
-        modifier = Modifier.clickable {}
-    )
 
-
-    ListItem(
-        headlineContent = { Text(text = "生源地   ${home}") },
-        leadingContent = {
-            Icon(
-                painterResource(R.drawable.home),
-                contentDescription = "Localized description",
+            ListItem(
+                headlineContent = { Text(text = "班级   ${classes}") },
+                leadingContent = {
+                    Icon(
+                        painterResource(R.drawable.sensor_door),
+                        contentDescription = "Localized description",
+                    )
+                },
+                modifier = Modifier.clickable {}
             )
-        },
-        modifier = Modifier.clickable {}
-    )
 
-    ListItem(
-        headlineContent = { Text(text = "身份证号   ${chineseid}") },
-        leadingContent = {
-            Icon(
-                painterResource(R.drawable.tag),
-                contentDescription = "Localized description",
+
+            ListItem(
+                headlineContent = { Text(text = "生源地   ${home}") },
+                leadingContent = {
+                    Icon(
+                        painterResource(R.drawable.home),
+                        contentDescription = "Localized description",
+                    )
+                },
+                modifier = Modifier.clickable {}
             )
-        },
-        modifier = Modifier.clickable {}
-    )
+
+            ListItem(
+                headlineContent = { Text(text = "身份证号   ${chineseid}") },
+                leadingContent = {
+                    Icon(
+                        painterResource(R.drawable.tag),
+                        contentDescription = "Localized description",
+                    )
+                },
+                modifier = Modifier.clickable {}
+            )
+        }
+    }
+
 }

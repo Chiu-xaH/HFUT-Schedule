@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,9 +22,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -76,88 +80,109 @@ fun XuanquUI(vm : LoginSuccessViewModel) {
         return data
     }
 
-    Column {
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
 
-            TextField(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 15.dp, vertical = 5.dp),
-                value = code,
-                onValueChange = {
-                    code = it
-                    clicked = false
-                    space  = true
-                },
-                label = { Text("楼号+N/S+寝号") },
-                singleLine = true,
-                trailingIcon = {
-                    IconButton(
-                        onClick = {
-                            CoroutineScope(Job()).launch {
-                                async {
-                                clicked = true
-                                loading = true
-                                    vm.SearchXuanqu(code) }.await()
-                                async {
-                                    delay(500)
-                                    loading = false
-                                    getXuanqu()
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                colors = TopAppBarDefaults.mediumTopAppBarColors(
+                    containerColor = Color.Transparent,
+                    titleContentColor = MaterialTheme.colorScheme.primary,
+                ),
+                title = { Text("寝室卫生评分查询") }
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+        ) {
+            Column {
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+
+                    TextField(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(horizontal = 15.dp, vertical = 5.dp),
+                        value = code,
+                        onValueChange = {
+                            code = it
+                            clicked = false
+                            space  = true
+                        },
+                        label = { Text("楼号+N/S+寝号") },
+                        singleLine = true,
+                        trailingIcon = {
+                            IconButton(
+                                onClick = {
+                                    CoroutineScope(Job()).launch {
+                                        async {
+                                            clicked = true
+                                            loading = true
+                                            vm.SearchXuanqu(code) }.await()
+                                        async {
+                                            delay(500)
+                                            loading = false
+                                            getXuanqu()
+                                        }
+                                    }
+                                }) { Icon(painter = painterResource(R.drawable.search), contentDescription = "description") }
+                        },
+                        shape = MaterialTheme.shapes.medium,
+                        colors = TextFieldDefaults.textFieldColors(focusedIndicatorColor = Color.Transparent, unfocusedIndicatorColor = Color.Transparent)
+                    )
+                    space(space)
+                }
+
+
+                if (clicked) {
+                    space  = false
+                    AnimatedVisibility(
+                        visible = loading,
+                        enter = fadeIn(),
+                        exit = fadeOut()
+                    ) {
+                        Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)  {
+                            Spacer(modifier = Modifier.height(5.dp))
+                            CircularProgressIndicator()
+                            Spacer(modifier = Modifier.height(50.dp))
+                        }
+                    }
+
+
+                    AnimatedVisibility(
+                        visible = !loading,
+                        enter = fadeIn(),
+                        exit = fadeOut()
+                    ){
+                        LazyColumn {
+
+                            getXuanqu()?.let {
+                                items(it.size) { item ->
+                                    Card(
+                                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 15.dp, vertical = 5.dp),
+                                        shape = MaterialTheme.shapes.medium
+                                    ) {
+                                        ListItem(
+                                            headlineContent = { getXuanqu()?.get(item)?.let { it1 -> Text(text = it1.date) } },
+                                            supportingContent = { Text(text =  "${getXuanqu()?.get(item)?.score} 分")}
+                                        )
+                                    }
                                 }
                             }
-                        }) { Icon(painter = painterResource(R.drawable.search), contentDescription = "description") }
-                },
-                shape = MaterialTheme.shapes.medium,
-                colors = TextFieldDefaults.textFieldColors(focusedIndicatorColor = Color.Transparent, unfocusedIndicatorColor = Color.Transparent)
-            )
-           space(space)
-        }
-
-
-        if (clicked) {
-            space  = false
-            AnimatedVisibility(
-                visible = loading,
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-                Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)  {
-                    Spacer(modifier = Modifier.height(5.dp))
-                    CircularProgressIndicator()
-                    Spacer(modifier = Modifier.height(50.dp))
-                }
-            }
-
-
-            AnimatedVisibility(
-                visible = !loading,
-                enter = fadeIn(),
-                exit = fadeOut()
-            ){
-                LazyColumn {
-
-                    getXuanqu()?.let {
-                        items(it.size) { item ->
-                            Card(
-                                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 15.dp, vertical = 5.dp),
-                                shape = MaterialTheme.shapes.medium
-                            ) {
-                                ListItem(
-                                    headlineContent = { getXuanqu()?.get(item)?.let { it1 -> Text(text = it1.date) } },
-                                    supportingContent = { Text(text =  "${getXuanqu()?.get(item)?.score} 分")}
-                                )
-                            }
                         }
+
                     }
                 }
 
+
             }
         }
-
-
     }
+
 
 }

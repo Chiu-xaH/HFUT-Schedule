@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -32,9 +33,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -79,6 +83,8 @@ fun LibraryItem(vm : LoginSuccessViewModel) {
         animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
         label = "" // 使用弹簧动画
     )
+
+
 
     ListItem(
         headlineContent = { Text(text = "图书  借阅 ${borrow} 本") },
@@ -128,150 +134,171 @@ fun LibraryItem(vm : LoginSuccessViewModel) {
             sheetState = sheetState_Library
         ) {
            LibItem()
-
-            Column() {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        title = { Text("图书检索") }
+                    )
+                },
+            ) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
                 ) {
-                    TextField(
-                        modifier = Modifier.weight(1f).padding(horizontal = 15.dp),
-                        value = input,
-                        onValueChange = {
-                            input = it
-                            onclick = false
-                                        },
-                        label = { Text("点击右侧搜索" ) },
-                        singleLine = true,
-                        trailingIcon = {
-                            IconButton(
-                               // shape = RoundedCornerShape(5.dp),
-                                onClick = {
-                                    val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-                                    if(sp.getString("Query","") != input){ sp.edit().putString("Query", input).apply() }
-                                onclick = true
-                                    loading = true
-                                CoroutineScope(Job()).apply {
-                                    launch {
-                                        async {
-                                            val searchWords = JsonArray().apply {
-                                                val fieldList = JsonArray().apply {
-                                                    val field = JsonObject().apply {
-                                                        addProperty("fieldCode", "")
-                                                        addProperty("fieldValue", input)
+                    Column() {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            TextField(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(horizontal = 15.dp),
+                                value = input,
+                                onValueChange = {
+                                    input = it
+                                    onclick = false
+                                },
+                                label = { Text("点击右侧搜索" ) },
+                                singleLine = true,
+                                trailingIcon = {
+                                    IconButton(
+                                        // shape = RoundedCornerShape(5.dp),
+                                        onClick = {
+                                            val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
+                                            if(sp.getString("Query","") != input){ sp.edit().putString("Query", input).apply() }
+                                            onclick = true
+                                            loading = true
+                                            CoroutineScope(Job()).apply {
+                                                launch {
+                                                    async {
+                                                        val searchWords = JsonArray().apply {
+                                                            val fieldList = JsonArray().apply {
+                                                                val field = JsonObject().apply {
+                                                                    addProperty("fieldCode", "")
+                                                                    addProperty("fieldValue", input)
+                                                                }
+                                                                add(field)
+                                                            }
+                                                            val searchWord = JsonObject().apply {
+                                                                add("fieldList", fieldList)
+                                                            }
+                                                            add(searchWord)
+                                                        }
+                                                        val jsonObject = JsonObject().apply {
+                                                            add("searchWords",searchWords)
+                                                            add("filters", JsonArray())
+                                                            add("limiter", JsonArray())
+                                                            addProperty("sortField","relevance")
+                                                            addProperty("sortType","desc")
+                                                            addProperty("pageSize",20)
+                                                            addProperty("pageCount",1)
+                                                            addProperty("locale","zh_CN")
+                                                            addProperty("first",true)
+                                                        }
+                                                        vm.LibSearch(jsonObject)
+                                                    }.await()
+                                                    async {
+                                                        delay(1000)
+                                                        loading = false
+                                                        LibItem()
                                                     }
-                                                    add(field)
                                                 }
-                                                val searchWord = JsonObject().apply {
-                                                    add("fieldList", fieldList)
-                                                }
-                                                add(searchWord)
                                             }
-                                            val jsonObject = JsonObject().apply {
-                                                add("searchWords",searchWords)
-                                                add("filters", JsonArray())
-                                                add("limiter", JsonArray())
-                                                addProperty("sortField","relevance")
-                                                addProperty("sortType","desc")
-                                                addProperty("pageSize",20)
-                                                addProperty("pageCount",1)
-                                                addProperty("locale","zh_CN")
-                                                addProperty("first",true)
+
+                                        }) {
+                                        Icon(painter = painterResource(R.drawable.search), contentDescription = "description")
+                                    }
+                                },
+                                shape = MaterialTheme.shapes.medium,
+                                colors = TextFieldDefaults.textFieldColors(
+                                    focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
+                                    unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
+                                ),
+                                // leadingIcon = { Icon( painterResource(R.drawable.search), contentDescription = "Localized description") },
+                            )
+                            if (onclick == false)
+                                Spacer(modifier = Modifier.fillMaxHeight())
+
+                        }
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        if (onclick) {
+
+                            AnimatedVisibility(
+                                visible = loading,
+                                enter = fadeIn(),
+                                exit = fadeOut()
+                            ) {
+                                Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)  {
+                                    //  Column() {
+                                    Spacer(modifier = Modifier.height(5.dp))
+                                    CircularProgressIndicator()
+                                    //  }
+
+                                }
+                            }////加载动画居中，3s后消失
+
+                            AnimatedVisibility(
+                                visible = !loading,
+                                enter = fadeIn(),
+                                exit = fadeOut()
+                            ) {
+                                LazyColumn {
+                                    items (LibItem().size){ item ->
+                                        Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)
+                                        {
+                                            Card(
+                                                elevation = CardDefaults.cardElevation(
+                                                    defaultElevation = 3.dp
+                                                ),
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(horizontal = 15.dp, vertical = 5.dp),
+                                                shape = MaterialTheme.shapes.medium
+                                            ) {
+                                                ListItem(
+                                                    headlineContent = { Text(text = LibItem()[item].title,fontWeight = FontWeight.Bold) },
+                                                    supportingContent = { Text(text = LibItem()[item].callNo) },
+                                                    leadingContent = {
+                                                        Icon(
+                                                            painterResource(R.drawable.book),
+                                                            contentDescription = "Localized description",
+                                                        )
+                                                    }
+                                                )
+                                                Divider()
+                                                ListItem(
+                                                    headlineContent = { Text(text = LibItem()[item].author)  },
+                                                    supportingContent = {Text(text = LibItem()[item].pubYear +  "  " + LibItem()[item].publisher) },
+                                                    leadingContent = {
+                                                        Icon(
+                                                            painterResource(R.drawable.info),
+                                                            contentDescription = "Localized description",
+                                                        )
+                                                    }
+                                                )
                                             }
-                                            vm.LibSearch(jsonObject)
-                                        }.await()
-                                        async {
-                                            delay(1000)
-                                            loading = false
-                                            LibItem()
                                         }
+
                                     }
                                 }
-
-                            }) {
-                                Icon(painter = painterResource(R.drawable.search), contentDescription = "description")
                             }
-                        },
-                        shape = MaterialTheme.shapes.medium,
-                        colors = TextFieldDefaults.textFieldColors(
-                            focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                            unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-                        ),
-                       // leadingIcon = { Icon( painterResource(R.drawable.search), contentDescription = "Localized description") },
-                    )
-                    if (onclick == false)
-                    Spacer(modifier = Modifier.fillMaxHeight())
-
-                }
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-if (onclick) {
-
-    AnimatedVisibility(
-        visible = loading,
-        enter = fadeIn(),
-        exit = fadeOut()
-    ) {
-        Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)  {
-          //  Column() {
-            Spacer(modifier = Modifier.height(5.dp))
-                CircularProgressIndicator()
-          //  }
-
-       }
-    }////加载动画居中，3s后消失
-
-    AnimatedVisibility(
-        visible = !loading,
-        enter = fadeIn(),
-        exit = fadeOut()
-    ) {
-        LazyColumn {
-            items (LibItem().size){ item ->
-                Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)
-                {
-                    Card(
-                        elevation = CardDefaults.cardElevation(
-                            defaultElevation = 3.dp
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 15.dp, vertical = 5.dp),
-                        shape = MaterialTheme.shapes.medium
-                    ) {
-                        ListItem(
-                            headlineContent = { Text(text = LibItem()[item].title,fontWeight = FontWeight.Bold) },
-                            supportingContent = { Text(text = LibItem()[item].callNo) },
-                            leadingContent = {
-                                Icon(
-                                    painterResource(R.drawable.book),
-                                    contentDescription = "Localized description",
-                                )
-                            }
-                        )
-                        Divider()
-                        ListItem(
-                            headlineContent = { Text(text = LibItem()[item].author)  },
-                            supportingContent = {Text(text = LibItem()[item].pubYear +  "  " + LibItem()[item].publisher) },
-                            leadingContent = {
-                                Icon(
-                                    painterResource(R.drawable.info),
-                                    contentDescription = "Localized description",
-                                )
-                            }
-                        )
+                        } else {
+                            Spacer(modifier = Modifier.fillMaxHeight())
+                        }
+                        Spacer(modifier = Modifier.height(20.dp))
                     }
                 }
+            }
 
-            }
-        }
-    }
-} else {
-    Spacer(modifier = Modifier.fillMaxHeight())
-}
-                Spacer(modifier = Modifier.height(20.dp))
-            }
 
 
         }
