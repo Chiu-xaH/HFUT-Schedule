@@ -399,15 +399,18 @@ fun zjgdcard() {
 
         async {
             if (token  != null && token.contains("AT") && card != "请登录刷新") {
-                    async {   vm.getCard("Bearer $token") }.await()
-                    async {
-                        delay(400)
-                        if (card!!.contains("-")) zjgdcard()
-                    }
+                async {   vm.getCard("Bearer $token") }.await()
+                async {
+                    delay(400)
+                    if (card!!.contains("-")) zjgdcard()
+                }
             } else {
                 Toast.makeText(MyApplication.context,"信息门户已超时,需重新登录",Toast.LENGTH_SHORT).show()
-                    async { vm.getCard("Bearer " + vm.token.value) }
-                    async { zjgdcard()  }
+                async { vm.getCard("Bearer " + vm.token.value) }
+                async {
+                    delay(400)
+                    zjgdcard()
+                }
             }
         }
 

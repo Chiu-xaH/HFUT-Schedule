@@ -10,12 +10,18 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.with
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -228,7 +234,9 @@ class LoginSuccessAcitivity : ComponentActivity() {
         }
     }
     @RequiresApi(Build.VERSION_CODES.O)
-    @OptIn(ExperimentalMaterial3Api::class)
+    @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class,
+        ExperimentalAnimationApi::class
+    )
     @SuppressLint("SuspiciousIndentation")
     @Composable
     fun CalendarScreen(isEnabled:Boolean,enabledchanged : (Boolean) -> Unit) {
@@ -780,9 +788,15 @@ class LoginSuccessAcitivity : ComponentActivity() {
                                 },modifier = Modifier.scale(scale2.value),
                                     interactionSource = interactionSource2
                                 ) {
-                                    Text(
-                                        text = "第${Bianhuaweeks}周",
-                                    )
+                                    AnimatedContent(
+                                        targetState = Bianhuaweeks,
+                                        transitionSpec = {  scaleIn(animationSpec = tween(500)
+                                        ) with scaleOut(animationSpec = tween(500))
+                                        }, label = ""
+                                    ){annumber ->
+                                        Text(text = "第${annumber}周",)
+                                    }
+
                                 }
                            Spacer(modifier = Modifier.width(20.dp))
                         //显示第几周

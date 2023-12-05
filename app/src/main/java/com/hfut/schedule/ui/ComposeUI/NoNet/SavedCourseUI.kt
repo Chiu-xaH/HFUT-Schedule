@@ -5,9 +5,15 @@ import android.content.Context
 import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.with
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -55,7 +61,7 @@ import com.hfut.schedule.logic.GetDate.weeksBetween
 import com.hfut.schedule.logic.datamodel.Jxglstu.data
 
 @RequiresApi(Build.VERSION_CODES.O)
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @SuppressLint("SuspiciousIndentation", "CoroutineCreationDuringComposition")
 @Composable
 fun NoNet() {
@@ -519,10 +525,15 @@ if (json?.contains("result") == true) {
                         interactionSource = interactionSource2,
 
                     ) {
-                        Text(
-                            text = "第${Bianhuaweeks}周",
-                           // color = MaterialTheme.colorScheme.primary
-                            )
+                        AnimatedContent(
+                            targetState = Bianhuaweeks,
+                            transitionSpec = {  scaleIn(animationSpec = tween(500)
+                            ) with scaleOut(animationSpec = tween(500))
+                            }, label = ""
+                        ){annumber ->
+                            Text(text = "第${annumber}周",)
+                        }
+
                     }
                     Spacer(modifier = Modifier.width(20.dp))
                     //显示第几周
