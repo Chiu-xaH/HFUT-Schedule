@@ -212,8 +212,6 @@
 ♢截图：
 
 ![打码处理](https://github.com/Chiu-xaH/HFUT-Schedule/assets/116127902/6194f6bc-e4a8-4300-b983-6c99d0456aca)
-![打码处理](http://172.31.248.26:8088/Login/GetValidateCode)
-
 
 ♢待修复：
 
