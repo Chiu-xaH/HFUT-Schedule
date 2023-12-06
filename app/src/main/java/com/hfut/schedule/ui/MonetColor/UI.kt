@@ -62,35 +62,20 @@ fun MonetUI() {
     val tonalPalettesFromWallpaper = extractTonalPalettesFromWallpaper()
     val tonalPalettes = extractTonalPalettes()
 
-    Card(
+    Spacer(modifier = Modifier.height(10.dp))
+    Text(text = "      壁纸色彩", color = MaterialTheme.colorScheme.primary)
 
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 3.dp
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 15.dp, vertical = 5.dp),
-            shape = MaterialTheme.shapes.medium
+    Spacer(modifier = Modifier.height(10.dp))
+    Palettes(palettes = tonalPalettesFromWallpaper)
+    Spacer(modifier = Modifier.height(10.dp))
 
-        ) {
-            Spacer(modifier = Modifier.height(10.dp))
-            Text(text = "      壁纸色彩")
-
-            Spacer(modifier = Modifier.height(10.dp))
-            Palettes(palettes = tonalPalettesFromWallpaper)
-            Spacer(modifier = Modifier.height(10.dp))
-
-            Text(text = "      预设色彩")
-            Spacer(modifier = Modifier.height(10.dp))
-            Palettes(palettes = tonalPalettes)
-            Spacer(modifier = Modifier.height(10.dp))
-
-
-        }
-
-
+    Text(text = "      预设色彩", color = MaterialTheme.colorScheme.primary)
+    Spacer(modifier = Modifier.height(10.dp))
+    Palettes(palettes = tonalPalettes)
+    Spacer(modifier = Modifier.height(10.dp))
 
 }
+
 
 @Composable
 fun Palettes(

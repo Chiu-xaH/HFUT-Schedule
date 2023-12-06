@@ -32,6 +32,11 @@
             android:label="@string/title_activity_uiacitivity"
             android:theme="@style/Theme.肥工课程表" />
         <activity
+            android:name=".activity.FWDTActivity"
+            android:exported="false"
+            android:label="FWDTActivity"
+            android:theme="@style/Theme.肥工课程表" />
+        <activity
             android:name=".activity.LoginActivity"
             android:exported="true"
             android:label="@string/app_name"
