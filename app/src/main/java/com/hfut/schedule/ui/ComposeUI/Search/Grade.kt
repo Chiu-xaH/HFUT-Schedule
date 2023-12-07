@@ -17,44 +17,41 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.logic.SharePrefs.prefs
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun XuanquItem(vm : LoginSuccessViewModel) {
-    val sheetState_Xuanqu = rememberModalBottomSheetState()
-    var showBottomSheet_Xuanqu by remember { mutableStateOf(false) }
+fun Grade()  {
+    val sheetState_Grade = rememberModalBottomSheetState()
+    var showBottomSheet_Grade by remember { mutableStateOf(false) }
+    var view by rememberSaveable { mutableStateOf("") }
 
     ListItem(
-        headlineContent = { Text(text = "寝室卫生评分") },
-        supportingContent = { Text(text = "仅宣城校区") },
-        leadingContent = { Icon(painter = painterResource(R.drawable.spa),"" ) },
-        modifier = Modifier.clickable { showBottomSheet_Xuanqu = true }
+        headlineContent = { Text(text = "成绩单") },
+        leadingContent = { Icon(painterResource(R.drawable.article), contentDescription = "Localized description",) },
+        modifier = Modifier.clickable {
+            val grade = prefs.getString("grade", "")
+            showBottomSheet_Grade = true
+            view = "空"
+        }
     )
 
-    if (showBottomSheet_Xuanqu) {
+
+    if (showBottomSheet_Grade ) {
         ModalBottomSheet(
-            onDismissRequest = {
-                showBottomSheet_Xuanqu = false
-            },
-            sheetState = sheetState_Xuanqu
+            onDismissRequest = { showBottomSheet_Grade = false },
+            sheetState = sheetState_Grade
         ) {
             Column() {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    XuanquUI(vm)
-                }
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) { Text(text = "暂未开发") }
                 Spacer(modifier = Modifier.height(20.dp))
             }
-
-
         }
     }
 }

@@ -2,6 +2,7 @@ package com.hfut.schedule.ui.ComposeUI.Search
 
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,12 +22,15 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,9 +38,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.hfut.schedule.MyApplication
+import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.datamodel.One.EmptyRoomResponse
 import kotlinx.coroutines.CoroutineScope
@@ -44,6 +50,52 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EmptyRoom(vm : LoginSuccessViewModel){
+    val sheetState_EmptyRoom = rememberModalBottomSheetState()
+    var showBottomSheet_EmptyRoom by remember { mutableStateOf(false) }
+
+    ListItem(
+        headlineContent = { Text(text = "空教室") },
+        leadingContent = {
+            Icon(
+                painterResource(R.drawable.meeting_room),
+                contentDescription = "Localized description",
+            )
+        },
+        modifier = Modifier.clickable {
+            val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
+            val token = prefs.getString("bearer","")
+            showBottomSheet_EmptyRoom = true
+            token?.let { vm.searchEmptyRoom("XC001", it) }
+            token?.let { vm.searchEmptyRoom("XC002", it) }
+            // view = "待开发"
+
+
+        }
+    )
+
+    if (showBottomSheet_EmptyRoom) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                showBottomSheet_EmptyRoom = false
+            },
+            sheetState = sheetState_EmptyRoom
+        ) {
+            Column() {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    emptyRoomUI(vm)
+                }
+                Spacer(modifier = Modifier.height(20.dp))
+            }
+        }
+    }
+}
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun emptyRoomUI(vm : LoginSuccessViewModel) {

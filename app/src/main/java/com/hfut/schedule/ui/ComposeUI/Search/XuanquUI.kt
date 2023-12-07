@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.ComposeUI
+package com.hfut.schedule.ui.ComposeUI.Search
 
 import android.annotation.SuppressLint
 import android.content.Context

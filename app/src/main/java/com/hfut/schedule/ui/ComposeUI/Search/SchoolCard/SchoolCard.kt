@@ -139,8 +139,6 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
     }
 
 
-
-
     if (showBottomSheet_Search) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet_Search = false },
@@ -164,12 +162,11 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
     }
 
     if (showBottomSheet_Bills) {
-
         CoroutineScope(Job()).apply {
             launch {
                 async {
                     delay(1000)
-                    val billjson = prefs.getString("cardliushui",MyApplication.NullBill)
+                    val billjson = prefs.getString("cardliushui", MyApplication.NullBill)
                     if (billjson != null) {
                         if (billjson.contains("操作成功")) BillItem()
                         else {
@@ -183,7 +180,7 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
                         }
                     }
                 }.await()
-               async { loading = false }
+                async { loading = false }
             }
         }
 
@@ -253,14 +250,14 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
                                         AssistChip(
                                             onClick = { showBottomSheet_Range = true },
                                             label = { Text(text = "范围支出") },
-                                            leadingIcon = { Icon(painter = painterResource(R.drawable.calendar), contentDescription = "description")}
+                                            leadingIcon = { Icon(painter = painterResource(R.drawable.calendar), contentDescription = "description") }
                                         )
                                         Spacer(modifier = Modifier.width(10.dp))
 
                                         AssistChip(
                                             onClick = { showBottomSheet_Month = true },
                                             label = { Text(text = "月份查询") },
-                                            leadingIcon = { Icon(painter = painterResource(R.drawable.calendar_view_month), contentDescription = "description")}
+                                            leadingIcon = { Icon(painter = painterResource(R.drawable.calendar_view_month), contentDescription = "description") }
                                         )
 
                                         Spacer(modifier = Modifier.width(10.dp))
@@ -268,7 +265,7 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
                                         AssistChip(
                                             onClick = { showBottomSheet_Search = true },
                                             label = { Text(text = "搜索") },
-                                            leadingIcon = { Icon(painter = painterResource(R.drawable.search), contentDescription = "description")}
+                                            leadingIcon = { Icon(painter = painterResource(R.drawable.search), contentDescription = "description") }
                                         )
 
                                     }
@@ -329,8 +326,8 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
                                                 ) {
                                                     ListItem(
                                                         headlineContent = { Text(text = name) },
-                                                        supportingContent = {Text(text = pay)},
-                                                        overlineContent = {Text(text = BillItem()[item].effectdateStr)},
+                                                        supportingContent = { Text(text = pay) },
+                                                        overlineContent = { Text(text = BillItem()[item].effectdateStr) },
                                                         leadingContent = {
                                                             when {
                                                                 name.contains("淋浴") ->  Icon(painterResource(R.drawable.bathtub), contentDescription = "")
@@ -418,8 +415,6 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
                     }
                 }
             }
-
-
         }
     }
 
@@ -456,7 +451,8 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
             }
 
         },
-        modifier = Modifier.clickable { page = 1
+        modifier = Modifier.clickable {
+            page = 1
             get() }
     )
 

@@ -1,18 +1,23 @@
-package com.hfut.schedule.logic.network.ServiceCreator.Login
+package com.hfut.schedule.logic.network.ServiceCreator.OneGoto
 
 import com.hfut.schedule.MyApplication
-import com.hfut.schedule.logic.network.interceptor.RedirectInterceptor
+import com.hfut.schedule.logic.network.interceptor.GotoInterceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-object OneServiceCreator {
+object OneGotoServiceCreator {
+    val Client = OkHttpClient.Builder()
+        .addNetworkInterceptor(GotoInterceptor())
+        .build()
 
 
     val retrofit = Retrofit.Builder()
-        .baseUrl(MyApplication.OneURL)
+        .baseUrl(MyApplication.LoginURL)
+        .client(Client)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
+
 
 
     fun <T> create(service: Class<T>): T = retrofit.create(service)

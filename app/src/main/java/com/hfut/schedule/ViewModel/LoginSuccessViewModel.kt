@@ -18,10 +18,10 @@ import com.hfut.schedule.logic.datamodel.Jxglstu.lessonIdsResponse
 import com.hfut.schedule.logic.network.ServiceCreator.XuanquServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuJSONServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuHTMLServiceCreator
-import com.hfut.schedule.logic.network.ServiceCreator.LibraryServiceCreator
-import com.hfut.schedule.logic.network.ServiceCreator.Login.OneGotoServiceCreator
+import com.hfut.schedule.logic.network.ServiceCreator.One.LibraryServiceCreator
+import com.hfut.schedule.logic.network.ServiceCreator.OneGoto.OneGotoServiceCreator
 //import com.hfut.schedule.logic.network.ServiceCreator.Login.OneGetNewTicketServiceCreator.client
-import com.hfut.schedule.logic.network.ServiceCreator.Login.OneServiceCreator
+import com.hfut.schedule.logic.network.ServiceCreator.One.OneServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.ZJGDBillServiceCreator
 import com.hfut.schedule.logic.network.api.XuanquService
 import com.hfut.schedule.logic.network.api.JxglstuService

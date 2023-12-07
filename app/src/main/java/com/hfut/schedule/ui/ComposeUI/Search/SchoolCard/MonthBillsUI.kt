@@ -67,6 +67,24 @@ fun MonthBillsUI(vm : LoginSuccessViewModel) {
 
     val date = GetDate.Date_yyyy_MM
     var input by remember { mutableStateOf(date) }
+
+    fun Click() {
+        CoroutineScope(Job()).apply {
+            launch {
+                async {
+                    clicked = true
+                    loading2 = true
+                    vm.getMonthBills("bearer " + auth, input)
+                }.await()
+                async {
+                    delay(500)
+                    getbillmonth()
+                    loading2 = false
+                }
+            }
+        }
+    }
+
     Column {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
 
@@ -84,22 +102,7 @@ fun MonthBillsUI(vm : LoginSuccessViewModel) {
                 singleLine = true,
                 trailingIcon = {
                     IconButton(
-                        onClick = {
-                            CoroutineScope(Job()).apply {
-                                launch {
-                                    async {
-                                        clicked = true
-                                        loading2 = true
-                                        vm.getMonthBills("bearer " + auth,input) }.await()
-                                    async {
-                                        delay(500)
-                                        getbillmonth()
-                                        loading2 = false
-                                    }
-                                }
-                            }
-
-                        }) {
+                        onClick = { Click() }) {
                         Icon(painter = painterResource(R.drawable.search), contentDescription = "description")
                     }
                 },
@@ -125,7 +128,6 @@ fun MonthBillsUI(vm : LoginSuccessViewModel) {
                     }
                 }
 
-
                 AnimatedVisibility(
                     visible = !loading2,
                     enter = fadeIn(),
@@ -133,7 +135,6 @@ fun MonthBillsUI(vm : LoginSuccessViewModel) {
                 ) {
                     //填充界面
                     Column{
-
                         //Spacer(modifier = Modifier.height(50.dp))
                         LazyColumn {
                             item {
@@ -152,27 +153,8 @@ fun MonthBillsUI(vm : LoginSuccessViewModel) {
                                         singleLine = true,
                                         trailingIcon = {
                                             IconButton(
-                                                onClick = {
-                                                    CoroutineScope(Job()).apply {
-                                                        launch {
-                                                            async {
-                                                                clicked = true
-                                                                loading2 = true
-                                                                vm.getMonthBills("bearer " + auth, input)
-                                                            }.await()
-                                                            async {
-                                                                delay(500)
-                                                                getbillmonth()
-                                                                loading2 = false
-                                                            }
-                                                        }
-                                                    }
-
-                                                }) {
-                                                Icon(
-                                                    painter = painterResource(R.drawable.search),
-                                                    contentDescription = "description"
-                                                )
+                                                onClick = { Click() }) {
+                                                Icon(painter = painterResource(R.drawable.search), contentDescription = "description")
                                             }
                                         },
                                         shape = MaterialTheme.shapes.medium,
@@ -248,14 +230,11 @@ fun MonthBillsUI(vm : LoginSuccessViewModel) {
                                         )
                                     }
                                 }
-
                             }
                         }
                     }
                 }
             }
-
-
         }
     }
 

@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,7 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.FWDTViewMoodel
-import com.hfut.schedule.logic.FWDTPsk
+import com.hfut.schedule.logic.Encrypt.FWDTPsk
 import com.hfut.schedule.logic.SharePrefs.prefs
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job

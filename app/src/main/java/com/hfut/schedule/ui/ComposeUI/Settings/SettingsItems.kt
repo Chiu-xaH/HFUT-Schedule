@@ -16,6 +16,15 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.StartUri
 import com.hfut.schedule.logic.StartUri.StartUri
 
+
+fun Clear() {
+    val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
+    prefs.edit().clear().commit()
+    Toast.makeText(MyApplication.context,"已清除缓存", Toast.LENGTH_SHORT).show()
+    //崩溃操作
+    val s = listOf("")
+    println(s[2])
+}
 @Composable
 fun SettingsItems() {
 
@@ -56,14 +65,7 @@ fun SettingsItems() {
                 contentDescription = "Localized description",
             )
         },
-        modifier = Modifier.clickable{
-            val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
-            prefs.edit().clear().commit()
-            Toast.makeText(MyApplication.context,"已清除缓存", Toast.LENGTH_SHORT).show()
-            //崩溃操作
-            val s = listOf("")
-            println(s[2])
-        }
+        modifier = Modifier.clickable{ Clear() }
     )
 
 }

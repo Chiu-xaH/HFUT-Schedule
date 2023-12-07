@@ -82,6 +82,25 @@ fun SearchBillsUI(vm : LoginSuccessViewModel) {
             if (result.contains("操作成功")) { Items() }
         }
     }
+
+
+    fun Click() {
+        CoroutineScope(Job()).apply {
+            launch {
+                async {
+                    clicked = true
+                    loading = true
+                    vm.searchBills("bearer " + auth,input,page) }.await()
+                async {
+                    delay(500)
+                    get()
+                    loading = false
+                }
+            }
+        }
+    }
+
+
     Column {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
 
@@ -100,20 +119,7 @@ fun SearchBillsUI(vm : LoginSuccessViewModel) {
                 trailingIcon = {
                     IconButton(
                         onClick = {
-                            CoroutineScope(Job()).apply {
-                                launch {
-                                    async {
-                                        clicked = true
-                                        loading = true
-                                        vm.searchBills("bearer " + auth,input,page) }.await()
-                                    async {
-                                        delay(500)
-                                        get()
-                                        loading = false
-                                    }
-                                }
-                            }
-
+                            Click()
                         }) {
                         Icon(painter = painterResource(R.drawable.search), contentDescription = "description")
                     }
@@ -167,27 +173,8 @@ fun SearchBillsUI(vm : LoginSuccessViewModel) {
                                         singleLine = true,
                                         trailingIcon = {
                                             IconButton(
-                                                onClick = {
-                                                    CoroutineScope(Job()).apply {
-                                                        launch {
-                                                            async {
-                                                                clicked = true
-                                                                loading = true
-                                                                vm.searchBills("bearer " + auth,input,page)
-                                                            }.await()
-                                                            async {
-                                                                delay(500)
-                                                               get()
-                                                                loading = false
-                                                            }
-                                                        }
-                                                    }
-
-                                                }) {
-                                                Icon(
-                                                    painter = painterResource(R.drawable.search),
-                                                    contentDescription = "description"
-                                                )
+                                                onClick = {Click()}) {
+                                                Icon(painter = painterResource(R.drawable.search), contentDescription = "description")
                                             }
                                         },
                                         shape = MaterialTheme.shapes.medium,

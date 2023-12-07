@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.ComposeUI
+package com.hfut.schedule.ui.ComposeUI.Activity
 
 import android.app.AlertDialog
 import com.hfut.schedule.MyApplication

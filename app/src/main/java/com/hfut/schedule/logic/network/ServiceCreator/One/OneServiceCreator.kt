@@ -1,13 +1,14 @@
-package com.hfut.schedule.logic.network.ServiceCreator
+package com.hfut.schedule.logic.network.ServiceCreator.One
 
 import com.hfut.schedule.MyApplication
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-object LibraryServiceCreator {
+object OneServiceCreator {
+
 
     val retrofit = Retrofit.Builder()
-        .baseUrl(MyApplication.LibURL)
+        .baseUrl(MyApplication.OneURL)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 

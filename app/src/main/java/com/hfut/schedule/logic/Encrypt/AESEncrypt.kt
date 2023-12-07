@@ -1,4 +1,4 @@
-package com.hfut.schedule.logic
+package com.hfut.schedule.logic.Encrypt
 
 import android.util.Base64
 import javax.crypto.Cipher
