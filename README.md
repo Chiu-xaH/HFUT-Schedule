@@ -215,8 +215,7 @@
 
 ♢截图：
 
-![微信图片_20231207155717](https://github.com/Chiu-xaH/HFUT-Schedule/assets/116127902/178d9342-518a-4593-960a-e66b841811df)
-
+![打码](https://github.com/Chiu-xaH/HFUT-Schedule/assets/116127902/d7761ac1-d8ce-4a93-a9cd-382eef18b51b)
 
 ♢待修复：
 
