@@ -25,12 +25,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -61,6 +64,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.GetDate
 import com.hfut.schedule.logic.OpenAlipay
+import com.hfut.schedule.logic.SharePrefs
 import com.hfut.schedule.logic.datamodel.zjgd.BillMonthResponse
 import com.hfut.schedule.logic.datamodel.zjgd.BillResponse
 import com.hfut.schedule.logic.datamodel.zjgd.BillMonth
@@ -112,6 +116,8 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
     val sheetState_Search = rememberModalBottomSheetState()
     var showBottomSheet_Search by remember { mutableStateOf(false) }
 
+    val sheetState_Settings = rememberModalBottomSheetState()
+    var showBottomSheet_Settings by remember { mutableStateOf(false) }
 
 
     var page by remember { mutableStateOf(1) }
@@ -119,15 +125,21 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
     var loading by remember { mutableStateOf(true) }
 
 
-    
+
     fun BillItem() :MutableList<records> {
         val billjson = prefs.getString("cardliushui",MyApplication.NullBill)
         val bill = Gson().fromJson(billjson, BillResponse::class.java)
         val data = bill.data.records
+        val msg = bill.data.msg
         var BillItems = mutableListOf<records>()
         val totalpage = bill.data.pages
-        val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-        if(sp.getInt("totalpage",0) != totalpage){ sp.edit().putInt("totalpage", totalpage).apply() }
+        if (msg != null) {
+            if (msg.contains("成功")) {
+                val cardAccount = bill.data.records[0].fromAccount
+                val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
+                if(sp.getString("cardAccount","") != cardAccount){ sp.edit().putString("cardAccount", cardAccount).apply() }
+            } else { Toast.makeText(MyApplication.context,msg,Toast.LENGTH_SHORT).show() }
+        }
         data.forEach {  BillItems.add(it) }
         return BillItems
     }
@@ -159,6 +171,13 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
             onDismissRequest = { showBottomSheet_Month = false },
             sheetState = sheetState_Month
         ) { MonthBillsUI(vm) }
+    }
+
+    if (showBottomSheet_Settings) {
+        ModalBottomSheet(
+            onDismissRequest = { showBottomSheet_Settings = false },
+            sheetState = sheetState_Settings
+        ) { CardSettings(vm) }
     }
 
     if (showBottomSheet_Bills) {
@@ -197,7 +216,7 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        title = { Text("一卡通 流水") }
+                        title = { Text("一卡通 服务") }
                     )
                 },) {innerPadding ->
                 Column(
@@ -247,11 +266,22 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
                                         .fillMaxWidth()
                                         .padding(horizontal = 15.dp, vertical = 0.dp), horizontalArrangement = Arrangement.Start){
 
+                                        FilterChip(
+                                            onClick = {  },
+                                            label = { Text(text = "账单") },
+                                            selected = true,
+                                            leadingIcon = { Icon(painter = painterResource(R.drawable.receipt_long), contentDescription = "description") }
+                                        )
+
+                                        Spacer(modifier = Modifier.width(10.dp))
+
+
                                         AssistChip(
                                             onClick = { showBottomSheet_Range = true },
                                             label = { Text(text = "范围支出") },
                                             leadingIcon = { Icon(painter = painterResource(R.drawable.calendar), contentDescription = "description") }
                                         )
+
                                         Spacer(modifier = Modifier.width(10.dp))
 
                                         AssistChip(
@@ -259,18 +289,38 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
                                             label = { Text(text = "月份查询") },
                                             leadingIcon = { Icon(painter = painterResource(R.drawable.calendar_view_month), contentDescription = "description") }
                                         )
+                                    }
 
-                                        Spacer(modifier = Modifier.width(10.dp))
+                                    Spacer(modifier = Modifier.height(0.dp))
+
+                                    Row(modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 15.dp, vertical = 0.dp), horizontalArrangement = Arrangement.Start){
 
                                         AssistChip(
                                             onClick = { showBottomSheet_Search = true },
                                             label = { Text(text = "搜索") },
                                             leadingIcon = { Icon(painter = painterResource(R.drawable.search), contentDescription = "description") }
                                         )
+                                        Spacer(modifier = Modifier.width(10.dp))
 
+                                        AssistChip(
+                                            onClick = { showBottomSheet_Settings = true },
+                                            label = { Text(text = "限额修改") },
+                                            leadingIcon = { Icon(painter = painterResource(R.drawable.price_change), contentDescription = "description") }
+                                        )
+
+                                        Spacer(modifier = Modifier.width(10.dp))
+
+                                        AssistChip(
+                                            onClick = { Toast.makeText(MyApplication.context,"暂未开发(等开发者丢卡了再做)",Toast.LENGTH_SHORT).show() },
+                                            label = { Text(text = "挂失解挂") },
+                                            leadingIcon = { Icon(painterResource(id = R.drawable.error), contentDescription = "description") }
+                                        )
                                     }
 
                                     Spacer(modifier = Modifier.height(5.dp))
+
 
                                     LazyColumn {
                                         if (page == 1){
@@ -284,7 +334,10 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
                                                     ),
                                                     modifier = Modifier
                                                         .fillMaxWidth()
-                                                        .padding(horizontal = 15.dp, vertical = 5.dp),
+                                                        .padding(
+                                                            horizontal = 15.dp,
+                                                            vertical = 5.dp
+                                                        ),
                                                     shape = MaterialTheme.shapes.medium
                                                 ) {
                                                     ListItem(
@@ -321,7 +374,10 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
                                                     ),
                                                     modifier = Modifier
                                                         .fillMaxWidth()
-                                                        .padding(horizontal = 15.dp, vertical = 5.dp),
+                                                        .padding(
+                                                            horizontal = 15.dp,
+                                                            vertical = 5.dp
+                                                        ),
                                                     shape = MaterialTheme.shapes.medium
                                                 ) {
                                                     ListItem(

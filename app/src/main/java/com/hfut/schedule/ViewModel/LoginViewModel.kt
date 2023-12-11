@@ -37,27 +37,29 @@ class LoginViewModel : ViewModel() {
          val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
         if (sp.getString("ONE", "") != cookies) { sp.edit().putString("ONE", cookies).apply() }
 
-        val call = Login.login(cookies,username, password, execution.value!!,"submit")
+        val call = execution.value?.let { Login.login(cookies,username, password, it,"submit") }
 
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+        if (call != null) {
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
 
 
                     location.value = response.headers()["Location"].toString()
-                val TGC = response.headers()["Set-Cookie"].toString().substringBefore(";")
+                    val TGC = response.headers()["Set-Cookie"].toString().substringBefore(";")
                     code.value = response.code().toString()
                     val ticket = response.headers()["Location"].toString().substringAfter("=")
                     val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
                     if (sp.getString("ticket", "") != ticket) { sp.edit().putString("ticket", ticket).apply() }
-                if (sp.getString("TGC", "") != TGC) { sp.edit().putString("TGC", TGC).apply() }
+                    if (sp.getString("TGC", "") != TGC) { sp.edit().putString("TGC", TGC).apply() }
 
-            }
+                }
 
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                code.value = "XXX"
-                t.printStackTrace()
-            }
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    code.value = "XXX"
+                    t.printStackTrace()
+                }
             })
+        }
 
 
     }

@@ -8,7 +8,7 @@ import dagger.hilt.android.HiltAndroidApp
 class MyApplication : Application() {
     companion object {
         lateinit var context: Context
-        const val version = "2.4.2"
+        const val version = "2.4.3"
         const val ZJGDBillURL = "http://121.251.19.62/"
         const val LibURL = "http://210.45.242.5:8080/"
         const val AlipayURL = "alipays://platformapi/startapp?appId=20000067&url=https://ur.alipay.com/_4kQhV32216tp7bzlDc3E1k"

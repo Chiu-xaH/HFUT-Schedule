@@ -27,7 +27,7 @@ import com.hfut.schedule.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ui.ComposeUI.Search.LibraryItem
-import com.hfut.schedule.ui.ComposeUI.Search.XuanquItem
+import com.hfut.schedule.ui.ComposeUI.Search.Xuanqu.XuanquItem
 import com.hfut.schedule.ui.ComposeUI.Settings.MyAPIItem
 import com.hfut.schedule.ui.ComposeUI.Settings.MonetColorItem
 import com.hfut.schedule.ui.ComposeUI.Settings.SettingsItems

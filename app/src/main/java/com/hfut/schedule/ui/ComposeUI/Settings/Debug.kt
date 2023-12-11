@@ -32,7 +32,7 @@ fun debug() {
 
     ListItem(
         headlineContent = { Text(text = "调试模式") },
-        modifier = Modifier.clickable { showBottomSheet },
+        modifier = Modifier.clickable { showBottomSheet = true },
         leadingContent = { Icon(painter = painterResource(id = R.drawable.api), contentDescription ="" ) }
     )
 }

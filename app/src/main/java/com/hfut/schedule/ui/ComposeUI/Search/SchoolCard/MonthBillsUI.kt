@@ -10,10 +10,15 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -63,6 +68,7 @@ fun MonthBillsUI(vm : LoginSuccessViewModel) {
 
     var clicked by remember { mutableStateOf(false) }
     var loading2 by remember { mutableStateOf(true) }
+    var expand by remember { mutableStateOf(false) }
     val auth = prefs.getString("auth","")
 
     val date = GetDate.Date_yyyy_MM
@@ -84,6 +90,14 @@ fun MonthBillsUI(vm : LoginSuccessViewModel) {
             }
         }
     }
+
+   // DropdownMenu(expanded = expand, onDismissRequest = { expand = false }) {
+       // LazyColumn{
+       //     items(12){item ->
+         //       DropdownMenuItem(text = { Text(text = "${item}月") }, onClick = { /*TODO*/ })
+       //     }
+       // }
+   // }
 
     Column {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
@@ -164,8 +178,26 @@ fun MonthBillsUI(vm : LoginSuccessViewModel) {
                                         ),
                                     )
                                 }
+                            }
+                            item {
+                                Card(
+                                    elevation = CardDefaults.cardElevation(
+                                        defaultElevation = 3.dp
+                                    ),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 15.dp, vertical = 5.dp),
+                                    shape = MaterialTheme.shapes.medium
+                                ){
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    Row(modifier = Modifier.padding(14.dp,6.dp)){
+                                        drawLineChart(getbillmonth())
+                                    }
+
+                                }
 
                             }
+
                             item {
                                 var total = 0.0
                                 for (i in 0 until getbillmonth().size) {
@@ -204,10 +236,7 @@ fun MonthBillsUI(vm : LoginSuccessViewModel) {
                             items(getbillmonth().size) { item ->
                                 var balance = getbillmonth()[item].balance
                                 balance = balance / 100
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.Center
-                                )
+                                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center)
                                 {
                                     Card(
                                         elevation = CardDefaults.cardElevation(
@@ -237,5 +266,4 @@ fun MonthBillsUI(vm : LoginSuccessViewModel) {
             }
         }
     }
-
 }

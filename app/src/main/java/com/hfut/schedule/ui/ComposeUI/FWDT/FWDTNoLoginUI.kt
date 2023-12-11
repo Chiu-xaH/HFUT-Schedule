@@ -39,6 +39,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun CodeImg() {
+
    // Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center){
      ///   AsyncImage(
         //    model = "http://172.31.248.26:8088/Login/GetValidateCode",

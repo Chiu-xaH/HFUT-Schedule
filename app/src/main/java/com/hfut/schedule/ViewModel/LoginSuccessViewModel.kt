@@ -205,7 +205,7 @@ class LoginSuccessViewModel : ViewModel() {
 
     }
 
-    fun OneGotoCard(cookie : String)  {// 创建一个Call对象，用于发送异步请求
+    fun OneGotoCard(cookie : String)  {
 
         val call = OneGoto.OneGotoCard(cookie)
 
@@ -214,8 +214,6 @@ class LoginSuccessViewModel : ViewModel() {
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
-
-
     }
 
 
@@ -254,6 +252,22 @@ class LoginSuccessViewModel : ViewModel() {
 
     }
 
+
+    fun changeLimit(auth: String,json: JsonObject) {
+
+        val call = ZJGDBill.changeLimit(auth,json)
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                val json = response.body()?.string()
+                val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
+                if(sp.getString("changeResult","") != json ){ sp.edit().putString("changeResult", json).apply() }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
+
     fun searchDate(auth : String, timeFrom : String, timeTo : String) {
         val call = ZJGDBill.searchDate(auth,timeFrom,timeTo)
 
@@ -262,7 +276,6 @@ class LoginSuccessViewModel : ViewModel() {
                 val yue = response.body()?.string()
                 val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
                 if(sp.getString("searchyue","") !=yue ){ sp.edit().putString("searchyue", yue).apply() }
-
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
