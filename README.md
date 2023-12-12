@@ -247,7 +247,8 @@
 
 ♢截图：
 
-![打码](https://github.com/Chiu-xaH/HFUT-Schedule/assets/116127902/d7761ac1-d8ce-4a93-a9cd-382eef18b51b)
+![微信图片_20231212221630](https://github.com/Chiu-xaH/HFUT-Schedule/assets/116127902/de0db8a9-cc23-4be3-b8c4-402b8ea83b7e)
+
 
 ♢权限：
 
