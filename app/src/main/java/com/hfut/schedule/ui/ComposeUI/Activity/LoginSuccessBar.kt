@@ -43,9 +43,11 @@ fun Judge() {
 @Composable
 fun SuccessUI(vm : LoginSuccessViewModel, grade : String) {
     val switch = prefs.getBoolean("SWITCH",true)
+    val switch_card = prefs.getBoolean("SWITCHCARD",true)
     val navController = rememberNavController()
     var isEnabled by remember { mutableStateOf(false) }
     var showlable by remember { mutableStateOf(switch) }
+    var showcard by remember { mutableStateOf(switch_card) }
 
     //等待加载完毕可切换标签
     CoroutineScope(Job()).launch {
@@ -101,10 +103,8 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String) {
     ) { innerPadding ->
         NavHost(navController = navController, startDestination = "calendar") {
             composable("calendar") { CalendarScreen(isEnabled,enabledchanged = {isEnabledch -> isEnabled = isEnabledch},vm,grade) }
-            composable("search") { SearchScreen(vm) }
+            composable("search") { SearchScreen(vm,false) }
             composable("settings") { SettingsScreen(
-                vm,
-                showItem = false,
                 showlable,
                 showlablechanged = {showlablech -> showlable = showlablech},
             ) }

@@ -26,6 +26,7 @@ import com.hfut.schedule.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.datamodel.NavigationBarItemData
+import com.hfut.schedule.ui.ComposeUI.BottomBar.SearchScreen
 import com.hfut.schedule.ui.ComposeUI.BottomBar.SettingsScreen
 import com.hfut.schedule.ui.ComposeUI.BottomBar.TodayScreen
 
@@ -38,14 +39,16 @@ fun NoNetWork(vm : LoginSuccessViewModel) {
     var isEnabled by remember { mutableStateOf(true) }
     var showlable by remember { mutableStateOf(switch) }
 
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
 
         bottomBar = {
             NavigationBar() {
                 val items = listOf(
-                    NavigationBarItemData("1", "课程", painterResource(R.drawable.calendar)),
+                    NavigationBarItemData("1", "课程表", painterResource(R.drawable.calendar)),
                     NavigationBarItemData("2","聚焦", painterResource(R.drawable.timeline)),
+                    NavigationBarItemData("search","查询中心", painterResource(R.drawable.search)),
                     NavigationBarItemData("3","选项", painterResource(id = R.drawable.cube))
                 )
                 items.forEach { item ->
@@ -77,14 +80,11 @@ fun NoNetWork(vm : LoginSuccessViewModel) {
         NavHost(navController = navController, startDestination = "1") {
             composable("1") { NoNet() }
             composable("2") { TodayScreen(vm) }
+            composable("search") { SearchScreen(vm,true) }
             composable("3") { SettingsScreen(
-                vm,
-                showItem = true,
                 showlable,
                 showlablechanged = {showlablech -> showlable = showlablech},
-
             )
-
             }
 
         }

@@ -57,6 +57,7 @@ import com.google.gson.JsonObject
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.logic.SharePrefs
 import com.hfut.schedule.logic.datamodel.One.Library
 import com.hfut.schedule.logic.datamodel.One.content
 import kotlinx.coroutines.CoroutineScope
@@ -171,8 +172,7 @@ fun LibraryItem(vm : LoginSuccessViewModel) {
                                     IconButton(
                                         // shape = RoundedCornerShape(5.dp),
                                         onClick = {
-                                            val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-                                            if(sp.getString("Query","") != input){ sp.edit().putString("Query", input).apply() }
+                                            SharePrefs.Save("Query", input)
                                             onclick = true
                                             loading = true
                                             CoroutineScope(Job()).apply {

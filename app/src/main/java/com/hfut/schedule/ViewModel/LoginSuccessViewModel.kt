@@ -9,6 +9,7 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import com.hfut.schedule.MyApplication
+import com.hfut.schedule.logic.SharePrefs
 import com.hfut.schedule.logic.datamodel.One.BorrowBooksResponse
 import com.hfut.schedule.logic.datamodel.One.CardResponse
 import com.hfut.schedule.logic.datamodel.One.SubBooksResponse
@@ -67,10 +68,7 @@ class LoginSuccessViewModel : ViewModel() {
                 if (response.headers()["Location"].toString().contains("/eams5-student/for-std/course-table/info/")) {
                     studentId.value = response.headers()["Location"].toString()
                         .substringAfter("/eams5-student/for-std/course-table/info/").toInt()
-                } else {
-                    studentId.value = 99999
-                }
-                //Log.d("学生ID", studentId.value.toString())
+                } else studentId.value = 99999
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -85,11 +83,9 @@ class LoginSuccessViewModel : ViewModel() {
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 val json = response.body()?.string()
-                //Log.d("检验",json!!)
                 if (json != null) {
                     val id = Gson().fromJson(json, lessonIdsResponse::class.java)
                     lessonIds.value = id.lessonIds
-
                 }
             }
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -100,22 +96,11 @@ class LoginSuccessViewModel : ViewModel() {
         val lessonIdsArray = JsonArray()
         lessonIds.value?.forEach {lessonIdsArray.add(JsonPrimitive(it))}
 
-        val jsonObject = JsonObject().apply {
-            add("lessonIds", lessonIdsArray)//课程ID
-            addProperty("studentId", studentId.value)//学生ID
-            addProperty("weekIndex", "")
-        }
-        //Log.d("xes",lessonid)
-
         val call = JxglstuJSON.getDatum(cookie,lessonid)
-
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val json = response.body()?.string()
-
-                val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-                if(sp.getString("json","") != json){ sp.edit().putString("json", json).apply() }
+                SharePrefs.Save("json", response.body()?.string())
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -127,11 +112,7 @@ class LoginSuccessViewModel : ViewModel() {
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val info = response.body()?.string()
-
-               // info?.let { Log.d("细腻些", it) }
-                val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-                if(sp.getString("info","") !=info ){ sp.edit().putString("info", info).apply() }
+                SharePrefs.Save("info", response.body()?.string())
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -143,9 +124,7 @@ class LoginSuccessViewModel : ViewModel() {
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val exam = response.body()?.string()
-                val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-                if(sp.getString("exam","") !=exam ){ sp.edit().putString("exam", exam).apply() }
+                SharePrefs.Save("exam", response.body()?.string())
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -157,9 +136,7 @@ class LoginSuccessViewModel : ViewModel() {
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val program = response.body()?.string()
-                val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-                if(sp.getString("program","") !=program ){ sp.edit().putString("program", program).apply() }
+                SharePrefs.Save("program", response.body()?.string())
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -171,10 +148,7 @@ class LoginSuccessViewModel : ViewModel() {
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val grade = response.body()?.string()
-                val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-                if(sp.getString("grade","") !=grade ){ sp.edit().putString("grade", grade).apply() }
-
+                SharePrefs.Save("grade", response.body()?.string())
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -189,20 +163,10 @@ class LoginSuccessViewModel : ViewModel() {
         val call = OneGoto.OneGoto(cookie)
 
         call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                     // response.headers()["Location"]?.let { Log.d("响应", it.toString()) }
-               // val finalUrl = (client.eventListener() as RedirectListener).getResponseUrl()
-                // response.headers()["Location"]
-            }
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {}
 
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                //   Log.d("VM","失败")
-                //   code.value = "XXX"
-                t.printStackTrace()
-            }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
-
-
     }
 
     fun OneGotoCard(cookie : String)  {
@@ -223,10 +187,7 @@ class LoginSuccessViewModel : ViewModel() {
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val liushui = response.body()?.string()
-                val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-                if(sp.getString("cardliushui","") !=liushui ){ sp.edit().putString("cardliushui", liushui).apply() }
-
+                SharePrefs.Save("cardliushui", response.body()?.string())
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -240,10 +201,7 @@ class LoginSuccessViewModel : ViewModel() {
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val yue = response.body()?.string()
-                val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-                if(sp.getString("cardyue","") !=yue ){ sp.edit().putString("cardyue", yue).apply() }
-
+                SharePrefs.Save("cardyue", response.body()?.string())
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -259,9 +217,7 @@ class LoginSuccessViewModel : ViewModel() {
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val json = response.body()?.string()
-                val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-                if(sp.getString("changeResult","") != json ){ sp.edit().putString("changeResult", json).apply() }
+                SharePrefs.Save("changeResult", response.body()?.string())
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -273,9 +229,7 @@ class LoginSuccessViewModel : ViewModel() {
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val yue = response.body()?.string()
-                val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-                if(sp.getString("searchyue","") !=yue ){ sp.edit().putString("searchyue", yue).apply() }
+                SharePrefs.Save("searchyue", response.body()?.string())
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -287,10 +241,7 @@ class LoginSuccessViewModel : ViewModel() {
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val yue = response.body()?.string()
-                val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-                if(sp.getString("searchbills","") !=yue ){ sp.edit().putString("searchbills", yue).apply() }
-
+                SharePrefs.Save("searchbills", response.body()?.string())
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -303,18 +254,15 @@ class LoginSuccessViewModel : ViewModel() {
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val yue = response.body()?.string()
-                val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-                if(sp.getString("monthbalance","") !=yue ){ sp.edit().putString("monthbalance", yue).apply() }
-
+                SharePrefs.Save("monthbalance", response.body()?.string())
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
     fun getToken()  {
-        val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
-        val codehttp = prefs.getString("code", "")
+
+        val codehttp = SharePrefs.prefs.getString("code", "")
         var code = codehttp
         if (code != null) { code = code.substringAfter("=") }
         if (code != null) { code = code.substringBefore("]") }
@@ -326,27 +274,15 @@ class LoginSuccessViewModel : ViewModel() {
         if (call != null) {
             call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                         // response.body()?.let { Log.d("响应", it.string()) }
                     val json = response.body()?.string()
-               //     json?.let { Log.d("json", it) }
                     val data = Gson().fromJson(json, getTokenResponse::class.java)
-                    // response.headers()["Location"]
-               //     data?.let { Log.d("JSON", it.toString()) }
                     if (data.msg == "success") {
                         token.value = data.data.access_token
-                        val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-                        if(sp.getString("bearer","") != data.data.access_token){ sp.edit().putString("bearer", data.data.access_token).apply() }
-
-
-                       // Log.d("token",token.value.toString())
+                        SharePrefs.Save("bearer", data.data.access_token)
                     }
                 }
 
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    //   Log.d("VM","失败")
-                    //   code.value = "XXX"
-                    t.printStackTrace()
-                }
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
             })
         }
 
@@ -363,34 +299,24 @@ class LoginSuccessViewModel : ViewModel() {
                 val json = response.body()?.string()
                 if (json != null) {
                     if (json.contains("--")) {
-                        val sp =
-                            PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-
-                        sp.edit().putString("card", "--").apply()
-
+                        SharePrefs.Save("card", "--")
                     } else {
                         val data = Gson().fromJson(json, CardResponse::class.java)
                         val code = data.msg
                         if (code == "success") {
                             val card = data.data.toString()
-                            val sp =
-                                PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-                            if (sp.getString("card", "") != card) {
-                                sp.edit().putString("card", card).apply()
-                            }
+                            SharePrefs.Save("card", card)
                         }
                     }
-                } else {
-                    val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-                    sp.edit().putString("card", "请登录刷新").apply()
-                }
+                } else SharePrefs.Save("card", "请登录刷新")
+
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
 
-
     }
+
     fun getBorrowBooks(token : String)  {
 
         val call = One.getBorrowBooks(token)
@@ -400,23 +326,18 @@ class LoginSuccessViewModel : ViewModel() {
                 val json = response.body()?.string()
                 if (json.toString().contains("success")) {
                     val data = Gson().fromJson(json, BorrowBooksResponse::class.java)
-
                         val borrow = data.data.toString()
-                        val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-                        if(sp.getString("borrow","") !=borrow ){ sp.edit().putString("borrow",borrow).apply() }
+                    SharePrefs.Save("borrow",borrow)
 
                 }
-                 else {
-                    val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-                     sp.edit().putString("borrow","未获取到").apply()
-                }
+                 else SharePrefs.Save("borrow","未获取到")
+
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
-
-
     }
+
     fun getSubBooks(token : String)  {
 
         val call = One.getSubBooks(token)
@@ -426,22 +347,14 @@ class LoginSuccessViewModel : ViewModel() {
                 val json = response.body()?.string()
                 if (json.toString().contains("success")) {
                     val data = Gson().fromJson(json, SubBooksResponse::class.java)
-
                         val sub = data.data.toString()
-                        val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-                        if(sp.getString("sub","") !=sub ){ sp.edit().putString("sub", sub).apply() }
-
+                    SharePrefs.Save("sub", sub)
                 }
-                else {
-                    val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-                    sp.edit().putString("borrow","未获取到").apply()
-                }
+                else SharePrefs.Save("borrow","未获取到")
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
-
-
     }
 
 
@@ -452,9 +365,7 @@ class LoginSuccessViewModel : ViewModel() {
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-               val emptyjson = response.body()?.string()
-                val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-                if(sp.getString("emptyjson","") !=emptyjson ){ sp.edit().putString("emptyjson", emptyjson).apply() }
+                SharePrefs.Save("emptyjson", response.body()?.string())
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -468,9 +379,7 @@ class LoginSuccessViewModel : ViewModel() {
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val library = response.body()?.string()
-                val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-                if(sp.getString("library","") !=library){ sp.edit().putString("library", library).apply() }
+                SharePrefs.Save("library", response.body()?.string())
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -485,14 +394,11 @@ class LoginSuccessViewModel : ViewModel() {
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val xuanqu = response.body()?.string()
-                val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-                if(sp.getString("xuanqu","") !=xuanqu){ sp.edit().putString("xuanqu", xuanqu).apply() }
+                SharePrefs.Save("xuanqu", response.body()?.string())
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
-
     }
 
 }

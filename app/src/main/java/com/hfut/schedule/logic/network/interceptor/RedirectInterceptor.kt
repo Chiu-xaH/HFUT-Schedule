@@ -3,6 +3,7 @@ package com.hfut.schedule.logic.network.interceptor
 import android.preference.PreferenceManager
 import android.util.Log
 import com.hfut.schedule.MyApplication
+import com.hfut.schedule.logic.SharePrefs
 import okhttp3.Interceptor
 import okhttp3.Response
 import java.io.IOException
@@ -34,10 +35,7 @@ if(sb.length > 30 ) {
     sb.delete(sb.length - 2, sb.length)
     val redirectcookie = sb.toString()
 
-    val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-    if (sp.getString("redirect", "") != redirectcookie) {
-        sp.edit().putString("redirect", redirectcookie).apply()
-    }
+   SharePrefs.Save("redirect", redirectcookie)
 
   //  sp.getString("redirect", "")?.let { Log.d("测试11", it) }
 }

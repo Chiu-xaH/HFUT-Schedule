@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.hfut.schedule.MyApplication
+import com.hfut.schedule.logic.SharePrefs
 import com.hfut.schedule.logic.network.api.LoginService
 import com.hfut.schedule.logic.network.ServiceCreator.Login.GetAESKeyServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Login.GetCookieServiceCreator
@@ -34,8 +35,7 @@ class LoginViewModel : ViewModel() {
     fun login(username : String,password : String,keys : String)  {// 创建一个Call对象，用于发送异步请求
 
         val cookies : String = sessionLiveData.value  + cookie2.value +";" + keys
-         val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-        if (sp.getString("ONE", "") != cookies) { sp.edit().putString("ONE", cookies).apply() }
+        SharePrefs.Save("ONE", cookies)
 
         val call = execution.value?.let { Login.login(cookies,username, password, it,"submit") }
 
@@ -43,14 +43,12 @@ class LoginViewModel : ViewModel() {
             call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
 
-
                     location.value = response.headers()["Location"].toString()
                     val TGC = response.headers()["Set-Cookie"].toString().substringBefore(";")
                     code.value = response.code().toString()
                     val ticket = response.headers()["Location"].toString().substringAfter("=")
-                    val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-                    if (sp.getString("ticket", "") != ticket) { sp.edit().putString("ticket", ticket).apply() }
-                    if (sp.getString("TGC", "") != TGC) { sp.edit().putString("TGC", TGC).apply() }
+                    SharePrefs.Save("ticket", ticket)
+                    SharePrefs.Save("TGC", TGC)
 
                 }
 
@@ -72,7 +70,7 @@ class LoginViewModel : ViewModel() {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
 
                 if(response.isSuccessful()){ cookie2.value  = response.headers()["Set-Cookie"].toString() }
-                else Log.d("测试","失败，${response.code()},${response.message()}")
+                //else Log.d("测试","失败，${response.code()},${response.message()}")
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
@@ -94,7 +92,7 @@ class LoginViewModel : ViewModel() {
                 execution.value = doc.select("input[name=execution]").first()?.attr("value")
 
                 if(response.isSuccessful()) { sessionLiveData.value  = response.headers()["Set-Cookie"].toString().substringBefore(";").plus(";") }
-                else Log.d("失败","getKey，${response.code()},${response.message()}")
+               // else Log.d("失败","getKey，${response.code()},${response.message()}")
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
@@ -110,9 +108,7 @@ class LoginViewModel : ViewModel() {
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val body = response.body()?.string()
-                val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-                if (sp.getString("my", "") !=body ) { sp.edit().putString("my", body).apply() }
+                SharePrefs.Save("my", response.body()?.string())
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }

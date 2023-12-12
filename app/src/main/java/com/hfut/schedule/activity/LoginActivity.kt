@@ -13,9 +13,12 @@ import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.hfut.schedule.MyApplication
 import com.hfut.schedule.ui.ComposeUI.TransparentSystemBars
 import com.hfut.schedule.ui.ComposeUI.Activity.checkDate
 import com.hfut.schedule.ViewModel.LoginViewModel
+import com.hfut.schedule.logic.SharePrefs
+import com.hfut.schedule.logic.SharePrefs.prefs
 import com.hfut.schedule.ui.ComposeUI.Activity.LoginUI
 import com.hfut.schedule.ui.MonetColor.LocalCurrentStickerUuid
 import com.hfut.schedule.ui.MonetColor.MainIntent
@@ -60,7 +63,10 @@ class LoginActivity : ComponentActivity() {
         lifecycleScope.apply {
             launch { vm.getCookie() }
             launch {  vm.getKey() }
-            launch {  vm.My() }
+            launch {
+                if (prefs.getBoolean("SWITCHMYAPI",true) == true) { vm.My()}
+                else{ SharePrefs.Save("my",MyApplication.NullMy) }
+            }
         }//协程并行执行，提高效率
 
         }

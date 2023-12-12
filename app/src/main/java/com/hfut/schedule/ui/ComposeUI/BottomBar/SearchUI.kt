@@ -56,10 +56,10 @@ fun getName(vm : LoginSuccessViewModel) : String? {
     return name
 }
 
-@SuppressLint("CoroutineCreationDuringComposition")
+@SuppressLint("CoroutineCreationDuringComposition", "SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchScreen(vm : LoginSuccessViewModel) {
+fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,) {
 
     getName(vm)
 
@@ -71,23 +71,35 @@ fun SearchScreen(vm : LoginSuccessViewModel) {
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
-                title = { Text("嗨  亲爱的 ${getName(vm)} 同学") }
+                title = {
+                    if(ifSaved) Text("免登录查询") else
+                    Text("嗨  亲爱的 ${getName(vm)} 同学")
+                }
             )
         },) {innerPadding ->
         Column(
             modifier = Modifier.padding(innerPadding).fillMaxSize().verticalScroll(rememberScrollState())
         ) {
-             Grade()
-             Exam()
-             Program()
-             PersonUI()
-             EmptyRoom(vm)
-             SchoolCardItem(vm)
-             LibraryItem(vm)
-             XuanquItem(vm)
-             WebUI()
-             FWDT()
-             UndevelipItem()
+
+
+            if (ifSaved){
+                SchoolCardItem(vm)
+                LibraryItem(vm)
+                XuanquItem(vm)
+                WebUI()
+            } else {
+                Grade()
+                Exam()
+                Program()
+                PersonUI()
+                EmptyRoom(vm)
+                SchoolCardItem(vm)
+                LibraryItem(vm)
+                XuanquItem(vm)
+                WebUI()
+                FWDT()
+                UndevelipItem()
+            }
 
              Spacer(modifier = Modifier.height(90.dp))
         }

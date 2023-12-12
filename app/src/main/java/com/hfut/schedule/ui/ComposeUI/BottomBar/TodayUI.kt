@@ -45,6 +45,7 @@ import com.hfut.schedule.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.GetDate
+import com.hfut.schedule.logic.SharePrefs
 import com.hfut.schedule.logic.datamodel.FocusCourse
 import com.hfut.schedule.logic.datamodel.Jxglstu.data
 import com.hfut.schedule.logic.datamodel.MyList
@@ -97,8 +98,7 @@ fun zjgdcard() {
                 var num_float = num.toFloat()
                 num_float = num_float / 100
                // Log.d("Log",num_float.toString())
-                val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-                if(sp.getString("card","") !=num ){ sp.edit().putString("card", num_float.toString()).apply() }
+                SharePrefs.Save("card", num_float.toString())
             }
         }
     }
@@ -530,17 +530,19 @@ fun zjgdcard() {
 
                 if (state == 0) {
 
-                    item {
-                        Card(
-                            elevation = CardDefaults.cardElevation(
-                                defaultElevation = 3.dp
-                            ),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 15.dp, vertical = 5.dp),
-                            shape = MaterialTheme.shapes.medium
+                    if (prefs.getBoolean("SWITCHCARD",true) == true) {
+                        item {
+                            Card(
+                                elevation = CardDefaults.cardElevation(
+                                    defaultElevation = 3.dp
+                                ),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 15.dp, vertical = 5.dp),
+                                shape = MaterialTheme.shapes.medium
 
-                        ){ SchoolCardItem(vm) }
+                            ){ SchoolCardItem(vm) }
+                        }
                     }
 
                     items(ExamGet()) {item ->

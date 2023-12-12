@@ -25,8 +25,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -35,7 +33,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -43,8 +40,6 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -65,9 +60,7 @@ import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.GetDate
 import com.hfut.schedule.logic.OpenAlipay
 import com.hfut.schedule.logic.SharePrefs
-import com.hfut.schedule.logic.datamodel.zjgd.BillMonthResponse
 import com.hfut.schedule.logic.datamodel.zjgd.BillResponse
-import com.hfut.schedule.logic.datamodel.zjgd.BillMonth
 import com.hfut.schedule.logic.datamodel.zjgd.records
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -133,11 +126,13 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
         val msg = bill.data.msg
         var BillItems = mutableListOf<records>()
         val totalpage = bill.data.pages
+
+        SharePrefs.Save("totalpage",totalpage.toString())
+
         if (msg != null) {
             if (msg.contains("成功")) {
                 val cardAccount = bill.data.records[0].fromAccount
-                val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-                if(sp.getString("cardAccount","") != cardAccount){ sp.edit().putString("cardAccount", cardAccount).apply() }
+                SharePrefs.Save("cardAccount", cardAccount)
             } else { Toast.makeText(MyApplication.context,msg,Toast.LENGTH_SHORT).show() }
         }
         data.forEach {  BillItems.add(it) }
@@ -177,7 +172,7 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet_Settings = false },
             sheetState = sheetState_Settings
-        ) { CardSettings(vm) }
+        ) { CardLimit(vm) }
     }
 
     if (showBottomSheet_Bills) {
@@ -405,6 +400,7 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
                                             }
                                         }
                                         item {
+                                            val totalpage = prefs.getString("totalpage","1")
                                             Spacer(modifier = Modifier.height(10.dp))
                                             Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
 
@@ -433,10 +429,21 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
 
                                                 OutlinedButton(
                                                     onClick = {
-                                                        page = 1
-                                                        loading = true
-                                                        get() }
-                                                ) { Text(text = "${page} / ${prefs.getInt("totalpage",1)}") }
+                                                        CoroutineScope(Job()).apply {
+                                                            launch {
+                                                                async {
+                                                                        page = 1
+                                                                        loading = true
+                                                                        get()
+                                                                }.await()
+                                                                async {
+                                                                    delay(500)
+                                                                    loading = false
+                                                                    BillItem()
+                                                                }
+                                                            }
+                                                        } }
+                                                ) { Text(text = "${page} / ${totalpage}") }
 
                                                 Spacer(modifier = Modifier.width(15.dp))
 
@@ -445,7 +452,7 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
                                                         CoroutineScope(Job()).apply {
                                                             launch {
                                                                 async {
-                                                                    if ( page < prefs.getInt("totalpage",1)) {
+                                                                    if ( page < totalpage?.toInt() ?: 1) {
                                                                         page++
                                                                         loading = true
                                                                         get()
