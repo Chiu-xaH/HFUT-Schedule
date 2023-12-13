@@ -359,14 +359,7 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
                                                                 colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
                                                             )
                                                         }
-
-
                                                     }
-
-
-
-
-
                                             }
 
                                         }
