@@ -15,7 +15,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.ui.ComposeUI.TransparentSystemBars
-import com.hfut.schedule.ui.ComposeUI.Activity.checkDate
 import com.hfut.schedule.ViewModel.LoginViewModel
 import com.hfut.schedule.logic.SharePrefs
 import com.hfut.schedule.logic.SharePrefs.prefs
@@ -54,19 +53,12 @@ class LoginActivity : ComponentActivity() {
                     }
                 }
             }
-
         }
-
-        checkDate("2023-09-01","2024-02-01") // 定义一个函数，超出日期不允许使用
-
 
         lifecycleScope.apply {
             launch { vm.getCookie() }
             launch {  vm.getKey() }
-            launch {
-                if (prefs.getBoolean("SWITCHMYAPI",true) == true) { vm.My()}
-                else{ SharePrefs.Save("my",MyApplication.NullMy) }
-            }
+            launch { vm.My() }
         }//协程并行执行，提高效率
 
         }

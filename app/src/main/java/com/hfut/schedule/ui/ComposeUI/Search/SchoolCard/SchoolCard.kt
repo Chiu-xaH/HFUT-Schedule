@@ -23,12 +23,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FilterChip
@@ -318,35 +320,55 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
 
 
                                     LazyColumn {
+
+
                                         if (page == 1){
-                                            val num = todaypay.toString()
-                                            val bd = BigDecimal(num)
-                                            val str = bd.setScale(2, RoundingMode.HALF_UP).toString()
+
                                             item {
-                                                Card(
-                                                    elevation = CardDefaults.cardElevation(
-                                                        defaultElevation = 3.dp
-                                                    ),
-                                                    modifier = Modifier
-                                                        .fillMaxWidth()
-                                                        .padding(
-                                                            horizontal = 15.dp,
-                                                            vertical = 5.dp
+                                                val now = prefs.getString("card_now","0.0")
+                                                val settle = prefs.getString("card_settle","0.0")
+                                                val num = todaypay.toString()
+                                                val bd = BigDecimal(num)
+                                                val str = bd.setScale(2, RoundingMode.HALF_UP).toString()
+
+
+                                                    Card(
+                                                        elevation = CardDefaults.cardElevation(
+                                                            defaultElevation = 3.dp
                                                         ),
-                                                    shape = MaterialTheme.shapes.medium
-                                                ) {
-                                                    ListItem(
-                                                        headlineContent = { Text(text = "今日消费  ${str} 元") },
-                                                        leadingContent = {
-                                                            Icon(
-                                                                painterResource(R.drawable.paid),
-                                                                contentDescription = "Localized description",
+                                                        modifier = Modifier
+                                                            .fillMaxWidth()
+                                                            .padding(
+                                                                horizontal = 15.dp,
+                                                                vertical = 5.dp
+                                                            ),
+                                                        shape = MaterialTheme.shapes.medium
+                                                    ) {
+                                                        Row {
+                                                            ListItem(
+                                                                headlineContent = { Text(text = "余额 ${now} 元") },
+                                                                modifier = Modifier.width(185.dp),
+                                                                supportingContent = { Text(text = "待圈存 ${settle} 元")},
+                                                                leadingContent = { Icon(painterResource(R.drawable.account_balance_wallet), contentDescription = "Localized description",) },
+                                                                colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
                                                             )
-                                                        },
-                                                        colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
-                                                    )
-                                                }
+                                                            ListItem(
+                                                                headlineContent = { Text(text = "${str} 元") },
+                                                                supportingContent = { Text(text = "今日消费")},
+                                                                leadingContent = { Icon(painterResource(R.drawable.send_money), contentDescription = "Localized description",) },
+                                                                colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
+                                                            )
+                                                        }
+
+
+                                                    }
+
+
+
+
+
                                             }
+
                                         }
                                         items(BillItem().size) { item ->
                                             var num = BillItem()[item].tranamt.toString()

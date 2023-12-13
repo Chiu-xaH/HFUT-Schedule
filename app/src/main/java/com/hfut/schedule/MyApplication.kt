@@ -8,7 +8,7 @@ import dagger.hilt.android.HiltAndroidApp
 class MyApplication : Application() {
     companion object {
         lateinit var context: Context
-        const val version = "2.4.3.1"
+        const val version = "2.4.4.1"
         const val ZJGDBillURL = "http://121.251.19.62/"
         const val LibURL = "http://210.45.242.5:8080/"
         const val AlipayURL = "alipays://platformapi/startapp?appId=20000067&url=https://ur.alipay.com/_4kQhV32216tp7bzlDc3E1k"
@@ -75,22 +75,24 @@ class MyApplication : Application() {
                 "        \"MyList\" : [\n" +
                 "        {\n" +
                 "            \"title\" : \"\",\n" +
-                "            \"time\" : \"01-01\",\n" +
-                "            \"info\" : \"\"\n" +
+                "            \"time\"  : \"01-01\",\n" +
+                "            \"info\"  : \"\"\n" +
                 "        }\n" +
                 "    ],\n" +
                 "        \"Schedule\" : [\n" +
-                "        {\n" +
+                "            {\n" +
                 "            \"title\" : \"\",\n" +
                 "            \"time\" : \"01-01\",\n" +
-                "            \"info\" : \"\"\n" +
+                "            \"info\"  : \"\"\n" +
                 "        }\n" +
                 "]\n" +
                 "},\n" +
                 "    \"SettingsInfo\" : {\n" +
-                "        \"title\" : \"网络接口\",\n" +
-                "        \"info\" : \"本接口在不用更新APP前提下可实时更新信息\"\n" +
-                "    }\n" +
+                "        \"version\" : \"正在获取\",\n" +
+                "        \"title\" : \"开发者接口\",\n" +
+                "        \"info\"  : \"本接口在不更新APP前提下可实时更新信息\"\n" +
+                "    },\n" +
+                "     \"semesterId\" : \"234\"\n" +
                 "}"
 
         const val NullLib = "{\n" +

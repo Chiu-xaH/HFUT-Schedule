@@ -3,6 +3,7 @@ package com.hfut.schedule.ui.ComposeUI.Activity
 import android.content.Context
 import android.content.Intent
 import android.preference.PreferenceManager
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
@@ -18,7 +19,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
@@ -63,13 +66,15 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 fun LoginClick(vm : LoginViewModel,username : String,inputAES : String) {
+   // Log.d("input",inputAES)
+    val cookie = prefs.getString("cookie", "")
 
-    val outputAES = SharePrefs.prefs_key?.let { it1 -> AESEncrypt.encrypt(inputAES, it1) }
+    val outputAES = cookie?.let { it1 -> AESEncrypt.encrypt(inputAES, it1) }
 
     val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
     if(sp.getString("Username","") != username){ sp.edit().putString("Username", username).apply() }
     if(sp.getString("Password","") != inputAES){ sp.edit().putString("Password", inputAES).apply() }
-    val ONE = "LOGIN_FLAVORING=" + SharePrefs.prefs_key
+    val ONE = "LOGIN_FLAVORING=" + cookie
     outputAES?.let { it1 -> vm.login(username, it1,ONE) }
 
 
@@ -89,15 +94,13 @@ fun LoginClick(vm : LoginViewModel,username : String,inputAES : String) {
         }
         if (vm.code.value.toString() == "401")
             withContext(Dispatchers.Main) {
-                Toast.makeText(MyApplication.context, "账号或密码错误", Toast.LENGTH_SHORT).show()
+                Toast.makeText(MyApplication.context, "账号或密码错误,超过五次会冻结五分钟", Toast.LENGTH_SHORT).show()
                 vm.getCookie()
             }
 
 
         if (vm.code.value.toString() == "200" || username.length != 10)
-            withContext(Dispatchers.Main) { Toast.makeText(MyApplication.context, "请输入正确的账号", Toast.LENGTH_SHORT) .show()
-
-            }
+            withContext(Dispatchers.Main) { Toast.makeText(MyApplication.context, "请输入正确的账号", Toast.LENGTH_SHORT) .show() }
 
         if (vm.code.value.toString() == "302") {
 
@@ -152,9 +155,26 @@ fun LoginUI(vm : LoginViewModel) {
             },
             sheetState = sheetState
         ) {
-            Column() {
-                FirstCube()
-                Spacer(modifier = Modifier.height(20.dp))
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        title = { Text("选项") }
+                    )
+                },) {innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .verticalScroll(rememberScrollState())
+                        .fillMaxSize()
+                ){
+                    FirstCube()
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
             }
         }
     }
@@ -272,7 +292,10 @@ fun TwoTextField(vm : LoginViewModel) {
         Row (modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center){
 
             Button(
-                onClick = { LoginClick(vm,username,inputAES) }, modifier = Modifier.scale(scale.value),
+                onClick = {
+                    val cookie = SharePrefs.prefs.getString("cookie", "")
+                    if (cookie != null) LoginClick(vm,username,inputAES)
+                    }, modifier = Modifier.scale(scale.value),
                 interactionSource = interactionSource
 
             ) { Text("登录") }

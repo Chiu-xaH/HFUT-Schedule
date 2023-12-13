@@ -4,8 +4,11 @@ import android.preference.PreferenceManager
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.gson.Gson
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.logic.SharePrefs
+import com.hfut.schedule.logic.SharePrefs.prefs
+import com.hfut.schedule.logic.datamodel.data4
 import com.hfut.schedule.logic.network.api.LoginService
 import com.hfut.schedule.logic.network.ServiceCreator.Login.GetAESKeyServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Login.GetCookieServiceCreator
@@ -106,9 +109,15 @@ class LoginViewModel : ViewModel() {
     fun My() {
         val call = MyAPI.my()
 
+        PreferenceManager.getDefaultSharedPreferences(MyApplication.context).edit().putString("semesterId","234")
+
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 SharePrefs.Save("my", response.body()?.string())
+               // val semesterId = Gson().fromJson(response.body()?.string(), data4::class.java).semesterId
+               // if(semesterId != null)
+               // PreferenceManager.getDefaultSharedPreferences(MyApplication.context).edit().putString("semesterId",semesterId)
+               // else  PreferenceManager.getDefaultSharedPreferences(MyApplication.context).edit().putString("semesterId","234")
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }

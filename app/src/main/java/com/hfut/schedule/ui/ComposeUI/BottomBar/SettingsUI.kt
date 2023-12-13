@@ -49,8 +49,7 @@ fun SettingsScreen(showlable : Boolean,
     val switch_api = prefs.getBoolean("SWITCHMYAPI",true)
     var showapi by remember { mutableStateOf(switch_api) }
 
-    val sp =
-        PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
+    val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
     if (sp.getBoolean("SWITCH", true) != showlable) { sp.edit().putBoolean("SWITCH", showlable).apply() }
     if (sp.getBoolean("SWITCHCARD", true) != showcard) { sp.edit().putBoolean("SWITCHCARD", showcard).apply() }
     if (sp.getBoolean("SWITCHMYAPI", true) != showapi) { sp.edit().putBoolean("SWITCHMYAPI", showapi).apply() }
@@ -70,9 +69,12 @@ fun SettingsScreen(showlable : Boolean,
             .padding(innerPadding)
             .verticalScroll(rememberScrollState())
             .fillMaxSize()) {
-            Spacer(modifier = Modifier.height(10.dp))
 
-            MyAPIItem()
+            if(prefs.getBoolean("SWITCHMYAPI",true)){
+                Spacer(modifier = Modifier.height(10.dp))
+
+                MyAPIItem()
+            }
 
             ListItem(
                 headlineContent = { Text(text = "显示标签") },
@@ -92,10 +94,7 @@ fun SettingsScreen(showlable : Boolean,
                 leadingContent = { Icon(painterResource(R.drawable.api), contentDescription = "Localized description",) },
                 trailingContent = { Switch(
                     checked = showapi,
-                    onCheckedChange = {showapich ->
-                        showapi = showapich
-                        Toast.makeText(MyApplication.context,"重启APP后会应用此更改",Toast.LENGTH_SHORT).show()
-                    }) }
+                    onCheckedChange = {showapich -> showapi = showapich }) }
             )
 
             MonetColorItem()

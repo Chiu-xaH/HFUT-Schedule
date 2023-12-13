@@ -25,11 +25,11 @@ interface JxglstuService {
 
     //获取需要POST的lessonsId数组
     //eams5-student/for-std/course-table/get-data?bizTypeId=23&semesterId=234&dataId=170317
-    @GET("for-std/course-table/get-data?semesterId=234")
+    @GET("for-std/course-table/get-data")
     @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.17")
     fun getLessonIds(@Header("Cookie") Cookie : String,
                      @Query("bizTypeId") bizTypeId : String,
-                    // @Query("semesterId") semesterId : String,
+                     @Query("semesterId") semesterId : String,
                      @Query("dataId") dataId : String
                      ) : Call<ResponseBody>
 

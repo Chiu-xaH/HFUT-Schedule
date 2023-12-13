@@ -18,14 +18,15 @@ import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.SharePrefs.prefs
 import com.hfut.schedule.logic.datamodel.data4
 @Composable
 fun MyAPIItem() {
-    val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
     val my = prefs.getString("my", MyApplication.NullMy)
     val data = Gson().fromJson(my, data4::class.java).SettingsInfo
     val title = data.title
     val content = data.info
+    val version = data.version
 
     Card(
         elevation = CardDefaults.cardElevation(

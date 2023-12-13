@@ -10,12 +10,14 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.logic.SharePrefs
+import com.hfut.schedule.logic.SharePrefs.prefs
 import com.hfut.schedule.logic.datamodel.One.BorrowBooksResponse
 import com.hfut.schedule.logic.datamodel.One.CardResponse
 import com.hfut.schedule.logic.datamodel.One.SubBooksResponse
 import com.hfut.schedule.logic.datamodel.One.getTokenResponse
 
 import com.hfut.schedule.logic.datamodel.Jxglstu.lessonIdsResponse
+import com.hfut.schedule.logic.datamodel.data4
 import com.hfut.schedule.logic.network.ServiceCreator.XuanquServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuJSONServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuHTMLServiceCreator
@@ -77,19 +79,23 @@ class LoginSuccessViewModel : ViewModel() {
 
     fun getLessonIds(cookie : String, bizTypeId : String) {
         //bizTypeId为年级数，例如23  //dataId为学生ID  //semesterId为学期Id，例如23-24第一学期为234
-        //这里先固定学期，每半年进行版本推送更新参数
-        val call = JxglstuJSON.getLessonIds(cookie,bizTypeId,studentId.value.toString())
+        //每半年进行版本推送更新参数
 
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val json = response.body()?.string()
-                if (json != null) {
-                    val id = Gson().fromJson(json, lessonIdsResponse::class.java)
-                    lessonIds.value = id.lessonIds
+        val call = prefs.getString("semesterId","234")
+            ?.let { JxglstuJSON.getLessonIds(cookie,bizTypeId, it,studentId.value.toString()) }
+
+        if (call != null) {
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    val json = response.body()?.string()
+                    if (json != null) {
+                        val id = Gson().fromJson(json, lessonIdsResponse::class.java)
+                        lessonIds.value = id.lessonIds
+                    }
                 }
-            }
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+            })
+        }
     }
     fun getDatum(cookie : String,lessonid: JsonObject) {
 
