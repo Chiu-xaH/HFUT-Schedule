@@ -90,9 +90,7 @@ fun SettingsItems() {
         headlineContent = { Text(text = "学期刷新") },
         supportingContent = { Text(text = "当开启下一学期后无法获取课表时,可点击刷新")},
         // supportingText =
-        leadingContent = {
-            Icon(Icons.Filled.Refresh, contentDescription = "Localized description",)
-        },
+        leadingContent = { Icon(painterResource(id =R.drawable.rotate_right), contentDescription = "") },
         modifier = Modifier.clickable{
             val semesterId = Gson().fromJson(prefs.getString("my",MyApplication.NullMy), data4::class.java).semesterId
             if(semesterId != null)

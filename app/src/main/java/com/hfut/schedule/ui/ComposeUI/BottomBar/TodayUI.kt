@@ -3,8 +3,6 @@ package com.hfut.schedule.ui.ComposeUI.BottomBar
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
-import android.preference.PreferenceManager
-import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
@@ -19,10 +17,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonColors
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -54,6 +57,7 @@ import com.hfut.schedule.logic.datamodel.Schedule
 import com.hfut.schedule.logic.datamodel.zjgd.BalanceResponse
 import com.hfut.schedule.logic.datamodel.data4
 import com.hfut.schedule.ui.ComposeUI.Search.SchoolCard.SchoolCardItem
+import com.hfut.schedule.ui.MyToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -403,39 +407,24 @@ fun zjgdcard() {
 
 
     //Today操作区///////////////////////////////////////////////////////////////////////////////////////////////////
-    CoroutineScope(Job()).apply {
-
-        async {
-           // if (token  != null && token.contains("AT") && card != "请登录刷新") {
-              //  async {   vm.getCard("Bearer $token") }.await()
-              //  async {
-               //     delay(400)
-                 //   if (card!!.contains("-"))
-                        zjgdcard()
-             //   }
-          //  } else {
-                //Toast.makeText(MyApplication.context,"信息门户已超时,需重新登录",Toast.LENGTH_SHORT).show()
-            //    async { vm.getCard("Bearer " + vm.token.value) }
-              //  async {
-              //      delay(400)
-                //    zjgdcard()
-            //    }
-           // }
+    fun TodayUpdate() {
+        CoroutineScope(Job()).apply {
+            async { zjgdcard() }
+            async {
+                val json = prefs.getString("json", "")
+                if (json?.contains("result") == true) {
+                    Datum()
+                    DatumTomorrow()
+                } else MyToast("本地数据为空,请登录以更新数据")
+            }
+            async{ ExamGet() }
+            async{ MyWangKe() }
+            async{ MySchedule() }
         }
-
-        async {
-            val json = prefs.getString("json", "")
-            if (json?.contains("result") == true) {
-                Datum()
-                DatumTomorrow()
-            } else Toast.makeText(MyApplication.context,"本地数据为空,请登录以更新数据",Toast.LENGTH_SHORT).show()
-        }
-
-        async{ ExamGet() }
-        async{ MyWangKe() }
-        async{ MySchedule() }
     }
 
+
+    TodayUpdate()
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     Scaffold(
@@ -446,9 +435,19 @@ fun zjgdcard() {
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
+                actions = {
+                    IconButton(
+                        onClick = {
+                        CoroutineScope(Job()).launch {
+                            async { TodayUpdate() }.await()
+                            async { MyToast("刷新成功") }
+                        }
+                    }) { Icon(painterResource(id =R.drawable.rotate_right), contentDescription = "") }
+                },
                 title = { Text("今天  第${GetDate.Benweeks}周  周${chinesenumber}  ${GetDate.Date_MM_dd}") }
             )
-        },) {innerPadding ->
+        },
+    ) {innerPadding ->
         Column(modifier = Modifier
             .padding(innerPadding)
             .fillMaxSize()){
@@ -540,6 +539,7 @@ fun zjgdcard() {
                 if (state == 0) {
 
                     if (prefs.getBoolean("SWITCHCARD",true) == true) {
+                        zjgdcard()
                         item {
                             Card(
                                 elevation = CardDefaults.cardElevation(
@@ -578,16 +578,10 @@ fun zjgdcard() {
                                         headlineContent = {  Text(text = "${item["课程名称"]}") },
                                         overlineContent = {Text(text = "${item["日期时间"]}")},
                                         supportingContent = { Text(text = "${item["考场"]}")},
-                                        leadingContent = {
-                                            Icon(
-                                                painterResource(R.drawable.draw),
-                                                contentDescription = "Localized description",
-                                            )
-                                        },
+                                        leadingContent = { Icon(painterResource(R.drawable.draw), contentDescription = "Localized description",) },
                                         modifier = Modifier.clickable {},
                                         colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
                                     )
-
                                 }
                             }
                         }

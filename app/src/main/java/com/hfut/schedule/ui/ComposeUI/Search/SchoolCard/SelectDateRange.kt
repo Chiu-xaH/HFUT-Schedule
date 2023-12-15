@@ -32,6 +32,7 @@ import com.google.gson.Gson
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.datamodel.zjgd.BillRangeResponse
+import com.hfut.schedule.ui.MyToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -99,14 +100,7 @@ fun SelecctDateRange(vm : LoginSuccessViewModel) {
                                     var zhichu = data.data.expenses
                                     zhichu = zhichu / 100
 
-                                    Handler(Looper.getMainLooper()).post {
-                                        Toast.makeText(
-                                            MyApplication.context,
-                                            "共支出 ${zhichu} 元",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
-
+                                   MyToast("共支出 ${zhichu} 元")
                                 }
                             }
                         }

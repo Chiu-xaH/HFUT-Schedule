@@ -30,6 +30,7 @@ import com.hfut.schedule.ui.ComposeUI.Search.SchoolCard.SchoolCardItem
 import com.hfut.schedule.ui.ComposeUI.Search.UndevelipItem
 import com.hfut.schedule.ui.ComposeUI.Search.Xuanqu.XuanquItem
 import com.hfut.schedule.ui.ComposeUI.Search.WebUI
+import com.hfut.schedule.ui.ComposeUI.Search.LePaoYun
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -72,13 +73,17 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,) {
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
                 title = {
-                    if(ifSaved) Text("免登录查询") else
-                    Text("嗨  亲爱的 ${getName(vm)} 同学")
+                    if (ifSaved) Text("免登录查询") else
+                        Text("嗨  亲爱的 ${getName(vm)} 同学")
                 }
             )
-        },) {innerPadding ->
+        },
+    ) {innerPadding ->
         Column(
-            modifier = Modifier.padding(innerPadding).fillMaxSize().verticalScroll(rememberScrollState())
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
         ) {
 
 
@@ -87,6 +92,10 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,) {
                 LibraryItem(vm)
                 XuanquItem(vm)
                 WebUI()
+                if (prefs.getBoolean("SWITCHBETA",false)){
+                    LePaoYun()
+                    FWDT()
+                }
             } else {
                 Grade()
                 Exam()
@@ -97,8 +106,11 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,) {
                 LibraryItem(vm)
                 XuanquItem(vm)
                 WebUI()
-                FWDT()
-                UndevelipItem()
+                if (prefs.getBoolean("SWITCHBETA",false)){
+                    LePaoYun()
+                    FWDT()
+                    UndevelipItem()
+                }
             }
 
              Spacer(modifier = Modifier.height(90.dp))

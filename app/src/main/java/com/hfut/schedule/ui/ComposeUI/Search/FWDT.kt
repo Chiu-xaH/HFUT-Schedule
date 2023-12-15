@@ -41,7 +41,7 @@ fun FWDT() {
             onConfirmation = { startFWDT("0") },
             dialogTitle = "服务大厅登录",
             dialogText = "即将跳转到服务大厅,在此之前需要确定您的服务大厅密码是否修改过,未修改可快速登录",
-            icon = Icons.Filled.Info,
+           // icon = Icons.Filled.Info,
             conformtext = "未修改(默认)",
             dismisstext = "已修改"
         )

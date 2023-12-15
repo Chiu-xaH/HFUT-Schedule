@@ -49,12 +49,9 @@ fun WebUI() {
 
     if (showBottomSheet_Web) {
         ModalBottomSheet(
-            onDismissRequest = {
-                showBottomSheet_Web = false
-            },
+            onDismissRequest = { showBottomSheet_Web = false },
             sheetState = sheetState_Web
         ) {
-
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 topBar = {
@@ -74,9 +71,7 @@ fun WebUI() {
                     WebItem()
                     Spacer(modifier = Modifier.height(20.dp))
                 }
-
             }
-
         }
     }
 }

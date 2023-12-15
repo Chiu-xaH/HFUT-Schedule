@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.ComposeUI.Search.SchoolCard
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
@@ -64,6 +65,7 @@ import com.hfut.schedule.logic.OpenAlipay
 import com.hfut.schedule.logic.SharePrefs
 import com.hfut.schedule.logic.datamodel.zjgd.BillResponse
 import com.hfut.schedule.logic.datamodel.zjgd.records
+import com.hfut.schedule.ui.MyToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -72,6 +74,7 @@ import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.math.RoundingMode
 
+@SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun SchoolCardItem(vm : LoginSuccessViewModel) {
@@ -190,9 +193,7 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
                             val TGC = prefs.getString("TGC","")
                             vm.OneGotoCard(ONE + ";" + TGC)
 
-                            Handler(Looper.getMainLooper()).post{
-                                Toast.makeText(MyApplication.context, "空数据,请再次尝试或登录", Toast.LENGTH_SHORT).show()
-                            }
+                           MyToast("空数据,请再次尝试或登录")
                         }
                     }
                 }.await()
@@ -263,11 +264,10 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
                                         .fillMaxWidth()
                                         .padding(horizontal = 15.dp, vertical = 0.dp), horizontalArrangement = Arrangement.Start){
 
-                                        FilterChip(
-                                            onClick = {  },
-                                            label = { Text(text = "账单") },
-                                            selected = true,
-                                            leadingIcon = { Icon(painter = painterResource(R.drawable.receipt_long), contentDescription = "description") }
+                                        AssistChip(
+                                            onClick = { OpenAlipay.openAlipay() },
+                                            label = { Text(text = "充值") },
+                                            leadingIcon = { Icon(painter = painterResource(R.drawable.add), contentDescription = "description") }
                                         )
 
                                         Spacer(modifier = Modifier.width(10.dp))

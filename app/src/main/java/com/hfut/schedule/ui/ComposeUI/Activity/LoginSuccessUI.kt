@@ -35,11 +35,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -346,7 +350,7 @@ fun CalendarScreen(isEnabled:Boolean,enabledchanged : (Boolean) -> Unit,vm : Log
    // val grade = intent.getStringExtra("Grade")
     val ONE = prefs.getString("ONE","")
     val TGC = prefs.getString("TGC","")
-    val cardvalue = prefs.getString("card","")
+    val cardvalue = prefs.getString("borrow","")
 
     val job = Job()
     val scope = CoroutineScope(job)
@@ -367,8 +371,8 @@ fun CalendarScreen(isEnabled:Boolean,enabledchanged : (Boolean) -> Unit,vm : Log
                 }
 
                 if (token != null) {
-                    if (token.contains("AT") && cardvalue != "请登录刷新") {
-                        async { vm.getCard("Bearer $token") }
+                    if (token.contains("AT") && cardvalue != "未获取到") {
+                       // async { vm.getCard("Bearer $token") }
                         async { vm.getSubBooks("Bearer $token") }
                         async { vm.getBorrowBooks("Bearer $token") }
 
@@ -380,7 +384,7 @@ fun CalendarScreen(isEnabled:Boolean,enabledchanged : (Boolean) -> Unit,vm : Log
                         }.await()
                         launch {
                             delay(2900)
-                            async { vm.getCard("Bearer " + vm.token.value) }
+                          //  async { vm.getCard("Bearer " + vm.token.value) }
                             async { vm.getBorrowBooks("Bearer " + vm.token.value) }
                             async { vm.getSubBooks("Bearer " + vm.token.value) }
                         }
@@ -443,7 +447,8 @@ fun CalendarScreen(isEnabled:Boolean,enabledchanged : (Boolean) -> Unit,vm : Log
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
-                title = { Text("今天  第${GetDate.Benweeks}周  周${chinesenumber}  ${GetDate.Date_MM_dd}") }
+                title = { Text("今天  第${GetDate.Benweeks}周  周${chinesenumber}  ${GetDate.Date_MM_dd}") },
+              //  actions = { IconButton(onClick = {}) { Icon(Icons.Filled.Refresh, contentDescription = "主页") } }
             )
         },) {innerPadding ->
         Column(

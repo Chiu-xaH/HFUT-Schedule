@@ -22,6 +22,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.BottomAppBarDefaults
+import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -128,10 +131,9 @@ fun LibraryItem(vm : LoginSuccessViewModel) {
     if (showBottomSheet_Library) {
         var loading by remember { mutableStateOf(true) }
         var onclick by remember { mutableStateOf(false) }
+
         ModalBottomSheet(
-            onDismissRequest = {
-                showBottomSheet_Library = false
-            },
+            onDismissRequest = { showBottomSheet_Library = false },
             sheetState = sheetState_Library
         ) {
            LibItem()

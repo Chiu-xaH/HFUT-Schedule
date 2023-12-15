@@ -17,12 +17,11 @@ fun Dialog(
     onConfirmation: () -> Unit,
     dialogTitle: String,
     dialogText: String,
-    icon: ImageVector,
     conformtext : String,
     dismisstext : String
 ) {
     AlertDialog(
-        icon = { Icon(icon, contentDescription = "Example Icon") },
+       // icon = { Icon(icon, contentDescription = "Example Icon") },
         title = { Text(text = dialogTitle) },
         text = { Text(text = dialogText) },
         onDismissRequest = { onDismissRequest() },

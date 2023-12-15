@@ -3,6 +3,7 @@ package com.hfut.schedule.ui.ComposeUI.BottomBar
 import android.annotation.SuppressLint
 import android.preference.PreferenceManager
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,6 +11,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -48,11 +52,15 @@ fun SettingsScreen(showlable : Boolean,
     var showcard by remember { mutableStateOf(switch_card) }
     val switch_api = prefs.getBoolean("SWITCHMYAPI",true)
     var showapi by remember { mutableStateOf(switch_api) }
+    val switch_beta = prefs.getBoolean("SWITCHBETA",true)
+    var showbeta by remember { mutableStateOf(switch_beta) }
+
 
     val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
     if (sp.getBoolean("SWITCH", true) != showlable) { sp.edit().putBoolean("SWITCH", showlable).apply() }
     if (sp.getBoolean("SWITCHCARD", true) != showcard) { sp.edit().putBoolean("SWITCHCARD", showcard).apply() }
     if (sp.getBoolean("SWITCHMYAPI", true) != showapi) { sp.edit().putBoolean("SWITCHMYAPI", showapi).apply() }
+    if (sp.getBoolean("SWITCHBETA", false) != showbeta) { sp.edit().putBoolean("SWITCHBETA", showbeta).apply() }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -70,14 +78,14 @@ fun SettingsScreen(showlable : Boolean,
             .verticalScroll(rememberScrollState())
             .fillMaxSize()) {
 
-            if(prefs.getBoolean("SWITCHMYAPI",true)){
+
                 Spacer(modifier = Modifier.height(10.dp))
 
                 MyAPIItem()
-            }
+
 
             ListItem(
-                headlineContent = { Text(text = "显示标签") },
+                headlineContent = { Text(text = "底栏标签") },
                 leadingContent = { Icon(painterResource(R.drawable.label), contentDescription = "Localized description",) },
                 trailingContent = { Switch(checked = showlable, onCheckedChange = showlablechanged) }
             )
@@ -89,12 +97,24 @@ fun SettingsScreen(showlable : Boolean,
             )
 
             ListItem(
-                headlineContent = { Text(text = "开发者接口") },
-                supportingContent = { Text(text = "本接口提供了除学校系统之外的信息")},
+                headlineContent = { Text(text = "聚焦接口") },
+                supportingContent = { Text(text = "本接口提供了除学校系统之外的聚焦信息,推荐23地科专业打开")},
                 leadingContent = { Icon(painterResource(R.drawable.api), contentDescription = "Localized description",) },
-                trailingContent = { Switch(
-                    checked = showapi,
-                    onCheckedChange = {showapich -> showapi = showapich }) }
+                trailingContent = { Switch(checked = showapi, onCheckedChange = {showapich -> showapi = showapich }) },
+            )
+
+            ListItem(
+                headlineContent = { Text(text = "添加聚焦") },
+                leadingContent = { Icon(painterResource(R.drawable.add_circle), contentDescription = "Localized description",) },
+                modifier = Modifier.clickable {  }
+            )
+
+            ListItem(
+                headlineContent = { Text(text = "Beta功能") },
+                leadingContent = { Icon(painterResource(id = R.drawable.hotel_class), contentDescription = "Localized description") },
+                supportingContent = { Text(text = "打开此开关后,会显示一些Beta功能及未开发完成的功能")},
+                modifier = Modifier.clickable { Toast.makeText(MyApplication.context,"Beta功能稳定性较差",Toast.LENGTH_SHORT).show() },
+                trailingContent = { Switch(checked = showbeta, onCheckedChange = {showbetach -> showbeta = showbetach }) },
             )
 
             MonetColorItem()
