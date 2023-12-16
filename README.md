@@ -320,24 +320,3 @@
 
 1.Bottom Sheet加载后短暂界面顿挫
 
-♢网络接口：
-
-1.教务系统 -> http://jxglstu.hfut.edu.cn/eams5-student/
-
-2.信息门户 -> https://one.hfut.edu.cn/
-
-3.慧新易校 -> http://121.251.19.62/
-
-4.服务大厅 -> http://172.31.248.26:8088/
-
-5.我的接口 -> https://chiu-xah.github.io/
-
-6.图书馆 -> http://210.45.242.5:8080/
-
-7.宣区寝室卫生查询 -> http://39.106.82.121/
-
-8.CAS统一登陆 -> https://cas.hfut.edu.cn/
-
-9.指尖工大 -> https://zjgd.hfut.edu.cn:8181/
-
-10.云运动 -> http://210.45.246.53:8080/
