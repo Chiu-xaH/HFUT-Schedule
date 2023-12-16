@@ -339,3 +339,5 @@
 8.CAS统一登陆 -> https://cas.hfut.edu.cn/
 
 9.指尖工大 -> https://zjgd.hfut.edu.cn:8181/
+
+10.云运动 -> http://210.45.246.53:8080/
