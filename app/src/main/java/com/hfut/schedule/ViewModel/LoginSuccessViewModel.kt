@@ -2,6 +2,7 @@ package com.hfut.schedule.ViewModel
 
 import android.content.Context
 import android.preference.PreferenceManager
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
@@ -21,6 +22,7 @@ import com.hfut.schedule.logic.datamodel.data4
 import com.hfut.schedule.logic.network.ServiceCreator.XuanquServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuJSONServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuHTMLServiceCreator
+import com.hfut.schedule.logic.network.ServiceCreator.LePaoYunServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.One.LibraryServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.OneGoto.OneGotoServiceCreator
 //import com.hfut.schedule.logic.network.ServiceCreator.Login.OneGetNewTicketServiceCreator.client
@@ -28,6 +30,7 @@ import com.hfut.schedule.logic.network.ServiceCreator.One.OneServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.ZJGDBillServiceCreator
 import com.hfut.schedule.logic.network.api.XuanquService
 import com.hfut.schedule.logic.network.api.JxglstuService
+import com.hfut.schedule.logic.network.api.LePaoYunService
 import com.hfut.schedule.logic.network.api.LoginService
 import com.hfut.schedule.logic.network.api.LibraryService
 import com.hfut.schedule.logic.network.api.ZJGDBillService
@@ -44,6 +47,7 @@ class LoginSuccessViewModel : ViewModel() {
     private val Library = LibraryServiceCreator.create(LibraryService::class.java)
     private val ZJGDBill = ZJGDBillServiceCreator.create(ZJGDBillService::class.java)
     private val Xuanqu = XuanquServiceCreator.create(XuanquService::class.java)
+    private val LePaoYun = LePaoYunServiceCreator.create(LePaoYunService::class.java)
 
     var studentId = MutableLiveData<Int>()
     var lessonIds = MutableLiveData<List<Int>>()
@@ -336,7 +340,7 @@ class LoginSuccessViewModel : ViewModel() {
                     SharePrefs.Save("borrow",borrow)
 
                 }
-                 else SharePrefs.Save("borrow","未获取到")
+                 else SharePrefs.Save("borrow","未获取")
 
             }
 
@@ -356,7 +360,7 @@ class LoginSuccessViewModel : ViewModel() {
                         val sub = data.data.toString()
                     SharePrefs.Save("sub", sub)
                 }
-                else SharePrefs.Save("borrow","未获取到")
+                else SharePrefs.Save("borrow","0")
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -401,6 +405,19 @@ class LoginSuccessViewModel : ViewModel() {
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 SharePrefs.Save("xuanqu", response.body()?.string())
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
+
+    fun LePaoYunHome(UA : String,Yuntoken : String) {
+
+        val call = LePaoYun.getLePaoYunHome(UA,Yuntoken)
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                SharePrefs.Save("LePaoYun", response.body()?.string())
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }

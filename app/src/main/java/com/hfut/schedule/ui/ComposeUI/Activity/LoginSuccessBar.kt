@@ -105,6 +105,7 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String) {
             composable("calendar") { CalendarScreen(isEnabled,enabledchanged = {isEnabledch -> isEnabled = isEnabledch},vm,grade) }
             composable("search") { SearchScreen(vm,false) }
             composable("settings") { SettingsScreen(
+                vm,
                 showlable,
                 showlablechanged = {showlablech -> showlable = showlablech},
             ) }

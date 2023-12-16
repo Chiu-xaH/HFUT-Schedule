@@ -371,7 +371,7 @@ fun CalendarScreen(isEnabled:Boolean,enabledchanged : (Boolean) -> Unit,vm : Log
                 }
 
                 if (token != null) {
-                    if (token.contains("AT") && cardvalue != "未获取到") {
+                    if (token.contains("AT") && cardvalue != "未获取") {
                        // async { vm.getCard("Bearer $token") }
                         async { vm.getSubBooks("Bearer $token") }
                         async { vm.getBorrowBooks("Bearer $token") }

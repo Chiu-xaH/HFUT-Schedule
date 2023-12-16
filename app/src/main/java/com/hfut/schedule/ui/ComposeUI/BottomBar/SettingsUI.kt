@@ -19,11 +19,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,6 +38,7 @@ import com.hfut.schedule.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.SharePrefs.prefs
+import com.hfut.schedule.ui.ComposeUI.Search.LePaoYun.InfoSet
 import com.hfut.schedule.ui.ComposeUI.Search.LibraryItem
 import com.hfut.schedule.ui.ComposeUI.Search.Xuanqu.XuanquItem
 import com.hfut.schedule.ui.ComposeUI.Settings.MyAPIItem
@@ -46,7 +49,8 @@ import com.hfut.schedule.ui.ComposeUI.Search.WebUI
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(showlable : Boolean,
+fun SettingsScreen(vm : LoginSuccessViewModel
+                   ,showlable : Boolean,
                    showlablechanged: (Boolean) -> Unit, ) {
     val switch_card = prefs.getBoolean("SWITCHCARD",true)
     var showcard by remember { mutableStateOf(switch_card) }
@@ -103,18 +107,40 @@ fun SettingsScreen(showlable : Boolean,
                 trailingContent = { Switch(checked = showapi, onCheckedChange = {showapich -> showapi = showapich }) },
             )
 
-            ListItem(
-                headlineContent = { Text(text = "添加聚焦") },
-                leadingContent = { Icon(painterResource(R.drawable.add_circle), contentDescription = "Localized description",) },
-                modifier = Modifier.clickable {  }
-            )
+
 
             ListItem(
-                headlineContent = { Text(text = "Beta功能") },
+                headlineContent = { Text(text = "Beta 功能") },
                 leadingContent = { Icon(painterResource(id = R.drawable.hotel_class), contentDescription = "Localized description") },
                 supportingContent = { Text(text = "打开此开关后,会显示一些Beta功能及未开发完成的功能")},
                 modifier = Modifier.clickable { Toast.makeText(MyApplication.context,"Beta功能稳定性较差",Toast.LENGTH_SHORT).show() },
                 trailingContent = { Switch(checked = showbeta, onCheckedChange = {showbetach -> showbeta = showbetach }) },
+            )
+
+
+            var showBottomSheet_input by remember { mutableStateOf(false) }
+            val sheetState_input = rememberModalBottomSheetState()
+            if (showBottomSheet_input) {
+                ModalBottomSheet(
+                    onDismissRequest = { showBottomSheet_input = false },
+                    sheetState = sheetState_input
+                ) {
+                    InfoSet()
+                    Spacer(modifier = Modifier.height(100.dp))
+                }
+            }
+
+            ListItem(
+                headlineContent = { Text(text = "云运动 信息配置") },
+                supportingContent = { Text(text = "需要提交已登录手机的信息")},
+                leadingContent = { Icon(painterResource(R.drawable.mode_of_travel), contentDescription = "Localized description",) },
+                modifier = Modifier.clickable { showBottomSheet_input = true }
+            )
+
+            ListItem(
+                headlineContent = { Text(text = "聚焦信息 添加") },
+                leadingContent = { Icon(painterResource(R.drawable.add_circle), contentDescription = "Localized description",) },
+                modifier = Modifier.clickable {  }
             )
 
             MonetColorItem()

@@ -76,8 +76,8 @@ fun LibraryItem(vm : LoginSuccessViewModel) {
     val sheetState_Library = rememberModalBottomSheetState()
     var showBottomSheet_Library by remember { mutableStateOf(false) }
     val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
-    val borrow =prefs.getString("borrow","正在获取")
-    val sub =prefs.getString("sub","正在获取")
+    val borrow = prefs.getString("borrow","获取")
+    val sub = prefs.getString("sub","0")
 
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -91,7 +91,7 @@ fun LibraryItem(vm : LoginSuccessViewModel) {
 
 
     ListItem(
-        headlineContent = { Text(text = "图书  借阅 ${borrow} 本") },
+        headlineContent = { Text(text = "图书  借阅 ${borrow} 本  预约 ${sub} 本") },
         supportingContent = {Text(text = "搜索需接入校园网")},
         leadingContent = {
             Icon(

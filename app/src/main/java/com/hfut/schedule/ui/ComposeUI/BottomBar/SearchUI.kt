@@ -30,7 +30,7 @@ import com.hfut.schedule.ui.ComposeUI.Search.SchoolCard.SchoolCardItem
 import com.hfut.schedule.ui.ComposeUI.Search.UndevelipItem
 import com.hfut.schedule.ui.ComposeUI.Search.Xuanqu.XuanquItem
 import com.hfut.schedule.ui.ComposeUI.Search.WebUI
-import com.hfut.schedule.ui.ComposeUI.Search.LePaoYun
+import com.hfut.schedule.ui.ComposeUI.Search.LePaoYun.LePaoYun
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -92,8 +92,8 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,) {
                 LibraryItem(vm)
                 XuanquItem(vm)
                 WebUI()
+                LePaoYun(vm)
                 if (prefs.getBoolean("SWITCHBETA",false)){
-                    LePaoYun()
                     FWDT()
                 }
             } else {
@@ -106,8 +106,8 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,) {
                 LibraryItem(vm)
                 XuanquItem(vm)
                 WebUI()
+                LePaoYun(vm)
                 if (prefs.getBoolean("SWITCHBETA",false)){
-                    LePaoYun()
                     FWDT()
                     UndevelipItem()
                 }
