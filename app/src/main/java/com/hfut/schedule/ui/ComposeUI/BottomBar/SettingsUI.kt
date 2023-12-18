@@ -58,6 +58,8 @@ fun SettingsScreen(vm : LoginSuccessViewModel
     var showapi by remember { mutableStateOf(switch_api) }
     val switch_beta = prefs.getBoolean("SWITCHBETA",true)
     var showbeta by remember { mutableStateOf(switch_beta) }
+    val switch_focus = prefs.getBoolean("SWITCHFOCUS",false)
+    var showfocus by remember { mutableStateOf(switch_focus) }
 
 
     val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
@@ -65,6 +67,7 @@ fun SettingsScreen(vm : LoginSuccessViewModel
     if (sp.getBoolean("SWITCHCARD", true) != showcard) { sp.edit().putBoolean("SWITCHCARD", showcard).apply() }
     if (sp.getBoolean("SWITCHMYAPI", true) != showapi) { sp.edit().putBoolean("SWITCHMYAPI", showapi).apply() }
     if (sp.getBoolean("SWITCHBETA", false) != showbeta) { sp.edit().putBoolean("SWITCHBETA", showbeta).apply() }
+    if (sp.getBoolean("SWITCHFOCUS", false) != showfocus) { sp.edit().putBoolean("SWITCHFOCUS", showfocus).apply() }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -107,13 +110,18 @@ fun SettingsScreen(vm : LoginSuccessViewModel
                 trailingContent = { Switch(checked = showapi, onCheckedChange = {showapich -> showapi = showapich }) },
             )
 
+            ListItem(
+                headlineContent = { Text(text = "聚焦优先") },
+                supportingContent = { Text(text = "使聚焦作为本地速览的第一页面,而不是课表")},
+                leadingContent = { Icon(painterResource(R.drawable.timeline), contentDescription = "Localized description",) },
+                trailingContent = { Switch(checked = showfocus, onCheckedChange = {showfocusch -> showfocus = showfocusch }) },
+            )
 
 
             ListItem(
                 headlineContent = { Text(text = "Beta 功能") },
                 leadingContent = { Icon(painterResource(id = R.drawable.hotel_class), contentDescription = "Localized description") },
                 supportingContent = { Text(text = "打开此开关后,会显示一些Beta功能及未开发完成的功能")},
-                modifier = Modifier.clickable { Toast.makeText(MyApplication.context,"Beta功能稳定性较差",Toast.LENGTH_SHORT).show() },
                 trailingContent = { Switch(checked = showbeta, onCheckedChange = {showbetach -> showbeta = showbetach }) },
             )
 

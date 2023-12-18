@@ -1,15 +1,11 @@
 package com.hfut.schedule.ViewModel
 
-import android.content.Context
-import android.preference.PreferenceManager
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
-import com.hfut.schedule.MyApplication
 import com.hfut.schedule.logic.SharePrefs
 import com.hfut.schedule.logic.SharePrefs.prefs
 import com.hfut.schedule.logic.datamodel.One.BorrowBooksResponse
@@ -18,7 +14,6 @@ import com.hfut.schedule.logic.datamodel.One.SubBooksResponse
 import com.hfut.schedule.logic.datamodel.One.getTokenResponse
 
 import com.hfut.schedule.logic.datamodel.Jxglstu.lessonIdsResponse
-import com.hfut.schedule.logic.datamodel.data4
 import com.hfut.schedule.logic.network.ServiceCreator.XuanquServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuJSONServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuHTMLServiceCreator
@@ -27,7 +22,9 @@ import com.hfut.schedule.logic.network.ServiceCreator.One.LibraryServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.OneGoto.OneGotoServiceCreator
 //import com.hfut.schedule.logic.network.ServiceCreator.Login.OneGetNewTicketServiceCreator.client
 import com.hfut.schedule.logic.network.ServiceCreator.One.OneServiceCreator
+import com.hfut.schedule.logic.network.ServiceCreator.SearchEleServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.ZJGDBillServiceCreator
+import com.hfut.schedule.logic.network.api.FWDTService
 import com.hfut.schedule.logic.network.api.XuanquService
 import com.hfut.schedule.logic.network.api.JxglstuService
 import com.hfut.schedule.logic.network.api.LePaoYunService
@@ -48,6 +45,7 @@ class LoginSuccessViewModel : ViewModel() {
     private val ZJGDBill = ZJGDBillServiceCreator.create(ZJGDBillService::class.java)
     private val Xuanqu = XuanquServiceCreator.create(XuanquService::class.java)
     private val LePaoYun = LePaoYunServiceCreator.create(LePaoYunService::class.java)
+    private val searchEle = SearchEleServiceCreator.create(FWDTService::class.java)
 
     var studentId = MutableLiveData<Int>()
     var lessonIds = MutableLiveData<List<Int>>()
@@ -325,6 +323,17 @@ class LoginSuccessViewModel : ViewModel() {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
 
+    }
+
+    fun searchEle(jsondata : String) {
+        val call = searchEle.searchEle(jsondata,"synjones.onecard.query.elec.roominfo",true)
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                SharePrefs.Save("SearchEle", response.body()?.string())
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
     }
 
     fun getBorrowBooks(token : String)  {

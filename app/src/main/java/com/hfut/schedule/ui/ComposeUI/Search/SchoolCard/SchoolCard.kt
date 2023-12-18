@@ -346,15 +346,15 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
                                                     ) {
                                                         Row {
                                                             ListItem(
-                                                                headlineContent = { Text(text = "余额 ${now} 元") },
+                                                                headlineContent = { Text(text = "余额 ￥${now}") },
                                                                 modifier = Modifier.width(185.dp),
-                                                                supportingContent = { Text(text = "待圈存 ${settle} 元")},
+                                                                supportingContent = { Text(text = "待圈存 ￥${settle}")},
                                                                 leadingContent = { Icon(painterResource(R.drawable.account_balance_wallet), contentDescription = "Localized description",) },
                                                                 colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
                                                             )
                                                             ListItem(
-                                                                headlineContent = { Text(text = "${str} 元") },
-                                                                supportingContent = { Text(text = "今日消费")},
+                                                                headlineContent = { Text(text = "￥${str}") },
+                                                                supportingContent = { Text(text = " 今日消费")},
                                                                 leadingContent = { Icon(painterResource(R.drawable.send_money), contentDescription = "Localized description",) },
                                                                 colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
                                                             )

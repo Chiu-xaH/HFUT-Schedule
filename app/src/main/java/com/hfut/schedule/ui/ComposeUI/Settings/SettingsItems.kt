@@ -103,7 +103,7 @@ fun SettingsItems() {
 
     ListItem(
         headlineContent = { Text(text = "清除数据") },
-        supportingContent = { Text(text = "慎用")},
+        supportingContent = { Text(text = "当数据异常或冲突崩溃时,可清除数据,然后重新登录")},
         leadingContent = {
             Icon(
                 painterResource(R.drawable.delete),

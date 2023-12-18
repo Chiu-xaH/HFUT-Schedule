@@ -19,18 +19,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.SharePrefs.prefs
+import com.hfut.schedule.ui.ComposeUI.Search.CourseTotal
 import com.hfut.schedule.ui.ComposeUI.Search.EmptyRoom
+import com.hfut.schedule.ui.ComposeUI.Search.Estimate
 import com.hfut.schedule.ui.ComposeUI.Search.Exam
-import com.hfut.schedule.ui.ComposeUI.Search.FWDT
 import com.hfut.schedule.ui.ComposeUI.Search.Grade
 import com.hfut.schedule.ui.ComposeUI.Search.LibraryItem
 import com.hfut.schedule.ui.ComposeUI.Search.PersonUI
 import com.hfut.schedule.ui.ComposeUI.Search.Program
 import com.hfut.schedule.ui.ComposeUI.Search.SchoolCard.SchoolCardItem
-import com.hfut.schedule.ui.ComposeUI.Search.UndevelipItem
 import com.hfut.schedule.ui.ComposeUI.Search.Xuanqu.XuanquItem
 import com.hfut.schedule.ui.ComposeUI.Search.WebUI
 import com.hfut.schedule.ui.ComposeUI.Search.LePaoYun.LePaoYun
+import com.hfut.schedule.ui.ComposeUI.Search.SchoolBus
+import com.hfut.schedule.ui.ComposeUI.Search.SearchEle
+import com.hfut.schedule.ui.ComposeUI.Search.Second
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -93,8 +96,9 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,) {
                 XuanquItem(vm)
                 WebUI()
                 LePaoYun(vm)
+                SearchEle(vm)
                 if (prefs.getBoolean("SWITCHBETA",false)){
-                    FWDT()
+
                 }
             } else {
                 Grade()
@@ -107,9 +111,12 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,) {
                 XuanquItem(vm)
                 WebUI()
                 LePaoYun(vm)
+                SearchEle(vm)
                 if (prefs.getBoolean("SWITCHBETA",false)){
-                    FWDT()
-                    UndevelipItem()
+                    Estimate()
+                    SchoolBus()
+                    Second()
+                    CourseTotal()
                 }
             }
 

@@ -38,6 +38,13 @@ fun NoNetWork(vm : LoginSuccessViewModel) {
     val navController = rememberNavController()
     var isEnabled by remember { mutableStateOf(true) }
     var showlable by remember { mutableStateOf(switch) }
+    var first = "1"
+
+//判定是否以聚焦作为第一页
+    when (prefs.getBoolean("SWITCHFOCUS",false)) {
+        true -> first = "2"
+        false -> first = "1"
+    }
 
 
     Scaffold(
@@ -77,7 +84,7 @@ fun NoNetWork(vm : LoginSuccessViewModel) {
             }
         }
     ) { innerPadding ->
-        NavHost(navController = navController, startDestination = "1") {
+        NavHost(navController = navController, startDestination = first) {
             composable("1") { NoNet() }
             composable("2") { TodayScreen(vm) }
             composable("search") { SearchScreen(vm,true) }
