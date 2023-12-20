@@ -79,17 +79,6 @@ fun LibraryItem(vm : LoginSuccessViewModel) {
     val borrow = prefs.getString("borrow","获取")
     val sub = prefs.getString("sub","0")
 
-    val interactionSource = remember { MutableInteractionSource() }
-    val isPressed by interactionSource.collectIsPressedAsState()
-
-    val scale = animateFloatAsState(
-        targetValue = if (isPressed) 0.9f else 1f, // 按下时为0.9，松开时为1
-        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-        label = "" // 使用弹簧动画
-    )
-
-
-
     ListItem(
         headlineContent = { Text(text = "图书  借阅 ${borrow} 本  预约 ${sub} 本") },
         supportingContent = {Text(text = "搜索需接入校园网")},
@@ -98,16 +87,6 @@ fun LibraryItem(vm : LoginSuccessViewModel) {
                 painterResource(R.drawable.book),
                 contentDescription = "Localized description",
             )
-        },
-        trailingContent={
-            FilledTonalIconButton(
-                modifier = Modifier.scale(scale.value),
-                interactionSource = interactionSource,
-                onClick = { showBottomSheet_Library = true }
-            ) {
-                Icon( painterResource(R.drawable.search),
-                    contentDescription = "Localized description",)
-            }
         },
         modifier = Modifier.clickable {
             showBottomSheet_Library = true

@@ -34,7 +34,7 @@ import com.hfut.schedule.ui.ComposeUI.Search.LePaoYun.LePaoYun
 import com.hfut.schedule.ui.ComposeUI.Search.SchoolBus
 import com.hfut.schedule.ui.ComposeUI.Search.SearchEle
 import com.hfut.schedule.ui.ComposeUI.Search.Second
-
+import com.hfut.schedule.ui.ComposeUI.Search.XueGong
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -48,7 +48,7 @@ fun getName(vm : LoginSuccessViewModel) : String? {
 
     if (card == "请登录刷新" && vm.token.value?.contains("AT") == true) {
         CoroutineScope(Job()).apply {
-            async { vm.getCard("Bearer " + vm.token.value) }
+           // async { vm.getCard("Bearer " + vm.token.value) }
             async { vm.getBorrowBooks("Bearer " + vm.token.value) }
             async { vm.getSubBooks("Bearer " + vm.token.value) }
         }
@@ -88,8 +88,6 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,) {
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
-
-
             if (ifSaved){
                 SchoolCardItem(vm)
                 LibraryItem(vm)
@@ -117,6 +115,7 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,) {
                     SchoolBus()
                     Second()
                     CourseTotal()
+                    XueGong()
                 }
             }
 

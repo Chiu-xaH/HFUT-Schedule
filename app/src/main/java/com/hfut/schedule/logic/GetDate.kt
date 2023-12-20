@@ -24,6 +24,12 @@ object GetDate {
 
     val Date_MM_dd = SimpleDateFormat("MM-dd").format(Date())
 
+    val Date_MM = SimpleDateFormat("MM").format(Date())
+
+    val Date_dd = SimpleDateFormat("dd").format(Date())
+
+    val Date_yyyy = SimpleDateFormat("yyyy").format(Date())
+
 
     val Date_yyyy_MM_dd = SimpleDateFormat("yyyy-MM-dd").format(Date())
 

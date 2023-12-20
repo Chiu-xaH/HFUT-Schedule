@@ -204,6 +204,18 @@ fun Person() {
                 },
                 modifier = Modifier.clickable {}
             )
+
+
+            ListItem(
+                headlineContent = { Text(text = "寝室   待开发") },
+                leadingContent = {
+                    Icon(
+                        painterResource(R.drawable.bed),
+                        contentDescription = "Localized description",
+                    )
+                },
+                modifier = Modifier.clickable {}
+            )
         }
     }
 

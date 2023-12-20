@@ -40,6 +40,8 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.logic.SharePrefs.Save
+import com.hfut.schedule.logic.SharePrefs.prefs
 import com.hfut.schedule.logic.datamodel.XuanquResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -57,8 +59,8 @@ fun space(space : Boolean) {
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun XuanquUI(vm : LoginSuccessViewModel) {
-    var code by remember { mutableStateOf("") }
-    val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
+    val Savedcode = prefs.getString("Room","")
+    var code by remember { mutableStateOf(Savedcode ?: "") }
     var clicked by remember { mutableStateOf(false) }
     var loading by remember { mutableStateOf(true) }
 
@@ -120,6 +122,7 @@ fun XuanquUI(vm : LoginSuccessViewModel) {
                                         async {
                                             clicked = true
                                             loading = true
+                                            Save("Room",code)
                                             vm.SearchXuanqu(code) }.await()
                                         async {
                                             delay(500)

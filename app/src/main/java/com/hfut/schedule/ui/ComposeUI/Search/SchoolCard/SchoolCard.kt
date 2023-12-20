@@ -79,18 +79,8 @@ import java.math.RoundingMode
 @Composable
 fun SchoolCardItem(vm : LoginSuccessViewModel) {
 
-
-    val interactionSource1 = remember { MutableInteractionSource() }
     val interactionSource2 = remember { MutableInteractionSource() }
-    val isPressed by interactionSource1.collectIsPressedAsState()
     val isPressed2 by interactionSource2.collectIsPressedAsState()
-
-
-    val scale = animateFloatAsState(
-        targetValue = if (isPressed) 0.9f else 1f, // 按下时为0.9，松开时为1
-        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-        label = "" // 使用弹簧动画
-    )
 
     val scale2 = animateFloatAsState(
         targetValue = if (isPressed2) 0.9f else 1f, // 按下时为0.9，松开时为1
@@ -99,7 +89,7 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
     )
 
     val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
-    var card =prefs.getString("card","正在获取")
+    var card = prefs.getString("card","00")
 
     val sheetState_Bills = rememberModalBottomSheetState()
     var showBottomSheet_Bills by remember { mutableStateOf(false) }
@@ -496,10 +486,13 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
         }
     }
 
+            val num = card
+            val bd = BigDecimal(num)
+            val str = bd.setScale(2, RoundingMode.HALF_UP).toString()
 
 
     ListItem(
-        headlineContent = { Text(text = "一卡通   ${card} 元") },
+        headlineContent = { Text(text = "一卡通   ${str} 元") },
         leadingContent = {
             Icon(
                 painterResource(R.drawable.credit_card),
@@ -507,16 +500,6 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
             )
         },
         trailingContent={
-            Row {
-                FilledTonalIconButton(
-                    modifier = Modifier.scale(scale.value),
-                    interactionSource = interactionSource1,
-                    onClick = { page = 1
-                        get() })
-                {
-                    Icon( painterResource(R.drawable.attach_money),
-                        contentDescription = "Localized description",)
-                }
                 FilledTonalIconButton(
                     modifier = Modifier.scale(scale2.value),
                     interactionSource = interactionSource2,
@@ -525,9 +508,6 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
                     Icon( painterResource(R.drawable.add),
                         contentDescription = "Localized description",)
                 }
-
-            }
-
         },
         modifier = Modifier.clickable {
             page = 1

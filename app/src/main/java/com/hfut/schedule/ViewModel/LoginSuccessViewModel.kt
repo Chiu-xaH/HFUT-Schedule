@@ -420,9 +420,9 @@ class LoginSuccessViewModel : ViewModel() {
         })
     }
 
-    fun LePaoYunHome(UA : String,Yuntoken : String) {
+    fun LePaoYunHome(Yuntoken : String) {
 
-        val call = LePaoYun.getLePaoYunHome(UA,Yuntoken)
+        val call = LePaoYun.getLePaoYunHome(Yuntoken)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {

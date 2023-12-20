@@ -9,6 +9,5 @@ import retrofit2.http.POST
 interface LePaoYunService {
     @POST("run/getHomeRunInfo")
     @Headers("isApp: app")
-    fun getLePaoYunHome(@Header("User-Agent") UA : String?,
-                        @Header("token") token : String?) : Call<ResponseBody>
+    fun getLePaoYunHome(@Header("token") token : String?) : Call<ResponseBody>
 }

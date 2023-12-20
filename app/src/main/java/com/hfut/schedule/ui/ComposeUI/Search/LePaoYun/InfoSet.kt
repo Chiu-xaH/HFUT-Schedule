@@ -54,21 +54,15 @@ fun InfoSet() {
 
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
-    val sheetState_input = rememberModalBottomSheetState()
 
-    val savedUA = SharePrefs.prefs.getString("UA","")
-    var inputUA by remember { mutableStateOf(savedUA ?: "") }
     val savedToken = SharePrefs.prefs.getString("Yuntoken","")
     var inputToken by remember { mutableStateOf(savedToken ?: "") }
-   // var showBottomSheet_input by remember { mutableStateOf(false) }
-
 
     val scale = animateFloatAsState(
         targetValue = if (isPressed) 0.9f else 1f, // 按下时为0.9，松开时为1
         animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
         label = "" // 使用弹簧动画
     )
-
 
     Scaffold(
                 modifier = Modifier.fillMaxSize(),
@@ -85,7 +79,6 @@ fun InfoSet() {
                                 interactionSource = interactionSource,
                                 onClick = {
                                    // showBottomSheet_inputchanged
-                                    SharePrefs.Save("UA",inputUA)
                                     SharePrefs.Save("Yuntoken",inputToken)
                                     Toast.makeText(MyApplication.context,"已保存",Toast.LENGTH_SHORT).show()
                                 }
@@ -106,23 +99,8 @@ fun InfoSet() {
                         shape = MaterialTheme.shapes.medium
                     ){
                         ListItem(
-                            headlineContent = { Text(text = "请通过抓包获取常用设备的UA与token,填写在对应位置,并点击提交")},
+                            headlineContent = { Text(text = "请通过抓包获取常用设备的token,多设备登录会带来风险,所以要手动填写")},
                             leadingContent = { Icon(painterResource(id = R.drawable.info), contentDescription = "")}
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                        TextField(
-                            modifier = Modifier.weight(1f).padding(horizontal = 15.dp),
-                            value = inputUA,
-                            onValueChange = { inputUA = it },
-                            label = { Text("User-Agent" ) },
-                            singleLine = true,
-                            shape = MaterialTheme.shapes.medium,
-                            colors = TextFieldDefaults.textFieldColors(focusedIndicatorColor = Color.Transparent, unfocusedIndicatorColor = Color.Transparent,),
-                            leadingIcon = { Icon( painterResource(R.drawable.net), contentDescription = "Localized description") }
                         )
                     }
 

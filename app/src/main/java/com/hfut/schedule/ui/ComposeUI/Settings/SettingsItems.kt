@@ -6,23 +6,34 @@ import android.net.Uri
 import android.preference.PreferenceManager
 import android.widget.Toast
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.SharePrefs
+import com.hfut.schedule.logic.SharePrefs.Save
 import com.hfut.schedule.logic.SharePrefs.prefs
-import com.hfut.schedule.logic.StartUri
 import com.hfut.schedule.logic.StartUri.StartUri
 import com.hfut.schedule.logic.datamodel.data4
 
@@ -35,12 +46,38 @@ fun Clear() {
     val s = listOf("")
     println(s[2])
 }
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsItems() {
-
+    val saved = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
     val my = SharePrefs.prefs.getString("my", MyApplication.NullMy)
     val data = Gson().fromJson(my, data4::class.java).SettingsInfo
     val version = data.version
+    val Saveselect = prefs.getBoolean("select",false)
+    var select by remember { mutableStateOf(Saveselect) }
+
+    ListItem(
+        headlineContent = { Text(text = "仓库切换") },
+        supportingContent = {
+            Column {
+                Text(text = "如可以翻墙推荐Github,否则为了获取更新请使用Gitee")
+                Row {
+                    FilterChip(
+                        onClick = {
+                        select = true
+                        if (saved.getBoolean("select",false) != select) { saved.edit().putBoolean("select",select).apply() }
+                                         }, label = { Text(text = "Github") }, selected = select)
+                    Spacer(modifier = Modifier.width(10.dp))
+                    FilterChip(
+                        onClick = {
+                        select = false
+                        if (saved.getBoolean("select",false) != select) { saved.edit().putBoolean("select",select).apply() }
+                                         }, label = { Text(text = "Gitee") }, selected = !select)
+                }
+            }
+                            },
+        leadingContent = { Icon(painterResource(R.drawable.swap_horiz), contentDescription = "Localized description",) },
+    )
 
     ListItem(
         headlineContent = { Text(text = "获取更新") },
@@ -52,8 +89,12 @@ fun SettingsItems() {
             )
         },
         modifier = Modifier.clickable{
-            if (version != MyApplication.version)
-            StartUri("https://github.com/Chiu-xaH/HFUT-Schedule/releases/tag/Android")
+            if (version != MyApplication.version){
+                when(select) {
+                    true -> StartUri("https://github.com/Chiu-xaH/HFUT-Schedule/releases/tag/Android")
+                    false ->  StartUri("https://gitee.com/chiu-xah/HFUT-Schedule/releases/tag/Android")
+                }
+            }
             else Toast.makeText(MyApplication.context,"与云端版本一致",Toast.LENGTH_SHORT).show()
         }
     )
@@ -75,16 +116,21 @@ fun SettingsItems() {
     )
 
     ListItem(
-        headlineContent = { Text(text = "Github主页") },
-        // supportingText =
+        headlineContent = { Text(text = "开源主页") },
         leadingContent = {
             Icon(
                 painterResource(R.drawable.home),
                 contentDescription = "Localized description",
             )
         },
-        modifier = Modifier.clickable{ StartUri("https://github.com/Chiu-xaH/HFUT-Schedule") }
+        modifier = Modifier.clickable{
+            when(select) {
+                false -> StartUri("https://gitee.com/chiu-xah/HFUT-Schedule")
+                true -> StartUri("https://github.com/Chiu-xaH/HFUT-Schedule")
+            }
+        }
     )
+
 
     ListItem(
         headlineContent = { Text(text = "学期刷新") },

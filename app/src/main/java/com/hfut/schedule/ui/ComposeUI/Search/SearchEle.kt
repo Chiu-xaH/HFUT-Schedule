@@ -1,27 +1,44 @@
 package com.hfut.schedule.ui.ComposeUI.Search
 
+import android.webkit.WebView
 import android.widget.Toast
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
+import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
@@ -33,26 +50,44 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.google.gson.Gson
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
-import com.hfut.schedule.logic.OpenAlipay
-import com.hfut.schedule.logic.SharePrefs
 import com.hfut.schedule.logic.SharePrefs.Save
 import com.hfut.schedule.logic.SharePrefs.prefs
+import com.hfut.schedule.logic.StartUri
 import com.hfut.schedule.logic.datamodel.SearchEleResponse
 import com.hfut.schedule.ui.MyToast
+import com.hfut.schedule.ui.theme.FWDTColr
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
+
+
+@Composable
+fun WebViewScreen(url: String) {
+    AndroidView(
+        factory = { context ->
+            WebView(context).apply {
+                settings.javaScriptEnabled = true
+                loadUrl(url)
+            }
+        },
+        modifier = Modifier.fillMaxSize()
+    )
+}
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,7 +96,15 @@ fun SearchEle(vm : LoginSuccessViewModel) {
 
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
 
+
+    val scale = animateFloatAsState(
+        targetValue = if (isPressed) 0.9f else 1f, // 按下时为0.9，松开时为1
+        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
+        label = "" // 使用弹簧动画
+    )
 
     if (showBottomSheet) {
 
@@ -88,18 +131,19 @@ fun SearchEle(vm : LoginSuccessViewModel) {
                         .fillMaxSize()
                 ) {
                     EleUI(vm)
+                    Spacer(modifier = Modifier.height(30.dp))
                 }
                 }
             }
         }
 
     ListItem(
-        headlineContent = { Text(text = "电费查询") },
+        headlineContent = { Text(text = "寝室电费") },
         supportingContent = { Text(text = "仅宣城校区,需接入校园网使用")},
         leadingContent = {
             Icon(painterResource(R.drawable.flash_on), contentDescription = "Localized description",)
         },
-        modifier = Modifier.clickable { showBottomSheet  = true}
+        modifier = Modifier.clickable { showBottomSheet  = true }
     )
 }
 
@@ -120,55 +164,102 @@ fun EleUI(vm : LoginSuccessViewModel) {
     var showitem by remember { mutableStateOf(false) }
     var showitem2 by remember { mutableStateOf(false) }
     var showitem3 by remember { mutableStateOf(false) }
+    var showitem4 by remember { mutableStateOf(false) }
 
+    var showDialog by remember { mutableStateOf(false) }
 
-
-    DropdownMenu(expanded = showitem, onDismissRequest = { showitem = false }) {
-        DropdownMenuItem(text = { Text(text = "北1") }, onClick = { BuildingsNumber =  "1"
+    DropdownMenu(expanded = showitem, onDismissRequest = { showitem = false }, offset = DpOffset(103.dp,0.dp)) {
+        DropdownMenuItem(text = { Text(text = "北一号楼") }, onClick = { BuildingsNumber =  "1"
             showitem = false})
-        DropdownMenuItem(text = { Text(text = "北2") }, onClick = {  BuildingsNumber =  "2"
+        DropdownMenuItem(text = { Text(text = "北二号楼") }, onClick = {  BuildingsNumber =  "2"
             showitem = false})
-        DropdownMenuItem(text = { Text(text = "北3") }, onClick = {  BuildingsNumber =  "3"
+        DropdownMenuItem(text = { Text(text = "北三号楼") }, onClick = {  BuildingsNumber =  "3"
             showitem = false})
-        DropdownMenuItem(text = { Text(text = "北4") }, onClick = {  BuildingsNumber =  "4"
+        DropdownMenuItem(text = { Text(text = "北四号楼") }, onClick = {  BuildingsNumber =  "4"
             showitem = false})
-        DropdownMenuItem(text = { Text(text = "北5") }, onClick = {  BuildingsNumber =  "5"
+        DropdownMenuItem(text = { Text(text = "北五号楼") }, onClick = {  BuildingsNumber =  "5"
             showitem = false})
-        DropdownMenuItem(text = { Text(text = "南6") }, onClick = {  BuildingsNumber =  "6"
+        DropdownMenuItem(text = { Text(text = "南六号楼") }, onClick = {  BuildingsNumber =  "6"
             showitem = false})
-        DropdownMenuItem(text = { Text(text = "南7") }, onClick = {  BuildingsNumber =  "7"
+        DropdownMenuItem(text = { Text(text = "南七号楼") }, onClick = {  BuildingsNumber =  "7"
             showitem = false})
-        DropdownMenuItem(text = { Text(text = "南8") }, onClick = {  BuildingsNumber =  "8"
+        DropdownMenuItem(text = { Text(text = "南八号楼") }, onClick = {  BuildingsNumber =  "8"
             showitem = false})
-        DropdownMenuItem(text = { Text(text = "南9") }, onClick = {  BuildingsNumber =  "9"
+        DropdownMenuItem(text = { Text(text = "南九号楼") }, onClick = {  BuildingsNumber =  "9"
             showitem = false})
-        DropdownMenuItem(text = { Text(text = "南10") }, onClick = {  BuildingsNumber = "10"
+        DropdownMenuItem(text = { Text(text = "南十号楼") }, onClick = {  BuildingsNumber = "10"
             showitem = false})
     }
 
-    DropdownMenu(expanded = showitem2, onDismissRequest = { showitem2 = false }) {
-        DropdownMenuItem(text = { Text(text = "南照明") }, onClick = { EndNumber = "11"
+    DropdownMenu(expanded = showitem2, onDismissRequest = { showitem2 = false }, offset = DpOffset(210.dp,0.dp)) {
+        DropdownMenuItem(text = { Text(text = "南边照明") }, onClick = { EndNumber = "11"
             showitem2 = false})
-        DropdownMenuItem(text = { Text(text = "南空调") }, onClick = { EndNumber = "12"
+        DropdownMenuItem(text = { Text(text = "南边空调") }, onClick = { EndNumber = "12"
             showitem2 = false})
-        DropdownMenuItem(text = { Text(text = "北照明") }, onClick = { EndNumber = "21"
+        DropdownMenuItem(text = { Text(text = "北边照明") }, onClick = { EndNumber = "21"
             showitem2 = false})
-        DropdownMenuItem(text = { Text(text = "北空调") }, onClick = { EndNumber = "22"
+        DropdownMenuItem(text = { Text(text = "北边空调") }, onClick = { EndNumber = "22"
             showitem2 = false})
     }
     DropdownMenu(expanded = showitem3, onDismissRequest = { showitem3 = false }) {
-        DropdownMenuItem(text = { Text(text = "南") }, onClick = { EndNumber = "11"
+        DropdownMenuItem(text = { Text(text = "南边") }, onClick = { EndNumber = "11"
             showitem3 = false })
-        DropdownMenuItem(text = { Text(text = "北") }, onClick = { EndNumber = "21"
+        DropdownMenuItem(text = { Text(text = "北边") }, onClick = { EndNumber = "21"
             showitem3 = false })
     }
 
     if (BuildingsNumber == "0") BuildingsNumber = ""
 
+    if (showDialog) {
+        androidx.compose.ui.window.Dialog(
+            onDismissRequest = { showDialog = false },
+            properties = DialogProperties(usePlatformDefaultWidth = false)
+        ) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = FWDTColr,
+                            titleContentColor = Color.White,
+                        ),
+                        actions = { IconButton(onClick = { showDialog = false }) {
+                          Icon(painterResource(id = R.drawable.close), contentDescription = "", tint = Color.White)
+                        }},
+                        title = { Text("服务大厅") }
+                    )
+                },
+            ) { innerPadding ->
+               Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                ) {
+                     WebViewScreen(url = "http://172.31.248.26:8088")
+                }
+            }
+        }
+
+       // ModalBottomSheet(
+       //     onDismissRequest = { showBottomSheet = false },
+       //     sheetState = sheetState
+      //  ) {
+
+
+      //  }
+    }
 
     Row(modifier = Modifier
         .fillMaxWidth()
         .padding(horizontal = 15.dp, vertical = 0.dp), horizontalArrangement = Arrangement.Start){
+
+        AssistChip(
+            onClick = {showDialog = true},
+            label = { Text(text = "充值") },
+            leadingIcon = { Icon(painter = painterResource(R.drawable.add), contentDescription = "description") }
+        )
+
+        Spacer(modifier = Modifier.width(10.dp))
 
         AssistChip(
             onClick = { showitem = true },
@@ -187,65 +278,102 @@ fun EleUI(vm : LoginSuccessViewModel) {
                 else -> Toast.makeText(MyApplication.context,"请选择楼栋",Toast.LENGTH_SHORT).show()
             }
                       },
-            label = { Text(text = "选择南北 ${EndNumber}") },
+            label = { Text(text = "选择南北") },
         //    leadingIcon = { Icon(painter = painterResource(R.drawable.calendar), contentDescription = "description") }
         )
 
         Spacer(modifier = Modifier.width(10.dp))
 
+    }
+
+    Row(modifier = Modifier
+        .fillMaxWidth()
+        .padding(horizontal = 15.dp, vertical = 0.dp), horizontalArrangement = Arrangement.Start){
+
+        AssistChip(
+            onClick = { RoomNumber = RoomNumber.replaceFirst(".$".toRegex(), "") },
+            label = { Text(text = "删除") },
+            leadingIcon = { Icon(painter = painterResource(R.drawable.close), contentDescription = "description") }
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+        AssistChip(
+            onClick = {
+                CoroutineScope(Job()).launch {
+                    async {
+                        Save("BuildNumber", BuildingsNumber)
+                        Save("EndNumber", EndNumber)
+                        Save("RoomNumber", RoomNumber)
+                    }
+                    async { vm.searchEle(jsons) }.await()
+                    async {
+                        delay(1000)
+                        val result = prefs.getString("SearchEle", "")
+                        if (result?.contains("query_elec_roominfo") == true) {
+                            val msg = Gson().fromJson(
+                                result,
+                                SearchEleResponse::class.java
+                            ).query_elec_roominfo.errmsg
+                            MyToast(msg)
+                        } else MyToast("无法获取,是否连接hfut-wlan")
+                    }
+                }
+            },
+            label = { Text(text = "搜索") },
+            leadingIcon = { Icon(painter = painterResource(R.drawable.search), contentDescription = "description") }
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+
+        AssistChip(
+            onClick = { showitem4 = true },
+            label = { Text(text = "房间号 ${RoomNumber}") },
+            //leadingIcon = { Icon(painter = painterResource(R.drawable.add), contentDescription = "description") }
+        )
 
     }
 
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
-    ) {
-        TextField(
-            modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 15.dp),
-            value = RoomNumber,
-            onValueChange = {
-                RoomNumber = it
-            },
-            label = { Text("输入房间号") },
-            singleLine = true,
-            trailingIcon = {
-                IconButton(
-                    // shape = RoundedCornerShape(5.dp),
-                    onClick = {
-                        CoroutineScope(Job()).launch {
-                            async {
-                                Save("BuildNumber",BuildingsNumber)
-                                Save("EndNumber",EndNumber)
-                                Save("RoomNumber",RoomNumber)
-                            }
-                            async { vm.searchEle(jsons) }.await()
-                            async {
-                                delay(1000)
-                                 val result = prefs.getString("SearchEle","")
-                                if (result?.contains("query_elec_roominfo") == true) {
-                                    val msg = Gson().fromJson(result,SearchEleResponse::class.java).query_elec_roominfo.errmsg
-                                    MyToast(msg)
-                                } else{
-                                    MyToast("无法获取")
-                                }
+    Spacer(modifier = Modifier.height(7.dp))
 
+    if(showitem4) {
+        Row (modifier = Modifier.padding(horizontal = 15.dp)){
+            OutlinedCard{
+                LazyColumn(modifier = Modifier.padding(horizontal = 10.dp)) {
+                    item {
+                        Text(text = " 选取房间号", modifier = Modifier.padding(10.dp))
+                    }
+                    item {
+                        LazyRow {
+                            items(5) { items ->
+                                IconButton(onClick = {
+                                    if (RoomNumber.length < 3)
+                                        RoomNumber = RoomNumber + items.toString()
+                                    else Toast.makeText(
+                                        MyApplication.context,
+                                        "三位数",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }) { Text(text = items.toString()) }
                             }
                         }
-
-
-
-                    }) {
-                    Icon(
-                        painter = painterResource(R.drawable.search),
-                        contentDescription = "description"
-                    )
+                    }
+                    item {
+                        LazyRow {
+                            items(5) { items ->
+                                val num = items + 5
+                                IconButton(onClick = {
+                                    if (RoomNumber.length < 3)
+                                        RoomNumber = RoomNumber + num
+                                    else Toast.makeText(
+                                        MyApplication.context,
+                                        "三位数",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }) { Text(text = num.toString()) }
+                            }
+                        }
+                    }
                 }
-            },
-            shape = MaterialTheme.shapes.medium,
-            colors = TextFieldDefaults.textFieldColors(
-                focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-            ),
-        )
+                Spacer(modifier = Modifier.height(10.dp))
+            }
+        }
     }
 }

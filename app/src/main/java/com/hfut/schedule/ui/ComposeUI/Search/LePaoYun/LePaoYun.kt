@@ -1,9 +1,6 @@
 package com.hfut.schedule.ui.ComposeUI.Search.LePaoYun
 
 import android.annotation.SuppressLint
-import android.content.ClipData
-import android.content.Context
-import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -37,10 +34,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.getSystemService
 import com.google.gson.Gson
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.R
@@ -48,7 +43,7 @@ import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.SharePrefs.Save
 import com.hfut.schedule.logic.SharePrefs.prefs
 import com.hfut.schedule.logic.datamodel.LePaoYunResponse
-import com.hfut.schedule.ui.ComposeUI.Dialog
+import com.hfut.schedule.ui.ComposeUI.LittleDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -57,10 +52,9 @@ import kotlinx.coroutines.launch
 
 
 fun Update(vm : LoginSuccessViewModel) {
-    val UA = prefs.getString("UA","")?.trim()
     val token =  prefs.getString("Yuntoken","")?.trim()
     CoroutineScope(Job()).launch {
-        async {vm.LePaoYunHome(UA!!,token!!)}.await()
+        async {vm.LePaoYunHome(token!!)}.await()
         async {
             delay(400)
             val json = prefs.getString("LePaoYun",MyApplication.NullLePao)
@@ -96,17 +90,19 @@ fun LePaoYun(vm : LoginSuccessViewModel) {
                           },
         leadingContent = { Icon(painter = painterResource(id = R.drawable.mode_of_travel), contentDescription = "")},
         modifier = Modifier.clickable {
-            if (prefs.getString("UA","")?.contains("LePao") == false) showDialog = true
-            else  showBottomSheet = true
+            if (msg != null) {
+                if (!msg.contains("成功")) showDialog = true
+                else  showBottomSheet = true
+            }
         }
     )
     
     if (showDialog) {
-        Dialog(
+        LittleDialog(
             onDismissRequest = { showDialog = false },
             onConfirmation = { showDialog = false },
             dialogTitle = "提示",
-            dialogText = "未检测到数据,首次使用需要前往 选项 配置信息",
+            dialogText = "未检测到token,或token不正确,需前往 选项 配置信息",
             conformtext = "好",
             dismisstext = "取消"
         )
