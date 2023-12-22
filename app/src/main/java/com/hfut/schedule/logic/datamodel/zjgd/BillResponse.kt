@@ -1,10 +1,10 @@
 package com.hfut.schedule.logic.datamodel.zjgd
 
-data class BillResponse(val data : data5)
+data class BillResponse(val data : BillDatas)
 
-data class data5(val records : List<records>,
-                 val pages : Int,
-                 val msg : String?)
+data class BillDatas(val records : List<records>,
+                     val pages : Int,
+                     val msg : String?)
 
 data class records(val tranamt : Int,
                    val resume : String,

@@ -113,17 +113,12 @@ fun SettingsScreen(vm : LoginSuccessViewModel
             ListItem(
                 headlineContent = { Text(text = "聚焦优先") },
                 supportingContent = { Text(text = "使聚焦作为本地速览的第一页面,而不是课表")},
-                leadingContent = { Icon(painterResource(R.drawable.timeline), contentDescription = "Localized description",) },
+                leadingContent = { Icon(painterResource(R.drawable.lightbulb), contentDescription = "Localized description",) },
                 trailingContent = { Switch(checked = showfocus, onCheckedChange = {showfocusch -> showfocus = showfocusch }) },
             )
 
 
-            ListItem(
-                headlineContent = { Text(text = "Beta 功能") },
-                leadingContent = { Icon(painterResource(id = R.drawable.hotel_class), contentDescription = "Localized description") },
-                supportingContent = { Text(text = "打开此开关后,会显示一些Beta功能及未开发完成的功能")},
-                trailingContent = { Switch(checked = showbeta, onCheckedChange = {showbetach -> showbeta = showbetach }) },
-            )
+
 
 
             var showBottomSheet_input by remember { mutableStateOf(false) }
@@ -139,21 +134,28 @@ fun SettingsScreen(vm : LoginSuccessViewModel
             }
 
             ListItem(
+                headlineContent = { Text(text = "Beta 功能") },
+                leadingContent = { Icon(painterResource(id = R.drawable.hotel_class), contentDescription = "Localized description") },
+                supportingContent = { Text(text = "打开此开关后,会显示一些Beta功能及未开发完成的功能")},
+                trailingContent = { Switch(checked = showbeta, onCheckedChange = {showbetach -> showbeta = showbetach }) },
+            )
+
+            ListItem(
                 headlineContent = { Text(text = "云运动 信息配置") },
                 supportingContent = { Text(text = "需要提交已登录手机的信息")},
                 leadingContent = { Icon(painterResource(R.drawable.mode_of_travel), contentDescription = "Localized description",) },
                 modifier = Modifier.clickable { showBottomSheet_input = true }
             )
 
-            ListItem(
-                headlineContent = { Text(text = "聚焦信息 添加") },
-                leadingContent = { Icon(painterResource(R.drawable.add_circle), contentDescription = "Localized description",) },
-                modifier = Modifier.clickable {  }
-            )
 
-            MonetColorItem()
+            // ListItem(
+             //   headlineContent = { Text(text = "聚焦信息 添加") },
+               // leadingContent = { Icon(painterResource(R.drawable.add_circle), contentDescription = "Localized description",) },
+              //  modifier = Modifier.clickable {  }
+           // )
 
             SettingsItems()
+
 
             Spacer(modifier = Modifier.height(90.dp))
 

@@ -2,9 +2,6 @@ package com.hfut.schedule.ui.ComposeUI.Search.SchoolCard
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
-import android.preference.PreferenceManager
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -24,17 +21,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
@@ -65,7 +59,7 @@ import com.hfut.schedule.logic.OpenAlipay
 import com.hfut.schedule.logic.SharePrefs
 import com.hfut.schedule.logic.datamodel.zjgd.BillResponse
 import com.hfut.schedule.logic.datamodel.zjgd.records
-import com.hfut.schedule.ui.MyToast
+import com.hfut.schedule.ui.ComposeUI.MyToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -486,8 +480,7 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
         }
     }
 
-            val num = card
-            val bd = BigDecimal(num)
+            val bd = BigDecimal(card)
             val str = bd.setScale(2, RoundingMode.HALF_UP).toString()
 
 

@@ -1,6 +1,5 @@
 package com.hfut.schedule.ui.ComposeUI.Search
 
-import android.media.tv.TvContract.Programs
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

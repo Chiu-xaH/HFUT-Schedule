@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui
+package com.hfut.schedule.ui.ComposeUI
 
 import android.os.Handler
 import android.os.Looper

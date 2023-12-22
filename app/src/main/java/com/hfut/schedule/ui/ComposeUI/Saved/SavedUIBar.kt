@@ -1,11 +1,15 @@
-package com.hfut.schedule.ui.ComposeUI.NoNet
+package com.hfut.schedule.ui.ComposeUI.Saved
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -29,7 +33,10 @@ import com.hfut.schedule.logic.datamodel.NavigationBarItemData
 import com.hfut.schedule.ui.ComposeUI.BottomBar.SearchScreen
 import com.hfut.schedule.ui.ComposeUI.BottomBar.SettingsScreen
 import com.hfut.schedule.ui.ComposeUI.BottomBar.TodayScreen
+import com.hfut.schedule.ui.ComposeUI.Settings.getMyVersion
 
+@SuppressLint("SuspiciousIndentation")
+@OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NoNetWork(vm : LoginSuccessViewModel) {
@@ -39,6 +46,12 @@ fun NoNetWork(vm : LoginSuccessViewModel) {
     var isEnabled by remember { mutableStateOf(true) }
     var showlable by remember { mutableStateOf(switch) }
     var first = "1"
+
+
+
+    var showBadge by remember { mutableStateOf(false) }
+    if (MyApplication.version != getMyVersion()) showBadge = true
+
 
 //判定是否以聚焦作为第一页
     when (prefs.getBoolean("SWITCHFOCUS",false)) {
@@ -54,7 +67,7 @@ fun NoNetWork(vm : LoginSuccessViewModel) {
             NavigationBar() {
                 val items = listOf(
                     NavigationBarItemData("1", "课程表", painterResource(R.drawable.calendar)),
-                    NavigationBarItemData("2","聚焦", painterResource(R.drawable.timeline)),
+                    NavigationBarItemData("2","聚焦", painterResource(R.drawable.lightbulb)),
                     NavigationBarItemData("search","查询中心", painterResource(R.drawable.search)),
                     NavigationBarItemData("3","选项", painterResource(id = R.drawable.cube))
                 )
@@ -77,7 +90,14 @@ fun NoNetWork(vm : LoginSuccessViewModel) {
                             }
                         },
                         label = { Text(text = item.label) },
-                        icon = { Icon(item.icon, contentDescription = item.label) }
+                        icon = {
+                            BadgedBox(badge = {
+                                if (item == items[3]){
+                                    if (showBadge)
+                                    Badge{ Text(text = "1")}
+                                }
+                            }) { Icon(item.icon, contentDescription = item.label) }
+                        }
 
                     )
                 }

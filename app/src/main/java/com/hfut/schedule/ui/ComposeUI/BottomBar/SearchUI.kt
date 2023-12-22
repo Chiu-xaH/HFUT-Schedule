@@ -31,6 +31,7 @@ import com.hfut.schedule.ui.ComposeUI.Search.SchoolCard.SchoolCardItem
 import com.hfut.schedule.ui.ComposeUI.Search.Xuanqu.XuanquItem
 import com.hfut.schedule.ui.ComposeUI.Search.WebUI
 import com.hfut.schedule.ui.ComposeUI.Search.LePaoYun.LePaoYun
+import com.hfut.schedule.ui.ComposeUI.Search.NotificationsCenter
 import com.hfut.schedule.ui.ComposeUI.Search.SchoolBus
 import com.hfut.schedule.ui.ComposeUI.Search.SearchEle
 import com.hfut.schedule.ui.ComposeUI.Search.Second
@@ -95,6 +96,7 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,) {
                 WebUI()
                 LePaoYun(vm)
                 SearchEle(vm)
+                NotificationsCenter()
                 if (prefs.getBoolean("SWITCHBETA",false)){
 
                 }
@@ -110,6 +112,7 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,) {
                 WebUI()
                 LePaoYun(vm)
                 SearchEle(vm)
+                NotificationsCenter()
                 if (prefs.getBoolean("SWITCHBETA",false)){
                     Estimate()
                     SchoolBus()

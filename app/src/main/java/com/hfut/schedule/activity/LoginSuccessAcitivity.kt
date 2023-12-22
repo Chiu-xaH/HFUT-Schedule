@@ -3,14 +3,11 @@ package com.hfut.schedule.activity
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
-import android.preference.PreferenceManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
-
 import androidx.compose.foundation.layout.fillMaxSize
-
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
@@ -20,13 +17,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.gson.Gson
 import com.hfut.schedule.MyApplication
-import com.hfut.schedule.ui.ComposeUI.TransparentSystemBars
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
-import com.hfut.schedule.logic.SharePrefs
 import com.hfut.schedule.logic.SharePrefs.Save
 import com.hfut.schedule.logic.SharePrefs.prefs
-import com.hfut.schedule.logic.datamodel.data4
+import com.hfut.schedule.logic.datamodel.MyAPIResponse
 import com.hfut.schedule.ui.ComposeUI.Activity.SuccessUI
+import com.hfut.schedule.ui.ComposeUI.TransparentSystemBars
 import com.hfut.schedule.ui.MonetColor.LocalCurrentStickerUuid
 import com.hfut.schedule.ui.MonetColor.MainIntent
 import com.hfut.schedule.ui.MonetColor.MainViewModel
@@ -66,7 +62,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
                 vm.Jxglstulogin(cookie!!)
             }
             launch {
-                val semesterId = Gson().fromJson(prefs.getString("my",MyApplication.NullMy), data4::class.java).semesterId
+                val semesterId = Gson().fromJson(prefs.getString("my",MyApplication.NullMy), MyAPIResponse::class.java).semesterId
                 if(semesterId != null)
                     Save("semesterId",semesterId)
                 else  Save("semesterId","234")

@@ -35,15 +35,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -70,7 +66,7 @@ import com.hfut.schedule.MyApplication
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.GetDate
 import com.hfut.schedule.logic.SharePrefs.prefs
-import com.hfut.schedule.logic.datamodel.Jxglstu.data
+import com.hfut.schedule.logic.datamodel.Jxglstu.datumResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -177,10 +173,10 @@ fun CalendarScreen(isEnabled:Boolean,enabledchanged : (Boolean) -> Unit,vm : Log
         //////////////////////////////////////////////////////////////////////////////////
         val json = prefs.getString("json", "")
         // Log.d("测试",json!!)
-        val data = Gson().fromJson(json, data::class.java)
-        val scheduleList = data.result.scheduleList
-        val lessonList = data.result.lessonList
-        val scheduleGroupList = data.result.scheduleGroupList
+        val datumResponse = Gson().fromJson(json, datumResponse::class.java)
+        val scheduleList = datumResponse.result.scheduleList
+        val lessonList = datumResponse.result.lessonList
+        val scheduleGroupList = datumResponse.result.scheduleGroupList
 
         for (i in 0 until scheduleList.size) {
             var starttime = scheduleList[i].startTime.toString()

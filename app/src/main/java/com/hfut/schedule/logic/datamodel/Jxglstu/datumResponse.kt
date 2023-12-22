@@ -1,6 +1,6 @@
 package com.hfut.schedule.logic.datamodel.Jxglstu
 
-data class data (val result: result)
+data class datumResponse (val result: result)
 
 data class result(val lessonList : List<lessonList>,
                   val scheduleList : List<scheduleList>,

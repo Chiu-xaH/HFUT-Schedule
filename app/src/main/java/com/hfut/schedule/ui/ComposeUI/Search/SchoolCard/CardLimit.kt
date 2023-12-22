@@ -2,7 +2,6 @@ package com.hfut.schedule.ui.ComposeUI.Search.SchoolCard
 
 import android.os.Handler
 import android.os.Looper
-import android.preference.PreferenceManager
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

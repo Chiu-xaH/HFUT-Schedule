@@ -1,6 +1,5 @@
 package com.hfut.schedule.ui.ComposeUI.Settings
 
-import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -19,11 +18,11 @@ import com.google.gson.Gson
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.SharePrefs.prefs
-import com.hfut.schedule.logic.datamodel.data4
+import com.hfut.schedule.logic.datamodel.MyAPIResponse
 @Composable
 fun MyAPIItem() {
     val my = prefs.getString("my", MyApplication.NullMy)
-    val data = Gson().fromJson(my, data4::class.java).SettingsInfo
+    val data = Gson().fromJson(my, MyAPIResponse::class.java).SettingsInfo
     val title = data.title
     val content = data.info
     val version = data.version

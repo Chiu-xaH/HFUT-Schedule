@@ -6,6 +6,9 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -22,6 +25,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.hfut.schedule.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.SharePrefs.prefs
@@ -29,6 +33,7 @@ import com.hfut.schedule.logic.datamodel.NavigationBarItemData
 import com.hfut.schedule.ui.ComposeUI.BottomBar.SearchScreen
 import com.hfut.schedule.ui.ComposeUI.BottomBar.SettingsScreen
 import com.hfut.schedule.ui.ComposeUI.BottomBar.TodayScreen
+import com.hfut.schedule.ui.ComposeUI.Settings.getMyVersion
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -38,6 +43,7 @@ import kotlinx.coroutines.launch
 fun Judge() {
 
 }
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("CoroutineCreationDuringComposition")
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -48,6 +54,9 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String) {
     var isEnabled by remember { mutableStateOf(false) }
     var showlable by remember { mutableStateOf(switch) }
     var showcard by remember { mutableStateOf(switch_card) }
+
+    var showBadge by remember { mutableStateOf(false) }
+    if (MyApplication.version != getMyVersion()) showBadge = true
 
     //等待加载完毕可切换标签
     CoroutineScope(Job()).launch {
@@ -71,7 +80,7 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String) {
             NavigationBar() {
                 val items = listOf(
                     NavigationBarItemData("calendar", "课程表", painterResource(R.drawable.calendar)),
-                    NavigationBarItemData("today","聚焦", painterResource(R.drawable.timeline)),
+                    NavigationBarItemData("today","聚焦", painterResource(R.drawable.lightbulb)),
                     NavigationBarItemData("search","查询中心", painterResource(R.drawable.search)),
                     NavigationBarItemData("settings", "选项", painterResource(R.drawable.cube))
 
@@ -95,7 +104,14 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String) {
                             }
                         },
                         label = { Text(text = item.label) },
-                        icon = { Icon(item.icon, contentDescription = item.label) }
+                        icon = {
+                            BadgedBox(badge = {
+                                if (item == items[3]){
+                                    if (showBadge)
+                                        Badge{ Text(text = "1")}
+                                }
+                            }) { Icon(item.icon, contentDescription = item.label) }
+                        }
                     )
                 }
             }

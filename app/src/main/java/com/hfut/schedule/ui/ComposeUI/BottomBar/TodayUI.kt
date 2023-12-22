@@ -3,7 +3,7 @@ package com.hfut.schedule.ui.ComposeUI.BottomBar
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
-import android.widget.Toast
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,26 +15,28 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonColors
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,6 +44,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
@@ -51,13 +54,16 @@ import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.GetDate
 import com.hfut.schedule.logic.SharePrefs
 import com.hfut.schedule.logic.datamodel.FocusCourse
-import com.hfut.schedule.logic.datamodel.Jxglstu.data
+import com.hfut.schedule.logic.datamodel.Jxglstu.datumResponse
 import com.hfut.schedule.logic.datamodel.MyList
 import com.hfut.schedule.logic.datamodel.Schedule
 import com.hfut.schedule.logic.datamodel.zjgd.BalanceResponse
-import com.hfut.schedule.logic.datamodel.data4
+import com.hfut.schedule.logic.datamodel.MyAPIResponse
+import com.hfut.schedule.logic.datamodel.Notifications
+import com.hfut.schedule.ui.ComposeUI.Search.NotificationItems
 import com.hfut.schedule.ui.ComposeUI.Search.SchoolCard.SchoolCardItem
-import com.hfut.schedule.ui.MyToast
+import com.hfut.schedule.ui.ComposeUI.MyToast
+import com.hfut.schedule.ui.ComposeUI.Search.getNotifications
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -84,6 +90,34 @@ fun TodayScreen(vm : LoginSuccessViewModel) {
 
     var chinesenumber  = GetDate.chinesenumber
 
+
+    val sheetState = rememberModalBottomSheetState()
+    var showBottomSheet by remember { mutableStateOf(false) }
+    if (showBottomSheet) {
+        SharePrefs.Save("Notifications", getNotifications().size.toString())
+        ModalBottomSheet(onDismissRequest = { showBottomSheet = false }, sheetState = sheetState) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        title = { Text("消息中心") }
+                    )
+                },
+            ) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                ){
+                    NotificationItems()
+                }
+            }
+        }
+    }
 
 //使用指尖工大接口获取一卡通余额
 fun zjgdcard() {
@@ -183,11 +217,14 @@ fun zjgdcard() {
     }
 
 
+
+
+
     fun MySchedule() : MutableList<Schedule> {
 
         val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
         val my = prefs.getString("my",MyApplication.NullMy)
-        val data = Gson().fromJson(my, data4::class.java).Lessons
+        val data = Gson().fromJson(my, MyAPIResponse::class.java).Lessons
         val list = data.Schedule
         var Schedule = mutableListOf<Schedule>()
         list.forEach { Schedule.add(it) }
@@ -198,7 +235,7 @@ fun zjgdcard() {
 
         val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
         val my = prefs.getString("my",MyApplication.NullMy)
-        val data = Gson().fromJson(my, data4::class.java).Lessons
+        val data = Gson().fromJson(my, MyAPIResponse::class.java).Lessons
         val list = data.MyList
         var Wabgke = mutableListOf<MyList>()
         list.forEach {  Wabgke.add(it) }
@@ -211,10 +248,10 @@ fun zjgdcard() {
         val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
         val json = prefs.getString("json", MyApplication.NullDatum)
         // Log.d("测试",json!!)
-        val data = Gson().fromJson(json, data::class.java)
-        val scheduleList = data.result.scheduleList
-        val lessonList = data.result.lessonList
-        val scheduleGroupList = data.result.scheduleGroupList
+        val datumResponse = Gson().fromJson(json, datumResponse::class.java)
+        val scheduleList = datumResponse.result.scheduleList
+        val lessonList = datumResponse.result.lessonList
+        val scheduleGroupList = datumResponse.result.scheduleGroupList
 
         for (i in 0 until scheduleList.size) {
             var starttime = scheduleList[i].startTime.toString()
@@ -316,10 +353,10 @@ fun zjgdcard() {
         val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
         val json = prefs.getString("json", MyApplication.NullDatum)
         // Log.d("测试",json!!)
-        val data = Gson().fromJson(json, data::class.java)
-        val scheduleList = data.result.scheduleList
-        val lessonList = data.result.lessonList
-        val scheduleGroupList = data.result.scheduleGroupList
+        val datumResponse = Gson().fromJson(json, datumResponse::class.java)
+        val scheduleList = datumResponse.result.scheduleList
+        val lessonList = datumResponse.result.lessonList
+        val scheduleGroupList = datumResponse.result.scheduleGroupList
 
         for (i in 0 until scheduleList.size) {
             var starttime = scheduleList[i].startTime.toString()
@@ -420,6 +457,7 @@ fun zjgdcard() {
             async{ ExamGet() }
             async{ MyWangKe() }
             async{ MySchedule() }
+            async { getNotifications() }
         }
     }
 
@@ -436,13 +474,20 @@ fun zjgdcard() {
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
                 actions = {
-                    IconButton(
-                        onClick = {
-                        CoroutineScope(Job()).launch {
-                            async { TodayUpdate() }.await()
-                            async { MyToast("刷新成功") }
+
+                        TextButton(onClick = { showBottomSheet = true }) {
+                            BadgedBox(badge = {
+                                if (getNotifications().size.toString() != prefs.getString("Notifications",""))
+                                Badge()
+                                Log.d("s",getNotifications().size.toString() + prefs.getString("Notifications",""))
+                            }) {
+                                Icon(
+                                    painterResource(id = R.drawable.notifications),
+                                    contentDescription = ""
+                                )
+                            }
                         }
-                    }) { Icon(painterResource(id =R.drawable.rotate_right), contentDescription = "") }
+
                 },
                 title = { Text("今天  第${GetDate.Benweeks}周  周${chinesenumber}  ${GetDate.Date_MM_dd}") }
             )

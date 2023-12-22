@@ -1,9 +1,6 @@
 package com.hfut.schedule.ui.ComposeUI.Search.SchoolCard
 
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
-import android.widget.Toast
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -32,7 +29,7 @@ import com.google.gson.Gson
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.datamodel.zjgd.BillRangeResponse
-import com.hfut.schedule.ui.MyToast
+import com.hfut.schedule.ui.ComposeUI.MyToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async

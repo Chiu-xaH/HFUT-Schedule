@@ -2,4 +2,11 @@
 <resources>
 
     <style name="Theme.肥工课程表" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <!-- 启动主题(低版本使用)，高版本用的是 -v31 -->
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenAnimatedIcon">@drawable/open_screen</item>
+        <item name="postSplashScreenTheme">@style/Theme.肥工课程表</item>
+    </style>
+
 </resources>

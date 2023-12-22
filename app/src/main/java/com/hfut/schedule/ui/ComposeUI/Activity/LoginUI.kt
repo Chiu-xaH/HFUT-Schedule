@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.ComposeUI.Activity
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.preference.PreferenceManager
@@ -18,10 +19,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
@@ -31,6 +35,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
@@ -46,6 +51,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -141,12 +148,16 @@ fun SavedClick() {
 }
 
 
+@SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginUI(vm : LoginViewModel) {
 
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
+
+    var showBadge by remember { mutableStateOf(false) }
+    if (MyApplication.version != prefs.getString("version",MyApplication.version)) showBadge = true
 
     if (showBottomSheet) {
         ModalBottomSheet(
@@ -187,11 +198,26 @@ fun LoginUI(vm : LoginViewModel) {
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
                 title = { Text("肥工教务通") },
-                actions = { IconButton(onClick = {showBottomSheet = true}) { Icon(painterResource(id = R.drawable.cube), contentDescription = "主页") } }
+                actions = {
+                  //  Row {
+                        TextButton(onClick = {
+                            showBottomSheet = true
+                        }){
+                            BadgedBox(badge = {
+                                if (showBadge)
+                                Badge(modifier = Modifier.size(5.dp))
+                            }) { Icon(painterResource(id = R.drawable.cube), contentDescription = "主页") }
+                        }
+                    //    Text(text = "   ")
+                   /// }
+                   
+                }
             )
         }
     ) {innerPadding ->
-        Column(modifier = Modifier.padding(innerPadding).fillMaxSize()) { TwoTextField(vm) }
+        Column(modifier = Modifier
+            .padding(innerPadding)
+            .fillMaxSize()) { TwoTextField(vm) }
     }
 }
 
@@ -232,7 +258,9 @@ fun TwoTextField(vm : LoginViewModel) {
 
         Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
             TextField(
-                modifier = Modifier.weight(1f).padding(horizontal = 40.dp),
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 40.dp),
                 value = username,
                 onValueChange = {username = it },
                 label = { Text("学号" ) },
@@ -257,7 +285,9 @@ fun TwoTextField(vm : LoginViewModel) {
         Spacer(modifier = Modifier.height(30.dp))
         Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
             TextField(
-                modifier = Modifier.weight(1f).padding(horizontal = 40.dp),
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 40.dp),
                 value = inputAES,
                 onValueChange = { inputAES = it },
                 label = { Text("信息门户密码") },

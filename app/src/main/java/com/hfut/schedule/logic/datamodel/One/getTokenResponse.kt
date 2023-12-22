@@ -1,9 +1,9 @@
 package com.hfut.schedule.logic.datamodel.One
 
 data class getTokenResponse(val msg : String,
-                            val data : data2
+                            val data : getTokendatas
 )
-data class  data2(val access_token : String)
+data class  getTokendatas(val access_token : String)
 
 //{
 //  "code": 1,

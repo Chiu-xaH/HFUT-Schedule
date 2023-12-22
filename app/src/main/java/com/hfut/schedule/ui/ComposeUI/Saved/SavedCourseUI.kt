@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.ComposeUI.NoNet
+package com.hfut.schedule.ui.ComposeUI.Saved
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -58,7 +58,7 @@ import com.hfut.schedule.logic.GetDate
 import com.hfut.schedule.logic.GetDate.Benweeks
 import com.hfut.schedule.logic.GetDate.Date_MM_dd
 import com.hfut.schedule.logic.GetDate.weeksBetween
-import com.hfut.schedule.logic.datamodel.Jxglstu.data
+import com.hfut.schedule.logic.datamodel.Jxglstu.datumResponse
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
@@ -163,10 +163,10 @@ fun NoNet() {
         val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
         val json = prefs.getString("json", "")
         // Log.d("测试",json!!)
-        val data = Gson().fromJson(json, data::class.java)
-        val scheduleList = data.result.scheduleList
-        val lessonList = data.result.lessonList
-        val scheduleGroupList = data.result.scheduleGroupList
+        val datumResponse = Gson().fromJson(json, datumResponse::class.java)
+        val scheduleList = datumResponse.result.scheduleList
+        val lessonList = datumResponse.result.lessonList
+        val scheduleGroupList = datumResponse.result.scheduleGroupList
 
         for (i in 0 until scheduleList.size) {
             var starttime = scheduleList[i].startTime.toString()

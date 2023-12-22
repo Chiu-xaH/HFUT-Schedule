@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.ComposeUI.Settings
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -9,11 +10,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AssistChip
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
@@ -26,16 +26,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
 import com.google.gson.Gson
 import com.hfut.schedule.MyApplication
+import com.hfut.schedule.MyApplication.Companion.context
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.SharePrefs
-import com.hfut.schedule.logic.SharePrefs.Save
 import com.hfut.schedule.logic.SharePrefs.prefs
 import com.hfut.schedule.logic.StartUri.StartUri
-import com.hfut.schedule.logic.datamodel.data4
+import com.hfut.schedule.logic.datamodel.MyAPIResponse
+import java.io.File
+import java.net.URLConnection
 
 
 fun Clear() {
@@ -46,15 +48,41 @@ fun Clear() {
     val s = listOf("")
     println(s[2])
 }
+@SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsItems() {
     val saved = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-    val my = SharePrefs.prefs.getString("my", MyApplication.NullMy)
-    val data = Gson().fromJson(my, data4::class.java).SettingsInfo
-    val version = data.version
+    getMyVersion()
     val Saveselect = prefs.getBoolean("select",false)
     var select by remember { mutableStateOf(Saveselect) }
+
+
+    var showBadge by remember { mutableStateOf(false) }
+    if (MyApplication.version != getMyVersion()) showBadge = true
+
+    MonetColorItem()
+
+    ListItem(
+        headlineContent = { Text(text = "获取更新") },
+        supportingContent = { Text(text = "当前版本  ${MyApplication.version}\n最新版本  ${getMyVersion()}")},
+        leadingContent = {
+            BadgedBox(badge = {
+                if(showBadge)
+                    Badge(modifier = Modifier.size(7.dp)) }) {
+                Icon(painterResource(R.drawable.arrow_upward), contentDescription = "Localized description",)
+            }
+        },
+        modifier = Modifier.clickable{
+            if (getMyVersion() != MyApplication.version){
+                when(select) {
+                    true -> StartUri("https://github.com/Chiu-xaH/HFUT-Schedule/releases/tag/Android")
+                    false ->  StartUri("https://gitee.com/chiu-xah/HFUT-Schedule/releases/tag/Android")
+                }
+            }
+            else Toast.makeText(MyApplication.context,"与云端版本一致",Toast.LENGTH_SHORT).show()
+        }
+    )
 
     ListItem(
         headlineContent = { Text(text = "仓库切换") },
@@ -76,35 +104,16 @@ fun SettingsItems() {
                 }
             }
                             },
-        leadingContent = { Icon(painterResource(R.drawable.swap_horiz), contentDescription = "Localized description",) },
+        leadingContent = { Icon(painterResource(R.drawable.swap_calls), contentDescription = "Localized description",) },
     )
 
-    ListItem(
-        headlineContent = { Text(text = "获取更新") },
-        supportingContent = { Text(text = "当前版本  ${MyApplication.version}\n最新版本  ${version}")},
-        leadingContent = {
-            Icon(
-                painterResource(R.drawable.net),
-                contentDescription = "Localized description",
-            )
-        },
-        modifier = Modifier.clickable{
-            if (version != MyApplication.version){
-                when(select) {
-                    true -> StartUri("https://github.com/Chiu-xaH/HFUT-Schedule/releases/tag/Android")
-                    false ->  StartUri("https://gitee.com/chiu-xah/HFUT-Schedule/releases/tag/Android")
-                }
-            }
-            else Toast.makeText(MyApplication.context,"与云端版本一致",Toast.LENGTH_SHORT).show()
-        }
-    )
 
     ListItem(
-        headlineContent = { Text(text = "向我反馈") },
-        // supportingText =
+        headlineContent = { Text(text = "联系开发者") },
+         supportingContent = { Text(text = "有更好的想法,或者反馈Bug,都可发邮件联系我")},
         leadingContent = {
             Icon(
-                painterResource(R.drawable.feedback),
+                painterResource(R.drawable.mail),
                 contentDescription = "Localized description",
             )
         },
@@ -119,7 +128,7 @@ fun SettingsItems() {
         headlineContent = { Text(text = "开源主页") },
         leadingContent = {
             Icon(
-                painterResource(R.drawable.home),
+                painterResource(R.drawable.net),
                 contentDescription = "Localized description",
             )
         },
@@ -138,10 +147,62 @@ fun SettingsItems() {
         // supportingText =
         leadingContent = { Icon(painterResource(id =R.drawable.rotate_right), contentDescription = "") },
         modifier = Modifier.clickable{
-            val semesterId = Gson().fromJson(prefs.getString("my",MyApplication.NullMy), data4::class.java).semesterId
+            val semesterId = Gson().fromJson(prefs.getString("my",MyApplication.NullMy), MyAPIResponse::class.java).semesterId
             if(semesterId != null)
                 SharePrefs.Save("semesterId",semesterId)
             Toast.makeText(MyApplication.context,"当前为 ${semesterId}",Toast.LENGTH_SHORT).show()
+        }
+    )
+
+
+    ListItem(
+        headlineContent = { Text(text = "推广本应用") },
+        supportingContent = { Text(text = "如果你觉得好用的话,可以替开发者多多推广")},
+        leadingContent = {
+            Icon(
+                painterResource(R.drawable.ios_share),
+                contentDescription = "Localized description",
+            )
+        },
+        modifier = Modifier.clickable{
+            //  when(select) {
+            //   false -> StartUri("https://gitee.com/chiu-xah/HFUT-Schedule")
+            //   true -> StartUri("https://github.com/Chiu-xaH/HFUT-Schedule")
+            //  }
+            // 创建一个分享的Intent
+        //    val it = Intent()
+          //  it.action = Intent.ACTION_SEND
+// 设置分享的内容
+        //    it.putExtra(Intent.EXTRA_TEXT, "这是要分享的字符串")
+// 设置分享的类型为纯文本
+         //   it.type = "text/plain"
+        //    it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+// 启动选/择器，让用户选择要分享的应用
+           // MyApplication.context.startActivity(Intent.createChooser(it, "分享到").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+
+
+// 获取当前应用的 apk 文件路径
+            val apkPath = MyApplication.context.packageManager.getApplicationInfo(MyApplication.context.packageName, 0).sourceDir
+// 获取文件的类型
+            val mimeType = URLConnection.guessContentTypeFromName(apkPath)
+// 创建一个 Intent
+            val file = File(apkPath)
+            val uri = FileProvider.getUriForFile(context, "${context.applicationContext.packageName}.provider", file)
+
+            // 创建一个 Intent
+            val shareIntent = Intent().apply {
+                action = Intent.ACTION_SEND // 设置动作
+                type = mimeType // 设置内容类型
+                putExtra(Intent.EXTRA_STREAM, uri) // 添加文件
+                putExtra(Intent.EXTRA_TEXT, "这是我要分享的应用") // 添加文本
+                flags = Intent.FLAG_GRANT_READ_URI_PERMISSION // 添加权限
+                flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+            }
+
+
+// 调用系统分享选择器
+            MyApplication.context.startActivity(Intent.createChooser(shareIntent, "分享到...").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION).addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION))
+
         }
     )
 

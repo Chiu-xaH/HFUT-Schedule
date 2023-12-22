@@ -1,14 +1,10 @@
 package com.hfut.schedule.ViewModel
 
 import android.preference.PreferenceManager
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.gson.Gson
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.logic.SharePrefs
-import com.hfut.schedule.logic.SharePrefs.prefs
-import com.hfut.schedule.logic.datamodel.data4
 import com.hfut.schedule.logic.network.api.LoginService
 import com.hfut.schedule.logic.network.ServiceCreator.Login.GetAESKeyServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Login.GetCookieServiceCreator

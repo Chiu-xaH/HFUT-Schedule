@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
-import com.hfut.schedule.ui.ComposeUI.NoNet.NoNetWork
+import com.hfut.schedule.ui.ComposeUI.Saved.NoNetWork
 import com.hfut.schedule.ui.ComposeUI.TransparentSystemBars
 import com.hfut.schedule.ui.MonetColor.LocalCurrentStickerUuid
 import com.hfut.schedule.ui.MonetColor.MainIntent
