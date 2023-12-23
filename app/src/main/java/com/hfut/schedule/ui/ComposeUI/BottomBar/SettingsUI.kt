@@ -94,13 +94,15 @@ fun SettingsScreen(vm : LoginSuccessViewModel
             ListItem(
                 headlineContent = { Text(text = "底栏标签") },
                 leadingContent = { Icon(painterResource(R.drawable.label), contentDescription = "Localized description",) },
-                trailingContent = { Switch(checked = showlable, onCheckedChange = showlablechanged) }
+                trailingContent = { Switch(checked = showlable, onCheckedChange = showlablechanged) },
+                modifier = Modifier.clickable { showlablechanged }
             )
 
             ListItem(
                 headlineContent = { Text(text = "聚焦显示一卡通") },
                 leadingContent = { Icon(painterResource(R.drawable.credit_card), contentDescription = "Localized description",) },
-                trailingContent = { Switch(checked = showcard, onCheckedChange = {showcardch -> showcard = showcardch}) }
+                trailingContent = { Switch(checked = showcard, onCheckedChange = { showcardch -> showcard = showcardch }) },
+                modifier = Modifier.clickable { showcard = !showcard }
             )
 
             ListItem(
@@ -108,6 +110,7 @@ fun SettingsScreen(vm : LoginSuccessViewModel
                 supportingContent = { Text(text = "本接口提供了除学校系统之外的聚焦信息,推荐23地科专业打开")},
                 leadingContent = { Icon(painterResource(R.drawable.api), contentDescription = "Localized description",) },
                 trailingContent = { Switch(checked = showapi, onCheckedChange = {showapich -> showapi = showapich }) },
+                modifier = Modifier.clickable { showapi = !showapi }
             )
 
             ListItem(
@@ -115,6 +118,7 @@ fun SettingsScreen(vm : LoginSuccessViewModel
                 supportingContent = { Text(text = "使聚焦作为本地速览的第一页面,而不是课表")},
                 leadingContent = { Icon(painterResource(R.drawable.lightbulb), contentDescription = "Localized description",) },
                 trailingContent = { Switch(checked = showfocus, onCheckedChange = {showfocusch -> showfocus = showfocusch }) },
+                modifier = Modifier.clickable { showfocus = !showfocus }
             )
 
 
@@ -138,6 +142,7 @@ fun SettingsScreen(vm : LoginSuccessViewModel
                 leadingContent = { Icon(painterResource(id = R.drawable.hotel_class), contentDescription = "Localized description") },
                 supportingContent = { Text(text = "打开此开关后,会显示一些Beta功能及未开发完成的功能")},
                 trailingContent = { Switch(checked = showbeta, onCheckedChange = {showbetach -> showbeta = showbetach }) },
+                modifier = Modifier.clickable { showbeta = !showbeta }
             )
 
             ListItem(

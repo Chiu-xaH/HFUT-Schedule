@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.ComposeUI.Search
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -43,13 +44,14 @@ import com.hfut.schedule.ui.ComposeUI.Settings.MyAPIItem
 
 //解析通知
 fun getNotifications() : MutableList<Notifications>{
-    val json = SharePrefs.prefs.getString("my",MyApplication.NullMy)
-    val list = Gson().fromJson(json,MyAPIResponse::class.java).Notifications
+    val json = prefs.getString("my",MyApplication.NullMy)
+    val list = Gson().fromJson(json,MyAPIResponse::class.java)?.Notifications
     var Notifications = mutableListOf<Notifications>()
-    list.forEach { Notifications.add(it) }
+    list?.forEach { Notifications.add(it) }
     return Notifications
 }
 
+@SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationsCenter() {
@@ -85,16 +87,12 @@ fun NotificationsCenter() {
 
     ListItem(
         headlineContent = { Text(text = "消息中心") },
-        supportingContent = {},
         modifier = Modifier.clickable { showBottomSheet = true },
         leadingContent = {
             BadgedBox(badge = {
                 if (prefs.getString("Notifications","") != getNotifications().size.toString())
                 Badge { Text(text = getNotifications().size.toString())}
-            }) {
-                Icon(painter = painterResource(id = R.drawable.notifications), contentDescription = "")
-            }
-
+            }) { Icon(painter = painterResource(id = R.drawable.notifications), contentDescription = "") }
         }
     )
 }
@@ -104,22 +102,15 @@ fun NotificationItems() {
     LazyColumn {
         items(getNotifications().size) {item ->
             Card(
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 3.dp
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp, vertical = 5.dp),
                 shape = MaterialTheme.shapes.medium
-
             ){
                 ListItem(
                     headlineContent = { Text(text = getNotifications()[item].title) },
                     supportingContent = { Text(text = getNotifications()[item].info)},
                     overlineContent = { Text(text = getNotifications()[item].remark)},
-                    leadingContent = {
-                        Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")
-                    }
+                    leadingContent = { Icon(painter = painterResource(id = R.drawable.info), contentDescription = "") }
                 )
             }
         }

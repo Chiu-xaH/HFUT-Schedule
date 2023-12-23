@@ -30,12 +30,13 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import com.google.gson.Gson
 import com.hfut.schedule.MyApplication
-import com.hfut.schedule.MyApplication.Companion.context
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.SharePrefs
+import com.hfut.schedule.logic.SharePrefs.SaveBoolean
 import com.hfut.schedule.logic.SharePrefs.prefs
 import com.hfut.schedule.logic.StartUri.StartUri
 import com.hfut.schedule.logic.datamodel.MyAPIResponse
+import com.hfut.schedule.ui.ComposeUI.LittleDialog
 import java.io.File
 import java.net.URLConnection
 
@@ -93,18 +94,24 @@ fun SettingsItems() {
                     FilterChip(
                         onClick = {
                         select = true
-                        if (saved.getBoolean("select",false) != select) { saved.edit().putBoolean("select",select).apply() }
-                                         }, label = { Text(text = "Github") }, selected = select)
+                        SaveBoolean("select",false,select)
+                                         },
+                        label = { Text(text = "Github") }, selected = select)
                     Spacer(modifier = Modifier.width(10.dp))
                     FilterChip(
                         onClick = {
                         select = false
-                        if (saved.getBoolean("select",false) != select) { saved.edit().putBoolean("select",select).apply() }
-                                         }, label = { Text(text = "Gitee") }, selected = !select)
+                            SaveBoolean("select",false,select)
+                                         },
+                        label = { Text(text = "Gitee") }, selected = !select)
                 }
             }
                             },
         leadingContent = { Icon(painterResource(R.drawable.swap_calls), contentDescription = "Localized description",) },
+        modifier = Modifier.clickable {
+            select = !select
+            SaveBoolean("select",false,select)
+        }
     )
 
 
@@ -165,58 +172,40 @@ fun SettingsItems() {
             )
         },
         modifier = Modifier.clickable{
-            //  when(select) {
-            //   false -> StartUri("https://gitee.com/chiu-xah/HFUT-Schedule")
-            //   true -> StartUri("https://github.com/Chiu-xaH/HFUT-Schedule")
-            //  }
+            var url = ""
+              when(select) {
+               false -> url = "https://gitee.com/chiu-xah/HFUT-Schedule"
+               true -> url = "https://github.com/Chiu-xaH/HFUT-Schedule"
+              }
             // 创建一个分享的Intent
-        //    val it = Intent()
-          //  it.action = Intent.ACTION_SEND
+            val it = Intent()
+            it.action = Intent.ACTION_SEND
 // 设置分享的内容
-        //    it.putExtra(Intent.EXTRA_TEXT, "这是要分享的字符串")
+            it.putExtra(Intent.EXTRA_TEXT, url)
 // 设置分享的类型为纯文本
-         //   it.type = "text/plain"
-        //    it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            it.type = "text/plain"
+            it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 // 启动选/择器，让用户选择要分享的应用
-           // MyApplication.context.startActivity(Intent.createChooser(it, "分享到").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-
-
-// 获取当前应用的 apk 文件路径
-            val apkPath = MyApplication.context.packageManager.getApplicationInfo(MyApplication.context.packageName, 0).sourceDir
-// 获取文件的类型
-            val mimeType = URLConnection.guessContentTypeFromName(apkPath)
-// 创建一个 Intent
-            val file = File(apkPath)
-            val uri = FileProvider.getUriForFile(context, "${context.applicationContext.packageName}.provider", file)
-
-            // 创建一个 Intent
-            val shareIntent = Intent().apply {
-                action = Intent.ACTION_SEND // 设置动作
-                type = mimeType // 设置内容类型
-                putExtra(Intent.EXTRA_STREAM, uri) // 添加文件
-                putExtra(Intent.EXTRA_TEXT, "这是我要分享的应用") // 添加文本
-                flags = Intent.FLAG_GRANT_READ_URI_PERMISSION // 添加权限
-                flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-            }
-
-
-// 调用系统分享选择器
-            MyApplication.context.startActivity(Intent.createChooser(shareIntent, "分享到...").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION).addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION))
-
+            MyApplication.context.startActivity(Intent.createChooser(it, "分享到").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
         }
     )
 
-
+    var showDialog by remember { mutableStateOf(false) }
+    if (showDialog) {
+        LittleDialog(
+            onDismissRequest = { showDialog = false },
+            onConfirmation = { Clear() },
+            dialogTitle = "警告",
+            dialogText = "确定要抹掉数据吗,只有当升级后崩溃,或者出现数据问题时推荐使用",
+            conformtext = "抹掉数据",
+            dismisstext = "取消"
+        )
+    }
 
     ListItem(
         headlineContent = { Text(text = "清除数据") },
         supportingContent = { Text(text = "当数据异常或冲突崩溃时,可清除数据,然后重新登录")},
-        leadingContent = {
-            Icon(
-                painterResource(R.drawable.delete),
-                contentDescription = "Localized description",
-            )
-        },
-        modifier = Modifier.clickable{ Clear() }
+        leadingContent = { Icon(painterResource(R.drawable.delete), contentDescription = "Localized description",) },
+        modifier = Modifier.clickable{ showDialog = true }
     )
 }

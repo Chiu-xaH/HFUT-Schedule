@@ -8,7 +8,7 @@ import dagger.hilt.android.HiltAndroidApp
 class MyApplication : Application() {
     companion object {
         lateinit var context: Context
-        const val version = "2.5.2"
+        const val version = "2.5.2.1"
         const val EleURL = "http://172.31.248.26:8988/"
         const val ZJGDBillURL = "http://121.251.19.62/"
         const val LePaoYunURL = "http://210.45.246.53:8080/"
@@ -94,7 +94,14 @@ class MyApplication : Application() {
                 "        \"title\" : \"开发者接口\",\n" +
                 "        \"info\"  : \"本接口在不更新APP前提下可实时更新信息\"\n" +
                 "    },\n" +
-                "     \"semesterId\" : \"234\"\n" +
+                "     \"semesterId\" : \"234\",\n" +
+                "    \"Notifications\" : [\n" +
+                "        {\n" +
+                "            \"title\" : \"\",\n" +
+                "            \"info\" : \"\",\n" +
+                "            \"remark\" : \"\"\n" +
+                "        }\n" +
+                "    ]\n" +
                 "}"
 
         const val NullLib = "{\n" +
