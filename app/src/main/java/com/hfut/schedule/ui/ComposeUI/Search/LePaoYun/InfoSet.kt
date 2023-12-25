@@ -53,6 +53,11 @@ fun InfoSet() {
     val savedToken = SharePrefs.prefs.getString("Yuntoken","")
     var inputToken by remember { mutableStateOf(savedToken ?: "") }
 
+
+    val savedRequestBody = SharePrefs.prefs.getString("YunRequestBody","")
+    var inputRequestBody by remember { mutableStateOf(savedRequestBody ?: "") }
+
+
     val scale = animateFloatAsState(
         targetValue = if (isPressed) 0.9f else 1f, // 按下时为0.9，松开时为1
         animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
@@ -75,6 +80,7 @@ fun InfoSet() {
                                 onClick = {
                                    // showBottomSheet_inputchanged
                                     SharePrefs.Save("Yuntoken",inputToken)
+                                    SharePrefs.Save("YunRequestBody",inputRequestBody)
                                     Toast.makeText(MyApplication.context,"已保存",Toast.LENGTH_SHORT).show()
                                 }
                             ) {
@@ -115,6 +121,25 @@ fun InfoSet() {
                             leadingIcon = { Icon( painterResource(R.drawable.key), contentDescription = "Localized description") }
                         )
                     }
+
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                        TextField(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(horizontal = 15.dp),
+                            value = inputRequestBody,
+                            onValueChange = { inputRequestBody = it },
+                            label = { Text("RequestBody,非必须,但填写后可查看建跑记录") },
+                            singleLine = true,
+                            shape = MaterialTheme.shapes.medium,
+                            colors = TextFieldDefaults.textFieldColors(focusedIndicatorColor = Color.Transparent, unfocusedIndicatorColor = Color.Transparent,),
+                            leadingIcon = { Icon( painterResource(R.drawable.net), contentDescription = "Localized description") }
+                        )
+                    }
+
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }

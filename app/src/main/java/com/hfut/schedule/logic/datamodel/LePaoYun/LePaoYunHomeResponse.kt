@@ -1,8 +1,6 @@
-package com.hfut.schedule.logic.datamodel
+package com.hfut.schedule.logic.datamodel.LePaoYun
 
-import android.provider.ContactsContract.CommonDataKinds.Im
-
-data class LePaoYunResponse(val msg : String,val data : distance)
+data class LePaoYunHomeResponse(val msg : String, val data : distance)
 
 data class distance(val distance: String,val cralist : List<cralist>)
 

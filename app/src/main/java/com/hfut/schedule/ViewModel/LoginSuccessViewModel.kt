@@ -1,5 +1,6 @@
 package com.hfut.schedule.ViewModel
 
+//import com.hfut.schedule.logic.network.ServiceCreator.Login.OneGetNewTicketServiceCreator.client
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
@@ -8,34 +9,35 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import com.hfut.schedule.logic.SharePrefs
 import com.hfut.schedule.logic.SharePrefs.prefs
+import com.hfut.schedule.logic.datamodel.Jxglstu.lessonIdsResponse
 import com.hfut.schedule.logic.datamodel.One.BorrowBooksResponse
 import com.hfut.schedule.logic.datamodel.One.CardResponse
 import com.hfut.schedule.logic.datamodel.One.SubBooksResponse
 import com.hfut.schedule.logic.datamodel.One.getTokenResponse
-
-import com.hfut.schedule.logic.datamodel.Jxglstu.lessonIdsResponse
-import com.hfut.schedule.logic.network.ServiceCreator.XuanquServiceCreator
-import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuJSONServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuHTMLServiceCreator
+import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuJSONServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.LePaoYunServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.One.LibraryServiceCreator
-import com.hfut.schedule.logic.network.ServiceCreator.OneGoto.OneGotoServiceCreator
-//import com.hfut.schedule.logic.network.ServiceCreator.Login.OneGetNewTicketServiceCreator.client
 import com.hfut.schedule.logic.network.ServiceCreator.One.OneServiceCreator
+import com.hfut.schedule.logic.network.ServiceCreator.OneGoto.OneGotoServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.SearchEleServiceCreator
+import com.hfut.schedule.logic.network.ServiceCreator.XuanquServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.ZJGDBillServiceCreator
 import com.hfut.schedule.logic.network.api.FWDTService
-import com.hfut.schedule.logic.network.api.XuanquService
 import com.hfut.schedule.logic.network.api.JxglstuService
 import com.hfut.schedule.logic.network.api.LePaoYunService
-import com.hfut.schedule.logic.network.api.LoginService
 import com.hfut.schedule.logic.network.api.LibraryService
-import com.hfut.schedule.logic.network.api.ZJGDBillService
+import com.hfut.schedule.logic.network.api.LoginService
 import com.hfut.schedule.logic.network.api.OneService
+import com.hfut.schedule.logic.network.api.XuanquService
+import com.hfut.schedule.logic.network.api.ZJGDBillService
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+
 class LoginSuccessViewModel : ViewModel() {
     private val JxglstuJSON = JxglstuJSONServiceCreator.create(JxglstuService::class.java)
     private val JxglstuHTML = JxglstuHTMLServiceCreator.create(JxglstuService::class.java)
@@ -427,6 +429,21 @@ class LoginSuccessViewModel : ViewModel() {
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 SharePrefs.Save("LePaoYun", response.body()?.string())
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
+
+    fun getRunRecord(Yuntoken : String, RequestBody : String) {
+        val requestBody = RequestBody
+            .toRequestBody("text/plain; charset=utf-8".toMediaTypeOrNull())
+
+        val call = LePaoYun.getRunRecord(Yuntoken,requestBody)
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                SharePrefs.Save("LePaoYunRecord", response.body()?.string())
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }

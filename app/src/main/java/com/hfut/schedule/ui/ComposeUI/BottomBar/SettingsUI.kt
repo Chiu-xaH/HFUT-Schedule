@@ -107,7 +107,7 @@ fun SettingsScreen(vm : LoginSuccessViewModel
 
             ListItem(
                 headlineContent = { Text(text = "聚焦接口") },
-                supportingContent = { Text(text = "本接口提供了除学校系统之外的聚焦信息,推荐23地科专业打开")},
+                supportingContent = { Text(text = "本接口提供了除学校系统之外的聚焦信息")},
                 leadingContent = { Icon(painterResource(R.drawable.api), contentDescription = "Localized description",) },
                 trailingContent = { Switch(checked = showapi, onCheckedChange = {showapich -> showapi = showapich }) },
                 modifier = Modifier.clickable { showapi = !showapi }

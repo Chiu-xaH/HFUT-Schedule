@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
@@ -42,7 +43,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.SharePrefs.Save
 import com.hfut.schedule.logic.SharePrefs.prefs
-import com.hfut.schedule.logic.datamodel.LePaoYunResponse
+import com.hfut.schedule.logic.datamodel.LePaoYun.LePaoYunHomeResponse
 import com.hfut.schedule.ui.ComposeUI.LittleDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -53,12 +54,14 @@ import kotlinx.coroutines.launch
 
 fun Update(vm : LoginSuccessViewModel) {
     val token =  prefs.getString("Yuntoken","")?.trim()
+    val RequestBody =  prefs.getString("YunRequestBody","")?.trim()
     CoroutineScope(Job()).launch {
         async {vm.LePaoYunHome(token!!)}.await()
+        async {vm.getRunRecord(token!!,RequestBody!!)}.await()
         async {
             delay(400)
             val json = prefs.getString("LePaoYun",MyApplication.NullLePao)
-            val result = Gson().fromJson(json,LePaoYunResponse::class.java)
+            val result = Gson().fromJson(json, LePaoYunHomeResponse::class.java)
             val msg = result.msg
             if (msg.contains("成功")) {
                 val distance = result.data.distance
@@ -121,9 +124,11 @@ fun LePaoYun(vm : LoginSuccessViewModel) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LePaoYunUI() {
+    val sheetState_Record = rememberModalBottomSheetState()
+    var showBottomSheet_Record by remember { mutableStateOf(false) }
     val json = prefs.getString("LePaoYun",MyApplication.NullLePao)
 //Log.d("j",json.toString())
-    val result = Gson().fromJson(json,LePaoYunResponse::class.java)
+    val result = Gson().fromJson(json, LePaoYunHomeResponse::class.java)
     val msg = result.msg
     if (msg.contains("成功")) {
         val distance = result.data.distance
@@ -133,6 +138,13 @@ fun LePaoYunUI() {
 
         Save("distance",distance)
         Save("msg",msg)
+
+
+        if (showBottomSheet_Record) {
+            ModalBottomSheet(onDismissRequest = { showBottomSheet_Record = false }) {
+                RecordUI()
+            }
+        }
 
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -152,6 +164,28 @@ fun LePaoYunUI() {
                     .fillMaxSize()
             ) {
                 Column{
+
+                    Row(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 15.dp, vertical = 0.dp), horizontalArrangement = Arrangement.Start){
+
+                        AssistChip(
+                            onClick = {  },
+                            label = { Text(text = "打开云运动") },
+                           // leadingIcon = { Icon(painter = painterResource(R.drawable.add), contentDescription = "description") }
+                        )
+
+                        Spacer(modifier = Modifier.width(10.dp))
+
+
+                        AssistChip(
+                            onClick = { showBottomSheet_Record = true },
+                            label = { Text(text = "跑步记录") },
+                           // leadingIcon = { Icon(painter = painterResource(R.drawable.calendar), contentDescription = "description") }
+                        )
+
+                    }
+
                     Card(
                         elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
                         modifier = Modifier
@@ -253,7 +287,9 @@ fun LePaoYunUI() {
             }
         }
     } else {
-        Row(modifier = Modifier.fillMaxWidth().padding(15.dp), horizontalArrangement = Arrangement.Center){ Text(text = msg)
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .padding(15.dp), horizontalArrangement = Arrangement.Center){ Text(text = msg)
         }
         Spacer(modifier = Modifier.height(100.dp))
     }

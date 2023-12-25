@@ -70,8 +70,6 @@ fun MonetColorItem() {
     AnimatedVisibility(
         visible = expandItems,
         enter = slideInVertically(
-            // Start the slide from 40 (pixels) above where the content is supposed to go, to
-            // produce a parallax effect
             initialOffsetY = { -40 }
         ) + expandVertically(
             expandFrom = Alignment.Top
@@ -87,9 +85,6 @@ fun MonetColorItem() {
 
     }
 
-
-
     Spacer(modifier = Modifier.height(5.dp))
-
 
 }
