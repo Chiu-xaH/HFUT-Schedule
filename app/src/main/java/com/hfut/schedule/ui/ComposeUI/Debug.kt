@@ -1,114 +1,109 @@
 package com.hfut.schedule.ui.ComposeUI
 
 import android.annotation.SuppressLint
-import android.util.Half.toFloat
-import android.widget.Toast
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.MutableTransitionState
-import androidx.compose.animation.expandIn
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
-import androidx.compose.animation.shrinkOut
-import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredHeight
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.hfut.schedule.logic.datamodel.zjgd.BillMonth
+import com.hfut.schedule.R
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+
 
 data class Item(var item: String, var isNew: Boolean)
 //在这里放测试布局
+@OptIn(ExperimentalMaterialApi::class)
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun Tests() {
-    Column {
-        var showRed by remember { mutableStateOf(true) }
-        var showGreen by remember { mutableStateOf(true) }
-
-        Button(onClick = { showGreen = !showGreen}) { Text(text = "颜色") }
-
-        AnimatedVisibility(
-            visible = showGreen,
-            enter = scaleIn() + expandVertically(expandFrom = Alignment.CenterVertically),
-            exit = scaleOut() + shrinkVertically(shrinkTowards = Alignment.CenterVertically)
-        ) {
-            Box(
-                Modifier
-                    .size(100.dp)
-                    .background(color = Color.Green, shape = RoundedCornerShape(20.dp))
-            )
+   // val list = remember { List(4){ "Item $it" }.toMutableStateList() }
+    var refreshing by remember { mutableStateOf(false) }
+    // 用协程模拟一个耗时加载
+    val scope = rememberCoroutineScope()
+    val state = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
+        scope.launch {
+            refreshing = true
+            delay(1000) // 模拟数据加载
+            //list+="Item ${list.size+1}"
+            refreshing = false
         }
+    })
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .pullRefresh(state)){
+        LazyVerticalGrid(
+            modifier = Modifier.fillMaxWidth(),
+            //...
+            horizontalArrangement = Arrangement.spacedBy(0.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
 
-        AnimatedVisibility(
-            visible = showRed,
-            // Scale up from the TopLeft by setting TransformOrigin to (0f, 0f), while expanding the
-            // layout size from Top start and fading. This will create a coherent look as if the
-            // scale is impacting the size.
-            enter = scaleIn(transformOrigin = TransformOrigin(0f, 0f)) +
-                    fadeIn() + expandIn(expandFrom = Alignment.TopStart),
-            // Scale down from the TopLeft by setting TransformOrigin to (0f, 0f), while shrinking
-            // the layout towards Top start and fading. This will create a coherent look as if the
-            // scale is impacting the layout size.
-            exit = scaleOut(transformOrigin = TransformOrigin(0f, 0f)) +
-                    fadeOut() + shrinkOut(shrinkTowards = Alignment.TopStart)
-        ) {
-            Box(
-                Modifier
-                    .size(100.dp)
-                    .background(color = Color.Red, shape = RoundedCornerShape(20.dp))
-            )
-        }
+            // 固定两列
+            columns = GridCells.Fixed(2),
+            content = {
+                items(2) {
+                    Card(
+                        elevation = CardDefaults.cardElevation(
+                            defaultElevation = 3.dp
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                horizontal = 4.dp,
+                                vertical = 5.dp
+                            ),
+                        shape = MaterialTheme.shapes.medium
+                    ) {
+                        ListItem(
+                            headlineContent = { Text(text = "余额 ￥110.50") },
+                            // modifier = Modifier.width(185.dp),
+                            supportingContent = { Text(text = "待圈存 ￥$120.50") },
+                            leadingContent = {
+                                Icon(
+                                    painterResource(R.drawable.account_balance_wallet),
+                                    contentDescription = "Localized description",
+                                )
+                            },
+                            colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
+                        )
+                    }
+                }
+            }
+        )
+        PullRefreshIndicator(refreshing, state, Modifier.align(Alignment.TopCenter))
     }
 }
-
 

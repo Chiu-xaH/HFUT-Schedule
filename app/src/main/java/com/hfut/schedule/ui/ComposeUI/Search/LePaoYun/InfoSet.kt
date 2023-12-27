@@ -83,9 +83,7 @@ fun InfoSet() {
                                     SharePrefs.Save("YunRequestBody",inputRequestBody)
                                     Toast.makeText(MyApplication.context,"已保存",Toast.LENGTH_SHORT).show()
                                 }
-                            ) {
-                                Icon(Icons.Filled.Check, contentDescription = "")
-                            }
+                            ) { Icon(Icons.Filled.Check, contentDescription = "") }
                         }
                     )
                 },

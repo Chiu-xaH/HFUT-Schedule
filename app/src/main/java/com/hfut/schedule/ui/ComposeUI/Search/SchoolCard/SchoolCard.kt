@@ -249,7 +249,7 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
                                         .padding(horizontal = 15.dp, vertical = 0.dp), horizontalArrangement = Arrangement.Start){
 
                                         AssistChip(
-                                            onClick = { OpenAlipay.openAlipay() },
+                                            onClick = { OpenAlipay.openAlipay(MyApplication.AlipayCardURL) },
                                             label = { Text(text = "充值") },
                                             leadingIcon = { Icon(painter = painterResource(R.drawable.add), contentDescription = "description") }
                                         )
@@ -496,7 +496,7 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
                 FilledTonalIconButton(
                     modifier = Modifier.scale(scale2.value),
                     interactionSource = interactionSource2,
-                    onClick = { OpenAlipay.openAlipay() }
+                    onClick = { OpenAlipay.openAlipay(MyApplication.AlipayCardURL) }
                 ) {
                     Icon( painterResource(R.drawable.add),
                         contentDescription = "Localized description",)

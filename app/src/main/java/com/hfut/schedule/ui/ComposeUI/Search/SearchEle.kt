@@ -2,9 +2,18 @@ package com.hfut.schedule.ui.ComposeUI.Search
 
 import android.webkit.WebView
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -39,8 +48,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -226,14 +237,6 @@ fun EleUI(vm : LoginSuccessViewModel) {
                 }
             }
         }
-
-       // ModalBottomSheet(
-       //     onDismissRequest = { showBottomSheet = false },
-       //     sheetState = sheetState
-      //  ) {
-
-
-      //  }
     }
 
     Row(modifier = Modifier
@@ -287,6 +290,7 @@ fun EleUI(vm : LoginSuccessViewModel) {
             onClick = {
                 CoroutineScope(Job()).launch {
                     async {
+                        showitem4 = false
                         Save("BuildNumber", BuildingsNumber)
                         Save("EndNumber", EndNumber)
                         Save("RoomNumber", RoomNumber)
@@ -311,7 +315,7 @@ fun EleUI(vm : LoginSuccessViewModel) {
         Spacer(modifier = Modifier.width(10.dp))
 
         AssistChip(
-            onClick = { showitem4 = true },
+            onClick = { showitem4 = !showitem4 },
             label = { Text(text = "房间号 ${RoomNumber}") },
             //leadingIcon = { Icon(painter = painterResource(R.drawable.add), contentDescription = "description") }
         )
@@ -320,47 +324,61 @@ fun EleUI(vm : LoginSuccessViewModel) {
 
     Spacer(modifier = Modifier.height(7.dp))
 
-    if(showitem4) {
+
+    AnimatedVisibility(
+        visible = showitem4,
+        enter = slideInVertically(
+            initialOffsetY = { -40 }
+        ) + expandVertically(
+            expandFrom = Alignment.Top
+        ) + scaleIn(
+            // Animate scale from 0f to 1f using the top center as the pivot point.
+            transformOrigin = TransformOrigin(0.5f, 0f)
+        ) + fadeIn(initialAlpha = 0.3f),
+        exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
+    ){
         Row (modifier = Modifier.padding(horizontal = 15.dp)){
-            OutlinedCard{
-                LazyColumn(modifier = Modifier.padding(horizontal = 10.dp)) {
-                    item {
-                        Text(text = " 选取房间号", modifier = Modifier.padding(10.dp))
-                    }
-                    item {
-                        LazyRow {
-                            items(5) { items ->
-                                IconButton(onClick = {
-                                    if (RoomNumber.length < 3)
-                                        RoomNumber = RoomNumber + items.toString()
-                                    else Toast.makeText(
-                                        MyApplication.context,
-                                        "三位数",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }) { Text(text = items.toString()) }
-                            }
-                        }
-                    }
-                    item {
-                        LazyRow {
-                            items(5) { items ->
-                                val num = items + 5
-                                IconButton(onClick = {
-                                    if (RoomNumber.length < 3)
-                                        RoomNumber = RoomNumber + num
-                                    else Toast.makeText(
-                                        MyApplication.context,
-                                        "三位数",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }) { Text(text = num.toString()) }
-                            }
+        OutlinedCard{
+            LazyColumn(modifier = Modifier.padding(horizontal = 10.dp)) {
+                item {
+                    Text(text = " 选取房间号", modifier = Modifier.padding(10.dp))
+                }
+                item {
+                    LazyRow {
+                        items(5) { items ->
+                            IconButton(onClick = {
+                                if (RoomNumber.length < 3)
+                                    RoomNumber = RoomNumber + items.toString()
+                                else Toast.makeText(
+                                    MyApplication.context,
+                                    "三位数",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }) { Text(text = items.toString()) }
                         }
                     }
                 }
-                Spacer(modifier = Modifier.height(10.dp))
+                item {
+                    LazyRow {
+                        items(5) { items ->
+                            val num = items + 5
+                            IconButton(onClick = {
+                                if (RoomNumber.length < 3)
+                                    RoomNumber = RoomNumber + num
+                                else Toast.makeText(
+                                    MyApplication.context,
+                                    "三位数",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }) { Text(text = num.toString()) }
+                        }
+                    }
+                }
             }
+            Spacer(modifier = Modifier.height(10.dp))
         }
-    }
+    }}
+   // if(showitem4) {
+
+//    }
 }

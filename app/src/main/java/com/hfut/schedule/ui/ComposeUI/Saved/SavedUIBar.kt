@@ -54,7 +54,7 @@ fun NoNetWork(vm : LoginSuccessViewModel) {
 
 
 //判定是否以聚焦作为第一页
-    when (prefs.getBoolean("SWITCHFOCUS",false)) {
+    when (prefs.getBoolean("SWITCHFOCUS",true)) {
         true -> first = "2"
         false -> first = "1"
     }

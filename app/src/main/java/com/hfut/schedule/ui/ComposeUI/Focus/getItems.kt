@@ -1,10 +1,13 @@
 package com.hfut.schedule.ui.ComposeUI.Focus
 
+import android.annotation.SuppressLint
 import android.content.Context
 import com.google.gson.Gson
 import com.hfut.schedule.MyApplication
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.SharePrefs
+import com.hfut.schedule.logic.dao.dataBase
+import com.hfut.schedule.logic.datamodel.AddFocus
 import com.hfut.schedule.logic.datamodel.MyAPIResponse
 import com.hfut.schedule.logic.datamodel.MyList
 import com.hfut.schedule.logic.datamodel.Schedule
@@ -78,6 +81,28 @@ fun MySchedule() : MutableList<Schedule> {
     list.forEach { Schedule.add(it) }
     return Schedule
 }
+
+
+@SuppressLint("Range")
+fun AddedItems() : MutableList<AddFocus> {
+    var AddFocus = mutableListOf<AddFocus>()
+    val dbwritableDatabase =  dataBase.writableDatabase
+    val cursor = dbwritableDatabase.query("Book",null,null,null,null,null,null)
+    if(cursor.moveToFirst()){
+        do{
+            val titles = cursor.getString(cursor.getColumnIndex("title"))
+            val infos = cursor.getString(cursor.getColumnIndex("info"))
+            val remarks = cursor.getString(cursor.getColumnIndex("remark"))
+            val ids = cursor.getString(cursor.getColumnIndex("id")).toInt()
+            val AddFocu = AddFocus(titles,infos,remarks,ids)
+            AddFocus.add(AddFocu)
+        } while (cursor.moveToNext())
+    }
+    cursor.close()
+    return AddFocus
+}
+
+
 
 fun MyWangKe() : MutableList<MyList> {
 

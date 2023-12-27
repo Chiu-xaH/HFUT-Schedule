@@ -5,6 +5,15 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -18,10 +27,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -39,11 +53,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
@@ -57,6 +74,7 @@ import com.hfut.schedule.logic.datamodel.FocusCourse
 import com.hfut.schedule.logic.datamodel.Jxglstu.datumResponse
 import com.hfut.schedule.ui.ComposeUI.Focus.AddButton
 import com.hfut.schedule.ui.ComposeUI.Focus.AddItem
+import com.hfut.schedule.ui.ComposeUI.Focus.AddedItems
 import com.hfut.schedule.ui.ComposeUI.Search.NotificationItems
 import com.hfut.schedule.ui.ComposeUI.MyToast
 import com.hfut.schedule.ui.ComposeUI.Search.getNotifications
@@ -74,13 +92,15 @@ import com.hfut.schedule.ui.ComposeUI.Focus.zjgdcard
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-@SuppressLint("SuspiciousIndentation")
+@SuppressLint("SuspiciousIndentation", "CoroutineCreationDuringComposition")
 @RequiresApi(Build.VERSION_CODES.O)
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun TodayScreen(vm : LoginSuccessViewModel) {
 
@@ -316,20 +336,44 @@ fun TodayScreen(vm : LoginSuccessViewModel) {
     }
 
 //Today操作区///////////////////////////////////////////////////////////////////////////////////////////////////
+suspend fun FocusUpdate(){
         CoroutineScope(Job()).apply {
-            async { zjgdcard(vm) }
             async {
                 val json = prefs.getString("json", "")
                 if (json?.contains("result") == true) {
-                    Datum()
-                    DatumTomorrow()
+                    async { Datum() }
+                    async { DatumTomorrow() }
                 } else MyToast("本地数据为空,请登录以更新数据")
             }
-            async{ ExamGet() }
-            async{ MyWangKe() }
-            async{ MySchedule() }
+            async { ExamGet() }
+            async { MyWangKe() }
+            async { MySchedule() }
+            async { AddedItems() }
             async { getNotifications() }
+            async { zjgdcard(vm) }.await()
         }
+    }
+
+    CoroutineScope(Job()).launch{ FocusUpdate() }
+
+    //刷新
+    var refreshing by remember { mutableStateOf(false) }
+    // 用协程模拟一个耗时加载
+    val scope = rememberCoroutineScope()
+    var states = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
+        scope.launch {
+            async {
+                refreshing = true
+                FocusUpdate()
+            }.await()
+            async {
+                refreshing = false
+                MyToast("刷新成功")
+            }
+
+        }
+    })
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //布局///////////////////////////////////////
 
@@ -416,7 +460,9 @@ fun TodayScreen(vm : LoginSuccessViewModel) {
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            Box(modifier = Modifier.fillMaxHeight()){
+            Box(modifier = Modifier
+                .fillMaxHeight()
+                .pullRefresh(states)){
                 val scrollstate = rememberLazyListState()
                 val shouldShowAddButton = scrollstate.firstVisibleItemScrollOffset  == 0
                 var date = GetDate.Date_MM_dd
@@ -456,16 +502,20 @@ fun TodayScreen(vm : LoginSuccessViewModel) {
                             //日程
                             items(MySchedule().size) { item -> FutureMyScheuleItem(item = item, MySchedule = MySchedule()) }
                             //网课
-                            items(MyWangKe().size,key = {it}) { item -> WangkeItem(item = item, MyWangKe = MyWangKe(),{it}) }
+                            items(MyWangKe().size) { item -> WangkeItem(item = item, MyWangKe = MyWangKe()) }
                         }
 
                         //第二天课表
                         if (formattedTime.toInt() < 18)
                             items(DatumTomorrow().size) { item -> TomorrowCourseItem(item = item, DatumTomorrow = DatumTomorrow()) }
+
+                        items(AddedItems().size){item -> AddItem(item = item, AddedItems = AddedItems()) }
+
                     }
                     item { Spacer(modifier = Modifier.height(100.dp)) }
                 }
                 AddButton(isVisible = shouldShowAddButton)
+                PullRefreshIndicator(refreshing, states, Modifier.align(Alignment.TopCenter))
             }
 
         }

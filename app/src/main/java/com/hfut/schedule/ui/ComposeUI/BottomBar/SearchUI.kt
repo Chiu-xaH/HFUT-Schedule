@@ -24,6 +24,7 @@ import com.hfut.schedule.ui.ComposeUI.Search.EmptyRoom
 import com.hfut.schedule.ui.ComposeUI.Search.Estimate
 import com.hfut.schedule.ui.ComposeUI.Search.Exam
 import com.hfut.schedule.ui.ComposeUI.Search.Grade
+import com.hfut.schedule.ui.ComposeUI.Search.HotWater
 import com.hfut.schedule.ui.ComposeUI.Search.LibraryItem
 import com.hfut.schedule.ui.ComposeUI.Search.PersonUI
 import com.hfut.schedule.ui.ComposeUI.Search.Program
@@ -97,8 +98,9 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,) {
                 LePaoYun(vm)
                 SearchEle(vm)
                 NotificationsCenter()
-                if (prefs.getBoolean("SWITCHBETA",false)){
 
+                if (prefs.getBoolean("SWITCHBETA",false)){
+                    HotWater()
                 }
             } else {
                 Grade()
@@ -113,7 +115,9 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,) {
                 LePaoYun(vm)
                 SearchEle(vm)
                 NotificationsCenter()
+
                 if (prefs.getBoolean("SWITCHBETA",false)){
+                    HotWater()
                     Estimate()
                     SchoolBus()
                     Second()

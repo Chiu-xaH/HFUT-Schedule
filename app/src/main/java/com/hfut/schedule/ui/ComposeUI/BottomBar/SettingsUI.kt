@@ -45,6 +45,7 @@ import com.hfut.schedule.ui.ComposeUI.Settings.MyAPIItem
 import com.hfut.schedule.ui.ComposeUI.Settings.MonetColorItem
 import com.hfut.schedule.ui.ComposeUI.Settings.SettingsItems
 import com.hfut.schedule.ui.ComposeUI.Search.WebUI
+import com.hfut.schedule.ui.ComposeUI.Settings.FocusSetting
 
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,22 +53,19 @@ import com.hfut.schedule.ui.ComposeUI.Search.WebUI
 fun SettingsScreen(vm : LoginSuccessViewModel
                    ,showlable : Boolean,
                    showlablechanged: (Boolean) -> Unit, ) {
-    val switch_card = prefs.getBoolean("SWITCHCARD",true)
-    var showcard by remember { mutableStateOf(switch_card) }
-    val switch_api = prefs.getBoolean("SWITCHMYAPI",true)
-    var showapi by remember { mutableStateOf(switch_api) }
+
     val switch_beta = prefs.getBoolean("SWITCHBETA",true)
     var showbeta by remember { mutableStateOf(switch_beta) }
-    val switch_focus = prefs.getBoolean("SWITCHFOCUS",false)
+    val switch_focus = prefs.getBoolean("SWITCHFOCUS",true)
     var showfocus by remember { mutableStateOf(switch_focus) }
 
 
     val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
     if (sp.getBoolean("SWITCH", true) != showlable) { sp.edit().putBoolean("SWITCH", showlable).apply() }
-    if (sp.getBoolean("SWITCHCARD", true) != showcard) { sp.edit().putBoolean("SWITCHCARD", showcard).apply() }
-    if (sp.getBoolean("SWITCHMYAPI", true) != showapi) { sp.edit().putBoolean("SWITCHMYAPI", showapi).apply() }
+
+
     if (sp.getBoolean("SWITCHBETA", false) != showbeta) { sp.edit().putBoolean("SWITCHBETA", showbeta).apply() }
-    if (sp.getBoolean("SWITCHFOCUS", false) != showfocus) { sp.edit().putBoolean("SWITCHFOCUS", showfocus).apply() }
+    if (sp.getBoolean("SWITCHFOCUS", true) != showfocus) { sp.edit().putBoolean("SWITCHFOCUS", showfocus).apply() }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -85,11 +83,8 @@ fun SettingsScreen(vm : LoginSuccessViewModel
             .verticalScroll(rememberScrollState())
             .fillMaxSize()) {
 
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                MyAPIItem()
-
+            Spacer(modifier = Modifier.height(10.dp))
+            MyAPIItem()
 
             ListItem(
                 headlineContent = { Text(text = "底栏标签") },
@@ -98,20 +93,6 @@ fun SettingsScreen(vm : LoginSuccessViewModel
                 modifier = Modifier.clickable { showlablechanged }
             )
 
-            ListItem(
-                headlineContent = { Text(text = "聚焦显示一卡通") },
-                leadingContent = { Icon(painterResource(R.drawable.credit_card), contentDescription = "Localized description",) },
-                trailingContent = { Switch(checked = showcard, onCheckedChange = { showcardch -> showcard = showcardch }) },
-                modifier = Modifier.clickable { showcard = !showcard }
-            )
-
-            ListItem(
-                headlineContent = { Text(text = "聚焦接口") },
-                supportingContent = { Text(text = "本接口提供了除学校系统之外的聚焦信息")},
-                leadingContent = { Icon(painterResource(R.drawable.api), contentDescription = "Localized description",) },
-                trailingContent = { Switch(checked = showapi, onCheckedChange = {showapich -> showapi = showapich }) },
-                modifier = Modifier.clickable { showapi = !showapi }
-            )
 
             ListItem(
                 headlineContent = { Text(text = "聚焦优先") },
@@ -121,10 +102,6 @@ fun SettingsScreen(vm : LoginSuccessViewModel
                 modifier = Modifier.clickable { showfocus = !showfocus }
             )
 
-
-
-
-
             var showBottomSheet_input by remember { mutableStateOf(false) }
             val sheetState_input = rememberModalBottomSheetState()
             if (showBottomSheet_input) {
@@ -133,6 +110,18 @@ fun SettingsScreen(vm : LoginSuccessViewModel
                     sheetState = sheetState_input
                 ) {
                     InfoSet()
+                    Spacer(modifier = Modifier.height(100.dp))
+                }
+            }
+
+            var showBottomSheet_focus by remember { mutableStateOf(false) }
+            var sheetState_focus = rememberModalBottomSheetState()
+            if (showBottomSheet_focus) {
+                ModalBottomSheet(
+                    onDismissRequest = { showBottomSheet_focus = false },
+                    sheetState = sheetState_focus
+                ) {
+                    FocusSetting()
                     Spacer(modifier = Modifier.height(100.dp))
                 }
             }
@@ -152,12 +141,13 @@ fun SettingsScreen(vm : LoginSuccessViewModel
                 modifier = Modifier.clickable { showBottomSheet_input = true }
             )
 
+            ListItem(
+                headlineContent = { Text(text = "聚焦编辑") },
+                supportingContent = { Text(text = "自定义聚焦的内容及信息来源")},
+                leadingContent = { Icon(painterResource(R.drawable.edit), contentDescription = "Localized description",) },
+                modifier = Modifier.clickable { showBottomSheet_focus = true }
+            )
 
-            // ListItem(
-             //   headlineContent = { Text(text = "聚焦信息 添加") },
-               // leadingContent = { Icon(painterResource(R.drawable.add_circle), contentDescription = "Localized description",) },
-              //  modifier = Modifier.clickable {  }
-           // )
 
             SettingsItems()
 
