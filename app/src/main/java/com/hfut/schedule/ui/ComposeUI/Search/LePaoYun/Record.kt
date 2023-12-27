@@ -14,7 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.google.gson.Gson
-import com.hfut.schedule.logic.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.datamodel.LePaoYun.LePaoYunRecordResponse
 
 

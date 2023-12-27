@@ -27,18 +27,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.core.content.FileProvider
 import com.google.gson.Gson
-import com.hfut.schedule.MyApplication
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.SharePrefs
-import com.hfut.schedule.logic.SharePrefs.SaveBoolean
-import com.hfut.schedule.logic.SharePrefs.prefs
-import com.hfut.schedule.logic.StartUri.StartUri
+import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.SharePrefs.SaveBoolean
+import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.StartUri.StartUri
 import com.hfut.schedule.logic.datamodel.MyAPIResponse
-import com.hfut.schedule.ui.ComposeUI.LittleDialog
-import java.io.File
-import java.net.URLConnection
+import com.hfut.schedule.ui.UIUtils.LittleDialog
 
 
 fun Clear() {
@@ -154,7 +151,7 @@ fun SettingsItems() {
         // supportingText =
         leadingContent = { Icon(painterResource(id =R.drawable.rotate_right), contentDescription = "") },
         modifier = Modifier.clickable{
-            val semesterId = Gson().fromJson(prefs.getString("my",MyApplication.NullMy), MyAPIResponse::class.java).semesterId
+            val semesterId = Gson().fromJson(prefs.getString("my", MyApplication.NullMy), MyAPIResponse::class.java).semesterId
             if(semesterId != null)
                 SharePrefs.Save("semesterId",semesterId)
             Toast.makeText(MyApplication.context,"当前为 ${semesterId}",Toast.LENGTH_SHORT).show()

@@ -18,25 +18,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
-import com.hfut.schedule.logic.SharePrefs.prefs
-import com.hfut.schedule.ui.ComposeUI.Search.CourseTotal
-import com.hfut.schedule.ui.ComposeUI.Search.EmptyRoom
-import com.hfut.schedule.ui.ComposeUI.Search.Estimate
-import com.hfut.schedule.ui.ComposeUI.Search.Exam
-import com.hfut.schedule.ui.ComposeUI.Search.Grade
-import com.hfut.schedule.ui.ComposeUI.Search.HotWater
-import com.hfut.schedule.ui.ComposeUI.Search.LibraryItem
-import com.hfut.schedule.ui.ComposeUI.Search.PersonUI
-import com.hfut.schedule.ui.ComposeUI.Search.Program
+import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.ui.ComposeUI.Search.Indevelopment.CourseTotal
+import com.hfut.schedule.ui.ComposeUI.Search.EmptyRoom.EmptyRoom
+import com.hfut.schedule.ui.ComposeUI.Search.Indevelopment.Estimate
+import com.hfut.schedule.ui.ComposeUI.Search.Exam.Exam
+import com.hfut.schedule.ui.ComposeUI.Search.Grade.Grade
+import com.hfut.schedule.ui.ComposeUI.Search.HotWater.HotWater
+import com.hfut.schedule.ui.ComposeUI.Search.Library.LibraryItem
+import com.hfut.schedule.ui.ComposeUI.Search.Person.PersonUI
+import com.hfut.schedule.ui.ComposeUI.Search.Program.Program
 import com.hfut.schedule.ui.ComposeUI.Search.SchoolCard.SchoolCardItem
 import com.hfut.schedule.ui.ComposeUI.Search.Xuanqu.XuanquItem
-import com.hfut.schedule.ui.ComposeUI.Search.WebUI
+import com.hfut.schedule.ui.ComposeUI.Search.Web.WebUI
 import com.hfut.schedule.ui.ComposeUI.Search.LePaoYun.LePaoYun
-import com.hfut.schedule.ui.ComposeUI.Search.NotificationsCenter
-import com.hfut.schedule.ui.ComposeUI.Search.SchoolBus
-import com.hfut.schedule.ui.ComposeUI.Search.SearchEle
-import com.hfut.schedule.ui.ComposeUI.Search.Second
-import com.hfut.schedule.ui.ComposeUI.Search.XueGong
+import com.hfut.schedule.ui.ComposeUI.Search.NotificationsCenter.NotificationsCenter
+import com.hfut.schedule.ui.ComposeUI.Search.Indevelopment.SchoolBus
+import com.hfut.schedule.ui.ComposeUI.Search.Electric.Electric
+import com.hfut.schedule.ui.ComposeUI.Search.Indevelopment.Second
+import com.hfut.schedule.ui.ComposeUI.Search.Indevelopment.XueGong
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -96,14 +96,14 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,) {
                 XuanquItem(vm)
                 WebUI()
                 LePaoYun(vm)
-                SearchEle(vm)
+                Electric(vm)
                 NotificationsCenter()
 
                 if (prefs.getBoolean("SWITCHBETA",false)){
                     HotWater()
                 }
             } else {
-                Grade()
+                Grade(vm)
                 Exam()
                 Program()
                 PersonUI()
@@ -113,7 +113,7 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,) {
                 XuanquItem(vm)
                 WebUI()
                 LePaoYun(vm)
-                SearchEle(vm)
+                Electric(vm)
                 NotificationsCenter()
 
                 if (prefs.getBoolean("SWITCHBETA",false)){

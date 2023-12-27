@@ -53,11 +53,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.gson.Gson
-import com.hfut.schedule.MyApplication
-import com.hfut.schedule.logic.GetDate
-import com.hfut.schedule.logic.GetDate.Benweeks
-import com.hfut.schedule.logic.GetDate.Date_MM_dd
-import com.hfut.schedule.logic.GetDate.weeksBetween
+import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.logic.utils.GetDate
+import com.hfut.schedule.logic.utils.GetDate.Benweeks
+import com.hfut.schedule.logic.utils.GetDate.Date_MM_dd
+import com.hfut.schedule.logic.utils.GetDate.weeksBetween
 import com.hfut.schedule.logic.datamodel.Jxglstu.datumResponse
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -471,7 +471,8 @@ if (json?.contains("result") == true) {
                                         shape = MaterialTheme.shapes.extraSmall,
                                         onClick = {
                                           //  Log.d("测试",sheet[rowIndex][columnIndex])
-                                            if (sheet[rowIndex][columnIndex].contains("课")) Toast.makeText(MyApplication.context, sheet[rowIndex][columnIndex], Toast.LENGTH_SHORT).show()
+                                            if (sheet[rowIndex][columnIndex].contains("课")) Toast.makeText(
+                                                MyApplication.context, sheet[rowIndex][columnIndex], Toast.LENGTH_SHORT).show()
                                             else Toast.makeText(MyApplication.context,"空数据", Toast.LENGTH_SHORT).show()
 
                                        }

@@ -3,7 +3,7 @@ package com.hfut.schedule.ui.MonetColor
 import android.graphics.BitmapFactory
 import androidx.datastore.preferences.core.edit
 import androidx.palette.graphics.Palette
-import com.hfut.schedule.MyApplication
+import com.hfut.schedule.App.MyApplication
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow

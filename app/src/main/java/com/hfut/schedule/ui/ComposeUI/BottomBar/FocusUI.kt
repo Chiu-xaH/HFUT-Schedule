@@ -5,39 +5,24 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
-import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -56,28 +41,26 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
-import com.hfut.schedule.MyApplication
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
-import com.hfut.schedule.logic.GetDate
-import com.hfut.schedule.logic.SharePrefs
-import com.hfut.schedule.logic.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.GetDate
+import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.datamodel.FocusCourse
 import com.hfut.schedule.logic.datamodel.Jxglstu.datumResponse
 import com.hfut.schedule.ui.ComposeUI.Focus.AddButton
 import com.hfut.schedule.ui.ComposeUI.Focus.AddItem
 import com.hfut.schedule.ui.ComposeUI.Focus.AddedItems
-import com.hfut.schedule.ui.ComposeUI.Search.NotificationItems
-import com.hfut.schedule.ui.ComposeUI.MyToast
-import com.hfut.schedule.ui.ComposeUI.Search.getNotifications
+import com.hfut.schedule.ui.ComposeUI.Search.NotificationsCenter.NotificationItems
+import com.hfut.schedule.ui.UIUtils.MyToast
+import com.hfut.schedule.ui.ComposeUI.Search.NotificationsCenter.getNotifications
 import com.hfut.schedule.ui.ComposeUI.Focus.ExamGet
 import com.hfut.schedule.ui.ComposeUI.Focus.ExamItem
 import com.hfut.schedule.ui.ComposeUI.Focus.FutureMyScheuleItem
@@ -92,7 +75,6 @@ import com.hfut.schedule.ui.ComposeUI.Focus.zjgdcard
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -426,7 +408,8 @@ suspend fun FocusUpdate(){
                             BadgedBox(badge = {
                                 if (getNotifications().size.toString() != prefs.getString("Notifications",""))
                                 Badge()
-                                Log.d("s",getNotifications().size.toString() + prefs.getString("Notifications",""))
+                                Log.d("s",
+                                    getNotifications().size.toString() + prefs.getString("Notifications",""))
                             }) {
                                 Icon(
                                     painterResource(id = R.drawable.notifications),

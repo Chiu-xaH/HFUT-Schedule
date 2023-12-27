@@ -39,9 +39,9 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.hfut.schedule.MyApplication
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.SharePrefs
+import com.hfut.schedule.logic.utils.SharePrefs
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

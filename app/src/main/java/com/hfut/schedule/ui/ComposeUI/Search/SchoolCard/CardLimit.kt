@@ -28,9 +28,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import com.hfut.schedule.MyApplication
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
-import com.hfut.schedule.logic.SharePrefs
+import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.datamodel.zjgd.ChangeLimitResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job

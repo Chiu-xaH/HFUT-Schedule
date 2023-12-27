@@ -16,13 +16,13 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.gson.Gson
-import com.hfut.schedule.MyApplication
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
-import com.hfut.schedule.logic.SharePrefs.Save
-import com.hfut.schedule.logic.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.SharePrefs.Save
+import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.datamodel.MyAPIResponse
 import com.hfut.schedule.ui.ComposeUI.Activity.SuccessUI
-import com.hfut.schedule.ui.ComposeUI.TransparentSystemBars
+import com.hfut.schedule.ui.UIUtils.TransparentSystemBars
 import com.hfut.schedule.ui.MonetColor.LocalCurrentStickerUuid
 import com.hfut.schedule.ui.MonetColor.MainIntent
 import com.hfut.schedule.ui.MonetColor.MainViewModel
@@ -62,7 +62,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
                 vm.Jxglstulogin(cookie!!)
             }
             launch {
-                val semesterId = Gson().fromJson(prefs.getString("my",MyApplication.NullMy), MyAPIResponse::class.java).semesterId
+                val semesterId = Gson().fromJson(prefs.getString("my", MyApplication.NullMy), MyAPIResponse::class.java).semesterId
                 if(semesterId != null)
                     Save("semesterId",semesterId)
                 else  Save("semesterId","234")

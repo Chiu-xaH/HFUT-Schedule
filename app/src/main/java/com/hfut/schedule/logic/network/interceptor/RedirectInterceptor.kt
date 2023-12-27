@@ -1,14 +1,10 @@
 package com.hfut.schedule.logic.network.interceptor
 
-import android.preference.PreferenceManager
-import android.util.Log
-import com.hfut.schedule.MyApplication
-import com.hfut.schedule.logic.SharePrefs
+import com.hfut.schedule.logic.utils.SharePrefs
 import okhttp3.Interceptor
 import okhttp3.Response
-import java.io.IOException
 
-    class RedirectInterceptor : Interceptor {
+class RedirectInterceptor : Interceptor {
         override fun intercept(chain: Interceptor.Chain): Response {
             val request = chain.request()
             val response = chain.proceed(request)

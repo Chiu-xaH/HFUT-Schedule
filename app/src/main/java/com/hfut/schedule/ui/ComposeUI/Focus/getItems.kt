@@ -3,9 +3,9 @@ package com.hfut.schedule.ui.ComposeUI.Focus
 import android.annotation.SuppressLint
 import android.content.Context
 import com.google.gson.Gson
-import com.hfut.schedule.MyApplication
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
-import com.hfut.schedule.logic.SharePrefs
+import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.dao.dataBase
 import com.hfut.schedule.logic.datamodel.AddFocus
 import com.hfut.schedule.logic.datamodel.MyAPIResponse

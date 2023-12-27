@@ -1,7 +1,6 @@
 package com.hfut.schedule.ui.ComposeUI.Focus
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
@@ -23,9 +22,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
@@ -57,19 +53,16 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.hfut.schedule.MyApplication
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
-import com.hfut.schedule.logic.GetDate
+import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.datamodel.AddFocus
 import com.hfut.schedule.logic.datamodel.FocusCourse
 import com.hfut.schedule.logic.datamodel.MyList
 import com.hfut.schedule.logic.datamodel.Schedule
-import com.hfut.schedule.ui.ComposeUI.MyToast
+import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.ComposeUI.Search.SchoolCard.SchoolCardItem
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 
 @Composable
 fun TodayCardItem(vm : LoginSuccessViewModel) {

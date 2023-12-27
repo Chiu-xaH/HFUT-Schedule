@@ -1,7 +1,6 @@
 package com.hfut.schedule.ui.ComposeUI.Search.SchoolCard
 
 import android.preference.PreferenceManager
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -21,7 +20,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -37,12 +35,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
-import com.hfut.schedule.MyApplication
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
-import com.hfut.schedule.logic.GetDate
-import com.hfut.schedule.logic.SharePrefs
-import com.hfut.schedule.logic.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.datamodel.zjgd.BillResponse
 import com.hfut.schedule.logic.datamodel.zjgd.records
 import kotlinx.coroutines.CoroutineScope
@@ -51,7 +48,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
-import java.math.RoundingMode
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -65,7 +61,7 @@ fun SearchBillsUI(vm : LoginSuccessViewModel) {
     var page by remember { mutableStateOf(1) }
 
   fun Items() : MutableList<records> {
-    val result = prefs.getString("searchbills",MyApplication.NullBill)
+    val result = prefs.getString("searchbills", MyApplication.NullBill)
     val data = Gson().fromJson(result,BillResponse::class.java)
     val records = data.data.records
     var BillItems = mutableListOf<records>()

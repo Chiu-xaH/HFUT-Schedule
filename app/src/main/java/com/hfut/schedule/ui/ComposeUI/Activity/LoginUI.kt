@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.preference.PreferenceManager
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
@@ -51,20 +50,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import com.hfut.schedule.MyApplication
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginViewModel
 import com.hfut.schedule.activity.LoginSuccessAcitivity
 import com.hfut.schedule.activity.SavedCoursesActivity
 import com.hfut.schedule.logic.Encrypt.AESEncrypt
-import com.hfut.schedule.logic.SharePrefs
-import com.hfut.schedule.logic.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.ComposeUI.Settings.FirstCube
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -157,7 +154,7 @@ fun LoginUI(vm : LoginViewModel) {
     var showBottomSheet by remember { mutableStateOf(false) }
 
     var showBadge by remember { mutableStateOf(false) }
-    if (MyApplication.version != prefs.getString("version",MyApplication.version)) showBadge = true
+    if (MyApplication.version != prefs.getString("version", MyApplication.version)) showBadge = true
 
     if (showBottomSheet) {
         ModalBottomSheet(

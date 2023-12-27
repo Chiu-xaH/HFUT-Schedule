@@ -1,10 +1,6 @@
 package com.hfut.schedule.logic.network.ServiceCreator
 
-import com.hfut.schedule.MyApplication
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
+import com.hfut.schedule.App.MyApplication
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 

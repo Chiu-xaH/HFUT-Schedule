@@ -1,6 +1,6 @@
 package com.hfut.schedule.logic.dao
 
-import com.hfut.schedule.MyApplication
+import com.hfut.schedule.App.MyApplication
 
 val  WANGKE = 1
 val  SCHEDULE = 2

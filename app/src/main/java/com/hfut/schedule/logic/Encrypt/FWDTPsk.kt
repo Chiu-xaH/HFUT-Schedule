@@ -2,7 +2,7 @@ package com.hfut.schedule.logic.Encrypt
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import com.hfut.schedule.logic.SharePrefs
+import com.hfut.schedule.logic.utils.SharePrefs
 import org.jsoup.Jsoup
 import java.util.Base64
 object FWDTPsk {

@@ -38,13 +38,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
-import com.hfut.schedule.MyApplication
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
-import com.hfut.schedule.logic.SharePrefs.Save
-import com.hfut.schedule.logic.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.SharePrefs.Save
+import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.datamodel.LePaoYun.LePaoYunHomeResponse
-import com.hfut.schedule.ui.ComposeUI.LittleDialog
+import com.hfut.schedule.ui.UIUtils.LittleDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -60,7 +60,7 @@ fun Update(vm : LoginSuccessViewModel) {
         async {vm.getRunRecord(token!!,RequestBody!!)}.await()
         async {
             delay(400)
-            val json = prefs.getString("LePaoYun",MyApplication.NullLePao)
+            val json = prefs.getString("LePaoYun", MyApplication.NullLePao)
             val result = Gson().fromJson(json, LePaoYunHomeResponse::class.java)
             val msg = result.msg
             if (msg.contains("成功")) {
@@ -126,7 +126,7 @@ fun LePaoYun(vm : LoginSuccessViewModel) {
 fun LePaoYunUI() {
     val sheetState_Record = rememberModalBottomSheetState()
     var showBottomSheet_Record by remember { mutableStateOf(false) }
-    val json = prefs.getString("LePaoYun",MyApplication.NullLePao)
+    val json = prefs.getString("LePaoYun", MyApplication.NullLePao)
 //Log.d("j",json.toString())
     val result = Gson().fromJson(json, LePaoYunHomeResponse::class.java)
     val msg = result.msg

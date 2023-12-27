@@ -7,11 +7,10 @@ import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
-import com.hfut.schedule.logic.SharePrefs
-import com.hfut.schedule.logic.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.datamodel.Jxglstu.lessonIdsResponse
 import com.hfut.schedule.logic.datamodel.One.BorrowBooksResponse
-import com.hfut.schedule.logic.datamodel.One.CardResponse
 import com.hfut.schedule.logic.datamodel.One.SubBooksResponse
 import com.hfut.schedule.logic.datamodel.One.getTokenResponse
 import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuHTMLServiceCreator
@@ -299,33 +298,6 @@ class LoginSuccessViewModel : ViewModel() {
 
     }
 
-
-    fun getCard(token : String)  {
-
-        val call = One.getCard(token)
-
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val json = response.body()?.string()
-                if (json != null) {
-                    if (json.contains("--")) {
-                        SharePrefs.Save("card", "--")
-                    } else {
-                        val data = Gson().fromJson(json, CardResponse::class.java)
-                        val code = data.msg
-                        if (code == "success") {
-                            val card = data.data.toString()
-                            SharePrefs.Save("card", card)
-                        }
-                    }
-                } else SharePrefs.Save("card", "请登录刷新")
-
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
-
-    }
 
     fun searchEle(jsondata : String) {
         val call = searchEle.searchEle(jsondata,"synjones.onecard.query.elec.roominfo",true)

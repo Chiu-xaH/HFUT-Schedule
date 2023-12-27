@@ -14,11 +14,8 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.hfut.schedule.MyApplication
-import com.hfut.schedule.ui.ComposeUI.TransparentSystemBars
+import com.hfut.schedule.ui.UIUtils.TransparentSystemBars
 import com.hfut.schedule.ViewModel.LoginViewModel
-import com.hfut.schedule.logic.SharePrefs
-import com.hfut.schedule.logic.SharePrefs.prefs
 import com.hfut.schedule.ui.ComposeUI.Activity.LoginUI
 import com.hfut.schedule.ui.MonetColor.LocalCurrentStickerUuid
 import com.hfut.schedule.ui.MonetColor.MainIntent

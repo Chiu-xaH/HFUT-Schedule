@@ -51,15 +51,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
-import com.hfut.schedule.MyApplication
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
-import com.hfut.schedule.logic.GetDate
-import com.hfut.schedule.logic.OpenAlipay
-import com.hfut.schedule.logic.SharePrefs
+import com.hfut.schedule.logic.utils.GetDate
+import com.hfut.schedule.logic.utils.OpenAlipay
+import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.datamodel.zjgd.BillResponse
 import com.hfut.schedule.logic.datamodel.zjgd.records
-import com.hfut.schedule.ui.ComposeUI.MyToast
+import com.hfut.schedule.ui.UIUtils.MyToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -109,7 +109,7 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
 
 
     fun BillItem() :MutableList<records> {
-        val billjson = prefs.getString("cardliushui",MyApplication.NullBill)
+        val billjson = prefs.getString("cardliushui", MyApplication.NullBill)
         val bill = Gson().fromJson(billjson, BillResponse::class.java)
         val data = bill.data.records
         val msg = bill.data.msg

@@ -1,6 +1,6 @@
 package com.hfut.schedule.logic.network.ServiceCreator.Jxglstu
 
-import com.hfut.schedule.MyApplication
+import com.hfut.schedule.App.MyApplication
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

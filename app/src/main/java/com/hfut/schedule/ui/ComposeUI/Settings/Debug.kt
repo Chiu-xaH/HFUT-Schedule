@@ -23,7 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
-import com.hfut.schedule.ui.ComposeUI.Tests
+import com.hfut.schedule.ui.UIUtils.Tests
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -4,7 +4,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.widget.Toast
-import com.hfut.schedule.MyApplication
+import com.hfut.schedule.App.MyApplication
 
 class Database (context: Context, name:String, version:Int) : SQLiteOpenHelper(context,name,null,version) {
     val Book = "create table Book ("+
