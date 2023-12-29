@@ -1,6 +1,8 @@
 package com.hfut.schedule.ui.ComposeUI.Search.LePaoYun
 
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -51,7 +53,13 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+fun OpenLePao() {
+    val intent = MyApplication.context.packageManager.getLaunchIntentForPackage("com.yunzhi.tiyu")
+    intent?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 
+    if (intent != null) MyApplication.context.startActivity(intent)
+    else  Toast.makeText(MyApplication.context, "没有找到这个应用", Toast.LENGTH_SHORT).show()
+}
 fun Update(vm : LoginSuccessViewModel) {
     val token =  prefs.getString("Yuntoken","")?.trim()
     val RequestBody =  prefs.getString("YunRequestBody","")?.trim()
@@ -87,8 +95,8 @@ fun LePaoYun(vm : LoginSuccessViewModel) {
     ListItem(
         headlineContent = {
             if (msg != null) {
-                if (msg.contains("成功")) Text(text = "校园跑  ${distance} km")
-                else Text(text = "校园跑")
+                if (msg.contains("成功")) Text(text = "云运动  ${distance} km")
+                else Text(text = "云运动")
             }
                           },
         leadingContent = { Icon(painter = painterResource(id = R.drawable.mode_of_travel), contentDescription = "")},
@@ -141,7 +149,7 @@ fun LePaoYunUI() {
 
 
         if (showBottomSheet_Record) {
-            ModalBottomSheet(onDismissRequest = { showBottomSheet_Record = false }) {
+            ModalBottomSheet(onDismissRequest = { showBottomSheet_Record = false }, sheetState = sheetState_Record) {
                 RecordUI()
             }
         }
@@ -170,7 +178,7 @@ fun LePaoYunUI() {
                         .padding(horizontal = 15.dp, vertical = 0.dp), horizontalArrangement = Arrangement.Start){
 
                         AssistChip(
-                            onClick = {  },
+                            onClick = { OpenLePao() },
                             label = { Text(text = "打开云运动") },
                            // leadingIcon = { Icon(painter = painterResource(R.drawable.add), contentDescription = "description") }
                         )

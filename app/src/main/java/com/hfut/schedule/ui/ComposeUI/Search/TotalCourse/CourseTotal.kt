@@ -1,12 +1,16 @@
-package com.hfut.schedule.ui.ComposeUI.Search.NotificationsCenter
+package com.hfut.schedule.ui.ComposeUI.Search.TotalCourse
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -25,25 +29,43 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import androidx.glance.appwidget.lazy.LazyColumn
+import com.google.gson.Gson
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.utils.SharePrefs.Save
-import com.hfut.schedule.logic.utils.SharePrefs.SaveInt
+import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.logic.datamodel.Community.CourseTotalResponse
+import com.hfut.schedule.logic.datamodel.Community.courseBasicInfoDTOList
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 
-
-@SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NotificationsCenter() {
-  
-    val sheetState = rememberModalBottomSheetState()
-    var showBottomSheet by remember { mutableStateOf(false) }
+fun CourseTotal(vm :LoginSuccessViewModel) {
+    val sheetState_Total = rememberModalBottomSheetState()
+    var showBottomSheet_Total by remember { mutableStateOf(false) }
+    val CommuityTOKEN = prefs.getString("TOKEN","")
+    CommuityTOKEN?.let { vm.GetCourse(it) }
 
-    if (showBottomSheet) {
+    ListItem(
+        headlineContent = { Text(text = "课程汇总") },
+        leadingContent = {
+            Icon(
+                painterResource(R.drawable.category),
+                contentDescription = "Localized description",
+            )
+        },
+        modifier = Modifier.clickable {
+             showBottomSheet_Total = true
+        }
+    )
 
+    if (showBottomSheet_Total) {
         ModalBottomSheet(
-            onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState) {
+            onDismissRequest = {
+                showBottomSheet_Total = false
+            },
+            sheetState = sheetState_Total
+        ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 topBar = {
@@ -52,7 +74,7 @@ fun NotificationsCenter() {
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        title = { Text("消息中心") }
+                        title = { Text("课程汇总") }
                     )
                 },
             ) { innerPadding ->
@@ -60,22 +82,11 @@ fun NotificationsCenter() {
                     modifier = Modifier
                         .padding(innerPadding)
                         .fillMaxSize()
-                ) { NotificationItems() }
+                ){
+                    CourseTotalUI()
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
             }
         }
     }
-
-    ListItem(
-        headlineContent = { Text(text = "消息中心") },
-        modifier = Modifier.clickable {
-            showBottomSheet = true
-            Save("Notifications", getNotifications().size.toString())
-                                      },
-        leadingContent = {
-            BadgedBox(badge = {
-                if (prefs.getString("Notifications","0") != getNotifications().size.toString())
-                Badge { Text(text = getNotifications().size.toString())}
-            }) { Icon(painter = painterResource(id = R.drawable.notifications), contentDescription = "") }
-        }
-    )
 }

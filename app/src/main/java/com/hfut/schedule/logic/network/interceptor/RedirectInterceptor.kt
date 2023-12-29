@@ -1,5 +1,6 @@
 package com.hfut.schedule.logic.network.interceptor
 
+import android.util.Log
 import com.hfut.schedule.logic.utils.SharePrefs
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -10,12 +11,15 @@ class RedirectInterceptor : Interceptor {
             val response = chain.proceed(request)
             if (response.isRedirect) {
                 val location = response.header("Location").toString()
+              //  Log.d("l",location)
+                val ticket = location.substringAfter("=")
+                SharePrefs.Save("TICKET",ticket)
                 val newRequest = request.newBuilder()
                     .url(location)
                     .build()
                 val newResponse = chain.proceed(newRequest)
                 val str = newResponse.headers.toString()
-               // Log.d("测试1",str)
+             //   Log.d("测试1",str)
 
                 val regex = "Set-Cookie: ([^;]+);".toRegex()
                 val matches = regex.findAll(str)

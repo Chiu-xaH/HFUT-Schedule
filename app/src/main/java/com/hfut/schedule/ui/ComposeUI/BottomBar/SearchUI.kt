@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.ui.ComposeUI.Search.Indevelopment.CourseTotal
+import com.hfut.schedule.ui.ComposeUI.Search.TotalCourse.CourseTotal
 import com.hfut.schedule.ui.ComposeUI.Search.EmptyRoom.EmptyRoom
 import com.hfut.schedule.ui.ComposeUI.Search.Indevelopment.Estimate
 import com.hfut.schedule.ui.ComposeUI.Search.Exam.Exam
@@ -35,8 +35,10 @@ import com.hfut.schedule.ui.ComposeUI.Search.LePaoYun.LePaoYun
 import com.hfut.schedule.ui.ComposeUI.Search.NotificationsCenter.NotificationsCenter
 import com.hfut.schedule.ui.ComposeUI.Search.Indevelopment.SchoolBus
 import com.hfut.schedule.ui.ComposeUI.Search.Electric.Electric
+import com.hfut.schedule.ui.ComposeUI.Search.FailRate.FailRate
 import com.hfut.schedule.ui.ComposeUI.Search.Indevelopment.Second
 import com.hfut.schedule.ui.ComposeUI.Search.Indevelopment.XueGong
+import com.hfut.schedule.ui.UIUtils.MyToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -68,6 +70,7 @@ fun getName(vm : LoginSuccessViewModel) : String? {
 fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,) {
 
     getName(vm)
+    if(prefs.getString("TOKEN","")?.contains("ey") == false) MyToast("未登录,部分功能不可用")
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -78,7 +81,7 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,) {
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
                 title = {
-                    if (ifSaved) Text("免登录查询") else
+                //    if (ifSaved) Text("免登录查询") else
                         Text("嗨  亲爱的 ${getName(vm)} 同学")
                 }
             )
@@ -90,40 +93,41 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,) {
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
+            Spacer(modifier = Modifier.height(5.dp))
             if (ifSaved){
+                Grade(vm)
+                Exam(vm)
+               // Program(vm)
                 SchoolCardItem(vm)
                 LibraryItem(vm)
-                XuanquItem(vm)
+                FailRate(vm)
+                CourseTotal(vm)
                 WebUI()
                 LePaoYun(vm)
+                XuanquItem(vm)
                 Electric(vm)
                 NotificationsCenter()
-
-                if (prefs.getBoolean("SWITCHBETA",false)){
-                    HotWater()
-                }
+                HotWater()
             } else {
                 Grade(vm)
-                Exam()
-                Program()
+                Exam(vm)
+                Program(vm)
                 PersonUI()
                 EmptyRoom(vm)
                 SchoolCardItem(vm)
                 LibraryItem(vm)
+                FailRate(vm)
+                CourseTotal(vm)
                 XuanquItem(vm)
+                Electric(vm)
                 WebUI()
                 LePaoYun(vm)
-                Electric(vm)
                 NotificationsCenter()
-
-                if (prefs.getBoolean("SWITCHBETA",false)){
-                    HotWater()
-                    Estimate()
-                    SchoolBus()
-                    Second()
-                    CourseTotal()
-                    XueGong()
-                }
+                HotWater()
+                Estimate(vm)
+                SchoolBus()
+                Second()
+                XueGong()
             }
 
              Spacer(modifier = Modifier.height(90.dp))

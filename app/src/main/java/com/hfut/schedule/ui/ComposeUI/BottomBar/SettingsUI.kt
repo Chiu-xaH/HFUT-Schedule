@@ -45,17 +45,12 @@ fun SettingsScreen(vm : LoginSuccessViewModel
                    ,showlable : Boolean,
                    showlablechanged: (Boolean) -> Unit, ) {
 
-    val switch_beta = prefs.getBoolean("SWITCHBETA",true)
-    var showbeta by remember { mutableStateOf(switch_beta) }
     val switch_focus = prefs.getBoolean("SWITCHFOCUS",true)
     var showfocus by remember { mutableStateOf(switch_focus) }
 
 
     val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
     if (sp.getBoolean("SWITCH", true) != showlable) { sp.edit().putBoolean("SWITCH", showlable).apply() }
-
-
-    if (sp.getBoolean("SWITCHBETA", false) != showbeta) { sp.edit().putBoolean("SWITCHBETA", showbeta).apply() }
     if (sp.getBoolean("SWITCHFOCUS", true) != showfocus) { sp.edit().putBoolean("SWITCHFOCUS", showfocus).apply() }
 
     Scaffold(
@@ -66,7 +61,7 @@ fun SettingsScreen(vm : LoginSuccessViewModel
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
-                title = { Text("肥工教务通") }
+                title = { Text("肥工教务通 选项") }
             )
         },) {innerPadding ->
         Column(modifier = Modifier
@@ -116,14 +111,6 @@ fun SettingsScreen(vm : LoginSuccessViewModel
                     Spacer(modifier = Modifier.height(100.dp))
                 }
             }
-
-            ListItem(
-                headlineContent = { Text(text = "Beta 功能") },
-                leadingContent = { Icon(painterResource(id = R.drawable.hotel_class), contentDescription = "Localized description") },
-                supportingContent = { Text(text = "打开此开关后,会显示一些Beta功能及未开发完成的功能")},
-                trailingContent = { Switch(checked = showbeta, onCheckedChange = {showbetach -> showbeta = showbetach }) },
-                modifier = Modifier.clickable { showbeta = !showbeta }
-            )
 
             ListItem(
                 headlineContent = { Text(text = "云运动 信息配置") },

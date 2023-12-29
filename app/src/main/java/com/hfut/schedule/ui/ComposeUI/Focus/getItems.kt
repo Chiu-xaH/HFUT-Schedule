@@ -7,7 +7,7 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.dao.dataBase
-import com.hfut.schedule.logic.datamodel.AddFocus
+import com.hfut.schedule.logic.datamodel.Focus.AddFocus
 import com.hfut.schedule.logic.datamodel.MyAPIResponse
 import com.hfut.schedule.logic.datamodel.MyList
 import com.hfut.schedule.logic.datamodel.Schedule

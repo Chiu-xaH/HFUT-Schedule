@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.dao.dataBase
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.SaveBoolean
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
@@ -39,9 +40,11 @@ import com.hfut.schedule.ui.UIUtils.LittleDialog
 
 
 fun Clear() {
+    val dbwritableDatabase =  dataBase.writableDatabase
+    dbwritableDatabase.delete("Book",null,null)
     val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
     prefs.edit().clear().commit()
-    Toast.makeText(MyApplication.context,"已清除缓存", Toast.LENGTH_SHORT).show()
+    Toast.makeText(MyApplication.context,"已清除缓存和数据库", Toast.LENGTH_SHORT).show()
     //崩溃操作
     val s = listOf("")
     println(s[2])
@@ -58,6 +61,13 @@ fun SettingsItems() {
 
     var showBadge by remember { mutableStateOf(false) }
     if (MyApplication.version != getMyVersion()) showBadge = true
+
+    ListItem(
+        headlineContent = { Text(text = "降级到2.X版本 (3.0 限定选项)") },
+        supportingContent = { Text(text = "由于3.0初期存在若干Bug,如影响使用,可点击此选项获取上版")},
+        leadingContent = { Icon(painterResource(R.drawable.trending_down), contentDescription = "Localized description",) },
+        modifier = Modifier.clickable{ StartUri("https://gitee.com/chiu-xah/HFUT-Schedule/releases/tag/Memory") }
+    )
 
     MonetColorItem()
 
@@ -193,7 +203,7 @@ fun SettingsItems() {
             onDismissRequest = { showDialog = false },
             onConfirmation = { Clear() },
             dialogTitle = "警告",
-            dialogText = "确定要抹掉数据吗,只有当升级后崩溃,或者出现数据问题时推荐使用",
+            dialogText = "确定要抹掉数据吗,抹掉数据后,应用将退出",
             conformtext = "抹掉数据",
             dismisstext = "取消"
         )

@@ -36,11 +36,14 @@ interface LoginService {
     fun OneGoto(
         @Header("Cookie") Cookie : String
     ) : Call<ResponseBody>
-
+//慧新易校
     @GET("cas/oauth2.0/authorize?response_type=code&client_id=Hfut2023Ydfwpt&redirect_uri=http%3A%2F%2F121.251.19.62%2Fberserker-auth%2Fcas%2Foauth2url%3Foauth2url%3Dhttp%3A%2F%2F121.251.19.62%2Fberserker-base%2Fredirect%3FappId%3D24%26type%3Dapp")
     @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.17")
     fun OneGotoCard(
         @Header("Cookie") Cookie : String
     ) : Call<ResponseBody>
+
+
+
 
 }

@@ -8,8 +8,9 @@ import dagger.hilt.android.HiltAndroidApp
 class MyApplication : Application() {
     companion object {
         lateinit var context: Context
-        const val version = "2.5.3"
+        const val version = "3.0"
         const val EleURL = "http://172.31.248.26:8988/"
+        const val CommunityURL = "https://community.hfut.edu.cn/"
         const val ZJGDBillURL = "http://121.251.19.62/"
         const val LePaoYunURL = "http://210.45.246.53:8080/"
         const val LibURL = "http://210.45.242.5:8080/"
@@ -21,10 +22,22 @@ class MyApplication : Application() {
         const val MyURL = "https://chiu-xah.github.io/"
         const val XuanquURL = "http://39.106.82.121/"
         const val RedirectURL = "https://cas.hfut.edu.cn/cas/login?service=http%3A%2F%2Fjxglstu.hfut.edu.cn%2Feams5-student%2Fneusoft-sso%2Flogin&exception.message=A+problem+occurred+restoring+the+flow+execution+with+key+%27e1s1%27"
+        const val NullLoginCommunity = "{\"result\": {\"token\": \"\"}}"
+        const val NullExams = "{\"result\": {\"examArrangementList\": []}}"
+        const val NullTotal = "{\"result\": {\"courseBasicInfoDTOList\": []}}"
+        const val NullProgram = "{\"result\":{\"majorName\":\"培养方案\",\"totalCreditDone\":0,\"totalCreditRequirement\":0,\"trainingProgramCategoryDTOList\":[]}}"
         const val NullCardblance = "{\"data\":{\"card\":[{ \"db_balance\":0000}]}}"
         const val NullMonthYue = "{\"data\":{ \"income\":0.0, \"expenses\":0.0 },}"
         const val NullLePao = "{\"msg\" : \"获取失败\",\"data\" : {\"distance\" : \"0.0\"}}"
         const val NullSearch = "{\"data\":{\"未查找到数据,输入格式是否正确?\":0.0} }"
+        const val NullGrades = "{\n" +
+                "    \"result\":{\n" +
+                "        \"gpa\": 0.00,\n" +
+                "        \"classRanking\":\"登录失效\",\n" +
+                "        \"majorRanking\":\"登录失效\",\n" +
+                "        \"scoreInfoDTOList\":[]\n" +
+                "        }\n" +
+                "    }"
         const val NullBill = "{\n" +
                 "    \"data\":{\n" +
                 "        \"records\":[],\n" +

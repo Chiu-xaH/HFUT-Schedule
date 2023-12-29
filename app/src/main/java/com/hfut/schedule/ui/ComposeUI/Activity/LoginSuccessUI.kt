@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContent
@@ -67,6 +68,9 @@ import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.datamodel.Jxglstu.datumResponse
+import com.hfut.schedule.logic.datamodel.Community.LoginCommunityResponse
+import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.ui.UIUtils.MyToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -347,7 +351,9 @@ fun CalendarScreen(isEnabled:Boolean,enabledchanged : (Boolean) -> Unit,vm : Log
     val ONE = prefs.getString("ONE","")
     val TGC = prefs.getString("TGC","")
     val cardvalue = prefs.getString("borrow","")
-
+    val cookies = ONE + ";" +TGC
+    val ticket = prefs.getString("TICKET","")
+    val jsons = prefs.getString("LoginCommunity",MyApplication.NullLoginCommunity)
     val job = Job()
     val scope = CoroutineScope(job)
     scope.apply {
@@ -365,6 +371,32 @@ fun CalendarScreen(isEnabled:Boolean,enabledchanged : (Boolean) -> Unit,vm : Log
                         vm.OneGotoCard(ONE + ";" + TGC)
                     }
                 }
+                val CommuityTOKEN = prefs.getString("TOKEN","")
+
+                if (CommuityTOKEN != null) {
+                    if(CommuityTOKEN.contains("ey") == false){
+                        async{
+                            async { vm.GotoCommunity(cookies) }.await()
+                            async {
+                                delay(1000)
+                                ticket?.let { vm.LoginCommunity(it) }
+                            }.await()
+                            async {
+                                delay(1000)
+                                if (jsons != null) {
+                                    if(jsons.contains("200")) {
+                                        val result = Gson().fromJson(jsons, LoginCommunityResponse::class.java)
+                                        val token = result.result.token
+                                        SharePrefs.Save("TOKEN", token)
+                                        //   vm.CommuityTOKEN?.let { Log.d("sss", it) }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+
 
                 if (token != null) {
                     if (token.contains("AT") && cardvalue != "未获取") {
@@ -373,22 +405,21 @@ fun CalendarScreen(isEnabled:Boolean,enabledchanged : (Boolean) -> Unit,vm : Log
                         async { vm.getBorrowBooks("Bearer $token") }
 
                     } else {
-                        async { vm.OneGoto(ONE + ";" + TGC) }.await()
-                        async {
-                            delay(500)
-                            vm.getToken()
-                        }.await()
-                        launch {
-                            delay(2900)
-                          //  async { vm.getCard("Bearer " + vm.token.value) }
-                            async { vm.getBorrowBooks("Bearer " + vm.token.value) }
-                            async { vm.getSubBooks("Bearer " + vm.token.value) }
+                        async{
+                            async { vm.OneGoto(cookies) }.await()
+                            async {
+                                delay(500)
+                                vm.getToken()
+                            }.await()
+                            launch {
+                                delay(2900)
+                                //  async { vm.getCard("Bearer " + vm.token.value) }
+                                async { vm.getBorrowBooks("Bearer " + vm.token.value) }
+                                async { vm.getSubBooks("Bearer " + vm.token.value) }
+                            }
                         }
-
                     }
                 }
-
-
             }
 
 //加载其他信息/////////////////////////////////////////////////////
@@ -411,7 +442,10 @@ fun CalendarScreen(isEnabled:Boolean,enabledchanged : (Boolean) -> Unit,vm : Log
                     }
                     //Log.d("xxx",jsonObject2.toString())
                     async { vm.getDatum(cookie!!,jsonObject) }
-                    async { vm.getExam(cookie!!) }
+                    async {
+                      //  if(prefs.getString("TOKEN","").contains("ey"))
+                      //  else vm.getExam(cookie!!)
+                    }
                     async {  vm.getProgram(cookie!!) }
 
                 }.await()

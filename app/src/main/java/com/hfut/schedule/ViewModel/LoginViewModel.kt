@@ -1,6 +1,7 @@
 package com.hfut.schedule.ViewModel
 
 import android.preference.PreferenceManager
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.hfut.schedule.App.MyApplication
@@ -48,7 +49,6 @@ class LoginViewModel : ViewModel() {
                     val ticket = response.headers()["Location"].toString().substringAfter("=")
                     SharePrefs.Save("ticket", ticket)
                     SharePrefs.Save("TGC", TGC)
-
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {

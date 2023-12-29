@@ -1,27 +1,33 @@
 package com.hfut.schedule.ViewModel
 
 //import com.hfut.schedule.logic.network.ServiceCreator.Login.OneGetNewTicketServiceCreator.client
+import android.preference.PreferenceManager
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.datamodel.Jxglstu.lessonIdsResponse
 import com.hfut.schedule.logic.datamodel.One.BorrowBooksResponse
 import com.hfut.schedule.logic.datamodel.One.SubBooksResponse
 import com.hfut.schedule.logic.datamodel.One.getTokenResponse
+import com.hfut.schedule.logic.network.ServiceCreator.CommunitySreviceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuHTMLServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuJSONServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.LePaoYunServiceCreator
+import com.hfut.schedule.logic.network.ServiceCreator.Login.LoginServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.One.LibraryServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.One.OneServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.OneGoto.OneGotoServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.SearchEleServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.XuanquServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.ZJGDBillServiceCreator
+import com.hfut.schedule.logic.network.api.CommunityService
 import com.hfut.schedule.logic.network.api.FWDTService
 import com.hfut.schedule.logic.network.api.JxglstuService
 import com.hfut.schedule.logic.network.api.LePaoYunService
@@ -30,6 +36,10 @@ import com.hfut.schedule.logic.network.api.LoginService
 import com.hfut.schedule.logic.network.api.OneService
 import com.hfut.schedule.logic.network.api.XuanquService
 import com.hfut.schedule.logic.network.api.ZJGDBillService
+import com.hfut.schedule.ui.UIUtils.MyToast
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.delay
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
@@ -47,11 +57,35 @@ class LoginSuccessViewModel : ViewModel() {
     private val Xuanqu = XuanquServiceCreator.create(XuanquService::class.java)
     private val LePaoYun = LePaoYunServiceCreator.create(LePaoYunService::class.java)
     private val searchEle = SearchEleServiceCreator.create(FWDTService::class.java)
-
+    private val CommunityLogin = LoginServiceCreator.create(CommunityService::class.java)
+    private val Community = CommunitySreviceCreator.create(CommunityService::class.java)
     var studentId = MutableLiveData<Int>()
     var lessonIds = MutableLiveData<List<Int>>()
     var token = MutableLiveData<String>()
 
+    fun GotoCommunity(cookie : String) {
+
+        val call = CommunityLogin.LoginCommunity(cookie)
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {}
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
+
+    fun LoginCommunity(ticket : String) {
+
+        val call = Community.Login(ticket)
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                SharePrefs.Save("LoginCommunity", response.body()?.string())
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
 
     fun Jxglstulogin(cookie : String) {
 
@@ -271,7 +305,7 @@ class LoginSuccessViewModel : ViewModel() {
     }
     fun getToken()  {
 
-        val codehttp = SharePrefs.prefs.getString("code", "")
+        val codehttp = prefs.getString("code", "")
         var code = codehttp
         if (code != null) { code = code.substringAfter("=") }
         if (code != null) { code = code.substringBefore("]") }
@@ -354,7 +388,7 @@ class LoginSuccessViewModel : ViewModel() {
 
     fun searchEmptyRoom(building_code : String,token : String)  {
 
-        val call = One.searchEmptyRoom(building_code,"Bearer " + token)
+        val call = One.searchEmptyRoom(building_code, "Bearer $token")
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -420,6 +454,134 @@ class LoginSuccessViewModel : ViewModel() {
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
+    }
+
+
+    fun SearchFailRate(CommuityTOKEN : String,name: String,page : String) {
+
+        val call = CommuityTOKEN?.let { Community.getFailRate(it,name,page) }
+
+        if (call != null) {
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    SharePrefs.Save("FailRate", response.body()?.string())
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+            })
+        }
+    }
+
+    fun Exam(CommuityTOKEN: String) {
+
+        val call = CommuityTOKEN?.let { Community.getExam(it) }
+
+        if (call != null) {
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    SharePrefs.Save("Exam", response.body()?.string())
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+            })
+        }
+    }
+
+
+    fun getGrade(CommuityTOKEN: String,year : String,term : String) {
+
+        val call = CommuityTOKEN?.let { Community.getGrade(it,year,term) }
+
+        if (call != null) {
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    SharePrefs.Save("Grade", response.body()?.string())
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+            })
+        }
+    }
+
+    val libraryData = MutableLiveData<String>()
+    fun SearchBooks(CommuityTOKEN: String,name: String) : Deferred<ResponseBody> {
+
+        val call = CommuityTOKEN?.let { Community.searchBooks(it,name,"1") }
+        val deferred = CompletableDeferred<ResponseBody>()
+        if (call != null) {
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    SharePrefs.Save("Library", response.body()?.string())
+                    response.body()?.let { deferred.complete(it) }
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    t.printStackTrace()
+                    deferred.completeExceptionally(t)
+                }
+            })
+        }
+        return deferred
+    }
+
+    fun GetCourse(CommuityTOKEN : String) {
+
+        val call = CommuityTOKEN?.let { Community.getCourse(it) }
+
+        if (call != null) {
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    SharePrefs.Save("Course", response.body()?.string())
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+            })
+        }
+    }
+
+    fun GetBorrowed(CommuityTOKEN: String,page : String) {
+
+        val call = CommuityTOKEN?.let { Community.getBorrowedBook(it,page) }
+
+        if (call != null) {
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    SharePrefs.Save("Borrowed", response.body()?.string())
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+            })
+        }
+    }
+
+    fun GetHistory(CommuityTOKEN: String,page : String) {
+
+        val call = CommuityTOKEN?.let { Community.getHistoyBook(it,page) }
+
+        if (call != null) {
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    SharePrefs.Save("History", response.body()?.string())
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+            })
+        }
+    }
+
+    fun GetProgram(CommuityTOKEN: String) {
+
+        val call = CommuityTOKEN?.let { Community.getProgram(it) }
+
+        if (call != null) {
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    SharePrefs.Save("Program", response.body()?.string())
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+            })
+        }
     }
 
 }

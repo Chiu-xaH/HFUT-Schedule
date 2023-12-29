@@ -8,9 +8,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
+import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 
 @Composable
-fun Estimate(){
+fun Estimate(vm : LoginSuccessViewModel){
+
     ListItem(
         headlineContent = { Text(text = "教师评教")},
         supportingContent = { Text(text = "暂未开发")},

@@ -16,4 +16,9 @@ object SharePrefs {
         val saved = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
         if (saved.getBoolean(title, default) != save) { saved.edit().putBoolean(title,save).apply() }
     }
+
+    fun SaveInt(title : String,save : Int) {
+        val saved = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
+        if (saved.getInt(title, 0) != save) { saved.edit().putInt(title,save).apply() }
+    }
 }

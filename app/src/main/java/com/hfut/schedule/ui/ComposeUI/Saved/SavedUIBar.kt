@@ -33,6 +33,9 @@ import com.hfut.schedule.logic.datamodel.NavigationBarItemData
 import com.hfut.schedule.ui.ComposeUI.BottomBar.SearchScreen
 import com.hfut.schedule.ui.ComposeUI.BottomBar.SettingsScreen
 import com.hfut.schedule.ui.ComposeUI.BottomBar.TodayScreen
+import com.hfut.schedule.ui.ComposeUI.Search.Exam.getExam
+import com.hfut.schedule.ui.ComposeUI.Search.Grade.getGrade
+import com.hfut.schedule.ui.ComposeUI.Search.NotificationsCenter.getNotifications
 import com.hfut.schedule.ui.ComposeUI.Settings.getMyVersion
 
 @SuppressLint("SuspiciousIndentation")
@@ -51,7 +54,10 @@ fun NoNetWork(vm : LoginSuccessViewModel) {
 
     var showBadge by remember { mutableStateOf(false) }
     if (MyApplication.version != getMyVersion()) showBadge = true
-
+    var showBadge2 by remember { mutableStateOf(false) }
+   // val savenum = prefs.getInt("GradeNum",0) + prefs.getInt("ExamNum",0) + prefs.getInt("Notifications",0)
+    //val getnum = getGrade().size + getExam().size + getNotifications().size
+    //if (savenum != getnum) showBadge2 = true
 
 //判定是否以聚焦作为第一页
     when (prefs.getBoolean("SWITCHFOCUS",true)) {
@@ -95,6 +101,10 @@ fun NoNetWork(vm : LoginSuccessViewModel) {
                                 if (item == items[3]){
                                     if (showBadge)
                                     Badge{ Text(text = "1")}
+                                }
+                                if (item == items[2]){
+                                   // if (showBadge2)
+                                     //   Badge{ Text(text = (getnum).toString())}
                                 }
                             }) { Icon(item.icon, contentDescription = item.label) }
                         }

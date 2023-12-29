@@ -53,7 +53,7 @@ import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.logic.datamodel.FocusCourse
+import com.hfut.schedule.logic.datamodel.Focus.FocusCourse
 import com.hfut.schedule.logic.datamodel.Jxglstu.datumResponse
 import com.hfut.schedule.ui.ComposeUI.Focus.AddButton
 import com.hfut.schedule.ui.ComposeUI.Focus.AddItem
@@ -62,7 +62,6 @@ import com.hfut.schedule.ui.ComposeUI.Search.NotificationsCenter.NotificationIte
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.ComposeUI.Search.NotificationsCenter.getNotifications
 import com.hfut.schedule.ui.ComposeUI.Focus.ExamGet
-import com.hfut.schedule.ui.ComposeUI.Focus.ExamItem
 import com.hfut.schedule.ui.ComposeUI.Focus.FutureMyScheuleItem
 import com.hfut.schedule.ui.ComposeUI.Focus.MySchedule
 import com.hfut.schedule.ui.ComposeUI.Focus.MyScheuleItem
@@ -72,6 +71,8 @@ import com.hfut.schedule.ui.ComposeUI.Focus.TodayCourseItem
 import com.hfut.schedule.ui.ComposeUI.Focus.TomorrowCourseItem
 import com.hfut.schedule.ui.ComposeUI.Focus.WangkeItem
 import com.hfut.schedule.ui.ComposeUI.Focus.zjgdcard
+import com.hfut.schedule.ui.ComposeUI.Search.Exam.ExamItems
+import com.hfut.schedule.ui.ComposeUI.Search.Exam.getExam
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -319,6 +320,7 @@ fun TodayScreen(vm : LoginSuccessViewModel) {
 
 //Today操作区///////////////////////////////////////////////////////////////////////////////////////////////////
 suspend fun FocusUpdate(){
+    val CommuityTOKEN = prefs.getString("TOKEN","")
         CoroutineScope(Job()).apply {
             async {
                 val json = prefs.getString("json", "")
@@ -332,6 +334,7 @@ suspend fun FocusUpdate(){
             async { MySchedule() }
             async { AddedItems() }
             async { getNotifications() }
+            async { CommuityTOKEN?.let { vm.Exam(it) } }
             async { zjgdcard(vm) }.await()
         }
     }
@@ -462,7 +465,7 @@ suspend fun FocusUpdate(){
                             item { TodayCardItem(vm) }
                         }
                         //考试
-                        items(ExamGet()) {item -> ExamItem(item) }
+                        items(getExam().size) { item -> ExamItems(item,true) }
 
                         //日程
                         if (prefs.getBoolean("SWITCHMYAPI",true)){

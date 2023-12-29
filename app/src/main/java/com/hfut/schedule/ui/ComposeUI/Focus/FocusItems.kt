@@ -57,8 +57,8 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.utils.GetDate
-import com.hfut.schedule.logic.datamodel.AddFocus
-import com.hfut.schedule.logic.datamodel.FocusCourse
+import com.hfut.schedule.logic.datamodel.Focus.AddFocus
+import com.hfut.schedule.logic.datamodel.Focus.FocusCourse
 import com.hfut.schedule.logic.datamodel.MyList
 import com.hfut.schedule.logic.datamodel.Schedule
 import com.hfut.schedule.ui.UIUtils.MyToast
@@ -77,44 +77,6 @@ fun TodayCardItem(vm : LoginSuccessViewModel) {
 
     ){ SchoolCardItem(vm) }
 }
-
-
-@Composable
-fun ExamItem(item : Map<String,String>) {
-    var date = GetDate.Date_yyyy_MM_dd
-    val todaydate = date?.substring(0, 4) + date?.substring(5, 7)  + date?.substring(8, 10)
-    var get = item["日期时间"]
-    val examdate = (get?.substring(0,4)+ get?.substring(5, 7) ) + get?.substring(8, 10)
-
-    var  times = item["日期时间"]
-    times = times?.substring(5,times.length)
-    //判断考完试不显示信息
-    if(examdate.toInt() >= todaydate.toInt()) {
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-            Spacer(modifier = Modifier.height(100.dp))
-            Card(
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 3.dp
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp),
-                shape = MaterialTheme.shapes.medium
-
-            )  {
-                ListItem(
-                    headlineContent = {  Text(text = "${item["课程名称"]}") },
-                    overlineContent = { Text(text = times!!) },
-                    supportingContent = { Text(text = "${item["考场"]}") },
-                    leadingContent = { Icon(painterResource(R.drawable.draw), contentDescription = "Localized description",) },
-                    modifier = Modifier.clickable {},
-                    colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
-                )
-            }
-        }
-    }
-}
-
 
 @Composable
 fun MyScheuleItem(item : Int, MySchedule : MutableList<Schedule> ) {
