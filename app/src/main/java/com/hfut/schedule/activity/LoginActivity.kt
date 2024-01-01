@@ -2,6 +2,8 @@ package com.hfut.schedule.activity
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels

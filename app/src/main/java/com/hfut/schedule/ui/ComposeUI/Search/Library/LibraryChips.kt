@@ -12,7 +12,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -49,7 +48,7 @@ fun LibraryChips() {
 
         AssistChip(
             onClick = { showBottomSheet_Borrow = true },
-            label = { Text(text = "已借图书  ${getBorrowed().size} 本") },
+            label = { Text(text = "当前借阅  ${getBorrow(BORROWED).size} 本") },
             // leadingIcon = { Icon(painter = painterResource(R.drawable.add), contentDescription = "description") }
         )
 
@@ -57,7 +56,7 @@ fun LibraryChips() {
 
         AssistChip(
             onClick = { showBottomSheet_History = true },
-            label = { Text(text = "借阅历史  ${getHistory().size} 本") },
+            label = { Text(text = "借阅历史  ${getBorrow(HISTORY).size} 本") },
             // leadingIcon = { Icon(painter = painterResource(R.drawable.calendar), contentDescription = "description") }
         )
     }
@@ -78,7 +77,7 @@ fun LibraryChips() {
                     modifier = Modifier
                         .padding(innerPadding)
                         .fillMaxSize()
-                ) { History() }
+                ) { BorrowItems(HISTORY) }
             }
         }
     }
@@ -101,44 +100,42 @@ fun LibraryChips() {
                         .padding(innerPadding)
                         // .verticalScroll(rememberScrollState())
                         .fillMaxSize()
-                ) { Borrowed() }
+                ) { BorrowItems(BORROWED) }
             }
         }
     }
 }
 
 @Composable
-fun History() {
+fun BorrowItems(PerfsJson : String) {
     LazyColumn {
-        items(getHistory().size){item ->
-            val Outtime = getHistory()[item].outTime
-            val Returntime = getHistory()[item].returnTime
+        items(getBorrow(PerfsJson).size){ item ->
+            val Outtime = getBorrow(PerfsJson)[item].outTime
+            val Returntime = getBorrow(PerfsJson)[item].returnTime
             Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)
             {
                 Card(
                     elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp, vertical = 5.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 15.dp, vertical = 5.dp),
                     shape = MaterialTheme.shapes.medium
                 ) {
                     ListItem(
-                        headlineContent = { Text(text = getHistory()[item].bookName,fontWeight = FontWeight.Bold) },
-                        supportingContent = {  Text(text = getHistory()[item].author) },
-                        overlineContent = {  Text(text = "借于 " + Outtime + "\n" + "还于 "+Returntime) },
-                     //   trailingContent = {  },
+                        headlineContent = { Text(text = getBorrow(PerfsJson)[item].bookName,fontWeight = FontWeight.Bold) },
+                        supportingContent = {  Text(text = getBorrow(PerfsJson)[item].author) },
+                        overlineContent = {
+                            if(Returntime == null)
+                                Text(text = "借于 " + Outtime)
+                            else
+                                Text(text = "借于 " + Outtime + "\n" + "还于 "+Returntime)
+                        },
                         leadingContent = {
-                            Icon(
-                                painterResource(R.drawable.book),
-                                contentDescription = "Localized description",
-                            )
+                            Icon(painterResource(R.drawable.book), contentDescription = "Localized description",)
                         }
                     )
                 }
             }
         }
     }
-}
-
-@Composable
-fun Borrowed() {
-
 }

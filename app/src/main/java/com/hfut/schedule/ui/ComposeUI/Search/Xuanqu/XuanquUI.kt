@@ -1,6 +1,8 @@
 package com.hfut.schedule.ui.ComposeUI.Search.Xuanqu
 
 import android.annotation.SuppressLint
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
@@ -84,7 +86,7 @@ fun XuanquUI(vm : LoginSuccessViewModel) {
     var space by remember { mutableStateOf(true) }
 
     fun getXuanqu() : List<XuanquResponse>? {
-        val html = prefs.getString("xuanqu", "")
+        val html = vm.XuanquData.value
 
         // 定义一个正则表达式来匹配HTML标签
         val regex = """<td rowspan="(\d+)">(\d+)</td>\s*<td>(\d+)</td>\s*<td>(\d+)</td>\s*<td rowspan="\d+">(\d{4}-\d{2}-\d{2})</td>""".toRegex()
@@ -200,15 +202,26 @@ fun XuanquUI(vm : LoginSuccessViewModel) {
                                     showitem4 = false
                                 }
                                 async {
+                                    Handler(Looper.getMainLooper()).post{
+                                        vm.XuanquData.value = "{}"
+                                    }
                                             clicked = true
                                             loading = true
                                             Save("Room",code)
-                                            Log.d("dayin",BuildingsNumber + NS + RoomNumber)
+
                                             vm.SearchXuanqu(BuildingsNumber + NS + RoomNumber) }.await()
                                 async {
-                                            delay(500)
-                                            loading = false
-                                            getXuanqu()
+                                        Handler(Looper.getMainLooper()).post{
+                                            vm.XuanquData.observeForever { result ->
+                                               // Log.d("r",result)
+                                                if(result.contains("div")) {
+                                                    CoroutineScope(Job()).launch {
+                                                        async { loading = false }
+                                                        async { getXuanqu() }
+                                                    }
+                                                }
+                                            }
+                                        }
                                 }
                             }
                         },

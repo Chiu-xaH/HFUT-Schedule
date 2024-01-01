@@ -1,7 +1,6 @@
 package com.hfut.schedule.ViewModel
 
 //import com.hfut.schedule.logic.network.ServiceCreator.Login.OneGetNewTicketServiceCreator.client
-import android.preference.PreferenceManager
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,7 +8,6 @@ import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
-import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.datamodel.Jxglstu.lessonIdsResponse
@@ -21,7 +19,6 @@ import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuHTMLService
 import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuJSONServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.LePaoYunServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Login.LoginServiceCreator
-import com.hfut.schedule.logic.network.ServiceCreator.One.LibraryServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.One.OneServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.OneGoto.OneGotoServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.SearchEleServiceCreator
@@ -31,17 +28,10 @@ import com.hfut.schedule.logic.network.api.CommunityService
 import com.hfut.schedule.logic.network.api.FWDTService
 import com.hfut.schedule.logic.network.api.JxglstuService
 import com.hfut.schedule.logic.network.api.LePaoYunService
-import com.hfut.schedule.logic.network.api.LibraryService
 import com.hfut.schedule.logic.network.api.LoginService
 import com.hfut.schedule.logic.network.api.OneService
 import com.hfut.schedule.logic.network.api.XuanquService
 import com.hfut.schedule.logic.network.api.ZJGDBillService
-import com.hfut.schedule.ui.UIUtils.MyToast
-import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.delay
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -52,7 +42,6 @@ class LoginSuccessViewModel : ViewModel() {
     private val JxglstuHTML = JxglstuHTMLServiceCreator.create(JxglstuService::class.java)
     private val OneGoto = OneGotoServiceCreator.create(LoginService::class.java)
     private val One = OneServiceCreator.create(OneService::class.java)
-    private val Library = LibraryServiceCreator.create(LibraryService::class.java)
     private val ZJGDBill = ZJGDBillServiceCreator.create(ZJGDBillService::class.java)
     private val Xuanqu = XuanquServiceCreator.create(XuanquService::class.java)
     private val LePaoYun = LePaoYunServiceCreator.create(LePaoYunService::class.java)
@@ -162,17 +151,6 @@ class LoginSuccessViewModel : ViewModel() {
         })
     }
 
-    fun getExam(cookie: String) {
-        val call = JxglstuJSON.getExam(cookie,studentId.value.toString())
-
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                SharePrefs.Save("exam", response.body()?.string())
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
-    }
 
     fun getProgram(cookie: String) {
         val call = JxglstuJSON.getProgram(cookie,studentId.value.toString())
@@ -185,21 +163,6 @@ class LoginSuccessViewModel : ViewModel() {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
-
-    fun getGrade(cookie: String) {
-        val call = JxglstuJSON.getGrade(cookie,studentId.value.toString())
-
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                SharePrefs.Save("grade", response.body()?.string())
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
-    }
-
-
-
 
     fun OneGoto(cookie : String)  {// 创建一个Call对象，用于发送异步请求
 
@@ -223,14 +186,14 @@ class LoginSuccessViewModel : ViewModel() {
         })
     }
 
-
+    val BillsData = MutableLiveData<String>()
     fun CardGet(auth : String,page : Int) {// 创建一个Call对象，用于发送异步请求
 
         val call = ZJGDBill.Cardget(auth,page)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                SharePrefs.Save("cardliushui", response.body()?.string())
+                BillsData.value = response.body()?.string()
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -267,24 +230,26 @@ class LoginSuccessViewModel : ViewModel() {
         })
     }
 
+    var RangeData = MutableLiveData<String>()
     fun searchDate(auth : String, timeFrom : String, timeTo : String) {
         val call = ZJGDBill.searchDate(auth,timeFrom,timeTo)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                SharePrefs.Save("searchyue", response.body()?.string())
+                RangeData.value = response.body()?.string()
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
 
+    val SearchBillsData = MutableLiveData<String>()
     fun searchBills(auth : String, info: String,page : Int) {
         val call = ZJGDBill.searchBills(auth,info,page)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                SharePrefs.Save("searchbills", response.body()?.string())
+               SearchBillsData.value = response.body()?.string()
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -292,12 +257,13 @@ class LoginSuccessViewModel : ViewModel() {
     }
 
 
+    var MonthData = MutableLiveData<String>()
     fun getMonthBills(auth : String, dateStr: String) {
         val call = ZJGDBill.getMonthYue(auth,dateStr)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                SharePrefs.Save("monthbalance", response.body()?.string())
+                MonthData.value = response.body()?.string()
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -332,15 +298,18 @@ class LoginSuccessViewModel : ViewModel() {
 
     }
 
-
+    val ElectricData = MutableLiveData<String>()
     fun searchEle(jsondata : String) {
         val call = searchEle.searchEle(jsondata,"synjones.onecard.query.elec.roominfo",true)
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                SharePrefs.Save("SearchEle", response.body()?.string())
+                ElectricData.value = response.body()?.string()
             }
 
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                ElectricData.value = "查询失败,是否连接了hfut-wlan?"
+                t.printStackTrace()
+            }
         })
     }
 
@@ -400,28 +369,15 @@ class LoginSuccessViewModel : ViewModel() {
 
 
     }
-    fun LibSearch(json : JsonObject)  {
 
-        val call = Library.LibSearch(json)
-
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                SharePrefs.Save("library", response.body()?.string())
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
-
-
-    }
-
+    val XuanquData = MutableLiveData<String>()
     fun SearchXuanqu(code : String) {
 
         val call = Xuanqu.SearchXuanqu(code)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                SharePrefs.Save("xuanqu", response.body()?.string())
+                XuanquData.value = response.body()?.string()
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -441,22 +397,8 @@ class LoginSuccessViewModel : ViewModel() {
         })
     }
 
-    fun getRunRecord(Yuntoken : String, RequestBody : String) {
-        val requestBody = RequestBody
-            .toRequestBody("text/plain; charset=utf-8".toMediaTypeOrNull())
 
-        val call = LePaoYun.getRunRecord(Yuntoken,requestBody)
-
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                SharePrefs.Save("LePaoYunRecord", response.body()?.string())
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
-    }
-
-
+    val FailRateData = MutableLiveData<String>()
     fun SearchFailRate(CommuityTOKEN : String,name: String,page : String) {
 
         val call = CommuityTOKEN?.let { Community.getFailRate(it,name,page) }
@@ -464,7 +406,7 @@ class LoginSuccessViewModel : ViewModel() {
         if (call != null) {
             call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    SharePrefs.Save("FailRate", response.body()?.string())
+                    FailRateData.value = response.body()?.string()
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -472,6 +414,7 @@ class LoginSuccessViewModel : ViewModel() {
         }
     }
 
+    val ExamData = MutableLiveData<String?>()
     fun Exam(CommuityTOKEN: String) {
 
         val call = CommuityTOKEN?.let { Community.getExam(it) }
@@ -479,10 +422,15 @@ class LoginSuccessViewModel : ViewModel() {
         if (call != null) {
             call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    SharePrefs.Save("Exam", response.body()?.string())
+                    val responses = response.body()?.string()
+                    SharePrefs.Save("Exam", responses)
+                    ExamData.value = responses
                 }
 
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    ExamData.value = "错误"
+                    t.printStackTrace()
+                }
             })
         }
     }
@@ -496,6 +444,7 @@ class LoginSuccessViewModel : ViewModel() {
             call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                     SharePrefs.Save("Grade", response.body()?.string())
+                    response.body()?.string()?.let { Log.d("Save", it) }
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -504,24 +453,22 @@ class LoginSuccessViewModel : ViewModel() {
     }
 
     val libraryData = MutableLiveData<String>()
-    fun SearchBooks(CommuityTOKEN: String,name: String) : Deferred<ResponseBody> {
+    fun SearchBooks(CommuityTOKEN: String,name: String) {
 
         val call = CommuityTOKEN?.let { Community.searchBooks(it,name,"1") }
-        val deferred = CompletableDeferred<ResponseBody>()
         if (call != null) {
             call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    libraryData.value = response.body()?.string()
                     SharePrefs.Save("Library", response.body()?.string())
-                    response.body()?.let { deferred.complete(it) }
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    libraryData.value = "错误"
                     t.printStackTrace()
-                    deferred.completeExceptionally(t)
                 }
             })
         }
-        return deferred
     }
 
     fun GetCourse(CommuityTOKEN : String) {

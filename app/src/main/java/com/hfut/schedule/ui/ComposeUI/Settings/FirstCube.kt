@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 fun FirstCube( ) {
     MyAPIItem()
     Spacer(modifier = Modifier.height(5.dp))
-    SettingsItems()
+    SettingsCubeItems()
     debug()
 
 }

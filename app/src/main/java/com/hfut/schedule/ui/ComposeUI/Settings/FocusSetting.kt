@@ -33,9 +33,12 @@ fun FocusSetting() {
     var showapi by remember { mutableStateOf(switch_api) }
     val switch_card = SharePrefs.prefs.getBoolean("SWITCHCARD",true)
     var showcard by remember { mutableStateOf(switch_card) }
+    val switch_add = SharePrefs.prefs.getBoolean("SWITCHADD",true)
+    var showadd by remember { mutableStateOf(switch_add) }
     val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
     if (sp.getBoolean("SWITCHCARD", true) != showcard) { sp.edit().putBoolean("SWITCHCARD", showcard).apply() }
     if (sp.getBoolean("SWITCHMYAPI", true) != showapi) { sp.edit().putBoolean("SWITCHMYAPI", showapi).apply() }
+    if (sp.getBoolean("SWITCHADD", true) != showadd) { sp.edit().putBoolean("SWITCHADD", showadd).apply() }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -53,7 +56,7 @@ fun FocusSetting() {
         ){
             ListItem(
                 headlineContent = { Text(text = "网络接口") },
-                supportingContent = { Text(text = "本接口提供了除学校系统之外的聚焦信息") },
+                supportingContent = { Text(text = "本接口为23地科提供了除学校系统之外的聚焦信息") },
                 leadingContent = { Icon(painterResource(R.drawable.api), contentDescription = "Localized description",) },
                 trailingContent = { Switch(checked = showapi, onCheckedChange = {showapich -> showapi = showapich }) },
                 modifier = Modifier.clickable { showapi = !showapi }
@@ -65,14 +68,12 @@ fun FocusSetting() {
                 modifier = Modifier.clickable { showcard = !showcard }
             )
             ListItem(
-                headlineContent = { Text(text = "本地数据编辑") },
-                supportingContent = { Text(text = "由用户自行添加的数据,不会上传到云端,只在本地存储可见") },
+                headlineContent = { Text(text = "添加功能") },
+                supportingContent = { Text(text = "如果觉得不需要添加聚焦的功能,可以关掉它")},
                 leadingContent = { Icon(painterResource(R.drawable.add_circle), contentDescription = "Localized description",) },
-                // trailingContent = { Switch(checked = showcard, onCheckedChange = { showcardch -> showcard = showcardch }) },
-                modifier = Modifier.clickable {  }
+                trailingContent = { Switch(checked = showadd, onCheckedChange = {showfocusch -> showadd = showfocusch }) },
+                modifier = Modifier.clickable { showadd = !showadd }
             )
-            //用BottomSheet罗列出所有添加的卡片
-            //选择卡片-->  删除   编辑
         }
     }
 

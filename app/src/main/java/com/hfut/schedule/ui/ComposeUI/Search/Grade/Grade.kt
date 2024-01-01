@@ -67,7 +67,9 @@ fun Grade(vm : LoginSuccessViewModel)  {
     val month = GetDate.Date_MM.toInt()
     if( month >= 8 || month <= 1) term = "1"
     else term = "2"
-    CommuityTOKEN?.let { vm.getGrade(it,GetDate.Date_yyyy+"-"+(GetDate.Date_yyyy.toInt()+1),term) }
+    var years = GetDate.Date_yyyy
+    if (month <= 2) years = (years.toInt() - 1).toString()
+    CommuityTOKEN?.let { vm.getGrade(it,years+"-"+(years.toInt()+1),term) }
 
     ListItem(
         headlineContent = { Text(text = "成绩") },

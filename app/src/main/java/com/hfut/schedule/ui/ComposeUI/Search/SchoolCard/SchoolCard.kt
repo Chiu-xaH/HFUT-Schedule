@@ -2,6 +2,8 @@ package com.hfut.schedule.ui.ComposeUI.Search.SchoolCard
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -73,6 +75,7 @@ import java.math.RoundingMode
 @Composable
 fun SchoolCardItem(vm : LoginSuccessViewModel) {
 
+
     val interactionSource2 = remember { MutableInteractionSource() }
     val isPressed2 by interactionSource2.collectIsPressedAsState()
 
@@ -109,22 +112,23 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
 
 
     fun BillItem() :MutableList<records> {
-        val billjson = prefs.getString("cardliushui", MyApplication.NullBill)
-        val bill = Gson().fromJson(billjson, BillResponse::class.java)
-        val data = bill.data.records
-        val msg = bill.data.msg
+        val billjson = vm.BillsData.value
         var BillItems = mutableListOf<records>()
-        val totalpage = bill.data.pages
-
-        SharePrefs.Save("totalpage",totalpage.toString())
-
-        if (msg != null) {
-            if (msg.contains("成功")) {
-                val cardAccount = bill.data.records[0].fromAccount
-                SharePrefs.Save("cardAccount", cardAccount)
-            } else { Toast.makeText(MyApplication.context,msg,Toast.LENGTH_SHORT).show() }
+        if(billjson?.contains("操作成功") == true){
+            val bill = Gson().fromJson(billjson, BillResponse::class.java)
+            val data = bill.data.records
+            val msg = bill.data.msg
+            val totalpage = bill.data.pages
+            SharePrefs.Save("totalpage",totalpage.toString())
+            if (msg != null) {
+                if (msg.contains("成功")) {
+                    val cardAccount = bill.data.records[0].fromAccount
+                    SharePrefs.Save("cardAccount", cardAccount)
+                } else { Toast.makeText(MyApplication.context,msg,Toast.LENGTH_SHORT).show() }
+            }
+            data.forEach {  BillItems.add(it) }
         }
-        data.forEach {  BillItems.add(it) }
+
         return BillItems
     }
 
@@ -134,17 +138,42 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
         showBottomSheet_Bills = true
     }
 
+    fun Updade() {
+        CoroutineScope(Job()).apply {
+            launch {
+                async {
+                    page = 1
+                    loading = true
+                    get()
+                }.await()
+                async {
+                    Handler(Looper.getMainLooper()).post {
+                        vm.libraryData.observeForever { result ->
+                            loading = false
+                            BillItem()
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     if (showBottomSheet_Search) {
         ModalBottomSheet(
-            onDismissRequest = { showBottomSheet_Search = false },
+            onDismissRequest = {
+                showBottomSheet_Search = false
+                Updade()
+                               },
             sheetState = sheetState_Search
         ) { SearchBillsUI(vm) }
     }
 
     if(showBottomSheet_Range) {
         ModalBottomSheet(
-            onDismissRequest = { showBottomSheet_Range = false },
+            onDismissRequest = {
+                showBottomSheet_Range = false
+                Updade()
+                               },
             sheetState = sheetState_Range
         ) { SelecctDateRange(vm) }
     }
@@ -152,36 +181,53 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
 
     if(showBottomSheet_Month) {
         ModalBottomSheet(
-            onDismissRequest = { showBottomSheet_Month = false },
+            onDismissRequest = {
+                showBottomSheet_Month = false
+                Updade()
+                               },
             sheetState = sheetState_Month
         ) { MonthBillsUI(vm) }
     }
 
     if (showBottomSheet_Settings) {
         ModalBottomSheet(
-            onDismissRequest = { showBottomSheet_Settings = false },
+            onDismissRequest = {
+                showBottomSheet_Settings = false
+                Updade()
+                               },
             sheetState = sheetState_Settings
         ) { CardLimit(vm) }
     }
+
+
 
     if (showBottomSheet_Bills) {
         CoroutineScope(Job()).apply {
             launch {
                 async {
-                    delay(1000)
-                    val billjson = prefs.getString("cardliushui", MyApplication.NullBill)
-                    if (billjson != null) {
-                        if (billjson.contains("操作成功")) BillItem()
-                        else {
-                            val ONE = prefs.getString("ONE","")
-                            val TGC = prefs.getString("TGC","")
-                            vm.OneGotoCard(ONE + ";" + TGC)
-
-                           MyToast("空数据,请再次尝试或登录")
+                    Handler(Looper.getMainLooper()).post{
+                        vm.BillsData.value = "{}"
+                    }
+                }.await()
+                async {
+                  //  delay(1000)
+                    Handler(Looper.getMainLooper()).post{
+                        vm.BillsData.observeForever { result ->
+                            if(result != null) {
+                                if(result.contains("操作成功")) {
+                                    loading = false
+                                    if (result.contains("操作成功")) BillItem()
+                                    else {
+                                        val ONE = prefs.getString("ONE","")
+                                        val TGC = prefs.getString("TGC","")
+                                        vm.OneGotoCard(ONE + ";" + TGC)
+                                        MyToast("空数据,请再次尝试或登录")
+                                    }
+                                }
+                            }
                         }
                     }
                 }.await()
-                async { loading = false }
             }
         }
 
@@ -348,7 +394,7 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
 
                                         }
                                         items(BillItem().size) { item ->
-                                            var num = BillItem()[item].tranamt.toString()
+                                            var num =( BillItem()[item].tranamt ?: 1000 ).toString()
                                             num = num.substring(0, num.length - 2) + "." + num.substring(num.length - 2)
                                             val big = BigDecimal(num)
                                             val num_float = big.toFloat()
@@ -378,23 +424,8 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
                                                         headlineContent = { Text(text = name) },
                                                         supportingContent = { Text(text = pay) },
                                                         overlineContent = { Text(text = BillItem()[item].effectdateStr) },
-                                                        leadingContent = {
-                                                            when {
-                                                                name.contains("淋浴") ->  Icon(painterResource(R.drawable.bathtub), contentDescription = "")
-                                                                name.contains("网") -> Icon(painterResource(R.drawable.net), contentDescription = "")
-                                                                name.contains("餐饮") -> Icon(painterResource(R.drawable.restaurant), contentDescription = "")
-                                                                name.contains("电") -> Icon(painterResource(R.drawable.flash_on), contentDescription = "")
-                                                                name.contains("超市") || name.contains("贸易") || name.contains("商店") -> Icon(painterResource(R.drawable.storefront), contentDescription = "",)
-                                                                name.contains("打印") -> Icon(painterResource(R.drawable.print), contentDescription = "",)
-                                                                name.contains("充值") -> Icon(painterResource(R.drawable.add_card), contentDescription = "",)
-                                                                name.contains("补助") -> Icon(painterResource(R.drawable.payments), contentDescription = "",)
-                                                                else ->  Icon(painterResource(R.drawable.paid), contentDescription = "")
-                                                            }
-                                                        }
+                                                        leadingContent = { BillsIcons(name) }
                                                     )
-
-
-
                                                 }
                                             }
                                         }
@@ -415,9 +446,14 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
                                                                     }
                                                                 }.await()
                                                                 async {
-                                                                    delay(500)
-                                                                    loading = false
-                                                                    BillItem()
+                                                                    Handler(Looper.getMainLooper()).post{
+                                                                        vm.libraryData.observeForever { result ->
+                                                                            loading = false
+                                                                            BillItem()
+                                                                        }
+                                                                    }
+                                                                 //   delay(500)
+
                                                                 }
                                                             }
                                                         }
@@ -427,21 +463,7 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
                                                 Spacer(modifier = Modifier.width(15.dp))
 
                                                 OutlinedButton(
-                                                    onClick = {
-                                                        CoroutineScope(Job()).apply {
-                                                            launch {
-                                                                async {
-                                                                        page = 1
-                                                                        loading = true
-                                                                        get()
-                                                                }.await()
-                                                                async {
-                                                                    delay(500)
-                                                                    loading = false
-                                                                    BillItem()
-                                                                }
-                                                            }
-                                                        } }
+                                                    onClick = {Updade()}
                                                 ) { Text(text = "${page} / ${totalpage}") }
 
                                                 Spacer(modifier = Modifier.width(15.dp))
@@ -459,9 +481,14 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
 
                                                                 }.await()
                                                                 async {
-                                                                    delay(500)
-                                                                    loading = false
-                                                                    BillItem()
+                                                                    async {
+                                                                        Handler(Looper.getMainLooper()).post {
+                                                                            vm.libraryData.observeForever { result ->
+                                                                                loading = false
+                                                                                BillItem()
+                                                                            }
+                                                                        }
+                                                                    }
                                                                 }
                                                             }
                                                         }

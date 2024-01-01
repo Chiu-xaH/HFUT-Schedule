@@ -3,6 +3,8 @@ package com.hfut.schedule.activity
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -67,6 +69,11 @@ class LoginSuccessAcitivity : ComponentActivity() {
                     Save("semesterId",semesterId)
                 else  Save("semesterId","234")
             }
+           // launch {
+             //   Handler(Looper.getMainLooper()).post{
+               //     vm.BillsData.value = "{}"
+               // }
+           // }
         }
     }
 }

@@ -1,5 +1,7 @@
 package com.hfut.schedule.ui.ComposeUI.Search.SchoolCard
 
+import android.os.Handler
+import android.os.Looper
 import android.preference.PreferenceManager
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -8,6 +10,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -22,9 +25,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -61,14 +67,16 @@ fun SearchBillsUI(vm : LoginSuccessViewModel) {
     var page by remember { mutableStateOf(1) }
 
   fun Items() : MutableList<records> {
-    val result = prefs.getString("searchbills", MyApplication.NullBill)
-    val data = Gson().fromJson(result,BillResponse::class.java)
-    val records = data.data.records
-    var BillItems = mutableListOf<records>()
-    val totalpage = data.data.pages
-    val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-    if(sp.getInt("totalsearch",0) != totalpage){ sp.edit().putInt("totalsearch", totalpage).apply() }
-    records.forEach {  BillItems.add(it) }
+    val result = vm.SearchBillsData.value
+      var BillItems = mutableListOf<records>()
+      if(result?.contains("操作成功") == true) {
+          val data = Gson().fromJson(result,BillResponse::class.java)
+          val records = data.data.records
+          val totalpage = data.data.pages
+          val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
+          if(sp.getInt("totalsearch",0) != totalpage){ sp.edit().putInt("totalsearch", totalpage).apply() }
+          records.forEach {  BillItems.add(it) }
+      }
     return BillItems
   }
 
@@ -86,219 +94,247 @@ fun SearchBillsUI(vm : LoginSuccessViewModel) {
                 async {
                     clicked = true
                     loading = true
+                    Handler(Looper.getMainLooper()).post{
+                        vm.SearchBillsData.value = "{}"
+                    }
                     vm.searchBills("bearer " + auth,input,page) }.await()
                 async {
-                    delay(500)
-                    get()
-                    loading = false
+                    Handler(Looper.getMainLooper()).post{
+                        vm.SearchBillsData.observeForever { result ->
+                            loading = false
+                            get()
+                        }
+                    }
                 }
             }
         }
     }
 
 
-    Column {
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-
-            TextField(
-                //  modifier = Modifier.size(width = 170.dp, height = 70.dp).padding(horizontal = 15.dp, vertical = 5.dp),
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 15.dp, vertical = 5.dp),
-                value = input,
-                onValueChange = {
-                    input = it
-                    clicked = false
-                },
-                label = { Text("输入关键字检索" ) },
-                singleLine = true,
-                trailingIcon = {
-                    IconButton(
-                        onClick = {
-                            Click()
-                        }) {
-                        Icon(painter = painterResource(R.drawable.search), contentDescription = "description")
-                    }
-                },
-                shape = MaterialTheme.shapes.medium,
-                colors = TextFieldDefaults.textFieldColors(
-                    focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                    unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                colors = TopAppBarDefaults.mediumTopAppBarColors(
+                    containerColor = Color.Transparent,
+                    titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
+                title = { Text("流水搜索") }
             )
-            Spacer(modifier = Modifier.height(500.dp))
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+        ){
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
 
-            if (clicked) {
+                TextField(
+                    //  modifier = Modifier.size(width = 170.dp, height = 70.dp).padding(horizontal = 15.dp, vertical = 5.dp),
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 15.dp, vertical = 5.dp),
+                    value = input,
+                    onValueChange = {
+                        input = it
+                        clicked = false
+                    },
+                    label = { Text("输入关键字检索" ) },
+                    singleLine = true,
+                    trailingIcon = {
+                        IconButton(
+                            onClick = {
+                                Click()
+                            }) {
+                            Icon(painter = painterResource(R.drawable.search), contentDescription = "description")
+                        }
+                    },
+                    shape = MaterialTheme.shapes.medium,
+                    colors = TextFieldDefaults.textFieldColors(
+                        focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
+                        unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
+                    ),
+                )
+                Spacer(modifier = Modifier.height(500.dp))
 
-                AnimatedVisibility(
-                    visible = loading,
-                    enter = fadeIn(),
-                    exit = fadeOut()
-                ) {
-                    Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)  {
-                        Spacer(modifier = Modifier.height(5.dp))
-                        CircularProgressIndicator()
-                        Spacer(modifier = Modifier.height(50.dp))
+                if (clicked) {
+
+                    AnimatedVisibility(
+                        visible = loading,
+                        enter = fadeIn(),
+                        exit = fadeOut()
+                    ) {
+                        Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)  {
+                            Spacer(modifier = Modifier.height(5.dp))
+                            CircularProgressIndicator()
+                            Spacer(modifier = Modifier.height(50.dp))
+                        }
                     }
-                }
 
 
-                AnimatedVisibility(
-                    visible = !loading,
-                    enter = fadeIn(),
-                    exit = fadeOut()
-                ) {
-                    //填充界面
-                    Column{
+                    AnimatedVisibility(
+                        visible = !loading,
+                        enter = fadeIn(),
+                        exit = fadeOut()
+                    ) {
+                        //填充界面
+                        Column{
 
-                        //Spacer(modifier = Modifier.height(50.dp))
-                        LazyColumn {
-                            item {
-                                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center){
-                                    TextField(
-                                        //  modifier = Modifier.size(width = 170.dp, height = 70.dp).padding(horizontal = 15.dp, vertical = 5.dp),
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .padding(horizontal = 15.dp, vertical = 5.dp),
-                                        value = input,
-                                        onValueChange = {
-                                            input = it
-                                            clicked = false
-                                        },
-                                        label = { Text("输入关键字检索") },
-                                        singleLine = true,
-                                        trailingIcon = {
-                                            IconButton(
-                                                onClick = {Click()}) {
-                                                Icon(painter = painterResource(R.drawable.search), contentDescription = "description")
-                                            }
-                                        },
-                                        shape = MaterialTheme.shapes.medium,
-                                        colors = TextFieldDefaults.textFieldColors(
-                                            focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                                            unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-                                        ),
-                                    )
-                                }
-
-                            }
-
-                            items(Items().size) { item ->
-                                var num = Items()[item].tranamt.toString()
-                                num = num.substring(0, num.length - 2) + "." + num.substring(num.length - 2)
-                                val big = BigDecimal(num)
-                                val num_float = big.toFloat()
-
-                                var name = Items()[item].resume
-                                if (name.contains("有限公司")) name = name.replace("有限公司","")
-
-                                var pay = "$num_float 元"
-                                if (name.contains("充值") || name.contains("补助")) pay = "+" + pay
-                                else pay = "-" + pay
-
-                                Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)
-                                {
-                                    Card(
-                                        elevation = CardDefaults.cardElevation(
-                                            defaultElevation = 3.dp
-                                        ),
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(horizontal = 15.dp, vertical = 5.dp),
-                                        shape = MaterialTheme.shapes.medium
-                                    ) {
-                                        ListItem(
-                                            headlineContent = { Text(text = name) },
-                                            supportingContent = {Text(text = pay)},
-                                            overlineContent = {Text(text = Items()[item].effectdateStr)},
-                                            leadingContent = {
-                                                when {
-                                                    name.contains("淋浴") ->  Icon(painterResource(R.drawable.bathtub), contentDescription = "")
-                                                    name.contains("网") -> Icon(painterResource(R.drawable.net), contentDescription = "")
-                                                    name.contains("餐饮") -> Icon(painterResource(R.drawable.restaurant), contentDescription = "")
-                                                    name.contains("电") -> Icon(painterResource(R.drawable.flash_on), contentDescription = "")
-                                                    name.contains("超市") || name.contains("贸易") || name.contains("商店") -> Icon(painterResource(R.drawable.storefront), contentDescription = "",)
-                                                    name.contains("打印") -> Icon(painterResource(R.drawable.print), contentDescription = "",)
-                                                    name.contains("充值") -> Icon(painterResource(R.drawable.add_card), contentDescription = "",)
-                                                    name.contains("补助") -> Icon(painterResource(R.drawable.payments), contentDescription = "",)
-                                                    else ->  Icon(painterResource(R.drawable.paid), contentDescription = "")
+                            //Spacer(modifier = Modifier.height(50.dp))
+                            LazyColumn {
+                                item {
+                                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center){
+                                        TextField(
+                                            //  modifier = Modifier.size(width = 170.dp, height = 70.dp).padding(horizontal = 15.dp, vertical = 5.dp),
+                                            modifier = Modifier
+                                                .weight(1f)
+                                                .padding(horizontal = 15.dp, vertical = 5.dp),
+                                            value = input,
+                                            onValueChange = {
+                                                input = it
+                                                clicked = false
+                                            },
+                                            label = { Text("输入关键字检索") },
+                                            singleLine = true,
+                                            trailingIcon = {
+                                                IconButton(
+                                                    onClick = {Click()}) {
+                                                    Icon(painter = painterResource(R.drawable.search), contentDescription = "description")
                                                 }
-                                            }
+                                            },
+                                            shape = MaterialTheme.shapes.medium,
+                                            colors = TextFieldDefaults.textFieldColors(
+                                                focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
+                                                unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
+                                            ),
                                         )
-
-
-
                                     }
+
                                 }
 
-                            }
-                            item {
-                                Spacer(modifier = Modifier.height(10.dp))
-                                Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
+                                items(Items().size) { item ->
+                                    var num = Items()[item].tranamt.toString()
+                                    num = num.substring(0, num.length - 2) + "." + num.substring(num.length - 2)
+                                    val big = BigDecimal(num)
+                                    val num_float = big.toFloat()
 
-                                    OutlinedButton(
-                                        onClick = {
-                                            CoroutineScope(Job()).apply {
-                                                launch {
-                                                    async {
-                                                        if(page > 1) {
-                                                            page--
-                                                            loading = true
-                                                            vm.searchBills("bearer " + auth,input,page)
-                                                        }
-                                                    }.await()
-                                                    async {
-                                                        delay(500)
-                                                        loading = false
-                                                        get()
-                                                    }
-                                                }
-                                            }
+                                    var name = Items()[item].resume
+                                    if (name.contains("有限公司")) name = name.replace("有限公司","")
 
-                                        }) { Text(text = "上一页") }
+                                    var pay = "$num_float 元"
+                                    if (name.contains("充值") || name.contains("补助")) pay = "+" + pay
+                                    else pay = "-" + pay
 
-                                    Spacer(modifier = Modifier.width(15.dp))
+                                    Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)
+                                    {
+                                        Card(
+                                            elevation = CardDefaults.cardElevation(
+                                                defaultElevation = 3.dp
+                                            ),
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(horizontal = 15.dp, vertical = 5.dp),
+                                            shape = MaterialTheme.shapes.medium
+                                        ) {
+                                            ListItem(
+                                                headlineContent = { Text(text = name) },
+                                                supportingContent = {Text(text = pay)},
+                                                overlineContent = {Text(text = Items()[item].effectdateStr)},
+                                                leadingContent = { BillsIcons(name) }
+                                            )
 
-                                    OutlinedButton(
-                                        onClick = {
-                                            page = 1
-                                            loading = true
-                                            vm.searchBills("bearer " + auth,input,page)
+
+
                                         }
-                                    ) { Text(text = "${page} / ${prefs.getInt("totalsearch",1)}") }
+                                    }
 
-                                    Spacer(modifier = Modifier.width(15.dp))
+                                }
+                                item {
+                                    Spacer(modifier = Modifier.height(10.dp))
+                                    Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
 
-                                    OutlinedButton(
-                                        onClick = {
-                                            CoroutineScope(Job()).apply {
-                                                launch {
-                                                    async {
-                                                        if ( page < prefs.getInt("totalsearch",1)) {
-                                                            page++
-                                                            loading = true
-                                                            vm.searchBills("bearer " + auth,input,page)
+                                        OutlinedButton(
+                                            onClick = {
+                                                CoroutineScope(Job()).apply {
+                                                    launch {
+                                                        async {
+                                                            if(page > 1) {
+                                                                page--
+                                                                loading = true
+                                                                vm.searchBills("bearer " + auth,input,page)
+                                                            }
+                                                        }.await()
+                                                        async {
+                                                            Handler(Looper.getMainLooper()).post{
+                                                                vm.SearchBillsData.observeForever { result ->
+                                                                    loading = false
+                                                                    get()
+                                                                }
+                                                            }
                                                         }
-
-                                                    }.await()
-                                                    async {
-                                                        delay(500)
-                                                        loading = false
-                                                        get()
                                                     }
                                                 }
-                                            }
 
-                                        }) { Text(text = "下一页") }
+                                            }) { Text(text = "上一页") }
+
+                                        Spacer(modifier = Modifier.width(15.dp))
+
+                                        OutlinedButton(
+                                            onClick = {
+                                                CoroutineScope(Job()).launch {
+                                                    async {
+                                                        page = 1
+                                                        loading = true
+                                                        vm.searchBills("bearer " + auth,input,page)
+                                                    }.await()
+                                                    async {
+                                                        Handler(Looper.getMainLooper()).post{
+                                                            vm.SearchBillsData.observeForever { result ->
+                                                                loading = false
+                                                                get()
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
+                                            }
+                                        ) { Text(text = "${page} / ${prefs.getInt("totalsearch",1)}") }
+
+                                        Spacer(modifier = Modifier.width(15.dp))
+
+                                        OutlinedButton(
+                                            onClick = {
+                                                CoroutineScope(Job()).apply {
+                                                    launch {
+                                                        async {
+                                                            if ( page < prefs.getInt("totalsearch",1)) {
+                                                                page++
+                                                                loading = true
+                                                                vm.searchBills("bearer " + auth,input,page)
+                                                            }
+
+                                                        }.await()
+                                                        async {
+                                                            Handler(Looper.getMainLooper()).post{
+                                                                vm.SearchBillsData.observeForever { result ->
+                                                                    loading = false
+                                                                    get()
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
+                                            }) { Text(text = "下一页") }
+                                    }
+                                    Spacer(modifier = Modifier.height(10.dp))
                                 }
-                                Spacer(modifier = Modifier.height(10.dp))
                             }
                         }
                     }
                 }
             }
-
-
         }
     }
 }

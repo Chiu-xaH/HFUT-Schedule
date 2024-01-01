@@ -1,5 +1,8 @@
 package com.hfut.schedule.ui.ComposeUI.Search.Electric
 
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -206,21 +209,23 @@ fun EleUI(vm : LoginSuccessViewModel) {
                 CoroutineScope(Job()).launch {
                     async {
                         showitem4 = false
+                        Handler(Looper.getMainLooper()).post{
+                            vm.ElectricData.value = "{}"
+                        }
                         SharePrefs.Save("BuildNumber", BuildingsNumber)
                         SharePrefs.Save("EndNumber", EndNumber)
                         SharePrefs.Save("RoomNumber", RoomNumber)
                     }
                     async { vm.searchEle(jsons) }.await()
                     async {
-                        delay(1000)
-                        val result = SharePrefs.prefs.getString("SearchEle", "")
-                        if (result?.contains("query_elec_roominfo") == true) {
-                            val msg = Gson().fromJson(
-                                result,
-                                SearchEleResponse::class.java
-                            ).query_elec_roominfo.errmsg
-                            MyToast(msg)
-                        } else MyToast("无法获取,是否连接hfut-wlan")
+                        Handler(Looper.getMainLooper()).post{
+                            vm.ElectricData.observeForever { result ->
+                                if (result?.contains("query_elec_roominfo") == true) {
+                                    val msg = Gson().fromJson(result, SearchEleResponse::class.java).query_elec_roominfo.errmsg
+                                    MyToast(msg)
+                                } else if (vm.ElectricData.value?.contains("失败") == true) vm.ElectricData.value?.let { MyToast(it) }
+                            }
+                        }
                     }
                 }
             },

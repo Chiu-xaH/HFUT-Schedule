@@ -35,8 +35,9 @@ import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.ComposeUI.Search.LePaoYun.InfoSet
 import com.hfut.schedule.ui.ComposeUI.Settings.MyAPIItem
-import com.hfut.schedule.ui.ComposeUI.Settings.SettingsItems
+import com.hfut.schedule.ui.ComposeUI.Settings.SettingsCubeItems
 import com.hfut.schedule.ui.ComposeUI.Settings.FocusSetting
+import com.hfut.schedule.ui.ComposeUI.Settings.SettingsItem
 
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -44,14 +45,6 @@ import com.hfut.schedule.ui.ComposeUI.Settings.FocusSetting
 fun SettingsScreen(vm : LoginSuccessViewModel
                    ,showlable : Boolean,
                    showlablechanged: (Boolean) -> Unit, ) {
-
-    val switch_focus = prefs.getBoolean("SWITCHFOCUS",true)
-    var showfocus by remember { mutableStateOf(switch_focus) }
-
-
-    val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-    if (sp.getBoolean("SWITCH", true) != showlable) { sp.edit().putBoolean("SWITCH", showlable).apply() }
-    if (sp.getBoolean("SWITCHFOCUS", true) != showfocus) { sp.edit().putBoolean("SWITCHFOCUS", showfocus).apply() }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -70,68 +63,14 @@ fun SettingsScreen(vm : LoginSuccessViewModel
             .fillMaxSize()) {
 
             Spacer(modifier = Modifier.height(10.dp))
+
             MyAPIItem()
 
-            ListItem(
-                headlineContent = { Text(text = "底栏标签") },
-                leadingContent = { Icon(painterResource(R.drawable.label), contentDescription = "Localized description",) },
-                trailingContent = { Switch(checked = showlable, onCheckedChange = showlablechanged) },
-                modifier = Modifier.clickable { showlablechanged }
-            )
+            SettingsItem(vm,showlable,showlablechanged)
 
-
-            ListItem(
-                headlineContent = { Text(text = "聚焦优先") },
-                supportingContent = { Text(text = "使聚焦作为本地速览的第一页面,而不是课表")},
-                leadingContent = { Icon(painterResource(R.drawable.lightbulb), contentDescription = "Localized description",) },
-                trailingContent = { Switch(checked = showfocus, onCheckedChange = {showfocusch -> showfocus = showfocusch }) },
-                modifier = Modifier.clickable { showfocus = !showfocus }
-            )
-
-            var showBottomSheet_input by remember { mutableStateOf(false) }
-            val sheetState_input = rememberModalBottomSheetState()
-            if (showBottomSheet_input) {
-                ModalBottomSheet(
-                    onDismissRequest = { showBottomSheet_input = false },
-                    sheetState = sheetState_input
-                ) {
-                    InfoSet()
-                    Spacer(modifier = Modifier.height(100.dp))
-                }
-            }
-
-            var showBottomSheet_focus by remember { mutableStateOf(false) }
-            var sheetState_focus = rememberModalBottomSheetState()
-            if (showBottomSheet_focus) {
-                ModalBottomSheet(
-                    onDismissRequest = { showBottomSheet_focus = false },
-                    sheetState = sheetState_focus
-                ) {
-                    FocusSetting()
-                    Spacer(modifier = Modifier.height(100.dp))
-                }
-            }
-
-            ListItem(
-                headlineContent = { Text(text = "云运动 信息配置") },
-                supportingContent = { Text(text = "需要提交已登录手机的信息")},
-                leadingContent = { Icon(painterResource(R.drawable.mode_of_travel), contentDescription = "Localized description",) },
-                modifier = Modifier.clickable { showBottomSheet_input = true }
-            )
-
-            ListItem(
-                headlineContent = { Text(text = "聚焦编辑") },
-                supportingContent = { Text(text = "自定义聚焦的内容及信息来源")},
-                leadingContent = { Icon(painterResource(R.drawable.edit), contentDescription = "Localized description",) },
-                modifier = Modifier.clickable { showBottomSheet_focus = true }
-            )
-
-
-            SettingsItems()
-
+            SettingsCubeItems()
 
             Spacer(modifier = Modifier.height(90.dp))
-
         }
     }
 }

@@ -3,9 +3,7 @@ package com.hfut.schedule.ui.ComposeUI.Search.Grade
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.datamodel.Community.scoreInfoDTOList
-import com.hfut.schedule.logic.datamodel.Jxglstu.GradeResponse
 import com.hfut.schedule.logic.utils.SharePrefs
-import org.jsoup.Jsoup
 
 fun getGrade() :  MutableList<scoreInfoDTOList> {
     val json = SharePrefs.prefs.getString("Grade", MyApplication.NullGrades)

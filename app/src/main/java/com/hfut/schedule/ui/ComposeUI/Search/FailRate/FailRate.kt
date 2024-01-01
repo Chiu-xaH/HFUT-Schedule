@@ -1,5 +1,8 @@
 package com.hfut.schedule.ui.ComposeUI.Search.FailRate
 
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -38,6 +41,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.utils.SharePrefs
@@ -119,10 +123,17 @@ fun FailRate(vm: LoginSuccessViewModel) {
                                                 Click(vm, input, 1)
                                                 loading = true
                                                 onclick = true
+                                                Handler(Looper.getMainLooper()).post{
+                                                    vm.FailRateData.value = "{}"
+                                                }
                                             }.await()
                                             async {
-                                                delay(1000)
-                                                loading = false
+                                                Handler(Looper.getMainLooper()).post{
+                                                    vm.FailRateData.observeForever { result ->
+                                                        if(result.contains("操作成功"))
+                                                               loading = false
+                                                    }
+                                                }
                                             }
                                         }
                                     }) {
@@ -161,7 +172,7 @@ fun FailRate(vm: LoginSuccessViewModel) {
                             visible = !loading,
                             enter = fadeIn(),
                             exit = fadeOut()
-                        ) { FailRateUI() }
+                        ) { FailRateUI(vm) }
                     }
                     Spacer(modifier = Modifier.height(30.dp))
                 }

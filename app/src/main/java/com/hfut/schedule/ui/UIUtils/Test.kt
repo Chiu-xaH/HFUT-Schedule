@@ -1,11 +1,19 @@
 package com.hfut.schedule.ui.UIUtils
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.ExperimentalMaterialApi
@@ -27,6 +35,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
@@ -41,6 +50,15 @@ data class Item(var item: String, var isNew: Boolean)
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun Tests() {
+    RotatingIcon(iconId = R.drawable.rotate_right)
+}
+
+
+// 定义一个可组合函数，接受一个iconId参数，表示要显示的图标资源
+@Composable
+fun RotatingIcon(iconId: Int) {
+
+
 
 }
 

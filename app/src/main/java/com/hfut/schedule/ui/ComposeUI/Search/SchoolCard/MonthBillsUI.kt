@@ -1,5 +1,7 @@
 package com.hfut.schedule.ui.ComposeUI.Search.SchoolCard
 
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -61,11 +63,15 @@ fun MonthBillsUI(vm : LoginSuccessViewModel) {
 
 
     fun getbillmonth() : List<BillMonth> {
-        val json = prefs.getString("monthbalance", MyApplication.NullSearch)
-        val data = Gson().fromJson(json, BillMonthResponse::class.java)
-        val bill = data.data
-        val list = bill.map { (date,balance) -> BillMonth(date, balance) }
-        return list
+        val json = vm.MonthData.value
+        var lists = listOf<BillMonth>(BillMonth("",0.0))
+
+        if(json?.contains("操作成功") == true) {
+            val data = Gson().fromJson(json, BillMonthResponse::class.java)
+            val bill = data.data
+            val list = bill.map { (date,balance) -> BillMonth(date, balance) }
+            return list
+        } else return lists
     }
 
     var clicked by remember { mutableStateOf(false) }
@@ -87,13 +93,20 @@ fun MonthBillsUI(vm : LoginSuccessViewModel) {
                     input = "$Years-$Months"
                     clicked = true
                     loading2 = true
-                    Log.d("inout",input)
+                    Handler(Looper.getMainLooper()).post{
+                        vm.MonthData.value = "{}"
+                    }
                     vm.getMonthBills("bearer " + auth, input)
                 }.await()
                 async {
-                    delay(500)
-                    getbillmonth()
-                    loading2 = false
+                    Handler(Looper.getMainLooper()).post{
+                        vm.MonthData.observeForever { result ->
+                            if(result.contains("操作成功")) {
+                                getbillmonth()
+                                loading2 = false
+                            }
+                        }
+                    }
                 }
             }
         }

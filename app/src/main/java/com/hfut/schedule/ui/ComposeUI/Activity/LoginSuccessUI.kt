@@ -446,7 +446,7 @@ fun CalendarScreen(isEnabled:Boolean,enabledchanged : (Boolean) -> Unit,vm : Log
                       //  if(prefs.getString("TOKEN","").contains("ey"))
                       //  else vm.getExam(cookie!!)
                     }
-                    async {  vm.getProgram(cookie!!) }
+                  //  async {  vm.getProgram(cookie!!) }
 
                 }.await()
                 async {

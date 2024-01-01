@@ -2,6 +2,10 @@ package com.hfut.schedule.ui.ComposeUI.Search.Library
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.lifecycle.ViewModelProvider
 import androidx.compose.animation.fadeIn
@@ -59,9 +63,6 @@ import com.hfut.schedule.logic.datamodel.Community.LibRecord
 import com.hfut.schedule.logic.datamodel.Community.LibraryResponse
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.logic.datamodel.One.Library
-import com.hfut.schedule.logic.datamodel.One.content
-import com.hfut.schedule.ui.ComposeUI.Search.LePaoYun.OpenLePao
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -82,37 +83,42 @@ fun LibraryItem(vm : LoginSuccessViewModel) {
     CommuityTOKEN?.let { vm.GetHistory(it,"1") }
 
     ListItem(
-        headlineContent = { Text(text = "图书服务") },
-        supportingContent = { Text(text = "借阅 ${borrow} 本  预约 ${sub} 本")},
+        headlineContent = { Text(text = "图书  借阅 ${getBorrow(BORROWED).size} 本") },
         leadingContent = {
             Icon(
                 painterResource(R.drawable.book),
                 contentDescription = "Localized description",
             )
         },
-        modifier = Modifier.clickable {
-            showBottomSheet_Library = true
-        }
+        modifier = Modifier.clickable { showBottomSheet_Library = true }
     )
 
     var input by remember { mutableStateOf( "") }
 
     fun LibItem() : MutableList<LibRecord> {
 
-        val library = prefs.getString("Library", MyApplication.NullLib)
-        val data = Gson().fromJson(library, LibraryResponse::class.java)
-        val result = data.result.records
+        val library = vm.libraryData.value
+        //library?.let { Log.d("direige", it) }
         var LibItems = mutableListOf<LibRecord>()
-        for (i in 0 until result.size){
-            val num = result[i].callNumber
-            val name = result[i].name
-            val author = result[i].author
-            val pubisher = result[i].publisher
-            val year = result[i].year
-            val place = result[i].place
-            val status = result[i].status_dictText
-            LibItems.add(LibRecord(num,name,author,pubisher,year, place,status))
+        if (library != null) {
+            if(library.contains("操作成功")){
+                val data = Gson().fromJson(library, LibraryResponse::class.java)
+                val result = data.result.records
+                if (result != null) {
+                    for (i in 0 until result.size){
+                        val num = result[i].callNumber
+                        val name = result[i].name
+                        val author = result[i].author
+                        val pubisher = result[i].publisher
+                        val year = result[i].year
+                        val place = result[i].place
+                        val status = result[i].status_dictText
+                        LibItems.add(LibRecord(num,name,author,pubisher,year, place,status))
+                    }
+                }
+            }
         }
+
         return LibItems
     }
 
@@ -169,17 +175,22 @@ fun LibraryItem(vm : LoginSuccessViewModel) {
                                             SharePrefs.Save("Query", input)
                                             onclick = true
                                             loading = true
+                                            vm.libraryData.value = MyApplication.NullLib
                                             CoroutineScope(Job()).launch {
-                                               try {
-                                                    val deffer = async {
-                                                        CommuityTOKEN?.let { vm.SearchBooks(it,input) }
-                                                    }.await()
+                                                    async { CommuityTOKEN?.let { vm.SearchBooks(it,input) } }.await()
                                                     async {
-                                                        delay(3000)
-                                                        loading = false
-                                                        LibItem()
+                                                        Handler(Looper.getMainLooper()).post{
+                                                            vm.libraryData.observeForever { result ->
+                                                               // Log.d("ee",result)
+                                                                if(result.contains("操作成功")) {
+                                                                    CoroutineScope(Job()).launch {
+                                                                        async { loading = false }
+                                                                        async { LibItem() }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
                                                     }
-                                                }catch (e : Exception){}
                                                 }
                                         }) {
                                         Icon(painter = painterResource(R.drawable.search), contentDescription = "description")

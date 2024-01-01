@@ -464,20 +464,17 @@ suspend fun FocusUpdate(){
                             zjgdcard(vm)
                             item { TodayCardItem(vm) }
                         }
-                        //考试
-                        items(getExam().size) { item -> ExamItems(item,true) }
-
-                        //日程
-                        if (prefs.getBoolean("SWITCHMYAPI",true)){
-                            items(MySchedule().size) { item -> MyScheuleItem(item = item, MySchedule = MySchedule()) }
-                        }
-
                         //课表
                         if (formattedTime.toInt() >= 18)
                             items(DatumTomorrow().size) { item -> TomorrowCourseItem(item = item, DatumTomorrow = DatumTomorrow()) }
                         else
                             items(Datum().size) { item -> TodayCourseItem(item = item, Datum = Datum()) }
-
+                        //日程
+                        if (prefs.getBoolean("SWITCHMYAPI",true)){
+                            items(MySchedule().size) { item -> MyScheuleItem(item = item, MySchedule = MySchedule()) }
+                        }
+                        //考试
+                        items(getExam().size) { item -> ExamItems(item,true) }
                      //   item{ AddItem(item = 0, AddedItems = )}
                     }
 
@@ -500,6 +497,7 @@ suspend fun FocusUpdate(){
                     }
                     item { Spacer(modifier = Modifier.height(100.dp)) }
                 }
+                if(prefs.getBoolean("SWITCHADD",true))
                 AddButton(isVisible = shouldShowAddButton)
                 PullRefreshIndicator(refreshing, states, Modifier.align(Alignment.TopCenter))
             }

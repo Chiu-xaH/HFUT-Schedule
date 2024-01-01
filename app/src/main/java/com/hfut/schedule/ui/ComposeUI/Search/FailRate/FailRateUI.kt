@@ -33,6 +33,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.hfut.schedule.R
+import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.datamodel.Community.FailRateRecord
 import com.hfut.schedule.logic.datamodel.Community.FailRateResponse
 import com.hfut.schedule.logic.datamodel.Community.courseFailRateDTOList
@@ -41,16 +42,16 @@ import com.hfut.schedule.ui.ComposeUI.Search.Program.getProgramItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FailRateUI() {
+fun FailRateUI(vm : LoginSuccessViewModel) {
 
-   getFailRate()
+    getFailRate(vm)
 
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
     var num by remember { mutableStateOf(0) }
 
     LazyColumn {
-        items(getFailRate().size){item ->
+        items(getFailRate(vm).size){item ->
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 Column() {
                     Card(
@@ -61,13 +62,13 @@ fun FailRateUI() {
                         shape = MaterialTheme.shapes.medium,
                     ){
                         ListItem(
-                            headlineContent = {  Text(getFailRate()[item].courseName) },
+                            headlineContent = {  Text(getFailRate(vm)[item].courseName) },
                             leadingContent = { Icon(painterResource(R.drawable.monitoring), contentDescription = "Localized description",) },
                             modifier = Modifier.clickable {
                                 showBottomSheet = true
                                 num = item },
                         )
-                        getLists(item)
+                        getLists(item,vm)
                     }
                 }
             }
@@ -90,7 +91,7 @@ fun FailRateUI() {
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        title = { Text("${getFailRate()[num].courseName}") }
+                        title = { Text("${getFailRate(vm)[num].courseName}") }
                     )
                 },
             ) { innerPadding ->
@@ -100,8 +101,8 @@ fun FailRateUI() {
                         .fillMaxSize()
                 ) {
                     LazyColumn{
-                        items(getLists(num).size){item ->
-                            val rate = getLists(num)[item].failRate * 100
+                        items(getLists(num,vm).size){item ->
+                            val rate = getLists(num,vm)[item].failRate * 100
                             val formattedNumber = String.format("%.2f", rate)
                             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                                 Column() {
@@ -118,9 +119,9 @@ fun FailRateUI() {
                                         shape = MaterialTheme.shapes.medium,
                                     ){
                                         ListItem(
-                                            headlineContent = {  Text("平均分 ${getLists(num)[item].avgScore}") },
-                                            supportingContent = { Text("人数: 挂科 ${getLists(num)[item].failCount} | 总 ${getLists(num)[item].totalCount}") },
-                                            overlineContent = { Text(text = "${getLists(num)[item].xn}年 第${getLists(num)[item].xq}学期")},
+                                            headlineContent = {  Text("平均分 ${getLists(num,vm)[item].avgScore}") },
+                                            supportingContent = { Text("人数: 挂科 ${getLists(num,vm)[item].failCount} | 总 ${getLists(num,vm)[item].totalCount}") },
+                                            overlineContent = { Text(text = "${getLists(num,vm)[item].xn}年 第${getLists(num,vm)[item].xq}学期")},
                                             leadingContent = { Icon(painterResource(R.drawable.article), contentDescription = "Localized description",) },
                                             trailingContent = { Text("挂科率 ${formattedNumber} %") },
                                             modifier = Modifier.clickable {},

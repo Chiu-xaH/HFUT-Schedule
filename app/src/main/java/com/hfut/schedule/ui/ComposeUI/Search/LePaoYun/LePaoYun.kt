@@ -65,7 +65,7 @@ fun Update(vm : LoginSuccessViewModel) {
     val RequestBody =  prefs.getString("YunRequestBody","")?.trim()
     CoroutineScope(Job()).launch {
         async {vm.LePaoYunHome(token!!)}.await()
-        async {vm.getRunRecord(token!!,RequestBody!!)}.await()
+      //  async {vm.getRunRecord(token!!,RequestBody!!)}.await()
         async {
             delay(400)
             val json = prefs.getString("LePaoYun", MyApplication.NullLePao)
@@ -150,7 +150,7 @@ fun LePaoYunUI() {
 
         if (showBottomSheet_Record) {
             ModalBottomSheet(onDismissRequest = { showBottomSheet_Record = false }, sheetState = sheetState_Record) {
-                RecordUI()
+
             }
         }
 

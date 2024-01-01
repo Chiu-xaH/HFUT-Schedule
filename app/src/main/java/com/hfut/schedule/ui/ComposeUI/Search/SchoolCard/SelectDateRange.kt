@@ -1,6 +1,9 @@
 package com.hfut.schedule.ui.ComposeUI.Search.SchoolCard
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -29,6 +32,7 @@ import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.datamodel.zjgd.BillRangeResponse
+import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.UIUtils.MyToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -74,34 +78,29 @@ fun SelecctDateRange(vm : LoginSuccessViewModel) {
                         val startDateString = formatter.format(startDate)
                         val endDateString = formatter.format(endDate)
 
-                        val prefs = MyApplication.context.getSharedPreferences(
-                            "com.hfut.schedule_preferences",
-                            Context.MODE_PRIVATE
-                        )
                         val auth = prefs.getString("auth", "")
                         CoroutineScope(Job()).apply {
                             launch {
                                 async {
-                                    vm.searchDate(
-                                        "bearer " + auth,
-                                        startDateString,
-                                        endDateString
-                                    )
+                                    Handler(Looper.getMainLooper()).post{
+                                        vm.RangeData.value = "{}"
+                                    }
+                                    vm.searchDate("bearer " + auth, startDateString, endDateString)
                                 }.await()
                                 async {
-                                    delay(500)
-                                    val json =
-                                        prefs.getString("searchyue", MyApplication.NullMonthYue)
-                                    val data =
-                                        Gson().fromJson(json, BillRangeResponse::class.java)
-                                    var zhichu = data.data.expenses
-                                    zhichu = zhichu / 100
-
-                                   MyToast("共支出 ${zhichu} 元")
+                                    Handler(Looper.getMainLooper()).post{
+                                        vm.RangeData.observeForever { result ->
+                                            if(result.contains("操作成功")){
+                                                val data = Gson().fromJson(result, BillRangeResponse::class.java)
+                                                var zhichu = data.data.expenses
+                                                zhichu = zhichu / 100
+                                                MyToast("共支出 ${zhichu} 元")
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
-
                     },
                     enabled = state.selectedEndDateMillis != null
                 ) {

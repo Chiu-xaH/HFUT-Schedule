@@ -120,24 +120,6 @@ fun InfoSet() {
                         )
                     }
 
-
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                        TextField(
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(horizontal = 15.dp),
-                            value = inputRequestBody,
-                            onValueChange = { inputRequestBody = it },
-                            label = { Text("RequestBody,非必须,但填写后可查看建跑记录") },
-                            singleLine = true,
-                            shape = MaterialTheme.shapes.medium,
-                            colors = TextFieldDefaults.textFieldColors(focusedIndicatorColor = Color.Transparent, unfocusedIndicatorColor = Color.Transparent,),
-                            leadingIcon = { Icon( painterResource(R.drawable.net), contentDescription = "Localized description") }
-                        )
-                    }
-
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
