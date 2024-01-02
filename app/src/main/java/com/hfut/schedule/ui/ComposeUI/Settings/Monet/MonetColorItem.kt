@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.ComposeUI.Settings
+package com.hfut.schedule.ui.ComposeUI.Settings.Monet
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility

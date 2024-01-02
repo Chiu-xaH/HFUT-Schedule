@@ -30,6 +30,7 @@ interface CommunityService {
         @Header("X-Access-Token") Token : String,
         @Query("courseName") courseName : String,
         @Query("pageNo") page : String
+        ,@Query("pageSize") size : String
     ) : Call<ResponseBody>
 
     @GET("api/business/book/search")
@@ -37,6 +38,7 @@ interface CommunityService {
         @Header("X-Access-Token") Token : String,
         @Query("name") name: String,
         @Query("pageNo") page : String
+        ,@Query("pageSize") size : String
     ) : Call<ResponseBody>
 
     @GET("api/business/examarrangement/listselect")

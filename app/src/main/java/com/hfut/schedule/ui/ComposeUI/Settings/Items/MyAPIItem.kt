@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.ComposeUI.Settings
+package com.hfut.schedule.ui.ComposeUI.Settings.Items
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth

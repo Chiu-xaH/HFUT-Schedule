@@ -1,8 +1,9 @@
-package com.hfut.schedule.ui.ComposeUI.Saved
+package com.hfut.schedule.ui.UIUtils
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContent
@@ -228,6 +229,7 @@ fun NoNet() {
                         if (scheduleList[i].weekIndex == Bianhuaweeks.toInt()) {
                 if (scheduleList[i].weekday == 1) {
                     Mon = date
+                    Log.d("周一", scheduleList[i].startTime.toString())
                     if (scheduleList[i].startTime == 800) {
                         table_1_1 = text
                         sheet_1_1 = info
@@ -338,15 +340,7 @@ if (json?.contains("result") == true) {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                title = { Text("今天  第${Benweeks}周  周${chinesenumber}  ${Date_MM_dd}") }
-            )
-        },) {innerPadding ->
+        ) {innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)

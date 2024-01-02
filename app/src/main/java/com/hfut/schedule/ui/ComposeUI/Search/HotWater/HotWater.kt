@@ -16,7 +16,6 @@ fun HotWater() {
 
     ListItem(
         headlineContent = { Text(text = "热水机") },
-        supportingContent = { Text(text = "宣区六号六楼")},
         leadingContent = { Icon(painterResource(R.drawable.water_voc), contentDescription = "")},
         modifier = Modifier.clickable { OpenAlipay.openAlipay(MyApplication.AlipayHotWaterURL) }
     )

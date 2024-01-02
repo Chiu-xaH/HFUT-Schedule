@@ -1,16 +1,14 @@
-package com.hfut.schedule.ui.ComposeUI.Settings
+package com.hfut.schedule.ui.ComposeUI.Settings.Items
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.preference.PreferenceManager
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Badge
@@ -19,10 +17,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,12 +28,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.dao.dataBase
 import com.hfut.schedule.logic.utils.SharePrefs.SaveBoolean
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.StartUri.StartUri
-import com.hfut.schedule.ui.ComposeUI.Search.LePaoYun.InfoSet
+import com.hfut.schedule.ui.ComposeUI.Settings.Monet.MonetColorItem
+import com.hfut.schedule.ui.ComposeUI.Settings.getMyVersion
 import com.hfut.schedule.ui.UIUtils.LittleDialog
 
 
@@ -195,80 +190,5 @@ fun SettingsCubeItems() {
         supportingContent = { Text(text = "当数据异常或冲突崩溃时,可清除数据,然后重新登录")},
         leadingContent = { Icon(painterResource(R.drawable.delete), contentDescription = "Localized description",) },
         modifier = Modifier.clickable{ showDialog = true }
-    )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SettingsItem(vm : LoginSuccessViewModel,showlable : Boolean,showlablechanged :(Boolean) -> Unit) {
-    val switch_focus = prefs.getBoolean("SWITCHFOCUS",true)
-    var showfocus by remember { mutableStateOf(switch_focus) }
-
-
-    val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-    if (sp.getBoolean("SWITCH", true) != showlable) { sp.edit().putBoolean("SWITCH", showlable).apply() }
-    if (sp.getBoolean("SWITCHFOCUS", true) != showfocus) { sp.edit().putBoolean("SWITCHFOCUS", showfocus).apply() }
-
-
-    ListItem(
-        headlineContent = { Text(text = "底栏标签") },
-        leadingContent = { Icon(painterResource(R.drawable.label), contentDescription = "Localized description",) },
-        trailingContent = { Switch(checked = showlable, onCheckedChange = showlablechanged) },
-        modifier = Modifier.clickable { showlablechanged }
-    )
-
-
-    ListItem(
-        headlineContent = { Text(text = "聚焦优先") },
-        supportingContent = { Text(text = "使聚焦作为本地速览的第一页面,而不是课表")},
-        leadingContent = { Icon(painterResource(R.drawable.lightbulb), contentDescription = "Localized description",) },
-        trailingContent = { Switch(checked = showfocus, onCheckedChange = {showfocusch -> showfocus = showfocusch }) },
-        modifier = Modifier.clickable { showfocus = !showfocus }
-    )
-
-
-    var showBottomSheet_input by remember { mutableStateOf(false) }
-    val sheetState_input = rememberModalBottomSheetState()
-    if (showBottomSheet_input) {
-        ModalBottomSheet(
-            onDismissRequest = { showBottomSheet_input = false },
-            sheetState = sheetState_input
-        ) {
-            InfoSet()
-            Spacer(modifier = Modifier.height(100.dp))
-        }
-    }
-
-    var showBottomSheet_focus by remember { mutableStateOf(false) }
-    var sheetState_focus = rememberModalBottomSheetState()
-    if (showBottomSheet_focus) {
-        ModalBottomSheet(
-            onDismissRequest = { showBottomSheet_focus = false },
-            sheetState = sheetState_focus
-        ) {
-            FocusSetting()
-            Spacer(modifier = Modifier.height(100.dp))
-        }
-    }
-
-    ListItem(
-        headlineContent = { Text(text = "云运动 信息配置") },
-        supportingContent = { Text(text = "需要提交已登录手机的信息")},
-        leadingContent = { Icon(painterResource(R.drawable.mode_of_travel), contentDescription = "Localized description",) },
-        modifier = Modifier.clickable { showBottomSheet_input = true }
-    )
-
-    ListItem(
-        headlineContent = { Text(text = "聚焦编辑") },
-        supportingContent = { Text(text = "自定义聚焦的内容及信息来源")},
-        leadingContent = { Icon(painterResource(R.drawable.edit), contentDescription = "Localized description",) },
-        modifier = Modifier.clickable { showBottomSheet_focus = true }
-    )
-
-    ListItem(
-        headlineContent = { Text(text = "请求配置") },
-        supportingContent = { Text(text = "自定义加载一页时出现的数目,数目越大,加载时间相应地会更长,但可显示更多信息")},
-        leadingContent = { Icon(painterResource(R.drawable.settings_ethernet), contentDescription = "Localized description",) },
-        modifier = Modifier.clickable {  }
     )
 }

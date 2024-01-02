@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.ComposeUI.Settings
+package com.hfut.schedule.ui.ComposeUI.Settings.Test
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column

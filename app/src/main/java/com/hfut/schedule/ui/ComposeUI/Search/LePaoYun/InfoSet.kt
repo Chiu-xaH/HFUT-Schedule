@@ -54,10 +54,6 @@ fun InfoSet() {
     var inputToken by remember { mutableStateOf(savedToken ?: "") }
 
 
-    val savedRequestBody = SharePrefs.prefs.getString("YunRequestBody","")
-    var inputRequestBody by remember { mutableStateOf(savedRequestBody ?: "") }
-
-
     val scale = animateFloatAsState(
         targetValue = if (isPressed) 0.9f else 1f, // 按下时为0.9，松开时为1
         animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
@@ -80,7 +76,6 @@ fun InfoSet() {
                                 onClick = {
                                    // showBottomSheet_inputchanged
                                     SharePrefs.Save("Yuntoken",inputToken)
-                                    SharePrefs.Save("YunRequestBody",inputRequestBody)
                                     Toast.makeText(MyApplication.context,"已保存",Toast.LENGTH_SHORT).show()
                                 }
                             ) { Icon(Icons.Filled.Check, contentDescription = "") }

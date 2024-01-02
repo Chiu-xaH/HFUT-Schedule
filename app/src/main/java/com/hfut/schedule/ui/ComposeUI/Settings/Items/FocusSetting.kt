@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.ComposeUI.Settings
+package com.hfut.schedule.ui.ComposeUI.Settings.Items
 
 import android.preference.PreferenceManager
 import androidx.compose.foundation.clickable

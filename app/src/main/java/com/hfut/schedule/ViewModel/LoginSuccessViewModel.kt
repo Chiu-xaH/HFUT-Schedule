@@ -189,15 +189,19 @@ class LoginSuccessViewModel : ViewModel() {
     val BillsData = MutableLiveData<String>()
     fun CardGet(auth : String,page : Int) {// 创建一个Call对象，用于发送异步请求
 
-        val call = ZJGDBill.Cardget(auth,page)
+        val size = prefs.getString("CardRequest","15")
+        size?.let { Log.d("size", it) }
+        val call = size?.let { ZJGDBill.Cardget(auth,page, it) }
 
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                BillsData.value = response.body()?.string()
-            }
+        if (call != null) {
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    BillsData.value = response.body()?.string()
+                }
 
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+            })
+        }
 
 
     }
@@ -245,15 +249,19 @@ class LoginSuccessViewModel : ViewModel() {
 
     val SearchBillsData = MutableLiveData<String>()
     fun searchBills(auth : String, info: String,page : Int) {
-        val call = ZJGDBill.searchBills(auth,info,page)
+        val size = prefs.getString("CardRequest","15")
+        size?.let { Log.d("size", it) }
+        val call = size?.let { ZJGDBill.searchBills(auth,info,page, it) }
 
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-               SearchBillsData.value = response.body()?.string()
-            }
+        if (call != null) {
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    SearchBillsData.value = response.body()?.string()
+                }
 
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+            })
+        }
     }
 
 
@@ -400,8 +408,9 @@ class LoginSuccessViewModel : ViewModel() {
 
     val FailRateData = MutableLiveData<String>()
     fun SearchFailRate(CommuityTOKEN : String,name: String,page : String) {
-
-        val call = CommuityTOKEN?.let { Community.getFailRate(it,name,page) }
+        val size = prefs.getString("FailRateRequest","15")
+        //size?.let { Log.d("size", it) }
+        val call = CommuityTOKEN?.let { size?.let { it1 -> Community.getFailRate(it,name,page, it1) } }
 
         if (call != null) {
             call.enqueue(object : Callback<ResponseBody> {
@@ -444,7 +453,7 @@ class LoginSuccessViewModel : ViewModel() {
             call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                     SharePrefs.Save("Grade", response.body()?.string())
-                    response.body()?.string()?.let { Log.d("Save", it) }
+                   // response.body()?.string()?.let { Log.d("Save", it) }
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -455,7 +464,9 @@ class LoginSuccessViewModel : ViewModel() {
     val libraryData = MutableLiveData<String>()
     fun SearchBooks(CommuityTOKEN: String,name: String) {
 
-        val call = CommuityTOKEN?.let { Community.searchBooks(it,name,"1") }
+        val size = prefs.getString("BookRequest","15")
+      //  size?.let { Log.d("size", it) }
+        val call = CommuityTOKEN?.let { size?.let { it1 -> Community.searchBooks(it,name,"1", it1) } }
         if (call != null) {
             call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
