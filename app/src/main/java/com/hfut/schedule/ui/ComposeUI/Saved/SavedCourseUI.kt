@@ -3,6 +3,7 @@ package com.hfut.schedule.ui.ComposeUI.Saved
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContent
@@ -54,17 +55,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.logic.datamodel.Community.CourseTotalResponse
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.GetDate.Benweeks
 import com.hfut.schedule.logic.utils.GetDate.Date_MM_dd
 import com.hfut.schedule.logic.utils.GetDate.weeksBetween
 import com.hfut.schedule.logic.datamodel.Jxglstu.datumResponse
+import com.hfut.schedule.logic.utils.SharePrefs
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @SuppressLint("SuspiciousIndentation", "CoroutineCreationDuringComposition")
 @Composable
 fun NoNet() {
+
 
     var Mon by rememberSaveable { mutableStateOf("") }
     var Tue by rememberSaveable { mutableStateOf("") }
@@ -376,9 +380,6 @@ if (json?.contains("result") == true) {
 
             Column{
 
-
-
-
                 val interactionSource = remember { MutableInteractionSource() }
                 val interactionSource2 = remember { MutableInteractionSource() }
                 val interactionSource3 = remember { MutableInteractionSource() } // 创建一个
@@ -476,12 +477,6 @@ if (json?.contains("result") == true) {
                                         )
 
                                     }
-
-
-
-
-
-
                                 }
                             }
 

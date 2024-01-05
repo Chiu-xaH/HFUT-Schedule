@@ -71,6 +71,7 @@ import com.hfut.schedule.ui.ComposeUI.Focus.TodayCourseItem
 import com.hfut.schedule.ui.ComposeUI.Focus.TomorrowCourseItem
 import com.hfut.schedule.ui.ComposeUI.Focus.WangkeItem
 import com.hfut.schedule.ui.ComposeUI.Focus.zjgdcard
+import com.hfut.schedule.ui.ComposeUI.Saved.getCourseINFO
 import com.hfut.schedule.ui.ComposeUI.Search.Exam.ExamItems
 import com.hfut.schedule.ui.ComposeUI.Search.Exam.getExam
 import kotlinx.coroutines.CoroutineScope
@@ -335,6 +336,7 @@ suspend fun FocusUpdate(){
             async { AddedItems() }
             async { getNotifications() }
             async { CommuityTOKEN?.let { vm.Exam(it) } }
+            async { CommuityTOKEN?.let { vm.GetCourse(it) } }
             async { zjgdcard(vm) }.await()
         }
     }
@@ -453,6 +455,16 @@ suspend fun FocusUpdate(){
                 val shouldShowAddButton = scrollstate.firstVisibleItemScrollOffset  == 0
                 var date = GetDate.Date_MM_dd
                 val todaydate = (date?.substring(0, 2) ) + date?.substring(3, 5)
+                var week = GetDate.Benweeks.toInt()
+
+                var weekdaytomorrow = GetDate.dayweek + 1
+                var week2 = GetDate.Benweeks.toInt()
+                //当第二天为周日时，变值为0
+                //当第二天为下一周的周一时，周数+1
+                when(weekdaytomorrow) {
+                    7 -> weekdaytomorrow = 0
+                    1 -> week2 += 1
+                }
 
                 LazyColumn(state = scrollstate) {
 
@@ -466,9 +478,9 @@ suspend fun FocusUpdate(){
                         }
                         //课表
                         if (formattedTime.toInt() >= 18)
-                            items(DatumTomorrow().size) { item -> TomorrowCourseItem(item = item, DatumTomorrow = DatumTomorrow()) }
+                            items(getCourseINFO(weekdaytomorrow,week2).size) { item -> TomorrowCourseItem(item = item) }
                         else
-                            items(Datum().size) { item -> TodayCourseItem(item = item, Datum = Datum()) }
+                            items(getCourseINFO(GetDate.dayweek,week).size) { item -> TodayCourseItem(item = item) }
                         //日程
                         if (prefs.getBoolean("SWITCHMYAPI",true)){
                             items(MySchedule().size) { item -> MyScheuleItem(item = item, MySchedule = MySchedule()) }
@@ -490,7 +502,7 @@ suspend fun FocusUpdate(){
 
                         //第二天课表
                         if (formattedTime.toInt() < 18)
-                            items(DatumTomorrow().size) { item -> TomorrowCourseItem(item = item, DatumTomorrow = DatumTomorrow()) }
+                            items(getCourseINFO(weekdaytomorrow,week2).size) { item -> TomorrowCourseItem(item = item) }
 
                         items(AddedItems().size){item -> AddItem(item = item, AddedItems = AddedItems()) }
 

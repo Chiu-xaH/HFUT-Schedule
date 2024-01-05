@@ -65,7 +65,6 @@ import com.hfut.schedule.ui.UIUtils.MyToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.math.RoundingMode

@@ -8,7 +8,7 @@ import dagger.hilt.android.HiltAndroidApp
 class MyApplication : Application() {
     companion object {
         lateinit var context: Context
-        const val version = "3.1"
+        const val version = "3.0.3"
         const val EleURL = "http://172.31.248.26:8988/"
         const val CommunityURL = "https://community.hfut.edu.cn/"
         const val ZJGDBillURL = "http://121.251.19.62/"
@@ -23,7 +23,43 @@ class MyApplication : Application() {
         const val RedirectURL = "https://cas.hfut.edu.cn/cas/login?service=http%3A%2F%2Fjxglstu.hfut.edu.cn%2Feams5-student%2Fneusoft-sso%2Flogin&exception.message=A+problem+occurred+restoring+the+flow+execution+with+key+%27e1s1%27"
         const val NullLoginCommunity = "{\"result\": {\"token\": \"\"}}"
         const val NullExams = "{\"result\": {\"examArrangementList\": []}}"
-        const val NullTotal = "{\"result\": {\"courseBasicInfoDTOList\": []}}"
+        const val NullTotal = "{\n" +
+                "  \"result\": {\n" +
+                "    \"startTime\": [\n" +
+                "      \"08:00\",\n" +
+                "      \"09:00\",\n" +
+                "      \"10:10\",\n" +
+                "      \"11:10\",\n" +
+                "      \"14:00\",\n" +
+                "      \"15:00\",\n" +
+                "      \"16:00\",\n" +
+                "      \"17:00\",\n" +
+                "      \"19:00\",\n" +
+                "      \"20:00\",\n" +
+                "      \"21:00\"\n" +
+                "    ],\n" +
+                "    \"endTime\": [\n" +
+                "      \"08:50\",\n" +
+                "      \"09:50\",\n" +
+                "      \"11:00\",\n" +
+                "      \"12:00\",\n" +
+                "      \"14:50\",\n" +
+                "      \"15:50\",\n" +
+                "      \"16:50\",\n" +
+                "      \"17:50\",\n" +
+                "      \"19:50\",\n" +
+                "      \"20:50\",\n" +
+                "      \"21:50\"\n" +
+                "    ],\n" +
+                "    \"xn\": \"2023-2024\",\n" +
+                "    \"xq\": \"1\",\n" +
+                "    \"start\": \"2023-09-11 00:00:00\",\n" +
+                "    \"currentWeek\": 17,\n" +
+                "    \"end\": \"2024-01-28 00:00:00\",\n" +
+                "    \"totalWeekCount\": 20,\n" +
+                "    \"courseBasicInfoDTOList\": []\n" +
+                "  }\n" +
+                "}"
         const val NullBorrow = "{\"result\": {\"records\": []}}"
         const val NullProgram = "{\"result\":{\"majorName\":\"培养方案\",\"totalCreditDone\":0,\"totalCreditRequirement\":0,\"trainingProgramCategoryDTOList\":[]}}"
         const val NullCardblance = "{\"data\":{\"card\":[{ \"db_balance\":0000}]}}"

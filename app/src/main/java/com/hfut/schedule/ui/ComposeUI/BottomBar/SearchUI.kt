@@ -3,14 +3,12 @@ package com.hfut.schedule.ui.ComposeUI.BottomBar
 import android.annotation.SuppressLint
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -57,7 +55,7 @@ import com.hfut.schedule.ui.ComposeUI.Search.Indevelopment.SchoolBus
 import com.hfut.schedule.ui.ComposeUI.Search.Electric.Electric
 import com.hfut.schedule.ui.ComposeUI.Search.FailRate.FailRate
 import com.hfut.schedule.ui.ComposeUI.Search.Indevelopment.Second
-import com.hfut.schedule.ui.ComposeUI.Search.Indevelopment.XueGong
+import com.hfut.schedule.ui.ComposeUI.Search.SchoolCalendar.SchoolCalendar
 import com.hfut.schedule.ui.UIUtils.MyToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -152,6 +150,7 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,) {
                 Electric(vm)
                 NotificationsCenter()
                 HotWater()
+                SchoolCalendar()
             } else {
                 Grade(vm)
                 Exam(vm)
@@ -168,6 +167,7 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,) {
                 LePaoYun(vm)
                 NotificationsCenter()
                 HotWater()
+                SchoolCalendar()
                 Estimate(vm)
                 SchoolBus()
                 Second()

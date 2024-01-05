@@ -1,7 +1,10 @@
 package com.hfut.schedule.ui.ComposeUI.Focus
 
 import android.annotation.SuppressLint
+import android.os.Build
+import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
@@ -61,6 +64,7 @@ import com.hfut.schedule.logic.datamodel.Focus.AddFocus
 import com.hfut.schedule.logic.datamodel.Focus.FocusCourse
 import com.hfut.schedule.logic.datamodel.MyList
 import com.hfut.schedule.logic.datamodel.Schedule
+import com.hfut.schedule.ui.ComposeUI.Saved.getCourseINFO
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.ComposeUI.Search.SchoolCard.SchoolCardItem
 
@@ -199,8 +203,10 @@ fun WangkeItem(item : Int, MyWangKe: MutableList<MyList>) {
 
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun TodayCourseItem(item : Int,Datum: MutableList<FocusCourse>) {
+fun TodayCourseItem(item : Int) {
+    var week = GetDate.Benweeks.toInt()
     Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)
     {
         Spacer(modifier = Modifier.height(100.dp))
@@ -215,9 +221,9 @@ fun TodayCourseItem(item : Int,Datum: MutableList<FocusCourse>) {
 
         ) {
             ListItem(
-                headlineContent = {  Text(text = Datum[item].name) },
-                overlineContent = {Text(text = Datum[item].time)},
-                supportingContent = { Text(text = Datum[item].room)},
+                headlineContent = {  Text(text = getCourseINFO(GetDate.dayweek,week)[item][0].name) },
+                overlineContent = { Text(text = getCourseINFO(GetDate.dayweek,week)[item][0].classTime)},
+                supportingContent = { Text(text = getCourseINFO(GetDate.dayweek,week)[item][0].place)},
                 leadingContent = {
                     Icon(
                         painterResource(R.drawable.schedule),
@@ -230,8 +236,18 @@ fun TodayCourseItem(item : Int,Datum: MutableList<FocusCourse>) {
 }
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun TomorrowCourseItem(item : Int,DatumTomorrow: MutableList<FocusCourse>) {
+fun TomorrowCourseItem(item : Int) {
+
+    var weekdaytomorrow = GetDate.dayweek + 1
+    var week = GetDate.Benweeks.toInt()
+    //当第二天为周日时，变值为0
+    //当第二天为下一周的周一时，周数+1
+    when(weekdaytomorrow) {
+        7 -> weekdaytomorrow = 0
+        1 -> week += 1
+    }
 
     Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
         Spacer(modifier = Modifier.height(100.dp))
@@ -245,9 +261,9 @@ fun TomorrowCourseItem(item : Int,DatumTomorrow: MutableList<FocusCourse>) {
             shape = MaterialTheme.shapes.medium,
             ) {
             ListItem(
-                headlineContent = {  Text(text = DatumTomorrow[item].name) },
-                overlineContent = {Text(text = DatumTomorrow[item].time)},
-                supportingContent = { Text(text = DatumTomorrow[item].room)},
+                headlineContent = {  Text(text = getCourseINFO(weekdaytomorrow,week)[item][0].name) },
+                overlineContent = {Text(text = getCourseINFO(weekdaytomorrow,week)[item][0].classTime)},
+                supportingContent = { Text(text = getCourseINFO(weekdaytomorrow,week)[item][0].place)},
                 leadingContent = { Icon(painterResource(R.drawable.exposure_plus_1), contentDescription = "Localized description",) },
                 modifier = Modifier.clickable {}
             )

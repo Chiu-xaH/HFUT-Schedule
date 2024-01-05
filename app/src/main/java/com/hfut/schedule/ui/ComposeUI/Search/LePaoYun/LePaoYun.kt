@@ -62,7 +62,7 @@ fun OpenLePao() {
 }
 fun Update(vm : LoginSuccessViewModel) {
     val token =  prefs.getString("Yuntoken","")?.trim()
-    val RequestBody =  prefs.getString("YunRequestBody","")?.trim()
+   
     CoroutineScope(Job()).launch {
         async {vm.LePaoYunHome(token!!)}.await()
       //  async {vm.getRunRecord(token!!,RequestBody!!)}.await()
@@ -182,16 +182,6 @@ fun LePaoYunUI() {
                             label = { Text(text = "打开云运动") },
                            // leadingIcon = { Icon(painter = painterResource(R.drawable.add), contentDescription = "description") }
                         )
-
-                        Spacer(modifier = Modifier.width(10.dp))
-
-
-                        AssistChip(
-                            onClick = { showBottomSheet_Record = true },
-                            label = { Text(text = "跑步记录") },
-                           // leadingIcon = { Icon(painter = painterResource(R.drawable.calendar), contentDescription = "description") }
-                        )
-
                     }
 
                     Card(

@@ -33,9 +33,6 @@ import com.hfut.schedule.logic.datamodel.NavigationBarItemData
 import com.hfut.schedule.ui.ComposeUI.BottomBar.SearchScreen
 import com.hfut.schedule.ui.ComposeUI.BottomBar.SettingsScreen
 import com.hfut.schedule.ui.ComposeUI.BottomBar.TodayScreen
-import com.hfut.schedule.ui.ComposeUI.Search.Exam.getExam
-import com.hfut.schedule.ui.ComposeUI.Search.Grade.getGrade
-import com.hfut.schedule.ui.ComposeUI.Search.NotificationsCenter.getNotifications
 import com.hfut.schedule.ui.ComposeUI.Settings.getMyVersion
 
 @SuppressLint("SuspiciousIndentation")

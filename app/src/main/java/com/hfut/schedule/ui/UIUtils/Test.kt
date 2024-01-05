@@ -36,44 +36,5 @@ import androidx.compose.ui.unit.sp
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun Tests() {
-  //Ver(5,4)
-    NoNet()
-}
 
-@Composable
-fun Ver(widnum : Int,heinum : Int) {
-    // 定义Card的高度和边距
-    val cardHeight = 120.dp
-    val cardMargin = 4.dp
-
-
-    // 使用LazyVerticalGrid创建一个4列的网格
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(widnum),
-        modifier = Modifier
-            // 填充父组件的宽度
-            .fillMaxWidth()
-            .padding(horizontal = 7.dp)
-        // 设置水平居中对齐
-    ) {
-        // 使用items函数创建20个Card
-        items(widnum*heinum) { index ->
-            // 使用Card函数创建一个Card
-            Card(
-                modifier = Modifier
-                    // 设置Card的高度
-                    .height(cardHeight)
-                    // 设置Card的边距
-                    .padding(cardMargin),
-                shape = MaterialTheme.shapes.extraSmall,
-                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
-            ) {
-                Text(
-                    text = "20:00\n内容测试A\n${index}",
-                    fontSize = 14.sp,
-                    textAlign = TextAlign.Center,
-                )
-            }
-        }
-    }
 }
