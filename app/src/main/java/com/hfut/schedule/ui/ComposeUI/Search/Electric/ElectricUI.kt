@@ -13,6 +13,7 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,11 +26,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.AssistChip
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -54,6 +59,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.datamodel.SearchEleResponse
 import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.ui.ComposeUI.Saved.getCourseINFO
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.theme.FWDTColr
 import kotlinx.coroutines.CoroutineScope
@@ -80,8 +86,9 @@ fun EleUI(vm : LoginSuccessViewModel) {
     var showitem2 by remember { mutableStateOf(false) }
     var showitem3 by remember { mutableStateOf(false) }
     var showitem4 by remember { mutableStateOf(false) }
-
     var showDialog by remember { mutableStateOf(false) }
+    var Result by remember { mutableStateOf("") }
+    var Result2 by remember { mutableStateOf("") }
 
     DropdownMenu(expanded = showitem, onDismissRequest = { showitem = false }, offset = DpOffset(103.dp,0.dp)) {
         DropdownMenuItem(text = { Text(text = "北一号楼") }, onClick = { BuildingsNumber =  "1"
@@ -222,7 +229,8 @@ fun EleUI(vm : LoginSuccessViewModel) {
                             vm.ElectricData.observeForever { result ->
                                 if (result?.contains("query_elec_roominfo") == true) {
                                     val msg = Gson().fromJson(result, SearchEleResponse::class.java).query_elec_roominfo.errmsg
-                                    MyToast(msg)
+                                    Result = msg
+                                   // MyToast(msg)
                                 } else if (vm.ElectricData.value?.contains("失败") == true) vm.ElectricData.value?.let { MyToast(it) }
                             }
                         }
@@ -285,11 +293,7 @@ fun EleUI(vm : LoginSuccessViewModel) {
                                 IconButton(onClick = {
                                     if (RoomNumber.length < 3)
                                         RoomNumber = RoomNumber + num
-                                    else Toast.makeText(
-                                        MyApplication.context,
-                                        "三位数",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                                    else Toast.makeText(MyApplication.context, "三位数", Toast.LENGTH_SHORT).show()
                                 }) { Text(text = num.toString()) }
                             }
                         }
@@ -299,7 +303,30 @@ fun EleUI(vm : LoginSuccessViewModel) {
             }
         }
     }
-    // if(showitem4) {
 
-//    }
+    if(Result.contains("剩余金额")){
+        Result2 = "剩余金额 " +Result.substringAfter("剩余金额")
+        Result2 = Result2.replace(":","")
+        Result = Result.substringBefore("剩余金额").replace(":","")
+    } else if(Result.contains("无法获取房间信息") || Result.contains("hfut")) Result2 = "失败"
+
+    Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
+        Spacer(modifier = Modifier.height(100.dp))
+        Card(
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 3.dp
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 15.dp, vertical = 5.dp),
+            shape = MaterialTheme.shapes.medium,
+        ) {
+            ListItem(
+                headlineContent = {  Text(text = Result) },
+                supportingContent = { Text(text = Result2)},
+                leadingContent = { Icon(painterResource(R.drawable.flash_on), contentDescription = "Localized description",) },
+                modifier = Modifier.clickable {}
+            )
+        }
+    }
 }

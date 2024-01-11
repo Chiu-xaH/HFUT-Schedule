@@ -67,6 +67,7 @@ import com.hfut.schedule.logic.datamodel.Schedule
 import com.hfut.schedule.ui.ComposeUI.Saved.getCourseINFO
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.ComposeUI.Search.SchoolCard.SchoolCardItem
+import com.hfut.schedule.ui.UIUtils.AddCalendar
 
 @Composable
 fun TodayCardItem(vm : LoginSuccessViewModel) {
@@ -194,7 +195,9 @@ fun WangkeItem(item : Int, MyWangKe: MutableList<MyList>) {
                             contentDescription = "Localized description",
                         )
                     },
-                    modifier = Modifier.clickable {}
+                    modifier = Modifier.clickable {
+                        //AddCalendar(Place = MyWangKe()[item].info, Title = MyWangKe[item].title)
+                    }
                 )
             }
         }

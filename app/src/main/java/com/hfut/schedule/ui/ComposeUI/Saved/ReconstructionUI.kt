@@ -85,14 +85,14 @@ fun getCouses(Week : Int) : Array<Array<List<courseDetailDTOList>>> {
 @RequiresApi(Build.VERSION_CODES.O)
 fun getCourseINFO(weekday : Int,Week : Int) : MutableList<List<courseDetailDTOList>> {
     val new = mutableListOf<List<courseDetailDTOList>>()
-    if(weekday <= 7) {
+    return if(weekday <= 7) {
         val days = getCouses(Week)[weekday - 1]
         for (i in 0 until days.size){
             if(days[i].isNotEmpty())
                 days[i].forEach { new.add(days[i]) }
         }
-        return new
-    } else return new
+        new
+    } else new
 }
 
 

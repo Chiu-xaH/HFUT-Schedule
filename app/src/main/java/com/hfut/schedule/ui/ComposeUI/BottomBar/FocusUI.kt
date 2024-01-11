@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
@@ -458,19 +457,17 @@ suspend fun FocusUpdate(){
                 var week = GetDate.Benweeks.toInt()
 
                 var weekdaytomorrow = GetDate.dayweek + 1
-                var week2 = GetDate.Benweeks.toInt()
-                //当第二天为周日时，变值为0
+                var weekdayToday = GetDate.dayweek
+                var Nextweek = GetDate.Benweeks.toInt()
+                //当今天为周日时，变0为7
                 //当第二天为下一周的周一时，周数+1
-                when(weekdaytomorrow) {
-                    7 -> weekdaytomorrow = 0
-                    1 -> week2 += 1
-                }
+                when(weekdaytomorrow) {1 -> Nextweek += 1 }
+                when (weekdayToday) {0 -> weekdayToday = 7 }
 
                 LazyColumn(state = scrollstate) {
 
                     //当Tab为第一个时
                     if (state == TAB_LEFT) {
-
                         //一卡通
                         if (prefs.getBoolean("SWITCHCARD",true) == true) {
                             zjgdcard(vm)
@@ -478,9 +475,9 @@ suspend fun FocusUpdate(){
                         }
                         //课表
                         if (formattedTime.toInt() >= 18)
-                            items(getCourseINFO(weekdaytomorrow,week2).size) { item -> TomorrowCourseItem(item = item) }
+                            items(getCourseINFO(weekdaytomorrow,Nextweek).size) { item -> TomorrowCourseItem(item = item) }
                         else
-                            items(getCourseINFO(GetDate.dayweek,week).size) { item -> TodayCourseItem(item = item) }
+                            items(getCourseINFO(weekdayToday,week).size) { item -> TodayCourseItem(item = item) }
                         //日程
                         if (prefs.getBoolean("SWITCHMYAPI",true)){
                             items(MySchedule().size) { item -> MyScheuleItem(item = item, MySchedule = MySchedule()) }
@@ -492,6 +489,7 @@ suspend fun FocusUpdate(){
 
                     //当Tab为第二个时
                     if (state == TAB_RIGHT) {
+                        Log.d("ww", weekdaytomorrow.toString())
 
                         if (prefs.getBoolean("SWITCHMYAPI",true)) {
                             //日程
@@ -502,7 +500,7 @@ suspend fun FocusUpdate(){
 
                         //第二天课表
                         if (formattedTime.toInt() < 18)
-                            items(getCourseINFO(weekdaytomorrow,week2).size) { item -> TomorrowCourseItem(item = item) }
+                            items(getCourseINFO(weekdaytomorrow,Nextweek).size) { item -> TomorrowCourseItem(item = item) }
 
                         items(AddedItems().size){item -> AddItem(item = item, AddedItems = AddedItems()) }
 
