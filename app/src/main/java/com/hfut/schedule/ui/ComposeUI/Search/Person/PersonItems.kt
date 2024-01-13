@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.utils.SharePrefs
 import org.jsoup.Jsoup
 
 
@@ -48,6 +49,8 @@ fun PersonItems() {
             infoMap[key] = value
         }
     }
+
+    SharePrefs.Save("ChineseId",chineseid)
 
     val benorsshuo =infoMap[elements?.get(8)?.text()]
     val yuanxi =infoMap[elements?.get(10)?.text()]
