@@ -30,7 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.glance.appwidget.lazy.LazyColumn
 import com.google.gson.Gson
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel

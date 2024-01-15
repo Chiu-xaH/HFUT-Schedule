@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.ComposeUI.Search.Indevelopment
+package com.hfut.schedule.ui.ComposeUI.Search.Bus
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement

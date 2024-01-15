@@ -47,7 +47,6 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.datamodel.Community.CourseTotalResponse
 import com.hfut.schedule.logic.datamodel.Community.courseDetailDTOList
 import com.hfut.schedule.logic.utils.GetDate
-import com.hfut.schedule.logic.utils.GetDateReconstruction
 import com.hfut.schedule.logic.utils.SharePrefs
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit

@@ -51,26 +51,6 @@ fun zjgdcard(vm : LoginSuccessViewModel) {
     }
 }
 
-fun ExamGet() : List<Map<String,String>>{
-    //考试JSON解析
-
-    val examjson = SharePrefs.prefs.getString("exam", MyApplication.NullExam)
-
-    val doc = Jsoup.parse(examjson).select("tbody tr")
-
-    val data = doc.map { row ->
-        val elements = row.select("td")
-        val courseName = elements[0].text()
-        val examRoom = elements[2].text()
-        var  examtime = elements[1].text()
-
-        mapOf("课程名称" to courseName,
-            "日期时间" to examtime,
-            "考场" to examRoom)
-    }
-    return data
-}
-
 fun MySchedule() : MutableList<Schedule> {
 
     val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
@@ -101,8 +81,6 @@ fun AddedItems() : MutableList<AddFocus> {
     cursor.close()
     return AddFocus
 }
-
-
 
 fun MyWangKe() : MutableList<MyList> {
 

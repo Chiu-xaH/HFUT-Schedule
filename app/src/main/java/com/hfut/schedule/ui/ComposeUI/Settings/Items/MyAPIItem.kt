@@ -78,6 +78,7 @@ fun APIIcons(celebration: Boolean) {
 fun Birthday() : String {
     val id = prefs.getString("ChineseId", "")
     var age = ""
+    var info = ""
     if (id != null) {
         if (id.length == 18) {
             val year = id.substring(6, 10)
@@ -86,8 +87,9 @@ fun Birthday() : String {
             val today = GetDate.Date_MM_dd.replace("-", "")
             if (today == birthday) {
                 age = " " + (todayYear - year.toInt()).toString() + " 岁"
+                info = "祝你${age}生日快乐"
             }
         }
     }
-    return "祝你${age}生日快乐"
+    return info
 }

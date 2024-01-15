@@ -39,7 +39,7 @@ import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.ComposeUI.Search.TotalCourse.CourseTotal
 import com.hfut.schedule.ui.ComposeUI.Search.EmptyRoom.EmptyRoom
-import com.hfut.schedule.ui.ComposeUI.Search.Indevelopment.Estimate
+import com.hfut.schedule.ui.ComposeUI.Search.Estimate.Estimate
 import com.hfut.schedule.ui.ComposeUI.Search.Exam.Exam
 import com.hfut.schedule.ui.ComposeUI.Search.Grade.Grade
 import com.hfut.schedule.ui.ComposeUI.Search.HotWater.HotWater
@@ -51,10 +51,10 @@ import com.hfut.schedule.ui.ComposeUI.Search.Xuanqu.XuanquItem
 import com.hfut.schedule.ui.ComposeUI.Search.Web.WebUI
 import com.hfut.schedule.ui.ComposeUI.Search.LePaoYun.LePaoYun
 import com.hfut.schedule.ui.ComposeUI.Search.NotificationsCenter.NotificationsCenter
-import com.hfut.schedule.ui.ComposeUI.Search.Indevelopment.SchoolBus
+import com.hfut.schedule.ui.ComposeUI.Search.Bus.SchoolBus
 import com.hfut.schedule.ui.ComposeUI.Search.Electric.Electric
 import com.hfut.schedule.ui.ComposeUI.Search.FailRate.FailRate
-import com.hfut.schedule.ui.ComposeUI.Search.Indevelopment.Second
+import com.hfut.schedule.ui.ComposeUI.Search.Second.Second
 import com.hfut.schedule.ui.ComposeUI.Search.SchoolCalendar.SchoolCalendar
 import com.hfut.schedule.ui.UIUtils.MyToast
 import kotlinx.coroutines.CoroutineScope

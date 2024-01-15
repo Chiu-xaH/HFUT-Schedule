@@ -60,7 +60,6 @@ import com.hfut.schedule.ui.ComposeUI.Focus.AddedItems
 import com.hfut.schedule.ui.ComposeUI.Search.NotificationsCenter.NotificationItems
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.ComposeUI.Search.NotificationsCenter.getNotifications
-import com.hfut.schedule.ui.ComposeUI.Focus.ExamGet
 import com.hfut.schedule.ui.ComposeUI.Focus.FutureMyScheuleItem
 import com.hfut.schedule.ui.ComposeUI.Focus.MySchedule
 import com.hfut.schedule.ui.ComposeUI.Focus.MyScheuleItem
@@ -329,7 +328,7 @@ suspend fun FocusUpdate(){
                     async { DatumTomorrow() }
                 } else MyToast("本地数据为空,请登录以更新数据")
             }
-            async { ExamGet() }
+           // async { ExamGet() }
             async { MyWangKe() }
             async { MySchedule() }
             async { AddedItems() }
