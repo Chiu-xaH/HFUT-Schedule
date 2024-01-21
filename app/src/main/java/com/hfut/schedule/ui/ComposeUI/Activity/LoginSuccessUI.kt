@@ -225,12 +225,12 @@ fun CalendarScreen(isEnabled:Boolean,enabledchanged : (Boolean) -> Unit,vm : Log
                     endtime = INFO
                     lessonType = courseTypeName
                 }
-
             }
 
 
 
-
+            //适配长文字布局
+            scheduleid = scheduleid.replace("语言程序设计","程序设计")
 
             val text = starttime + "\n" + scheduleid + "\n" + room
             val info =

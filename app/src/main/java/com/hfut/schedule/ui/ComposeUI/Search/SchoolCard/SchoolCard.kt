@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -278,6 +279,11 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
                                     val todaydate = get?.substringBefore(" ")
                                     var num = BillItem()[item].tranamt.toString()
 
+                                    //优化0.0X元Bug
+                                    if(num.length == 1)
+                                    num = "00$num"
+
+
                                     num = num.substring(0, num.length - 2) + "." + num.substring(num.length - 2)
 
                                     val num_float = num.toFloat()
@@ -394,6 +400,11 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
                                         }
                                         items(BillItem().size) { item ->
                                             var num =( BillItem()[item].tranamt ?: 1000 ).toString()
+
+                                            //优化0.0X元Bug
+                                            if(num.length == 1)
+                                                num = "00$num"
+
                                             num = num.substring(0, num.length - 2) + "." + num.substring(num.length - 2)
                                             val big = BigDecimal(num)
                                             val num_float = big.toFloat()
