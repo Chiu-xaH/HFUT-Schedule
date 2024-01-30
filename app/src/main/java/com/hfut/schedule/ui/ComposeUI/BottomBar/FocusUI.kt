@@ -355,7 +355,6 @@ suspend fun FocusUpdate(){
                 refreshing = false
                 MyToast("刷新成功")
             }
-
         }
     })
 

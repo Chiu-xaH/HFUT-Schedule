@@ -35,7 +35,6 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.ui.ComposeUI.Saved.ReconstructionUI
 import com.hfut.schedule.ui.ComposeUI.Search.Electric.WebViewScreen
 import com.hfut.schedule.ui.ComposeUI.Search.LePaoYun.InfoSet
 import com.hfut.schedule.ui.UIUtils.MyToast
@@ -56,6 +55,7 @@ fun SettingsItem(vm : LoginSuccessViewModel, showlable : Boolean, showlablechang
 
     ListItem(
         headlineContent = { Text(text = "底栏标签") },
+        supportingContent = { Text(text = "屏幕底部的Tab栏底栏标签")},
         leadingContent = { Icon(painterResource(R.drawable.label), contentDescription = "Localized description",) },
         trailingContent = { Switch(checked = showlable, onCheckedChange = showlablechanged) },
         modifier = Modifier.clickable { showlablechanged }
@@ -72,6 +72,8 @@ fun SettingsItem(vm : LoginSuccessViewModel, showlable : Boolean, showlablechang
 
 
 
+
+
     var showBottomSheet_input by remember { mutableStateOf(false) }
     val sheetState_input = rememberModalBottomSheetState()
     if (showBottomSheet_input) {
@@ -81,39 +83,6 @@ fun SettingsItem(vm : LoginSuccessViewModel, showlable : Boolean, showlablechang
         ) {
             InfoSet()
             Spacer(modifier = Modifier.height(100.dp))
-        }
-    }
-
-    var showDialog by remember { mutableStateOf(false) }
-    if (showDialog) {
-        androidx.compose.ui.window.Dialog(
-            onDismissRequest = { showDialog = false },
-            properties = DialogProperties(usePlatformDefaultWidth = false)
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        actions = { IconButton(onClick = { showDialog = false }) {
-                            Icon(painterResource(id = R.drawable.close), contentDescription = "")
-                        }
-                        },
-                        title = { Text("DEBUG") }
-                    )
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    ReconstructionUI()
-                }
-            }
         }
     }
 
@@ -163,11 +132,4 @@ fun SettingsItem(vm : LoginSuccessViewModel, showlable : Boolean, showlablechang
         modifier = Modifier.clickable {  showBottomSheet_arrange = true }
     )
 
-    ListItem(
-        headlineContent = { Text(text = "扩展课表布局") },
-        supportingContent = { Text(text = "使课表方格由4*5扩展到4*7,甚至6*7,即使不扩展课表布局,无法显示出来的课程依旧会被解析,在聚焦中显示出来)") },
-        leadingContent = { Icon(painterResource(R.drawable.calendar), contentDescription = "Localized description",) },
-       // trailingContent = { Switch(checked = showfocus, onCheckedChange = {showfocusch -> showfocus = showfocusch }) },
-        modifier = Modifier.clickable { MyToast("正在开发") }
-    )
 }

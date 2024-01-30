@@ -8,7 +8,7 @@ import dagger.hilt.android.HiltAndroidApp
 class MyApplication : Application() {
     companion object {
         lateinit var context: Context
-        const val version = "3.0.3.4"
+        const val version = "3.1"
         const val EleURL = "http://172.31.248.26:8988/"
         const val CommunityURL = "https://community.hfut.edu.cn/"
         const val ZJGDBillURL = "http://121.251.19.62/"
@@ -52,10 +52,10 @@ class MyApplication : Application() {
                 "      \"21:50\"\n" +
                 "    ],\n" +
                 "    \"xn\": \"2023-2024\",\n" +
-                "    \"xq\": \"1\",\n" +
-                "    \"start\": \"2023-09-11 00:00:00\",\n" +
+                "    \"xq\": \"2\",\n" +
+                "    \"start\": \"2024-02-26 00:00:00\",\n" +
                 "    \"currentWeek\": 17,\n" +
-                "    \"end\": \"2024-01-28 00:00:00\",\n" +
+                "    \"end\": \"2024-07-13 00:00:00\",\n" +
                 "    \"totalWeekCount\": 20,\n" +
                 "    \"courseBasicInfoDTOList\": []\n" +
                 "  }\n" +

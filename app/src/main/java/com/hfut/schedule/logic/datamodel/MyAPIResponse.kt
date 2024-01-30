@@ -14,12 +14,16 @@ data class Lessons(val MyList : List<MyList>,
 data class MyList(
     val time : String,
     val title : String,
-    val info: String)
+    val info: String,
+    var startTime : List<Int>,
+    var endTime : List<Int>)
 
 data class Schedule(
     val time : String,
     val title : String,
-    val info: String)
+    val info: String,
+    var startTime : List<Int>,
+    var endTime : List<Int>)
 
 data class Notifications(val title : String,
                          val info : String,

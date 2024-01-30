@@ -76,7 +76,8 @@ fun CourseTotalUI() {
             }
         }
     }
-                LazyColumn {
+
+    LazyColumn {
         item { Another(num) }
         items(getCourse().size) { item ->
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {

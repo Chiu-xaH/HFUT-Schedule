@@ -59,7 +59,7 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String) {
         val card = prefs.getString("card", "")
         val json = prefs.getString("json","")
         if (json != null) {
-            if (card == "请登录刷新" ||  json.contains("课") == false ) {
+            if (card == "请登录刷新" || !json.contains("课")) {
                 delay(3000)
                 isEnabled = true
             } else {

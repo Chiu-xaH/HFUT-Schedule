@@ -7,6 +7,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
@@ -15,9 +16,11 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.with
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -30,20 +33,39 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -56,15 +78,25 @@ import androidx.compose.ui.unit.sp
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.datamodel.Community.CourseTotalResponse
+import com.hfut.schedule.logic.datamodel.Community.courseDetailDTOList
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.GetDate.Benweeks
 import com.hfut.schedule.logic.utils.GetDate.Date_MM_dd
 import com.hfut.schedule.logic.utils.GetDate.weeksBetween
 import com.hfut.schedule.logic.datamodel.Jxglstu.datumResponse
 import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.ui.ComposeUI.Search.LePaoYun.Update
+import com.hfut.schedule.ui.ComposeUI.Search.TotalCourse.DetailItems
+import com.hfut.schedule.ui.ComposeUI.Search.TotalCourse.getCourse
+import com.hfut.schedule.ui.UIUtils.MyToast
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class,
+    ExperimentalMaterialApi::class
+)
 @SuppressLint("SuspiciousIndentation", "CoroutineCreationDuringComposition")
 @Composable
 fun NoNet() {
@@ -96,34 +128,68 @@ fun NoNet() {
     var table_4_3 by rememberSaveable { mutableStateOf("") }
     var table_4_4 by rememberSaveable { mutableStateOf("") }
     var table_4_5 by rememberSaveable { mutableStateOf("") }
-
-    var sheet_1_1 by rememberSaveable { mutableStateOf("") }
-    var sheet_1_2 by rememberSaveable { mutableStateOf("") }
-    var sheet_1_3 by rememberSaveable { mutableStateOf("") }
-    var sheet_1_4 by rememberSaveable { mutableStateOf("") }
-    var sheet_1_5 by rememberSaveable { mutableStateOf("") }
-    var sheet_2_1 by rememberSaveable { mutableStateOf("") }
-    var sheet_2_2 by rememberSaveable { mutableStateOf("") }
-    var sheet_2_3 by rememberSaveable { mutableStateOf("") }
-    var sheet_2_4 by rememberSaveable { mutableStateOf("") }
-    var sheet_2_5 by rememberSaveable { mutableStateOf("") }
-    var sheet_3_1 by rememberSaveable { mutableStateOf("") }
-    var sheet_3_2 by rememberSaveable { mutableStateOf("") }
-    var sheet_3_3 by rememberSaveable { mutableStateOf("") }
-    var sheet_3_4 by rememberSaveable { mutableStateOf("") }
-    var sheet_3_5 by rememberSaveable { mutableStateOf("") }
-    var sheet_4_1 by rememberSaveable { mutableStateOf("") }
-    var sheet_4_2 by rememberSaveable { mutableStateOf("") }
-    var sheet_4_3 by rememberSaveable { mutableStateOf("") }
-    var sheet_4_4 by rememberSaveable { mutableStateOf("") }
-    var sheet_4_5 by rememberSaveable { mutableStateOf("") }
+    var table_5_1 by rememberSaveable { mutableStateOf("") }
+    var table_5_2 by rememberSaveable { mutableStateOf("") }
+    var table_5_3 by rememberSaveable { mutableStateOf("") }
+    var table_5_4 by rememberSaveable { mutableStateOf("") }
+    var table_5_5 by rememberSaveable { mutableStateOf("") }
+    var table_6_1 by rememberSaveable { mutableStateOf("") }
+    var table_6_2 by rememberSaveable { mutableStateOf("") }
+    var table_6_3 by rememberSaveable { mutableStateOf("") }
+    var table_6_4 by rememberSaveable { mutableStateOf("") }
+    var table_6_5 by rememberSaveable { mutableStateOf("") }
 
 
+    var sheet_1_1 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_1_2  = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_1_3 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_1_4 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_1_5 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_2_1 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_2_2 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_2_3 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_2_4 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_2_5 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_3_1 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_3_2  = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_3_3 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_3_4  = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_3_5  = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_4_1  = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_4_2  = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_4_3 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_4_4 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_4_5 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_5_1 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_5_2  = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_5_3 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_5_4 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_5_5 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
 
 
 
-    var Bianhuaweeks = weeksBetween  //切换周数
 
+
+    //切换周数
+    var Bianhuaweeks by rememberSaveable { mutableStateOf(GetDate.weeksBetween) }
+    var date by rememberSaveable { mutableStateOf(LocalDate.now()) }
+
+    val table = arrayOf(
+        table_1_1, table_1_2, table_1_3, table_1_4, table_1_5,
+        table_2_1, table_2_2, table_2_3, table_2_4, table_2_5,
+        table_3_1, table_3_2, table_3_3, table_3_4, table_3_5,
+        table_4_1, table_4_2, table_4_3, table_4_4, table_4_5,
+        table_5_1, table_5_2, table_5_3, table_5_4, table_5_5,
+        table_6_1, table_6_2, table_6_3, table_6_4, table_6_5,
+    )
+
+    val sheet = arrayOf(
+        sheet_1_1, sheet_1_2, sheet_1_3, sheet_1_4, sheet_1_5,
+        sheet_2_1, sheet_2_2, sheet_2_3, sheet_2_4, sheet_2_5,
+        sheet_3_1, sheet_3_2, sheet_3_3, sheet_3_4, sheet_3_5,
+        sheet_4_1, sheet_4_2, sheet_4_3, sheet_4_4, sheet_4_5,
+        sheet_5_1, sheet_5_2, sheet_5_3, sheet_5_4, sheet_5_5,
+    )
 
 
 
@@ -138,11 +204,11 @@ fun NoNet() {
         3 -> chinesenumber = "三"
         4 -> chinesenumber = "四"
         5 -> chinesenumber = "五"
-        6 ->  chinesenumber = "六"
-        0 ->  chinesenumber = "日"
+        6 -> chinesenumber = "六"
+        0 -> chinesenumber = "日"
     }
     //填充UI与更新
-    fun Update() {
+    fun Updates() {
         table_1_1 = ""
         table_1_2 = ""
         table_1_3 = ""
@@ -163,181 +229,214 @@ fun NoNet() {
         table_4_3 = ""
         table_4_4 = ""
         table_4_5 = ""
-        //////////////////////////////////////////////////////////////////////////////////
-        val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
-        val json = prefs.getString("json", "")
-        // Log.d("测试",json!!)
-        val datumResponse = Gson().fromJson(json, datumResponse::class.java)
-        val scheduleList = datumResponse.result.scheduleList
-        val lessonList = datumResponse.result.lessonList
-        val scheduleGroupList = datumResponse.result.scheduleGroupList
+        table_5_1 = ""
+        table_5_2 = ""
+        table_5_3 = ""
+        table_5_4 = ""
+        table_5_5 = ""
+        for (j in 0 until 5 ) {
+            var info = ""
+            val lists = getCourseINFO(j +1 ,Bianhuaweeks.toInt())
 
-        for (i in 0 until scheduleList.size) {
-            var starttime = scheduleList[i].startTime.toString()
-            starttime =
-                starttime.substring(0, starttime.length - 2) + ":" + starttime.substring(
-                    starttime.length - 2
-                )
-
-            var room = scheduleList[i].room.nameZh
-            val person = scheduleList[i].personName
-            var scheduleid = scheduleList[i].lessonId.toString()
-            var endtime = scheduleList[i].endTime.toString()
-            var periods = scheduleList[i].periods
-            var lessonType = scheduleList[i].lessonType
-            var date = scheduleList[i].date
-
-            room = room.replace("学堂","")
-
-            date = date.replace("2023-","")
-            date = date.replace("2024-","")
+            for(i in 0 until lists.size) {
+                val text = lists[i][0]
+                val name = text.name
+                var time = text.classTime
+                time = time.substringBefore("-")
+                var room = text.place
+                room = room.replace("学堂","")
+                info = time + "\n" + name + "\n" + room
 
 
-
-            for (k in 0 until scheduleGroupList.size) {
-
-                val id = scheduleGroupList[k].lessonId.toString()
-                val std = scheduleGroupList[k].stdCount
-                if ( scheduleid == id) {
-                    periods = std
-
+                when (j) {
+                    0 -> {
+                        when(text.section) {
+                            1 -> {
+                                table[0] = info
+                                sheet[0] = text
+                            }
+                            3 -> {
+                                table[5] = info
+                                sheet[5] = text
+                            }
+                            5 -> {
+                                table[10] = info
+                                sheet[10] = text
+                            }
+                            7 -> {
+                                table[15] = info
+                                sheet[15] = text
+                            }
+                            9 -> {
+                                table[20] = info
+                                sheet[20] = text
+                            }
+                        }
+                    }
+                    1 -> {
+                        when(text.section) {
+                            1 -> {
+                                table[1] = info
+                                sheet[1] = text
+                            }
+                            3 -> {
+                                table[6] = info
+                                sheet[6] = text
+                            }
+                            5 -> {
+                                table[11] = info
+                                sheet[11] = text
+                            }
+                            7 -> {
+                                table[16] = info
+                                sheet[16] = text
+                            }
+                            9 -> {
+                                table[21] = info
+                                sheet[21] = text
+                            }
+                        }
+                    }
+                    2 -> {
+                        when(text.section) {
+                            1 -> {
+                                table[2] = info
+                                sheet[2] = text
+                            }
+                            3 -> {
+                                table[7] = info
+                                sheet[7] = text
+                            }
+                            5 -> {
+                                table[12] = info
+                                sheet[12] = text
+                            }
+                            7 -> {
+                                table[17] = info
+                                sheet[17] = text
+                            }
+                            9 -> {
+                                table[22] = info
+                                sheet[22] = text
+                            }
+                        }
+                    }
+                    3 -> {
+                        when(text.section) {
+                            1 -> {
+                                table[3] = info
+                                sheet[3] = text
+                            }
+                            3 -> {
+                                table[8] = info
+                                sheet[8] = text
+                            }
+                            5 -> {
+                                table[13] = info
+                                sheet[13] = text
+                            }
+                            7 -> {
+                                table[18] = info
+                                sheet[18] = text
+                            }
+                            9 -> {
+                                table[23] = info
+                                sheet[23] = text
+                            }
+                        }
+                    }
+                    4 -> {
+                        when(text.section) {
+                            1 -> {
+                                table[4] = info
+                                sheet[4] = text
+                            }
+                            3 -> {
+                                table[9] = info
+                                sheet[9] = text
+                            }
+                            5 -> {
+                                table[14] = info
+                                sheet[14] = text
+                            }
+                            7 -> {
+                                table[19] = info
+                                sheet[19] = text
+                            }
+                            9 -> {
+                                table[24] = info
+                                sheet[24] = text
+                            }
+                        }
+                    }
                 }
             }
-
-            for (j in 0 until lessonList.size) {
-                val lessonlist_id = lessonList[j].id
-                val INFO = lessonList[j].suggestScheduleWeekInfo
-                val courseTypeName = lessonList[j].courseTypeName
-                val name = lessonList[j].courseName
-                if (scheduleid == lessonlist_id) {
-                    scheduleid = name
-                    endtime = INFO
-                    lessonType = courseTypeName
-                }
-
-            }
-
-            //适配长文字布局
-            scheduleid = scheduleid.replace("语言程序设计","程序设计")
-
-            val text = starttime + "\n" + scheduleid + "\n" + room
-            val info =
-                        "教师:${person}"+ "  "+
-                        "周数:${endtime}"+ "  "+
-                        "人数:${periods}"+ "  "+
-                        "类型:${lessonType}"
-
-
-                        if (scheduleList[i].weekIndex == Bianhuaweeks.toInt()) {
-                if (scheduleList[i].weekday == 1) {
-                    Mon = date
-                    if (scheduleList[i].startTime == 800) {
-                        table_1_1 = text
-                        sheet_1_1 = info
-                    }
-                    if (scheduleList[i].startTime == 1010) {
-                        table_2_1 = text
-                        sheet_2_1 = info
-                    }
-                    if (scheduleList[i].startTime == 1400) {
-                        table_3_1 = text
-                        sheet_3_1 = info
-                    }
-                    if (scheduleList[i].startTime == 1600) {
-                        table_4_1 = text
-                        sheet_4_1 = info
-                    }
-                }
-                if (scheduleList[i].weekday == 2) {
-                    Tue = date
-                    if (scheduleList[i].startTime == 800) {
-                        table_1_2 = text
-                        sheet_1_2 = info
-                    }
-                    if (scheduleList[i].startTime == 1010) {
-                        table_2_2 = text
-                        sheet_2_2 = info
-                    }
-                    if (scheduleList[i].startTime == 1400) {
-                        table_3_2 = text
-                        sheet_3_2 = info
-                    }
-                    if (scheduleList[i].startTime == 1600) {
-                        table_4_2 = text
-                        sheet_4_2 = info
-                    }
-                }
-                if (scheduleList[i].weekday == 3) {
-                    Wed = date
-                    if (scheduleList[i].startTime == 800) {
-                        table_1_3 = text
-                        sheet_1_3 = info
-                    }
-                    if (scheduleList[i].startTime == 1010) {
-                        table_2_3 = text
-                        sheet_2_3 = info
-                    }
-                    if (scheduleList[i].startTime == 1400) {
-                        table_3_3 = text
-                        sheet_3_3 = info
-                    }
-                    if (scheduleList[i].startTime == 1600) {
-                        table_4_3 = text
-                        sheet_4_3 = info
-                    }
-                }
-                if (scheduleList[i].weekday == 4) {
-                    Thur = date
-                    if (scheduleList[i].startTime == 800) {
-                        table_1_4 = text
-                        sheet_1_4 = info
-                    }
-                    if (scheduleList[i].startTime == 1010) {
-                        table_2_4 = text
-                        sheet_2_4 = info
-                    }
-                    if (scheduleList[i].startTime == 1400) {
-                        table_3_4 = text
-                        sheet_3_4 = info
-                    }
-                    if (scheduleList[i].startTime == 1600) {
-                        table_4_4 = text
-                        sheet_4_4 = info
-                    }
-                }
-                if (scheduleList[i].weekday == 5) {
-                    Fri = date
-                    if (scheduleList[i].startTime == 800) {
-                        table_1_5 = text
-                        sheet_1_5 = info
-                    }
-                    if (scheduleList[i].startTime == 1010) {
-                        table_2_5 = text
-                        sheet_2_5 = info
-                    }
-                    if (scheduleList[i].startTime == 1400) {
-                        table_3_5 = text
-                        sheet_3_5 = info
-                    }
-                    if (scheduleList[i].startTime == 1600) {
-                        table_4_5 = text
-                        sheet_4_5 = info
-                    }
-                }
-
-
-            }
-
         }
-
     }
+
+    //装载数组和信息
+    Updates()
 
     val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
     val json = prefs.getString("json", "")
-if (json?.contains("result") == true) {
-        Update()//填充UI与更新
-} else Toast.makeText(MyApplication.context,"本地数据为空,请登录以更新数据",Toast.LENGTH_SHORT).show()
+    if (json?.contains("result") == true) {
+        Updates()//填充UI与更新
+    } else Toast.makeText(MyApplication.context,"本地数据为空,请登录以更新数据",Toast.LENGTH_SHORT).show()
 
+
+    //刷新
+    var refreshing by remember { mutableStateOf(false) }
+    // 用协程模拟一个耗时加载
+    val scope = rememberCoroutineScope()
+    var states = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
+        scope.launch {
+            async {
+                refreshing = true
+                Updates()
+            }.await()
+            async {
+                refreshing = false
+                MyToast("刷新成功")
+            }
+        }
+    })
+
+    //课程详情
+    var num by remember { mutableStateOf(0) }
+    val sheetState = rememberModalBottomSheetState()
+    var showBottomSheet by remember { mutableStateOf(false) }
+    if (showBottomSheet) {
+
+        ModalBottomSheet(
+            onDismissRequest = { showBottomSheet = false },
+            sheetState = sheetState
+        ) {
+
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        title = { Text(sheet[num].name) }
+                    )
+                },
+            ) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                ) {
+                    DetailInfos(sheet[num])
+                }
+            }
+        }
+    }
+
+    var today by rememberSaveable { mutableStateOf(LocalDate.now()) }
+    val mondayOfCurrentWeek = today.minusDays(today.dayOfWeek.value - 1L)
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -357,195 +456,126 @@ if (json?.contains("result") == true) {
         ) {
 
 
-            //在这里插入课程表布局
+            Spacer(modifier = Modifier.height(5.dp))
 
-            val table = arrayOf(
-                arrayOf(table_1_1, table_1_2, table_1_3, table_1_4, table_1_5),
-                arrayOf(table_2_1, table_2_2, table_2_3, table_2_4, table_2_5),
-                arrayOf(table_3_1, table_3_2, table_3_3, table_3_4, table_3_5),
-                arrayOf(table_4_1, table_4_2, table_4_3, table_4_4, table_4_5)
-            )
-
-            val sheet = arrayOf(
-                arrayOf(sheet_1_1, sheet_1_2, sheet_1_3, sheet_1_4, sheet_1_5),
-                arrayOf(sheet_2_1, sheet_2_2, sheet_2_3, sheet_2_4, sheet_2_5),
-                arrayOf(sheet_3_1, sheet_3_2, sheet_3_3, sheet_3_4, sheet_3_5),
-                arrayOf(sheet_4_1, sheet_4_2, sheet_4_3, sheet_4_4, sheet_4_5)
-            )
-
-            val week = arrayOf(Mon,Tue,Wed,Thur,Fri)
-
-
-
-            Column{
-
-                val interactionSource = remember { MutableInteractionSource() }
-                val interactionSource2 = remember { MutableInteractionSource() }
-                val interactionSource3 = remember { MutableInteractionSource() } // 创建一个
-                val isPressed by interactionSource.collectIsPressedAsState()
-                val isPressed2 by interactionSource2.collectIsPressedAsState()
-                val isPressed3 by interactionSource3.collectIsPressedAsState()
-
-                val scale = animateFloatAsState(
-                    targetValue = if (isPressed) 0.9f else 1f, // 按下时为0.9，松开时为1
-                    animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-                    label = "" // 使用弹簧动画
-                )
-
-                val scale2 = animateFloatAsState(
-                    targetValue = if (isPressed2) 0.9f else 1f, // 按下时为0.9，松开时为1
-                    animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-                    label = "" // 使用弹簧动画
-                )
-
-                val scale3 = animateFloatAsState(
-                    targetValue = if (isPressed3) 0.9f else 1f, // 按下时为0.9，松开时为1
-                    animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-                    label = "" // 使用弹簧动画
-                )
-
-
-
-                LazyRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 2.dp)
-                        .height(520.dp),
-                    horizontalArrangement = Arrangement.spacedBy(
-                        5.dp,
-                        Alignment.CenterHorizontally
+            LazyVerticalGrid(columns = GridCells.Fixed(5),modifier = Modifier.padding(horizontal = 10.dp)){
+                items(5) { item ->
+                    if (Benweeks > 0)
+                        Text(
+                            text = mondayOfCurrentWeek.plusDays(item.toLong()).toString()
+                                .substringAfter("-") ,
+                            textAlign = TextAlign.Center,
+                            fontSize = 14.sp,
+                            color = Color.Gray
+                        )
+                    else Text(
+                        text = "未开学",
+                        textAlign = TextAlign.Center,
+                        color = Color.Gray,
+                        fontSize = 14.sp
                     )
-
-                ) {
-                    items(5) { columnIndex ->
-                        val weekdays = columnIndex + 1
-                        val chinese = arrayOf("一", "二", "三", "四", "五")
-                        Column {
-                            Spacer(modifier = Modifier.height(10.dp))
-
-                            Text(
-                                text = "    周${chinese[columnIndex]}",
-                                textAlign = TextAlign.Center,
-                                fontSize = 15.sp,
-                            )
-
-                            Spacer(modifier = Modifier.height(1.dp))
-
-                            Text(
-                                text = "     ${week[columnIndex]}",
-                                textAlign = TextAlign.Center,
-                                fontSize = 11.sp,
-                                color = Color.Gray
-                            )
-
-
-
-                            LazyColumn(
-                                modifier = Modifier
-                                    .fillMaxHeight()
-                                    .padding(2.dp)
-                            ) {
-                                items(4) { rowIndex ->
-                                    Spacer(modifier = Modifier.height(8.dp))
-
-                                    Card(
-                                        elevation = CardDefaults.cardElevation(
-                                            defaultElevation = 3.dp
-                                        ),
-                                     //   colors = CardDefaults.cardColors(
-                                      //      containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                                      //  ),
-                                        modifier = Modifier
-                                            //.padding(horizontal = 0.dp, vertical = 0.dp)
-                                            .size(width = 63.dp, height = 100.dp),
-
-                                           // .clickable {},
-                                        shape = MaterialTheme.shapes.extraSmall,
-                                        onClick = {
-                                          //  Log.d("测试",sheet[rowIndex][columnIndex])
-                                            if (sheet[rowIndex][columnIndex].contains("课")) Toast.makeText(
-                                                MyApplication.context, sheet[rowIndex][columnIndex], Toast.LENGTH_SHORT).show()
-                                            else Toast.makeText(MyApplication.context,"空数据", Toast.LENGTH_SHORT).show()
-
-                                       }
-                                    ) {
-                                        Text(
-                                            text = table[rowIndex][columnIndex],
-                                            fontSize = 14.sp,
-                                            textAlign = TextAlign.Center,
-                                        )
-
-                                    }
-                                }
-                            }
-
-                        }
-                    }
-                }
-
-                //按钮
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),horizontalArrangement = Arrangement.Center) {
-
-                    FilledTonalButton(
-                        onClick = {
-                            if (Bianhuaweeks > 1) {
-                                Bianhuaweeks-- - 1}
-                            Update()
-                        },modifier = Modifier.scale(scale.value),
-                        interactionSource = interactionSource,
-
-                    ) {
-                        Text(text = "上一周"
-                            ///,color = MaterialTheme.colorScheme.primary
-                    )
-                    }
-
-                    Spacer(modifier = Modifier.width(20.dp))
-
-                    FilledTonalButton(
-                        onClick = {
-                            Bianhuaweeks = Benweeks
-                            Update()
-                        },modifier = Modifier.scale(scale2.value),
-                        interactionSource = interactionSource2,
-
-                    ) {
-                        AnimatedContent(
-                            targetState = Bianhuaweeks,
-                            transitionSpec = {  scaleIn(animationSpec = tween(500)
-                            ) with scaleOut(animationSpec = tween(500))
-                            }, label = ""
-                        ){annumber ->
-                            Text(text = "第${annumber}周",)
-                        }
-
-                    }
-                    Spacer(modifier = Modifier.width(20.dp))
-                    //显示第几周
-
-                    FilledTonalButton(
-                        onClick = {
-                            if (Bianhuaweeks < 20) {
-                                Bianhuaweeks++ + 1}
-                            Update()
-                        },modifier = Modifier.scale(scale3.value),
-                        interactionSource = interactionSource3,
-
-                    ) {
-                        Text(text = "下一周"
-                            //,color = MaterialTheme.colorScheme.primary
-                    )
-                    }
                 }
             }
 
+                    Box( modifier = Modifier
+                        .fillMaxHeight()
+                        .pullRefresh(states)
+                    ) {
+                        val scrollstate = rememberLazyGridState()
+                        val shouldShowAddButton = scrollstate.firstVisibleItemScrollOffset == 0
+
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(5),
+                            modifier = Modifier.padding(10.dp),
+                            state = scrollstate
+                        ) {
+                            items(30) { cell ->
+                                Card(
+                                    shape = MaterialTheme.shapes.extraSmall,
+                                    modifier = Modifier
+                                        .height(125.dp)
+                                        .padding(2.dp)
+                                        .clickable {
+                                            num = cell
+                                            if (sheet[cell].name != "")
+                                                showBottomSheet = true
+                                            else MyToast("空数据")
+                                        }
+                                ) {
+                                    Text(text = table[cell],fontSize = 14.sp, textAlign = TextAlign.Center)
+                                }
+                            }
+                        }
+                        androidx.compose.animation.AnimatedVisibility(
+                            visible = shouldShowAddButton,
+                            enter = scaleIn(),
+                            exit = scaleOut(),
+                            modifier = Modifier
+                                .align(Alignment.BottomStart)
+                                .padding(horizontal = 15.dp, vertical = 100.dp)
+                        ) {
+                            if (shouldShowAddButton) {
+                                FloatingActionButton(
+                                    onClick = {
+                                        if (Bianhuaweeks > 1) {
+                                            Bianhuaweeks-- - 1
+                                            today = today.minusDays(7)
+                                        }
+                                    },
+                                ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
+                            }
+                        }
 
 
+                        androidx.compose.animation.AnimatedVisibility(
+                            visible = shouldShowAddButton,
+                            enter = scaleIn(),
+                            exit = scaleOut(),
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .padding(horizontal = 15.dp, vertical = 100.dp)
+                        ) {
+                            if (shouldShowAddButton) {
+                                ExtendedFloatingActionButton(
+                                    onClick = {
+                                        Bianhuaweeks = GetDate.Benweeks
+                                        today = LocalDate.now()
+                                    },
+                                ) {
+                                    AnimatedContent(
+                                        targetState = Bianhuaweeks,
+                                        transitionSpec = {  scaleIn(animationSpec = tween(500)
+                                        ) with scaleOut(animationSpec = tween(500))
+                                        }, label = ""
+                                    ){annumber ->
+                                        Text(text = "第 $annumber 周",)
+                                    }
+                                }
+                            }
+                        }
+
+                        androidx.compose.animation.AnimatedVisibility(
+                            visible = shouldShowAddButton,
+                            enter = scaleIn(),
+                            exit = scaleOut(),
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .padding(horizontal = 15.dp, vertical = 100.dp)
+                        ) {
+                            if (shouldShowAddButton) {
+                                    FloatingActionButton(
+                                        onClick = {
+                                             if (Bianhuaweeks < 20) {
+                                                 Bianhuaweeks++ + 1
+                                                 today = today.plusDays(7)
+                                             }
+                                        },
+                                    ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
+                            }
+                        }
+                        PullRefreshIndicator(refreshing, states, Modifier.align(Alignment.TopCenter))
+                    }
+            Spacer(modifier = Modifier.height(100.dp))
         }
     }
-
-
-
 }

@@ -1,8 +1,9 @@
 package com.hfut.schedule.ui.ComposeUI.Focus
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.pm.PackageManager
 import android.os.Build
-import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
@@ -56,12 +57,12 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.datamodel.Focus.AddFocus
-import com.hfut.schedule.logic.datamodel.Focus.FocusCourse
 import com.hfut.schedule.logic.datamodel.MyList
 import com.hfut.schedule.logic.datamodel.Schedule
 import com.hfut.schedule.ui.ComposeUI.Saved.getCourseINFO
@@ -155,7 +156,20 @@ fun FutureMyScheuleItem(item : Int, MySchedule : MutableList<Schedule> ) {
                         else
                             Icon(painterResource(R.drawable.calendar), contentDescription = "Localized description",)
                     },
-                    modifier = Modifier.clickable {}
+                    modifier = Modifier.clickable {},
+                    trailingContent = {
+                        FilledTonalIconButton(
+                            onClick = {
+                                var startTime = MySchedule[item].startTime
+                                var endTime = MySchedule[item].endTime
+                                AddCalendar(startTime,endTime, MySchedule[item].info, MySchedule[item].title,MySchedule[item].time)
+                                MyToast("添加到系统日历成功")
+                            }
+                        ) {
+                            Icon( painterResource(R.drawable.calendar_add_on),
+                                contentDescription = "Localized description",)
+                        }
+                    }
                 )
             }
         }
@@ -187,13 +201,26 @@ fun WangkeItem(item : Int, MyWangKe: MutableList<MyList>) {
 
                 ListItem(
                     headlineContent = {  Text(text = MyWangKe[item].title) },
-                    overlineContent = {Text(text = MyWangKe[item].time)},
+                    overlineContent = { Text(text = MyWangKe[item].time) },
                     supportingContent = { Text(text = MyWangKe[item].info)},
                     leadingContent = {
                         Icon(
                             painterResource(R.drawable.net),
                             contentDescription = "Localized description",
                         )
+                    },
+                    trailingContent = {
+                        FilledTonalIconButton(
+                            onClick = {
+                                    var startTime = MyWangKe[item].startTime
+                                    var endTime = MyWangKe[item].endTime
+                                    AddCalendar(startTime,endTime, MyWangKe[item].info, MyWangKe[item].title,MyWangKe[item].time)
+                                    MyToast("添加到系统日历成功")
+                            }
+                        ) {
+                            Icon( painterResource(R.drawable.calendar_add_on),
+                                contentDescription = "Localized description",)
+                        }
                     },
                     modifier = Modifier.clickable {
                         //AddCalendar(Place = MyWangKe()[item].info, Title = MyWangKe[item].title)

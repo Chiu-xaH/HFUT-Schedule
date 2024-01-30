@@ -52,7 +52,6 @@ fun zjgdcard(vm : LoginSuccessViewModel) {
 }
 
 fun MySchedule() : MutableList<Schedule> {
-
     val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
     val my = prefs.getString("my", MyApplication.NullMy)
     val data = Gson().fromJson(my, MyAPIResponse::class.java).Lessons

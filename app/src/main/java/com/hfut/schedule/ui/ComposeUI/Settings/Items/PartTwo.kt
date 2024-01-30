@@ -131,6 +131,7 @@ fun SettingsCubeItems() {
 
     ListItem(
         headlineContent = { Text(text = "开源主页") },
+        supportingContent = { Text(text = "欢迎来开源主页参观一下")},
         leadingContent = {
             Icon(
                 painterResource(R.drawable.net),
@@ -186,8 +187,8 @@ fun SettingsCubeItems() {
     }
 
     ListItem(
-        headlineContent = { Text(text = "清除数据") },
-        supportingContent = { Text(text = "当数据异常或冲突崩溃时,可清除数据,然后重新登录")},
+        headlineContent = { Text(text = "抹掉数据") },
+        supportingContent = { Text(text = "当数据异常或冲突崩溃时,可抹掉数据,然后重新登录")},
         leadingContent = { Icon(painterResource(R.drawable.delete), contentDescription = "Localized description",) },
         modifier = Modifier.clickable{ showDialog = true }
     )

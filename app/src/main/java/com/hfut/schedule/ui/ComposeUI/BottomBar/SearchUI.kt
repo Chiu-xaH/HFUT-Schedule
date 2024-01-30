@@ -151,6 +151,7 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,) {
                 NotificationsCenter()
                 HotWater()
                 SchoolCalendar()
+                //NextSchedule()
             } else {
                 Grade(vm)
                 Exam(vm)
@@ -168,6 +169,7 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,) {
                 NotificationsCenter()
                 HotWater()
                 SchoolCalendar()
+             ///   NextSchedule()
                 Estimate(vm)
                 SchoolBus()
                 Second()
