@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.ComposeUI.Search.Grade
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -56,10 +57,15 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
+@SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Grade(vm : LoginSuccessViewModel)  {
+fun Grade(vm : LoginSuccessViewModel,ifSaved : Boolean)  {
     val cookie = prefs.getString("redirect", "")
+
+    if(!ifSaved)
+    vm.getGrade(cookie!!)
+
     val sheetState_Grade = rememberModalBottomSheetState()
     var showBottomSheet_Grade by remember { mutableStateOf(false) }
     val CommuityTOKEN = prefs.getString("TOKEN","")
@@ -81,6 +87,9 @@ fun Grade(vm : LoginSuccessViewModel)  {
                     }
             }) { Icon(painterResource(R.drawable.article), contentDescription = "Localized description",) }
                          },
+        supportingContent = { if(!ifSaved) Text(text = "教务系统数据,当前可查看最全面的成绩信息")
+            else Text(text = "Community数据,当前可免登录查看最新成绩,但无法查看详情")
+                            },
         modifier = Modifier.clickable {
             getGrade()
             Save("GradeNum", getGrade().size.toString())
@@ -110,7 +119,8 @@ fun Grade(vm : LoginSuccessViewModel)  {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ){
-                    GradeItemUI()
+                    if (ifSaved) GradeItemUI()
+                    else GradeItemUIJXGLSTU()
                 }
             }
         }

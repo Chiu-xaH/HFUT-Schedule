@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -24,13 +26,14 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.SharePrefs
 
 @Composable
-fun GradeItemUI() {
+fun TotaGrade() {
 
     val json = SharePrefs.prefs.getString("Grade", MyApplication.NullGrades)
     val result = Gson().fromJson(json,com.hfut.schedule.logic.datamodel.Community.GradeResponse::class.java).result
     val Class = result?.classRanking
     val Major = result?.majorRanking
     val TotalGPA = result?.gpa
+
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
         Column() {
             Card(
@@ -50,7 +53,18 @@ fun GradeItemUI() {
             }
         }
     }
+}
+@Composable
+fun GradeItemUI() {
+
+    val json = SharePrefs.prefs.getString("Grade", MyApplication.NullGrades)
+    val result = Gson().fromJson(json,com.hfut.schedule.logic.datamodel.Community.GradeResponse::class.java).result
+    val Class = result?.classRanking
+    val Major = result?.majorRanking
+    val TotalGPA = result?.gpa
+
     LazyColumn{
+        item { TotaGrade() }
         items(getGrade().size) { item ->
             val pass = getGrade()[item].pass
             var passs = ""
@@ -70,6 +84,55 @@ fun GradeItemUI() {
                             supportingContent = { Text("学分: " + getGrade()[item].credit  + "   绩点: " + getGrade()[item].gpa   + "   分数: ${getGrade()[item].score}") },
                             leadingContent = { Icon(painterResource(R.drawable.article), contentDescription = "Localized description",) },
                             trailingContent = { Text(passs ) },
+                            modifier = Modifier.clickable {},
+                        )
+                    }
+                }
+            }
+        }
+        item {
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                Column() {
+                    Card(
+                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 15.dp, vertical = 5.dp),
+                        shape = MaterialTheme.shapes.medium,
+                    ){
+                        ListItem(
+                            headlineContent = {  Text("想查看更多详细信息请登录") },
+                            supportingContent = { Text(text = "您现在使用的是Community接口,登陆后使用教务系统数据可查看详细成绩")},
+                            leadingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "")},
+                            modifier = Modifier.clickable {},
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun GradeItemUIJXGLSTU() {
+
+    LazyColumn{
+        item { TotaGrade() }
+        items(getGrade().size) { item ->
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                Column() {
+                    Card(
+                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 15.dp, vertical = 5.dp),
+                        shape = MaterialTheme.shapes.medium,
+                    ){
+                        ListItem(
+                            headlineContent = {  Text(getGradeJXGLSTU()[item].title) },
+                            overlineContent = { Text( "成绩  "+ getGradeJXGLSTU()[item].totalGrade + "  |  绩点  " + getGradeJXGLSTU()[item].GPA +  "  |  学分  " + getGradeJXGLSTU()[item].score) },
+                            leadingContent = { Icon(painterResource(R.drawable.article), contentDescription = "Localized description",) },
+                            supportingContent = { Text(getGradeJXGLSTU()[item].grade) },
                             modifier = Modifier.clickable {},
                         )
                     }

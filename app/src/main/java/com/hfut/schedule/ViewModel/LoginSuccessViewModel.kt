@@ -76,6 +76,18 @@ class LoginSuccessViewModel : ViewModel() {
         })
     }
 
+    fun getGrade(cookie: String) {
+        val call = JxglstuJSON.getGrade(cookie,studentId.value.toString())
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                SharePrefs.Save("grade", response.body()?.string())
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
+
     fun Jxglstulogin(cookie : String) {
 
         val call = JxglstuJSON.jxglstulogin(cookie)

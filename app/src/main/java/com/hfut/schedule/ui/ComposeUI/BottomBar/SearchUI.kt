@@ -137,7 +137,7 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,) {
         ) {
             Spacer(modifier = Modifier.height(5.dp))
             if (ifSaved){
-                Grade(vm)
+                Grade(vm,ifSaved)
                 Exam(vm)
                // Program(vm)
                 SchoolCardItem(vm)
@@ -153,7 +153,7 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,) {
                 SchoolCalendar()
                 //NextSchedule()
             } else {
-                Grade(vm)
+                Grade(vm,ifSaved)
                 Exam(vm)
                 Program(vm)
                 PersonUI()
