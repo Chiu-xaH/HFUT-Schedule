@@ -32,6 +32,11 @@ import com.hfut.schedule.logic.network.api.LoginService
 import com.hfut.schedule.logic.network.api.OneService
 import com.hfut.schedule.logic.network.api.XuanquService
 import com.hfut.schedule.logic.network.api.ZJGDBillService
+import com.hfut.schedule.logic.utils.SharePrefs.Save
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -109,6 +114,8 @@ class LoginSuccessViewModel : ViewModel() {
                     studentId.value = response.headers()["Location"].toString()
                         .substringAfter("/eams5-student/for-std/course-table/info/").toInt()
                 } else studentId.value = 99999
+
+                Save("studentId",studentId.value.toString())
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -456,7 +463,7 @@ class LoginSuccessViewModel : ViewModel() {
         }
     }
 
-
+    var GradeData = MutableLiveData<String?>()
     fun getGrade(CommuityTOKEN: String,year : String,term : String) {
 
         val call = CommuityTOKEN?.let { Community.getGrade(it,year,term) }
@@ -464,11 +471,14 @@ class LoginSuccessViewModel : ViewModel() {
         if (call != null) {
             call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    SharePrefs.Save("Grade", response.body()?.string())
-                   // response.body()?.string()?.let { Log.d("Save", it) }
+                        val responses = response.body()?.string()
+                        SharePrefs.Save("Grade",responses )
+                        GradeData.value = responses
                 }
 
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    GradeData.value = "错误"
+                    t.printStackTrace() }
             })
         }
     }

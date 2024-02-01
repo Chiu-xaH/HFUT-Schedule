@@ -18,3 +18,17 @@ fun WebViewScreen(url: String) {
         modifier = Modifier.fillMaxSize()
     )
 }
+
+@Composable
+fun WebViewScreen2(url: String,Cookie : String) {
+    AndroidView(
+        factory = { context ->
+            WebView(context).apply {
+                settings.javaScriptEnabled = true
+                val headers = mapOf("Cookie" to Cookie)
+                loadUrl(url,headers)
+            }
+        },
+        modifier = Modifier.fillMaxSize()
+    )
+}

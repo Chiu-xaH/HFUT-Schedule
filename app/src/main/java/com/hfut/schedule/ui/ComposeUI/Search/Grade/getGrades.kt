@@ -10,7 +10,7 @@ import org.jsoup.Jsoup
 
 fun getGrade() :  MutableList<scoreInfoDTOList> {
     val json = SharePrefs.prefs.getString("Grade", MyApplication.NullGrades)
-    val result = Gson().fromJson(json,com.hfut.schedule.logic.datamodel.Community.GradeResponse::class.java).result
+    val result = Gson().fromJson(json,GradeResponse::class.java).result
     val list = result?.scoreInfoDTOList
     var Addlist = mutableListOf<scoreInfoDTOList>()
     if (list != null) {

@@ -185,10 +185,10 @@ fun Refresh(vm : LoginSuccessViewModel, rotating: MutableState<Boolean>) {
     val CommuityTOKEN = prefs.getString("TOKEN","")
     var term = ""
     val month = GetDate.Date_MM.toInt()
-    if( month >= 8 || month <= 2) term = "1"
+    if( month >= 9 || month <= 2) term = "1"
     else term = "2"
     var years = GetDate.Date_yyyy
-    if (month <= 2) years = (years.toInt() - 1).toString()
+    if (month <= 8) years = (years.toInt() - 1).toString()
     rotating.value = true
     CoroutineScope(Job()).launch {
         vm.apply {
