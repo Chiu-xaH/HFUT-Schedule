@@ -2,7 +2,6 @@ package com.hfut.schedule.ui.ComposeUI.Search.Electric
 
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -59,13 +58,11 @@ import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.datamodel.SearchEleResponse
 import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.ui.ComposeUI.Saved.getCourseINFO
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.theme.FWDTColr
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)

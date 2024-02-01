@@ -20,6 +20,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.LoginViewModel
 import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.datamodel.MyAPIResponse
@@ -37,6 +38,7 @@ import kotlinx.coroutines.launch
 class LoginSuccessAcitivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
     private val vm by lazy { ViewModelProvider(this).get(LoginSuccessViewModel::class.java) }
+    private val vm2 by lazy { ViewModelProvider(this).get(LoginViewModel::class.java) }
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,7 +55,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
                         color = MaterialTheme.colorScheme.background
                     ) {
                         TransparentSystemBars()
-                        grade?.let { SuccessUI(vm, it) }
+                        grade?.let { SuccessUI(vm, it,vm2) }
                     }
                 }
             }

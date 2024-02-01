@@ -2,6 +2,7 @@ package com.hfut.schedule.ui.ComposeUI.Activity
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,6 +29,7 @@ import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.LoginViewModel
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.datamodel.NavigationBarItemData
 import com.hfut.schedule.ui.ComposeUI.BottomBar.SearchScreen
@@ -43,7 +45,7 @@ import kotlinx.coroutines.launch
 @SuppressLint("CoroutineCreationDuringComposition")
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun SuccessUI(vm : LoginSuccessViewModel, grade : String) {
+fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel) {
     val switch = prefs.getBoolean("SWITCH",true)
     val switch_card = prefs.getBoolean("SWITCHCARD",true)
     val navController = rememberNavController()
@@ -121,7 +123,7 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String) {
                 showlable,
                 showlablechanged = {showlablech -> showlable = showlablech},
             ) }
-            composable("today") { TodayScreen(vm) }
+            composable("today") { TodayScreen(vm,vm2) }
         }
 
         Column(

@@ -54,6 +54,7 @@ import com.hfut.schedule.ui.ComposeUI.Search.NotificationsCenter.NotificationsCe
 import com.hfut.schedule.ui.ComposeUI.Search.Bus.SchoolBus
 import com.hfut.schedule.ui.ComposeUI.Search.Electric.Electric
 import com.hfut.schedule.ui.ComposeUI.Search.FailRate.FailRate
+import com.hfut.schedule.ui.ComposeUI.Search.More.More
 import com.hfut.schedule.ui.ComposeUI.Search.Second.Second
 import com.hfut.schedule.ui.ComposeUI.Search.SchoolCalendar.SchoolCalendar
 import com.hfut.schedule.ui.UIUtils.MyToast
@@ -137,9 +138,8 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,) {
         ) {
             Spacer(modifier = Modifier.height(5.dp))
             if (ifSaved){
-                Grade(vm,ifSaved)
+                Grade(vm,true)
                 Exam(vm)
-               // Program(vm)
                 SchoolCardItem(vm)
                 LibraryItem(vm)
                 FailRate(vm)
@@ -151,9 +151,9 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,) {
                 NotificationsCenter()
                 HotWater()
                 SchoolCalendar()
-                //NextSchedule()
+                More()
             } else {
-                Grade(vm,ifSaved)
+                Grade(vm,false)
                 Exam(vm)
                 Program(vm)
                 PersonUI()
@@ -169,11 +169,9 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,) {
                 NotificationsCenter()
                 HotWater()
                 SchoolCalendar()
-             ///   NextSchedule()
                 Estimate(vm)
                 SchoolBus()
                 Second()
-                //XueGong()
             }
              Spacer(modifier = Modifier.height(90.dp))
         }

@@ -49,6 +49,7 @@ import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.LoginViewModel
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
@@ -69,7 +70,8 @@ import com.hfut.schedule.ui.ComposeUI.Focus.TodayCourseItem
 import com.hfut.schedule.ui.ComposeUI.Focus.TomorrowCourseItem
 import com.hfut.schedule.ui.ComposeUI.Focus.WangkeItem
 import com.hfut.schedule.ui.ComposeUI.Focus.zjgdcard
-import com.hfut.schedule.ui.ComposeUI.Saved.getCourseINFO
+import com.hfut.schedule.ui.ComposeUI.Saved.NetWorkUpdate
+import com.hfut.schedule.ui.ComposeUI.SavedCourse.getCourseINFO
 import com.hfut.schedule.ui.ComposeUI.Search.Exam.ExamItems
 import com.hfut.schedule.ui.ComposeUI.Search.Exam.getExam
 import kotlinx.coroutines.CoroutineScope
@@ -84,7 +86,7 @@ import java.time.format.DateTimeFormatter
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
-fun TodayScreen(vm : LoginSuccessViewModel) {
+fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel) {
 
     val dayweek = GetDate.dayweek
     var chinesenumber  = GetDate.chinesenumber
@@ -318,28 +320,17 @@ fun TodayScreen(vm : LoginSuccessViewModel) {
     }
 
 //Today操作区///////////////////////////////////////////////////////////////////////////////////////////////////
-suspend fun FocusUpdate(){
-    val CommuityTOKEN = prefs.getString("TOKEN","")
-        CoroutineScope(Job()).apply {
-            async {
-                val json = prefs.getString("json", "")
-                if (json?.contains("result") == true) {
-                    async { Datum() }
-                    async { DatumTomorrow() }
-                } else MyToast("本地数据为空,请登录以更新数据")
-            }
-           // async { ExamGet() }
-            async { MyWangKe() }
-            async { MySchedule() }
-            async { AddedItems() }
-            async { getNotifications() }
-            async { CommuityTOKEN?.let { vm.Exam(it) } }
-            async { CommuityTOKEN?.let { vm.GetCourse(it) } }
-            async { zjgdcard(vm) }.await()
-        }
-    }
 
-    CoroutineScope(Job()).launch{ FocusUpdate() }
+    CoroutineScope(Job()).launch{
+        async {
+            val json = prefs.getString("json", "")
+            if (json?.contains("result") == true) {
+                async { Datum() }
+                async { DatumTomorrow() }
+            } else MyToast("本地数据为空,请登录以更新数据")
+        }
+        async { NetWorkUpdate(vm,vm2) }
+    }
 
     //刷新
     var refreshing by remember { mutableStateOf(false) }
@@ -349,7 +340,7 @@ suspend fun FocusUpdate(){
         scope.launch {
             async {
                 refreshing = true
-                FocusUpdate()
+                NetWorkUpdate(vm,vm2)
             }.await()
             async {
                 refreshing = false

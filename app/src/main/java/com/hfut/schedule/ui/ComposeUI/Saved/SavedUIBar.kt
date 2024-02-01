@@ -29,17 +29,22 @@ import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.LoginViewModel
 import com.hfut.schedule.logic.datamodel.NavigationBarItemData
 import com.hfut.schedule.ui.ComposeUI.BottomBar.SearchScreen
 import com.hfut.schedule.ui.ComposeUI.BottomBar.SettingsScreen
 import com.hfut.schedule.ui.ComposeUI.BottomBar.TodayScreen
+import com.hfut.schedule.ui.ComposeUI.SavedCourse.NoNet
 import com.hfut.schedule.ui.ComposeUI.Settings.getMyVersion
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
-@SuppressLint("SuspiciousIndentation")
+@SuppressLint("SuspiciousIndentation", "CoroutineCreationDuringComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun NoNetWork(vm : LoginSuccessViewModel) {
+fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel) {
     val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
     val switch = prefs.getBoolean("SWITCH",true)
     val navController = rememberNavController()
@@ -47,7 +52,7 @@ fun NoNetWork(vm : LoginSuccessViewModel) {
     var showlable by remember { mutableStateOf(switch) }
     var first = "1"
 
-
+    CoroutineScope(Job()).launch { NetWorkUpdate(vm, vm2) }
 
     var showBadge by remember { mutableStateOf(false) }
     if (MyApplication.version != getMyVersion()) showBadge = true
@@ -113,7 +118,7 @@ fun NoNetWork(vm : LoginSuccessViewModel) {
     ) { innerPadding ->
         NavHost(navController = navController, startDestination = first) {
             composable("1") { NoNet() }
-            composable("2") { TodayScreen(vm) }
+            composable("2") { TodayScreen(vm,vm2) }
             composable("search") { SearchScreen(vm,true) }
             composable("3") { SettingsScreen(vm,showlable, showlablechanged = {showlablech -> showlable = showlablech},)
             }

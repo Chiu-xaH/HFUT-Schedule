@@ -325,7 +325,7 @@ fun TwoTextField(vm : LoginViewModel) {
                     }, modifier = Modifier.scale(scale.value),
                 interactionSource = interactionSource
 
-            ) { Text("登录") }
+            ) { Text("教务登录") }
 
             Spacer(modifier = Modifier.width(15.dp))
 
@@ -334,7 +334,7 @@ fun TwoTextField(vm : LoginViewModel) {
                 modifier = Modifier.scale(scale2.value),
                 interactionSource = interactionSource2,
 
-                ) { Text("本地速览") }
+                ) { Text("免登录") }
         }
     }
 }

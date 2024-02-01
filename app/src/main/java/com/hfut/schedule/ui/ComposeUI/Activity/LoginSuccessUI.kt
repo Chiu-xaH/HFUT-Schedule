@@ -5,42 +5,37 @@ import android.content.Context
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.with
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -54,7 +49,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -65,17 +59,18 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
-import com.hfut.schedule.logic.utils.GetDate
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.logic.datamodel.Jxglstu.datumResponse
 import com.hfut.schedule.logic.datamodel.Community.LoginCommunityResponse
+import com.hfut.schedule.logic.datamodel.Jxglstu.datumResponse
+import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.UIUtils.MyToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class, ExperimentalAnimationApi::class)
@@ -111,6 +106,16 @@ fun CalendarScreen(isEnabled:Boolean,enabledchanged : (Boolean) -> Unit,vm : Log
     var table_4_3 by rememberSaveable { mutableStateOf("") }
     var table_4_4 by rememberSaveable { mutableStateOf("") }
     var table_4_5 by rememberSaveable { mutableStateOf("") }
+    var table_5_1 by rememberSaveable { mutableStateOf("") }
+    var table_5_2 by rememberSaveable { mutableStateOf("") }
+    var table_5_3 by rememberSaveable { mutableStateOf("") }
+    var table_5_4 by rememberSaveable { mutableStateOf("") }
+    var table_5_5 by rememberSaveable { mutableStateOf("") }
+    var table_6_1 by rememberSaveable { mutableStateOf("") }
+    var table_6_2 by rememberSaveable { mutableStateOf("") }
+    var table_6_3 by rememberSaveable { mutableStateOf("") }
+    var table_6_4 by rememberSaveable { mutableStateOf("") }
+    var table_6_5 by rememberSaveable { mutableStateOf("") }
 
     var sheet_1_1 by rememberSaveable { mutableStateOf("") }
     var sheet_1_2 by rememberSaveable { mutableStateOf("") }
@@ -132,6 +137,11 @@ fun CalendarScreen(isEnabled:Boolean,enabledchanged : (Boolean) -> Unit,vm : Log
     var sheet_4_3 by rememberSaveable { mutableStateOf("") }
     var sheet_4_4 by rememberSaveable { mutableStateOf("") }
     var sheet_4_5 by rememberSaveable { mutableStateOf("") }
+    var sheet_5_1 by rememberSaveable { mutableStateOf("") }
+    var sheet_5_2 by rememberSaveable { mutableStateOf("") }
+    var sheet_5_3 by rememberSaveable { mutableStateOf("") }
+    var sheet_5_4 by rememberSaveable { mutableStateOf("") }
+    var sheet_5_5 by rememberSaveable { mutableStateOf("") }
 
 
 
@@ -154,7 +164,6 @@ fun CalendarScreen(isEnabled:Boolean,enabledchanged : (Boolean) -> Unit,vm : Log
     }
     //填充UI与更新
     fun Update() {
-        table_1_1 = ""
         table_1_2 = ""
         table_1_3 = ""
         table_1_4 = ""
@@ -174,6 +183,11 @@ fun CalendarScreen(isEnabled:Boolean,enabledchanged : (Boolean) -> Unit,vm : Log
         table_4_3 = ""
         table_4_4 = ""
         table_4_5 = ""
+        table_5_1 = ""
+        table_5_2 = ""
+        table_5_3 = ""
+        table_5_4 = ""
+        table_5_5 = ""
         //////////////////////////////////////////////////////////////////////////////////
         val json = prefs.getString("json", "")
         // Log.d("测试",json!!)
@@ -261,6 +275,10 @@ fun CalendarScreen(isEnabled:Boolean,enabledchanged : (Boolean) -> Unit,vm : Log
                         table_4_1 = text
                         sheet_4_1 = info
                     }
+                    if (scheduleList[i].startTime == 1900) {
+                        table_5_1 = text
+                        sheet_5_1 = info
+                    }
                 }
                 if (scheduleList[i].weekday == 2) {
                     Tue = date
@@ -279,6 +297,10 @@ fun CalendarScreen(isEnabled:Boolean,enabledchanged : (Boolean) -> Unit,vm : Log
                     if (scheduleList[i].startTime == 1600) {
                         table_4_2 = text
                         sheet_4_2 = info
+                    }
+                    if (scheduleList[i].startTime == 1900) {
+                        table_5_2 = text
+                        sheet_5_2 = info
                     }
                 }
                 if (scheduleList[i].weekday == 3) {
@@ -299,6 +321,10 @@ fun CalendarScreen(isEnabled:Boolean,enabledchanged : (Boolean) -> Unit,vm : Log
                         table_4_3 = text
                         sheet_4_3 = info
                     }
+                    if (scheduleList[i].startTime == 1900) {
+                        table_5_3 = text
+                        sheet_5_3 = info
+                    }
                 }
                 if (scheduleList[i].weekday == 4) {
                     Thur = date
@@ -317,6 +343,10 @@ fun CalendarScreen(isEnabled:Boolean,enabledchanged : (Boolean) -> Unit,vm : Log
                     if (scheduleList[i].startTime == 1600) {
                         table_4_4 = text
                         sheet_4_4 = info
+                    }
+                    if (scheduleList[i].startTime == 1900) {
+                        table_5_4 = text
+                        sheet_5_4 = info
                     }
                 }
                 if (scheduleList[i].weekday == 5) {
@@ -337,11 +367,12 @@ fun CalendarScreen(isEnabled:Boolean,enabledchanged : (Boolean) -> Unit,vm : Log
                         table_4_5 = text
                         sheet_4_5 = info
                     }
+                    if (scheduleList[i].startTime == 1900) {
+                        table_5_5 = text
+                        sheet_5_5 = info
+                    }
                 }
-
-
             }
-
         }
     }
 //////////////////////////////////////////////////////////////////////////////////
@@ -467,7 +498,24 @@ fun CalendarScreen(isEnabled:Boolean,enabledchanged : (Boolean) -> Unit,vm : Log
         }
     }
 
-    val week = arrayOf(Mon,Tue,Wed,Thur,Fri)
+    val table = arrayOf(
+        table_1_1, table_1_2, table_1_3, table_1_4, table_1_5,
+        table_2_1, table_2_2, table_2_3, table_2_4, table_2_5,
+        table_3_1, table_3_2, table_3_3, table_3_4, table_3_5,
+        table_4_1, table_4_2, table_4_3, table_4_4, table_4_5,
+        table_5_1, table_5_2, table_5_3, table_5_4, table_5_5,
+        table_6_1, table_6_2, table_6_3, table_6_4, table_6_5,
+    )
+
+    val sheet = arrayOf(
+        sheet_1_1, sheet_1_2, sheet_1_3, sheet_1_4, sheet_1_5,
+        sheet_2_1, sheet_2_2, sheet_2_3, sheet_2_4, sheet_2_5,
+        sheet_3_1, sheet_3_2, sheet_3_3, sheet_3_4, sheet_3_5,
+        sheet_4_1, sheet_4_2, sheet_4_3, sheet_4_4, sheet_4_5,
+        sheet_5_1, sheet_5_2, sheet_5_3, sheet_5_4, sheet_5_5,
+    )
+    var today by rememberSaveable { mutableStateOf(LocalDate.now()) }
+    val mondayOfCurrentWeek = today.minusDays(today.dayOfWeek.value - 1L)
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -504,171 +552,124 @@ fun CalendarScreen(isEnabled:Boolean,enabledchanged : (Boolean) -> Unit,vm : Log
             ) {
                 //在这里插入课程表布局
 
-                val table = arrayOf(
-                    arrayOf(table_1_1, table_1_2, table_1_3, table_1_4, table_1_5),
-                    arrayOf(table_2_1, table_2_2, table_2_3, table_2_4, table_2_5),
-                    arrayOf(table_3_1, table_3_2, table_3_3, table_3_4, table_3_5),
-                    arrayOf(table_4_1, table_4_2, table_4_3, table_4_4, table_4_5)
-                )
 
-                val sheet = arrayOf(
-                    arrayOf(sheet_1_1, sheet_1_2, sheet_1_3, sheet_1_4, sheet_1_5),
-                    arrayOf(sheet_2_1, sheet_2_2, sheet_2_3, sheet_2_4, sheet_2_5),
-                    arrayOf(sheet_3_1, sheet_3_2, sheet_3_3, sheet_3_4, sheet_3_5),
-                    arrayOf(sheet_4_1, sheet_4_2, sheet_4_3, sheet_4_4, sheet_4_5)
-                )
-
-                Column{
-                    val interactionSource = remember { MutableInteractionSource() }
-                    val interactionSource2 = remember { MutableInteractionSource() }
-                    val interactionSource3 = remember { MutableInteractionSource() } // 创建一个
-                    val isPressed by interactionSource.collectIsPressedAsState()
-                    val isPressed2 by interactionSource2.collectIsPressedAsState()
-                    val isPressed3 by interactionSource3.collectIsPressedAsState()
-
-                    val scale = animateFloatAsState(
-                        targetValue = if (isPressed) 0.9f else 1f, // 按下时为0.9，松开时为1
-                        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-                        label = "" // 使用弹簧动画
-                    )
-
-                    val scale2 = animateFloatAsState(
-                        targetValue = if (isPressed2) 0.9f else 1f, // 按下时为0.9，松开时为1
-                        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-                        label = "" // 使用弹簧动画
-                    )
-
-                    val scale3 = animateFloatAsState(
-                        targetValue = if (isPressed3) 0.9f else 1f, // 按下时为0.9，松开时为1
-                        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-                        label = "" // 使用弹簧动画
-                    )
-
-                    LazyRow(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 2.dp)
-                            .height(520.dp),
-                        horizontalArrangement = Arrangement.spacedBy(
-                            5.dp,
-                            Alignment.CenterHorizontally
+                LazyVerticalGrid(columns = GridCells.Fixed(5),modifier = Modifier.padding(horizontal = 10.dp)){
+                    items(5) { item ->
+                        if (GetDate.Benweeks > 0)
+                            Text(
+                                text = mondayOfCurrentWeek.plusDays(item.toLong()).toString()
+                                    .substringAfter("-") ,
+                                textAlign = TextAlign.Center,
+                                fontSize = 14.sp,
+                                color = Color.Gray
+                            )
+                        else Text(
+                            text = "未开学",
+                            textAlign = TextAlign.Center,
+                            color = Color.Gray,
+                            fontSize = 14.sp
                         )
-
-                    ) {
-                        items(5) { columnIndex ->
-                            val weekdays = columnIndex + 1
-                            val chinese = arrayOf("一", "二", "三", "四", "五")
-                            Column {
-                                Spacer(modifier = Modifier.height(10.dp))
-
-                                Text(
-                                    text = "    周${chinese[columnIndex]}",
-                                    textAlign = TextAlign.Center,
-                                    fontSize = 15.sp,
-                                )
-
-                                Spacer(modifier = Modifier.height(1.dp))
-
-                                Text(
-                                    text = "     ${week[columnIndex]}",
-                                    textAlign = TextAlign.Center,
-                                    fontSize = 11.sp,
-                                    color = Color.Gray
-                                )
-
-
-
-                                LazyColumn(
-                                    modifier = Modifier
-                                        .fillMaxHeight()
-                                        .padding(2.dp)
-                                ) {
-                                    items(4) { rowIndex ->
-                                        Spacer(modifier = Modifier.height(8.dp))
-
-                                        Card(
-                                            elevation = CardDefaults.cardElevation(
-                                                defaultElevation = 3.dp
-                                            ),
-                                            modifier = Modifier
-                                                .size(width = 63.dp, height = 100.dp),
-                                            shape = MaterialTheme.shapes.extraSmall,
-                                            onClick = {
-                                                if (sheet[rowIndex][columnIndex].contains("课")) Toast.makeText(
-                                                    MyApplication.context, sheet[rowIndex][columnIndex], Toast.LENGTH_SHORT).show()
-                                                else Toast.makeText(MyApplication.context,"空数据", Toast.LENGTH_SHORT).show()
-                                            }
-                                        ) {
-                                            Text(
-                                                text = table[rowIndex][columnIndex],
-                                                fontSize = 14.sp,
-                                                textAlign = TextAlign.Center
-                                                //   ,color = MaterialTheme.colorScheme.primary
-
-                                            )
-                                        }
-
-                                    }
-                                }
-
-                            }
-                        }
-                    }
-
-                    //按钮
-                    Row(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),horizontalArrangement = Arrangement.Center) {
-
-                        FilledTonalButton(
-                            onClick = {
-                                if (Bianhuaweeks > 1) {
-                                    Bianhuaweeks-- - 1}
-                                Update()
-                            },modifier = Modifier.scale(scale.value),
-                            interactionSource = interactionSource
-                        ) {
-                            Text(text = "上一周")
-                        }
-
-                        Spacer(modifier = Modifier.width(20.dp))
-
-                        FilledTonalButton(
-                            onClick = {
-                                Bianhuaweeks = GetDate.Benweeks
-                                Update()
-                            },modifier = Modifier.scale(scale2.value),
-                            interactionSource = interactionSource2
-                        ) {
-                            AnimatedContent(
-                                targetState = Bianhuaweeks,
-                                transitionSpec = {  scaleIn(animationSpec = tween(500)
-                                ) with scaleOut(animationSpec = tween(500))
-                                }, label = ""
-                            ){annumber ->
-                                Text(text = "第${annumber}周",)
-                            }
-
-                        }
-                        Spacer(modifier = Modifier.width(20.dp))
-                        //显示第几周
-
-                        FilledTonalButton(
-                            onClick = {
-                                if (Bianhuaweeks < 20) {
-
-                                    Bianhuaweeks++ + 1}
-                                Update()
-                            },modifier = Modifier.scale(scale3.value),
-                            interactionSource = interactionSource3
-                        ) {
-                            Text(text = "下一周")
-                        }
                     }
                 }
 
-            }
 
+                Box( modifier = Modifier
+                    .fillMaxHeight()
+                ) {
+                    val scrollstate = rememberLazyGridState()
+                    val shouldShowAddButton = scrollstate.firstVisibleItemScrollOffset == 0
+
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(5),
+                        modifier = Modifier.padding(10.dp),
+                        state = scrollstate
+                    ) {
+                        items(30) { cell ->
+                            Card(
+                                shape = MaterialTheme.shapes.extraSmall,
+                                modifier = Modifier
+                                    .height(125.dp)
+                                    .padding(2.dp)
+                                    .clickable {
+                                        if (sheet[cell] != "")
+                                            MyToast(sheet[cell])
+                                        else MyToast("空数据")
+                                    }
+                            ) {
+                                Text(text = table[cell],fontSize = 14.sp, textAlign = TextAlign.Center)
+                            }
+                        }
+                    }
+                    androidx.compose.animation.AnimatedVisibility(
+                        visible = shouldShowAddButton,
+                        enter = scaleIn(),
+                        exit = scaleOut(),
+                        modifier = Modifier
+                            .align(Alignment.BottomStart)
+                            .padding(horizontal = 15.dp, vertical = 100.dp)
+                    ) {
+                        if (shouldShowAddButton) {
+                            FloatingActionButton(
+                                onClick = {
+                                    if (Bianhuaweeks > 1) {
+                                        Bianhuaweeks-- - 1
+                                        today = today.minusDays(7)
+                                    }
+                                },
+                            ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
+                        }
+                    }
+
+
+                    androidx.compose.animation.AnimatedVisibility(
+                        visible = shouldShowAddButton,
+                        enter = scaleIn(),
+                        exit = scaleOut(),
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(horizontal = 15.dp, vertical = 100.dp)
+                    ) {
+                        if (shouldShowAddButton) {
+                            ExtendedFloatingActionButton(
+                                onClick = {
+                                    Bianhuaweeks = GetDate.Benweeks
+                                    today = LocalDate.now()
+                                },
+                            ) {
+                                AnimatedContent(
+                                    targetState = Bianhuaweeks,
+                                    transitionSpec = {  scaleIn(animationSpec = tween(500)
+                                    ) with scaleOut(animationSpec = tween(500))
+                                    }, label = ""
+                                ){annumber ->
+                                    Text(text = "第 $annumber 周",)
+                                }
+                            }
+                        }
+                    }
+
+                    androidx.compose.animation.AnimatedVisibility(
+                        visible = shouldShowAddButton,
+                        enter = scaleIn(),
+                        exit = scaleOut(),
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(horizontal = 15.dp, vertical = 100.dp)
+                    ) {
+                        if (shouldShowAddButton) {
+                            FloatingActionButton(
+                                onClick = {
+                                    if (Bianhuaweeks < 20) {
+                                        Bianhuaweeks++ + 1
+                                        today = today.plusDays(7)
+                                    }
+                                },
+                            ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(100.dp))
+            }
         }
     }
 }

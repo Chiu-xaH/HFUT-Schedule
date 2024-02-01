@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.ComposeUI.Search.Grade
 
+import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -43,6 +44,8 @@ import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.activity.LoginActivity
+import com.hfut.schedule.activity.LoginSuccessAcitivity
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
@@ -71,8 +74,8 @@ fun TotaGrade() {
                 shape = MaterialTheme.shapes.medium,
             ){
                 ListItem(
-                    headlineContent = {  Text("绩点(GPA)  ${TotalGPA}") },
-                    supportingContent = { Text("班级排名: ${Class}   专业排名: ${Major}") },
+                    headlineContent = {  Text("绩点(GPA)  $TotalGPA") },
+                    supportingContent = { Text("班级排名: $Class   专业排名: $Major") },
                     leadingContent = { Icon(painterResource(R.drawable.flag), contentDescription = "Localized description",) },
                     modifier = Modifier.clickable {},
                     colors = ListItemDefaults.colors(MaterialTheme.colorScheme.errorContainer)
@@ -97,7 +100,6 @@ fun GradeItemUI(vm :LoginSuccessViewModel) {
     ) }
 
 
-
     var termBoolean by remember { mutableStateOf(prefs.getBoolean("term",true)) }
 
     if (termBoolean) term = "1"
@@ -105,19 +107,26 @@ fun GradeItemUI(vm :LoginSuccessViewModel) {
 
     var showitem_year by remember { mutableStateOf(false) }
     DropdownMenu(expanded = showitem_year, onDismissRequest = { showitem_year = false }, offset = DpOffset(15.dp,0.dp)) {
-        DropdownMenuItem(text = { Text(text = "${(GetDate.Date_yyyy.toInt() - 3).toString()} - ${(GetDate.Date_yyyy.toInt() - 2).toString()}" )}, onClick = {  Years = (GetDate.Date_yyyy.toInt() - 3)
+        DropdownMenuItem(text = { Text(text = "${(GetDate.Date_yyyy.toInt() - 3).toString()} - ${(GetDate.Date_yyyy.toInt() - 2).toString()}" )}, onClick = {
+            Years = (GetDate.Date_yyyy.toInt() - 3)
             showitem_year = false})
-        DropdownMenuItem(text = { Text(text = "${(GetDate.Date_yyyy.toInt() - 2).toString()} - ${(GetDate.Date_yyyy.toInt() - 1).toString()}" )}, onClick = {  Years =  (GetDate.Date_yyyy.toInt() - 2)
+        DropdownMenuItem(text = { Text(text = "${(GetDate.Date_yyyy.toInt() - 2).toString()} - ${(GetDate.Date_yyyy.toInt() - 1).toString()}" )}, onClick = {
+            Years =  (GetDate.Date_yyyy.toInt() - 2)
             showitem_year = false})
-        DropdownMenuItem(text = { Text(text = "${(GetDate.Date_yyyy.toInt() - 1).toString()} - ${(GetDate.Date_yyyy.toInt() ).toString()}" )},onClick = {  Years =  (GetDate.Date_yyyy.toInt() - 1)
+        DropdownMenuItem(text = { Text(text = "${(GetDate.Date_yyyy.toInt() - 1).toString()} - ${(GetDate.Date_yyyy.toInt() ).toString()}" )},onClick = {
+            Years =  (GetDate.Date_yyyy.toInt() - 1)
             showitem_year = false})
-        DropdownMenuItem(text = { Text(text = "${(GetDate.Date_yyyy.toInt() ).toString()} - ${(GetDate.Date_yyyy.toInt() + 1).toString()}" )}, onClick = {  Years =  GetDate.Date_yyyy.toInt()
+        DropdownMenuItem(text = { Text(text = "${(GetDate.Date_yyyy.toInt() ).toString()} - ${(GetDate.Date_yyyy.toInt() + 1).toString()}" )}, onClick = {
+            Years =  GetDate.Date_yyyy.toInt()
             showitem_year = false})
-        DropdownMenuItem(text = { Text(text = "${(GetDate.Date_yyyy.toInt() + 1).toString()} - ${(GetDate.Date_yyyy.toInt() + 2).toString()}" )}, onClick = {  Years =  (GetDate.Date_yyyy.toInt() + 1)
+        DropdownMenuItem(text = { Text(text = "${(GetDate.Date_yyyy.toInt() + 1).toString()} - ${(GetDate.Date_yyyy.toInt() + 2).toString()}" )}, onClick = {
+            Years =  (GetDate.Date_yyyy.toInt() + 1)
             showitem_year = false})
-        DropdownMenuItem(text = { Text(text = "${(GetDate.Date_yyyy.toInt() + 2).toString()} - ${(GetDate.Date_yyyy.toInt() + 3).toString()}" )}, onClick = {  Years =  (GetDate.Date_yyyy.toInt() + 2)
+        DropdownMenuItem(text = { Text(text = "${(GetDate.Date_yyyy.toInt() + 2).toString()} - ${(GetDate.Date_yyyy.toInt() + 3).toString()}" )}, onClick = {
+            Years =  (GetDate.Date_yyyy.toInt() + 2)
             showitem_year = false})
-        DropdownMenuItem(text = { Text(text = "${(GetDate.Date_yyyy.toInt() + 3).toString()} - ${(GetDate.Date_yyyy.toInt() + 4).toString()}" )}, onClick = { Years =  (GetDate.Date_yyyy.toInt() + 3)
+        DropdownMenuItem(text = { Text(text = "${(GetDate.Date_yyyy.toInt() + 3).toString()} - ${(GetDate.Date_yyyy.toInt() + 4).toString()}" )}, onClick = {
+            Years =  (GetDate.Date_yyyy.toInt() + 3)
             showitem_year = false})
     }
 
@@ -127,7 +136,7 @@ fun GradeItemUI(vm :LoginSuccessViewModel) {
 
         AssistChip(
             onClick = { showitem_year = true },
-            label = { Text(text = "学年 ${Years} - ${Years + 1}") }
+            label = { Text(text = "${Years} - ${Years + 1}") }
         )
 
         Spacer(modifier = Modifier.width(10.dp))
@@ -166,7 +175,6 @@ fun GradeItemUI(vm :LoginSuccessViewModel) {
                         }
                     }
                 }
-
                       },
             label = { Text(text = "切换") },
             leadingIcon = { Icon(painter = painterResource(R.drawable.search), contentDescription = "description") }
@@ -234,7 +242,13 @@ fun GradeItemUI(vm :LoginSuccessViewModel) {
                                         contentDescription = ""
                                     )
                                 },
-                                modifier = Modifier.clickable {},
+                                modifier = Modifier.clickable {
+                                    val it = Intent(MyApplication.context, LoginActivity::class.java).apply {
+                                        putExtra("nologin",false)
+                                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                    }
+                                    MyApplication.context.startActivity(it)
+                                },
                             )
                         }
                     }
@@ -268,7 +282,6 @@ fun GradeItemUI(vm :LoginSuccessViewModel) {
 
 @Composable
 fun GradeItemUIJXGLSTU() {
-
     LazyColumn{
         item { TotaGrade() }
         items(getGrade().size) { item ->

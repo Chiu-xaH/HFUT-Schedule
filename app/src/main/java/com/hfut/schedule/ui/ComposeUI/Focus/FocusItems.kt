@@ -1,8 +1,6 @@
 package com.hfut.schedule.ui.ComposeUI.Focus
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.content.pm.PackageManager
 import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -57,7 +55,6 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
@@ -65,7 +62,7 @@ import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.datamodel.Focus.AddFocus
 import com.hfut.schedule.logic.datamodel.MyList
 import com.hfut.schedule.logic.datamodel.Schedule
-import com.hfut.schedule.ui.ComposeUI.Saved.getCourseINFO
+import com.hfut.schedule.ui.ComposeUI.SavedCourse.getCourseINFO
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.ComposeUI.Search.SchoolCard.SchoolCardItem
 import com.hfut.schedule.ui.UIUtils.AddCalendar

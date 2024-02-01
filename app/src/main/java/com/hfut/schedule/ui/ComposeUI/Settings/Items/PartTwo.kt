@@ -17,6 +17,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.dao.dataBase
+import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.SaveBoolean
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.StartUri.StartUri
@@ -111,7 +113,17 @@ fun SettingsCubeItems() {
             SaveBoolean("select",false,select)
         }
     )
+    val switch_faststart = SharePrefs.prefs.getBoolean("SWITCHFASTSTART",false)
+    var faststart by remember { mutableStateOf(switch_faststart) }
+    SharePrefs.SaveBoolean("SWITCHFASTSTART",false,faststart)
 
+    ListItem(
+        headlineContent = { Text(text = "快速启动") },
+        supportingContent = { Text(text = "打开后,再次打开应用时将默认打开免登录二级界面,而不是登陆教务页面,但您仍可通过查询中心中的选项以登录")},
+        leadingContent = { Icon(painterResource(R.drawable.speed), contentDescription = "Localized description",) },
+        trailingContent = { Switch(checked = faststart, onCheckedChange = {faststartch -> faststart = faststartch }) },
+        modifier = Modifier.clickable { faststart = !faststart }
+    )
 
     ListItem(
         headlineContent = { Text(text = "联系开发者") },

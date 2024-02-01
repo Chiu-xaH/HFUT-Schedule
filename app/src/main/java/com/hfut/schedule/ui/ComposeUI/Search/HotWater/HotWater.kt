@@ -13,7 +13,6 @@ import com.hfut.schedule.logic.utils.OpenAlipay
 
 @Composable
 fun HotWater() {
-
     ListItem(
         headlineContent = { Text(text = "热水机") },
         leadingContent = { Icon(painterResource(R.drawable.water_voc), contentDescription = "")},
