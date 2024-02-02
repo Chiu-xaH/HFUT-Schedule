@@ -25,6 +25,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -312,15 +315,14 @@ fun XuanquUI(vm : LoginSuccessViewModel) {
                         enter = fadeIn(),
                         exit = fadeOut()
                     ){
-                        LazyColumn {
-
+                        LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.padding(horizontal = 5.dp)) {
                             getXuanqu()?.let {
                                 items(it.size) { item ->
                                     Card(
                                         elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .padding(horizontal = 15.dp, vertical = 5.dp),
+                                            .padding(horizontal = 5.dp, vertical = 5.dp),
                                         shape = MaterialTheme.shapes.medium
                                     ) {
                                         ListItem(
@@ -331,7 +333,6 @@ fun XuanquUI(vm : LoginSuccessViewModel) {
                                 }
                             }
                         }
-
                     }
                 }
             }

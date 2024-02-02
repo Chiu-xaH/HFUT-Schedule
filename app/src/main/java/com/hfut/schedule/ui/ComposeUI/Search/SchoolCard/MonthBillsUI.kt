@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -245,9 +247,7 @@ fun MonthBillsUI(vm : LoginSuccessViewModel) {
                                             Row(modifier = Modifier.padding(14.dp,6.dp)){
                                                 drawLineChart(getbillmonth())
                                             }
-
                                         }
-
                                     }
 
                                     item {
@@ -257,7 +257,6 @@ fun MonthBillsUI(vm : LoginSuccessViewModel) {
                                             balance = balance / 100
                                             total += balance
                                         }
-
 
                                         val num = total.toString()
                                         val bd = BigDecimal(num)
@@ -284,7 +283,8 @@ fun MonthBillsUI(vm : LoginSuccessViewModel) {
                                             )
                                         }
                                     }
-
+                                }
+                                LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.padding(horizontal = 5.dp)) {
                                     items(getbillmonth().size) { item ->
                                         var balance = getbillmonth()[item].balance
                                         balance = balance / 100
@@ -296,18 +296,12 @@ fun MonthBillsUI(vm : LoginSuccessViewModel) {
                                                 ),
                                                 modifier = Modifier
                                                     .fillMaxWidth()
-                                                    .padding(horizontal = 15.dp, vertical = 5.dp),
+                                                    .padding(horizontal = 5.dp, vertical = 5.dp),
                                                 shape = MaterialTheme.shapes.medium
                                             ) {
                                                 ListItem(
                                                     headlineContent = { Text(text = getbillmonth()[item].date) },
-                                                    supportingContent = { Text(text = balance.toString() + " 元") },
-                                                    leadingContent = {
-                                                        Icon(
-                                                            painterResource(R.drawable.paid),
-                                                            contentDescription = "Localized description",
-                                                        )
-                                                    }
+                                                    supportingContent = { Text(text = balance.toString() + " 元") }
                                                 )
                                             }
                                         }

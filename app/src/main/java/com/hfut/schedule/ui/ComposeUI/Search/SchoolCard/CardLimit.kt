@@ -4,8 +4,10 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -15,9 +17,12 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -71,18 +76,37 @@ fun Click(vm : LoginSuccessViewModel,input : String) {
 fun CardLimit(vm : LoginSuccessViewModel) {
     var input by remember { mutableStateOf(SharePrefs.prefs.getString("input","") ?: "") }
 
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                colors = TopAppBarDefaults.mediumTopAppBarColors(
+                    containerColor = Color.Transparent,
+                    titleContentColor = MaterialTheme.colorScheme.primary,
+                ),
+                title = { Text("限额修改") }
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+        ) {
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
 
-        TextField(
-            modifier = Modifier.weight(1f).padding(horizontal = 15.dp, vertical = 5.dp),
-            value = input,
-            onValueChange = { input = it },
-            label = { Text("务必输入整数!") },
-            singleLine = true,
-            trailingIcon = { IconButton(onClick = {Click(vm,input)}) { Icon(Icons.Filled.Check, contentDescription = "description") } },
-            shape = MaterialTheme.shapes.medium,
-            colors = TextFieldDefaults.textFieldColors(focusedIndicatorColor = Color.Transparent, unfocusedIndicatorColor = Color.Transparent)
-        )
-        Spacer(modifier = Modifier.height(500.dp))
+                TextField(
+                    modifier = Modifier.weight(1f).padding(horizontal = 15.dp, vertical = 5.dp),
+                    value = input,
+                    onValueChange = { input = it },
+                    label = { Text("务必输入整数!") },
+                    singleLine = true,
+                    trailingIcon = { IconButton(onClick = {Click(vm,input)}) { Icon(Icons.Filled.Check, contentDescription = "description") } },
+                    shape = MaterialTheme.shapes.medium,
+                    colors = TextFieldDefaults.textFieldColors(focusedIndicatorColor = Color.Transparent, unfocusedIndicatorColor = Color.Transparent)
+                )
+                Spacer(modifier = Modifier.height(500.dp))
+            }
+        }
     }
 }
