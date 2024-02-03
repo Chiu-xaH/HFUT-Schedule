@@ -53,7 +53,7 @@ class LoginSuccessViewModel : ViewModel() {
     private val searchEle = SearchEleServiceCreator.create(FWDTService::class.java)
     private val CommunityLogin = LoginServiceCreator.create(CommunityService::class.java)
     private val Community = CommunitySreviceCreator.create(CommunityService::class.java)
-    var studentId = MutableLiveData<Int>()
+    var studentId = MutableLiveData<Int>(99999)
     var lessonIds = MutableLiveData<List<Int>>()
     var token = MutableLiveData<String>()
 
@@ -114,20 +114,17 @@ class LoginSuccessViewModel : ViewModel() {
                     studentId.value = response.headers()["Location"].toString()
                         .substringAfter("/eams5-student/for-std/course-table/info/").toInt()
                 } else studentId.value = 99999
-
-                Save("studentId",studentId.value.toString())
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
 
-    fun getLessonIds(cookie : String, bizTypeId : String) {
+    fun getLessonIds(cookie : String, bizTypeId : String,studentid : String) {
         //bizTypeId为年级数，例如23  //dataId为学生ID  //semesterId为学期Id，例如23-24第一学期为234
-        //每半年进行版本推送更新参数
 
         val call = prefs.getString("semesterId","234")
-            ?.let { JxglstuJSON.getLessonIds(cookie,bizTypeId, it,studentId.value.toString()) }
+            ?.let { JxglstuJSON.getLessonIds(cookie,bizTypeId, it,studentid) }
 
         if (call != null) {
             call.enqueue(object : Callback<ResponseBody> {
@@ -142,6 +139,8 @@ class LoginSuccessViewModel : ViewModel() {
             })
         }
     }
+
+    val datumData = MutableLiveData<String?>()
     fun getDatum(cookie : String,lessonid: JsonObject) {
 
         val lessonIdsArray = JsonArray()
@@ -151,7 +150,9 @@ class LoginSuccessViewModel : ViewModel() {
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                SharePrefs.Save("json", response.body()?.string())
+                val body = response.body()?.string()
+                datumData.value = body
+                SharePrefs.Save("json", body)
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }

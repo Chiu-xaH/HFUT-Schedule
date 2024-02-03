@@ -126,6 +126,13 @@ fun SettingsCubeItems() {
     )
 
     ListItem(
+        headlineContent = { Text(text = "降级到3.X版本 (4.0 限定选项)") },
+        supportingContent = { Text(text = "由于4.0初期存在若干Bug,如影响使用,可点击此选项获取上版")},
+        leadingContent = { Icon(painterResource(R.drawable.trending_down), contentDescription = "Localized description",) },
+        modifier = Modifier.clickable{ StartUri("https://gitee.com/chiu-xah/HFUT-Schedule/releases/tag/Memory") }
+    )
+
+    ListItem(
         headlineContent = { Text(text = "联系开发者") },
          supportingContent = { Text(text = "有更好的想法,或者反馈Bug,都可发邮件联系我")},
         leadingContent = {

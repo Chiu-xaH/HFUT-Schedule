@@ -3,7 +3,10 @@ package com.hfut.schedule.ui.ComposeUI.Activity
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.os.Handler
+import android.os.Looper
 import android.preference.PreferenceManager
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
@@ -61,8 +64,10 @@ import com.hfut.schedule.activity.LoginSuccessAcitivity
 import com.hfut.schedule.activity.SavedCoursesActivity
 import com.hfut.schedule.logic.Encrypt.AESEncrypt
 import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.ComposeUI.Settings.FirstCube
+import com.hfut.schedule.ui.UIUtils.MyToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -70,65 +75,51 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 fun LoginClick(vm : LoginViewModel,username : String,inputAES : String) {
-   // Log.d("input",inputAES)
     val cookie = prefs.getString("cookie", "")
-
     val outputAES = cookie?.let { it1 -> AESEncrypt.encrypt(inputAES, it1) }
-
-    val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-    if(sp.getString("Username","") != username){ sp.edit().putString("Username", username).apply() }
-    if(sp.getString("Password","") != inputAES){ sp.edit().putString("Password", inputAES).apply() }
-    val ONE = "LOGIN_FLAVORING=" + cookie
-    outputAES?.let { it1 -> vm.login(username, it1,ONE) }
-
-
+    val ONE = "LOGIN_FLAVORING=$cookie"
+    //保存账密
+    Save("Username",username)
+    Save("Password",inputAES)
+    //登录
+    if (username.length != 10) MyToast("请输入正确的账号")
+    else outputAES?.let { it1 -> vm.login(username, it1,ONE) }
+    //登陆判定机制
     CoroutineScope(Job()).launch {
-
-        delay(1250)
-
-
-        // vm.code.value?.let { Log.d("代码", it) }
-
-        if (vm.code.value.toString() == "XXX" || vm.code.value == null) {
-            withContext(Dispatchers.Main) {
-                Toast.makeText(MyApplication.context, "连接Host失败,请再次尝试登录", Toast.LENGTH_SHORT).show()
-                vm.getCookie()
-            }
-
-        }
-        if (vm.code.value.toString() == "401")
-            withContext(Dispatchers.Main) {
-                Toast.makeText(MyApplication.context, "账号或密码错误,超过五次会冻结五分钟", Toast.LENGTH_SHORT).show()
-                vm.getCookie()
-            }
-
-
-        if (vm.code.value.toString() == "200" || username.length != 10)
-            withContext(Dispatchers.Main) { Toast.makeText(MyApplication.context, "请输入正确的账号", Toast.LENGTH_SHORT) .show() }
-
-        if (vm.code.value.toString() == "302") {
-
-            if (vm.location.value.toString() == MyApplication.RedirectURL) {
-                Toast.makeText(MyApplication.context, "重定向失败,请重新登录", Toast.LENGTH_SHORT).show()
-                vm.getCookie()
-            }
-
-            if (vm.location.value.toString().contains("ticket")) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(MyApplication.context, "登陆成功", Toast.LENGTH_SHORT).show()
-
-                    val it = Intent(MyApplication.context, LoginSuccessAcitivity::class.java).apply {
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        putExtra("Grade", username.substring(2, 4))
+        Handler(Looper.getMainLooper()).post{
+            vm.code.observeForever { result ->
+                Log.d("代码",result)
+                when(vm.code.value.toString()) {
+                    "XXX" -> {
+                        MyToast("连接Host失败,请再次尝试登录")
+                        vm.getCookie()
                     }
-                    MyApplication.context.startActivity(it)
+                    "401" -> {
+                        MyToast("账号或密码错误")
+                        vm.getCookie()
+                    }
+                    "200" -> MyToast("请输入正确的账号")
+                    "302" -> {
+                        when {
+                            vm.location.value.toString() == MyApplication.RedirectURL -> {
+                                MyToast("重定向失败,请重新登录")
+                                vm.getCookie()
+                            }
+                            vm.location.value.toString().contains("ticket") -> {
+                                    Toast.makeText(MyApplication.context, "登陆成功", Toast.LENGTH_SHORT).show()
+                                    val it = Intent(MyApplication.context, LoginSuccessAcitivity::class.java).apply {
+                                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                        putExtra("Grade", username.substring(2, 4))
+                                    }
+                                    MyApplication.context.startActivity(it)
+                            }
+                            else -> {
+                                MyToast("重定向失败,请重新登录")
+                                vm.getCookie()
+                            }
+                        }
+                    }
                 }
-            }
-
-            else {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(MyApplication.context, "重定向失败,请重新登录", Toast.LENGTH_SHORT).show()
-                    vm.getCookie()}
             }
         }
     }

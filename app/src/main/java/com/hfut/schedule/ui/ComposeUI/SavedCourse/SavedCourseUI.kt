@@ -137,6 +137,11 @@ fun NoNet() {
     var sheet_5_3 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
     var sheet_5_4 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
     var sheet_5_5 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_6_1 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_6_2  = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_6_3 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_6_4 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_6_5 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
 
 
 
@@ -161,6 +166,7 @@ fun NoNet() {
         sheet_3_1, sheet_3_2, sheet_3_3, sheet_3_4, sheet_3_5,
         sheet_4_1, sheet_4_2, sheet_4_3, sheet_4_4, sheet_4_5,
         sheet_5_1, sheet_5_2, sheet_5_3, sheet_5_4, sheet_5_5,
+        sheet_6_1, sheet_6_2, sheet_6_3, sheet_6_4, sheet_6_5,
     )
 
 

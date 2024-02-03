@@ -67,15 +67,9 @@ class LoginSuccessAcitivity : ComponentActivity() {
             }
             launch {
                 val semesterId = Gson().fromJson(prefs.getString("my", MyApplication.NullMy), MyAPIResponse::class.java).semesterId
-                if(semesterId != null)
-                    Save("semesterId",semesterId)
-                else  Save("semesterId","234")
+                if(semesterId != null) Save("semesterId",semesterId)
+                else  Save("semesterId","254")
             }
-           // launch {
-             //   Handler(Looper.getMainLooper()).post{
-               //     vm.BillsData.value = "{}"
-               // }
-           // }
         }
     }
 }

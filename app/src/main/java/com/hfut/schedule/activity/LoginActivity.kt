@@ -73,26 +73,9 @@ class LoginActivity : ComponentActivity() {
        // val CommuityTOKEN = SharePrefs.prefs.getString("TOKEN","")
         lifecycleScope.launch {
             launch { vm.getCookie() }
+            launch { SharePrefs.Save("tip","0") }
             launch {  vm.getKey() }
             launch { vm.My() }
-            //launch {
-              //  async { CommuityTOKEN?.let { vm2.Exam(it) }  }.await()
-                ///async {
-                   // Handler(Looper.getMainLooper()).post{
-                     //   vm2.ExamData.observeForever { result ->
-                            // Log.d("r",result)
-                       //     if (result != null) {
-                         //       if(result.contains("成功")) {
-                           //         CoroutineScope(Job()).launch {
-                             //           val it = Intent(MyApplication.context, SavedCoursesActivity::class.java).apply { addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) }
-                               //         MyApplication.context.startActivity(it)
-                                 //   }
-                               // }
-                            //}
-                        //}
-                    //}
-                //}
-            ///}
         }
     }
 }
