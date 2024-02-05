@@ -34,7 +34,7 @@ import com.hfut.schedule.logic.datamodel.NavigationBarItemData
 import com.hfut.schedule.ui.ComposeUI.BottomBar.SearchScreen
 import com.hfut.schedule.ui.ComposeUI.BottomBar.SettingsScreen
 import com.hfut.schedule.ui.ComposeUI.BottomBar.TodayScreen
-import com.hfut.schedule.ui.ComposeUI.SavedCourse.NoNet
+import com.hfut.schedule.ui.ComposeUI.SavedCourse.SaveCourse
 import com.hfut.schedule.ui.ComposeUI.Settings.getMyVersion
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -117,7 +117,7 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel) {
         }
     ) { innerPadding ->
         NavHost(navController = navController, startDestination = first) {
-            composable("1") { NoNet() }
+            composable("1") { SaveCourse() }
             composable("2") { TodayScreen(vm,vm2) }
             composable("search") { SearchScreen(vm,true) }
             composable("3") { SettingsScreen(vm,showlable, showlablechanged = {showlablech -> showlable = showlablech},)
