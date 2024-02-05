@@ -23,6 +23,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
@@ -52,10 +53,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.R
 import com.hfut.schedule.logic.datamodel.Community.courseDetailDTOList
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.GetDate.Benweeks
@@ -71,14 +74,7 @@ import java.time.LocalDate
 )
 @SuppressLint("SuspiciousIndentation", "CoroutineCreationDuringComposition")
 @Composable
-fun NoNet() {
-
-
-    var Mon by rememberSaveable { mutableStateOf("") }
-    var Tue by rememberSaveable { mutableStateOf("") }
-    var Wed by rememberSaveable { mutableStateOf("") }
-    var Thur by rememberSaveable { mutableStateOf("") }
-    var Fri by rememberSaveable { mutableStateOf("") }
+fun SaveCourse() {
 
     var table_1_1 by rememberSaveable { mutableStateOf("") }
     var table_1_2 by rememberSaveable { mutableStateOf("") }
@@ -110,7 +106,20 @@ fun NoNet() {
     var table_6_3 by rememberSaveable { mutableStateOf("") }
     var table_6_4 by rememberSaveable { mutableStateOf("") }
     var table_6_5 by rememberSaveable { mutableStateOf("") }
+    var table_1_6 by rememberSaveable { mutableStateOf("") }
+    var table_1_7 by rememberSaveable { mutableStateOf("") }
+    var table_2_6 by rememberSaveable { mutableStateOf("") }
+    var table_2_7 by rememberSaveable { mutableStateOf("") }
+    var table_3_6 by rememberSaveable { mutableStateOf("") }
+    var table_3_7 by rememberSaveable { mutableStateOf("") }
+    var table_4_6 by rememberSaveable { mutableStateOf("") }
+    var table_4_7 by rememberSaveable { mutableStateOf("") }
+    var table_5_6 by rememberSaveable { mutableStateOf("") }
+    var table_5_7 by rememberSaveable { mutableStateOf("") }
+    var table_6_6 by rememberSaveable { mutableStateOf("") }
+    var table_6_7 by rememberSaveable { mutableStateOf("") }
 
+    var showAll by remember { mutableStateOf(false) }
 
     var sheet_1_1 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
     var sheet_1_2  = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
@@ -142,15 +151,42 @@ fun NoNet() {
     var sheet_6_3 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
     var sheet_6_4 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
     var sheet_6_5 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-
-
-
+    var sheet_1_6= courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_1_7= courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_2_6 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_2_7= courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_3_6= courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_3_7= courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_4_6 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_4_7= courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_5_6 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_5_7 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_6_6= courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    var sheet_6_7= courseDetailDTOList(0,0,"","","", listOf(0),0,"")
 
 
 
     //切换周数
     var Bianhuaweeks by rememberSaveable { mutableStateOf(GetDate.weeksBetween) }
     var date by rememberSaveable { mutableStateOf(LocalDate.now()) }
+
+    val tableall = arrayOf(
+        table_1_1, table_1_2, table_1_3, table_1_4, table_1_5,table_1_6,table_1_7,
+        table_2_1, table_2_2, table_2_3, table_2_4, table_2_5,table_2_6,table_2_7,
+        table_3_1, table_3_2, table_3_3, table_3_4, table_3_5,table_3_6,table_3_7,
+        table_4_1, table_4_2, table_4_3, table_4_4, table_4_5,table_4_6,table_4_7,
+        table_5_1, table_5_2, table_5_3, table_5_4, table_5_5,table_5_6,table_5_7,
+        table_6_1, table_6_2, table_6_3, table_6_4, table_6_5,table_6_6,table_6_7,
+    )
+
+    val sheetall = arrayOf(
+        sheet_1_1, sheet_1_2, sheet_1_3, sheet_1_4, sheet_1_5,sheet_1_6,sheet_1_7,
+        sheet_2_1, sheet_2_2, sheet_2_3, sheet_2_4, sheet_2_5,sheet_2_6,sheet_2_7,
+        sheet_3_1, sheet_3_2, sheet_3_3, sheet_3_4, sheet_3_5,sheet_3_6,sheet_3_7,
+        sheet_4_1, sheet_4_2, sheet_4_3, sheet_4_4, sheet_4_5,sheet_4_6,sheet_4_7,
+        sheet_5_1, sheet_5_2, sheet_5_3, sheet_5_4, sheet_5_5,sheet_5_6,sheet_5_7,
+        sheet_6_1, sheet_6_2, sheet_6_3, sheet_6_4, sheet_6_5,sheet_6_6,sheet_6_7,
+    )
 
     val table = arrayOf(
         table_1_1, table_1_2, table_1_3, table_1_4, table_1_5,
@@ -167,8 +203,9 @@ fun NoNet() {
         sheet_3_1, sheet_3_2, sheet_3_3, sheet_3_4, sheet_3_5,
         sheet_4_1, sheet_4_2, sheet_4_3, sheet_4_4, sheet_4_5,
         sheet_5_1, sheet_5_2, sheet_5_3, sheet_5_4, sheet_5_5,
-        sheet_6_1, sheet_6_2, sheet_6_3, sheet_6_4, sheet_6_5,
+        sheet_6_1, sheet_6_2, sheet_6_3, sheet_6_4, sheet_6_5
     )
+
 
 
 
@@ -187,6 +224,237 @@ fun NoNet() {
         0 -> chinesenumber = "日"
     }
     //填充UI与更新
+    fun UpdatesAll() {
+        table_1_1 = ""
+        table_1_2 = ""
+        table_1_3 = ""
+        table_1_4 = ""
+        table_1_5 = ""
+        table_2_1 = ""
+        table_2_2 = ""
+        table_2_3 = ""
+        table_2_4 = ""
+        table_2_5 = ""
+        table_3_1 = ""
+        table_3_2 = ""
+        table_3_3 = ""
+        table_3_4 = ""
+        table_3_5 = ""
+        table_4_1 = ""
+        table_4_2 = ""
+        table_4_3 = ""
+        table_4_4 = ""
+        table_4_5 = ""
+        table_5_1 = ""
+        table_5_2 = ""
+        table_5_3 = ""
+        table_5_4 = ""
+        table_5_5 = ""
+        table_6_1 = ""
+        table_6_2 = ""
+        table_6_3 = ""
+        table_6_4 = ""
+        table_6_5 = ""
+        table_1_6 = ""
+        table_1_7 = ""
+        table_2_6 = ""
+        table_2_7 = ""
+        table_3_6 = ""
+        table_3_7 = ""
+        table_4_6 = ""
+        table_4_7 = ""
+        table_5_6 = ""
+        table_5_7 = ""
+        table_6_6 = ""
+        table_6_7 = ""
+
+        for (j in 0 until 7 ) {
+            var info = ""
+            val lists = getCourseINFO(j +1 ,Bianhuaweeks.toInt())
+
+            for(i in 0 until lists.size) {
+                val text = lists[i][0]
+                val name = text.name
+                var time = text.classTime
+                time = time.substringBefore("-")
+                var room = text.place
+                room = room.replace("学堂","")
+                info = time + "\n" + name + "\n" + room
+
+
+                when (j) {
+                    0 -> {
+                        when(text.section) {
+                            1 -> {
+                                tableall[0] = info
+                                sheetall[0] = text
+                            }
+                            3 -> {
+                                tableall[7] = info
+                                sheetall[7] = text
+                            }
+                            5 -> {
+                                tableall[14] = info
+                                sheetall[14] = text
+                            }
+                            7 -> {
+                                tableall[21] = info
+                                sheetall[21] = text
+                            }
+                            9 -> {
+                                tableall[28] = info
+                                sheetall[28] = text
+                            }
+                        }
+                    }
+                    1 -> {
+                        when(text.section) {
+                            1 -> {
+                                tableall[1] = info
+                                sheetall[1] = text
+                            }
+                            3 -> {
+                                tableall[8] = info
+                                sheetall[8] = text
+                            }
+                            5 -> {
+                                tableall[15] = info
+                                sheetall[15] = text
+                            }
+                            7 -> {
+                                tableall[22] = info
+                                sheetall[22] = text
+                            }
+                            9 -> {
+                                tableall[29] = info
+                                sheetall[29] = text
+                            }
+                        }
+                    }
+                    2 -> {
+                        when(text.section) {
+                            1 -> {
+                                tableall[2] = info
+                                sheetall[2] = text
+                            }
+                            3 -> {
+                                tableall[9] = info
+                                sheetall[9] = text
+                            }
+                            5 -> {
+                                tableall[16] = info
+                                sheetall[16] = text
+                            }
+                            7 -> {
+                                tableall[23] = info
+                                sheetall[23] = text
+                            }
+                            9 -> {
+                                tableall[30] = info
+                                sheetall[30] = text
+                            }
+                        }
+                    }
+                    3 -> {
+                        when(text.section) {
+                            1 -> {
+                                tableall[3] = info
+                                sheetall[3] = text
+                            }
+                            3 -> {
+                                tableall[10] = info
+                                sheetall[10] = text
+                            }
+                            5 -> {
+                                tableall[17] = info
+                                sheetall[17] = text
+                            }
+                            7 -> {
+                                tableall[24] = info
+                                sheetall[24] = text
+                            }
+                            9 -> {
+                                tableall[31] = info
+                                sheetall[31] = text
+                            }
+                        }
+                    }
+                    4 -> {
+                        when(text.section) {
+                            1 -> {
+                                tableall[4] = info
+                                sheetall[4] = text
+                            }
+                            3 -> {
+                                tableall[11] = info
+                                sheetall[11] = text
+                            }
+                            5 -> {
+                                tableall[18] = info
+                                sheetall[18] = text
+                            }
+                            7 -> {
+                                tableall[25] = info
+                                sheetall[25] = text
+                            }
+                            9 -> {
+                                tableall[32] = info
+                                sheetall[32] = text
+                            }
+                        }
+                    }
+                    5 -> {
+                        when(text.section) {
+                            1 -> {
+                                tableall[5] = info
+                                sheetall[5] = text
+                            }
+                            3 -> {
+                                tableall[12] = info
+                                sheetall[12] = text
+                            }
+                            5 -> {
+                                tableall[19] = info
+                                sheetall[19] = text
+                            }
+                            7 -> {
+                                tableall[26] = info
+                                sheetall[26] = text
+                            }
+                            9 -> {
+                                tableall[33] = info
+                                sheetall[33] = text
+                            }
+                        }
+                    }
+                    6 -> {
+                        when(text.section) {
+                            1 -> {
+                                tableall[6] = info
+                                sheetall[6] = text
+                            }
+                            3 -> {
+                                tableall[13] = info
+                                sheetall[13] = text
+                            }
+                            5 -> {
+                                tableall[20] = info
+                                sheetall[20] = text
+                            }
+                            7 -> {
+                                tableall[27] = info
+                                sheetall[27] = text
+                            }
+                            9 -> {
+                                tableall[34] = info
+                                sheetall[34] = text
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
     fun Updates() {
         table_1_1 = ""
         table_1_2 = ""
@@ -213,6 +481,12 @@ fun NoNet() {
         table_5_3 = ""
         table_5_4 = ""
         table_5_5 = ""
+        table_6_1 = ""
+        table_6_2 = ""
+        table_6_3 = ""
+        table_6_4 = ""
+        table_6_5 = ""
+
         for (j in 0 until 5 ) {
             var info = ""
             val lists = getCourseINFO(j +1 ,Bianhuaweeks.toInt())
@@ -354,12 +628,13 @@ fun NoNet() {
     }
 
     //装载数组和信息
+    UpdatesAll()
     Updates()
 
     val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
     val json = prefs.getString("json", "")
     if (json?.contains("result") == true) {
-        Updates()//填充UI与更新
+        UpdatesAll()//填充UI与更新
     } else Toast.makeText(MyApplication.context,"本地数据为空,请登录以更新数据",Toast.LENGTH_SHORT).show()
 
 
@@ -371,7 +646,8 @@ fun NoNet() {
         scope.launch {
             async {
                 refreshing = true
-                Updates()
+                if(showAll) UpdatesAll()
+                else Updates()
             }.await()
             async {
                 refreshing = false
@@ -399,7 +675,7 @@ fun NoNet() {
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        title = { Text(sheet[num].name) }
+                        title = { Text(sheetall[num].name) },
                     )
                 },
             ) { innerPadding ->
@@ -408,7 +684,7 @@ fun NoNet() {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    DetailInfos(sheet[num])
+                    DetailInfos(sheetall[num])
                 }
             }
         }
@@ -425,16 +701,18 @@ fun NoNet() {
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
-                title = { Text("今天  第${Benweeks}周  周$chinesenumber  $Date_MM_dd") }
+                title = { Text("今天  第${Benweeks}周  周$chinesenumber  $Date_MM_dd") },
+                actions = {
+                    IconButton(onClick = { showAll = !showAll }) { Icon(painter = painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "") }
+                }
             )
-        },) {innerPadding ->
+        },
+    ) {innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-
-
             Spacer(modifier = Modifier.height(5.dp))
 
             LazyVerticalGrid(columns = GridCells.Fixed(5),modifier = Modifier.padding(horizontal = 10.dp)){
@@ -456,104 +734,104 @@ fun NoNet() {
                 }
             }
 
-                    Box( modifier = Modifier
-                        .fillMaxHeight()
-                        .pullRefresh(states)
-                    ) {
-                        val scrollstate = rememberLazyGridState()
-                        val shouldShowAddButton = scrollstate.firstVisibleItemScrollOffset == 0
+            Box( modifier = Modifier
+                .fillMaxHeight()
+                .pullRefresh(states)
+            ) {
+                val scrollstate = rememberLazyGridState()
+                val shouldShowAddButton = scrollstate.firstVisibleItemScrollOffset == 0
 
-                        LazyVerticalGrid(
-                            columns = GridCells.Fixed(5),
-                            modifier = Modifier.padding(10.dp),
-                            state = scrollstate
-                        ) {
-                            items(30) { cell ->
-                                Card(
-                                    shape = MaterialTheme.shapes.extraSmall,
-                                    modifier = Modifier
-                                        .height(125.dp)
-                                        .padding(2.dp)
-                                        .clickable {
-                                            num = cell
-                                            if (sheet[cell].name != "")
-                                                showBottomSheet = true
-                                            else MyToast("空数据")
-                                        }
-                                ) {
-                                    Text(text = table[cell],fontSize = 14.sp, textAlign = TextAlign.Center)
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(if(showAll)7 else 5),
+                    modifier = Modifier.padding(7.dp),
+                    state = scrollstate
+                ) {
+                    items(if(showAll)42 else 30) { cell ->
+                        Card(
+                            shape = MaterialTheme.shapes.extraSmall,
+                            modifier = Modifier
+                                .height(125.dp)
+                                .padding(if (showAll) 1.dp else 2.dp)
+                                .clickable {
+                                    num = cell
+                                    if ((if (showAll) sheetall[cell].name else sheet[cell].name) != "")
+                                        showBottomSheet = true
+                                    else MyToast("空数据")
                                 }
-                            }
-                        }
-                        androidx.compose.animation.AnimatedVisibility(
-                            visible = shouldShowAddButton,
-                            enter = scaleIn(),
-                            exit = scaleOut(),
-                            modifier = Modifier
-                                .align(Alignment.BottomStart)
-                                .padding(horizontal = 15.dp, vertical = 100.dp)
                         ) {
-                            if (shouldShowAddButton) {
-                                FloatingActionButton(
-                                    onClick = {
-                                        if (Bianhuaweeks > 1) {
-                                            Bianhuaweeks-- - 1
-                                            today = today.minusDays(7)
-                                        }
-                                    },
-                                ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
-                            }
+                            Text(text = if(showAll)tableall[cell] else table[cell],fontSize = if(showAll)12.sp else 14.sp, textAlign = TextAlign.Center)
                         }
-
-
-                        androidx.compose.animation.AnimatedVisibility(
-                            visible = shouldShowAddButton,
-                            enter = scaleIn(),
-                            exit = scaleOut(),
-                            modifier = Modifier
-                                .align(Alignment.BottomCenter)
-                                .padding(horizontal = 15.dp, vertical = 100.dp)
-                        ) {
-                            if (shouldShowAddButton) {
-                                ExtendedFloatingActionButton(
-                                    onClick = {
-                                        Bianhuaweeks = GetDate.Benweeks
-                                        today = LocalDate.now()
-                                    },
-                                ) {
-                                    AnimatedContent(
-                                        targetState = Bianhuaweeks,
-                                        transitionSpec = {  scaleIn(animationSpec = tween(500)
-                                        ) with scaleOut(animationSpec = tween(500))
-                                        }, label = ""
-                                    ){annumber ->
-                                        Text(text = "第 $annumber 周",)
-                                    }
-                                }
-                            }
-                        }
-
-                        androidx.compose.animation.AnimatedVisibility(
-                            visible = shouldShowAddButton,
-                            enter = scaleIn(),
-                            exit = scaleOut(),
-                            modifier = Modifier
-                                .align(Alignment.BottomEnd)
-                                .padding(horizontal = 15.dp, vertical = 100.dp)
-                        ) {
-                            if (shouldShowAddButton) {
-                                    FloatingActionButton(
-                                        onClick = {
-                                             if (Bianhuaweeks < 20) {
-                                                 Bianhuaweeks++ + 1
-                                                 today = today.plusDays(7)
-                                             }
-                                        },
-                                    ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
-                            }
-                        }
-                        PullRefreshIndicator(refreshing, states, Modifier.align(Alignment.TopCenter))
                     }
+                }
+                androidx.compose.animation.AnimatedVisibility(
+                    visible = shouldShowAddButton,
+                    enter = scaleIn(),
+                    exit = scaleOut(),
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .padding(horizontal = 15.dp, vertical = 100.dp)
+                ) {
+                    if (shouldShowAddButton) {
+                        FloatingActionButton(
+                            onClick = {
+                                if (Bianhuaweeks > 1) {
+                                    Bianhuaweeks-- - 1
+                                    today = today.minusDays(7)
+                                }
+                            },
+                        ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
+                    }
+                }
+
+
+                androidx.compose.animation.AnimatedVisibility(
+                    visible = shouldShowAddButton,
+                    enter = scaleIn(),
+                    exit = scaleOut(),
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(horizontal = 15.dp, vertical = 100.dp)
+                ) {
+                    if (shouldShowAddButton) {
+                        ExtendedFloatingActionButton(
+                            onClick = {
+                                Bianhuaweeks = GetDate.Benweeks
+                                today = LocalDate.now()
+                            },
+                        ) {
+                            AnimatedContent(
+                                targetState = Bianhuaweeks,
+                                transitionSpec = {  scaleIn(animationSpec = tween(500)
+                                ) with scaleOut(animationSpec = tween(500))
+                                }, label = ""
+                            ){annumber ->
+                                Text(text = "第 $annumber 周",)
+                            }
+                        }
+                    }
+                }
+
+                androidx.compose.animation.AnimatedVisibility(
+                    visible = shouldShowAddButton,
+                    enter = scaleIn(),
+                    exit = scaleOut(),
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(horizontal = 15.dp, vertical = 100.dp)
+                ) {
+                    if (shouldShowAddButton) {
+                        FloatingActionButton(
+                            onClick = {
+                                if (Bianhuaweeks < 20) {
+                                    Bianhuaweeks++ + 1
+                                    today = today.plusDays(7)
+                                }
+                            },
+                        ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
+                    }
+                }
+                PullRefreshIndicator(refreshing, states, Modifier.align(Alignment.TopCenter))
+            }
             Spacer(modifier = Modifier.height(100.dp))
         }
     }
