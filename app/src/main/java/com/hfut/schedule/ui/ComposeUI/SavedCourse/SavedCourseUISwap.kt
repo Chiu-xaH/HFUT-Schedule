@@ -714,21 +714,21 @@ fun SaveCourse() {
         ) {
             Spacer(modifier = Modifier.height(5.dp))
 
-            LazyVerticalGrid(columns = GridCells.Fixed(5),modifier = Modifier.padding(horizontal = 10.dp)){
-                items(5) { item ->
+            LazyVerticalGrid(columns = GridCells.Fixed(if(showAll)7 else 5),modifier = Modifier.padding(horizontal = 10.dp)){
+                items(if(showAll)7 else 5) { item ->
                     if (Benweeks > 0)
                         Text(
                             text = mondayOfCurrentWeek.plusDays(item.toLong()).toString()
                                 .substringAfter("-") ,
                             textAlign = TextAlign.Center,
-                            fontSize = 14.sp,
+                            fontSize = if(showAll)12.sp else 14.sp,
                             color = Color.Gray
                         )
                     else Text(
                         text = "未开学",
                         textAlign = TextAlign.Center,
                         color = Color.Gray,
-                        fontSize = 14.sp
+                        fontSize = if(showAll)12.sp else 14.sp
                     )
                 }
             }

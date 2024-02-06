@@ -1,6 +1,8 @@
 package com.hfut.schedule.ui.ComposeUI.Focus
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.pm.PackageManager
 import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -55,6 +57,8 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
@@ -87,7 +91,7 @@ fun MyScheuleItem(item : Int, MySchedule : MutableList<Schedule> ) {
     val todaydate = (date?.substring(0, 2) ) + date?.substring(3, 5)
     val get = MySchedule[item].time
     val examdate = (get?.substring(0, 2) ) + get?.substring(3, 5)
-    //判断考完试不显示信息
+    //判断完 不显示信息
     if (examdate.toInt() == todaydate.toInt()) {
         Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)
         {
@@ -127,7 +131,7 @@ fun FutureMyScheuleItem(item : Int, MySchedule : MutableList<Schedule> ) {
     val todaydate = (date?.substring(0, 2) ) + date?.substring(3, 5)
     val get = MySchedule[item].time
     val examdate = (get?.substring(0, 2) ) + get?.substring(3, 5)
-    //判断考完试不显示信息
+    //判断完 不显示信息
     if (examdate.toInt() > todaydate.toInt()) {
         Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)
         {
@@ -157,10 +161,15 @@ fun FutureMyScheuleItem(item : Int, MySchedule : MutableList<Schedule> ) {
                     trailingContent = {
                         FilledTonalIconButton(
                             onClick = {
-                                var startTime = MySchedule[item].startTime
-                                var endTime = MySchedule[item].endTime
-                                AddCalendar(startTime,endTime, MySchedule[item].info, MySchedule[item].title,MySchedule[item].time)
-                                MyToast("添加到系统日历成功")
+                                    try {
+                                        var startTime = MySchedule[item].startTime
+                                        var endTime = MySchedule[item].endTime
+                                        AddCalendar(startTime,endTime, MySchedule[item].info, MySchedule[item].title,MySchedule[item].time)
+                                        MyToast("添加到系统日历成功")
+                                    } catch (e : SecurityException) {
+                                        MyToast("未授予权限")
+                                        e.printStackTrace()
+                                    }
                             }
                         ) {
                             Icon( painterResource(R.drawable.calendar_add_on),

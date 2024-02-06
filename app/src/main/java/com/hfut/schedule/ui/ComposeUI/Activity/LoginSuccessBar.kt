@@ -124,6 +124,7 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel) {
                 vm,
                 showlable,
                 showlablechanged = {showlablech -> showlable = showlablech},
+                false
             ) }
             composable("today") { TodayScreen(vm,vm2) }
         }

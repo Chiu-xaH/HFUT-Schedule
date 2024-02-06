@@ -1,6 +1,8 @@
 package com.hfut.schedule.ui.ComposeUI.BottomBar
 
 import android.annotation.SuppressLint
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,12 +24,14 @@ import com.hfut.schedule.ui.ComposeUI.Settings.Items.MyAPIItem
 import com.hfut.schedule.ui.ComposeUI.Settings.Items.SettingsCubeItems
 import com.hfut.schedule.ui.ComposeUI.Settings.Items.SettingsItem
 
+@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(vm : LoginSuccessViewModel
                    ,showlable : Boolean,
-                   showlablechanged: (Boolean) -> Unit, ) {
+                   showlablechanged: (Boolean) -> Unit,
+                   ifSaved : Boolean) {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -49,7 +53,7 @@ fun SettingsScreen(vm : LoginSuccessViewModel
 
             MyAPIItem()
 
-            SettingsItem(vm,showlable,showlablechanged)
+            SettingsItem(vm,showlable,showlablechanged,ifSaved)
 
             SettingsCubeItems()
 

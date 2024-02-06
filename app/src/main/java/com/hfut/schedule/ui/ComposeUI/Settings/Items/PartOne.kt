@@ -5,11 +5,14 @@ import android.preference.PreferenceManager
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -35,6 +38,7 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.SharePrefs.SaveBoolean
 import com.hfut.schedule.ui.ComposeUI.Search.Electric.WebViewScreen
 import com.hfut.schedule.ui.ComposeUI.Search.LePaoYun.InfoSet
 import com.hfut.schedule.ui.UIUtils.MyToast
@@ -43,14 +47,13 @@ import com.hfut.schedule.ui.UIUtils.MyToast
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsItem(vm : LoginSuccessViewModel, showlable : Boolean, showlablechanged :(Boolean) -> Unit) {
+fun SettingsItem(vm : LoginSuccessViewModel, showlable : Boolean, showlablechanged :(Boolean) -> Unit,ifSaved : Boolean) {
     val switch_focus = SharePrefs.prefs.getBoolean("SWITCHFOCUS",true)
     var showfocus by remember { mutableStateOf(switch_focus) }
 
 
     val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
     if (sp.getBoolean("SWITCH", true) != showlable) { sp.edit().putBoolean("SWITCH", showlable).apply() }
-    if (sp.getBoolean("SWITCHFOCUS", true) != showfocus) { sp.edit().putBoolean("SWITCHFOCUS", showfocus).apply() }
 
 
     ListItem(
@@ -61,19 +64,36 @@ fun SettingsItem(vm : LoginSuccessViewModel, showlable : Boolean, showlablechang
         modifier = Modifier.clickable { showlablechanged }
     )
 
-
+    if(ifSaved)
     ListItem(
-        headlineContent = { Text(text = "聚焦优先") },
-        supportingContent = { Text(text = "使聚焦作为本地速览的第一页面,而不是课表") },
-        leadingContent = { Icon(painterResource(R.drawable.lightbulb), contentDescription = "Localized description",) },
-        trailingContent = { Switch(checked = showfocus, onCheckedChange = {showfocusch -> showfocus = showfocusch }) },
-        modifier = Modifier.clickable { showfocus = !showfocus }
+        headlineContent = { Text(text = "主页面") },
+        supportingContent = {
+            Column {
+                Text(text = "选择作为本地速览的第一页面")
+                Row {
+                    FilterChip(
+                        onClick = {
+                            showfocus = true
+                            SaveBoolean("SWITCHFOCUS",true,showfocus)
+                        },
+                        label = { Text(text = "聚焦") }, selected = showfocus)
+                    Spacer(modifier = Modifier.width(10.dp))
+                    FilterChip(
+                        onClick = {
+                            showfocus = false
+                            SaveBoolean("SWITCHFOCUS",false,showfocus)
+                        },
+                        label = { Text(text = "课程表") }, selected = !showfocus)
+                }
+            }
+        },
+        leadingContent = { Icon(painterResource(if(showfocus)R.drawable.lightbulb else R.drawable.calendar), contentDescription = "Localized description",) },
+        //trailingContent = { Switch(checked = showfocus, onCheckedChange = {showfocusch -> showfocus = showfocusch }) },
+        modifier = Modifier.clickable {
+            showfocus = !showfocus
+            SaveBoolean("SWITCHFOCUS",true,showfocus)
+        }
     )
-
-
-
-
-
 
 
     var showBottomSheet_input by remember { mutableStateOf(false) }

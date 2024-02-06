@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContent
@@ -43,6 +44,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -73,13 +75,15 @@ import com.hfut.schedule.ui.UIUtils.MyToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class, ExperimentalAnimationApi::class)
-@SuppressLint("SuspiciousIndentation")
+@SuppressLint("SuspiciousIndentation", "CoroutineCreationDuringComposition")
 @Composable
 fun CalendarScreen(vm : LoginSuccessViewModel,grade : String) {
 
@@ -195,6 +199,7 @@ fun CalendarScreen(vm : LoginSuccessViewModel,grade : String) {
     }
     //填充UI与更新
     fun Update() {
+        table_1_1 = ""
         table_1_2 = ""
         table_1_3 = ""
         table_1_4 = ""
@@ -393,7 +398,8 @@ fun CalendarScreen(vm : LoginSuccessViewModel,grade : String) {
             }
         }
     }
-    fun UpdateAll(data : Boolean) {
+    fun UpdateAll() {
+        table_1_1 = ""
         table_1_2 = ""
         table_1_3 = ""
         table_1_4 = ""
@@ -431,7 +437,7 @@ fun CalendarScreen(vm : LoginSuccessViewModel,grade : String) {
 
         //////////////////////////////////////////////////////////////////////////////////
 
-        val json = if(!data) prefs.getString("json", "") else vm.datumData.value
+        val json =  prefs.getString("json", "")
         // Log.d("测试",json!!)
         val datumResponse = Gson().fromJson(json, datumResponse::class.java)
         val scheduleList = datumResponse.result.scheduleList
@@ -655,9 +661,10 @@ fun CalendarScreen(vm : LoginSuccessViewModel,grade : String) {
     val ONE = prefs.getString("ONE","")
     val TGC = prefs.getString("TGC","")
     val cardvalue = prefs.getString("borrow","")
-    val cookies = ONE + ";" +TGC
+    val cookies = "$ONE;$TGC"
     val ticket = prefs.getString("TICKET","")
     val jsons = prefs.getString("LoginCommunity",MyApplication.NullLoginCommunity)
+    var a by rememberSaveable { mutableStateOf(0) }
     val job = Job()
     val scope = CoroutineScope(job)
     scope.apply {
@@ -669,20 +676,17 @@ fun CalendarScreen(vm : LoginSuccessViewModel,grade : String) {
 
                 val liushui = prefs.getString("cardliushui", MyApplication.NullBill)
                 if (liushui != null) {
-                    if (prefs.getString(
-                            "auth",
-                            ""
-                        ) == null || liushui.contains("操作成功") == false
+                    if (prefs.getString("auth", "") == null || !liushui.contains("操作成功")
                     ) {
                         val ONE = prefs.getString("ONE", "")
                         val TGC = prefs.getString("TGC", "")
-                        vm.OneGotoCard(ONE + ";" + TGC)
+                        vm.OneGotoCard("$ONE;$TGC")
                     }
                 }
                 val CommuityTOKEN = prefs.getString("TOKEN", "")
 
                 if (CommuityTOKEN != null) {
-                    if (CommuityTOKEN.contains("ey") == false) {
+                    if (!CommuityTOKEN.contains("ey")) {
                         async {
                             async { vm.GotoCommunity(cookies) }.await()
                             async {
@@ -706,8 +710,6 @@ fun CalendarScreen(vm : LoginSuccessViewModel,grade : String) {
                         }
                     }
                 }
-
-
 
                 if (token != null) {
                     if (token.contains("AT") && cardvalue != "未获取") {
@@ -733,22 +735,13 @@ fun CalendarScreen(vm : LoginSuccessViewModel,grade : String) {
                 }
             }
 
-//加载其他信息/////////////////////////////////////////////////////
-            if (prefs.getString("tip", "0") == "0") {
+//加载其他信息////////////////////////////////////////////////////////////////////////////////////////////////////
                 launch {
                     val studentIdObserver = Observer<Int> { result ->
                         if (result != 99999) {
                             SharePrefs.Save("studentId", result.toString())
                             CoroutineScope(Job()).launch {
-                                async {
-                                    grade?.let {
-                                        vm.getLessonIds(
-                                            cookie!!,
-                                            it,
-                                            result.toString()
-                                        )
-                                    }
-                                }
+                                async { grade?.let { vm.getLessonIds(cookie!!, it, result.toString()) } }
                                 async { vm.getInfo(cookie!!) }
                                 async { vm.getProgram(cookie!!) }
                             }
@@ -771,16 +764,11 @@ fun CalendarScreen(vm : LoginSuccessViewModel,grade : String) {
                         if (result != null) {
                             if (result.contains("result")) {
                                 CoroutineScope(Job()).launch {
-                                    async { UpdateAll(true) }.await()
-                                    async {
-                                        Handler(Looper.getMainLooper()).post {
-                                            vm.lessonIds.removeObserver(
-                                                lessonIdObserver
-                                            )
-                                        }
-                                    }
+                                    async { if(showAll) UpdateAll() else Update() }.await()
+                                    async { Handler(Looper.getMainLooper()).post { vm.lessonIds.removeObserver(lessonIdObserver) } }
                                     async {
                                         delay(200)
+                                        a++
                                         loading = false
                                     }
                                 }
@@ -796,19 +784,13 @@ fun CalendarScreen(vm : LoginSuccessViewModel,grade : String) {
                         vm.datumData.observeForever(datumObserver)
                     }
                 }
-            } else {
-                launch {
-                    async { UpdateAll(false) }.await()
-                    async {
-                        delay(200)
-                        loading = false
-                    }
-                }
-            }
         }
     }
 
+    if(a > 0) job.cancel()
+    if (prefs.getString("tip", "0") != "0") loading  = false
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     val tableall = arrayOf(
         table_1_1, table_1_2, table_1_3, table_1_4, table_1_5,table_1_6,table_1_7,
         table_2_1, table_2_2, table_2_3, table_2_4, table_2_5,table_2_6,table_2_7,
@@ -860,7 +842,6 @@ fun CalendarScreen(vm : LoginSuccessViewModel,grade : String) {
                 actions = {
                     IconButton(onClick = { showAll = !showAll }) { Icon(painter = painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "") }
                 }
-              //  actions = { IconButton(onClick = {}) { Icon(Icons.Filled.Refresh, contentDescription = "主页") } }
             )
         },) {innerPadding ->
         Column(
@@ -885,124 +866,127 @@ fun CalendarScreen(vm : LoginSuccessViewModel,grade : String) {
                 exit = fadeOut()
             ) {
                 //在这里插入课程表布局
-
-
-                LazyVerticalGrid(columns = GridCells.Fixed(5),modifier = Modifier.padding(horizontal = 10.dp)){
-                    items(5) { item ->
-                        if (GetDate.Benweeks > 0)
-                            Text(
-                                text = mondayOfCurrentWeek.plusDays(item.toLong()).toString()
-                                    .substringAfter("-") ,
+                Column {
+                    Spacer(modifier = Modifier.height(5.dp))
+                    LazyVerticalGrid(columns = GridCells.Fixed(if(showAll)7 else 5),modifier = Modifier.padding(horizontal = 10.dp)){
+                        items(if(showAll)7 else 5) { item ->
+                            if (GetDate.Benweeks > 0)
+                                Text(
+                                    text = mondayOfCurrentWeek.plusDays(item.toLong()).toString()
+                                        .substringAfter("-") ,
+                                    textAlign = TextAlign.Center,
+                                    fontSize = if(showAll)12.sp else 14.sp,
+                                    color = Color.Gray
+                                )
+                            else Text(
+                                text = "未开学",
                                 textAlign = TextAlign.Center,
-                                fontSize = 14.sp,
-                                color = Color.Gray
+                                color = Color.Gray,
+                                fontSize = if(showAll)12.sp else 14.sp
                             )
-                        else Text(
-                            text = "未开学",
-                            textAlign = TextAlign.Center,
-                            color = Color.Gray,
-                            fontSize = 14.sp
-                        )
-                    }
-                }
-
-
-                Box( modifier = Modifier
-                    .fillMaxHeight()
-                ) {
-                    val scrollstate = rememberLazyGridState()
-                    val shouldShowAddButton = scrollstate.firstVisibleItemScrollOffset == 0
-
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(if(showAll)7 else 5),
-                        modifier = Modifier.padding(10.dp),
-                        state = scrollstate
-                    ) {
-                        items(if(showAll)42 else 30) { cell ->
-                            Card(
-                                shape = MaterialTheme.shapes.extraSmall,
-                                modifier = Modifier
-                                    .height(125.dp)
-                                    .padding(if (showAll) 1.dp else 2.dp)
-                                    .clickable {
-                                        if ((if (showAll) sheetall[cell] else sheet[cell]) != "")
-                                            MyToast(if(showAll)sheetall[cell] else sheet[cell])
-                                        else MyToast("空数据")
-                                    }
-                            ) {
-                                Text(text = if(showAll)tableall[cell] else table[cell],fontSize = if(showAll)12.sp else 14.sp, textAlign = TextAlign.Center)
-                            }
-                        }
-                    }
-                    androidx.compose.animation.AnimatedVisibility(
-                        visible = shouldShowAddButton,
-                        enter = scaleIn(),
-                        exit = scaleOut(),
-                        modifier = Modifier
-                            .align(Alignment.BottomStart)
-                            .padding(horizontal = 15.dp, vertical = 100.dp)
-                    ) {
-                        if (shouldShowAddButton) {
-                            FloatingActionButton(
-                                onClick = {
-                                    if (Bianhuaweeks > 1) {
-                                        Bianhuaweeks-- - 1
-                                        today = today.minusDays(7)
-                                    }
-                                },
-                            ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
                         }
                     }
 
-
-                    androidx.compose.animation.AnimatedVisibility(
-                        visible = shouldShowAddButton,
-                        enter = scaleIn(),
-                        exit = scaleOut(),
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .padding(horizontal = 15.dp, vertical = 100.dp)
+                    Box( modifier = Modifier
+                        .fillMaxHeight()
                     ) {
-                        if (shouldShowAddButton) {
-                            ExtendedFloatingActionButton(
-                                onClick = {
-                                    Bianhuaweeks = GetDate.Benweeks
-                                    today = LocalDate.now()
-                                },
-                            ) {
-                                AnimatedContent(
-                                    targetState = Bianhuaweeks,
-                                    transitionSpec = {  scaleIn(animationSpec = tween(500)
-                                    ) with scaleOut(animationSpec = tween(500))
-                                    }, label = ""
-                                ){annumber ->
-                                    Text(text = "第 $annumber 周",)
+                        val scrollstate = rememberLazyGridState()
+                        val shouldShowAddButton = scrollstate.firstVisibleItemScrollOffset == 0
+
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(if(showAll)7 else 5),
+                            modifier = Modifier.padding(10.dp),
+                            state = scrollstate
+                        ) {
+                            items(if(showAll)42 else 30) { cell ->
+                                Card(
+                                    shape = MaterialTheme.shapes.extraSmall,
+                                    modifier = Modifier
+                                        .height(125.dp)
+                                        .padding(if (showAll) 1.dp else 2.dp)
+                                        .clickable {
+                                            if ((if (showAll) sheetall[cell] else sheet[cell]) != "")
+                                                MyToast(if (showAll) sheetall[cell] else sheet[cell])
+                                            else MyToast("空数据")
+                                        }
+                                ) {
+                                    Text(text = if(showAll)tableall[cell] else table[cell],fontSize = if(showAll)12.sp else 14.sp, textAlign = TextAlign.Center)
                                 }
                             }
                         }
-                    }
+                        androidx.compose.animation.AnimatedVisibility(
+                            visible = shouldShowAddButton,
+                            enter = scaleIn(),
+                            exit = scaleOut(),
+                            modifier = Modifier
+                                .align(Alignment.BottomStart)
+                                .padding(horizontal = 15.dp, vertical = 100.dp)
+                        ) {
+                            if (shouldShowAddButton) {
+                                FloatingActionButton(
+                                    onClick = {
+                                        if (Bianhuaweeks > 1) {
+                                            Bianhuaweeks-- - 1
+                                            if(showAll) UpdateAll() else Update()
+                                            today = today.minusDays(7)
+                                        }
+                                    },
+                                ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
+                            }
+                        }
 
-                    androidx.compose.animation.AnimatedVisibility(
-                        visible = shouldShowAddButton,
-                        enter = scaleIn(),
-                        exit = scaleOut(),
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .padding(horizontal = 15.dp, vertical = 100.dp)
-                    ) {
-                        if (shouldShowAddButton) {
-                            FloatingActionButton(
-                                onClick = {
-                                    if (Bianhuaweeks < 20) {
-                                        Bianhuaweeks++ + 1
-                                        today = today.plusDays(7)
+
+                        androidx.compose.animation.AnimatedVisibility(
+                            visible = shouldShowAddButton,
+                            enter = scaleIn(),
+                            exit = scaleOut(),
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .padding(horizontal = 15.dp, vertical = 100.dp)
+                        ) {
+                            if (shouldShowAddButton) {
+                                ExtendedFloatingActionButton(
+                                    onClick = {
+                                        Bianhuaweeks = GetDate.Benweeks
+                                        if(showAll) UpdateAll() else Update()
+                                        today = LocalDate.now()
+                                    },
+                                ) {
+                                    AnimatedContent(
+                                        targetState = Bianhuaweeks,
+                                        transitionSpec = {  scaleIn(animationSpec = tween(500)
+                                        ) with scaleOut(animationSpec = tween(500))
+                                        }, label = ""
+                                    ){annumber ->
+                                        Text(text = "第 $annumber 周",)
                                     }
-                                },
-                            ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
+                                }
+                            }
+                        }
+
+                        androidx.compose.animation.AnimatedVisibility(
+                            visible = shouldShowAddButton,
+                            enter = scaleIn(),
+                            exit = scaleOut(),
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .padding(horizontal = 15.dp, vertical = 100.dp)
+                        ) {
+                            if (shouldShowAddButton) {
+                                FloatingActionButton(
+                                    onClick = {
+                                        if (Bianhuaweeks < 20) {
+                                            Bianhuaweeks++ + 1
+                                            if(showAll) UpdateAll() else Update()
+                                            today = today.plusDays(7)
+                                        }
+                                    },
+                                ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
+                            }
                         }
                     }
+                    Spacer(modifier = Modifier.height(100.dp))
                 }
-                Spacer(modifier = Modifier.height(100.dp))
             }
         }
     }

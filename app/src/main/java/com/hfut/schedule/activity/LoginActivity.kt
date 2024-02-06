@@ -1,10 +1,13 @@
 package com.hfut.schedule.activity
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -13,6 +16,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
@@ -21,6 +26,7 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ui.UIUtils.TransparentSystemBars
 import com.hfut.schedule.ViewModel.LoginViewModel
+import com.hfut.schedule.activity.ui.theme.肥工课程表Theme
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.ComposeUI.Activity.LoginUI
@@ -40,6 +46,7 @@ class LoginActivity : ComponentActivity() {
    // private val vm2 by lazy { ViewModelProvider(this).get(LoginSuccessViewModel::class.java) }
     private val vm by lazy { ViewModelProvider(this).get(LoginViewModel::class.java) }
     private val viewModel: MainViewModel by viewModels()
+    val switchColor= prefs.getBoolean("SWITCHCOLOR",true)
     @SuppressLint("SuspiciousIndentation", "MissingInflatedId")
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,13 +56,8 @@ class LoginActivity : ComponentActivity() {
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
-            SettingsProvider {
-                // 更新主题色
-                val stickerUuid = LocalCurrentStickerUuid.current
-                LaunchedEffect(stickerUuid) {
-                    viewModel.sendUiIntent(MainIntent.UpdateThemeColor(stickerUuid))
-                }
-                MonetColor {
+            if(!switchColor) {
+                肥工课程表Theme {
                     Surface(
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.background
@@ -64,18 +66,55 @@ class LoginActivity : ComponentActivity() {
                         LoginUI(vm)
                     }
                 }
+            } else {
+                SettingsProvider {
+                    // 更新主题色
+                    val stickerUuid = LocalCurrentStickerUuid.current
+                    LaunchedEffect(stickerUuid) {
+                        viewModel.sendUiIntent(MainIntent.UpdateThemeColor(stickerUuid))
+                    }
+                    MonetColor {
+                        Surface(
+                            modifier = Modifier.fillMaxSize(),
+                            color = MaterialTheme.colorScheme.background
+                        ) {
+                            TransparentSystemBars()
+                            LoginUI(vm)
+                        }
+                    }
+                }
             }
         }
         if(prefs.getBoolean("SWITCHFASTSTART",false) && intent.getBooleanExtra("nologin",true)) {
             val it = Intent(this,SavedCoursesActivity::class.java)
             startActivity(it)
         }
-       // val CommuityTOKEN = SharePrefs.prefs.getString("TOKEN","")
+        if(ContextCompat.checkSelfPermission(this,android.Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED)
+            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.WRITE_CALENDAR),1)
+
+        if(ContextCompat.checkSelfPermission(this,android.Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED)
+            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.READ_CALENDAR),1)
+
         lifecycleScope.launch {
             launch { vm.getCookie() }
             launch { SharePrefs.Save("tip","0") }
             launch {  vm.getKey() }
             launch { vm.My() }
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when(requestCode) {
+            1 -> {
+                if(grantResults.isNotEmpty() && grantResults[0]  == PackageManager.PERMISSION_GRANTED) {
+
+                }else Toast.makeText(this,"拒绝权限后添加日程将不可用",Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }

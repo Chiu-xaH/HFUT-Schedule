@@ -115,7 +115,7 @@ fun SettingsCubeItems() {
     )
     val switch_faststart = SharePrefs.prefs.getBoolean("SWITCHFASTSTART",false)
     var faststart by remember { mutableStateOf(switch_faststart) }
-    SharePrefs.SaveBoolean("SWITCHFASTSTART",false,faststart)
+    SaveBoolean("SWITCHFASTSTART",false,faststart)
 
     ListItem(
         headlineContent = { Text(text = "快速启动") },
@@ -125,12 +125,12 @@ fun SettingsCubeItems() {
         modifier = Modifier.clickable { faststart = !faststart }
     )
 
-    ListItem(
-        headlineContent = { Text(text = "降级到3.X版本 (4.0 限定选项)") },
-        supportingContent = { Text(text = "由于4.0初期存在若干Bug,如影响使用,可点击此选项获取上版")},
-        leadingContent = { Icon(painterResource(R.drawable.trending_down), contentDescription = "Localized description",) },
-        modifier = Modifier.clickable{ StartUri("https://gitee.com/chiu-xah/HFUT-Schedule/releases/tag/Memory") }
-    )
+   // ListItem(
+     //   headlineContent = { Text(text = "降级到3.X版本 (4.0 限定选项)") },
+      //  supportingContent = { Text(text = "由于4.0初期存在若干Bug,如影响使用,可点击此选项获取上版")},
+       // leadingContent = { Icon(painterResource(R.drawable.trending_down), contentDescription = "Localized description",) },
+        //modifier = Modifier.clickable{ StartUri("https://gitee.com/chiu-xah/HFUT-Schedule/releases/tag/Memory") }
+    //)
 
     ListItem(
         headlineContent = { Text(text = "联系开发者") },
