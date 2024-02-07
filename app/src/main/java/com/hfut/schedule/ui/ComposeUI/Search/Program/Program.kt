@@ -99,24 +99,17 @@ fun Program(vm : LoginSuccessViewModel) {
 
 @Composable
 fun ProgramUI() {
-    getProgram()
+    //getProgram()
     Spacer(modifier = Modifier.height(10.dp))
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
         Column() {
             Card(
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 3.dp
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        horizontal = 15.dp,
-                        vertical = 5.dp
-                    ),
+                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp, vertical = 5.dp),
                 shape = MaterialTheme.shapes.medium,
             ){
                 ListItem(
-                    headlineContent = { Text(text = "学分  ") },
+                    headlineContent = { Text(text = "功能维护升级中") },
                     leadingContent = { Icon(painterResource(id = R.drawable.hotel_class), contentDescription = "Localized description") },
                     modifier = Modifier.clickable {},
                 )

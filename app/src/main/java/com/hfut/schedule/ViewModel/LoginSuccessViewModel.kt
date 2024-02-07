@@ -68,13 +68,14 @@ class LoginSuccessViewModel : ViewModel() {
         })
     }
 
+    val LoginCommunityData = MutableLiveData<String?>()
     fun LoginCommunity(ticket : String) {
 
         val call = Community.Login(ticket)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                SharePrefs.Save("LoginCommunity", response.body()?.string())
+                LoginCommunityData.value = response.body()?.string()
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -444,6 +445,7 @@ class LoginSuccessViewModel : ViewModel() {
     }
 
     val ExamData = MutableLiveData<String?>()
+    val ExamCodeData = MutableLiveData<Int>()
     fun Exam(CommuityTOKEN: String) {
 
         val call = CommuityTOKEN?.let { Community.getExam(it) }
@@ -454,6 +456,7 @@ class LoginSuccessViewModel : ViewModel() {
                     val responses = response.body()?.string()
                     SharePrefs.Save("Exam", responses)
                     ExamData.value = responses
+                    ExamCodeData.value = response.code()
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {

@@ -37,6 +37,7 @@ import com.hfut.schedule.logic.utils.StartUri.StartUri
 import com.hfut.schedule.ui.ComposeUI.Settings.Monet.MonetColorItem
 import com.hfut.schedule.ui.ComposeUI.Settings.getMyVersion
 import com.hfut.schedule.ui.UIUtils.LittleDialog
+import com.hfut.schedule.ui.UIUtils.MyToast
 
 
 fun Clear() {
@@ -188,7 +189,7 @@ fun SettingsCubeItems() {
 // 设置分享的类型为纯文本
             it.type = "text/plain"
             it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-// 启动选/择器，让用户选择要分享的应用
+// 启动选择器，让用户选择要分享的应用
             MyApplication.context.startActivity(Intent.createChooser(it, "分享到").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
         }
     )
@@ -204,6 +205,13 @@ fun SettingsCubeItems() {
             dismisstext = "取消"
         )
     }
+
+    ListItem(
+        headlineContent = { Text(text = "问题检测") },
+        supportingContent = { Text(text = "如果您遇到了部分数据无法显示问题,可在此处进行连通性检测") },
+        leadingContent = { Icon(painterResource(R.drawable.build), contentDescription = "Localized description",) },
+        modifier = Modifier.clickable { MyToast("待开发") }
+    )
 
     ListItem(
         headlineContent = { Text(text = "抹掉数据") },

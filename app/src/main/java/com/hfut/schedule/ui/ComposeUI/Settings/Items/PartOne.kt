@@ -153,5 +153,4 @@ fun SettingsItem(vm : LoginSuccessViewModel, showlable : Boolean, showlablechang
         leadingContent = { Icon(painterResource(R.drawable.settings_ethernet), contentDescription = "Localized description",) },
         modifier = Modifier.clickable {  showBottomSheet_arrange = true }
     )
-
 }

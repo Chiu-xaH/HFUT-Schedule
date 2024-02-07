@@ -663,80 +663,78 @@ fun CalendarScreen(vm : LoginSuccessViewModel,grade : String) {
     val cardvalue = prefs.getString("borrow","")
     val cookies = "$ONE;$TGC"
     val ticket = prefs.getString("TICKET","")
-    val jsons = prefs.getString("LoginCommunity",MyApplication.NullLoginCommunity)
+   // val jsons = prefs.getString("LoginCommunity",MyApplication.NullLoginCommunity)
+    val CommuityTOKEN = prefs.getString("TOKEN", "")
     var a by rememberSaveable { mutableStateOf(0) }
     val job = Job()
+    val job2 = Job()
     val scope = CoroutineScope(job)
-    scope.apply {
-        launch {
 
-            launch {
-                val token = prefs.getString("bearer", "")
-                // token?.let { Log.d("token", it) }
+    CoroutineScope(job2).launch {
+          val token = prefs.getString("bearer", "")
 
-                val liushui = prefs.getString("cardliushui", MyApplication.NullBill)
-                if (liushui != null) {
-                    if (prefs.getString("auth", "") == null || !liushui.contains("操作成功")
-                    ) {
-                        val ONE = prefs.getString("ONE", "")
-                        val TGC = prefs.getString("TGC", "")
-                        vm.OneGotoCard("$ONE;$TGC")
-                    }
+        //检测若登陆成功（200）则解析出CommunityTOKEN
+        val LoginCommunityObserver = Observer<String?> { result ->
+            if (result != null) {
+                if (result.contains("200")) {
+                    val result = Gson().fromJson(result, LoginCommunityResponse::class.java)
+                    val token = result.result.token
+                    SharePrefs.Save("TOKEN", token)
+                    MyToast("Community登陆成功")
                 }
-                val CommuityTOKEN = prefs.getString("TOKEN", "")
+            }
+        }
 
-                if (CommuityTOKEN != null) {
-                    if (!CommuityTOKEN.contains("ey")) {
+        //检测CommunityTOKEN的可用性
+        val ExamObserver = Observer<Int> { result ->
+            if (result != null) {
+                //若不可用则执行登录流程
+                if(result == 500) {
+                    async {
+                        async { vm.GotoCommunity(cookies) }.await()
                         async {
-                            async { vm.GotoCommunity(cookies) }.await()
-                            async {
-                                delay(1000)
-                                ticket?.let { vm.LoginCommunity(it) }
-                            }.await()
-                            async {
-                                delay(1000)
-                                if (jsons != null) {
-                                    if (jsons.contains("200")) {
-                                        val result = Gson().fromJson(
-                                            jsons,
-                                            LoginCommunityResponse::class.java
-                                        )
-                                        val token = result.result.token
-                                        SharePrefs.Save("TOKEN", token)
-                                        //   vm.CommuityTOKEN?.let { Log.d("sss", it) }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (token != null) {
-                    if (token.contains("AT") && cardvalue != "未获取") {
-                        // async { vm.getCard("Bearer $token") }
-                        async { vm.getSubBooks("Bearer $token") }
-                        async { vm.getBorrowBooks("Bearer $token") }
-
-                    } else {
+                            delay(1000)
+                            ticket?.let { vm.LoginCommunity(it) }
+                        }.await()
                         async {
-                            async { vm.OneGoto(cookies) }.await()
-                            async {
-                                delay(500)
-                                vm.getToken()
-                            }.await()
-                            launch {
-                                delay(2900)
-                                //  async { vm.getCard("Bearer " + vm.token.value) }
-                                async { vm.getBorrowBooks("Bearer " + vm.token.value) }
-                                async { vm.getSubBooks("Bearer " + vm.token.value) }
-                            }
+                            Handler(Looper.getMainLooper()).post { vm.LoginCommunityData.observeForever(LoginCommunityObserver) }
                         }
                     }
                 }
             }
+        }
+
+
+        async { CommuityTOKEN?.let { vm.Exam(it) } }
+        Handler(Looper.getMainLooper()).post { vm.ExamCodeData.observeForever(ExamObserver) }
+
+        //慧新易校获取TOKEN
+        val liushui = prefs.getString("cardliushui", MyApplication.NullBill)
+        if (liushui != null) {
+            if (prefs.getString("auth", "") == null || !liushui.contains("操作成功"))
+                vm.OneGotoCard("$ONE;$TGC")
+        }
+
+        //暂时废除登录信息门户的接口
+               if (token != null) {
+                 if (token.contains("AT") && cardvalue != "未获取") {
+                   async { vm.getSubBooks("Bearer $token") }
+                 async { vm.getBorrowBooks("Bearer $token") }
+           } else {
+             async {
+               async { vm.OneGoto(cookies) }.await()
+             async {
+               delay(500)
+             vm.getToken()
+            }.await()
+             }
+            }
+          }
+    }
+    scope.launch {
 
 //加载其他信息////////////////////////////////////////////////////////////////////////////////////////////////////
-                launch {
+        launch {
                     val studentIdObserver = Observer<Int> { result ->
                         if (result != 99999) {
                             SharePrefs.Save("studentId", result.toString())
@@ -784,7 +782,6 @@ fun CalendarScreen(vm : LoginSuccessViewModel,grade : String) {
                         vm.datumData.observeForever(datumObserver)
                     }
                 }
-        }
     }
 
     if(a > 0) job.cancel()
