@@ -8,7 +8,7 @@ import dagger.hilt.android.HiltAndroidApp
 class MyApplication : Application() {
     companion object {
         lateinit var context: Context
-        const val version = "3.3"
+        const val version = "4.0"
         const val EleURL = "http://172.31.248.26:8988/"
         const val CommunityURL = "https://community.hfut.edu.cn/"
         const val ZJGDBillURL = "http://121.251.19.62/"
@@ -61,11 +61,8 @@ class MyApplication : Application() {
                 "  }\n" +
                 "}"
         const val NullBorrow = "{\"result\": {\"records\": []}}"
-        const val NullProgram = "{\"result\":{\"majorName\":\"培养方案\",\"totalCreditDone\":0,\"totalCreditRequirement\":0,\"trainingProgramCategoryDTOList\":[]}}"
         const val NullCardblance = "{\"data\":{\"card\":[{ \"db_balance\":0000}]}}"
-        const val NullMonthYue = "{\"data\":{ \"income\":0.0, \"expenses\":0.0 },}"
         const val NullLePao = "{\"msg\" : \"获取失败\",\"data\" : {\"distance\" : \"0.0\"}}"
-        const val NullSearch = "{\"data\":{\"未查找到数据,输入格式是否正确?\":0.0} }"
         const val NullGrades = "{\n" +
                 "    \"result\":{\n" +
                 "        \"gpa\": 0.00,\n" +
@@ -144,7 +141,7 @@ class MyApplication : Application() {
                 "        \"title\" : \"开发者接口\",\n" +
                 "        \"info\"  : \"本接口在不更新APP前提下可实时更新信息\"\n" +
                 "    },\n" +
-                "     \"semesterId\" : \"234\",\n" +
+                "     \"semesterId\" : \"254\",\n" +
                 "    \"Notifications\" : [\n" +
                 "        {\n" +
                 "            \"title\" : \"\",\n" +

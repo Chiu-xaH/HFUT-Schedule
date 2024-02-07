@@ -36,11 +36,6 @@ import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
-import com.hfut.schedule.logic.datamodel.Community.FailRateRecord
-import com.hfut.schedule.logic.datamodel.Community.FailRateResponse
-import com.hfut.schedule.logic.datamodel.Community.courseFailRateDTOList
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.ui.ComposeUI.Search.Program.getProgramItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -94,7 +89,7 @@ fun FailRateUI(vm : LoginSuccessViewModel) {
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        title = { Text("${getFailRate(vm)[num].courseName}") }
+                        title = { Text(getFailRate(vm)[num].courseName) }
                     )
                 },
             ) { innerPadding ->

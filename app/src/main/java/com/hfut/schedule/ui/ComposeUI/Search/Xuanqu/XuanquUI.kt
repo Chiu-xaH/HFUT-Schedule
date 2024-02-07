@@ -76,8 +76,6 @@ fun space(space : Boolean) {
     Spacer(modifier = Modifier.height(700.dp))
 }
 
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
@@ -88,19 +86,6 @@ fun XuanquUI(vm : LoginSuccessViewModel) {
     var loading by remember { mutableStateOf(true) }
     var space by remember { mutableStateOf(true) }
 
-    fun getXuanqu() : List<XuanquResponse>? {
-        val html = vm.XuanquData.value
-
-        // 定义一个正则表达式来匹配HTML标签
-        val regex = """<td rowspan="(\d+)">(\d+)</td>\s*<td>(\d+)</td>\s*<td>(\d+)</td>\s*<td rowspan="\d+">(\d{4}-\d{2}-\d{2})</td>""".toRegex()
-
-        val data = html?.let {
-            regex.findAll(it).map {
-                XuanquResponse(score = it.groupValues[2].toInt(), date = it.groupValues[5])
-            }.toList()
-        }
-        return data
-    }
 
     val SavedBuildNumber = prefs.getString("BuildNumber", "0")
     var BuildingsNumber by remember { mutableStateOf(SavedBuildNumber ?: "0") }
@@ -220,7 +205,7 @@ fun XuanquUI(vm : LoginSuccessViewModel) {
                                                 if(result.contains("div")) {
                                                     CoroutineScope(Job()).launch {
                                                         async { loading = false }
-                                                        async { getXuanqu() }
+                                                        async { getXuanqu(vm) }
                                                     }
                                                 }
                                             }
@@ -316,7 +301,7 @@ fun XuanquUI(vm : LoginSuccessViewModel) {
                         exit = fadeOut()
                     ){
                         LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.padding(horizontal = 5.dp)) {
-                            getXuanqu()?.let {
+                            getXuanqu(vm)?.let {
                                 items(it.size) { item ->
                                     Card(
                                         elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
@@ -326,8 +311,8 @@ fun XuanquUI(vm : LoginSuccessViewModel) {
                                         shape = MaterialTheme.shapes.medium
                                     ) {
                                         ListItem(
-                                            headlineContent = { getXuanqu()?.get(item)?.let { it1 -> Text(text = it1.date) } },
-                                            supportingContent = { Text(text =  "${getXuanqu()?.get(item)?.score} 分")}
+                                            headlineContent = { getXuanqu(vm)?.get(item)?.let { it1 -> Text(text = it1.date) } },
+                                            supportingContent = { Text(text =  "${getXuanqu(vm)?.get(item)?.score} 分")}
                                         )
                                     }
                                 }
@@ -338,6 +323,4 @@ fun XuanquUI(vm : LoginSuccessViewModel) {
             }
         }
     }
-
-
 }

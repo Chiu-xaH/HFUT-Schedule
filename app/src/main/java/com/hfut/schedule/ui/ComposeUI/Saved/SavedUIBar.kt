@@ -120,7 +120,7 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel) {
             composable("1") { SaveCourse() }
             composable("2") { TodayScreen(vm,vm2) }
             composable("search") { SearchScreen(vm,true) }
-            composable("3") { SettingsScreen(vm,showlable, showlablechanged = {showlablech -> showlable = showlablech},)
+            composable("3") { SettingsScreen(vm,showlable, showlablechanged = {showlablech -> showlable = showlablech},true)
             }
 
         }

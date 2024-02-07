@@ -17,8 +17,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -32,6 +34,7 @@ import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.LoginViewModel
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.datamodel.NavigationBarItemData
+import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.ui.ComposeUI.BottomBar.SearchScreen
 import com.hfut.schedule.ui.ComposeUI.BottomBar.SettingsScreen
 import com.hfut.schedule.ui.ComposeUI.BottomBar.TodayScreen
@@ -47,11 +50,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel) {
     val switch = prefs.getBoolean("SWITCH",true)
-    val switch_card = prefs.getBoolean("SWITCHCARD",true)
     val navController = rememberNavController()
     var isEnabled by remember { mutableStateOf(false) }
     var showlable by remember { mutableStateOf(switch) }
-    var showcard by remember { mutableStateOf(switch_card) }
 
     var showBadge by remember { mutableStateOf(false) }
     if (MyApplication.version != getMyVersion()) showBadge = true
@@ -91,6 +92,7 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel) {
                         alwaysShowLabel = showlable,
                         enabled = isEnabled,
                         onClick = {
+                                Save("tip","0000")
                             if (!selected) {
                                 navController.navigate(route) {
                                     popUpTo(navController.graph.startDestinationId) {
@@ -116,12 +118,13 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel) {
         }
     ) { innerPadding ->
         NavHost(navController = navController, startDestination = "calendar") {
-            composable("calendar") { CalendarScreen(isEnabled,enabledchanged = {isEnabledch -> isEnabled = isEnabledch},vm,grade) }
+            composable("calendar") { CalendarScreen(vm,grade) }
             composable("search") { SearchScreen(vm,false) }
             composable("settings") { SettingsScreen(
                 vm,
                 showlable,
                 showlablechanged = {showlablech -> showlable = showlablech},
+                false
             ) }
             composable("today") { TodayScreen(vm,vm2) }
         }

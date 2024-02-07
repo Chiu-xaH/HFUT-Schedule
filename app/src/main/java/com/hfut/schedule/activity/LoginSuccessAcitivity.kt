@@ -21,6 +21,7 @@ import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.LoginViewModel
+import com.hfut.schedule.activity.ui.theme.肥工课程表Theme
 import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.datamodel.MyAPIResponse
@@ -39,6 +40,7 @@ class LoginSuccessAcitivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
     private val vm by lazy { ViewModelProvider(this).get(LoginSuccessViewModel::class.java) }
     private val vm2 by lazy { ViewModelProvider(this).get(LoginViewModel::class.java) }
+    val switchColor= prefs.getBoolean("SWITCHCOLOR",true)
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,10 +48,22 @@ class LoginSuccessAcitivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         val grade = intent.getStringExtra("Grade")
         setContent {
-            SettingsProvider {
-                val stickerUuid = LocalCurrentStickerUuid.current
-                LaunchedEffect(stickerUuid) { viewModel.sendUiIntent(MainIntent.UpdateThemeColor(stickerUuid)) }
-                MonetColor {
+            if(switchColor) {
+                SettingsProvider {
+                    val stickerUuid = LocalCurrentStickerUuid.current
+                    LaunchedEffect(stickerUuid) { viewModel.sendUiIntent(MainIntent.UpdateThemeColor(stickerUuid)) }
+                    MonetColor {
+                        Surface(
+                            modifier = Modifier.fillMaxSize(),
+                            color = MaterialTheme.colorScheme.background
+                        ) {
+                            TransparentSystemBars()
+                            grade?.let { SuccessUI(vm, it,vm2) }
+                        }
+                    }
+                }
+            } else {
+                肥工课程表Theme {
                     Surface(
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.background
@@ -67,15 +81,9 @@ class LoginSuccessAcitivity : ComponentActivity() {
             }
             launch {
                 val semesterId = Gson().fromJson(prefs.getString("my", MyApplication.NullMy), MyAPIResponse::class.java).semesterId
-                if(semesterId != null)
-                    Save("semesterId",semesterId)
-                else  Save("semesterId","234")
+                if(semesterId != null) Save("semesterId",semesterId)
+                else  Save("semesterId","254")
             }
-           // launch {
-             //   Handler(Looper.getMainLooper()).post{
-               //     vm.BillsData.value = "{}"
-               // }
-           // }
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.ComposeUI.Search.Exam
 
+import android.annotation.SuppressLint
 import android.util.Log
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
@@ -45,6 +46,7 @@ fun getExam() : MutableList<examArrangementList> {
     return AddExam
 }
 
+@SuppressLint("SuspiciousIndentation")
 fun getNewExam() : MutableList<examArrangementList> {
     val json = prefs.getString("Exam",MyApplication.NullExams)
     val result = Gson().fromJson(json,ExamResponse::class.java)

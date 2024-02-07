@@ -32,6 +32,7 @@ class LoginViewModel : ViewModel() {
     private val MyAPI = MyServiceCreator.create(MyService::class.java)
 
 
+    var TICKET = MutableLiveData<String?>()
     fun login(username : String,password : String,keys : String)  {// 创建一个Call对象，用于发送异步请求
 
         val cookies : String = sessionLiveData.value  + cookie2.value +";" + keys
@@ -42,13 +43,13 @@ class LoginViewModel : ViewModel() {
         if (call != null) {
             call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-
                     location.value = response.headers()["Location"].toString()
                     val TGC = response.headers()["Set-Cookie"].toString().substringBefore(";")
                     code.value = response.code().toString()
                     val ticket = response.headers()["Location"].toString().substringAfter("=")
                     SharePrefs.Save("ticket", ticket)
                     SharePrefs.Save("TGC", TGC)
+                   TICKET.value = ticket
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {

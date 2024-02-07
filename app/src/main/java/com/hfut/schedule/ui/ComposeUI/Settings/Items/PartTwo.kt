@@ -37,6 +37,7 @@ import com.hfut.schedule.logic.utils.StartUri.StartUri
 import com.hfut.schedule.ui.ComposeUI.Settings.Monet.MonetColorItem
 import com.hfut.schedule.ui.ComposeUI.Settings.getMyVersion
 import com.hfut.schedule.ui.UIUtils.LittleDialog
+import com.hfut.schedule.ui.UIUtils.MyToast
 
 
 fun Clear() {
@@ -115,7 +116,7 @@ fun SettingsCubeItems() {
     )
     val switch_faststart = SharePrefs.prefs.getBoolean("SWITCHFASTSTART",false)
     var faststart by remember { mutableStateOf(switch_faststart) }
-    SharePrefs.SaveBoolean("SWITCHFASTSTART",false,faststart)
+    SaveBoolean("SWITCHFASTSTART",false,faststart)
 
     ListItem(
         headlineContent = { Text(text = "快速启动") },
@@ -124,6 +125,13 @@ fun SettingsCubeItems() {
         trailingContent = { Switch(checked = faststart, onCheckedChange = {faststartch -> faststart = faststartch }) },
         modifier = Modifier.clickable { faststart = !faststart }
     )
+
+   // ListItem(
+     //   headlineContent = { Text(text = "降级到3.X版本 (4.0 限定选项)") },
+      //  supportingContent = { Text(text = "由于4.0初期存在若干Bug,如影响使用,可点击此选项获取上版")},
+       // leadingContent = { Icon(painterResource(R.drawable.trending_down), contentDescription = "Localized description",) },
+        //modifier = Modifier.clickable{ StartUri("https://gitee.com/chiu-xah/HFUT-Schedule/releases/tag/Memory") }
+    //)
 
     ListItem(
         headlineContent = { Text(text = "联系开发者") },
@@ -181,7 +189,7 @@ fun SettingsCubeItems() {
 // 设置分享的类型为纯文本
             it.type = "text/plain"
             it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-// 启动选/择器，让用户选择要分享的应用
+// 启动选择器，让用户选择要分享的应用
             MyApplication.context.startActivity(Intent.createChooser(it, "分享到").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
         }
     )
@@ -197,6 +205,13 @@ fun SettingsCubeItems() {
             dismisstext = "取消"
         )
     }
+
+    ListItem(
+        headlineContent = { Text(text = "问题检测") },
+        supportingContent = { Text(text = "如果您遇到了部分数据无法显示问题,可在此处进行连通性检测") },
+        leadingContent = { Icon(painterResource(R.drawable.build), contentDescription = "Localized description",) },
+        modifier = Modifier.clickable { MyToast("待开发") }
+    )
 
     ListItem(
         headlineContent = { Text(text = "抹掉数据") },

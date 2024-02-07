@@ -12,12 +12,21 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.requiredHeight
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,11 +38,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.core.os.BuildCompat
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.MonetColor.MonetUI
+import com.hfut.schedule.ui.UIUtils.MyToast
 
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("SuspiciousIndentation")
 @Composable
 fun MonetColorItem() {
@@ -43,20 +55,66 @@ fun MonetColorItem() {
         true -> "收回"
         false -> "展开"
     }
-    ListItem(
-        headlineContent = { Text(text = "莫奈取色") },
-        supportingContent = { Text(text = "选择主色调,点击${text}") },
-        leadingContent = {
-            Icon(
-                painterResource(R.drawable.color),
-                contentDescription = "Localized description",
-            )
-        },
-        modifier = Modifier.clickable {
-            expandItems = !expandItems
-            SharePrefs.SaveBoolean("expandMonet",false,expandItems)
-        }
-    )
+    val switch_color = prefs.getBoolean("SWITCHCOLOR",true)
+    var DynamicSwitch by remember { mutableStateOf(switch_color) }
+    if (BuildCompat.isAtLeastS())
+        ListItem(
+            headlineContent = { Text(text = "取色算法") },
+            supportingContent = {
+            Column {
+                Text(text = "对于无法调用Android 12+的原生动态取色的系统,可使用莫奈取色算法,点击${text};若您的系统支持原生取色,请选择原生")
+                Row {
+                    FilterChip(
+                        onClick = {
+                            DynamicSwitch = true
+                            MyToast("切换算法后,重启应用生效")
+                            SharePrefs.SaveBoolean("SWITCHCOLOR", true, DynamicSwitch)
+                        },
+                        label = { Text(text = "莫奈取色") }, selected = DynamicSwitch)
+                    Spacer(modifier = Modifier.width(10.dp))
+                    FilterChip(
+                        onClick = {
+                            MyToast("切换算法后,重启应用生效")
+                            expandItems = false
+                            SharePrefs.SaveBoolean("expandMonet",false,expandItems)
+                            DynamicSwitch = false
+                            SharePrefs.SaveBoolean("SWITCHCOLOR", true, DynamicSwitch)
+                        },
+                        label = { Text(text = "原生取色") }, selected = !DynamicSwitch)
+                }
+            }
+                            },
+            leadingContent = { Icon(painterResource(R.drawable.color), contentDescription = "Localized description",) },
+            trailingContent = { if(DynamicSwitch) {
+                IconButton(onClick = {
+                    expandItems = !expandItems
+                    SharePrefs.SaveBoolean("expandMonet",false,expandItems)
+                }) { Icon( if(!expandItems)Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowUp, contentDescription = "")}
+            }
+                              },
+            modifier = Modifier.clickable {
+                if(DynamicSwitch) {
+                    expandItems = !expandItems
+                    SharePrefs.SaveBoolean("expandMonet",false,expandItems)
+                } else MyToast("未打开")
+            }
+        )
+    else
+        ListItem(
+            headlineContent = { Text(text = "莫奈取色") },
+            supportingContent = { Text(text = "对于低于Android 12的系统,不支持原生取色,可使用莫奈取色算法,点击${text}") },
+            leadingContent = { Icon(painterResource(R.drawable.color), contentDescription = "Localized description",) },
+            trailingContent = {
+                IconButton(onClick = {
+                    expandItems = !expandItems
+                    SharePrefs.SaveBoolean("expandMonet",false,expandItems)
+                }) { Icon( if(!expandItems)Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowUp, contentDescription = "")}
+            },
+            modifier = Modifier.clickable {
+                    expandItems = !expandItems
+                    SharePrefs.SaveBoolean("expandMonet",false,expandItems)
+            }
+        )
 
     AnimatedVisibility(
         visible = expandItems,
@@ -70,10 +128,12 @@ fun MonetColorItem() {
         ) + fadeIn(initialAlpha = 0.3f),
         exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
     ) {
-        Column(Modifier.fillMaxWidth().requiredHeight(240.dp)) {
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .requiredHeight(240.dp)) {
             MonetUI()
         }
-
     }
 
     Spacer(modifier = Modifier.height(5.dp))

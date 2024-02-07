@@ -54,10 +54,6 @@ import org.jsoup.Jsoup
 fun Program(vm : LoginSuccessViewModel) {
     val sheetState_Program = rememberModalBottomSheetState()
     var showBottomSheet_Program by remember { mutableStateOf(false) }
-    var view by rememberSaveable { mutableStateOf("") }
-    val CommuityTOKEN = prefs.getString("TOKEN","")
-    CommuityTOKEN?.let { vm.GetProgram(it) }
-    var showDialog by remember { mutableStateOf(false) }
 
     ListItem(
         headlineContent = { Text(text = "培养方案") },
@@ -67,12 +63,7 @@ fun Program(vm : LoginSuccessViewModel) {
                 contentDescription = "Localized description",
             )
         },
-        modifier = Modifier.clickable {
-           // val program = prefs.getString("program", " <h2 class=\"info-title\"><i style=\"color: #ffa200;\" class=\"fa fa-warning highlight\"></i>未获取到</h2>")
-            showDialog = true
-            //val doc = Jsoup.parse(program)
-          //  view = doc.select("h2.info-title").text()
-        }
+        modifier = Modifier.clickable { showBottomSheet_Program = true }
     )
 
 
@@ -90,7 +81,7 @@ fun Program(vm : LoginSuccessViewModel) {
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        title = { Text(getProgramItem()["name"].toString()) }
+                        title = { Text("培养方案") }
                     )
                 },) {innerPadding ->
                 Column(
@@ -104,79 +95,25 @@ fun Program(vm : LoginSuccessViewModel) {
             }
         }
     }
-
-
-
-    if (showDialog) {
-        androidx.compose.ui.window.Dialog(
-            onDismissRequest = { showDialog = false },
-            properties = DialogProperties(usePlatformDefaultWidth = false)
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        actions = { IconButton(onClick = { showDialog = false }) {
-                            Icon(painterResource(id = R.drawable.close), contentDescription = "")
-                        }
-                        },
-                        title = { Text("培养方案") }
-                    )
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    prefs.getString("redirect", "")?.let {
-                        WebViewScreen2(url = "https://jxglstu.hfut.edu.cn/eams5-student/for-std/program/info/${prefs.getString("studentId", "99999")}", it)
-                    }
-                }
-            }
-        }
-    }
 }
 
 @Composable
 fun ProgramUI() {
+    //getProgram()
     Spacer(modifier = Modifier.height(10.dp))
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
         Column() {
             Card(
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 3.dp
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        horizontal = 15.dp,
-                        vertical = 5.dp
-                    ),
+                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp, vertical = 5.dp),
                 shape = MaterialTheme.shapes.medium,
             ){
                 ListItem(
-                    headlineContent = { Text(text = "学分   已完成 ${getProgramItem()["got"]} / 要求 ${getProgramItem()["require"]}") },
+                    headlineContent = { Text(text = "功能维护升级中") },
                     leadingContent = { Icon(painterResource(id = R.drawable.hotel_class), contentDescription = "Localized description") },
                     modifier = Modifier.clickable {},
                 )
-
-               // prefs.getString("redirect", "")?.let { Log.d("cookie", it) }
             }
         }
     }
-
-}
-
-fun getProgramItem() : Map<String, Any> {
-    val json = prefs.getString("Program",MyApplication.NullProgram)
-    val result = Gson().fromJson(json,ProgramResponse::class.java).result
-    val name = result.majorName
-    val require = result.totalCreditRequirement
-    val got = result.totalCreditDone
-    return mapOf("name" to name, "require" to require, "got" to got)
 }
