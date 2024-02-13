@@ -49,11 +49,11 @@ class LoginViewModel : ViewModel() {
                     val ticket = response.headers()["Location"].toString().substringAfter("=")
                     SharePrefs.Save("ticket", ticket)
                     SharePrefs.Save("TGC", TGC)
-                   TICKET.value = ticket
+                    TICKET.value = ticket
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    code.value = "XXX"
+                    code.value = "XXX $t"
                     t.printStackTrace()
                 }
             })

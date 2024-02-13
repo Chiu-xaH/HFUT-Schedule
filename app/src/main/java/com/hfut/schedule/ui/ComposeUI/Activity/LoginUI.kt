@@ -88,8 +88,10 @@ fun LoginClick(vm : LoginViewModel,username : String,inputAES : String) {
     CoroutineScope(Job()).launch {
         Handler(Looper.getMainLooper()).post{
             vm.code.observeForever { result ->
-                Log.d("代码",result)
-                when(vm.code.value.toString()) {
+                if(result.contains("XXX")) {
+                    Log.d("代码",result)
+                }
+                when(result) {
                     "XXX" -> {
                         MyToast("连接Host失败,请再次尝试登录")
                         vm.getCookie()

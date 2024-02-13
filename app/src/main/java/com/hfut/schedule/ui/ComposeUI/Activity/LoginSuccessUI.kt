@@ -178,7 +178,41 @@ fun CalendarScreen(vm : LoginSuccessViewModel,grade : String) {
     var sheet_6_7 by rememberSaveable { mutableStateOf("") }
 
 
+    val tableall = arrayOf(
+        table_1_1, table_1_2, table_1_3, table_1_4, table_1_5,table_1_6,table_1_7,
+        table_2_1, table_2_2, table_2_3, table_2_4, table_2_5,table_2_6,table_2_7,
+        table_3_1, table_3_2, table_3_3, table_3_4, table_3_5,table_3_6,table_3_7,
+        table_4_1, table_4_2, table_4_3, table_4_4, table_4_5,table_4_6,table_4_7,
+        table_5_1, table_5_2, table_5_3, table_5_4, table_5_5,table_5_6,table_5_7,
+        table_6_1, table_6_2, table_6_3, table_6_4, table_6_5,table_6_6,table_6_7,
+    )
 
+    val sheetall = arrayOf(
+        sheet_1_1, sheet_1_2, sheet_1_3, sheet_1_4, sheet_1_5,sheet_1_6,sheet_1_7,
+        sheet_2_1, sheet_2_2, sheet_2_3, sheet_2_4, sheet_2_5,sheet_2_6,sheet_2_7,
+        sheet_3_1, sheet_3_2, sheet_3_3, sheet_3_4, sheet_3_5,sheet_3_6,sheet_3_7,
+        sheet_4_1, sheet_4_2, sheet_4_3, sheet_4_4, sheet_4_5,sheet_4_6,sheet_4_7,
+        sheet_5_1, sheet_5_2, sheet_5_3, sheet_5_4, sheet_5_5,sheet_5_6,sheet_5_7,
+        sheet_6_1, sheet_6_2, sheet_6_3, sheet_6_4, sheet_6_5,sheet_6_6,sheet_6_7,
+    )
+
+    val table = arrayOf(
+        table_1_1, table_1_2, table_1_3, table_1_4, table_1_5,
+        table_2_1, table_2_2, table_2_3, table_2_4, table_2_5,
+        table_3_1, table_3_2, table_3_3, table_3_4, table_3_5,
+        table_4_1, table_4_2, table_4_3, table_4_4, table_4_5,
+        table_5_1, table_5_2, table_5_3, table_5_4, table_5_5,
+        table_6_1, table_6_2, table_6_3, table_6_4, table_6_5,
+    )
+
+    val sheet = arrayOf(
+        sheet_1_1, sheet_1_2, sheet_1_3, sheet_1_4, sheet_1_5,
+        sheet_2_1, sheet_2_2, sheet_2_3, sheet_2_4, sheet_2_5,
+        sheet_3_1, sheet_3_2, sheet_3_3, sheet_3_4, sheet_3_5,
+        sheet_4_1, sheet_4_2, sheet_4_3, sheet_4_4, sheet_4_5,
+        sheet_5_1, sheet_5_2, sheet_5_3, sheet_5_4, sheet_5_5,
+        sheet_6_1, sheet_6_2, sheet_6_3, sheet_6_4, sheet_6_5
+    )
 
     var Bianhuaweeks by rememberSaveable { mutableStateOf(GetDate.weeksBetween) }
 
@@ -199,31 +233,10 @@ fun CalendarScreen(vm : LoginSuccessViewModel,grade : String) {
     }
     //填充UI与更新
     fun Update() {
-        table_1_1 = ""
-        table_1_2 = ""
-        table_1_3 = ""
-        table_1_4 = ""
-        table_1_5 = ""
-        table_2_1 = ""
-        table_2_2 = ""
-        table_2_3 = ""
-        table_2_4 = ""
-        table_2_5 = ""
-        table_3_1 = ""
-        table_3_2 = ""
-        table_3_3 = ""
-        table_3_4 = ""
-        table_3_5 = ""
-        table_4_1 = ""
-        table_4_2 = ""
-        table_4_3 = ""
-        table_4_4 = ""
-        table_4_5 = ""
-        table_5_1 = ""
-        table_5_2 = ""
-        table_5_3 = ""
-        table_5_4 = ""
-        table_5_5 = ""
+        for(i in table.indices)
+            table[i] = ""
+        for(i in sheet.indices)
+            sheet[i] = ""
         //////////////////////////////////////////////////////////////////////////////////
         val json = prefs.getString("json", "")
         // Log.d("测试",json!!)
@@ -399,42 +412,10 @@ fun CalendarScreen(vm : LoginSuccessViewModel,grade : String) {
         }
     }
     fun UpdateAll() {
-        table_1_1 = ""
-        table_1_2 = ""
-        table_1_3 = ""
-        table_1_4 = ""
-        table_1_5 = ""
-        table_2_1 = ""
-        table_2_2 = ""
-        table_2_3 = ""
-        table_2_4 = ""
-        table_2_5 = ""
-        table_3_1 = ""
-        table_3_2 = ""
-        table_3_3 = ""
-        table_3_4 = ""
-        table_3_5 = ""
-        table_4_1 = ""
-        table_4_2 = ""
-        table_4_3 = ""
-        table_4_4 = ""
-        table_4_5 = ""
-        table_5_1 = ""
-        table_5_2 = ""
-        table_5_3 = ""
-        table_5_4 = ""
-        table_5_5 = ""
-        table_1_6 = ""
-        table_1_7 = ""
-        table_2_6 = ""
-        table_2_7 = ""
-        table_3_6 = ""
-        table_3_7 = ""
-        table_4_6 = ""
-        table_4_7 = ""
-        table_5_6 = ""
-        table_5_7 = ""
-
+        for(i in tableall.indices)
+            tableall[i] = ""
+        for(i in sheetall.indices)
+            sheetall[i] = ""
         //////////////////////////////////////////////////////////////////////////////////
 
         val json =  prefs.getString("json", "")
@@ -788,41 +769,7 @@ fun CalendarScreen(vm : LoginSuccessViewModel,grade : String) {
     if (prefs.getString("tip", "0") != "0") loading  = false
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    val tableall = arrayOf(
-        table_1_1, table_1_2, table_1_3, table_1_4, table_1_5,table_1_6,table_1_7,
-        table_2_1, table_2_2, table_2_3, table_2_4, table_2_5,table_2_6,table_2_7,
-        table_3_1, table_3_2, table_3_3, table_3_4, table_3_5,table_3_6,table_3_7,
-        table_4_1, table_4_2, table_4_3, table_4_4, table_4_5,table_4_6,table_4_7,
-        table_5_1, table_5_2, table_5_3, table_5_4, table_5_5,table_5_6,table_5_7,
-        table_6_1, table_6_2, table_6_3, table_6_4, table_6_5,table_6_6,table_6_7,
-    )
 
-    val sheetall = arrayOf(
-        sheet_1_1, sheet_1_2, sheet_1_3, sheet_1_4, sheet_1_5,sheet_1_6,sheet_1_7,
-        sheet_2_1, sheet_2_2, sheet_2_3, sheet_2_4, sheet_2_5,sheet_2_6,sheet_2_7,
-        sheet_3_1, sheet_3_2, sheet_3_3, sheet_3_4, sheet_3_5,sheet_3_6,sheet_3_7,
-        sheet_4_1, sheet_4_2, sheet_4_3, sheet_4_4, sheet_4_5,sheet_4_6,sheet_4_7,
-        sheet_5_1, sheet_5_2, sheet_5_3, sheet_5_4, sheet_5_5,sheet_5_6,sheet_5_7,
-        sheet_6_1, sheet_6_2, sheet_6_3, sheet_6_4, sheet_6_5,sheet_6_6,sheet_6_7,
-    )
-
-    val table = arrayOf(
-        table_1_1, table_1_2, table_1_3, table_1_4, table_1_5,
-        table_2_1, table_2_2, table_2_3, table_2_4, table_2_5,
-        table_3_1, table_3_2, table_3_3, table_3_4, table_3_5,
-        table_4_1, table_4_2, table_4_3, table_4_4, table_4_5,
-        table_5_1, table_5_2, table_5_3, table_5_4, table_5_5,
-        table_6_1, table_6_2, table_6_3, table_6_4, table_6_5,
-    )
-
-    val sheet = arrayOf(
-        sheet_1_1, sheet_1_2, sheet_1_3, sheet_1_4, sheet_1_5,
-        sheet_2_1, sheet_2_2, sheet_2_3, sheet_2_4, sheet_2_5,
-        sheet_3_1, sheet_3_2, sheet_3_3, sheet_3_4, sheet_3_5,
-        sheet_4_1, sheet_4_2, sheet_4_3, sheet_4_4, sheet_4_5,
-        sheet_5_1, sheet_5_2, sheet_5_3, sheet_5_4, sheet_5_5,
-        sheet_6_1, sheet_6_2, sheet_6_3, sheet_6_4, sheet_6_5
-    )
 
     var today by rememberSaveable { mutableStateOf(LocalDate.now()) }
     val mondayOfCurrentWeek = today.minusDays(today.dayOfWeek.value - 1L)
