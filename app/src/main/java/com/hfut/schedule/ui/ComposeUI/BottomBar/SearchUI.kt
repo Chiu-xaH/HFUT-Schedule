@@ -1,8 +1,10 @@
 package com.hfut.schedule.ui.ComposeUI.BottomBar
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -10,10 +12,12 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,6 +33,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
@@ -84,6 +89,7 @@ fun getName(vm : LoginSuccessViewModel) : String? {
     return name
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("CoroutineCreationDuringComposition", "SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -105,6 +111,14 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,) {
     )
     val rotating = remember { mutableStateOf(false) }
 
+    var text by remember { mutableStateOf("你好") }
+    if(GetDate.formattedTime.toInt() == 12) text = "午饭时间到~"
+    if(GetDate.formattedTime.toInt() in 13..17) text = "下午要忙什么呢"
+    if(GetDate.formattedTime.toInt() in 7..11) text = "上午好呀"
+    if(GetDate.formattedTime.toInt() in 5..6) text = "起的好早呀"
+    if(GetDate.formattedTime.toInt() in 18..23) text = "晚上好"
+    if(GetDate.formattedTime.toInt() in 0..4) text = "熬夜也要早睡哦"
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -113,10 +127,7 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,) {
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
-                title = {
-                //    if (ifSaved) Text("免登录查询") else
-                        Text("嗨  亲爱的 ${getName(vm)} 同学")
-                },
+                title = {  Text("$text ${getName(vm)} 同学") },
                 actions = {
                     IconButton(onClick = {
                         Refresh(vm,rotating)

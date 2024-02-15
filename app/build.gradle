@@ -15,8 +15,8 @@ android {
         applicationId "com.hfut.schedule"
         minSdk 24
         targetSdk 33
-        versionCode 56
-        versionName "4.0.1"
+        versionCode 57
+        versionName "4.0.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
@@ -74,6 +74,7 @@ dependencies {
     implementation platform('androidx.compose:compose-bom:2022.10.00')
     implementation 'androidx.compose.material3:material3:1.1.2'
     implementation 'androidx.palette:palette-ktx:1.0.0'
+    implementation 'androidx.compose.animation:animation-graphics-android:1.6.1'
     //implementation 'androidx.glance:glance-appwidget:1.0.0'
     testImplementation 'junit:junit:4.13.2'
    // implementation 'io.coil-kt:coil-compose:2.0.0'

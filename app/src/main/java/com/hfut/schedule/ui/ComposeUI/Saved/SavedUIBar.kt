@@ -4,6 +4,10 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
+import androidx.compose.animation.graphics.res.animatedVectorResource
+import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
+import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -41,7 +45,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 @SuppressLint("SuspiciousIndentation", "CoroutineCreationDuringComposition")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationGraphicsApi::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel) {
@@ -61,10 +65,11 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel) {
     //val getnum = getGrade().size + getExam().size + getNotifications().size
     //if (savenum != getnum) showBadge2 = true
 
+
 //判定是否以聚焦作为第一页
-    when (prefs.getBoolean("SWITCHFOCUS",true)) {
-        true -> first = "2"
-        false -> first = "1"
+    first = when (prefs.getBoolean("SWITCHFOCUS",true)) {
+        true -> "2"
+        false -> "1"
     }
 
 
@@ -73,11 +78,14 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel) {
 
         bottomBar = {
             NavigationBar() {
+            //    val image = AnimatedImageVector.animatedVectorResource(R.drawable.ic_hourglass_animated)
+              //  var atEnd by remember { mutableStateOf(false) }
+
                 val items = listOf(
-                    NavigationBarItemData("1", "课程表", painterResource(R.drawable.calendar)),
-                    NavigationBarItemData("2","聚焦", painterResource(R.drawable.lightbulb)),
-                    NavigationBarItemData("search","查询中心", painterResource(R.drawable.search)),
-                    NavigationBarItemData("3","选项", painterResource(id = R.drawable.cube))
+                    NavigationBarItemData("1", "课程表", painterResource(R.drawable.calendar ), painterResource(R.drawable.calendar_month_filled)),
+                    NavigationBarItemData("2","聚焦", painterResource(R.drawable.lightbulb), painterResource(R.drawable.lightbulb_filled)),
+                    NavigationBarItemData("search","查询中心", painterResource(R.drawable.search),painterResource(R.drawable.search)),
+                    NavigationBarItemData("3","选项", painterResource(R.drawable.cube), painterResource(R.drawable.deployed_code_filled))
                 )
                 items.forEach { item ->
                     val route = item.route
@@ -87,6 +95,8 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel) {
                         alwaysShowLabel = showlable,
                         enabled = isEnabled,
                         onClick = {
+                         //   if(item == items[2])
+                           //     atEnd = !atEnd
                             if (!selected) {
                                 navController.navigate(route) {
                                     popUpTo(navController.graph.startDestinationId) {
@@ -104,13 +114,8 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel) {
                                     if (showBadge)
                                     Badge{ Text(text = "1")}
                                 }
-                                if (item == items[2]){
-                                   // if (showBadge2)
-                                     //   Badge{ Text(text = (getnum).toString())}
-                                }
-                            }) { Icon(item.icon, contentDescription = item.label) }
+                            }) { Icon(if(selected)item.filledIcon else item.icon, contentDescription = item.label) }
                         }
-
                     )
                 }
             }

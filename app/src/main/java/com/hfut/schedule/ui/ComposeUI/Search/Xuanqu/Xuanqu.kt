@@ -1,5 +1,8 @@
 package com.hfut.schedule.ui.ComposeUI.Search.Xuanqu
 
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,16 +26,43 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.logic.utils.SharePrefs.Save
+import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun XuanquItem(vm : LoginSuccessViewModel) {
+    vm.XuanquData.value = "{}"
     val sheetState_Xuanqu = rememberModalBottomSheetState()
     var showBottomSheet_Xuanqu by remember { mutableStateOf(false) }
+    var text by remember { mutableStateOf("最近 ${prefs.getString("XuanData","XX")} 分") }
+    //预加载
+    CoroutineScope(Job()).launch {
+        if(prefs.getString("XUANQUroom","")?.isNotEmpty() == true) {
+            async { prefs.getString("XUANQUroom","")?.let { vm.SearchXuanqu(it) } }.await()
+            async {
+                Handler(Looper.getMainLooper()).post{
+                    vm.XuanquData.observeForever { result ->
+                        if(result.contains("div")) {
+                            CoroutineScope(Job()).launch {
+                                async { getXuanqu(vm) }.await()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
     ListItem(
         headlineContent = { Text(text = "寝室卫生评分") },
-        supportingContent = { Text(text = "仅宣城校区") },
+        supportingContent = { Text(text = text) },
         leadingContent = { Icon(painter = painterResource(R.drawable.psychiatry),"" ) },
         modifier = Modifier.clickable { showBottomSheet_Xuanqu = true }
     )

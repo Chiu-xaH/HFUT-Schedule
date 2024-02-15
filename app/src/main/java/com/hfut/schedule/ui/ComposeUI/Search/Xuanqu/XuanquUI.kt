@@ -196,7 +196,7 @@ fun XuanquUI(vm : LoginSuccessViewModel) {
                                             clicked = true
                                             loading = true
                                             Save("Room",code)
-
+                                            Save("XUANQUroom",BuildingsNumber + NS + RoomNumber)
                                             vm.SearchXuanqu(BuildingsNumber + NS + RoomNumber) }.await()
                                 async {
                                         Handler(Looper.getMainLooper()).post{

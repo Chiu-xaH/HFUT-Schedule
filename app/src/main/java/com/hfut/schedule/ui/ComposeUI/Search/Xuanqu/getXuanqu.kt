@@ -1,7 +1,10 @@
 package com.hfut.schedule.ui.ComposeUI.Search.Xuanqu
 
+import android.util.Log
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.datamodel.XuanquResponse
+import com.hfut.schedule.logic.utils.SharePrefs.Save
+import com.hfut.schedule.logic.utils.SharePrefs.prefs
 
 fun getXuanqu(vm: LoginSuccessViewModel) : List<XuanquResponse>? {
     val html = vm.XuanquData.value
@@ -14,5 +17,6 @@ fun getXuanqu(vm: LoginSuccessViewModel) : List<XuanquResponse>? {
             XuanquResponse(score = it.groupValues[2].toInt(), date = it.groupValues[5])
         }.toList()
     }
+    Save("XuanData", data?.get(0)?.score.toString())
     return data
 }

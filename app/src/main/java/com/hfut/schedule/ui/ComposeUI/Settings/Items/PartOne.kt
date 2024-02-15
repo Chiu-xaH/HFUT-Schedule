@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.ComposeUI.Settings.Items
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.preference.PreferenceManager
 import androidx.annotation.RequiresApi
@@ -44,6 +45,7 @@ import com.hfut.schedule.ui.ComposeUI.Search.LePaoYun.InfoSet
 import com.hfut.schedule.ui.UIUtils.MyToast
 
 
+@SuppressLint("SuspiciousIndentation")
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -133,24 +135,29 @@ fun SettingsItem(vm : LoginSuccessViewModel, showlable : Boolean, showlablechang
         }
     }
 
-    ListItem(
-        headlineContent = { Text(text = "云运动 信息配置") },
-        supportingContent = { Text(text = "需要提交已登录手机的信息") },
-        leadingContent = { Icon(painterResource(R.drawable.mode_of_travel), contentDescription = "Localized description",) },
-        modifier = Modifier.clickable { showBottomSheet_input = true }
-    )
-
-    ListItem(
-        headlineContent = { Text(text = "聚焦编辑") },
-        supportingContent = { Text(text = "自定义聚焦的内容及信息来源") },
-        leadingContent = { Icon(painterResource(R.drawable.edit), contentDescription = "Localized description",) },
-        modifier = Modifier.clickable { showBottomSheet_focus = true }
-    )
 
     ListItem(
         headlineContent = { Text(text = "请求范围") },
         supportingContent = { Text(text = "自定义加载一页时出现的数目,数目越大,加载时间相应地会更长,但可显示更多信息") },
         leadingContent = { Icon(painterResource(R.drawable.settings_ethernet), contentDescription = "Localized description",) },
         modifier = Modifier.clickable {  showBottomSheet_arrange = true }
+    )
+    ListItem(
+        headlineContent = { Text(text = "聚焦 布局编辑") },
+        supportingContent = { Text(text = "自定义聚焦的内容及信息来源") },
+        leadingContent = { Icon(painterResource(R.drawable.edit), contentDescription = "Localized description",) },
+        modifier = Modifier.clickable { showBottomSheet_focus = true }
+    )
+  //  ListItem(
+    //    headlineContent = { Text(text = "查询中心 布局编辑") },
+      //  supportingContent = { Text(text = "定义查询中心的布局") },
+        //leadingContent = { Icon(painterResource(R.drawable.edit), contentDescription = "Localized description",) },
+       // modifier = Modifier.clickable {  }
+   // )
+    ListItem(
+            headlineContent = { Text(text = "云运动 信息配置") },
+    supportingContent = { Text(text = "需要提交已登录手机的信息") },
+    leadingContent = { Icon(painterResource(R.drawable.mode_of_travel), contentDescription = "Localized description",) },
+    modifier = Modifier.clickable { showBottomSheet_input = true }
     )
 }

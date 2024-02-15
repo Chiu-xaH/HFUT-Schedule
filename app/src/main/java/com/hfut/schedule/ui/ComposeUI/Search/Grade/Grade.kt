@@ -77,6 +77,7 @@ fun Grade(vm : LoginSuccessViewModel,ifSaved : Boolean)  {
     if (month <= 8) years = (years.toInt() - 1).toString()
     CommuityTOKEN?.let { vm.getGrade(it,years+"-"+(years.toInt()+1),term) }
 
+
     ListItem(
         headlineContent = { Text(text = "成绩") },
         leadingContent = {
@@ -87,8 +88,8 @@ fun Grade(vm : LoginSuccessViewModel,ifSaved : Boolean)  {
                     }
             }) { Icon(painterResource(R.drawable.article), contentDescription = "Localized description",) }
                          },
-        supportingContent = { if(!ifSaved) Text(text = "教务系统数据,当前可查看最全面的成绩信息")
-            else Text(text = "Community数据,当前可免登录查看最新成绩,但无法查看详情")
+        supportingContent = { if(!ifSaved) Text(text = "教务系统数据")
+                              else Text(text = "Community数据")
                             },
         modifier = Modifier.clickable {
             getGrade()

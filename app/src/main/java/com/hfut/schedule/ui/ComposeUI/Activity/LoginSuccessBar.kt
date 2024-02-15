@@ -78,10 +78,10 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel) {
         bottomBar = {
             NavigationBar() {
                 val items = listOf(
-                    NavigationBarItemData("calendar", "课程表", painterResource(R.drawable.calendar)),
-                    NavigationBarItemData("today","聚焦", painterResource(R.drawable.lightbulb)),
-                    NavigationBarItemData("search","查询中心", painterResource(R.drawable.search)),
-                    NavigationBarItemData("settings", "选项", painterResource(R.drawable.cube))
+                    NavigationBarItemData("calendar", "课程表", painterResource(R.drawable.calendar),painterResource(R.drawable.calendar_month_filled)),
+                    NavigationBarItemData("today","聚焦", painterResource(R.drawable.lightbulb),painterResource(R.drawable.lightbulb_filled)),
+                    NavigationBarItemData("search","查询中心", painterResource(R.drawable.search), painterResource(R.drawable.search)),
+                    NavigationBarItemData("settings", "选项", painterResource(R.drawable.cube),painterResource(R.drawable.deployed_code_filled))
 
                 )
                 items.forEach { item ->
@@ -110,7 +110,7 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel) {
                                     if (showBadge)
                                         Badge{ Text(text = "1")}
                                 }
-                            }) { Icon(item.icon, contentDescription = item.label) }
+                            }) { Icon(if(selected)item.filledIcon else item.icon, contentDescription = item.label)}
                         }
                     )
                 }

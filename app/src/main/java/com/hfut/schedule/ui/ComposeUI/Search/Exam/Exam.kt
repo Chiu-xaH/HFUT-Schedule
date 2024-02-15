@@ -1,18 +1,14 @@
 package com.hfut.schedule.ui.ComposeUI.Search.Exam
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.BadgedBox
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -44,7 +40,6 @@ import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.ui.ComposeUI.Search.NotificationsCenter.getNotifications
 
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -54,6 +49,7 @@ fun Exam(vm : LoginSuccessViewModel) {
     var showBottomSheet_Exam by remember { mutableStateOf(false) }
     val CommuityTOKEN = prefs.getString("TOKEN","")
     CommuityTOKEN?.let { vm.Exam(it) }
+
     ListItem(
         headlineContent = { Text(text = "考试  ${getNewExam().size} 门") },
         leadingContent = {

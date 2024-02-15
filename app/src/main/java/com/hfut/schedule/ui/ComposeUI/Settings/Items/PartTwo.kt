@@ -108,7 +108,7 @@ fun SettingsCubeItems() {
                 }
             }
                             },
-        leadingContent = { Icon(painterResource(R.drawable.swap_calls), contentDescription = "Localized description",) },
+        leadingContent = { Icon(painterResource(R.drawable.arrow_split), contentDescription = "Localized description",) },
         modifier = Modifier.clickable {
             select = !select
             SaveBoolean("select",false,select)
@@ -205,13 +205,6 @@ fun SettingsCubeItems() {
             dismisstext = "取消"
         )
     }
-
-    ListItem(
-        headlineContent = { Text(text = "问题检测") },
-        supportingContent = { Text(text = "如果您遇到了部分数据无法显示问题,可在此处进行连通性检测") },
-        leadingContent = { Icon(painterResource(R.drawable.build), contentDescription = "Localized description",) },
-        modifier = Modifier.clickable { MyToast("待开发") }
-    )
 
     ListItem(
         headlineContent = { Text(text = "抹掉数据") },

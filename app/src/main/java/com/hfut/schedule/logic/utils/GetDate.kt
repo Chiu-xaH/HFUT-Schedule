@@ -8,6 +8,8 @@ import com.hfut.schedule.logic.datamodel.Community.CourseTotalResponse
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import java.text.SimpleDateFormat
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.Calendar
 import java.util.Date
@@ -45,5 +47,13 @@ object GetDate {
     val dayweek = dayOfWeek - 1
 
     var chinesenumber  = ""
+
+    //获取小时
+    @RequiresApi(Build.VERSION_CODES.O)
+    val currentTime = LocalDateTime.now()
+    @RequiresApi(Build.VERSION_CODES.O)
+    val formatter = DateTimeFormatter.ofPattern("HH")
+    @RequiresApi(Build.VERSION_CODES.O)
+    val formattedTime = currentTime.format(formatter)
 
 }

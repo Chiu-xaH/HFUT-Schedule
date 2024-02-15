@@ -55,6 +55,7 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.datamodel.Focus.FocusCourse
 import com.hfut.schedule.logic.datamodel.Jxglstu.datumResponse
+import com.hfut.schedule.logic.utils.GetDate.formattedTime
 import com.hfut.schedule.ui.ComposeUI.Focus.AddButton
 import com.hfut.schedule.ui.ComposeUI.Focus.AddItem
 import com.hfut.schedule.ui.ComposeUI.Focus.AddedItems
@@ -162,10 +163,6 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel) {
     }
 
 
-    val currentTime = LocalDateTime.now()
-    val formatter = DateTimeFormatter.ofPattern("HH")
-    val formattedTime = currentTime.format(formatter)
-
     
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -181,14 +178,7 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel) {
                             BadgedBox(badge = {
                                 if (getNotifications().size.toString() != prefs.getString("Notifications",""))
                                 Badge()
-                                Log.d("s",
-                                    getNotifications().size.toString() + prefs.getString("Notifications",""))
-                            }) {
-                                Icon(
-                                    painterResource(id = R.drawable.notifications),
-                                    contentDescription = ""
-                                )
-                            }
+                            }) { Icon(painterResource(id = R.drawable.notifications), contentDescription = "") }
                         }
 
                 },
@@ -243,7 +233,7 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel) {
                             item { TodayCardItem(vm) }
                         }
                         //课表
-                        if (formattedTime.toInt() >= 18)
+                        if (GetDate.formattedTime.toInt() >= 18)
                             items(getCourseINFO(weekdaytomorrow,Nextweek).size) { item -> TomorrowCourseItem(item = item) }
                         else
                             items(getCourseINFO(weekdayToday,week).size) { item -> TodayCourseItem(item = item) }
@@ -267,10 +257,10 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel) {
                         }
 
                         //第二天课表
-                        if (formattedTime.toInt() < 18)
+                        if (GetDate.formattedTime.toInt() < 18)
                             items(getCourseINFO(weekdaytomorrow,Nextweek).size) { item -> TomorrowCourseItem(item = item) }
 
-                        items(AddedItems().size){item -> AddItem(item = item, AddedItems = AddedItems()) }
+                        items(AddedItems().size){ item -> AddItem(item = item, AddedItems = AddedItems()) }
 
                     }
                     item { Spacer(modifier = Modifier.height(100.dp)) }

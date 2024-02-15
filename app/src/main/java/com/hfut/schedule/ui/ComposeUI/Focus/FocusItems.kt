@@ -66,10 +66,10 @@ import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.datamodel.Focus.AddFocus
 import com.hfut.schedule.logic.datamodel.MyList
 import com.hfut.schedule.logic.datamodel.Schedule
+import com.hfut.schedule.logic.utils.AddCalendar.AddCalendar
 import com.hfut.schedule.ui.ComposeUI.SavedCourse.getCourseINFO
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.ComposeUI.Search.SchoolCard.SchoolCardItem
-import com.hfut.schedule.ui.UIUtils.AddCalendar
 
 @Composable
 fun TodayCardItem(vm : LoginSuccessViewModel) {
@@ -312,9 +312,7 @@ fun TomorrowCourseItem(item : Int) {
 @SuppressLint("Range")
 @Composable
 fun AddItem(item : Int, AddedItems : MutableList<AddFocus>) {
-    var isClicked by remember { mutableStateOf(false) }
-
-    //if(!isClicked){
+        var Lists by remember { mutableStateOf( AddedItems() ) }
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
             Spacer(modifier = Modifier.height(100.dp))
             Card(
@@ -336,25 +334,17 @@ fun AddItem(item : Int, AddedItems : MutableList<AddFocus>) {
                             contentDescription = "Localized description",
                         )
                     },
-                    colors = if (isClicked) ListItemDefaults.colors(MaterialTheme.colorScheme.errorContainer) else ListItemDefaults.colors(),
                     modifier = Modifier.combinedClickable(
-                        onClick = { MyToast("长按删除") },
+                        onClick = { MyToast("左滑删除") },
                         onDoubleClick = {
-
+                                        //双击操作
                         },
                         onLongClick = {
-                            isClicked = true
-                            RemoveItems(AddedItems[item].id)
-
-                            // AddedItems().removeAt(item)
-                            MyToast("下次数据刷新时将删除")
-                            //EditItems(AddedItems[item].id,AddedItems[item].title,AddedItems[item].info,AddedItems[item].remark)
-                           // MyToast("就那几个字删了重新添加吧")
+                            //长按操作
                         })
                 )
             }
         }
-  //  }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
