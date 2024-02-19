@@ -3,6 +3,7 @@ package com.hfut.schedule.ui.ComposeUI.Settings.Items
 import android.annotation.SuppressLint
 import android.os.Build
 import android.preference.PreferenceManager
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -38,6 +39,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.SaveBoolean
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
@@ -61,6 +63,7 @@ fun SettingsItem(vm : LoginSuccessViewModel, showlable : Boolean, showlablechang
     var faststart by remember { mutableStateOf(switch_faststart) }
     SaveBoolean("SWITCHFASTSTART",false,faststart)
 
+
     ListItem(
         headlineContent = { Text(text = "底栏标签") },
         supportingContent = { Text(text = "屏幕底部的Tab栏底栏标签")},
@@ -68,11 +71,12 @@ fun SettingsItem(vm : LoginSuccessViewModel, showlable : Boolean, showlablechang
         trailingContent = { Switch(checked = showlable, onCheckedChange = showlablechanged) },
         modifier = Modifier.clickable { showlablechanged }
     )
+    if(AndroidVersion.sdkInt >= 32)
     ListItem(
         headlineContent = { Text(text = "实时模糊") },
-        supportingContent = { Text(text = "Android 13+可用,开启后将会转换部分渲染为实时模糊,非支持的系统开启后将为半透明背景")},
+        supportingContent = { Text(text = "开启后将会转换部分渲染为实时模糊")},
         leadingContent = { Icon(painterResource(R.drawable.deblur), contentDescription = "Localized description",) },
-        trailingContent = { Switch(checked = blur, onCheckedChange = blurchanged) },
+        trailingContent = {  Switch(checked = blur, onCheckedChange = blurchanged ) },
         modifier = Modifier.clickable { blurchanged }
     )
     ListItem(

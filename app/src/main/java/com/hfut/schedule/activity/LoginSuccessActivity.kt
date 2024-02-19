@@ -3,8 +3,6 @@ package com.hfut.schedule.activity
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -36,7 +34,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class LoginSuccessAcitivity : ComponentActivity() {
+class LoginSuccessActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
     private val vm by lazy { ViewModelProvider(this).get(LoginSuccessViewModel::class.java) }
     private val vm2 by lazy { ViewModelProvider(this).get(LoginViewModel::class.java) }

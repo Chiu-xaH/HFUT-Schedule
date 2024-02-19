@@ -40,6 +40,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.os.BuildCompat
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.MonetColor.MonetUI
@@ -57,12 +58,12 @@ fun MonetColorItem() {
     }
     val switch_color = prefs.getBoolean("SWITCHCOLOR",true)
     var DynamicSwitch by remember { mutableStateOf(switch_color) }
-    if (BuildCompat.isAtLeastS())
+    if(AndroidVersion.sdkInt >= 31)
         ListItem(
             headlineContent = { Text(text = "取色算法") },
             supportingContent = {
             Column {
-                Text(text = "对于无法调用Android 12+的原生动态取色的系统,可使用莫奈取色算法,点击${text};若您的系统支持原生取色,请选择原生")
+                Text(text = "若无法调用Android 12+的原生动态取色的系统,可使用莫奈取色算法,点击${text}")
                 Row {
                     FilterChip(
                         onClick = {
@@ -102,7 +103,7 @@ fun MonetColorItem() {
     else
         ListItem(
             headlineContent = { Text(text = "莫奈取色") },
-            supportingContent = { Text(text = "对于低于Android 12的系统,不支持原生取色,可使用莫奈取色算法,点击${text}") },
+            supportingContent = { Text(text = "点击${text}") },
             leadingContent = { Icon(painterResource(R.drawable.color), contentDescription = "Localized description",) },
             trailingContent = {
                 IconButton(onClick = {

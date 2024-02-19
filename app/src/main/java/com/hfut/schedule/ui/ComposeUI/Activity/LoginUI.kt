@@ -3,11 +3,12 @@ package com.hfut.schedule.ui.ComposeUI.Activity
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import android.preference.PreferenceManager
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -60,7 +61,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginViewModel
-import com.hfut.schedule.activity.LoginSuccessAcitivity
+import com.hfut.schedule.activity.LoginSuccessActivity
 import com.hfut.schedule.activity.SavedCoursesActivity
 import com.hfut.schedule.logic.Encrypt.AESEncrypt
 import com.hfut.schedule.logic.utils.SharePrefs
@@ -68,12 +69,11 @@ import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.ComposeUI.Settings.FirstCube
 import com.hfut.schedule.ui.UIUtils.MyToast
+import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+
 fun LoginClick(vm : LoginViewModel,username : String,inputAES : String) {
     val cookie = prefs.getString("cookie", "")
     val outputAES = cookie?.let { it1 -> AESEncrypt.encrypt(inputAES, it1) }
@@ -109,7 +109,7 @@ fun LoginClick(vm : LoginViewModel,username : String,inputAES : String) {
                             }
                             vm.location.value.toString().contains("ticket") -> {
                                     Toast.makeText(MyApplication.context, "登陆成功", Toast.LENGTH_SHORT).show()
-                                    val it = Intent(MyApplication.context, LoginSuccessAcitivity::class.java).apply {
+                                    val it = Intent(MyApplication.context, LoginSuccessActivity::class.java).apply {
                                         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                                         putExtra("Grade", username.substring(2, 4))
                                     }
@@ -138,6 +138,7 @@ fun SavedClick() {
 }
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -148,7 +149,7 @@ fun LoginUI(vm : LoginViewModel) {
 
     var showBadge by remember { mutableStateOf(false) }
     if (MyApplication.version != prefs.getString("version", MyApplication.version)) showBadge = true
-
+    val hazeState = remember { HazeState() }
     if (showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = {
@@ -171,7 +172,6 @@ fun LoginUI(vm : LoginViewModel) {
                     modifier = Modifier
                         .padding(innerPadding)
                         .verticalScroll(rememberScrollState())
-                        .fillMaxSize()
                 ){
                     FirstCube()
                     Spacer(modifier = Modifier.height(20.dp))

@@ -1,7 +1,6 @@
 package com.hfut.schedule.ui.ComposeUI.Saved
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
@@ -40,7 +39,9 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.LoginViewModel
+import com.hfut.schedule.logic.Enums.BottomBarItems
 import com.hfut.schedule.logic.datamodel.NavigationBarItemData
+import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.GetDate.Benweeks
 import com.hfut.schedule.logic.utils.GetDate.Date_MM_dd
@@ -71,13 +72,12 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel) {
     var isEnabled by remember { mutableStateOf(true) }
     val switch = prefs.getBoolean("SWITCH",true)
     var showlable by remember { mutableStateOf(switch) }
-    var first = "1"
     val hazeState = remember { HazeState() }
     CoroutineScope(Job()).launch { NetWorkUpdate(vm, vm2) }
-    var topBarSwap by remember { mutableStateOf(1) }
+    var bottomBarItems by remember { mutableStateOf(BottomBarItems.FOCUS) }
     var showBadge by remember { mutableStateOf(false) }
     if (MyApplication.version != getMyVersion()) showBadge = true
-    val switchblur = prefs.getBoolean("SWITCHBLUR",true)
+    val switchblur = prefs.getBoolean("SWITCHBLUR", AndroidVersion.sdkInt >= 32)
     var blur by remember { mutableStateOf(switchblur) }
    // val savenum = prefs.getInt("GradeNum",0) + prefs.getInt("ExamNum",0) + prefs.getInt("Notifications",0)
     //val getnum = getGrade().size + getExam().size + getNotifications().size
@@ -85,10 +85,11 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel) {
 
 
 //判定是否以聚焦作为第一页
-    first = when (prefs.getBoolean("SWITCHFOCUS",true)) {
-        true -> "2"
-        false -> "1"
+    var first : String = when (prefs.getBoolean("SWITCHFOCUS",true)) {
+        true -> BottomBarItems.FOCUS.name
+        false -> BottomBarItems.COURSES.name
     }
+
     var showAll by remember { mutableStateOf(false) }
 
 
@@ -120,8 +121,6 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel) {
         }
     }
 
-
-
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -131,13 +130,13 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel) {
                     containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = if(blur).50f else 1f),
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
-                title = { Text(texts(vm,topBarSwap)) },
+                title = { Text(texts(vm,bottomBarItems)) },
                 actions = {
-                    if(topBarSwap == 0) {
+                    if(bottomBarItems == BottomBarItems.COURSES) {
                         androidx.compose.material.IconButton(onClick = { showAll = !showAll
                         }) { Icon(painter = painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "") }
                     }
-                    if(topBarSwap == 1) {
+                    if(bottomBarItems == BottomBarItems.FOCUS) {
                         TextButton(onClick = { showBottomSheet = true }) {
                             BadgedBox(badge = {
                                 if (getNotifications().size.toString() != prefs.getString("Notifications",""))
@@ -156,10 +155,10 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel) {
               //  var atEnd by remember { mutableStateOf(false) }
 
                 val items = listOf(
-                    NavigationBarItemData("1", "课程表", painterResource(R.drawable.calendar ), painterResource(R.drawable.calendar_month_filled)),
-                    NavigationBarItemData("2","聚焦", painterResource(R.drawable.lightbulb), painterResource(R.drawable.lightbulb_filled)),
-                    NavigationBarItemData("search","查询中心", painterResource(R.drawable.search),painterResource(R.drawable.search_filledx)),
-                    NavigationBarItemData("3","选项", painterResource(R.drawable.cube), painterResource(R.drawable.deployed_code_filled))
+                    NavigationBarItemData(BottomBarItems.COURSES.name, "课程表", painterResource(R.drawable.calendar ), painterResource(R.drawable.calendar_month_filled)),
+                    NavigationBarItemData(BottomBarItems.FOCUS.name,"聚焦", painterResource(R.drawable.lightbulb), painterResource(R.drawable.lightbulb_filled)),
+                    NavigationBarItemData(BottomBarItems.SEARCH.name,"查询中心", painterResource(R.drawable.search),painterResource(R.drawable.search_filledx)),
+                    NavigationBarItemData(BottomBarItems.SETTINGS.name,"选项", painterResource(R.drawable.cube), painterResource(R.drawable.deployed_code_filled))
                 )
                 items.forEach { item ->
                     val route = item.route
@@ -169,10 +168,10 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel) {
                         alwaysShowLabel = showlable,
                         enabled = isEnabled,
                         onClick = {
-                            if(item == items[0]) topBarSwap = 0
-                            if(item == items[1]) topBarSwap = 1
-                            if(item == items[2]) topBarSwap = 2
-                            if(item == items[3]) topBarSwap = 3
+                            if(item == items[0]) bottomBarItems = BottomBarItems.COURSES
+                            if(item == items[1]) bottomBarItems = BottomBarItems.FOCUS
+                            if(item == items[2]) bottomBarItems = BottomBarItems.SEARCH
+                            if(item == items[3]) bottomBarItems = BottomBarItems.SETTINGS
                            //     atEnd = !atEnd
                             if (!selected) {
                                 navController.navigate(route) {
@@ -205,10 +204,10 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel) {
                 state = hazeState,
                 backgroundColor = MaterialTheme.colorScheme.surface,
             )) {
-            composable("1") { SaveCourse(showAll, innerPadding) }
-            composable("2") { TodayScreen(vm,vm2,innerPadding, blur) }
-            composable("search") { SearchScreen(vm,true,innerPadding) }
-            composable("3") { SettingsScreen(vm,showlable, showlablechanged = {showlablech -> showlable = showlablech},true,innerPadding, blur,blurchanged = {blurch -> blur = blurch})
+            composable(BottomBarItems.COURSES.name) { SaveCourse(showAll, innerPadding) }
+            composable(BottomBarItems.FOCUS.name) { TodayScreen(vm,vm2,innerPadding, blur) }
+            composable(BottomBarItems.SEARCH.name) { SearchScreen(vm,true,innerPadding) }
+            composable(BottomBarItems.SETTINGS.name) { SettingsScreen(vm,showlable, showlablechanged = { showlablech -> showlable = showlablech},true,innerPadding, blur,blurchanged = { blurch -> blur = blurch})
             }
         }
     }
@@ -216,9 +215,9 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel) {
 
 
 @RequiresApi(Build.VERSION_CODES.O)
-fun texts(vm : LoginSuccessViewModel,num : Int) : String {
+fun texts(vm : LoginSuccessViewModel,num : BottomBarItems) : String {
     when(num){
-        0 -> {
+        BottomBarItems.COURSES -> {
             val dayweek = GetDate.dayweek
             var chinesenumber  = GetDate.chinesenumber
 
@@ -233,7 +232,7 @@ fun texts(vm : LoginSuccessViewModel,num : Int) : String {
             }
             return "今天  第${Benweeks}周  周$chinesenumber  $Date_MM_dd"
         }
-        1 -> {
+        BottomBarItems.FOCUS -> {
             val dayweek = GetDate.dayweek
             var chinesenumber  = GetDate.chinesenumber
 
@@ -248,7 +247,7 @@ fun texts(vm : LoginSuccessViewModel,num : Int) : String {
             }
             return "今天  第${Benweeks}周  周$chinesenumber  $Date_MM_dd"
         }
-        2 -> {
+        BottomBarItems.SEARCH -> {
             var text  = "你好"
             if(GetDate.formattedTime.toInt() == 12) text = "午饭时间到~"
             if(GetDate.formattedTime.toInt() in 13..17) text = "下午要忙什么呢"
@@ -259,7 +258,7 @@ fun texts(vm : LoginSuccessViewModel,num : Int) : String {
 
             return "$text ${getName(vm)} 同学"
         }
-        3 -> {
+        BottomBarItems.SETTINGS -> {
             return "肥工教务通 选项"
         }
         else -> return "肥工教务通"

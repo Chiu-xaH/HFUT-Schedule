@@ -15,8 +15,8 @@ android {
         applicationId "com.hfut.schedule"
         minSdk 24
         targetSdk 33
-        versionCode 58
-        versionName "4.1"
+        versionCode 59
+        versionName "4.1.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
@@ -81,10 +81,14 @@ dependencies {
     implementation 'dev.chrisbanes.haze:haze:0.5.2'
     implementation 'dev.chrisbanes.haze:haze-materials:0.5.1'
 
+    //预测性返回手势
+    implementation 'androidx.activity:activity:1.6.0-alpha05'
+
     implementation 'androidx.compose.material3:material3:1.1.2'
     //调色盘
     implementation 'androidx.palette:palette-ktx:1.0.0'
     implementation 'androidx.compose.animation:animation-graphics-android:1.6.1'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
     //implementation 'androidx.glance:glance-appwidget:1.0.0'
     testImplementation 'junit:junit:4.13.2'
    // implementation 'io.coil-kt:coil-compose:2.0.0'

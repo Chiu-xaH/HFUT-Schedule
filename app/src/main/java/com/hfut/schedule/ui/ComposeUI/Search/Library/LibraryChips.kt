@@ -33,6 +33,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.Enums.LibraryItems
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,7 +49,7 @@ fun LibraryChips() {
 
         AssistChip(
             onClick = { showBottomSheet_Borrow = true },
-            label = { Text(text = "当前借阅  ${getBorrow(BORROWED).size} 本") },
+            label = { Text(text = "当前借阅  ${getBorrow(LibraryItems.BORROWED.name).size} 本") },
             // leadingIcon = { Icon(painter = painterResource(R.drawable.add), contentDescription = "description") }
         )
 
@@ -56,7 +57,7 @@ fun LibraryChips() {
 
         AssistChip(
             onClick = { showBottomSheet_History = true },
-            label = { Text(text = "借阅历史  ${getBorrow(HISTORY).size} 本") },
+            label = { Text(text = "借阅历史  ${getBorrow(LibraryItems.HISTORY.name).size} 本") },
             // leadingIcon = { Icon(painter = painterResource(R.drawable.calendar), contentDescription = "description") }
         )
     }
@@ -77,7 +78,7 @@ fun LibraryChips() {
                     modifier = Modifier
                         .padding(innerPadding)
                         .fillMaxSize()
-                ) { BorrowItems(HISTORY) }
+                ) { BorrowItems(LibraryItems.HISTORY.name) }
             }
         }
     }
@@ -100,7 +101,7 @@ fun LibraryChips() {
                         .padding(innerPadding)
                         // .verticalScroll(rememberScrollState())
                         .fillMaxSize()
-                ) { BorrowItems(BORROWED) }
+                ) { BorrowItems(LibraryItems.BORROWED.name) }
             }
         }
     }
@@ -126,9 +127,9 @@ fun BorrowItems(PerfsJson : String) {
                         supportingContent = {  Text(text = getBorrow(PerfsJson)[item].author) },
                         overlineContent = {
                             if(Returntime == null)
-                                Text(text = "借于 " + Outtime)
+                                Text(text = "借于 $Outtime")
                             else
-                                Text(text = "借于 " + Outtime + "\n" + "还于 "+Returntime)
+                                Text(text = "借于 $Outtime\n还于 $Returntime")
                         },
                         leadingContent = {
                             Icon(painterResource(R.drawable.book), contentDescription = "Localized description",)

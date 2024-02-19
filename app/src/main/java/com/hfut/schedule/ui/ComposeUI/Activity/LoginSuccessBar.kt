@@ -2,7 +2,6 @@ package com.hfut.schedule.ui.ComposeUI.Activity
 
 import android.annotation.SuppressLint
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,10 +24,8 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,11 +41,13 @@ import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.LoginViewModel
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.datamodel.NavigationBarItemData
+import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.ui.ComposeUI.BottomBar.SearchScreen
 import com.hfut.schedule.ui.ComposeUI.BottomBar.SettingsScreen
 import com.hfut.schedule.ui.ComposeUI.BottomBar.TodayScreen
+import com.hfut.schedule.logic.Enums.BottomBarItems
 import com.hfut.schedule.ui.ComposeUI.Saved.texts
 import com.hfut.schedule.ui.ComposeUI.Search.NotificationsCenter.NotificationItems
 import com.hfut.schedule.ui.ComposeUI.Search.NotificationsCenter.getNotifications
@@ -70,11 +69,11 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel) {
     val navController = rememberNavController()
     var isEnabled by remember { mutableStateOf(false) }
     var showlable by remember { mutableStateOf(switch) }
-    var topBarSwap by remember { mutableStateOf(0) }
+    var bottomBarItems by remember { mutableStateOf(BottomBarItems.COURSES) }
     val hazeState = remember { HazeState() }
     var showBadge by remember { mutableStateOf(false) }
     if (MyApplication.version != getMyVersion()) showBadge = true
-    val switchblur = prefs.getBoolean("SWITCHBLUR",true)
+    val switchblur = prefs.getBoolean("SWITCHBLUR", AndroidVersion.sdkInt >= 32)
     var blur by remember { mutableStateOf(switchblur) }
 
     //等待加载完毕可切换标签
@@ -133,13 +132,13 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel) {
                     containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = if(blur).50f else 1f),
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
-                title = { Text(texts(vm,topBarSwap)) },
+                title = { Text(texts(vm,bottomBarItems)) },
                 actions = {
-                    if(topBarSwap == 0) {
+                    if(bottomBarItems == BottomBarItems.COURSES) {
                         IconButton(onClick = { showAll = !showAll
                         }) { Icon(painter = painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "") }
                     }
-                    if(topBarSwap == 1) {
+                    if(bottomBarItems == BottomBarItems.FOCUS) {
                         TextButton(onClick = { showBottomSheet = true }) {
                             BadgedBox(badge = {
                                 if (getNotifications().size.toString() != prefs.getString("Notifications",""))
@@ -157,10 +156,10 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel) {
                 modifier = Modifier.hazeChild(state = hazeState, blurRadius = 35.dp, tint = Color.Transparent, noiseFactor = 0f)
             ) {
                 val items = listOf(
-                    NavigationBarItemData("calendar", "课程表", painterResource(R.drawable.calendar),painterResource(R.drawable.calendar_month_filled)),
-                    NavigationBarItemData("today","聚焦", painterResource(R.drawable.lightbulb),painterResource(R.drawable.lightbulb_filled)),
-                    NavigationBarItemData("search","查询中心", painterResource(R.drawable.search), painterResource(R.drawable.search_filledx)),
-                    NavigationBarItemData("settings", "选项", painterResource(R.drawable.cube),painterResource(R.drawable.deployed_code_filled))
+                    NavigationBarItemData(BottomBarItems.COURSES.name, "课程表", painterResource(R.drawable.calendar),painterResource(R.drawable.calendar_month_filled)),
+                    NavigationBarItemData(BottomBarItems.FOCUS.name,"聚焦", painterResource(R.drawable.lightbulb),painterResource(R.drawable.lightbulb_filled)),
+                    NavigationBarItemData(BottomBarItems.SEARCH.name,"查询中心", painterResource(R.drawable.search), painterResource(R.drawable.search_filledx)),
+                    NavigationBarItemData(BottomBarItems.SETTINGS.name, "选项", painterResource(R.drawable.cube),painterResource(R.drawable.deployed_code_filled))
 
                 )
                 items.forEach { item ->
@@ -172,10 +171,10 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel) {
                         enabled = isEnabled,
                         onClick = {
                                 Save("tip","0000")
-                            if(item == items[0]) topBarSwap = 0
-                            if(item == items[1]) topBarSwap = 1
-                            if(item == items[2]) topBarSwap = 2
-                            if(item == items[3]) topBarSwap = 3
+                            if(item == items[0]) bottomBarItems = BottomBarItems.COURSES
+                            if(item == items[1]) bottomBarItems = BottomBarItems.FOCUS
+                            if(item == items[2]) bottomBarItems = BottomBarItems.SEARCH
+                            if(item == items[3]) bottomBarItems = BottomBarItems.SETTINGS
                             if (!selected) {
                                 navController.navigate(route) {
                                     popUpTo(navController.graph.startDestinationId) {
@@ -200,16 +199,16 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel) {
             }
         }
     ) { innerPadding ->
-        NavHost(navController = navController, startDestination = "calendar",modifier = Modifier
+        NavHost(navController = navController, startDestination = BottomBarItems.COURSES.name,modifier = Modifier
             .haze(
                 state = hazeState,
                 backgroundColor = MaterialTheme.colorScheme.surface,)) {
-            composable("calendar") { CalendarScreen(showAll,vm,grade,innerPadding) }
-            composable("search") { SearchScreen(vm,false,innerPadding) }
-            composable("settings") { SettingsScreen(
+            composable(BottomBarItems.COURSES.name) { CalendarScreen(showAll,vm,grade,innerPadding) }
+            composable(BottomBarItems.FOCUS.name) { TodayScreen(vm,vm2,innerPadding,blur) }
+            composable(BottomBarItems.SEARCH.name) { SearchScreen(vm,false,innerPadding) }
+            composable(BottomBarItems.SETTINGS.name) { SettingsScreen(
                 vm, showlable, showlablechanged = {showlablech -> showlable = showlablech}, false,innerPadding,blur,blurchanged = {blurch -> blur = blurch}
             ) }
-            composable("today") { TodayScreen(vm,vm2,innerPadding,blur) }
         }
     }
 }

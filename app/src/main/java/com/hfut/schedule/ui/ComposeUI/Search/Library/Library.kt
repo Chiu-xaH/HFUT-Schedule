@@ -1,13 +1,9 @@
 package com.hfut.schedule.ui.ComposeUI.Search.Library
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
-import androidx.lifecycle.ViewModelProvider
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
@@ -20,9 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -35,7 +29,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
@@ -51,14 +44,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Observer
 import com.google.gson.Gson
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
-import com.hfut.schedule.activity.LoginSuccessAcitivity
+import com.hfut.schedule.logic.Enums.LibraryItems
 import com.hfut.schedule.logic.datamodel.Community.LibRecord
 import com.hfut.schedule.logic.datamodel.Community.LibraryResponse
 import com.hfut.schedule.logic.utils.SharePrefs
@@ -66,9 +56,7 @@ import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.lang.Exception
 
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -83,7 +71,7 @@ fun LibraryItem(vm : LoginSuccessViewModel) {
     CommuityTOKEN?.let { vm.GetHistory(it,"1") }
 
     ListItem(
-        headlineContent = { Text(text = "图书  借阅 ${getBorrow(BORROWED).size} 本") },
+        headlineContent = { Text(text = "图书  借阅 ${getBorrow(LibraryItems.BORROWED.name).size} 本") },
         leadingContent = {
             Icon(
                 painterResource(R.drawable.book),

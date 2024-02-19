@@ -12,12 +12,13 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.ui.ComposeUI.Settings.Items.MyAPIItem
 import com.hfut.schedule.ui.ComposeUI.Settings.Items.SettingsCubeItems
 import com.hfut.schedule.ui.ComposeUI.Settings.Test.debug
+import dev.chrisbanes.haze.HazeState
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun FirstCube( ) {
+fun FirstCube() {
     MyAPIItem()
     Spacer(modifier = Modifier.height(5.dp))
     SettingsCubeItems()

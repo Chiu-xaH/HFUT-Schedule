@@ -43,6 +43,9 @@ import androidx.compose.ui.unit.sp
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.UIUtils.DialogSample
 import com.hfut.schedule.ui.UIUtils.Tests
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.haze
+import dev.chrisbanes.haze.hazeChild
 import kotlinx.coroutines.launch
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -57,8 +60,9 @@ fun debug() {
     var showBottomSheet by remember { mutableStateOf(false) }
     if (showBottomSheet) {
         ModalBottomSheet(
+            containerColor = Color.Transparent,
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState
+            sheetState = sheetState,
         ) { DialogSample() }
     }
 

@@ -10,6 +10,7 @@
     <application
         android:name=".App.MyApplication"
         android:allowBackup="true"
+        android:enableOnBackInvokedCallback="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
@@ -29,13 +30,13 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-    <activity
+        <activity
             android:name=".activity.SavedCoursesActivity"
             android:exported="false"
             android:label="@string/title_activity_schedule"
             android:theme="@style/Theme.肥工课程表" />
         <activity
-            android:name=".activity.LoginSuccessAcitivity"
+            android:name=".activity.LoginSuccessActivity"
             android:exported="false"
             android:label="@string/title_activity_uiacitivity"
             android:theme="@style/Theme.肥工课程表" />

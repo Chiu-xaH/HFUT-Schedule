@@ -6,10 +6,6 @@ import com.hfut.schedule.logic.datamodel.Community.BorrowRecords
 import com.hfut.schedule.logic.datamodel.Community.BorrowResponse
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 
-
-val HISTORY = "History"
-val BORROWED = "Borrowed"
-
 fun getBorrow(PrefsJson : String) : MutableList<BorrowRecords> {
     val json = prefs.getString(PrefsJson,MyApplication.NullBorrow)
     val records = Gson().fromJson(json,BorrowResponse::class.java).result.records

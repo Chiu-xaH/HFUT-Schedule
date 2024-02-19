@@ -8,6 +8,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
+import com.hfut.schedule.logic.Enums.LibraryItems
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.datamodel.Jxglstu.lessonIdsResponse
@@ -530,7 +531,7 @@ class LoginSuccessViewModel : ViewModel() {
         if (call != null) {
             call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    SharePrefs.Save("Borrowed", response.body()?.string())
+                    SharePrefs.Save(LibraryItems.BORROWED.name, response.body()?.string())
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -545,7 +546,7 @@ class LoginSuccessViewModel : ViewModel() {
         if (call != null) {
             call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    SharePrefs.Save("History", response.body()?.string())
+                    SharePrefs.Save(LibraryItems.HISTORY.name, response.body()?.string())
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }

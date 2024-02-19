@@ -207,7 +207,7 @@ fun Tests() {
     val wifiManager = MyApplication.context.getSystemService(Context.WIFI_SERVICE) as WifiManager
     val wifiInfo = wifiManager.connectionInfo.ssid
     Log.d("SSID",wifiInfo)
-    DialogSample()
+   // DialogSample()
 }
 
 @OptIn(ExperimentalAnimationGraphicsApi::class, ExperimentalMaterial3Api::class)
@@ -233,7 +233,6 @@ fun ts() {
     Box(
         Modifier
             .size(300.dp)
-            // Blur content allowing the result to extend beyond the bounds of the original content
             .blur(30.dp, edgeTreatment = BlurredEdgeTreatment.Unbounded)
     ) {
         Button(onClick = { /*TODO*/ }) {
@@ -242,131 +241,70 @@ fun ts() {
     }
 }
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DialogSample() {
-    val hazeState = remember { HazeState() }
-    val navController = rememberNavController()
     Scaffold(
+        modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-            modifier = Modifier.hazeChild(state = hazeState),
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = .45f),
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-            title = {  Text("同学") },
-            actions = {
-                IconButton(onClick = {
-
-                }) {
-                    Icon(painter = painterResource(id = R.drawable.rotate_right),
-                        contentDescription = "",
-                        //modifier = Modifier.graphicsLayer(rotationZ = if (rotating.value) angle else 0f)
-                    )
-                }
-            },
-        )
+                title = { Text(text = "Haze Dialog sample") },
+                navigationIcon = {
+                    IconButton(onClick = {}) {
+                        @Suppress("DEPRECATION")
+                        Icon(Icons.Default.ArrowBack, null)
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+            )
         },
-        bottomBar = {
-            NavigationBar(
-                containerColor = MaterialTheme.colorScheme.primaryContainer.copy(.35f),
-                modifier = Modifier
-                .hazeChild(state = hazeState)) {
-                //    val image = AnimatedImageVector.animatedVectorResource(R.drawable.ic_hourglass_animated)
-                //  var atEnd by remember { mutableStateOf(false) }
+    ) { innerPadding ->
+        val hazeState = remember { HazeState() }
+        var showDialog by remember { mutableStateOf(false) }
 
-                val items = listOf(
-                    NavigationBarItemData("1", "课程表", painterResource(R.drawable.calendar ), painterResource(R.drawable.calendar_month_filled)),
-                    NavigationBarItemData("2","聚焦", painterResource(R.drawable.lightbulb), painterResource(R.drawable.lightbulb_filled)),
-                    NavigationBarItemData("search","查询中心", painterResource(R.drawable.search),painterResource(R.drawable.search_filledx)),
-                    NavigationBarItemData("3","选项", painterResource(R.drawable.cube), painterResource(R.drawable.deployed_code_filled))
-                )
-                items.forEach { item ->
-                    val route = item.route
-                    val selected = navController.currentBackStackEntryAsState().value?.destination?.route == route
-                    NavigationBarItem(
-                        selected = selected,
-
-                                // alwaysShowLabel = sholable,
-                     //   enabled = isEnabled,
-                        onClick = {
-                            //   if(item == items[2])
-                            //     atEnd = !atEnd
-                            if (!selected) {
-                                navController.navigate(route) {
-                                    popUpTo(navController.graph.startDestinationId) {
-                                        saveState = true
-                                    }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            }
-                        },
-                        label = { Text(text = item.label) },
-                        icon = {
-                            BadgedBox(badge = {
-                                if (item == items[3]){
-                                 //   if (showBadge)
-                                      //  Badge{ Text(text = "1")}
-                                }
-                            }) { Icon(if(selected)item.filledIcon else item.icon, contentDescription = item.label) }
-                        }
-                    )
-                }
-            }
-        },
-    ) {
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            modifier = Modifier
-                .haze(
-                    state = hazeState,
-                    backgroundColor = MaterialTheme.colorScheme.surface,
-                ),
-        ) {
-            items(50){item ->
-                Card(
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = 3.dp
-                    ),
+        if (showDialog) {
+            Dialog(onDismissRequest = { showDialog = false }) {
+                Surface(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 15.dp, vertical = 5.dp)
-                    //.size(width = 350.dp, height = 90.dp)
-                    ,shape = MaterialTheme.shapes.medium
-
+                        .fillMaxHeight(fraction = .5f)
+                        .hazeChild(
+                            state = hazeState,
+                            shape = MaterialTheme.shapes.extraLarge,
+                            blurRadius = 35.dp, tint = Color.Transparent, noiseFactor = 0f
+                        ),
+                    shape = MaterialTheme.shapes.extraLarge,
+                    // We can't use Haze tint with dialogs, as the tint will display a scrim over the
+                    // background content. Instead we need to set a translucent background on the
+                    // dialog content.
+                    color = MaterialTheme.colorScheme.surface.copy(alpha = 0.1f),
+                    contentColor = MaterialTheme.colorScheme.onSurface,
                 ) {
-                    ListItem(
-                        headlineContent = {  Text(text = "高斯模糊测试列表") },
-                        supportingContent = { Text(text = "项目 ${item + 1}")},
-                        leadingContent = {
-                                Icon(painterResource(R.drawable.deblur), contentDescription = "Localized description",)
-                        },
-                        colors = if(item % 2 == 0)
-                            ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
-                        else ListItemDefaults.colors(),
-                        modifier = Modifier.clickable {}
-                    )
+                    // empty
+                }
+            }
+        }
+
+        LazyVerticalGrid(
+            modifier = Modifier.haze(hazeState),
+            columns = GridCells.Fixed(4),
+            contentPadding = innerPadding,
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            items(40) {
+                Card(
+                    modifier = Modifier.height(100.dp),
+                    onClick = { showDialog = true },
+                ) {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxSize(),
+                    ) {
+                        Text(text = "Card $it")
+                    }
                 }
             }
         }
     }
 }
-
-val LorumIspum by lazy {
-    """
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sit amet congue mauris, iaculis accumsan eros. Aliquam pulvinar est ac elit vulputate egestas. Vestibulum consequat libero at sem varius, vitae semper urna rhoncus. Aliquam mollis, ipsum a convallis scelerisque, sem dui consequat leo, in tempor risus est ac mi. Nam vel tellus dolor. Nunc lobortis bibendum fermentum. Mauris sed mollis justo, eu tristique elit. Cras semper augue a tortor tempor, vitae vestibulum eros convallis. Curabitur id justo eget tortor iaculis lobortis. Integer pharetra augue ac elit porta iaculis non vitae libero. Nam eros turpis, suscipit at iaculis vitae, malesuada vel arcu. Donec tincidunt porttitor iaculis. Pellentesque non augue magna. Mauris mattis purus vitae mi maximus, id molestie ipsum facilisis. Donec bibendum gravida dolor nec suscipit. Pellentesque tempus felis iaculis, porta diam sed, tristique tortor.
-
-Sed vel tellus vel augue pulvinar semper sit amet eu est. In porta arcu eu sapien luctus scelerisque. In hac habitasse platea dictumst. Aenean varius lobortis malesuada. Sed vitae ornare arcu. Nunc maximus lectus purus, vel aliquet velit facilisis a. Nulla maximus bibendum magna id vulputate. Mauris volutpat lorem et risus porta dignissim. In at elit a est vulputate tincidunt.
-
-Nulla facilisi. Curabitur gravida quam nec massa tempus, sed placerat nunc hendrerit. Duis sit amet cursus ipsum. Phasellus eget congue lacus. Duis vehicula venenatis posuere. Morbi non tempor risus. Aenean bibendum efficitur tortor, eu interdum velit gravida rutrum. Sed tempus elementum libero. Suspendisse dapibus lorem vitae justo congue pellentesque. Phasellus et tellus sagittis, blandit nibh a, porta felis. Proin ornare eget odio eget laoreet. Cras id augue fringilla, molestie ligula sit amet, sollicitudin neque.
-
-Suspendisse vitae bibendum justo, nec egestas mauris. Mauris id metus mi. Morbi ut maximus ex, eu consequat elit. Sed malesuada pellentesque mauris vel molestie. Nulla facilisi. Cras pellentesque metus id nibh sodales gravida. Vivamus a feugiat felis. Vivamus et justo libero. Maecenas ac augue viverra, blandit diam sed, porttitor sapien. Proin eu eros mollis, commodo lectus nec, imperdiet nisi. Proin nulla nulla, vehicula a faucibus sit amet, auctor sed lorem. Mauris ut ipsum sit amet massa posuere maximus eget porttitor nisl. Quisque nunc dolor, pharetra id nunc sit amet, maximus convallis nunc.
-
-Ut magna diam, ullamcorper vel imperdiet at, dignissim sit amet turpis. Duis ut enim eu sapien fringilla placerat. Integer at dui eget leo tincidunt iaculis. Fusce nec elementum turpis. Aenean gravida, ipsum sit amet varius hendrerit, elit nisi hendrerit ex, et porta enim lorem eget mi. Duis convallis dolor a lacinia aliquam. Aliquam erat volutpat.
-""".trim()
-}
-
-
