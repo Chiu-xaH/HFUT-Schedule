@@ -14,8 +14,8 @@ import androidx.compose.animation.with
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -23,7 +23,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
@@ -53,16 +52,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.App.MyApplication
-import com.hfut.schedule.R
 import com.hfut.schedule.logic.datamodel.Community.courseDetailDTOList
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.GetDate.Benweeks
-import com.hfut.schedule.logic.utils.GetDate.Date_MM_dd
 import com.hfut.schedule.ui.UIUtils.MyToast
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -74,7 +70,7 @@ import java.time.LocalDate
 )
 @SuppressLint("SuspiciousIndentation", "CoroutineCreationDuringComposition")
 @Composable
-fun SaveCourse() {
+fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues) {
 
     var table_1_1 by rememberSaveable { mutableStateOf("") }
     var table_1_2 by rememberSaveable { mutableStateOf("") }
@@ -119,7 +115,7 @@ fun SaveCourse() {
     var table_6_6 by rememberSaveable { mutableStateOf("") }
     var table_6_7 by rememberSaveable { mutableStateOf("") }
 
-    var showAll by remember { mutableStateOf(false) }
+    //var showAll by remember { mutableStateOf(false) }
 
     var sheet_1_1 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
     var sheet_1_2  = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
@@ -631,26 +627,9 @@ fun SaveCourse() {
     var today by rememberSaveable { mutableStateOf(LocalDate.now()) }
     val mondayOfCurrentWeek = today.minusDays(today.dayOfWeek.value - 1L)
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                title = { Text("今天  第${Benweeks}周  周$chinesenumber  $Date_MM_dd") },
-                actions = {
-                    IconButton(onClick = { showAll = !showAll }) { Icon(painter = painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "") }
-                }
-            )
-        },
-    ) {innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-        ) {
+
+
+        Column(modifier = Modifier.fillMaxSize().padding(innerPaddings)) {
             Spacer(modifier = Modifier.height(5.dp))
 
             LazyVerticalGrid(columns = GridCells.Fixed(if(showAll)7 else 5),modifier = Modifier.padding(horizontal = 10.dp)){
@@ -673,7 +652,6 @@ fun SaveCourse() {
             }
 
             Box( modifier = Modifier
-                .fillMaxHeight()
                 .pullRefresh(states)
             ) {
                 val scrollstate = rememberLazyGridState()
@@ -707,7 +685,7 @@ fun SaveCourse() {
                     exit = scaleOut(),
                     modifier = Modifier
                         .align(Alignment.BottomStart)
-                        .padding(horizontal = 15.dp, vertical = 100.dp)
+                        .padding(horizontal = 15.dp, vertical = 15.dp)
                 ) {
                     if (shouldShowAddButton) {
                         FloatingActionButton(
@@ -728,7 +706,7 @@ fun SaveCourse() {
                     exit = scaleOut(),
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
-                        .padding(horizontal = 15.dp, vertical = 100.dp)
+                        .padding(horizontal = 15.dp, vertical = 15.dp)
                 ) {
                     if (shouldShowAddButton) {
                         ExtendedFloatingActionButton(
@@ -755,7 +733,7 @@ fun SaveCourse() {
                     exit = scaleOut(),
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
-                        .padding(horizontal = 15.dp, vertical = 100.dp)
+                        .padding(horizontal = 15.dp, vertical = 15.dp)
                 ) {
                     if (shouldShowAddButton) {
                         FloatingActionButton(
@@ -772,5 +750,5 @@ fun SaveCourse() {
             }
             Spacer(modifier = Modifier.height(100.dp))
         }
-    }
+
 }

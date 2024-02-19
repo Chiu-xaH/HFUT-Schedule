@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -31,33 +32,25 @@ import com.hfut.schedule.ui.ComposeUI.Settings.Items.SettingsItem
 fun SettingsScreen(vm : LoginSuccessViewModel
                    ,showlable : Boolean,
                    showlablechanged: (Boolean) -> Unit,
-                   ifSaved : Boolean) {
+                   ifSaved : Boolean,innerPaddings : PaddingValues,
+                   blur : Boolean,
+                   blurchanged : (Boolean) -> Unit
+) {
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                title = { Text("肥工教务通 选项") }
-            )
-        },) {innerPadding ->
+
         Column(modifier = Modifier
-            .padding(innerPadding)
             .verticalScroll(rememberScrollState())
-            .fillMaxSize()) {
+            .fillMaxSize().padding(innerPaddings)) {
 
             Spacer(modifier = Modifier.height(10.dp))
 
             MyAPIItem()
 
-            SettingsItem(vm,showlable,showlablechanged,ifSaved)
+            SettingsItem(vm,showlable,showlablechanged,ifSaved,blur,blurchanged)
 
             SettingsCubeItems()
 
             Spacer(modifier = Modifier.height(90.dp))
         }
-    }
+
 }

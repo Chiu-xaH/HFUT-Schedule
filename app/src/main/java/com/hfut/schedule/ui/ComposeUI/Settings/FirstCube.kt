@@ -1,6 +1,8 @@
 package com.hfut.schedule.ui.ComposeUI.Settings
 
 import android.annotation.SuppressLint
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -11,6 +13,7 @@ import com.hfut.schedule.ui.ComposeUI.Settings.Items.MyAPIItem
 import com.hfut.schedule.ui.ComposeUI.Settings.Items.SettingsCubeItems
 import com.hfut.schedule.ui.ComposeUI.Settings.Test.debug
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("SuspiciousIndentation")
 @Composable

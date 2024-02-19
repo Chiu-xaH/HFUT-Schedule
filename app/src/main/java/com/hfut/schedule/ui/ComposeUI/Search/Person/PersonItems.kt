@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.ComposeUI.Search.Person
 
+import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -20,16 +21,18 @@ import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import org.jsoup.Jsoup
 
 
 
 
+@SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PersonItems() {
+fun PersonItems(ifSaved : Boolean) {
 
-    val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
+   // val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
 
 
     val info = prefs.getString("info","")
@@ -180,13 +183,12 @@ fun PersonItems() {
                 },
                 modifier = Modifier.clickable {}
             )
-
-
+            if(!ifSaved)
             ListItem(
-                headlineContent = { Text(text = "寝室   待开发") },
+                headlineContent = { Text(text = "获取人像照片") },
                 leadingContent = {
                     Icon(
-                        painterResource(R.drawable.bed),
+                        painterResource(R.drawable.background_replace),
                         contentDescription = "Localized description",
                     )
                 },

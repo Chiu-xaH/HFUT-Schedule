@@ -492,7 +492,7 @@ fun BoxScope.AddButton(isVisible: Boolean) {
             exit = scaleOut(),
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(horizontal = 15.dp, vertical = 100.dp)
+                .padding(horizontal = 15.dp, vertical = 15.dp)
         ) {
             if (isVisible) {
                 FloatingActionButton(

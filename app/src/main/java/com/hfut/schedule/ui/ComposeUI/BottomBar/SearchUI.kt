@@ -12,9 +12,11 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
@@ -24,6 +26,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -35,6 +38,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -63,6 +67,9 @@ import com.hfut.schedule.ui.ComposeUI.Search.More.More
 import com.hfut.schedule.ui.ComposeUI.Search.Second.Second
 import com.hfut.schedule.ui.ComposeUI.Search.SchoolCalendar.SchoolCalendar
 import com.hfut.schedule.ui.UIUtils.MyToast
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.haze
+import dev.chrisbanes.haze.hazeChild
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -93,23 +100,12 @@ fun getName(vm : LoginSuccessViewModel) : String? {
 @SuppressLint("CoroutineCreationDuringComposition", "SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,) {
+fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : PaddingValues) {
 
     getName(vm)
+    val info = prefs.getString("info","")
     if(prefs.getString("TOKEN","")?.contains("ey") == false) MyToast("未登录,部分功能不可用")
-    // 创建一个无限循环的动画过渡
-    val transition = rememberInfiniteTransition()
-    // 从0到360度线性插值，每秒旋转一圈
-    val angle by transition.animateFloat(
-        initialValue = 0f,
-        targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 1000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = ""
-    )
-    val rotating = remember { mutableStateOf(false) }
+
 
     var text by remember { mutableStateOf("你好") }
     if(GetDate.formattedTime.toInt() == 12) text = "午饭时间到~"
@@ -119,38 +115,25 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,) {
     if(GetDate.formattedTime.toInt() in 18..23) text = "晚上好"
     if(GetDate.formattedTime.toInt() in 0..4) text = "熬夜也要早睡哦"
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                title = {  Text("$text ${getName(vm)} 同学") },
-                actions = {
-                    IconButton(onClick = {
-                        Refresh(vm,rotating)
-                    }) {
-                        Icon(painter = painterResource(id = R.drawable.rotate_right),
-                            contentDescription = "",
-                            modifier = Modifier.graphicsLayer(rotationZ = if (rotating.value) angle else 0f)
-                        )
-                    }
-                }
-            )
-        },
-    ) {innerPadding ->
+    val hazeState = remember { HazeState() }
+
+
         Column(
             modifier = Modifier
-                .padding(innerPadding)
+                .haze(state = hazeState, backgroundColor = MaterialTheme.colorScheme.surface,)
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(rememberScrollState()).padding(innerPaddings)
+
         ) {
             Spacer(modifier = Modifier.height(5.dp))
             if (ifSaved){
                 Grade(vm,true)
                 Exam(vm)
+                if (info != null) {
+                    if(info.isNotEmpty()){
+                        PersonUI(true)
+                    }
+                }
                 SchoolCardItem(vm)
                 LibraryItem(vm)
                 FailRate(vm)
@@ -167,7 +150,7 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,) {
                 Grade(vm,false)
                 Exam(vm)
                 Program(vm)
-                PersonUI()
+                PersonUI(false)
                 EmptyRoom(vm)
                 SchoolCardItem(vm)
                 LibraryItem(vm)
@@ -186,7 +169,7 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,) {
             }
              Spacer(modifier = Modifier.height(90.dp))
         }
-    }
+
 }
 
 fun Refresh(vm : LoginSuccessViewModel, rotating: MutableState<Boolean>) {

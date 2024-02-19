@@ -8,6 +8,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -87,23 +88,10 @@ import java.time.format.DateTimeFormatter
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
-fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel) {
-
-    val dayweek = GetDate.dayweek
-    var chinesenumber  = GetDate.chinesenumber
+fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel,innerPaddings : PaddingValues,blur : Boolean) {
 
     val  TAB_LEFT = 0
     val TAB_RIGHT = 1
-
-    when (dayweek) {
-        1 -> chinesenumber = "一"
-        2 -> chinesenumber = "二"
-        3 -> chinesenumber = "三"
-        4 -> chinesenumber = "四"
-        5 -> chinesenumber = "五"
-        6 ->  chinesenumber = "六"
-        0 ->  chinesenumber = "日"
-    }
 
 /////////////////////////////////////////逻辑函数区/////////////////////////////////////////////////
 
@@ -164,31 +152,9 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel) {
 
 
     
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                actions = {
 
-                        TextButton(onClick = { showBottomSheet = true }) {
-                            BadgedBox(badge = {
-                                if (getNotifications().size.toString() != prefs.getString("Notifications",""))
-                                Badge()
-                            }) { Icon(painterResource(id = R.drawable.notifications), contentDescription = "") }
-                        }
-
-                },
-                title = { Text("今天  第${GetDate.Benweeks}周  周${chinesenumber}  ${GetDate.Date_MM_dd}") }
-            )
-        },
-    ) {innerPadding ->
         Column(modifier = Modifier
-            .padding(innerPadding)
-            .fillMaxSize()){
+            .fillMaxSize().padding(innerPaddings)){
             var state by remember { mutableStateOf(TAB_LEFT) }
             val titles = listOf("重要安排","其他事项")
             Column {
@@ -198,7 +164,7 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel) {
                             selected = state == index,
                             onClick = { state = index },
                             text = { Text(text = title) },
-                            modifier = Modifier.background(MaterialTheme.colorScheme.primaryContainer)
+                            modifier = Modifier.background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = if(blur).5f else 1f))
                         )
                     }
                 }
@@ -271,5 +237,4 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel) {
             }
 
         }
-    }
 }

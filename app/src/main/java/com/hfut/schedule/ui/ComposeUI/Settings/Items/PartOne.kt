@@ -40,6 +40,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.SaveBoolean
+import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.ComposeUI.Search.Electric.WebViewScreen
 import com.hfut.schedule.ui.ComposeUI.Search.LePaoYun.InfoSet
 import com.hfut.schedule.ui.UIUtils.MyToast
@@ -49,14 +50,16 @@ import com.hfut.schedule.ui.UIUtils.MyToast
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsItem(vm : LoginSuccessViewModel, showlable : Boolean, showlablechanged :(Boolean) -> Unit,ifSaved : Boolean) {
-    val switch_focus = SharePrefs.prefs.getBoolean("SWITCHFOCUS",true)
+fun SettingsItem(vm : LoginSuccessViewModel, showlable : Boolean, showlablechanged :(Boolean) -> Unit,ifSaved : Boolean, blur : Boolean,blurchanged :(Boolean) -> Unit) {
+    val switch_focus = prefs.getBoolean("SWITCHFOCUS",true)
     var showfocus by remember { mutableStateOf(switch_focus) }
 
+    SaveBoolean("SWITCH",true,showlable)
+    SaveBoolean("SWITCHBLUR",true,blur)
 
-    val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-    if (sp.getBoolean("SWITCH", true) != showlable) { sp.edit().putBoolean("SWITCH", showlable).apply() }
-
+    val switch_faststart = SharePrefs.prefs.getBoolean("SWITCHFASTSTART",false)
+    var faststart by remember { mutableStateOf(switch_faststart) }
+    SaveBoolean("SWITCHFASTSTART",false,faststart)
 
     ListItem(
         headlineContent = { Text(text = "底栏标签") },
@@ -64,6 +67,20 @@ fun SettingsItem(vm : LoginSuccessViewModel, showlable : Boolean, showlablechang
         leadingContent = { Icon(painterResource(R.drawable.label), contentDescription = "Localized description",) },
         trailingContent = { Switch(checked = showlable, onCheckedChange = showlablechanged) },
         modifier = Modifier.clickable { showlablechanged }
+    )
+    ListItem(
+        headlineContent = { Text(text = "实时模糊") },
+        supportingContent = { Text(text = "Android 13+可用,开启后将会转换部分渲染为实时模糊,非支持的系统开启后将为半透明背景")},
+        leadingContent = { Icon(painterResource(R.drawable.deblur), contentDescription = "Localized description",) },
+        trailingContent = { Switch(checked = blur, onCheckedChange = blurchanged) },
+        modifier = Modifier.clickable { blurchanged }
+    )
+    ListItem(
+        headlineContent = { Text(text = "快速启动") },
+        supportingContent = { Text(text = "打开后,再次打开应用时将默认打开免登录二级界面,而不是登陆教务页面,但您仍可通过查询中心中的选项以登录")},
+        leadingContent = { Icon(painterResource(R.drawable.speed), contentDescription = "Localized description",) },
+        trailingContent = { Switch(checked = faststart, onCheckedChange = {faststartch -> faststart = faststartch }) },
+        modifier = Modifier.clickable { faststart = !faststart }
     )
 
     if(ifSaved)
@@ -148,12 +165,6 @@ fun SettingsItem(vm : LoginSuccessViewModel, showlable : Boolean, showlablechang
         leadingContent = { Icon(painterResource(R.drawable.edit), contentDescription = "Localized description",) },
         modifier = Modifier.clickable { showBottomSheet_focus = true }
     )
-  //  ListItem(
-    //    headlineContent = { Text(text = "查询中心 布局编辑") },
-      //  supportingContent = { Text(text = "定义查询中心的布局") },
-        //leadingContent = { Icon(painterResource(R.drawable.edit), contentDescription = "Localized description",) },
-       // modifier = Modifier.clickable {  }
-   // )
     ListItem(
             headlineContent = { Text(text = "云运动 信息配置") },
     supportingContent = { Text(text = "需要提交已登录手机的信息") },

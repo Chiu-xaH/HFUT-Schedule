@@ -19,9 +19,9 @@ object GetDate {
     val result = Gson().fromJson(json,CourseTotalResponse::class.java).result
     val start = result.start.substringBefore(" ")
     @RequiresApi(Build.VERSION_CODES.O)
-    val firstWeekStart = LocalDate.parse(start)
+    val firstWeekStart: LocalDate = LocalDate.parse(start)
     @RequiresApi(Build.VERSION_CODES.O)
-    val today = LocalDate.now()
+    val today: LocalDate = LocalDate.now()
     @RequiresApi(Build.VERSION_CODES.O)
     val weeksBetween = ChronoUnit.WEEKS.between(firstWeekStart, today) + 1
 

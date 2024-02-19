@@ -20,6 +20,7 @@ import androidx.compose.animation.with
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -85,7 +86,7 @@ import java.time.LocalDate
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class, ExperimentalAnimationApi::class)
 @SuppressLint("SuspiciousIndentation", "CoroutineCreationDuringComposition")
 @Composable
-fun CalendarScreen(vm : LoginSuccessViewModel,grade : String) {
+fun CalendarScreen(showAll : Boolean,vm : LoginSuccessViewModel,grade : String,innerPadding : PaddingValues) {
 
     var loading by remember { mutableStateOf(true) }
 
@@ -132,7 +133,6 @@ fun CalendarScreen(vm : LoginSuccessViewModel,grade : String) {
     var table_6_6 by rememberSaveable { mutableStateOf("") }
     var table_6_7 by rememberSaveable { mutableStateOf("") }
 
-    var showAll by remember { mutableStateOf(false) }
 
     var sheet_1_1 by rememberSaveable { mutableStateOf("") }
     var sheet_1_2 by rememberSaveable { mutableStateOf("") }
@@ -216,21 +216,6 @@ fun CalendarScreen(vm : LoginSuccessViewModel,grade : String) {
 
     var Bianhuaweeks by rememberSaveable { mutableStateOf(GetDate.weeksBetween) }
 
-
-    val dayweek = GetDate.dayweek
-
-
-    var chinesenumber  = GetDate.chinesenumber
-
-    when (dayweek) {
-        1 -> chinesenumber = "一"
-        2 -> chinesenumber = "二"
-        3 -> chinesenumber = "三"
-        4 -> chinesenumber = "四"
-        5 -> chinesenumber = "五"
-        6 ->  chinesenumber = "六"
-        0 ->  chinesenumber = "日"
-    }
     //填充UI与更新
     fun Update() {
         for(i in table.indices)
@@ -774,20 +759,7 @@ fun CalendarScreen(vm : LoginSuccessViewModel,grade : String) {
     var today by rememberSaveable { mutableStateOf(LocalDate.now()) }
     val mondayOfCurrentWeek = today.minusDays(today.dayOfWeek.value - 1L)
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                title = { Text("今天  第${GetDate.Benweeks}周  周${chinesenumber}  ${GetDate.Date_MM_dd}") },
-                actions = {
-                    IconButton(onClick = { showAll = !showAll }) { Icon(painter = painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "") }
-                }
-            )
-        },) {innerPadding ->
+
         Column(
             modifier = Modifier
                 .padding(innerPadding)
@@ -864,7 +836,7 @@ fun CalendarScreen(vm : LoginSuccessViewModel,grade : String) {
                             exit = scaleOut(),
                             modifier = Modifier
                                 .align(Alignment.BottomStart)
-                                .padding(horizontal = 15.dp, vertical = 100.dp)
+                                .padding(horizontal = 15.dp, vertical = 15.dp)
                         ) {
                             if (shouldShowAddButton) {
                                 FloatingActionButton(
@@ -886,7 +858,7 @@ fun CalendarScreen(vm : LoginSuccessViewModel,grade : String) {
                             exit = scaleOut(),
                             modifier = Modifier
                                 .align(Alignment.BottomCenter)
-                                .padding(horizontal = 15.dp, vertical = 100.dp)
+                                .padding(horizontal = 15.dp, vertical = 15.dp)
                         ) {
                             if (shouldShowAddButton) {
                                 ExtendedFloatingActionButton(
@@ -914,7 +886,7 @@ fun CalendarScreen(vm : LoginSuccessViewModel,grade : String) {
                             exit = scaleOut(),
                             modifier = Modifier
                                 .align(Alignment.BottomEnd)
-                                .padding(horizontal = 15.dp, vertical = 100.dp)
+                                .padding(horizontal = 15.dp, vertical = 15.dp)
                         ) {
                             if (shouldShowAddButton) {
                                 FloatingActionButton(
@@ -933,5 +905,5 @@ fun CalendarScreen(vm : LoginSuccessViewModel,grade : String) {
                 }
             }
         }
-    }
+
 }

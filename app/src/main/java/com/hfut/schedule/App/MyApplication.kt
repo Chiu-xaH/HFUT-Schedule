@@ -8,7 +8,7 @@ import dagger.hilt.android.HiltAndroidApp
 class MyApplication : Application() {
     companion object {
         lateinit var context: Context
-        const val version = "4.0.2"
+        const val version = "4.1"
         const val EleURL = "http://172.31.248.26:8988/"
         const val CommunityURL = "https://community.hfut.edu.cn/"
         const val ZJGDBillURL = "http://121.251.19.62/"
@@ -21,7 +21,6 @@ class MyApplication : Application() {
         const val MyURL = "https://chiu-xah.github.io/"
         const val XuanquURL = "http://39.106.82.121/"
         const val RedirectURL = "https://cas.hfut.edu.cn/cas/login?service=http%3A%2F%2Fjxglstu.hfut.edu.cn%2Feams5-student%2Fneusoft-sso%2Flogin&exception.message=A+problem+occurred+restoring+the+flow+execution+with+key+%27e1s1%27"
-        const val NullLoginCommunity = "{\"result\": {\"token\": \"\"}}"
         const val NullExams = "{\"result\": {\"examArrangementList\": []}}"
         const val NullTotal = "{\n" +
                 "  \"result\": {\n" +
@@ -84,40 +83,6 @@ class MyApplication : Application() {
                 "            <td>空</td>\n" +
                 "          </tr>\n" +
                 "        </tbody>"
-
-        const val NullDatum = "{\n" +
-                "    \"result\" : {\n" +
-                "        \"lessonList\" : [\n" +
-                "            {\n" +
-                "                \"courseName\" : \"\",\n" +
-                "                \"suggestScheduleWeekInfo\" : \"\",\n" +
-                "                \"courseTypeName\" : \"\"\n" +
-                "            }\n" +
-                "        ],\n" +
-                "        \"scheduleList\" : [\n" +
-                "            {\n" +
-                "                \"lessonId\" : 0,\n" +
-                "                \"room\" : {\n" +
-                "                    \"nameZh\" : \"2\"\n" +
-                "                },\n" +
-                "                \"weekday\" : 0,\n" +
-                "                \"personName\" : \"\",\n" +
-                "                \"weekIndex\" : 0,\n" +
-                "                \"startTime\" : 0000,\n" +
-                "                \"endTime\" : 0000,\n" +
-                "                \"date\" : \"\",\n" +
-                "                \"lessonType\" : \"\"\n" +
-                "            }\n" +
-                "        ],\n" +
-                "        \"scheduleGroupList\" : [\n" +
-                "            {\n" +
-                "                \"lessonId\" : 0,\n" +
-                "                \"stdCount\" : 0\n" +
-                "            }\n" +
-                "        ]\n" +
-                "    }\n" +
-                "}\n" +
-                "\n"
 
         const val NullMy = "{\n" +
                 "    \"Lessons\" : {\n" +

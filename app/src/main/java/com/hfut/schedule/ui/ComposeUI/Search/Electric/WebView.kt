@@ -1,10 +1,13 @@
 package com.hfut.schedule.ui.ComposeUI.Search.Electric
 
 import android.webkit.WebView
+import android.widget.TextView
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
+import com.hfut.schedule.R
+
 
 @Composable
 fun WebViewScreen(url: String) {

@@ -18,7 +18,7 @@ import com.hfut.schedule.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PersonUI() {
+fun PersonUI(ifSaved : Boolean) {
     val sheetState_Person = rememberModalBottomSheetState()
     var showBottomSheet_Person by remember { mutableStateOf(false) }
 
@@ -35,6 +35,6 @@ fun PersonUI() {
                 showBottomSheet_Person = false
             },
             sheetState = sheetState_Person
-        ) { PersonItems() }
+        ) { PersonItems(ifSaved) }
     }
 }

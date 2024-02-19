@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,7 +26,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
@@ -37,8 +41,6 @@ import com.hfut.schedule.logic.utils.StartUri.StartUri
 import com.hfut.schedule.ui.ComposeUI.Settings.Monet.MonetColorItem
 import com.hfut.schedule.ui.ComposeUI.Settings.getMyVersion
 import com.hfut.schedule.ui.UIUtils.LittleDialog
-import com.hfut.schedule.ui.UIUtils.MyToast
-
 
 fun Clear() {
     val dbwritableDatabase =  dataBase.writableDatabase
@@ -113,17 +115,6 @@ fun SettingsCubeItems() {
             select = !select
             SaveBoolean("select",false,select)
         }
-    )
-    val switch_faststart = SharePrefs.prefs.getBoolean("SWITCHFASTSTART",false)
-    var faststart by remember { mutableStateOf(switch_faststart) }
-    SaveBoolean("SWITCHFASTSTART",false,faststart)
-
-    ListItem(
-        headlineContent = { Text(text = "快速启动") },
-        supportingContent = { Text(text = "打开后,再次打开应用时将默认打开免登录二级界面,而不是登陆教务页面,但您仍可通过查询中心中的选项以登录")},
-        leadingContent = { Icon(painterResource(R.drawable.speed), contentDescription = "Localized description",) },
-        trailingContent = { Switch(checked = faststart, onCheckedChange = {faststartch -> faststart = faststartch }) },
-        modifier = Modifier.clickable { faststart = !faststart }
     )
 
    // ListItem(
@@ -204,6 +195,7 @@ fun SettingsCubeItems() {
             conformtext = "抹掉数据",
             dismisstext = "取消"
         )
+        //This will look like IOS!
     }
 
     ListItem(
