@@ -38,7 +38,8 @@ class LoginSuccessActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
     private val vm by lazy { ViewModelProvider(this).get(LoginSuccessViewModel::class.java) }
     private val vm2 by lazy { ViewModelProvider(this).get(LoginViewModel::class.java) }
-    val switchColor= prefs.getBoolean("SWITCHCOLOR",true)
+    private val switchColor= prefs.getBoolean("SWITCHCOLOR",true)
+
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {

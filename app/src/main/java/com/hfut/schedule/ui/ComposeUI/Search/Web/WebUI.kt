@@ -40,7 +40,7 @@ fun WebUI() {
         headlineContent = { Text(text = "网址导航") },
         leadingContent = {
             Icon(
-                painterResource(R.drawable.travel_explore),
+                painterResource(R.drawable.explore),
                 contentDescription = "Localized description",
             )
         },

@@ -103,7 +103,7 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel) {
                 topBar = {
                     TopAppBar(
                         colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = .45f),
+                            containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
                         title = { Text("消息中心") }

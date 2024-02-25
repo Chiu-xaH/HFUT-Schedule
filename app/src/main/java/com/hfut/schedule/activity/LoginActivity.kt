@@ -51,6 +51,7 @@ import com.hfut.schedule.activity.ui.theme.肥工课程表Theme
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.ComposeUI.Activity.LoginUI
+import com.hfut.schedule.ui.ComposeUI.Saved.NoNetWork
 import com.hfut.schedule.ui.ComposeUI.Search.Electric.WebViewScreen
 import com.hfut.schedule.ui.ComposeUI.Settings.Test.BottomSheetExample
 import com.hfut.schedule.ui.ComposeUI.Settings.Test.ss
@@ -70,10 +71,11 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class LoginActivity : ComponentActivity() {
-   // private val vm2 by lazy { ViewModelProvider(this).get(LoginSuccessViewModel::class.java) }
+    private val startAcitivity = prefs.getBoolean("SWITCHFASTSTART",false)
     private val vm by lazy { ViewModelProvider(this).get(LoginViewModel::class.java) }
+    private val vm2 by lazy { ViewModelProvider(this).get(LoginSuccessViewModel::class.java) }
     private val viewModel: MainViewModel by viewModels()
-    val switchColor= prefs.getBoolean("SWITCHCOLOR",true)
+    private val switchColor= prefs.getBoolean("SWITCHCOLOR",true)
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SuspiciousIndentation", "MissingInflatedId")
 
@@ -91,7 +93,8 @@ class LoginActivity : ComponentActivity() {
                         color = MaterialTheme.colorScheme.background
                     ) {
                         TransparentSystemBars()
-                        LoginUI(vm)
+                        if(startAcitivity && intent.getBooleanExtra("nologin",true)) NoNetWork(vm2,vm)
+                        else LoginUI(vm)
                     }
                 }
             } else {
@@ -107,28 +110,27 @@ class LoginActivity : ComponentActivity() {
                             color = MaterialTheme.colorScheme.background
                         ) {
                             TransparentSystemBars()
-                            LoginUI(vm)
+                            if(startAcitivity && intent.getBooleanExtra("nologin",true)) NoNetWork(vm2,vm)
+                            else LoginUI(vm)
                         }
                     }
                 }
             }
         }
 
-        if(prefs.getBoolean("SWITCHFASTSTART",false) && intent.getBooleanExtra("nologin",true)) {
-            val it = Intent(this,SavedCoursesActivity::class.java)
-            startActivity(it)
-        }
         if(ContextCompat.checkSelfPermission(this,android.Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED)
             ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.WRITE_CALENDAR),1)
 
         if(ContextCompat.checkSelfPermission(this,android.Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED)
             ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.READ_CALENDAR),1)
 
-        lifecycleScope.launch {
-            launch { vm.getCookie() }
-            launch { SharePrefs.Save("tip","0") }
-            launch {  vm.getKey() }
-            launch { vm.My() }
+        if(!(startAcitivity && intent.getBooleanExtra("nologin",true))) {
+            lifecycleScope.launch {
+                launch { vm.getCookie() }
+                launch { SharePrefs.Save("tip","0") }
+                launch {  vm.getKey() }
+                launch { vm.My() }
+            }
         }
     }
 
