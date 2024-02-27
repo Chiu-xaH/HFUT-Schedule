@@ -125,7 +125,7 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel) {
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                modifier = Modifier.hazeChild(state = hazeState, blurRadius = 35.dp, tint = Color.Transparent, noiseFactor = 0f),
+                modifier = Modifier.hazeChild(state = hazeState, blurRadius = MyApplication.Blur, tint = Color.Transparent, noiseFactor = 0f),
                 colors = TopAppBarDefaults.mediumTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = if(blur).50f else 1f),
                     titleContentColor = MaterialTheme.colorScheme.primary,
@@ -150,7 +150,7 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel) {
         bottomBar = {
             NavigationBar(containerColor = if(blur) MaterialTheme.colorScheme.primaryContainer.copy(.25f) else ListItemDefaults.containerColor ,
                 modifier = Modifier
-                    .hazeChild(state = hazeState, blurRadius = 35.dp, tint = Color.Transparent, noiseFactor = 0f)) {
+                    .hazeChild(state = hazeState, blurRadius = MyApplication.Blur, tint = Color.Transparent, noiseFactor = 0f)) {
             //    val image = AnimatedImageVector.animatedVectorResource(R.drawable.ic_hourglass_animated)
               //  var atEnd by remember { mutableStateOf(false) }
 

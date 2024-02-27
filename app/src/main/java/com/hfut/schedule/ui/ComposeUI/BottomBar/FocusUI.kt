@@ -67,6 +67,7 @@ import com.hfut.schedule.ui.ComposeUI.Focus.FutureMyScheuleItem
 import com.hfut.schedule.ui.ComposeUI.Focus.MySchedule
 import com.hfut.schedule.ui.ComposeUI.Focus.MyScheuleItem
 import com.hfut.schedule.ui.ComposeUI.Focus.MyWangKe
+import com.hfut.schedule.ui.ComposeUI.Focus.TimeStampItem
 import com.hfut.schedule.ui.ComposeUI.Focus.TodayCardItem
 import com.hfut.schedule.ui.ComposeUI.Focus.TodayCourseItem
 import com.hfut.schedule.ui.ComposeUI.Focus.TomorrowCourseItem
@@ -121,40 +122,10 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel,innerPaddings : 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //布局///////////////////////////////////////
 
-//通知中心
-    val sheetState = rememberModalBottomSheetState()
-    var showBottomSheet by remember { mutableStateOf(false) }
-    if (showBottomSheet) {
-        SharePrefs.Save("Notifications", getNotifications().size.toString())
-        ModalBottomSheet(onDismissRequest = { showBottomSheet = false }, sheetState = sheetState) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("消息中心") }
-                    )
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ){
-                    NotificationItems()
-                }
-            }
-        }
-    }
-
-
-    
 
         Column(modifier = Modifier
-            .fillMaxSize().padding(innerPaddings)){
+            .fillMaxSize()
+            .padding(innerPaddings)){
             var state by remember { mutableStateOf(TAB_LEFT) }
             val titles = listOf("重要安排","其他事项")
             Column {
@@ -227,7 +198,7 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel,innerPaddings : 
                             items(getCourseINFO(weekdaytomorrow,Nextweek).size) { item -> TomorrowCourseItem(item = item) }
 
                         items(AddedItems().size){ item -> AddItem(item = item, AddedItems = AddedItems()) }
-
+                        item { TimeStampItem() }
                     }
                     item { Spacer(modifier = Modifier.height(100.dp)) }
                 }

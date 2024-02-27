@@ -2,13 +2,17 @@ package com.hfut.schedule.App
 
 import android.app.Application
 import android.content.Context
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
 class MyApplication : Application() {
     companion object {
+        //学籍照GET ： eams5-student/students/avatar/170317
         lateinit var context: Context
-        const val version = "4.1.2"
+        val Blur = 20.dp
+        const val version = "4.1.4"
         const val EleURL = "http://172.31.248.26:8988/"
         const val CommunityURL = "https://community.hfut.edu.cn/"
         const val ZJGDBillURL = "http://121.251.19.62/"

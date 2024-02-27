@@ -58,12 +58,12 @@ fun MonetColorItem() {
     }
     val switch_color = prefs.getBoolean("SWITCHCOLOR",true)
     var DynamicSwitch by remember { mutableStateOf(switch_color) }
-    if(AndroidVersion.sdkInt >= 31)
+
         ListItem(
             headlineContent = { Text(text = "取色算法") },
             supportingContent = {
             Column {
-                Text(text = "若无法调用Android 12+的原生动态取色的系统,可使用莫奈取色算法,点击${text}")
+                Text(text = if(AndroidVersion.sdkInt >= 31)"若无法调用Android 12+的原生动态取色的系统,可使用莫奈取色算法,点击${text}" else "仅 Android 12+ 支持原生取色 点击${text}")
                 Row {
                     FilterChip(
                         onClick = {
@@ -81,7 +81,9 @@ fun MonetColorItem() {
                             DynamicSwitch = false
                             SharePrefs.SaveBoolean("SWITCHCOLOR", true, DynamicSwitch)
                         },
-                        label = { Text(text = "原生取色") }, selected = !DynamicSwitch)
+                        label = { Text(text = "原生取色") },
+                        selected = !DynamicSwitch,
+                        enabled = AndroidVersion.sdkInt >= 31 )
                 }
             }
                             },
@@ -100,22 +102,7 @@ fun MonetColorItem() {
                 } else MyToast("未打开")
             }
         )
-    else
-        ListItem(
-            headlineContent = { Text(text = "莫奈取色") },
-            supportingContent = { Text(text = "点击${text}") },
-            leadingContent = { Icon(painterResource(R.drawable.color), contentDescription = "Localized description",) },
-            trailingContent = {
-                IconButton(onClick = {
-                    expandItems = !expandItems
-                    SharePrefs.SaveBoolean("expandMonet",false,expandItems)
-                }) { Icon( if(!expandItems)Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowUp, contentDescription = "")}
-            },
-            modifier = Modifier.clickable {
-                    expandItems = !expandItems
-                    SharePrefs.SaveBoolean("expandMonet",false,expandItems)
-            }
-        )
+
 
     AnimatedVisibility(
         visible = expandItems,

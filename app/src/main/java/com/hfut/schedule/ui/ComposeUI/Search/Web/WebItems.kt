@@ -12,11 +12,10 @@ import com.hfut.schedule.logic.utils.StartUri
 
 @Composable
 fun WebItem() {
-
     ListItem(
         headlineContent = { Text(text = "工大官网") },
         leadingContent = { Icon(painterResource(R.drawable.publics), contentDescription = "Localized description",) },
-        modifier = Modifier.clickable { StartUri.StartUri("http://www.hfut.edu.cn/") }
+        modifier = Modifier.clickable {  }
     )
     ListItem(
         headlineContent = { Text(text = "信息门户") },

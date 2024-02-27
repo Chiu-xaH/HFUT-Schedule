@@ -218,10 +218,32 @@ fun CalendarScreen(showAll : Boolean,vm : LoginSuccessViewModel,grade : String,i
 
     //填充UI与更新
     fun Update() {
-        for(i in table.indices)
-            table[i] = ""
-        for(i in sheet.indices)
-            sheet[i] = ""
+
+        table_1_1 = ""
+        table_1_2 = ""
+        table_1_3 = ""
+        table_1_4 = ""
+        table_1_5 = ""
+        table_2_1 = ""
+        table_2_2 = ""
+        table_2_3 = ""
+        table_2_4 = ""
+        table_2_5 = ""
+        table_3_1 = ""
+        table_3_2 = ""
+        table_3_3 = ""
+        table_3_4 = ""
+        table_3_5 = ""
+        table_4_1 = ""
+        table_4_2 = ""
+        table_4_3 = ""
+        table_4_4 = ""
+        table_4_5 = ""
+        table_5_1 = ""
+        table_5_2 = ""
+        table_5_3 = ""
+        table_5_4 = ""
+        table_5_5 = ""
         //////////////////////////////////////////////////////////////////////////////////
         val json = prefs.getString("json", "")
         // Log.d("测试",json!!)
@@ -397,10 +419,41 @@ fun CalendarScreen(showAll : Boolean,vm : LoginSuccessViewModel,grade : String,i
         }
     }
     fun UpdateAll() {
-        for(i in tableall.indices)
-            tableall[i] = ""
-        for(i in sheetall.indices)
-            sheetall[i] = ""
+        table_1_1 = ""
+        table_1_2 = ""
+        table_1_3 = ""
+        table_1_4 = ""
+        table_1_5 = ""
+        table_2_1 = ""
+        table_2_2 = ""
+        table_2_3 = ""
+        table_2_4 = ""
+        table_2_5 = ""
+        table_3_1 = ""
+        table_3_2 = ""
+        table_3_3 = ""
+        table_3_4 = ""
+        table_3_5 = ""
+        table_4_1 = ""
+        table_4_2 = ""
+        table_4_3 = ""
+        table_4_4 = ""
+        table_4_5 = ""
+        table_5_1 = ""
+        table_5_2 = ""
+        table_5_3 = ""
+        table_5_4 = ""
+        table_5_5 = ""
+        table_1_6 = ""
+        table_1_7 = ""
+        table_2_6 = ""
+        table_2_7 = ""
+        table_3_6 = ""
+        table_3_7 = ""
+        table_4_6 = ""
+        table_4_7 = ""
+        table_5_6 = ""
+        table_5_7 = ""
         //////////////////////////////////////////////////////////////////////////////////
 
         val json =  prefs.getString("json", "")

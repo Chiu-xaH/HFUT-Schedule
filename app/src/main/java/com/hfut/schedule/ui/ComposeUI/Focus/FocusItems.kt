@@ -57,6 +57,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.hfut.schedule.App.MyApplication
@@ -500,6 +501,13 @@ fun BoxScope.AddButton(isVisible: Boolean) {
                 ) { Icon(Icons.Filled.Add, "Add Button") }
             }
         }
+}
+
+@Composable
+fun TimeStampItem() {
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+        Text(text = getTimeStamp(), color = Color.Gray, fontSize = 14.sp)
+    }
 }
 
 

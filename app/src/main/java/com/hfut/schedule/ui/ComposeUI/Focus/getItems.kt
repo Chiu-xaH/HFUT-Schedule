@@ -12,6 +12,7 @@ import com.hfut.schedule.logic.datamodel.MyAPIResponse
 import com.hfut.schedule.logic.datamodel.MyList
 import com.hfut.schedule.logic.datamodel.Schedule
 import com.hfut.schedule.logic.datamodel.zjgd.BalanceResponse
+import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -83,7 +84,6 @@ fun AddedItems() : MutableList<AddFocus> {
 
 fun MyWangKe() : MutableList<MyList> {
 
-    val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
     val my = prefs.getString("my", MyApplication.NullMy)
     val data = Gson().fromJson(my, MyAPIResponse::class.java).Lessons
     val list = data.MyList

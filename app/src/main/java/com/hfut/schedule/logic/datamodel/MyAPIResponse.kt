@@ -2,6 +2,7 @@ package com.hfut.schedule.logic.datamodel
 data class MyAPIResponse (val SettingsInfo : SettingsInfo,
                           val Lessons : Lessons,
                           val semesterId : String,
+                          val TimeStamp : String,
                           val Notifications : List<Notifications>)
 data class SettingsInfo(val version : String,
                         val title : String,

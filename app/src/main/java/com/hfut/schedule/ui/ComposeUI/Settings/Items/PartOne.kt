@@ -71,12 +71,11 @@ fun SettingsItem(vm : LoginSuccessViewModel, showlable : Boolean, showlablechang
         trailingContent = { Switch(checked = showlable, onCheckedChange = showlablechanged) },
         modifier = Modifier.clickable { showlablechanged }
     )
-    if(AndroidVersion.sdkInt >= 32)
     ListItem(
         headlineContent = { Text(text = "实时模糊") },
-        supportingContent = { Text(text = "开启后将会转换部分渲染为实时模糊")},
+        supportingContent = { Text(text = if(AndroidVersion.sdkInt >= 32) "开启后将会转换部分渲染为实时模糊" else "需为 Android 13+")},
         leadingContent = { Icon(painterResource(R.drawable.deblur), contentDescription = "Localized description",) },
-        trailingContent = {  Switch(checked = blur, onCheckedChange = blurchanged ) },
+        trailingContent = {  Switch(checked = blur, onCheckedChange = blurchanged, enabled = AndroidVersion.sdkInt >= 32 ) },
         modifier = Modifier.clickable { blurchanged }
     )
     ListItem(

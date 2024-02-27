@@ -124,14 +124,15 @@ class LoginActivity : ComponentActivity() {
         if(ContextCompat.checkSelfPermission(this,android.Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED)
             ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.READ_CALENDAR),1)
 
-        if(!(startAcitivity && intent.getBooleanExtra("nologin",true))) {
             lifecycleScope.launch {
-                launch { vm.getCookie() }
-                launch { SharePrefs.Save("tip","0") }
-                launch {  vm.getKey() }
+                if(!(startAcitivity && intent.getBooleanExtra("nologin",true))) {
+                    launch { vm.getCookie() }
+                    launch { SharePrefs.Save("tip","0") }
+                    launch {  vm.getKey() }
+                }
                 launch { vm.My() }
             }
-        }
+
     }
 
     @Deprecated("Deprecated in Java")

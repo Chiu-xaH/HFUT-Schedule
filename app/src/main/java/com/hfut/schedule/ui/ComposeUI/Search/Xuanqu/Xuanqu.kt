@@ -40,29 +40,11 @@ fun XuanquItem(vm : LoginSuccessViewModel) {
     vm.XuanquData.value = "{}"
     val sheetState_Xuanqu = rememberModalBottomSheetState()
     var showBottomSheet_Xuanqu by remember { mutableStateOf(false) }
-    var text by remember { mutableStateOf("最近 ${prefs.getString("XuanData","XX")} 分") }
-    //预加载
-    CoroutineScope(Job()).launch {
-        if(prefs.getString("XUANQUroom","")?.isNotEmpty() == true) {
-            async { prefs.getString("XUANQUroom","")?.let { vm.SearchXuanqu(it) } }.await()
-            async {
-                Handler(Looper.getMainLooper()).post{
-                    vm.XuanquData.observeForever { result ->
-                        if(result.contains("div")) {
-                            CoroutineScope(Job()).launch {
-                                async { getXuanqu(vm) }.await()
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
 
 
     ListItem(
         headlineContent = { Text(text = "寝室卫生评分") },
-        supportingContent = { Text(text = text) },
+        supportingContent = { Text(text = "仅宣城校区") },
         leadingContent = { Icon(painter = painterResource(R.drawable.psychiatry),"" ) },
         modifier = Modifier.clickable { showBottomSheet_Xuanqu = true }
     )

@@ -17,6 +17,5 @@ fun getXuanqu(vm: LoginSuccessViewModel) : List<XuanquResponse>? {
             XuanquResponse(score = it.groupValues[2].toInt(), date = it.groupValues[5])
         }.toList()
     }
-    Save("XuanData", data?.get(0)?.score.toString())
     return data
 }
