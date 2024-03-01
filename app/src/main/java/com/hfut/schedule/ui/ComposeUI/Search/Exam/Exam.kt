@@ -1,6 +1,8 @@
 package com.hfut.schedule.ui.ComposeUI.Search.Exam
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.core.animateDp
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.BadgedBox
 import androidx.compose.material.BottomSheetScaffold
+import androidx.compose.material.Button
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Badge
@@ -41,6 +44,7 @@ import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.ui.UIUtils.EmptyUI
 
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -71,7 +75,7 @@ fun Exam(vm : LoginSuccessViewModel) {
     )
 
     if (showBottomSheet_Exam) {
-
+        
         ModalBottomSheet(
             onDismissRequest = {
                 showBottomSheet_Exam = false
@@ -95,9 +99,9 @@ fun Exam(vm : LoginSuccessViewModel) {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ){
-                    LazyColumn {
-                    items(getExam().size) { item -> ExamItems(item,false) }
-                    }
+                    if(getExam().size == 0) EmptyUI()
+                    else
+                    LazyColumn { items(getExam().size) { item -> ExamItems(item,false) } }
                 }
             }
         }

@@ -3,6 +3,7 @@ package com.hfut.schedule.ui.ComposeUI.SavedCourse
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContent
@@ -31,6 +32,8 @@ import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
@@ -56,9 +59,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.datamodel.Community.courseDetailDTOList
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.GetDate.Benweeks
+import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.ui.UIUtils.MyToast
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -70,7 +76,7 @@ import java.time.LocalDate
 )
 @SuppressLint("SuspiciousIndentation", "CoroutineCreationDuringComposition")
 @Composable
-fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues) {
+fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues,vm : LoginSuccessViewModel,vmUI : UIViewModel) {
 
     var table_1_1 by rememberSaveable { mutableStateOf("") }
     var table_1_2 by rememberSaveable { mutableStateOf("") }
@@ -115,7 +121,8 @@ fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues) {
     var table_6_6 by rememberSaveable { mutableStateOf("") }
     var table_6_7 by rememberSaveable { mutableStateOf("") }
 
-    //var showAll by remember { mutableStateOf(false) }
+    var findCoure by remember { mutableStateOf(false) }
+
 
     var sheet_1_1 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
     var sheet_1_2  = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
@@ -203,22 +210,6 @@ fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues) {
     )
 
 
-
-
-    val dayweek = GetDate.dayweek
-
-
-    var chinesenumber  = GetDate.chinesenumber
-
-    when (dayweek) {
-        1 -> chinesenumber = "一"
-        2 -> chinesenumber = "二"
-        3 -> chinesenumber = "三"
-        4 -> chinesenumber = "四"
-        5 -> chinesenumber = "五"
-        6 -> chinesenumber = "六"
-        0 -> chinesenumber = "日"
-    }
     //填充UI与更新
     fun UpdatesAll() {
 
@@ -363,6 +354,7 @@ fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues) {
                         }
                     }
                     5 -> {
+                        vmUI.findNewCourse.value = info.isNotEmpty()
                         when(text.section) {
                             1 -> {
                                 tableall[5] = info
@@ -387,6 +379,7 @@ fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues) {
                         }
                     }
                     6 -> {
+                        vmUI.findNewCourse.value = info.isNotEmpty()
                         when(text.section) {
                             1 -> {
                                 tableall[6] = info
@@ -590,6 +583,7 @@ fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues) {
         }
     })
 
+
     //课程详情
     var num by remember { mutableStateOf(0) }
     val sheetState = rememberModalBottomSheetState()
@@ -629,7 +623,9 @@ fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues) {
 
 
 
-        Column(modifier = Modifier.fillMaxSize().padding(innerPaddings)) {
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .padding(innerPaddings)) {
             Spacer(modifier = Modifier.height(5.dp))
 
             LazyVerticalGrid(columns = GridCells.Fixed(if(showAll)7 else 5),modifier = Modifier.padding(horizontal = 10.dp)){
@@ -663,6 +659,7 @@ fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues) {
                     state = scrollstate
                 ) {
                     items(if(showAll)42 else 30) { cell ->
+                        var texts = if(showAll)tableall[cell] else table[cell]
                         Card(
                             shape = MaterialTheme.shapes.extraSmall,
                             modifier = Modifier
@@ -675,7 +672,7 @@ fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues) {
                                     else MyToast("空数据")
                                 }
                         ) {
-                            Text(text = if(showAll)tableall[cell] else table[cell],fontSize = if(showAll)12.sp else 14.sp, textAlign = TextAlign.Center)
+                            Text(text = texts,fontSize = if(showAll)12.sp else 14.sp, textAlign = TextAlign.Center)
                         }
                     }
                 }
@@ -750,5 +747,4 @@ fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues) {
             }
             Spacer(modifier = Modifier.height(100.dp))
         }
-
 }

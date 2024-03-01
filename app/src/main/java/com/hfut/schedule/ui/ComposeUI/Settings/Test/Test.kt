@@ -7,6 +7,8 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.animate
+import androidx.compose.animation.core.animateDp
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
 import androidx.compose.animation.graphics.res.animatedVectorResource
 import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
@@ -191,5 +193,25 @@ fun ts() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DialogSample() {
+    var isExpanded by remember { mutableStateOf(false) }
+    val transition = updateTransition(targetState = isExpanded, label = "Stack Expand")
+    val blurRadius by transition.animateDp(label = "Title blur") { expanded ->
+        if (expanded) 8.dp else 0.dp
+    }
 
+    Button(onClick = { /*TODO*/ }, modifier = Modifier.blur(blurRadius, BlurredEdgeTreatment.Unbounded)) {
+        androidx.compose.material.Text(
+            text = "Certificates",
+            style = androidx.compose.material.MaterialTheme.typography.h2,
+            modifier = Modifier
+                .padding(horizontal = 16.dp, vertical = 24.dp)
+            // .align(Alignment.TopStart)
+
+        )
+    }
+    
+    
+    Button(onClick = { isExpanded = !isExpanded }) {
+        Text(text = "模糊")
+    }
 }

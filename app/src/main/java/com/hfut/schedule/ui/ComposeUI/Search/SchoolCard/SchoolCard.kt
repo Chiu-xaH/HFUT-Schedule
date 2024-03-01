@@ -385,13 +385,13 @@ fun SchoolCardItem(vm : LoginSuccessViewModel) {
                                                                 modifier = Modifier.width(185.dp),
                                                                 supportingContent = { Text(text = "待圈存 ￥${settle}")},
                                                                 leadingContent = { Icon(painterResource(R.drawable.account_balance_wallet), contentDescription = "Localized description",) },
-                                                                colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
+                                                                colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.primaryContainer)
                                                             )
                                                             ListItem(
                                                                 headlineContent = { Text(text = "￥${str}") },
                                                                 supportingContent = { Text(text = " 今日消费")},
                                                                 leadingContent = { Icon(painterResource(R.drawable.send_money), contentDescription = "Localized description",) },
-                                                                colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
+                                                                colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.primaryContainer)
                                                             )
                                                         }
                                                     }

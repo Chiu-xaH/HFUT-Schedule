@@ -58,6 +58,7 @@ class LoginSuccessViewModel : ViewModel() {
     var lessonIds = MutableLiveData<List<Int>>()
     var token = MutableLiveData<String>()
 
+
     fun GotoCommunity(cookie : String) {
 
         val call = CommunityLogin.LoginCommunity(cookie)

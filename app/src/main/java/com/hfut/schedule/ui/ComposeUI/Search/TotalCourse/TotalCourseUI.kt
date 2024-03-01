@@ -133,7 +133,7 @@ fun Another(num : Double) {
                     headlineContent = {  Text("学分合计 ${num}") },
                     leadingContent = { Icon(painterResource(R.drawable.category), contentDescription = "Localized description",) },
                     modifier = Modifier.clickable {},
-                    colors = ListItemDefaults.colors(MaterialTheme.colorScheme.errorContainer)
+                    colors = ListItemDefaults.colors(MaterialTheme.colorScheme.primaryContainer)
                 )
             }
         }

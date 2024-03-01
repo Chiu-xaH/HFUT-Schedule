@@ -16,6 +16,7 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.LoginViewModel
+import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.activity.ui.theme.肥工课程表Theme
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.ComposeUI.Saved.NoNetWork
@@ -32,6 +33,7 @@ class SavedCoursesActivity : ComponentActivity() {
     private val vm by lazy { ViewModelProvider(this).get(LoginSuccessViewModel::class.java) }
     private val viewModel: MainViewModel by viewModels()
     private val vm2 by lazy { ViewModelProvider(this).get(LoginViewModel::class.java) }
+    private val vmUI by lazy { ViewModelProvider(this).get(UIViewModel::class.java) }
     val switchColor= prefs.getBoolean("SWITCHCOLOR",true)
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("MissingInflatedId")
@@ -54,7 +56,7 @@ class SavedCoursesActivity : ComponentActivity() {
                         ) {
                             TransparentSystemBars()
                             //  Text(text = "首页\r\n首页1\r\n首页2\r\n首页3")
-                            NoNetWork(vm,vm2)
+                            NoNetWork(vm,vm2,vmUI)
                             //BottomSheetDemo()
                         }
                     }
@@ -67,7 +69,7 @@ class SavedCoursesActivity : ComponentActivity() {
                     ) {
                         TransparentSystemBars()
                         //  Text(text = "首页\r\n首页1\r\n首页2\r\n首页3")
-                        NoNetWork(vm,vm2)
+                        NoNetWork(vm,vm2,vmUI)
                         //BottomSheetDemo()
                     }
                 }

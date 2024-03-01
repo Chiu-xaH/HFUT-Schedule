@@ -2,7 +2,12 @@ package com.hfut.schedule.ui.ComposeUI.Saved
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.core.animateDp
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,9 +33,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.BlurredEdgeTreatment
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Observer
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -39,6 +47,7 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.LoginViewModel
+import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.Enums.BottomBarItems
 import com.hfut.schedule.logic.datamodel.NavigationBarItemData
 import com.hfut.schedule.logic.utils.AndroidVersion
@@ -66,7 +75,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationGraphicsApi::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel) {
+fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel) {
    // val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
     val navController = rememberNavController()
     var isEnabled by remember { mutableStateOf(true) }
@@ -91,13 +100,20 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel) {
     }
 
     var showAll by remember { mutableStateOf(false) }
-
+    var findCourse by remember { mutableStateOf(false) }
 
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
+
+
+    var blurBack by remember { mutableStateOf(false) }
+    val transition = updateTransition(targetState = showBottomSheet, label = "Stack Expand")
+    val blurRadius by transition.animateDp(label = "Title blur") { expanded ->
+        if (expanded) 10.dp else 0.dp
+    }
     if (showBottomSheet) {
         SharePrefs.Save("Notifications", getNotifications().size.toString())
-        ModalBottomSheet(onDismissRequest = { showBottomSheet = false }, sheetState = sheetState) {
+        ModalBottomSheet(onDismissRequest = { showBottomSheet = false }, sheetState = sheetState, modifier = Modifier) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 topBar = {
@@ -121,8 +137,14 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel) {
         }
     }
 
+    //监听是否周六周日有课，有则显示红点
+    val Observer = Observer<Boolean> { result ->
+        findCourse = result
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+            //.blur(blurRadius, BlurredEdgeTreatment.Unbounded),
         topBar = {
             TopAppBar(
                 modifier = Modifier.hazeChild(state = hazeState, blurRadius = MyApplication.Blur, tint = Color.Transparent, noiseFactor = 0f),
@@ -133,12 +155,16 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel) {
                 title = { Text(texts(vm,bottomBarItems)) },
                 actions = {
                     if(bottomBarItems == BottomBarItems.COURSES) {
-                        androidx.compose.material.IconButton(onClick = { showAll = !showAll
-                        }) { Icon(painter = painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "") }
+                        TextButton(onClick = { showAll = !showAll }) {
+                            BadgedBox(badge = {
+                                if (findCourse) Badge()
+                            }) { Icon(painter = painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "") }
+                        }
                     }
                     if(bottomBarItems == BottomBarItems.FOCUS) {
                         TextButton(onClick = { showBottomSheet = true }) {
                             BadgedBox(badge = {
+                                Handler(Looper.getMainLooper()).post { vmUI.findNewCourse.observeForever(Observer) }
                                 if (getNotifications().size.toString() != prefs.getString("Notifications",""))
                                     Badge()
                             }) { Icon(painterResource(id = R.drawable.notifications), contentDescription = "") }
@@ -204,7 +230,7 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel) {
                 state = hazeState,
                 backgroundColor = MaterialTheme.colorScheme.surface,
             )) {
-            composable(BottomBarItems.COURSES.name) { SaveCourse(showAll, innerPadding) }
+            composable(BottomBarItems.COURSES.name) { SaveCourse(showAll, innerPadding,vm,vmUI) }
             composable(BottomBarItems.FOCUS.name) { TodayScreen(vm,vm2,innerPadding, blur) }
             composable(BottomBarItems.SEARCH.name) { SearchScreen(vm,true,innerPadding) }
             composable(BottomBarItems.SETTINGS.name) { SettingsScreen(vm,showlable, showlablechanged = { showlablech -> showlable = showlablech},true,innerPadding, blur,blurchanged = { blurch -> blur = blurch})
@@ -263,5 +289,4 @@ fun texts(vm : LoginSuccessViewModel,num : BottomBarItems) : String {
         }
         else -> return "肥工教务通"
     }
-
 }

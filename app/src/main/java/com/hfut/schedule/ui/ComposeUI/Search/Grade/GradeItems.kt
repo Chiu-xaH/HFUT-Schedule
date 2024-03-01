@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.ComposeUI.Search.Grade
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
@@ -46,6 +47,7 @@ import com.hfut.schedule.activity.LoginActivity
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.ui.UIUtils.EmptyUI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -75,7 +77,7 @@ fun TotaGrade() {
                     supportingContent = { Text("班级排名: $Class   专业排名: $Major") },
                     leadingContent = { Icon(painterResource(R.drawable.flag), contentDescription = "Localized description",) },
                     modifier = Modifier.clickable {},
-                    colors = ListItemDefaults.colors(MaterialTheme.colorScheme.errorContainer)
+                    colors = ListItemDefaults.colors(MaterialTheme.colorScheme.primaryContainer)
                 )
             }
         }
@@ -173,15 +175,18 @@ fun GradeItemUI(vm :LoginSuccessViewModel) {
                     }
                 }
                       },
-            label = { Text(text = "切换") },
+            label = { Text(text = "搜索") },
             leadingIcon = { Icon(painter = painterResource(R.drawable.search), contentDescription = "description") }
         )
     }
 
 
 
+    @SuppressLint("SuspiciousIndentation")
     @Composable
     fun UIS(){
+        if(getGrade().size == 0) EmptyUI()
+        else
         LazyColumn {
             item { TotaGrade() }
             items(getGrade().size) { item ->
@@ -277,11 +282,14 @@ fun GradeItemUI(vm :LoginSuccessViewModel) {
     else { UIS() }
 }
 
+@SuppressLint("SuspiciousIndentation")
 @Composable
 fun GradeItemUIJXGLSTU() {
+    if(getGradeJXGLSTU().size == 0) EmptyUI()
+    else
     LazyColumn{
         item { TotaGrade() }
-        items(getGrade().size) { item ->
+        items(getGradeJXGLSTU().size) { item ->
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 Column() {
                     Card(
