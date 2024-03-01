@@ -6,8 +6,7 @@
 
 ♢截图：(当前截图为4.1.4版本 与最新版本可能有所差异)
 
-![微信图片_20240301194223](https://github.com/Chiu-xaH/HFUT-Schedule/assets/116127902/ea94b5f2-5a08-48a2-8a0f-b09b5499c253)
-
+![a97904519283228be4d9b9b1948353d](https://github.com/Chiu-xaH/HFUT-Schedule/assets/116127902/5662d7b7-6495-44dd-9109-b014b88f8d40)
 
 ♢权限：
 
