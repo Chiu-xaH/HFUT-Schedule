@@ -18,6 +18,7 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -54,10 +55,11 @@ fun getCouses(Week : Int) : Array<Array<List<courseDetailDTOList>>> {
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun getCourseINFO(weekday : Int,Week : Int) : MutableList<List<courseDetailDTOList>> {
+
     val new = mutableListOf<List<courseDetailDTOList>>()
     return if(weekday <= 7) {
         val days = getCouses(Week)[weekday - 1]
-        for (i in 0 until days.size){
+        for (i in days.indices){
             if(days[i].isNotEmpty())
                 days[i].forEach { new.add(days[i]) }
         }
@@ -131,7 +133,8 @@ fun DetailInfos(sheet : courseDetailDTOList) {
                             .padding(
                                 horizontal = 15.dp,
                                 vertical = 5.dp
-                            ).clickable {  },
+                            )
+                            .clickable { },
                         shape = MaterialTheme.shapes.medium,
                     ){
                         ListItem(

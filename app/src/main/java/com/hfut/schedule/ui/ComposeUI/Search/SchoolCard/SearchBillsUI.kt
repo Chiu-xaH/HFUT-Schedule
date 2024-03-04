@@ -3,6 +3,7 @@ package com.hfut.schedule.ui.ComposeUI.Search.SchoolCard
 import android.os.Handler
 import android.os.Looper
 import android.preference.PreferenceManager
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut

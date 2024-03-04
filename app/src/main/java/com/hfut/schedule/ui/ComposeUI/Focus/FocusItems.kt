@@ -244,6 +244,9 @@ fun WangkeItem(item : Int, MyWangKe: MutableList<MyList>) {
 @Composable
 fun TodayCourseItem(item : Int) {
     var week = GetDate.Benweeks.toInt()
+
+    var weekday = GetDate.dayweek
+    if(weekday == 0) weekday = 7
     Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)
     {
         Spacer(modifier = Modifier.height(100.dp))
@@ -258,9 +261,9 @@ fun TodayCourseItem(item : Int) {
 
         ) {
             ListItem(
-                headlineContent = {  Text(text = getCourseINFO(GetDate.dayweek,week)[item][0].name) },
-                overlineContent = { Text(text = getCourseINFO(GetDate.dayweek,week)[item][0].classTime)},
-                supportingContent = { Text(text = getCourseINFO(GetDate.dayweek,week)[item][0].place)},
+                headlineContent = {  Text(text = getCourseINFO(weekday,week)[item][0].name) },
+                overlineContent = { Text(text = getCourseINFO(weekday,week)[item][0].classTime)},
+                supportingContent = { Text(text = getCourseINFO(weekday,week)[item][0].place)},
                 leadingContent = {
                     Icon(
                         painterResource(R.drawable.schedule),
