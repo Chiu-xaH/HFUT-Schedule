@@ -19,11 +19,12 @@ import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.LoginViewModel
+import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.activity.ui.theme.肥工课程表Theme
 import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.datamodel.MyAPIResponse
-import com.hfut.schedule.ui.ComposeUI.Activity.SuccessUI
+import com.hfut.schedule.ui.Activity.success.main.login.SuccessUI
 import com.hfut.schedule.ui.UIUtils.TransparentSystemBars
 import com.hfut.schedule.ui.MonetColor.LocalCurrentStickerUuid
 import com.hfut.schedule.ui.MonetColor.MainIntent
@@ -39,7 +40,7 @@ class LoginSuccessActivity : ComponentActivity() {
     private val vm by lazy { ViewModelProvider(this).get(LoginSuccessViewModel::class.java) }
     private val vm2 by lazy { ViewModelProvider(this).get(LoginViewModel::class.java) }
     private val switchColor= prefs.getBoolean("SWITCHCOLOR",true)
-
+    private val vmUI by lazy { ViewModelProvider(this).get(UIViewModel::class.java) }
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,7 +58,7 @@ class LoginSuccessActivity : ComponentActivity() {
                             color = MaterialTheme.colorScheme.background
                         ) {
                             TransparentSystemBars()
-                            grade?.let { SuccessUI(vm, it,vm2) }
+                            grade?.let { SuccessUI(vm, it,vm2,vmUI) }
                         }
                     }
                 }
@@ -68,7 +69,7 @@ class LoginSuccessActivity : ComponentActivity() {
                         color = MaterialTheme.colorScheme.background
                     ) {
                         TransparentSystemBars()
-                        grade?.let { SuccessUI(vm, it,vm2) }
+                        grade?.let { SuccessUI(vm, it,vm2,vmUI) }
                     }
                 }
             }

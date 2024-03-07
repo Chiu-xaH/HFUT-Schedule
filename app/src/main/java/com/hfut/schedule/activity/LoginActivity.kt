@@ -26,8 +26,8 @@ import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.activity.ui.theme.肥工课程表Theme
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.ui.ComposeUI.Activity.LoginUI
-import com.hfut.schedule.ui.ComposeUI.Saved.NoNetWork
+import com.hfut.schedule.ui.Activity.login.main.LoginUI
+import com.hfut.schedule.ui.Activity.success.main.saved.NoNetWork
 import com.hfut.schedule.ui.MonetColor.LocalCurrentStickerUuid
 import com.hfut.schedule.ui.MonetColor.MainIntent
 import com.hfut.schedule.ui.MonetColor.MainViewModel
@@ -39,7 +39,7 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class LoginActivity : ComponentActivity() {
-    private val startAcitivity = prefs.getBoolean("SWITCHFASTSTART",false)
+    private val startAcitivity = prefs.getBoolean("SWITCHFASTSTART",prefs.getString("TOKEN","")?.isNotEmpty() ?: false)
     private val vm by lazy { ViewModelProvider(this).get(LoginViewModel::class.java) }
     private val vm2 by lazy { ViewModelProvider(this).get(LoginSuccessViewModel::class.java) }
     private val vmUI by lazy { ViewModelProvider(this).get(UIViewModel::class.java) }

@@ -228,13 +228,15 @@ class LoginSuccessViewModel : ViewModel() {
 
 
     }
-
+    val CardData = MutableLiveData<String?>()
     fun getyue(auth : String) {
         val call = ZJGDBill.getYue(auth)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                SharePrefs.Save("cardyue", response.body()?.string())
+                val body = response.body()?.string()
+                CardData.value = body
+                SharePrefs.Save("cardyue",body )
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }

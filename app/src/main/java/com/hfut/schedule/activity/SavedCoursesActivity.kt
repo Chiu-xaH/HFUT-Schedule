@@ -19,7 +19,7 @@ import com.hfut.schedule.ViewModel.LoginViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.activity.ui.theme.肥工课程表Theme
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.ui.ComposeUI.Saved.NoNetWork
+import com.hfut.schedule.ui.Activity.success.main.saved.NoNetWork
 import com.hfut.schedule.ui.UIUtils.TransparentSystemBars
 import com.hfut.schedule.ui.MonetColor.LocalCurrentStickerUuid
 import com.hfut.schedule.ui.MonetColor.MainIntent
