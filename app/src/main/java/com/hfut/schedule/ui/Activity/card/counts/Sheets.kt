@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.Activity.success.search.Search.SchoolCard
+package com.hfut.schedule.ui.Activity.card.counts
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.size

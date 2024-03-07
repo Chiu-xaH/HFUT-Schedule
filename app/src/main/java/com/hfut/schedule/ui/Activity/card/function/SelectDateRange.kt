@@ -1,9 +1,7 @@
-package com.hfut.schedule.ui.Activity.success.search.Search.SchoolCard
+package com.hfut.schedule.ui.Activity.card.function
 
-import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -29,7 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
-import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.datamodel.zjgd.BillRangeResponse
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
@@ -37,7 +34,6 @@ import com.hfut.schedule.ui.UIUtils.MyToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date

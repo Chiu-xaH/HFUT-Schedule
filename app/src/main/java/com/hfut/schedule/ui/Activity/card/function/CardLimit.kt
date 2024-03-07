@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.Activity.success.search.Search.SchoolCard
+package com.hfut.schedule.ui.Activity.card.function
 
 import android.os.Handler
 import android.os.Looper

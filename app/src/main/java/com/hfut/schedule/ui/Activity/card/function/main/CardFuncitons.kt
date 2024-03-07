@@ -1,6 +1,5 @@
-package com.hfut.schedule.ui.Activity.card.main.BottomBars
+package com.hfut.schedule.ui.Activity.card.function.main
 
-import android.provider.Contacts.Intents.UI
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -36,9 +35,10 @@ import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.OpenAlipay
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.ui.Activity.success.search.Search.SchoolCard.CardLimit
-import com.hfut.schedule.ui.Activity.success.search.Search.SchoolCard.SearchBillsUI
-import com.hfut.schedule.ui.Activity.success.search.Search.SchoolCard.SelecctDateRange
+import com.hfut.schedule.ui.Activity.card.bills.main.BillItem
+import com.hfut.schedule.ui.Activity.card.function.CardLimit
+import com.hfut.schedule.ui.Activity.card.function.SearchBillsUI
+import com.hfut.schedule.ui.Activity.card.function.SelecctDateRange
 import com.hfut.schedule.ui.UIUtils.MyToast
 import java.math.BigDecimal
 import java.math.RoundingMode

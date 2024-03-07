@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.Activity.success.search.Search.SchoolCard
+package com.hfut.schedule.ui.Activity.card
 
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable

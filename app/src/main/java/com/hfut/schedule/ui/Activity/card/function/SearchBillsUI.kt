@@ -1,9 +1,8 @@
-package com.hfut.schedule.ui.Activity.success.search.Search.SchoolCard
+package com.hfut.schedule.ui.Activity.card.function
 
 import android.os.Handler
 import android.os.Looper
 import android.preference.PreferenceManager
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -49,10 +48,10 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.datamodel.zjgd.BillResponse
 import com.hfut.schedule.logic.datamodel.zjgd.records
+import com.hfut.schedule.ui.Activity.card.BillsIcons
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 
@@ -216,6 +215,10 @@ fun SearchBillsUI(vm : LoginSuccessViewModel) {
 
                                 items(Items().size) { item ->
                                     var num = Items()[item].tranamt.toString()
+                                    //优化0.0X元Bug
+                                    if(num.length == 1)
+                                        num = "00$num"
+
                                     num = num.substring(0, num.length - 2) + "." + num.substring(num.length - 2)
                                     val big = BigDecimal(num)
                                     val num_float = big.toFloat()
@@ -225,7 +228,7 @@ fun SearchBillsUI(vm : LoginSuccessViewModel) {
 
                                     var pay = "$num_float 元"
                                     if (name.contains("充值") || name.contains("补助")) pay = "+" + pay
-                                    else pay = "-" + pay
+                                    else pay = "-$pay"
 
                                     Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)
                                     {
