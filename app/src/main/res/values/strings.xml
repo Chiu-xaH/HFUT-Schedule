@@ -8,4 +8,6 @@
     <string name="title_activity_no_net">NoNetActivity</string>
     <string name="title_activity_fwdtlogin">FWDTLoginActivity</string>
     <string name="title_activity_card">CardActivity</string>
+    <string name="card">一卡通</string>
+    <string name="main">速览</string>
 </resources>

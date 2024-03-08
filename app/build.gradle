@@ -15,8 +15,8 @@ android {
         applicationId "com.hfut.schedule"
         minSdk 24
         targetSdk 33
-        versionCode 66
-        versionName "4.2.1.1"
+        versionCode 67
+        versionName "4.2.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
@@ -103,8 +103,8 @@ dependencies {
     //莫奈取色
     implementation "com.github.Kyant0:Monet:0.1.0-alpha03"
     //小组件
-    // implementation 'androidx.glance:glance:1.0.0'
-    // implementation 'androidx.glance:glance-appwidget:1.0.0'
+     implementation 'androidx.glance:glance:1.0.0'
+     implementation 'androidx.glance:glance-appwidget:1.0.0'
     //Hilt
     var hilt_version = "2.31-alpha"
     implementation "com.google.dagger:hilt-android:$hilt_version"

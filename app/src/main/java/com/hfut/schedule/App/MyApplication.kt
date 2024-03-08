@@ -12,7 +12,7 @@ class MyApplication : Application() {
         //学籍照GET ： eams5-student/students/avatar/170317
         lateinit var context: Context
         val Blur = 20.dp
-        const val version = "4.2.1.1"
+        const val version = "4.2.2"
         const val EleURL = "http://172.31.248.26:8988/"
         const val CommunityURL = "https://community.hfut.edu.cn/"
         const val ZJGDBillURL = "http://121.251.19.62/"
