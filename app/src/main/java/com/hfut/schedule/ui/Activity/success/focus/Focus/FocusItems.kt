@@ -2,6 +2,7 @@ package com.hfut.schedule.ui.Activity.success.focus.Focus
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
@@ -59,7 +60,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.datamodel.Focus.AddFocus
@@ -86,124 +86,128 @@ fun TodayCardItem(vmUI : UIViewModel) {
 }
 
 @Composable
-fun MyScheuleItem(item : Int, MySchedule : MutableList<Schedule> ) {
-    var date = GetDate.Date_MM_dd
-    val todaydate = (date?.substring(0, 2) ) + date?.substring(3, 5)
-    val get = MySchedule[item].time
-    val examdate = (get?.substring(0, 2) ) + get?.substring(3, 5)
-    //判断完 不显示信息
-    if (examdate.toInt() == todaydate.toInt()) {
-        Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)
-        {
-            Spacer(modifier = Modifier.height(100.dp))
-            Card(
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 3.dp
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp)
-                //.size(width = 350.dp, height = 90.dp)
-                ,shape = MaterialTheme.shapes.medium
+fun MyScheuleItem(item : Int, MySchedule : MutableList<Schedule>,Future: Boolean ) {
 
-            ) {
-                ListItem(
-                    headlineContent = {  Text(text = MySchedule[item].title) },
-                    overlineContent = {Text(text = MySchedule[item].time)},
-                    supportingContent = { Text(text = MySchedule[item].info)},
-                    leadingContent = {
-                        if (MySchedule[item].title.contains("实验"))
-                            Icon(painterResource(R.drawable.science), contentDescription = "Localized description",)
-                        else
-                            Icon(painterResource(R.drawable.calendar), contentDescription = "Localized description",)
-                    },
-                    modifier = Modifier.clickable {}
-                )
-            }
+        val startTime = MySchedule[item].startTime
+        val endTime = MySchedule[item].endTime
+
+        //判断过期不显示信息
+
+        val startYear = startTime[0]
+        var startMonth = startTime[1]
+        var startDay = startTime[2]
+        var startDateStr = startTime[2].toString()
+        var startMonthStr = startTime[1].toString()
+        if(startDay < 10) startDateStr = "0$startDay"
+        if(startMonth < 10) startMonthStr = "0$startMonth"
+        val getStartTime = "${startYear}${startMonthStr}${startDateStr}".toInt()
+
+        val endYear = endTime[0]
+        var endMonth = endTime[1]
+        var endDay = endTime[2]
+        var endDateStr = endTime[2].toString()
+        var endMonthStr = endTime[1].toString()
+        if(endDay < 10) endDateStr = "0$endDay"
+        if(endMonth < 10) endMonthStr = "0$endMonth"
+        val getEndTime = "${endYear}${endMonthStr}${endDateStr}".toInt()
+
+
+        val nowTime = GetDate.Date_yyyy_MM_dd.replace("-","").toInt()
+
+
+        if(!Future) {
+            if(nowTime in getStartTime .. getEndTime)
+                ScheduleItems(MySchedule = MySchedule, item = item, false)
         }
-    }
+        else {
+            if(nowTime < getStartTime)
+                ScheduleItems(MySchedule = MySchedule, item = item,true)
+        }
+
 }
 
 
 @Composable
-fun FutureMyScheuleItem(item : Int, MySchedule : MutableList<Schedule> ) {
-    var date = GetDate.Date_MM_dd
-    val todaydate = (date?.substring(0, 2) ) + date?.substring(3, 5)
-    val get = MySchedule[item].time
-    val examdate = (get?.substring(0, 2) ) + get?.substring(3, 5)
-    //判断完 不显示信息
-    if (examdate.toInt() > todaydate.toInt()) {
-        Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)
-        {
-            Spacer(modifier = Modifier.height(100.dp))
-            Card(
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 3.dp
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp)
-                //.size(width = 350.dp, height = 90.dp)
-                ,shape = MaterialTheme.shapes.medium
+fun ScheduleItems(MySchedule: MutableList<Schedule>, item : Int,Future : Boolean) {
 
-            ) {
-                ListItem(
-                    headlineContent = {  Text(text = MySchedule[item].title) },
-                    overlineContent = {Text(text = MySchedule[item].time)},
-                    supportingContent = { Text(text = MySchedule[item].info)},
-                    leadingContent = {
-                        if (MySchedule[item].title.contains("实验"))
-                            Icon(painterResource(R.drawable.science), contentDescription = "Localized description",)
-                        else
-                            Icon(painterResource(R.drawable.calendar), contentDescription = "Localized description",)
-                    },
-                    modifier = Modifier.clickable {},
-                    trailingContent = {
-                        FilledTonalIconButton(
-                            onClick = {
-                                    try {
-                                        var startTime = MySchedule[item].startTime
-                                        var endTime = MySchedule[item].endTime
-                                        AddCalendar(startTime,endTime, MySchedule[item].info, MySchedule[item].title,MySchedule[item].time)
-                                        MyToast("添加到系统日历成功")
-                                    } catch (e : SecurityException) {
-                                        MyToast("未授予权限")
-                                        e.printStackTrace()
-                                    }
+        Card(
+            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 15.dp, vertical = 5.dp)
+            //.size(width = 350.dp, height = 90.dp)
+            ,shape = MaterialTheme.shapes.medium
+
+        ) {
+            ListItem(
+                headlineContent = {  Text(text = MySchedule[item].title) },
+                overlineContent = {Text(text = MySchedule[item].time)},
+                supportingContent = { Text(text = MySchedule[item].info)},
+                leadingContent = { ScheduleIcons(title = MySchedule[item].title) },
+                modifier = Modifier.clickable {},
+                trailingContent = {
+                    if(Future)
+                    FilledTonalIconButton(
+                        onClick = {
+                            try {
+                                var startTime = MySchedule[item].startTime
+                                var endTime = MySchedule[item].endTime
+                                AddCalendar(startTime,endTime, MySchedule[item].info, MySchedule[item].title,MySchedule[item].time)
+                                MyToast("添加到系统日历成功")
+                            } catch (e : SecurityException) {
+                                MyToast("未授予权限")
+                                e.printStackTrace()
                             }
-                        ) {
-                            Icon( painterResource(R.drawable.calendar_add_on),
-                                contentDescription = "Localized description",)
                         }
+                    ) {
+                        Icon( painterResource(R.drawable.add_task),
+                            contentDescription = "Localized description",)
                     }
-                )
-            }
+                    else Text(text = "进行中")
+                }
+            )
         }
-    }
+
 }
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun WangkeItem(item : Int, MyWangKe: MutableList<MyList>) {
 
-    var date = GetDate.Date_MM_dd
-    val todaydate = (date?.substring(0, 2) ) + date?.substring(3, 5)
-    val get = MyWangKe[item].time
-    val Wangkedate = (get?.substring(0, 2) ) + get?.substring(3, 5)
-    //判断过期不显示信息
-    if(Wangkedate.toInt() >= todaydate.toInt()) {
+        val startTime = MyWangKe[item].startTime
+        val endTime = MyWangKe[item].endTime
 
-        Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)
-        {
-            Spacer(modifier = Modifier.height(100.dp))
+        //判断过期不显示信息
+        val startYear = startTime[0]
+        var startMonth = startTime[1]
+        var startDay = startTime[2]
+        var startDateStr = startTime[2].toString()
+        var startMonthStr = startTime[1].toString()
+        if(startDay < 10) startDateStr = "0$startDay"
+        if(startMonth < 10) startMonthStr = "0$startMonth"
+        val getStartTime = "${startYear}${startMonthStr}${startDateStr}".toInt()
+
+        val endYear = endTime[0]
+        var endMonth = endTime[1]
+        var endDay = endTime[2]
+        var endDateStr = endTime[2].toString()
+        var endMonthStr = endTime[1].toString()
+        if(endDay < 10) endDateStr = "0$endDay"
+        if(endMonth < 10) endMonthStr = "0$endMonth"
+        val getEndTime = "${endYear}${endMonthStr}${endDateStr}".toInt()
+
+
+        val nowTime = GetDate.Date_yyyy_MM_dd.replace("-","").toInt()
+
+        if(nowTime <= getEndTime) {
             Card(
                 elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 15.dp, vertical = 5.dp),
                 shape = MaterialTheme.shapes.medium,
-
-                ) {
+            ) {
 
                 ListItem(
                     headlineContent = {  Text(text = MyWangKe[item].title) },
@@ -218,13 +222,11 @@ fun WangkeItem(item : Int, MyWangKe: MutableList<MyList>) {
                     trailingContent = {
                         FilledTonalIconButton(
                             onClick = {
-                                    var startTime = MyWangKe[item].startTime
-                                    var endTime = MyWangKe[item].endTime
-                                    AddCalendar(startTime,endTime, MyWangKe[item].info, MyWangKe[item].title,MyWangKe[item].time)
-                                    MyToast("添加到系统日历成功")
+                                AddCalendar(startTime,endTime, MyWangKe[item].info, MyWangKe[item].title,MyWangKe[item].time)
+                                MyToast("添加到系统日历成功")
                             }
                         ) {
-                            Icon( painterResource(R.drawable.calendar_add_on),
+                            Icon( painterResource(R.drawable.add_task),
                                 contentDescription = "Localized description",)
                         }
                     },
@@ -234,7 +236,6 @@ fun WangkeItem(item : Int, MyWangKe: MutableList<MyList>) {
                 )
             }
         }
-    }
 }
 
 

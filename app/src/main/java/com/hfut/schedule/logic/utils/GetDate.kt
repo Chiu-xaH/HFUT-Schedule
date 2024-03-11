@@ -48,12 +48,16 @@ object GetDate {
 
     var chinesenumber  = ""
 
-    //获取小时
+    //获取时间
     @RequiresApi(Build.VERSION_CODES.O)
     val currentTime = LocalDateTime.now()
     @RequiresApi(Build.VERSION_CODES.O)
-    val formatter = DateTimeFormatter.ofPattern("HH")
+    val formatter_Hour = DateTimeFormatter.ofPattern("HH")
     @RequiresApi(Build.VERSION_CODES.O)
-    val formattedTime = currentTime.format(formatter)
+    val formatter_Minute = DateTimeFormatter.ofPattern("MM")
+    @RequiresApi(Build.VERSION_CODES.O)
+    val formattedTime_Hour = currentTime.format(formatter_Hour)
+    @RequiresApi(Build.VERSION_CODES.O)
+    val formattedTime_Minute = currentTime.format(formatter_Minute)
 
 }

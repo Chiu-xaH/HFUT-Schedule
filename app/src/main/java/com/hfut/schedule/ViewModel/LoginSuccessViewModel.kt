@@ -290,7 +290,7 @@ class LoginSuccessViewModel : ViewModel() {
     }
 
 
-    var MonthData = MutableLiveData<String>()
+    var MonthData = MutableLiveData<String?>()
     fun getMonthBills(auth : String, dateStr: String) {
         val call = ZJGDBill.getMonthYue(auth,dateStr)
 

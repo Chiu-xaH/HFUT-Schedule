@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.animation.Transformation
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.lifecycle.LiveData
@@ -20,10 +21,12 @@ import com.hfut.schedule.logic.datamodel.zjgd.BalanceResponse
 import com.hfut.schedule.logic.datamodel.zjgd.ReturnCard
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.ui.UIUtils.MyToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import java.lang.Exception
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -69,17 +72,6 @@ fun GetZjgdCard(vm : LoginSuccessViewModel,vmUI : UIViewModel) {
     }
 }
 
-fun MySchedule() : MutableList<Schedule> {
-    val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
-    val my = prefs.getString("my", MyApplication.NullMy)
-    val data = Gson().fromJson(my, MyAPIResponse::class.java).Lessons
-    val list = data.Schedule
-    var Schedule = mutableListOf<Schedule>()
-    list.forEach { Schedule.add(it) }
-    return Schedule
-}
-
-
 @SuppressLint("Range")
 fun AddedItems() : MutableList<AddFocus> {
     var AddFocus = mutableListOf<AddFocus>()
@@ -99,12 +91,32 @@ fun AddedItems() : MutableList<AddFocus> {
     return AddFocus
 }
 
-fun MyWangKe() : MutableList<MyList> {
+fun MySchedule() : MutableList<Schedule> {
+    var Schedule = mutableListOf<Schedule>()
+    return try {
+        val my = prefs.getString("my", MyApplication.NullMy)
+        val data = Gson().fromJson(my, MyAPIResponse::class.java).Lessons
+        val list = data.Schedule
+        list.forEach { Schedule.add(it) }
+        Schedule
+    } catch (e : Exception) {
+        e.printStackTrace()
+        MyToast("解析出错,请联系开发者纠正")
+        Schedule
+    }
+}
 
-    val my = prefs.getString("my", MyApplication.NullMy)
-    val data = Gson().fromJson(my, MyAPIResponse::class.java).Lessons
-    val list = data.MyList
+fun MyWangKe() : MutableList<MyList> {
     var Wabgke = mutableListOf<MyList>()
-    list.forEach {  Wabgke.add(it) }
-    return Wabgke
+    return try {
+        val my = prefs.getString("my", MyApplication.NullMy)
+        val data = Gson().fromJson(my, MyAPIResponse::class.java).Lessons
+        val list = data.MyList
+        list.forEach {  Wabgke.add(it) }
+        Wabgke
+    } catch (e : Exception) {
+        e.printStackTrace()
+        MyToast("解析出错,请联系开发者纠正")
+        Wabgke
+    }
 }

@@ -5,6 +5,8 @@ import android.os.Looper
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +22,10 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -27,6 +33,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
@@ -55,6 +62,7 @@ import com.hfut.schedule.logic.datamodel.zjgd.BillMonthResponse
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.ui.Activity.card.counts.drawLineChart
+import com.hfut.schedule.ui.UIUtils.MyToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -86,11 +94,13 @@ fun CardCounts(vm : LoginSuccessViewModel,innerPaddings : PaddingValues) {
     var Months  by remember { mutableStateOf(GetDate.Date_MM) }
     var Years by remember { mutableStateOf(GetDate.Date_yyyy) }
     input = "$Years-$Months"
-    var showitem_year by remember { mutableStateOf(false) }
-    fun Click() {
+    fun Click(Num : Int) {
+
         CoroutineScope(Job()).apply {
             launch {
                 async {
+                    Months = (Months.toInt() + Num).toString()
+                    if(Months.toInt() < 10) Months = "0$Months"
                     input = "$Years-$Months"
                     clicked = true
                     loading2 = true
@@ -102,9 +112,11 @@ fun CardCounts(vm : LoginSuccessViewModel,innerPaddings : PaddingValues) {
                 async {
                     Handler(Looper.getMainLooper()).post{
                         vm.MonthData.observeForever { result ->
-                            if(result.contains("操作成功")) {
-                                getbillmonth(vm)
-                                loading2 = false
+                            if (result != null) {
+                                if(result.contains("操作成功")) {
+                                    getbillmonth(vm)
+                                    loading2 = false
+                                }
                             }
                         }
                     }
@@ -112,8 +124,6 @@ fun CardCounts(vm : LoginSuccessViewModel,innerPaddings : PaddingValues) {
             }
         }
     }
-
-
 
 ////////////////////////////////////////////////////布局///////////////////////////////////////////
     Box(modifier = Modifier
@@ -145,7 +155,7 @@ fun CardCounts(vm : LoginSuccessViewModel,innerPaddings : PaddingValues) {
                             actions = {
                                 FilledTonalIconButton(onClick = {
                                     showBottomSheet = false
-                                    Click()
+                                    Click(0)
                                 }) {
                                     Icon(painter = painterResource(id = R.drawable.search), contentDescription = "")
                                 }
@@ -293,11 +303,41 @@ fun CardCounts(vm : LoginSuccessViewModel,innerPaddings : PaddingValues) {
                         .padding(innerPaddings)
                         .padding(15.dp)
                 )
+            AnimatedVisibility(
+                visible = shouldShowAddButton,
+                enter = scaleIn() ,
+                exit = scaleOut(),
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(innerPaddings)
+                    .padding(15.dp)
+            ) {
+                if (shouldShowAddButton) {
+                    Row {
+                        FloatingActionButton(
+                            onClick = {
+                                if(Months.toInt() > 1)
+                                Click(-1)
+                                else MyToast("请切换年份")
+                                      },
+                        ) { Icon(Icons.Filled.ArrowBack, contentDescription = "") }
+                        Spacer(modifier = Modifier.padding(horizontal = 15.dp))
+                        FloatingActionButton(
+                            onClick = {
+                                if(Months.toInt() <= 11)
+                                Click(1)
+                                      },
+                        ) { Icon(Icons.Filled.ArrowForward, contentDescription = "")}
+                    }
+                }
+            }
+
+
         } else {
             ExtendedFloatingActionButton(
                 text = { Text(text = "${Years} 年 ${Months} 月") },
                 icon = { Icon(painter = painterResource(id = R.drawable.search), contentDescription = "") },
-                onClick = { Click() },
+                onClick = { Click(0) },
                 expanded = expanded,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)

@@ -49,6 +49,7 @@ import com.hfut.schedule.ui.Activity.success.search.main.SearchScreen
 import com.hfut.schedule.ui.Activity.success.cube.main.SettingsScreen
 import com.hfut.schedule.ui.Activity.success.focus.main.TodayScreen
 import com.hfut.schedule.logic.Enums.BottomBarItems
+import com.hfut.schedule.logic.utils.APPVersion
 import com.hfut.schedule.ui.Activity.success.calendar.login.CalendarScreen
 import com.hfut.schedule.ui.Activity.success.main.saved.texts
 import com.hfut.schedule.ui.Activity.success.cube.Settings.getMyVersion
@@ -75,7 +76,7 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel,vm
     var bottomBarItems by remember { mutableStateOf(BottomBarItems.COURSES) }
     val hazeState = remember { HazeState() }
     var showBadge by remember { mutableStateOf(false) }
-    if (MyApplication.version != getMyVersion()) showBadge = true
+    if (APPVersion.getVersionName() != getMyVersion()) showBadge = true
     val switchblur = prefs.getBoolean("SWITCHBLUR", AndroidVersion.sdkInt >= 32)
     var blur by remember { mutableStateOf(switchblur) }
     //监听是否周六周日有课，有则显示红点

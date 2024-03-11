@@ -64,6 +64,7 @@ import com.hfut.schedule.ViewModel.LoginViewModel
 import com.hfut.schedule.activity.LoginSuccessActivity
 import com.hfut.schedule.activity.SavedCoursesActivity
 import com.hfut.schedule.logic.Encrypt.AESEncrypt
+import com.hfut.schedule.logic.utils.APPVersion
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
@@ -148,7 +149,7 @@ fun LoginUI(vm : LoginViewModel) {
     var showBottomSheet by remember { mutableStateOf(false) }
 
     var showBadge by remember { mutableStateOf(false) }
-    if (MyApplication.version != prefs.getString("version", MyApplication.version)) showBadge = true
+    if (APPVersion.getVersionName() != prefs.getString("version", APPVersion.getVersionName())) showBadge = true
     val hazeState = remember { HazeState() }
     if (showBottomSheet) {
         ModalBottomSheet(

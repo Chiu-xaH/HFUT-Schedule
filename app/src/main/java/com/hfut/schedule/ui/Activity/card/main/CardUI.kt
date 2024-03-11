@@ -50,6 +50,7 @@ import com.hfut.schedule.logic.datamodel.zjgd.records
 import com.hfut.schedule.logic.utils.ActivityCollecter
 import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.ui.Activity.card.EcoUI
 import com.hfut.schedule.ui.Activity.card.bills.main.CardBills
 import com.hfut.schedule.ui.Activity.card.counts.main.CardCounts
 import com.hfut.schedule.ui.Activity.card.function.main.CardFunctions
@@ -207,9 +208,14 @@ fun CardUI(vm : LoginSuccessViewModel, activity : Activity,vmUI : UIViewModel) {
                         painterResource(R.drawable.monetization_on_filled)
                     ),
                     NavigationBarItemData(
-                        CardBarItems.FUNCTION.name,"功能区", painterResource(R.drawable.toll), painterResource(
-                            R.drawable.toll_filled)
+                        CardBarItems.FUNCTION.name,"功能", painterResource(R.drawable.cube), painterResource(
+                            R.drawable.deployed_code_filled)
+                    ),
+                    NavigationBarItemData(
+                        CardBarItems.ECO.name,"环保", painterResource(R.drawable.eco), painterResource(
+                            R.drawable.eco_filled)
                     )
+
                 )
                 items.forEach { item ->
                     val route = item.route
@@ -244,6 +250,7 @@ fun CardUI(vm : LoginSuccessViewModel, activity : Activity,vmUI : UIViewModel) {
             composable(CardBarItems.BILLS.name) { CardBills(vm,innerPadding,vmUI) }
             composable(CardBarItems.COUNT.name) {  CardCounts(vm, innerPadding) }
             composable(CardBarItems.FUNCTION.name) { CardFunctions(vm,innerPadding,vmUI) }
+            composable(CardBarItems.ECO.name) { EcoUI(innerPadding) }
         }
 
     }

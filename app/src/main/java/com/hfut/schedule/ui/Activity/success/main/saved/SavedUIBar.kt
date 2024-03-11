@@ -2,11 +2,7 @@ package com.hfut.schedule.ui.Activity.success.main.saved
 
 import android.annotation.SuppressLint
 import android.os.Build
-import android.os.Handler
-import android.os.Looper
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.core.animateDp
-import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,7 +30,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Observer
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -47,6 +42,7 @@ import com.hfut.schedule.ViewModel.LoginViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.Enums.BottomBarItems
 import com.hfut.schedule.logic.datamodel.NavigationBarItemData
+import com.hfut.schedule.logic.utils.APPVersion
 import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.GetDate.Benweeks
@@ -83,7 +79,7 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
     CoroutineScope(Job()).launch { NetWorkUpdate(vm, vm2,vmUI) }
     var bottomBarItems by remember { mutableStateOf(BottomBarItems.FOCUS) }
     var showBadge by remember { mutableStateOf(false) }
-    if (MyApplication.version != getMyVersion()) showBadge = true
+    if (APPVersion.getVersionName() != getMyVersion()) showBadge = true
     val switchblur = prefs.getBoolean("SWITCHBLUR", AndroidVersion.sdkInt >= 32)
     var blur by remember { mutableStateOf(switchblur) }
    // val savenum = prefs.getInt("GradeNum",0) + prefs.getInt("ExamNum",0) + prefs.getInt("Notifications",0)
@@ -267,12 +263,12 @@ fun texts(vm : LoginSuccessViewModel,num : BottomBarItems) : String {
         }
         BottomBarItems.SEARCH -> {
             var text  = "你好"
-            if(GetDate.formattedTime.toInt() == 12) text = "午饭时间到~"
-            if(GetDate.formattedTime.toInt() in 13..17) text = "下午要忙什么呢"
-            if(GetDate.formattedTime.toInt() in 7..11) text = "上午好呀"
-            if(GetDate.formattedTime.toInt() in 5..6) text = "起的好早呀"
-            if(GetDate.formattedTime.toInt() in 18..23) text = "晚上好"
-            if(GetDate.formattedTime.toInt() in 0..4) text = "熬夜也要早睡哦"
+            if(GetDate.formattedTime_Hour.toInt() == 12) text = "午饭时间到~"
+            if(GetDate.formattedTime_Hour.toInt() in 13..17) text = "下午要忙什么呢"
+            if(GetDate.formattedTime_Hour.toInt() in 7..11) text = "上午好呀"
+            if(GetDate.formattedTime_Hour.toInt() in 5..6) text = "起的好早呀"
+            if(GetDate.formattedTime_Hour.toInt() in 18..23) text = "晚上好"
+            if(GetDate.formattedTime_Hour.toInt() in 0..4) text = "熬夜也要早睡哦"
 
             return "$text ${getName(vm)} 同学"
         }

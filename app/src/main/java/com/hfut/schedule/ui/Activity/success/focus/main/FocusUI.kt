@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
@@ -41,7 +40,6 @@ import com.hfut.schedule.ui.Activity.success.focus.Focus.AddButton
 import com.hfut.schedule.ui.Activity.success.focus.Focus.AddItem
 import com.hfut.schedule.ui.Activity.success.focus.Focus.AddedItems
 import com.hfut.schedule.ui.UIUtils.MyToast
-import com.hfut.schedule.ui.Activity.success.focus.Focus.FutureMyScheuleItem
 import com.hfut.schedule.ui.Activity.success.focus.Focus.MySchedule
 import com.hfut.schedule.ui.Activity.success.focus.Focus.MyScheuleItem
 import com.hfut.schedule.ui.Activity.success.focus.Focus.MyWangKe
@@ -144,13 +142,13 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel,innerPaddings : 
                             item { TodayCardItem(vmUI) }
                         }
                         //课表
-                        if (GetDate.formattedTime.toInt() >= 18)
+                        if (GetDate.formattedTime_Hour.toInt() >= 18)
                             items(getCourseINFO(weekdaytomorrow,Nextweek).size) { item -> TomorrowCourseItem(item = item) }
                         else
                             items(getCourseINFO(weekdayToday,week).size) { item -> TodayCourseItem(item = item) }
                         //日程
-                        if (prefs.getBoolean("SWITCHMYAPI",true)){
-                            items(MySchedule().size) { item -> MyScheuleItem(item = item, MySchedule = MySchedule()) }
+                        if (prefs.getBoolean("SWITCHMYAPI",true) && MySchedule().size > 0){
+                            items(MySchedule().size) { item -> MyScheuleItem(item = item, MySchedule = MySchedule(),false) }
                         }
                         //考试
                         items(getExam().size) { item -> ExamItems(item,true) }
@@ -162,13 +160,15 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel,innerPaddings : 
 
                         if (prefs.getBoolean("SWITCHMYAPI",true)) {
                             //日程
-                            items(MySchedule().size) { item -> FutureMyScheuleItem(item = item, MySchedule = MySchedule()) }
+                            if(MySchedule().size > 0)
+                            items(MySchedule().size) { item -> MyScheuleItem(item = item, MySchedule = MySchedule(),true)  }
                             //网课
+                            if(MyWangKe().size > 0)
                             items(MyWangKe().size) { item -> WangkeItem(item = item, MyWangKe = MyWangKe()) }
                         }
 
                         //第二天课表
-                        if (GetDate.formattedTime.toInt() < 18)
+                        if (GetDate.formattedTime_Hour.toInt() < 18)
                             items(getCourseINFO(weekdaytomorrow,Nextweek).size) { item -> TomorrowCourseItem(item = item) }
 
                         items(AddedItems().size){ item -> AddItem(item = item, AddedItems = AddedItems()) }

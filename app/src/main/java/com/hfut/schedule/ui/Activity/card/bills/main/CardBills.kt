@@ -22,6 +22,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemColors
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -39,6 +41,7 @@ import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.datamodel.zjgd.BillResponse
 import com.hfut.schedule.logic.datamodel.zjgd.records
+import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.card.function.main.CardRow
@@ -142,7 +145,9 @@ fun CardBills(vm : LoginSuccessViewModel,innerPaddings : PaddingValues,vmUI : UI
             visible = loading,
             enter = fadeIn(),
             exit = fadeOut(),
-            modifier = Modifier.padding(innerPaddings).align(Alignment.Center)
+            modifier = Modifier
+                .padding(innerPaddings)
+                .align(Alignment.Center)
         ) {
             Column {
                 Spacer(modifier = Modifier.height(innerPaddings.calculateTopPadding()))
@@ -177,6 +182,9 @@ fun CardBills(vm : LoginSuccessViewModel,innerPaddings : PaddingValues,vmUI : UI
                     if (name.contains("充值") || name.contains("补助")) pay = "+$pay"
                     else pay = "-$pay"
 
+                    val time = BillItem(vm)[item].effectdateStr
+                    val getTime = time.substringBefore(" ")
+
 
                     Card(
                         elevation = CardDefaults.cardElevation(
@@ -193,8 +201,12 @@ fun CardBills(vm : LoginSuccessViewModel,innerPaddings : PaddingValues,vmUI : UI
                         ListItem(
                             headlineContent = { Text(text = name) },
                             supportingContent = { Text(text = pay) },
-                            overlineContent = { Text(text = BillItem(vm)[item].effectdateStr) },
-                            leadingContent = { BillsIcons(name) }
+                            overlineContent = { Text(text = time) },
+                            leadingContent = { BillsIcons(name) },
+                            colors =
+                            if(GetDate.Date_yyyy_MM_dd == getTime)
+                                ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                            else ListItemDefaults.colors()
                         )
                     }
                 }

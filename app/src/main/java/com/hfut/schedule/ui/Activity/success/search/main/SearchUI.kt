@@ -89,12 +89,12 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
 
 
     var text by remember { mutableStateOf("你好") }
-    if(GetDate.formattedTime.toInt() == 12) text = "午饭时间到~"
-    if(GetDate.formattedTime.toInt() in 13..17) text = "下午要忙什么呢"
-    if(GetDate.formattedTime.toInt() in 7..11) text = "上午好呀"
-    if(GetDate.formattedTime.toInt() in 5..6) text = "起的好早呀"
-    if(GetDate.formattedTime.toInt() in 18..23) text = "晚上好"
-    if(GetDate.formattedTime.toInt() in 0..4) text = "熬夜也要早睡哦"
+    if(GetDate.formattedTime_Hour.toInt() == 12) text = "午饭时间到~"
+    if(GetDate.formattedTime_Hour.toInt() in 13..17) text = "下午要忙什么呢"
+    if(GetDate.formattedTime_Hour.toInt() in 7..11) text = "上午好呀"
+    if(GetDate.formattedTime_Hour.toInt() in 5..6) text = "起的好早呀"
+    if(GetDate.formattedTime_Hour.toInt() in 18..23) text = "晚上好"
+    if(GetDate.formattedTime_Hour.toInt() in 0..4) text = "熬夜也要早睡哦"
 
     val hazeState = remember { HazeState() }
 

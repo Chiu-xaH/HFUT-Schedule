@@ -1,6 +1,7 @@
 package com.hfut.schedule.ui.Activity.card.function.main
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -10,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -49,7 +52,7 @@ import java.math.RoundingMode
 fun CardFunctions(vm : LoginSuccessViewModel,innerPaddings : PaddingValues,vmUI: UIViewModel) {
     Column(modifier = Modifier
         .fillMaxSize()
-        .padding(innerPaddings)) {
+        .verticalScroll(rememberScrollState())) {
 
 
 
@@ -89,7 +92,7 @@ fun CardFunctions(vm : LoginSuccessViewModel,innerPaddings : PaddingValues,vmUI:
             ) { CardLimit(vm) }
         }
 
-
+        Spacer(modifier = Modifier.height(innerPaddings.calculateTopPadding()))
 
 
         Spacer(modifier = Modifier.height(5.dp))
@@ -125,9 +128,10 @@ fun CardFunctions(vm : LoginSuccessViewModel,innerPaddings : PaddingValues,vmUI:
         )
         ListItem(
             headlineContent = { Text(text = "捷径说明") },
-            supportingContent = { Text(text = "本界面与教务通独立,可自行通过工具直接打开一卡通界面")},
+            supportingContent = { Text(text = "本界面与教务通独立,可直接打开一卡通界面")},
             leadingContent = { Icon(painterResource(R.drawable.keyboard_command_key), contentDescription = "Localized description",) },
         )
+        Spacer(modifier = Modifier.height(innerPaddings.calculateBottomPadding()))
     }
 }
 
@@ -185,31 +189,14 @@ fun CardRow(vm : LoginSuccessViewModel,show : Boolean,vmUI : UIViewModel) {
                 modifier = Modifier.width(185.dp),
                 supportingContent = { Text(text = "待圈存 ￥${vmUI.CardValue.value?.settle ?: settle}") },
                 leadingContent = { Icon(painterResource(R.drawable.account_balance_wallet), contentDescription = "Localized description",) },
-                colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
             )
             ListItem(
                 headlineContent = { Text(text = "￥${str}") },
                 supportingContent = { Text(text = " 今日消费") },
                 leadingContent = { Icon(painterResource(R.drawable.send_money), contentDescription = "Localized description",) },
-                colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
             )
-        }
-        if(show) {
-            Row {
-                ListItem(
-                    headlineContent = { Text(text = "今日账单") },
-                    supportingContent = { Text(text = "点击查看")},
-                    modifier = Modifier.width(185.dp).clickable { MyToast("正在开发") },
-                    leadingContent = { Icon(painterResource(R.drawable.monetization_on), contentDescription = "Localized description",) },
-                    colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.primaryContainer)
-                )
-                ListItem(
-                    headlineContent = { Text(text = "￥XX.XX") },
-                    supportingContent = { Text(text = " 本月支出") },
-                    leadingContent = { Icon(painterResource(R.drawable.credit_card), contentDescription = "Localized description",) },
-                    colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.primaryContainer)
-                )
-            }
         }
     }
 }
