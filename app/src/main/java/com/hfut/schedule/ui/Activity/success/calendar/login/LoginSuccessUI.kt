@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -59,10 +60,12 @@ import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.datamodel.Community.LoginCommunityResponse
 import com.hfut.schedule.logic.datamodel.Jxglstu.datumResponse
+import com.hfut.schedule.logic.datamodel.Jxglstu.result
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.UIUtils.MyToast
+import com.hfut.schedule.ui.UIUtils.num2
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -233,178 +236,183 @@ fun CalendarScreen(showAll : Boolean,vm : LoginSuccessViewModel,grade : String,i
         table_5_4 = ""
         table_5_5 = ""
         //////////////////////////////////////////////////////////////////////////////////
-        val json = prefs.getString("json", "")
-        // Log.d("测试",json!!)
-        val datumResponse = Gson().fromJson(json, datumResponse::class.java)
-        val scheduleList = datumResponse.result.scheduleList
-        val lessonList = datumResponse.result.lessonList
-        val scheduleGroupList = datumResponse.result.scheduleGroupList
+        try {
+            val json = prefs.getString("json", "")
+            val datumResponse = Gson().fromJson(json, datumResponse::class.java)
+            val scheduleList = datumResponse.result.scheduleList
+            val lessonList = datumResponse.result.lessonList
+            val scheduleGroupList = datumResponse.result.scheduleGroupList
 
-        for (i in 0 until scheduleList.size) {
-            var starttime = scheduleList[i].startTime.toString()
-            starttime =
-                starttime.substring(0, starttime.length - 2) + ":" + starttime.substring(
-                    starttime.length - 2
-                )
-            var room = scheduleList[i].room.nameZh
-            val person = scheduleList[i].personName
-            var date = scheduleList[i].date
-            var scheduleid = scheduleList[i].lessonId.toString()
-            var endtime = scheduleList[i].endTime.toString()
-            var periods = scheduleList[i].periods
-            var lessonType = scheduleList[i].lessonType
+            for (i in 0 until scheduleList.size) {
+                var starttime = scheduleList[i].startTime.toString()
+                starttime =
+                    starttime.substring(0, starttime.length - 2) + ":" + starttime.substring(
+                        starttime.length - 2
+                    )
+                var room = scheduleList[i].room.nameZh
+                val person = scheduleList[i].personName
+                var date = scheduleList[i].date
+                var scheduleid = scheduleList[i].lessonId.toString()
+                var endtime = scheduleList[i].endTime.toString()
+                var periods = scheduleList[i].periods
+                var lessonType = scheduleList[i].lessonType
 
-            room = room.replace("学堂","")
+                room = room.replace("学堂","")
 
-            for (k in 0 until scheduleGroupList.size) {
+                for (k in 0 until scheduleGroupList.size) {
 
-                val id = scheduleGroupList[k].lessonId.toString()
-                val std = scheduleGroupList[k].stdCount
-                if ( scheduleid == id) {
-                    periods = std
+                    val id = scheduleGroupList[k].lessonId.toString()
+                    val std = scheduleGroupList[k].stdCount
+                    if ( scheduleid == id) {
+                        periods = std
+                    }
+                }
+
+                for (j in 0 until lessonList.size) {
+                    val lessonlist_id = lessonList[j].id
+                    val INFO = lessonList[j].suggestScheduleWeekInfo
+                    val name = lessonList[j].courseName
+                    val courseTypeName = lessonList[j].courseTypeName
+                    if (scheduleid == lessonlist_id) {
+                        scheduleid = name
+                        endtime = INFO
+                        lessonType = courseTypeName
+                    }
+                }
+
+
+
+                //适配长文字布局
+                scheduleid = scheduleid.replace("语言程序设计","程序设计")
+
+                val text = starttime + "\n" + scheduleid + "\n" + room
+                val info =
+                    "教师:${person}"+ "  "+
+                            "周数:${endtime}"+ "  "+
+                            "人数:${periods}"+ "  "+
+                            "类型:${lessonType}"
+
+
+                //  Log.d("变化",Bianhuaweeks.toString())
+
+                if (scheduleList[i].weekIndex == Bianhuaweeks.toInt()) {
+                    if (scheduleList[i].weekday == 1) {
+                        if (scheduleList[i].startTime == 800) {
+                            table_1_1 = text
+                            sheet_1_1 = info
+                        }
+                        if (scheduleList[i].startTime == 1010) {
+                            table_2_1 = text
+                            sheet_2_1 = info
+                        }
+                        if (scheduleList[i].startTime == 1400) {
+                            table_3_1 = text
+                            sheet_3_1 = info
+                        }
+                        if (scheduleList[i].startTime == 1600) {
+                            table_4_1 = text
+                            sheet_4_1 = info
+                        }
+                        if (scheduleList[i].startTime == 1900) {
+                            table_5_1 = text
+                            sheet_5_1 = info
+                        }
+                    }
+                    if (scheduleList[i].weekday == 2) {
+                        if (scheduleList[i].startTime == 800) {
+                            table_1_2 = text
+                            sheet_1_2 = info
+                        }
+                        if (scheduleList[i].startTime == 1010) {
+                            table_2_2 = text
+                            sheet_2_2 = info
+                        }
+                        if (scheduleList[i].startTime == 1400) {
+                            table_3_2 = text
+                            sheet_3_2 = info
+                        }
+                        if (scheduleList[i].startTime == 1600) {
+                            table_4_2 = text
+                            sheet_4_2 = info
+                        }
+                        if (scheduleList[i].startTime == 1900) {
+                            table_5_2 = text
+                            sheet_5_2 = info
+                        }
+                    }
+                    if (scheduleList[i].weekday == 3) {
+                        if (scheduleList[i].startTime == 800) {
+                            table_1_3 = text
+                            sheet_1_3 = info
+                        }
+                        if (scheduleList[i].startTime == 1010) {
+                            table_2_3 = text
+                            sheet_2_3 = info
+                        }
+                        if (scheduleList[i].startTime == 1400) {
+                            table_3_3 = text
+                            sheet_3_3 = info
+                        }
+                        if (scheduleList[i].startTime == 1600) {
+                            table_4_3 = text
+                            sheet_4_3 = info
+                        }
+                        if (scheduleList[i].startTime == 1900) {
+                            table_5_3 = text
+                            sheet_5_3 = info
+                        }
+                    }
+                    if (scheduleList[i].weekday == 4) {
+                        if (scheduleList[i].startTime == 800) {
+                            table_1_4 = text
+                            sheet_1_4 = info
+                        }
+                        if (scheduleList[i].startTime == 1010) {
+                            table_2_4 = text
+                            sheet_2_4 = info
+                        }
+                        if (scheduleList[i].startTime == 1400) {
+                            table_3_4 = text
+                            sheet_3_4 = info
+                        }
+                        if (scheduleList[i].startTime == 1600) {
+                            table_4_4 = text
+                            sheet_4_4 = info
+                        }
+                        if (scheduleList[i].startTime == 1900) {
+                            table_5_4 = text
+                            sheet_5_4 = info
+                        }
+                    }
+                    if (scheduleList[i].weekday == 5) {
+                        if (scheduleList[i].startTime == 800) {
+                            table_1_5 = text
+                            sheet_1_5 = info
+                        }
+                        if (scheduleList[i].startTime == 1010) {
+                            table_2_5 = text
+                            sheet_2_5 = info
+                        }
+                        if (scheduleList[i].startTime == 1400) {
+                            table_3_5 = text
+                            sheet_3_5 = info
+                        }
+                        if (scheduleList[i].startTime == 1600) {
+                            table_4_5 = text
+                            sheet_4_5 = info
+                        }
+                        if (scheduleList[i].startTime == 1900) {
+                            table_5_5 = text
+                            sheet_5_5 = info
+                        }
+                    }
                 }
             }
-
-            for (j in 0 until lessonList.size) {
-                val lessonlist_id = lessonList[j].id
-                val INFO = lessonList[j].suggestScheduleWeekInfo
-                val name = lessonList[j].courseName
-                val courseTypeName = lessonList[j].courseTypeName
-                if (scheduleid == lessonlist_id) {
-                    scheduleid = name
-                    endtime = INFO
-                    lessonType = courseTypeName
-                }
-            }
-
-
-
-            //适配长文字布局
-            scheduleid = scheduleid.replace("语言程序设计","程序设计")
-
-            val text = starttime + "\n" + scheduleid + "\n" + room
-            val info =
-                "教师:${person}"+ "  "+
-                        "周数:${endtime}"+ "  "+
-                        "人数:${periods}"+ "  "+
-                        "类型:${lessonType}"
-
-
-            //  Log.d("变化",Bianhuaweeks.toString())
-
-            if (scheduleList[i].weekIndex == Bianhuaweeks.toInt()) {
-                if (scheduleList[i].weekday == 1) {
-                    if (scheduleList[i].startTime == 800) {
-                        table_1_1 = text
-                        sheet_1_1 = info
-                    }
-                    if (scheduleList[i].startTime == 1010) {
-                        table_2_1 = text
-                        sheet_2_1 = info
-                    }
-                    if (scheduleList[i].startTime == 1400) {
-                        table_3_1 = text
-                        sheet_3_1 = info
-                    }
-                    if (scheduleList[i].startTime == 1600) {
-                        table_4_1 = text
-                        sheet_4_1 = info
-                    }
-                    if (scheduleList[i].startTime == 1900) {
-                        table_5_1 = text
-                        sheet_5_1 = info
-                    }
-                }
-                if (scheduleList[i].weekday == 2) {
-                    if (scheduleList[i].startTime == 800) {
-                        table_1_2 = text
-                        sheet_1_2 = info
-                    }
-                    if (scheduleList[i].startTime == 1010) {
-                        table_2_2 = text
-                        sheet_2_2 = info
-                    }
-                    if (scheduleList[i].startTime == 1400) {
-                        table_3_2 = text
-                        sheet_3_2 = info
-                    }
-                    if (scheduleList[i].startTime == 1600) {
-                        table_4_2 = text
-                        sheet_4_2 = info
-                    }
-                    if (scheduleList[i].startTime == 1900) {
-                        table_5_2 = text
-                        sheet_5_2 = info
-                    }
-                }
-                if (scheduleList[i].weekday == 3) {
-                    if (scheduleList[i].startTime == 800) {
-                        table_1_3 = text
-                        sheet_1_3 = info
-                    }
-                    if (scheduleList[i].startTime == 1010) {
-                        table_2_3 = text
-                        sheet_2_3 = info
-                    }
-                    if (scheduleList[i].startTime == 1400) {
-                        table_3_3 = text
-                        sheet_3_3 = info
-                    }
-                    if (scheduleList[i].startTime == 1600) {
-                        table_4_3 = text
-                        sheet_4_3 = info
-                    }
-                    if (scheduleList[i].startTime == 1900) {
-                        table_5_3 = text
-                        sheet_5_3 = info
-                    }
-                }
-                if (scheduleList[i].weekday == 4) {
-                    if (scheduleList[i].startTime == 800) {
-                        table_1_4 = text
-                        sheet_1_4 = info
-                    }
-                    if (scheduleList[i].startTime == 1010) {
-                        table_2_4 = text
-                        sheet_2_4 = info
-                    }
-                    if (scheduleList[i].startTime == 1400) {
-                        table_3_4 = text
-                        sheet_3_4 = info
-                    }
-                    if (scheduleList[i].startTime == 1600) {
-                        table_4_4 = text
-                        sheet_4_4 = info
-                    }
-                    if (scheduleList[i].startTime == 1900) {
-                        table_5_4 = text
-                        sheet_5_4 = info
-                    }
-                }
-                if (scheduleList[i].weekday == 5) {
-                    if (scheduleList[i].startTime == 800) {
-                        table_1_5 = text
-                        sheet_1_5 = info
-                    }
-                    if (scheduleList[i].startTime == 1010) {
-                        table_2_5 = text
-                        sheet_2_5 = info
-                    }
-                    if (scheduleList[i].startTime == 1400) {
-                        table_3_5 = text
-                        sheet_3_5 = info
-                    }
-                    if (scheduleList[i].startTime == 1600) {
-                        table_4_5 = text
-                        sheet_4_5 = info
-                    }
-                    if (scheduleList[i].startTime == 1900) {
-                        table_5_5 = text
-                        sheet_5_5 = info
-                    }
-                }
-            }
+        } catch (e : Exception) {
+            e.printStackTrace()
+            Log.d("错误","错误")
         }
+
     }
     fun UpdateAll() {
         table_1_1 = ""
@@ -444,230 +452,236 @@ fun CalendarScreen(showAll : Boolean,vm : LoginSuccessViewModel,grade : String,i
         table_5_7 = ""
         //////////////////////////////////////////////////////////////////////////////////
 
-        val json =  prefs.getString("json", "")
-        // Log.d("测试",json!!)
-        val datumResponse = Gson().fromJson(json, datumResponse::class.java)
-        val scheduleList = datumResponse.result.scheduleList
-        val lessonList = datumResponse.result.lessonList
-        val scheduleGroupList = datumResponse.result.scheduleGroupList
+        try {
+            val json =  prefs.getString("json", "")
+            // Log.d("测试",json!!)
+            val datumResponse = Gson().fromJson(json, datumResponse::class.java)
+            val scheduleList = datumResponse.result.scheduleList
+            val lessonList = datumResponse.result.lessonList
+            val scheduleGroupList = datumResponse.result.scheduleGroupList
 
-        for (i in 0 until scheduleList.size) {
-            var starttime = scheduleList[i].startTime.toString()
-            starttime =
-                starttime.substring(0, starttime.length - 2) + ":" + starttime.substring(
-                    starttime.length - 2
-                )
-            var room = scheduleList[i].room.nameZh
-            val person = scheduleList[i].personName
-            var date = scheduleList[i].date
-            var scheduleid = scheduleList[i].lessonId.toString()
-            var endtime = scheduleList[i].endTime.toString()
-            var periods = scheduleList[i].periods
-            var lessonType = scheduleList[i].lessonType
+            for (i in scheduleList.indices) {
+                var starttime = scheduleList[i].startTime.toString()
+                starttime =
+                    starttime.substring(0, starttime.length - 2) + ":" + starttime.substring(
+                        starttime.length - 2
+                    )
+                var room = scheduleList[i].room.nameZh
+                val person = scheduleList[i].personName
+                var date = scheduleList[i].date
+                var scheduleid = scheduleList[i].lessonId.toString()
+                var endtime = scheduleList[i].endTime.toString()
+                var periods = scheduleList[i].periods
+                var lessonType = scheduleList[i].lessonType
 
-            room = room.replace("学堂","")
+                room = room.replace("学堂","")
 
-            for (k in 0 until scheduleGroupList.size) {
+                for (k in 0 until scheduleGroupList.size) {
 
-                val id = scheduleGroupList[k].lessonId.toString()
-                val std = scheduleGroupList[k].stdCount
-                if ( scheduleid == id) {
-                    periods = std
+                    val id = scheduleGroupList[k].lessonId.toString()
+                    val std = scheduleGroupList[k].stdCount
+                    if ( scheduleid == id) {
+                        periods = std
+                    }
+                }
+
+                for (j in 0 until lessonList.size) {
+                    val lessonlist_id = lessonList[j].id
+                    val INFO = lessonList[j].suggestScheduleWeekInfo
+                    val name = lessonList[j].courseName
+                    val courseTypeName = lessonList[j].courseTypeName
+                    if (scheduleid == lessonlist_id) {
+                        scheduleid = name
+                        endtime = INFO
+                        lessonType = courseTypeName
+                    }
+                }
+
+
+
+                //适配长文字布局
+                scheduleid = scheduleid.replace("语言程序设计","程序设计")
+
+                val text = starttime + "\n" + scheduleid + "\n" + room
+                val info =
+                    "教师:${person}"+ "  "+
+                            "周数:${endtime}"+ "  "+
+                            "人数:${periods}"+ "  "+
+                            "类型:${lessonType}"
+
+
+                //  Log.d("变化",Bianhuaweeks.toString())
+
+                if (scheduleList[i].weekIndex == Bianhuaweeks.toInt()) {
+                    when(scheduleList[i].weekday) {
+                        6 -> { Handler(Looper.getMainLooper()).post { vmUI.findNewCourse.value = text.isNotEmpty() } }
+                        7 -> { Handler(Looper.getMainLooper()).post { vmUI.findNewCourse.value = text.isNotEmpty() } }
+                    }
+                    if (scheduleList[i].weekday == 1) {
+                        if (scheduleList[i].startTime == 800) {
+                            table_1_1 = text
+                            sheet_1_1 = info
+                        }
+                        if (scheduleList[i].startTime == 1010) {
+                            table_2_1 = text
+                            sheet_2_1 = info
+                        }
+                        if (scheduleList[i].startTime == 1400) {
+                            table_3_1 = text
+                            sheet_3_1 = info
+                        }
+                        if (scheduleList[i].startTime == 1600) {
+                            table_4_1 = text
+                            sheet_4_1 = info
+                        }
+                        if (scheduleList[i].startTime == 1900) {
+                            table_5_1 = text
+                            sheet_5_1 = info
+                        }
+                    }
+                    if (scheduleList[i].weekday == 2) {
+                        if (scheduleList[i].startTime == 800) {
+                            table_1_2 = text
+                            sheet_1_2 = info
+                        }
+                        if (scheduleList[i].startTime == 1010) {
+                            table_2_2 = text
+                            sheet_2_2 = info
+                        }
+                        if (scheduleList[i].startTime == 1400) {
+                            table_3_2 = text
+                            sheet_3_2 = info
+                        }
+                        if (scheduleList[i].startTime == 1600) {
+                            table_4_2 = text
+                            sheet_4_2 = info
+                        }
+                        if (scheduleList[i].startTime == 1900) {
+                            table_5_2 = text
+                            sheet_5_2 = info
+                        }
+                    }
+                    if (scheduleList[i].weekday == 3) {
+                        if (scheduleList[i].startTime == 800) {
+                            table_1_3 = text
+                            sheet_1_3 = info
+                        }
+                        if (scheduleList[i].startTime == 1010) {
+                            table_2_3 = text
+                            sheet_2_3 = info
+                        }
+                        if (scheduleList[i].startTime == 1400) {
+                            table_3_3 = text
+                            sheet_3_3 = info
+                        }
+                        if (scheduleList[i].startTime == 1600) {
+                            table_4_3 = text
+                            sheet_4_3 = info
+                        }
+                        if (scheduleList[i].startTime == 1900) {
+                            table_5_3 = text
+                            sheet_5_3 = info
+                        }
+                    }
+                    if (scheduleList[i].weekday == 4) {
+                        if (scheduleList[i].startTime == 800) {
+                            table_1_4 = text
+                            sheet_1_4 = info
+                        }
+                        if (scheduleList[i].startTime == 1010) {
+                            table_2_4 = text
+                            sheet_2_4 = info
+                        }
+                        if (scheduleList[i].startTime == 1400) {
+                            table_3_4 = text
+                            sheet_3_4 = info
+                        }
+                        if (scheduleList[i].startTime == 1600) {
+                            table_4_4 = text
+                            sheet_4_4 = info
+                        }
+                        if (scheduleList[i].startTime == 1900) {
+                            table_5_4 = text
+                            sheet_5_4 = info
+                        }
+                    }
+                    if (scheduleList[i].weekday == 5) {
+                        if (scheduleList[i].startTime == 800) {
+                            table_1_5 = text
+                            sheet_1_5 = info
+                        }
+                        if (scheduleList[i].startTime == 1010) {
+                            table_2_5 = text
+                            sheet_2_5 = info
+                        }
+                        if (scheduleList[i].startTime == 1400) {
+                            table_3_5 = text
+                            sheet_3_5 = info
+                        }
+                        if (scheduleList[i].startTime == 1600) {
+                            table_4_5 = text
+                            sheet_4_5 = info
+                        }
+                        if (scheduleList[i].startTime == 1900) {
+                            table_5_5 = text
+                            sheet_5_5 = info
+                        }
+                    }
+                    if (scheduleList[i].weekday == 6) {
+                        if (scheduleList[i].startTime == 800) {
+                            table_1_6 = text
+                            sheet_1_6 = info
+                        }
+                        if (scheduleList[i].startTime == 1010) {
+                            table_2_6 = text
+                            sheet_2_6 = info
+                        }
+                        if (scheduleList[i].startTime == 1400) {
+                            table_3_6 = text
+                            sheet_3_6 = info
+                        }
+                        if (scheduleList[i].startTime == 1600) {
+                            table_4_6 = text
+                            sheet_4_6 = info
+                        }
+                        if (scheduleList[i].startTime == 1900) {
+                            table_5_6 = text
+                            sheet_5_6 = info
+                        }
+                    }
+                    if (scheduleList[i].weekday == 7) {
+                        if (scheduleList[i].startTime == 800) {
+                            table_1_7 = text
+                            sheet_1_7 = info
+                        }
+                        if (scheduleList[i].startTime == 1010) {
+                            table_2_7 = text
+                            sheet_2_7 = info
+                        }
+                        if (scheduleList[i].startTime == 1400) {
+                            table_3_7 = text
+                            sheet_3_7 = info
+                        }
+                        if (scheduleList[i].startTime == 1600) {
+                            table_4_7 = text
+                            sheet_4_7 = info
+                        }
+                        if (scheduleList[i].startTime == 1900) {
+                            table_5_7 = text
+                            sheet_5_7 = info
+                        }
+                    }
                 }
             }
-
-            for (j in 0 until lessonList.size) {
-                val lessonlist_id = lessonList[j].id
-                val INFO = lessonList[j].suggestScheduleWeekInfo
-                val name = lessonList[j].courseName
-                val courseTypeName = lessonList[j].courseTypeName
-                if (scheduleid == lessonlist_id) {
-                    scheduleid = name
-                    endtime = INFO
-                    lessonType = courseTypeName
-                }
-            }
-
-
-
-            //适配长文字布局
-            scheduleid = scheduleid.replace("语言程序设计","程序设计")
-
-            val text = starttime + "\n" + scheduleid + "\n" + room
-            val info =
-                "教师:${person}"+ "  "+
-                        "周数:${endtime}"+ "  "+
-                        "人数:${periods}"+ "  "+
-                        "类型:${lessonType}"
-
-
-            //  Log.d("变化",Bianhuaweeks.toString())
-
-            if (scheduleList[i].weekIndex == Bianhuaweeks.toInt()) {
-                when(scheduleList[i].weekday) {
-                    6 -> { Handler(Looper.getMainLooper()).post { vmUI.findNewCourse.value = text.isNotEmpty() } }
-                    7 -> { Handler(Looper.getMainLooper()).post { vmUI.findNewCourse.value = text.isNotEmpty() } }
-                }
-                if (scheduleList[i].weekday == 1) {
-                    if (scheduleList[i].startTime == 800) {
-                        table_1_1 = text
-                        sheet_1_1 = info
-                    }
-                    if (scheduleList[i].startTime == 1010) {
-                        table_2_1 = text
-                        sheet_2_1 = info
-                    }
-                    if (scheduleList[i].startTime == 1400) {
-                        table_3_1 = text
-                        sheet_3_1 = info
-                    }
-                    if (scheduleList[i].startTime == 1600) {
-                        table_4_1 = text
-                        sheet_4_1 = info
-                    }
-                    if (scheduleList[i].startTime == 1900) {
-                        table_5_1 = text
-                        sheet_5_1 = info
-                    }
-                }
-                if (scheduleList[i].weekday == 2) {
-                    if (scheduleList[i].startTime == 800) {
-                        table_1_2 = text
-                        sheet_1_2 = info
-                    }
-                    if (scheduleList[i].startTime == 1010) {
-                        table_2_2 = text
-                        sheet_2_2 = info
-                    }
-                    if (scheduleList[i].startTime == 1400) {
-                        table_3_2 = text
-                        sheet_3_2 = info
-                    }
-                    if (scheduleList[i].startTime == 1600) {
-                        table_4_2 = text
-                        sheet_4_2 = info
-                    }
-                    if (scheduleList[i].startTime == 1900) {
-                        table_5_2 = text
-                        sheet_5_2 = info
-                    }
-                }
-                if (scheduleList[i].weekday == 3) {
-                    if (scheduleList[i].startTime == 800) {
-                        table_1_3 = text
-                        sheet_1_3 = info
-                    }
-                    if (scheduleList[i].startTime == 1010) {
-                        table_2_3 = text
-                        sheet_2_3 = info
-                    }
-                    if (scheduleList[i].startTime == 1400) {
-                        table_3_3 = text
-                        sheet_3_3 = info
-                    }
-                    if (scheduleList[i].startTime == 1600) {
-                        table_4_3 = text
-                        sheet_4_3 = info
-                    }
-                    if (scheduleList[i].startTime == 1900) {
-                        table_5_3 = text
-                        sheet_5_3 = info
-                    }
-                }
-                if (scheduleList[i].weekday == 4) {
-                    if (scheduleList[i].startTime == 800) {
-                        table_1_4 = text
-                        sheet_1_4 = info
-                    }
-                    if (scheduleList[i].startTime == 1010) {
-                        table_2_4 = text
-                        sheet_2_4 = info
-                    }
-                    if (scheduleList[i].startTime == 1400) {
-                        table_3_4 = text
-                        sheet_3_4 = info
-                    }
-                    if (scheduleList[i].startTime == 1600) {
-                        table_4_4 = text
-                        sheet_4_4 = info
-                    }
-                    if (scheduleList[i].startTime == 1900) {
-                        table_5_4 = text
-                        sheet_5_4 = info
-                    }
-                }
-                if (scheduleList[i].weekday == 5) {
-                    if (scheduleList[i].startTime == 800) {
-                        table_1_5 = text
-                        sheet_1_5 = info
-                    }
-                    if (scheduleList[i].startTime == 1010) {
-                        table_2_5 = text
-                        sheet_2_5 = info
-                    }
-                    if (scheduleList[i].startTime == 1400) {
-                        table_3_5 = text
-                        sheet_3_5 = info
-                    }
-                    if (scheduleList[i].startTime == 1600) {
-                        table_4_5 = text
-                        sheet_4_5 = info
-                    }
-                    if (scheduleList[i].startTime == 1900) {
-                        table_5_5 = text
-                        sheet_5_5 = info
-                    }
-                }
-                if (scheduleList[i].weekday == 6) {
-                    if (scheduleList[i].startTime == 800) {
-                        table_1_6 = text
-                        sheet_1_6 = info
-                    }
-                    if (scheduleList[i].startTime == 1010) {
-                        table_2_6 = text
-                        sheet_2_6 = info
-                    }
-                    if (scheduleList[i].startTime == 1400) {
-                        table_3_6 = text
-                        sheet_3_6 = info
-                    }
-                    if (scheduleList[i].startTime == 1600) {
-                        table_4_6 = text
-                        sheet_4_6 = info
-                    }
-                    if (scheduleList[i].startTime == 1900) {
-                        table_5_6 = text
-                        sheet_5_6 = info
-                    }
-                }
-                if (scheduleList[i].weekday == 7) {
-                    if (scheduleList[i].startTime == 800) {
-                        table_1_7 = text
-                        sheet_1_7 = info
-                    }
-                    if (scheduleList[i].startTime == 1010) {
-                        table_2_7 = text
-                        sheet_2_7 = info
-                    }
-                    if (scheduleList[i].startTime == 1400) {
-                        table_3_7 = text
-                        sheet_3_7 = info
-                    }
-                    if (scheduleList[i].startTime == 1600) {
-                        table_4_7 = text
-                        sheet_4_7 = info
-                    }
-                    if (scheduleList[i].startTime == 1900) {
-                        table_5_7 = text
-                        sheet_5_7 = info
-                    }
-                }
-            }
+        } catch (e : Exception) {
+            e.printStackTrace()
+            Log.d("错误ALL","错误")
         }
+
     }
 //////////////////////////////////////////////////////////////////////////////////
     val cookie = prefs.getString("redirect", "")
-
+    var num2 = 1
    // val grade = intent.getStringExtra("Grade")
     val ONE = prefs.getString("ONE","")
     val TGC = prefs.getString("TGC","")
@@ -691,7 +705,10 @@ fun CalendarScreen(showAll : Boolean,vm : LoginSuccessViewModel,grade : String,i
                     val result = Gson().fromJson(result, LoginCommunityResponse::class.java)
                     val token = result.result.token
                     SharePrefs.Save("TOKEN", token)
-                    MyToast("Community登陆成功")
+                    if(num2 == 1) {
+                        MyToast("Community登陆成功")
+                        num2++
+                    }
                 }
             }
         }
@@ -715,18 +732,34 @@ fun CalendarScreen(showAll : Boolean,vm : LoginSuccessViewModel,grade : String,i
             }
         }
 
+        //获取慧新易校
+       // val AuthObserver = Observer<String?> { result ->
+        //    if (result != null) {
+       //        if(result.contains("成功")) MyToast("一卡通登陆成功")
+      //          else
+     //       }
+   //     }
 
+
+
+        //检测慧新易校可用性
+        val auth = prefs.getString("auth","")
+        if (prefs.getString("auth", "") == "") vm.OneGotoCard("$ONE;$TGC")
+
+        async { vm.OneGotoCard("$ONE;$TGC") }
         async { CommuityTOKEN?.let { vm.Exam(it) } }
+
         Handler(Looper.getMainLooper()).post { vm.ExamCodeData.observeForever(ExamObserver) }
 
         //慧新易校获取TOKEN
-        val liushui = prefs.getString("cardliushui", MyApplication.NullBill)
-        if (liushui != null) {
-            if (prefs.getString("auth", "") == null || !liushui.contains("操作成功"))
-                vm.OneGotoCard("$ONE;$TGC")
-        }
+        //val liushui = prefs.getString("cardliushui", MyApplication.NullBill)
+        //if (liushui != null) {
 
-        //暂时废除登录信息门户的接口
+
+               //
+        ///}
+
+        //登录信息门户的接口,还没做重构（懒）
                if (token != null) {
                  if (token.contains("AT") && cardvalue != "未获取") {
                    async { vm.getSubBooks("Bearer $token") }
@@ -744,7 +777,7 @@ fun CalendarScreen(showAll : Boolean,vm : LoginSuccessViewModel,grade : String,i
     }
     scope.launch {
 
-//加载其他信息////////////////////////////////////////////////////////////////////////////////////////////////////
+//加载其他教务信息////////////////////////////////////////////////////////////////////////////////////////////////////
         launch {
                     val studentIdObserver = Observer<Int> { result ->
                         if (result != 99999) {

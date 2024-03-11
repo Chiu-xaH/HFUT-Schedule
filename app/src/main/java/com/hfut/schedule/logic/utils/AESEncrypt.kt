@@ -1,11 +1,7 @@
-package com.hfut.schedule.logic.Encrypt
+package com.hfut.schedule.logic.utils
 
 import android.util.Base64
-import java.security.SecureRandom
 import javax.crypto.Cipher
-import javax.crypto.SecretKeyFactory
-import javax.crypto.spec.IvParameterSpec
-import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
 object AESEncrypt {
     fun encrypt(input:String,password:String): String{

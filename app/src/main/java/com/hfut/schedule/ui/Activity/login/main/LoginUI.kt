@@ -63,7 +63,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginViewModel
 import com.hfut.schedule.activity.LoginSuccessActivity
 import com.hfut.schedule.activity.SavedCoursesActivity
-import com.hfut.schedule.logic.Encrypt.AESEncrypt
+import com.hfut.schedule.logic.utils.AESEncrypt
 import com.hfut.schedule.logic.utils.APPVersion
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.Save

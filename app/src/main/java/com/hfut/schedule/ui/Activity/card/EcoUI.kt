@@ -17,9 +17,7 @@ import com.hfut.schedule.ui.UIUtils.MyToast
 fun EcoUI(innerPadding : PaddingValues) {
     Column {
         Spacer(modifier = Modifier.padding(innerPadding.calculateTopPadding()))
-        Box {
-            Text(text = "肥工教务通致力于帮助减少碳足迹,环保消费\n(本页面正在开发,敬请期待)", modifier = Modifier.align(Alignment.Center).padding(horizontal = 15.dp))
-        }
+        
         Spacer(modifier = Modifier.padding(innerPadding.calculateBottomPadding()))
     }
 }

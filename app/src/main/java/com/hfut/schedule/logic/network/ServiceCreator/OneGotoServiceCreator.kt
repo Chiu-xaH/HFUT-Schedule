@@ -1,6 +1,7 @@
-package com.hfut.schedule.logic.network.ServiceCreator.OneGoto
+package com.hfut.schedule.logic.network.ServiceCreator
 
 import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.network.interceptor.GotoInterceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit

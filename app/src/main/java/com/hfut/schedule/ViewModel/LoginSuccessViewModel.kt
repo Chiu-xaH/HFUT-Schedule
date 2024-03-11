@@ -21,7 +21,7 @@ import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuJSONService
 import com.hfut.schedule.logic.network.ServiceCreator.LePaoYunServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Login.LoginServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.One.OneServiceCreator
-import com.hfut.schedule.logic.network.ServiceCreator.OneGoto.OneGotoServiceCreator
+import com.hfut.schedule.logic.network.ServiceCreator.OneGotoServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.SearchEleServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.XuanquServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.ZJGDBillServiceCreator
@@ -33,11 +33,6 @@ import com.hfut.schedule.logic.network.api.LoginService
 import com.hfut.schedule.logic.network.api.OneService
 import com.hfut.schedule.logic.network.api.XuanquService
 import com.hfut.schedule.logic.network.api.ZJGDBillService
-import com.hfut.schedule.logic.utils.SharePrefs.Save
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
