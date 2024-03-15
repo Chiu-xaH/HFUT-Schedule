@@ -11,8 +11,8 @@
       "type": "SINGLE",
       "filters": [],
       "attributes": [],
-      "versionCode": 69,
-      "versionName": "4.2.3.1 Fix",
+      "versionCode": 70,
+      "versionName": "4.3",
       "outputFile": "app-release.apk"
     }
   ],

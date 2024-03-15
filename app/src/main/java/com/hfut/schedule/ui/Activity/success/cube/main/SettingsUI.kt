@@ -13,17 +13,15 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.MyAPIItem
-import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.SettingsCubeItems
-import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.SettingsItem
+import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.PersonPart
+import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.PartTwo
+import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.PartOne
 
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("SuspiciousIndentation")
@@ -32,7 +30,8 @@ import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.SettingsItem
 fun SettingsScreen(vm : LoginSuccessViewModel
                    ,showlable : Boolean,
                    showlablechanged: (Boolean) -> Unit,
-                   ifSaved : Boolean,innerPaddings : PaddingValues,
+                   ifSaved : Boolean,
+                   innerPaddings : PaddingValues,
                    blur : Boolean,
                    blurchanged : (Boolean) -> Unit
 ) {
@@ -40,17 +39,24 @@ fun SettingsScreen(vm : LoginSuccessViewModel
 
         Column(modifier = Modifier
             .verticalScroll(rememberScrollState())
-            .fillMaxSize().padding(innerPaddings)) {
+            .fillMaxSize()
+            .padding(innerPaddings)) {
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(5.dp))
 
+            Text(text = "登录信息", color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp))
+            PersonPart()
+            Text(text = "API接口", color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp))
             MyAPIItem()
 
-            SettingsItem(vm,showlable,showlablechanged,ifSaved,blur,blurchanged)
+            Text(text = "设置", color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp))
+            PartOne(vm,showlable,showlablechanged,ifSaved,blur,blurchanged)
 
-            SettingsCubeItems()
+            PartTwo()
 
-            Spacer(modifier = Modifier.height(90.dp))
+            Spacer(modifier = Modifier
+                .height(innerPaddings.calculateBottomPadding())
+                .height(5.dp))
         }
 
 }

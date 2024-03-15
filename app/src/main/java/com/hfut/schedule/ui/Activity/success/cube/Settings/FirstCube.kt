@@ -10,9 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.MyAPIItem
-import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.SettingsCubeItems
+import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.PartTwo
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Test.debug
-import dev.chrisbanes.haze.HazeState
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -21,7 +20,7 @@ import dev.chrisbanes.haze.HazeState
 fun FirstCube() {
     MyAPIItem()
     Spacer(modifier = Modifier.height(5.dp))
-    SettingsCubeItems()
+    PartTwo()
     debug()
 
 }

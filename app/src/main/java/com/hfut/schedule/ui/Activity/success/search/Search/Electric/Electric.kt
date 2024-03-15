@@ -82,7 +82,7 @@ fun Electric(vm : LoginSuccessViewModel) {
 
     ListItem(
         headlineContent = { Text(text = "寝室电费") },
-        supportingContent = { Text(text = "需接入校园网")},
+        overlineContent = { Text(text = "校园网 宣城校区")},
         leadingContent = {
             Icon(painterResource(R.drawable.flash_on), contentDescription = "Localized description",)
         },

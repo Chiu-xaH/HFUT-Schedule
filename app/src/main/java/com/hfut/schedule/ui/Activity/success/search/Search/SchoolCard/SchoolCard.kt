@@ -12,7 +12,12 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonColors
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemColors
+import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -45,17 +50,33 @@ fun SchoolCardItem(vmUI : UIViewModel) {
     var card = prefs.getString("card","00")
   //  val bd = BigDecimal(card)
   //  val str = bd.setScale(2, RoundingMode.HALF_UP).toString()
+    val test = vmUI.CardValue.value?.balance ?: card
 
     ListItem(
-        headlineContent = { Text(text = "一卡通   ${vmUI.CardValue.value?.balance ?: card} 元") },
+        headlineContent = { Text(text =
+        "一卡通   $test 元"
+                +
+                if (test != null) {
+                    if(test.length <= 4){
+                        "  余额不足"
+                    } else ""
+                } else ""
+        ) },
         leadingContent = { Icon(painterResource(R.drawable.credit_card), contentDescription = "Localized description",) },
         trailingContent={
                 FilledTonalIconButton(
                     modifier = Modifier.scale(scale2.value),
                     interactionSource = interactionSource2,
-                    onClick = { OpenAlipay.openAlipay(MyApplication.AlipayCardURL) }
+                    onClick = { OpenAlipay.openAlipay(MyApplication.AlipayCardURL) },
                 ) { Icon( painterResource(R.drawable.add), contentDescription = "Localized description",) }
         },
+        colors = (
+            if (test != null) {
+                if(test.length <= 4){
+                    ListItemDefaults.colors(MaterialTheme.colorScheme.errorContainer)
+                } else ListItemDefaults.colors()
+            } else ListItemDefaults.colors()
+        ),
         modifier = Modifier.clickable {
             val it = Intent(MyApplication.context, CardActivity::class.java).apply { addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) }
             MyApplication.context.startActivity(it)

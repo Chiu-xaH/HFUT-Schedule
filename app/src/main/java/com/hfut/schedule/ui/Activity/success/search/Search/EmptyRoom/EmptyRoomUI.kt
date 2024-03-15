@@ -25,11 +25,12 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ui.Activity.success.search.Search.More.Login
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EmptyRoom(vm : LoginSuccessViewModel){
+fun EmptyRoom(vm : LoginSuccessViewModel,ifSaved : Boolean){
     val sheetState_EmptyRoom = rememberModalBottomSheetState()
     var showBottomSheet_EmptyRoom by remember { mutableStateOf(false) }
 
@@ -42,14 +43,15 @@ fun EmptyRoom(vm : LoginSuccessViewModel){
             )
         },
         modifier = Modifier.clickable {
-            val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
-            val token = prefs.getString("bearer","")
-            showBottomSheet_EmptyRoom = true
-            token?.let { vm.searchEmptyRoom("XC001", it) }
-            token?.let { vm.searchEmptyRoom("XC002", it) }
-            // view = "待开发"
-
-
+            if(ifSaved) Login()
+            else {
+                val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
+                val token = prefs.getString("bearer","")
+                showBottomSheet_EmptyRoom = true
+                token?.let { vm.searchEmptyRoom("XC001", it) }
+                token?.let { vm.searchEmptyRoom("XC002", it) }
+                // view = "待开发"
+            }
         }
     )
 

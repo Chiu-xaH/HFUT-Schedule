@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.Activity.success.search.Search.Estimate
+package com.hfut.schedule.ui.Activity.success.search.Search
 
 import androidx.compose.foundation.clickable
 import androidx.compose.material3.Icon
@@ -8,15 +8,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ui.UIUtils.MyToast
 
 @Composable
-fun Estimate(){
+fun MuCourse() {
+
 
     ListItem(
-        headlineContent = { Text(text = "教师评教")},
-        leadingContent = { Icon(painter = painterResource(id = R.drawable.verified), contentDescription = "")},
+        headlineContent = { Text(text = "慕课") },
+        leadingContent = {
+            Icon(
+                painterResource(R.drawable.task_alt),
+                contentDescription = "Localized description",
+            )
+        },
         modifier = Modifier.clickable {
             MyToast("暂未开发")
         }

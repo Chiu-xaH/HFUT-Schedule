@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
+import com.hfut.schedule.ui.UIUtils.MyToast
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,7 +33,6 @@ fun Second() {
 
     ListItem(
         headlineContent = { Text(text = "第二课堂") },
-        supportingContent = { Text(text = "暂未开发") },
         leadingContent = {
             Icon(
                 painterResource(R.drawable.school),
@@ -40,7 +40,7 @@ fun Second() {
             )
         },
         modifier = Modifier.clickable {
-            // showBottomSheet_Second = true
+            MyToast("暂未开发")
         }
     )
 

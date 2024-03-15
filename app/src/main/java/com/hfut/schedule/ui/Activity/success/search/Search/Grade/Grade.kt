@@ -1,6 +1,7 @@
 package com.hfut.schedule.ui.Activity.success.search.Search.Grade
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -43,8 +44,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.activity.CardActivity
+import com.hfut.schedule.activity.GradeActivity
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
@@ -82,13 +86,15 @@ fun Grade(vm : LoginSuccessViewModel,ifSaved : Boolean)  {
                     }
             }) { Icon(painterResource(R.drawable.article), contentDescription = "Localized description",) }
                          },
-        supportingContent = { if(!ifSaved) Text(text = "教务系统数据")
-                              else Text(text = "Community数据")
-                            },
         modifier = Modifier.clickable {
             getGrade()
             Save("GradeNum", getGrade().size.toString())
-            showBottomSheet_Grade = true
+            //showBottomSheet_Grade = true
+            val it = Intent(MyApplication.context, GradeActivity::class.java).apply {
+                putExtra("saved",ifSaved)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            MyApplication.context.startActivity(it)
         }
     )
 

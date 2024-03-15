@@ -32,10 +32,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ui.Activity.success.search.Search.More.Login
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Program(vm : LoginSuccessViewModel) {
+fun Program(vm : LoginSuccessViewModel,ifSaved : Boolean) {
     val sheetState_Program = rememberModalBottomSheetState()
     var showBottomSheet_Program by remember { mutableStateOf(false) }
 
@@ -47,7 +48,10 @@ fun Program(vm : LoginSuccessViewModel) {
                 contentDescription = "Localized description",
             )
         },
-        modifier = Modifier.clickable { showBottomSheet_Program = true }
+        modifier = Modifier.clickable {
+            if (ifSaved) Login()
+            else showBottomSheet_Program = true
+        }
     )
 
 

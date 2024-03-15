@@ -198,5 +198,21 @@ fun CardRow(vm : LoginSuccessViewModel,show : Boolean,vmUI : UIViewModel) {
                 colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
             )
         }
+        if(show)
+        Row {
+            ListItem(
+                headlineContent = { Text(text = "XX") },
+                modifier = Modifier.width(185.dp),
+                supportingContent = { Text(text = "余额不足提醒") },
+                leadingContent = { Icon(painterResource(R.drawable.account_balance_wallet), contentDescription = "Localized description",) },
+                colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
+            )
+            ListItem(
+                headlineContent = { Text(text = "XX") },
+                supportingContent = { Text(text = " 充值") },
+                leadingContent = { Icon(painterResource(R.drawable.add), contentDescription = "Localized description",) },
+                colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
+            )
+        }
     }
 }

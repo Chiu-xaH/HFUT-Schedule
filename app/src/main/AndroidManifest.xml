@@ -19,6 +19,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.App.Starting"
         tools:targetApi="31">
+        <activity
+            android:name=".activity.GradeActivity"
+            android:exported="false"
+            android:label="@string/title_activity_grade"
+            android:theme="@style/Theme.肥工课程表" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -35,14 +40,13 @@
             android:enabled="@bool/glance_appwidget_available"
             android:exported="false">
             <intent-filter>
-                <action android:name
-                    ="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
+
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget_info" />
         </receiver>
-
 
         <activity
             android:name=".activity.CardActivity"

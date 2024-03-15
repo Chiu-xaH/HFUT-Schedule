@@ -95,7 +95,7 @@ fun CourseTotalUI() {
                         shape = MaterialTheme.shapes.medium,
                     ){
                         ListItem(
-                            overlineContent = { Text(text = getCourse()[item].trainingCategoryName_dictText)},
+                            overlineContent = { getCourse()[item].trainingCategoryName_dictText?.let { Text(text = it) } },
                             headlineContent = {  Text(getCourse()[item].courseName) },
                             supportingContent = { Text("学分 " + getCourse()[item].credit.toString()) },
                             trailingContent = { Icon( Icons.Filled.ArrowForward, contentDescription = "")},
@@ -162,7 +162,7 @@ fun DetailItems(item : Int) {
                         shape = MaterialTheme.shapes.medium,
                     ) {
                         ListItem(
-                            overlineContent = { Text(text = getCourse()[item].trainingCategoryName_dictText) },
+                            overlineContent = { getCourse()[item].trainingCategoryName_dictText?.let { Text(text = it) } },
                             headlineContent = { Text("学分 " + getCourse()[item].credit.toString() + " | " + "教师 " + lists[0].teacher ) },
                             supportingContent = { Text("班级 " + getCourse()[item].className) },
                             trailingContent = {

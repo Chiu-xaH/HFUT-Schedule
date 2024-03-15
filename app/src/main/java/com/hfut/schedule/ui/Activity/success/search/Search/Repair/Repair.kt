@@ -16,7 +16,7 @@ fun Repair() {
         headlineContent = { Text(text = "报修") },
         leadingContent = { Icon(painter = painterResource(id = R.drawable.build), contentDescription = "") },
         modifier = Modifier.clickable {
-
+            MyToast("暂未开发")
         }
     )
 

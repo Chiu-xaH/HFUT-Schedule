@@ -5,8 +5,10 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Divider
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -135,33 +137,40 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
         modifier = Modifier.fillMaxSize(),
             //.blur(blurRadius, BlurredEdgeTreatment.Unbounded),
         topBar = {
-            TopAppBar(
-                modifier = Modifier.hazeChild(state = hazeState, blurRadius = MyApplication.Blur, tint = Color.Transparent, noiseFactor = 0f),
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = if(blur).50f else 1f),
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                title = { Text(texts(vm,bottomBarItems)) },
-                actions = {
-                    if(bottomBarItems == BottomBarItems.COURSES) {
-                        TextButton(onClick = { showAll = !showAll }) {
-                            BadgedBox(badge = {
-                                if (findCourse) Badge()
-                            }) { Icon(painter = painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "") }
+            Column {
+                TopAppBar(
+                    modifier = Modifier.hazeChild(state = hazeState, blurRadius = MyApplication.Blur, tint = Color.Transparent, noiseFactor = 0f),
+                    colors = TopAppBarDefaults.mediumTopAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = if(blur).50f else 1f),
+                        titleContentColor = MaterialTheme.colorScheme.primary,
+                    ),
+                    title = { Text(texts(vm,bottomBarItems)) },
+                    actions = {
+                        if(bottomBarItems == BottomBarItems.COURSES) {
+                            TextButton(onClick = { showAll = !showAll }) {
+                                BadgedBox(badge = {
+                                    if (findCourse) Badge()
+                                }) { Icon(painter = painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "") }
+                            }
                         }
-                    }
-                    if(bottomBarItems == BottomBarItems.FOCUS) {
-                        TextButton(onClick = { showBottomSheet = true }) {
-                            BadgedBox(badge = {
-                                if (getNotifications().size.toString() != prefs.getString("Notifications",""))
-                                    Badge()
-                            }) { Icon(painterResource(id = R.drawable.notifications), contentDescription = "") }
+                        if(bottomBarItems == BottomBarItems.FOCUS) {
+                            Row {
+                                TextButton(onClick = { showBottomSheet = true }) {
+                                    BadgedBox(badge = {
+                                        if (getNotifications().size.toString() != prefs.getString("Notifications",""))
+                                            Badge()
+                                    }) { Icon(painterResource(id = R.drawable.notifications), contentDescription = "") }
+                                }
+                            }
                         }
-                    }
-                },
+                    },
                 )
+                if(bottomBarItems != BottomBarItems.FOCUS)
+                Divider()
+            }
         },
         bottomBar = {
+            Divider()
             NavigationBar(containerColor = if(blur) MaterialTheme.colorScheme.primaryContainer.copy(.25f) else ListItemDefaults.containerColor ,
                 modifier = Modifier
                     .hazeChild(state = hazeState, blurRadius = MyApplication.Blur, tint = Color.Transparent, noiseFactor = 0f)) {

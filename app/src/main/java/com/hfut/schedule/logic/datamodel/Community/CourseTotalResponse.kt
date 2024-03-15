@@ -15,7 +15,7 @@ data class CourseResult(val courseBasicInfoDTOList : List<courseBasicInfoDTOList
 data class courseBasicInfoDTOList(val courseName : String,
                                   val credit : Double,
                                   val className : String,
-                                  val trainingCategoryName_dictText : String,
+                                  val trainingCategoryName_dictText : String?,
                                   val courseDetailDTOList : List<courseDetailDTOList>)
 
 data class courseDetailDTOList(val section : Int,

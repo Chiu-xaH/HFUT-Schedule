@@ -228,7 +228,6 @@ fun emptyRoomUI(vm : LoginSuccessViewModel) {
                                     label = { Text(text = room) },
                                     modifier = Modifier.padding(horizontal = 14.dp)
                                 )
-
                             }
                         }
 

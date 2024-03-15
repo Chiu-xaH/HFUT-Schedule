@@ -126,6 +126,15 @@ fun LoginClick(vm : LoginViewModel,username : String,inputAES : String) {
             }
         }
     }
+    //输入特定暗号进入调试模式
+    if(username == "DEBUG") {
+        MyToast("您已进入调试模式")
+        val it = Intent(MyApplication.context, SavedCoursesActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            putExtra("Grade", username.substring(2, 4))
+        }
+        MyApplication.context.startActivity(it)
+    }
 }
 
 
@@ -253,7 +262,7 @@ fun TwoTextField(vm : LoginViewModel) {
                     .weight(1f)
                     .padding(horizontal = 40.dp),
                 value = username,
-                onValueChange = {username = it },
+                onValueChange = { username = it },
                 label = { Text("学号" ) },
                 singleLine = true,
                 // placeholder = { Text("请输入正确格式")},

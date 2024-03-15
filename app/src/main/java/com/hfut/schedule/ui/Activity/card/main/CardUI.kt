@@ -10,7 +10,9 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.BadgedBox
@@ -50,6 +52,7 @@ import com.hfut.schedule.logic.datamodel.zjgd.records
 import com.hfut.schedule.logic.utils.ActivityCollecter
 import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.card.EcoUI
 import com.hfut.schedule.ui.Activity.card.bills.main.CardBills
 import com.hfut.schedule.ui.Activity.card.counts.main.CardCounts
@@ -68,20 +71,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun CardUI(vm : LoginSuccessViewModel, activity : Activity,vmUI : UIViewModel) {
 
-
-    val interactionSource2 = remember { MutableInteractionSource() }
-    val isPressed2 by interactionSource2.collectIsPressedAsState()
-
-    val scale2 = animateFloatAsState(
-        targetValue = if (isPressed2) 0.9f else 1f, // 按下时为0.9，松开时为1
-        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-        label = "" // 使用弹簧动画
-    )
-
-    val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
-    var card = prefs.getString("card","00")
-
-    val sheetState_Bills = rememberModalBottomSheetState()
     var showBottomSheet_Bills by remember { mutableStateOf(false) }
 
     val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR", AndroidVersion.sdkInt >= 32)
@@ -112,32 +101,6 @@ fun CardUI(vm : LoginSuccessViewModel, activity : Activity,vmUI : UIViewModel) {
         }
 
         return BillItems
-    }
-
-    fun get() {
-        val auth = prefs.getString("auth","")
-        vm.CardGet("bearer " + auth,page)
-        showBottomSheet_Bills = true
-    }
-
-    fun Updade() {
-        CoroutineScope(Job()).apply {
-            launch {
-                async {
-                    page = 1
-                    loading = true
-                    get()
-                }.await()
-                async {
-                    Handler(Looper.getMainLooper()).post {
-                        vm.libraryData.observeForever { result ->
-                            loading = false
-                            BillItem()
-                        }
-                    }
-                }
-            }
-        }
     }
 
 
@@ -176,24 +139,28 @@ fun CardUI(vm : LoginSuccessViewModel, activity : Activity,vmUI : UIViewModel) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            TopAppBar(
-                modifier = Modifier.hazeChild(state = hazeState, blurRadius = MyApplication.Blur, tint = Color.Transparent, noiseFactor = 0f),
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = if(blur).50f else 1f),
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                title = { Text("一卡通") },
-                actions = {
-                    IconButton(onClick = {
-                        //关闭
-                        ActivityCollecter.removeActivity(activity)
-                    }) {
-                        Icon(Icons.Filled.Close, contentDescription = "")
+            Column {
+                TopAppBar(
+                    modifier = Modifier.hazeChild(state = hazeState, blurRadius = MyApplication.Blur, tint = Color.Transparent, noiseFactor = 0f),
+                    colors = TopAppBarDefaults.mediumTopAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = if(blur).50f else 1f),
+                        titleContentColor = MaterialTheme.colorScheme.primary,
+                    ),
+                    title = { Text("一卡通") },
+                    actions = {
+                        IconButton(onClick = {
+                            //关闭
+                            ActivityCollecter.removeActivity(activity)
+                        }) {
+                            Icon(Icons.Filled.Close, contentDescription = "")
+                        }
                     }
-                }
-            )
+                )
+                Divider()
+            }
         },
         bottomBar = {
+            Divider()
             NavigationBar(containerColor = if(blur) MaterialTheme.colorScheme.primaryContainer.copy(.25f) else ListItemDefaults.containerColor ,
                 modifier = Modifier
                     .hazeChild(state = hazeState, blurRadius = MyApplication.Blur, tint = Color.Transparent, noiseFactor = 0f)) {
@@ -204,8 +171,8 @@ fun CardUI(vm : LoginSuccessViewModel, activity : Activity,vmUI : UIViewModel) {
                             R.drawable.receipt_long_filled)
                     ),
                     NavigationBarItemData(
-                        CardBarItems.COUNT.name,"统计", painterResource(R.drawable.monetization_on),
-                        painterResource(R.drawable.monetization_on_filled)
+                        CardBarItems.COUNT.name,"统计", painterResource(R.drawable.leaderboard),
+                        painterResource(R.drawable.leaderboard_filled)
                     ),
                     NavigationBarItemData(
                         CardBarItems.FUNCTION.name,"功能", painterResource(R.drawable.cube), painterResource(

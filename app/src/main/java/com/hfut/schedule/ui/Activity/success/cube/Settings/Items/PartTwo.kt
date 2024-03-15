@@ -51,7 +51,7 @@ fun Clear() {
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsCubeItems() {
+fun PartTwo() {
 
     getMyVersion()
     val Saveselect = prefs.getBoolean("select",false)
@@ -184,6 +184,12 @@ fun SettingsCubeItems() {
         headlineContent = { Text(text = "抹掉数据") },
         supportingContent = { Text(text = "当数据异常或冲突崩溃时,可抹掉数据,然后重新登录")},
         leadingContent = { Icon(painterResource(R.drawable.delete), contentDescription = "Localized description",) },
+        modifier = Modifier.clickable{ showDialog = true }
+    )
+    ListItem(
+        headlineContent = { Text(text = "问题检测") },
+        supportingContent = { Text(text = "当数据异常时,可尝试检测状态")},
+        leadingContent = { Icon(painterResource(R.drawable.build), contentDescription = "Localized description",) },
         modifier = Modifier.clickable{ showDialog = true }
     )
 }

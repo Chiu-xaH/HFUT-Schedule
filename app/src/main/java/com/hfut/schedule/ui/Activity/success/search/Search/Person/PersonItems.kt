@@ -53,7 +53,7 @@ fun PersonItems(ifSaved : Boolean) {
         }
     }
 
-    SharePrefs.Save("ChineseId",chineseid)
+    //SharePrefs.Save("ChineseId",chineseid)
 
     val benorsshuo =infoMap[elements?.get(8)?.text()]
     val yuanxi =infoMap[elements?.get(10)?.text()]
