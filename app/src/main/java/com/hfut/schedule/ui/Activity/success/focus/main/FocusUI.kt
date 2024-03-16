@@ -129,8 +129,8 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel,innerPaddings : 
                 var Nextweek = GetDate.Benweeks.toInt()
                 //当今天为周日时，变0为7
                 //当第二天为下一周的周一时，周数+1
-                when(weekdaytomorrow) {1 -> Nextweek += 1 }
-                when (weekdayToday) {0 -> weekdayToday = 7 }
+                when(weekdaytomorrow) { 1 -> Nextweek += 1 }
+                when (weekdayToday) { 0 -> weekdayToday = 7 }
 
                 LazyColumn(state = scrollstate) {
 
@@ -147,12 +147,11 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel,innerPaddings : 
                         else
                             items(getCourseINFO(weekdayToday,week).size) { item -> TodayCourseItem(item = item) }
                         //日程
-                        if (prefs.getBoolean("SWITCHMYAPI",true) && MySchedule().size > 0){
+                        if (prefs.getBoolean("SWITCHMYAPI",true)){
                             items(MySchedule().size) { item -> MyScheuleItem(item = item, MySchedule = MySchedule(),false) }
                         }
                         //考试
                         items(getExam().size) { item -> ExamItems(item,true) }
-                     //   item{ AddItem(item = 0, AddedItems = )}
                     }
 
                     //当Tab为第二个时
@@ -160,10 +159,8 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel,innerPaddings : 
 
                         if (prefs.getBoolean("SWITCHMYAPI",true)) {
                             //日程
-                            if(MySchedule().size > 0)
                             items(MySchedule().size) { item -> MyScheuleItem(item = item, MySchedule = MySchedule(),true)  }
                             //网课
-                            if(MyWangKe().size > 0)
                             items(MyWangKe().size) { item -> WangkeItem(item = item, MyWangKe = MyWangKe()) }
                         }
 

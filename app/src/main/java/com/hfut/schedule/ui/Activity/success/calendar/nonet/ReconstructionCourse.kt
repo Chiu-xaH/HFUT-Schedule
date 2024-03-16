@@ -1,6 +1,7 @@
 package com.hfut.schedule.ui.Activity.success.calendar.nonet
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -54,16 +55,20 @@ fun getCouses(Week : Int) : Array<Array<List<courseDetailDTOList>>> {
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun getCourseINFO(weekday : Int,Week : Int) : MutableList<List<courseDetailDTOList>> {
-
     val new = mutableListOf<List<courseDetailDTOList>>()
-    return if(weekday <= 7) {
-        val days = getCouses(Week)[weekday - 1]
-        for (i in days.indices){
-            if(days[i].isNotEmpty())
-                days[i].forEach { new.add(days[i]) }
-        }
+    return try {
+        if(weekday <= 7) {
+            val days = getCouses(Week)[weekday - 1]
+            for (i in days.indices){
+                if(days[i].isNotEmpty())
+                    days[i].forEach { new.add(days[i]) }
+            }
+            new
+        } else new
+    } catch (e : Exception) {
+        e.printStackTrace()
         new
-    } else new
+    }
 }
 
 

@@ -282,10 +282,8 @@ fun TomorrowCourseItem(item : Int) {
 
     var weekdaytomorrow = GetDate.dayweek + 1
     var week = GetDate.Benweeks.toInt()
-    //当第二天为周日时，变值为0
     //当第二天为下一周的周一时，周数+1
     when(weekdaytomorrow) {
-        7 -> weekdaytomorrow = 0
         1 -> week += 1
     }
 
