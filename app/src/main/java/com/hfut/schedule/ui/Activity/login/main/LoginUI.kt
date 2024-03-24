@@ -197,7 +197,7 @@ fun LoginUI(vm : LoginViewModel) {
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
-                title = { Text("肥工教务通") },
+                title = { Text("登录") },
                 actions = {
                   //  Row {
                         TextButton(onClick = {

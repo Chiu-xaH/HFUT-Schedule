@@ -3,6 +3,7 @@ package com.hfut.schedule.ui.Activity.success.search.Search.Grade
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.BadgedBox
@@ -51,23 +52,27 @@ fun GradeUI(ifSaved : Boolean,vm : LoginSuccessViewModel) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            TopAppBar(
-                modifier = Modifier.hazeChild(state = hazeState, blurRadius = MyApplication.Blur, tint = Color.Transparent, noiseFactor = 0f),
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = if(blur).50f else 1f),
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                title = { Text("成绩") },
-                actions = {
-                    IconButton(onClick = {
-                        //关闭
-                    }) {
-                        Icon(Icons.Filled.Close, contentDescription = "")
+            Column {
+                TopAppBar(
+                    modifier = Modifier.hazeChild(state = hazeState, blurRadius = MyApplication.Blur, tint = Color.Transparent, noiseFactor = 0f),
+                    colors = TopAppBarDefaults.mediumTopAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = if(blur).50f else 1f),
+                        titleContentColor = MaterialTheme.colorScheme.primary,
+                    ),
+                    title = { Text("成绩") },
+                    actions = {
+                        IconButton(onClick = {
+                            //关闭
+                        }) {
+                            Icon(Icons.Filled.Close, contentDescription = "")
+                        }
                     }
-                }
-            )
+                )
+                Divider()
+            }
         },
         bottomBar = {
+            Divider()
             NavigationBar(containerColor = if(blur) MaterialTheme.colorScheme.primaryContainer.copy(.25f) else ListItemDefaults.containerColor ,
                 modifier = Modifier
                     .hazeChild(state = hazeState, blurRadius = MyApplication.Blur, tint = Color.Transparent, noiseFactor = 0f)) {
@@ -118,8 +123,8 @@ fun GradeUI(ifSaved : Boolean,vm : LoginSuccessViewModel) {
                     backgroundColor = MaterialTheme.colorScheme.surface,
                 )) {
                 composable(GradeBarItems.GRADE.name) {
-                    if (ifSaved) GradeItemUI(vm)
-                    else GradeItemUIJXGLSTU()
+                    if (ifSaved) GradeItemUI(vm,innerPadding)
+                    else GradeItemUIJXGLSTU(innerPadding)
                 }
                 composable(GradeBarItems.COUNT.name) { 
                     Text(text = "")

@@ -11,13 +11,13 @@
             android:targetPackage="com.hfut.schedule" />
     </shortcut>
     <shortcut
-        android:icon="@drawable/lightbulb_shortcut"
+        android:icon="@drawable/login_shortcut"
         android:shortcutId="main"
         android:shortcutLongLabel="@string/main"
         android:shortcutShortLabel="@string/main">
         <intent
             android:action="com.hfut.schedule.shortcuts"
-            android:targetClass="com.hfut.schedule.activity.SavedCoursesActivity"
+            android:targetClass="com.hfut.schedule.activity.LoginActivity"
             android:targetPackage="com.hfut.schedule" />
     </shortcut>
 </shortcuts>

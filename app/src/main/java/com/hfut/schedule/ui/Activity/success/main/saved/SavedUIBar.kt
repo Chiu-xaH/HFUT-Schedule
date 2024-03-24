@@ -282,8 +282,8 @@ fun texts(vm : LoginSuccessViewModel,num : BottomBarItems) : String {
             return "$text ${getName(vm)} 同学"
         }
         BottomBarItems.SETTINGS -> {
-            return "肥工教务通 选项"
+            return "选项"
         }
-        else -> return "肥工教务通"
+        else -> return "HFUT Focus"
     }
 }

@@ -120,8 +120,8 @@ fun Grade(vm : LoginSuccessViewModel,ifSaved : Boolean)  {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ){
-                    if (ifSaved) GradeItemUI(vm)
-                    else GradeItemUIJXGLSTU()
+                    if (ifSaved) GradeItemUI(vm,innerPadding)
+                    else GradeItemUIJXGLSTU(innerPadding)
                 }
             }
         }

@@ -1,6 +1,7 @@
 package com.hfut.schedule.activity
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -45,6 +46,7 @@ class LoginActivity : ComponentActivity() {
     private val vmUI by lazy { ViewModelProvider(this).get(UIViewModel::class.java) }
     private val viewModel: MainViewModel by viewModels()
     private val switchColor= prefs.getBoolean("SWITCHCOLOR",true)
+
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SuspiciousIndentation", "MissingInflatedId")
 
@@ -119,6 +121,7 @@ class LoginActivity : ComponentActivity() {
             }
         }
     }
+
 }
 
 

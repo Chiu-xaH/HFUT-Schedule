@@ -66,6 +66,7 @@ import com.hfut.schedule.logic.datamodel.Focus.AddFocus
 import com.hfut.schedule.logic.datamodel.MyList
 import com.hfut.schedule.logic.datamodel.Schedule
 import com.hfut.schedule.logic.utils.AddCalendar.AddCalendar
+import com.hfut.schedule.ui.Activity.success.calendar.nonet.DetailInfos
 import com.hfut.schedule.ui.Activity.success.calendar.nonet.getCourseINFO
 import com.hfut.schedule.ui.Activity.success.search.Search.SchoolCard.SchoolCardItem
 import com.hfut.schedule.ui.UIUtils.MyToast
@@ -240,6 +241,7 @@ fun WangkeItem(item : Int, MyWangKe: MutableList<MyList>) {
 
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TodayCourseItem(item : Int) {
@@ -247,6 +249,39 @@ fun TodayCourseItem(item : Int) {
 
     var weekday = GetDate.dayweek
     if(weekday == 0) weekday = 7
+    //课程详情
+    val sheetState = rememberModalBottomSheetState()
+    var showBottomSheet by remember { mutableStateOf(false) }
+    if (showBottomSheet) {
+
+        ModalBottomSheet(
+            onDismissRequest = { showBottomSheet = false },
+            sheetState = sheetState
+        ) {
+
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        title = { Text(getCourseINFO(weekday,week)[item][0].name) },
+                    )
+                },
+            ) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                ) {
+                    DetailInfos(getCourseINFO(weekday,week)[item][0])
+                }
+            }
+        }
+    }
+
     Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)
     {
         Spacer(modifier = Modifier.height(100.dp))
@@ -269,13 +304,16 @@ fun TodayCourseItem(item : Int) {
                         painterResource(R.drawable.schedule),
                         contentDescription = "Localized description",
                     )
-                }, modifier = Modifier.clickable {  }
+                }, modifier = Modifier.clickable {
+                    showBottomSheet = true
+                }
             )
         }
     }
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TomorrowCourseItem(item : Int) {
@@ -286,6 +324,40 @@ fun TomorrowCourseItem(item : Int) {
     when(weekdaytomorrow) {
         1 -> week += 1
     }
+
+    //课程详情
+    val sheetState = rememberModalBottomSheetState()
+    var showBottomSheet by remember { mutableStateOf(false) }
+    if (showBottomSheet) {
+
+        ModalBottomSheet(
+            onDismissRequest = { showBottomSheet = false },
+            sheetState = sheetState
+        ) {
+
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        title = { Text(getCourseINFO(weekdaytomorrow,week)[item][0].name) },
+                    )
+                },
+            ) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                ) {
+                    DetailInfos(getCourseINFO(weekdaytomorrow,week)[item][0])
+                }
+            }
+        }
+    }
+
 
     Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
         Spacer(modifier = Modifier.height(100.dp))
@@ -303,7 +375,9 @@ fun TomorrowCourseItem(item : Int) {
                 overlineContent = {Text(text = getCourseINFO(weekdaytomorrow,week)[item][0].classTime)},
                 supportingContent = { Text(text = getCourseINFO(weekdaytomorrow,week)[item][0].place)},
                 leadingContent = { Icon(painterResource(R.drawable.exposure_plus_1), contentDescription = "Localized description",) },
-                modifier = Modifier.clickable {}
+                modifier = Modifier.clickable {
+                    showBottomSheet = true
+                }
             )
         }
     }

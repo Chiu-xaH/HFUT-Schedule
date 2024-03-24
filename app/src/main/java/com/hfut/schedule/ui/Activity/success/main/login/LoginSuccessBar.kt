@@ -56,6 +56,7 @@ import com.hfut.schedule.ui.Activity.success.main.saved.texts
 import com.hfut.schedule.ui.Activity.success.cube.Settings.getMyVersion
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.NotificationItems
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.getNotifications
+import com.hfut.schedule.ui.UIUtils.MyToast
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 import dev.chrisbanes.haze.hazeChild
@@ -93,7 +94,7 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel,vm
         val json = prefs.getString("json","")
         if (json != null) {
             if (card == "请登录刷新" || !json.contains("课")) {
-                delay(4000)
+                delay(6000)
                 isEnabled = true
             } else {
                 delay(1000)

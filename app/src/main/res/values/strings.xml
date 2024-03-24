@@ -1,14 +1,13 @@
 <resources>
-    <string name="app_name">肥工教务通</string>
-    <string name="title_activity_uiacitivity">UIAcitivity</string>
-    <string name="title_activity_schedule">ScheduleActivity</string>
-    <string name="title_activity_self">SelfActivity</string>
+    <string name="app_name">聚在工大</string>
+    <string name="title_activity_uiacitivity">主界面</string>
+    <string name="title_activity_schedule">速览</string>
     <string name="title_activity_urlactivity">URLActivity</string>
     <string name="title_activity_jxglstu">JxglstuActivity</string>
     <string name="title_activity_no_net">NoNetActivity</string>
     <string name="title_activity_fwdtlogin">FWDTLoginActivity</string>
     <string name="title_activity_card">CardActivity</string>
     <string name="card">一卡通</string>
-    <string name="main">速览</string>
+    <string name="main">主界面</string>
     <string name="title_activity_grade">GradeActivity</string>
 </resources>

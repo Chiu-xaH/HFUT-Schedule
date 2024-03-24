@@ -9,7 +9,9 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -35,6 +37,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpOffset
@@ -84,7 +87,7 @@ fun TotaGrade() {
     }
 }
 @Composable
-fun GradeItemUI(vm :LoginSuccessViewModel) {
+fun GradeItemUI(vm :LoginSuccessViewModel,innerPadding : PaddingValues) {
 
     var loading by remember { mutableStateOf(true) }
     var clicked by remember { mutableStateOf(false) }
@@ -129,162 +132,172 @@ fun GradeItemUI(vm :LoginSuccessViewModel) {
             showitem_year = false})
     }
 
-    Row(modifier = Modifier
-        .fillMaxWidth()
-        .padding(horizontal = 15.dp, vertical = 0.dp), horizontalArrangement = Arrangement.Start){
 
-        AssistChip(
-            onClick = { showitem_year = true },
-            label = { Text(text = "${Years} - ${Years + 1}") }
-        )
-
-        Spacer(modifier = Modifier.width(10.dp))
-
-        AssistChip(
-            onClick = {termBoolean = !termBoolean},
-            label = { Text(text = "第 $term 学期") },
-        )
-
-        Spacer(modifier = Modifier.width(10.dp))
-        val CommuityTOKEN = prefs.getString("TOKEN","")
-        AssistChip(
-            onClick = {
-                CoroutineScope(Job()).launch {
-                    async {
-                        loading = true
-                        clicked = true
-                        SharePrefs.SaveBoolean("term",true,termBoolean)
-                    }.await()
-                    async { CommuityTOKEN?.let { vm.getGrade(it,Years.toString() + "-"+(Years+1),term) } }
-                    async {
-                        Handler(Looper.getMainLooper()).post{
-                            vm.GradeData.observeForever { result ->
-                                if (result != null) {
-                                    if(result.contains("success")) {
-                                        CoroutineScope(Job()).launch {
-                                            async {
-                                                delay(500)
-                                                async { loading = false }
-                                                async { getGrade() }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                      },
-            label = { Text(text = "搜索") },
-            leadingIcon = { Icon(painter = painterResource(R.drawable.search), contentDescription = "description") }
-        )
-    }
 
 
 
     @SuppressLint("SuspiciousIndentation")
     @Composable
     fun UIS(){
-        if(getGrade().size == 0) EmptyUI()
-        else
-        LazyColumn {
-            item { TotaGrade() }
-            items(getGrade().size) { item ->
-                val pass = getGrade()[item].pass
-                var passs = ""
-                if (pass == true) passs = "通过"
-                else passs = "挂科"
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Column() {
-                        Card(
-                            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 15.dp, vertical = 5.dp),
-                            shape = MaterialTheme.shapes.medium,
-                        ) {
-                            ListItem(
-                                headlineContent = { Text(getGrade()[item].courseName) },
-                                supportingContent = { Text("学分: " + getGrade()[item].credit + "   绩点: " + getGrade()[item].gpa + "   分数: ${getGrade()[item].score}") },
-                                leadingContent = {
-                                    Icon(
-                                        painterResource(R.drawable.article),
-                                        contentDescription = "Localized description",
-                                    )
-                                },
-                                trailingContent = { Text(passs) },
-                                modifier = Modifier.clickable {},
-                            )
-                        }
-                    }
-                }
-            }
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Column() {
-                        Card(
-                            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 15.dp, vertical = 5.dp),
-                            shape = MaterialTheme.shapes.medium,
-                        ) {
-                            ListItem(
-                                headlineContent = { Text("想查看更多详细信息请登录") },
-                                supportingContent = { Text(text = "您现在使用的是Community接口,登陆后使用教务系统数据可查看详细成绩") },
-                                leadingContent = {
-                                    Icon(
-                                        Icons.Filled.ArrowForward,
-                                        contentDescription = ""
-                                    )
-                                },
-                                modifier = Modifier.clickable {
-                                    val it = Intent(MyApplication.context, LoginActivity::class.java).apply {
-                                        putExtra("nologin",false)
-                                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        Column {
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 15.dp, vertical = 0.dp), horizontalArrangement = Arrangement.Start){
+
+                AssistChip(
+                    onClick = { showitem_year = true },
+                    label = { Text(text = "${Years} - ${Years + 1}") }
+                )
+
+                Spacer(modifier = Modifier.width(10.dp))
+
+                AssistChip(
+                    onClick = {termBoolean = !termBoolean},
+                    label = { Text(text = "第 $term 学期") },
+                )
+
+                Spacer(modifier = Modifier.width(10.dp))
+                val CommuityTOKEN = prefs.getString("TOKEN","")
+                AssistChip(
+                    onClick = {
+                        CoroutineScope(Job()).launch {
+                            async {
+                                loading = true
+                                clicked = true
+                                SharePrefs.SaveBoolean("term",true,termBoolean)
+                            }.await()
+                            async { CommuityTOKEN?.let { vm.getGrade(it,Years.toString() + "-"+(Years+1),term) } }
+                            async {
+                                Handler(Looper.getMainLooper()).post{
+                                    vm.GradeData.observeForever { result ->
+                                        if (result != null) {
+                                            if(result.contains("success")) {
+                                                CoroutineScope(Job()).launch {
+                                                    async {
+                                                        delay(500)
+                                                        async { loading = false }
+                                                        async { getGrade() }
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
-                                    MyApplication.context.startActivity(it)
-                                },
-                            )
+                                }
+                            }
+                        }
+                    },
+                    label = { Text(text = "搜索") },
+                    leadingIcon = { Icon(painter = painterResource(R.drawable.search), contentDescription = "description") }
+                )
+            }
+
+            if(getGrade().size == 0) EmptyUI()
+            else
+                LazyColumn {
+                    item { TotaGrade() }
+                    items(getGrade().size) { item ->
+                        val pass = getGrade()[item].pass
+                        var passs = ""
+                        if (pass == true) passs = "通过"
+                        else passs = "挂科"
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Column() {
+                                Card(
+                                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 15.dp, vertical = 5.dp),
+                                    shape = MaterialTheme.shapes.medium,
+                                ) {
+                                    ListItem(
+                                        headlineContent = { Text(getGrade()[item].courseName) },
+                                        supportingContent = { Text("学分: " + getGrade()[item].credit + "   绩点: " + getGrade()[item].gpa + "   分数: ${getGrade()[item].score}") },
+                                        leadingContent = {
+                                            Icon(
+                                                painterResource(R.drawable.article),
+                                                contentDescription = "Localized description",
+                                            )
+                                        },
+                                        trailingContent = { Text(passs) },
+                                        modifier = Modifier.clickable {},
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    item {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Column() {
+                                Card(
+                                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 15.dp, vertical = 5.dp),
+                                    shape = MaterialTheme.shapes.medium,
+                                ) {
+                                    ListItem(
+                                        headlineContent = { Text("想查看更多详细信息请登录") },
+                                        supportingContent = { Text(text = "您现在使用的是Community接口,登陆后使用教务系统数据可查看详细成绩") },
+                                        leadingContent = {
+                                            Icon(
+                                                Icons.Filled.ArrowForward,
+                                                contentDescription = ""
+                                            )
+                                        },
+                                        modifier = Modifier.clickable {
+                                            val it = Intent(MyApplication.context, LoginActivity::class.java).apply {
+                                                putExtra("nologin",false)
+                                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                            }
+                                            MyApplication.context.startActivity(it)
+                                        },
+                                    )
+                                }
+                            }
                         }
                     }
                 }
-            }
         }
     }
 
 
     if(clicked){
-        AnimatedVisibility(
-            visible = loading,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)  {
-                Spacer(modifier = Modifier.height(5.dp))
-                CircularProgressIndicator()
-                Spacer(modifier = Modifier.height(50.dp))
+        Box{
+            AnimatedVisibility(
+                visible = loading,
+                enter = fadeIn(),
+                exit = fadeOut(),
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .align(Alignment.Center)
+            ) {
+                Column {
+                    Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
+                    Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)  {
+                        CircularProgressIndicator()
+                    }
+                }
             }
-        }
 
-        AnimatedVisibility(
-            visible = !loading,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ){ UIS() }
+            AnimatedVisibility(
+                visible = !loading,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ){ UIS() }
+        }
     }
     else { UIS() }
 }
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun GradeItemUIJXGLSTU() {
+fun GradeItemUIJXGLSTU(innerPadding: PaddingValues) {
     if(getGradeJXGLSTU().size == 0) EmptyUI()
     else
     LazyColumn{

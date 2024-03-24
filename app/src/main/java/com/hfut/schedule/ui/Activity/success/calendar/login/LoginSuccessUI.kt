@@ -58,6 +58,7 @@ import com.google.gson.JsonPrimitive
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
+import com.hfut.schedule.logic.datamodel.Community.GradeResponseJXGLSTU
 import com.hfut.schedule.logic.datamodel.Community.LoginCommunityResponse
 import com.hfut.schedule.logic.datamodel.Jxglstu.datumResponse
 import com.hfut.schedule.logic.datamodel.Jxglstu.result
@@ -701,7 +702,7 @@ fun CalendarScreen(showAll : Boolean,vm : LoginSuccessViewModel,grade : String,i
         //检测若登陆成功（200）则解析出CommunityTOKEN
         val LoginCommunityObserver = Observer<String?> { result ->
             if (result != null) {
-                if (result.contains("200")) {
+                if (result.contains("200") && result.contains("token")) {
                     val result = Gson().fromJson(result, LoginCommunityResponse::class.java)
                     val token = result.result.token
                     SharePrefs.Save("TOKEN", token)
@@ -991,3 +992,6 @@ fun CalendarScreen(showAll : Boolean,vm : LoginSuccessViewModel,grade : String,i
         }
 
 }
+
+
+

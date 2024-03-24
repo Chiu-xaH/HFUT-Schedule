@@ -49,9 +49,8 @@ fun SettingsScreen(vm : LoginSuccessViewModel
             Text(text = "API接口", color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp))
             MyAPIItem()
 
-            Text(text = "设置", color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp))
+            Text(text = "应用设置", color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp))
             PartOne(vm,showlable,showlablechanged,ifSaved,blur,blurchanged)
-
             PartTwo()
 
             Spacer(modifier = Modifier
