@@ -80,6 +80,7 @@ fun CardUI(vm : LoginSuccessViewModel, activity : Activity,vmUI : UIViewModel) {
     var page by remember { mutableStateOf(1) }
     var loading by remember { mutableStateOf(true) }
 
+
     GetZjgdCard(vm, vmUI)
 
     fun BillItem() :MutableList<records> {

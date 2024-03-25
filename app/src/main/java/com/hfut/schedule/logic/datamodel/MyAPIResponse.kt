@@ -3,6 +3,7 @@ data class MyAPIResponse (val SettingsInfo : SettingsInfo,
                           val Lessons : Lessons,
                           val semesterId : String,
                           val TimeStamp : String,
+                          val Labs : List<Lab>,
                           val Notifications : List<Notifications>)
 data class SettingsInfo(val version : String,
                         val title : String,
@@ -30,3 +31,6 @@ data class Notifications(val title : String,
                          val info : String,
                          val remark : String)
 
+data class Lab(val title : String,
+               val info : String,
+               val type : String)

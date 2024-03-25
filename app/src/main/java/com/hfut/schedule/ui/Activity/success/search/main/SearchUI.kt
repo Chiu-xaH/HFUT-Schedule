@@ -49,6 +49,7 @@ import com.hfut.schedule.ui.Activity.success.search.Search.FailRate.FailRate
 import com.hfut.schedule.ui.Activity.success.search.Search.Grade.Grade
 import com.hfut.schedule.ui.Activity.success.search.Search.Grade.GradeUI
 import com.hfut.schedule.ui.Activity.success.search.Search.HotWater.HotWater
+import com.hfut.schedule.ui.Activity.success.search.Search.Lab
 import com.hfut.schedule.ui.Activity.success.search.Search.LePaoYun.LePaoYun
 import com.hfut.schedule.ui.Activity.success.search.Search.Library.LibraryItem
 import com.hfut.schedule.ui.Activity.success.search.Search.Maps
@@ -345,7 +346,7 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
                             .weight(.5f),
                         shape = MaterialTheme.shapes.medium,
                     ){
-                        Maps()
+                        Lab()
                     }
                     Spacer(modifier = Modifier.width(10.dp))
                     Card(
@@ -687,7 +688,7 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
                             .weight(.5f),
                         shape = MaterialTheme.shapes.medium,
                     ){
-                        Maps()
+                        Lab()
                     }
                     Spacer(modifier = Modifier.width(10.dp))
                     Card(

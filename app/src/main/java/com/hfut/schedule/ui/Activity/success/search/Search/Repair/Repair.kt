@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.utils.StartUri
 import com.hfut.schedule.ui.UIUtils.MyToast
 
 @Composable
@@ -16,7 +17,8 @@ fun Repair() {
         headlineContent = { Text(text = "报修") },
         leadingContent = { Icon(painter = painterResource(id = R.drawable.build), contentDescription = "") },
         modifier = Modifier.clickable {
-            MyToast("暂未开发")
+            StartUri.StartUri("http://xcfw.hfut.edu.cn/school/index.html")
+           // MyToast("暂未开发")
         }
     )
 

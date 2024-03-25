@@ -44,7 +44,7 @@ fun WebItem() {
         modifier = Modifier.clickable { StartUri.StartUri("https://webvpn.hfut.edu.cn/") }
     )
     ListItem(
-        headlineContent = { Text(text = "Community") },
+        headlineContent = { Text(text = "智慧社区") },
         supportingContent = { Text(text = "可查看一些教务信息") },
         leadingContent = { Icon(painterResource(R.drawable.toll), contentDescription = "Localized description",) },
         modifier = Modifier.clickable { StartUri.StartUri("https://community.hfut.edu.cn/myCommunity/index") }
@@ -66,8 +66,8 @@ fun WebItem() {
         modifier = Modifier.clickable { StartUri.StartUri("https://172.18.7.2:8443/Self/nav_login") }
     )
     ListItem(
-        headlineContent = { Text(text = "报修系统") },
+        headlineContent = { Text(text = "报修") },
         leadingContent = { Icon(painterResource(R.drawable.build), contentDescription = "Localized description",) },
-        modifier = Modifier.clickable { StartUri.StartUri("https://ehall.hfut.edu.cn/repairsportal/home/index?from=need-auth") }
+        modifier = Modifier.clickable { StartUri.StartUri("http://xcfw.hfut.edu.cn/school/index.html") }
     )
 }
