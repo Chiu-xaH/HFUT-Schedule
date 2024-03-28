@@ -174,4 +174,15 @@ fun PartOne(vm : LoginSuccessViewModel, showlable : Boolean, showlablechanged :(
         }
             MyApplication.context.startActivity(it) }
     )
+   // ListItem(
+     //   headlineContent = { Text(text = "简化选项布局") },
+     //   supportingContent = { Text(text = "仅保留设置选项") },
+      //  leadingContent = { Icon(painterResource(R.drawable.rotate_right), contentDescription = "Localized description",) },
+       // modifier = Modifier.clickable {
+         //   val it = Intent(MyApplication.context, LoginActivity::class.java).apply {
+           //     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            //    putExtra("nologin",false)
+           // }
+           // MyApplication.context.startActivity(it) }
+   // )
 }

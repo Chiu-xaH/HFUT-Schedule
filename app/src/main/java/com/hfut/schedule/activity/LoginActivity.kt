@@ -36,6 +36,8 @@ import com.hfut.schedule.ui.MonetColor.SettingsProvider
 import com.hfut.schedule.ui.UIUtils.TransparentSystemBars
 import com.hfut.schedule.ui.theme.MonetColor
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -101,6 +103,7 @@ class LoginActivity : ComponentActivity() {
                     launch { SharePrefs.Save("tip","0") }
                     launch {  vm.getKey() }
                 }
+                launch { vmUI.getUpdate() }
                 launch { vm.My() }
             }
 

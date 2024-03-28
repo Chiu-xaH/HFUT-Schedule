@@ -34,3 +34,5 @@ data class Notifications(val title : String,
 data class Lab(val title : String,
                val info : String,
                val type : String)
+
+data class Update(val version : String?,val text : String?)

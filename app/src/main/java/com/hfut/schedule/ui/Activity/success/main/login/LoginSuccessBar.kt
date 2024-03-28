@@ -54,6 +54,7 @@ import com.hfut.schedule.logic.utils.APPVersion
 import com.hfut.schedule.ui.Activity.success.calendar.login.CalendarScreen
 import com.hfut.schedule.ui.Activity.success.main.saved.texts
 import com.hfut.schedule.ui.Activity.success.cube.Settings.getMyVersion
+import com.hfut.schedule.ui.Activity.success.cube.Settings.getUpdates
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.NotificationItems
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.getNotifications
 import com.hfut.schedule.ui.UIUtils.MyToast
@@ -78,7 +79,7 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel,vm
     var bottomBarItems by remember { mutableStateOf(BottomBarItems.COURSES) }
     val hazeState = remember { HazeState() }
     var showBadge by remember { mutableStateOf(false) }
-    if (APPVersion.getVersionName() != getMyVersion()) showBadge = true
+    if (getUpdates().version != APPVersion.getVersionName()) showBadge = true
     val switchblur = prefs.getBoolean("SWITCHBLUR", AndroidVersion.sdkInt >= 32)
     var blur by remember { mutableStateOf(switchblur) }
     //监听是否周六周日有课，有则显示红点
@@ -179,7 +180,7 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel,vm
                     NavigationBarItemData(BottomBarItems.COURSES.name, "课程表", painterResource(R.drawable.calendar),painterResource(R.drawable.calendar_month_filled)),
                     NavigationBarItemData(BottomBarItems.FOCUS.name,"聚焦", painterResource(R.drawable.lightbulb),painterResource(R.drawable.lightbulb_filled)),
                     NavigationBarItemData(BottomBarItems.SEARCH.name,"查询中心", painterResource(R.drawable.search), painterResource(R.drawable.search_filledx)),
-                    NavigationBarItemData(BottomBarItems.SETTINGS.name, "选项", painterResource(R.drawable.cube),painterResource(R.drawable.deployed_code_filled))
+                    NavigationBarItemData(BottomBarItems.SETTINGS.name,"选项", painterResource(if (getUpdates().version == APPVersion.getVersionName())R.drawable.cube else R.drawable.deployed_code_update), painterResource(if (getUpdates().version == APPVersion.getVersionName()) R.drawable.deployed_code_filled else R.drawable.deployed_code_update_filled ))
 
                 )
                 items.forEach { item ->
