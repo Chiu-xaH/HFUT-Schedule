@@ -137,12 +137,10 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel,innerPaddings : 
                     //当Tab为第一个时
                     if (state == TAB_LEFT) {
                         //一卡通
-                        if (prefs.getBoolean("SWITCHCARD",true) == true) {
-                            GetZjgdCard(vm,vmUI)
-                            item { TodayCardItem(vmUI) }
-                        }
+                        GetZjgdCard(vm,vmUI)
+                        item { TodayCardItem(vmUI) }
                         //课表
-                        if (GetDate.formattedTime_Hour.toInt() >= 18)
+                        if (GetDate.formattedTime_Hour.toInt() >= 19)
                             items(getCourseINFO(weekdaytomorrow,Nextweek).size) { item -> TomorrowCourseItem(item = item) }
                         else
                             items(getCourseINFO(weekdayToday,week).size) { item -> TodayCourseItem(item = item) }
@@ -165,15 +163,15 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel,innerPaddings : 
                         }
 
                         //第二天课表
-                        if (GetDate.formattedTime_Hour.toInt() < 18)
+                        if (GetDate.formattedTime_Hour.toInt() < 19)
                             items(getCourseINFO(weekdaytomorrow,Nextweek).size) { item -> TomorrowCourseItem(item = item) }
 
                         items(AddedItems().size){ item -> AddItem(item = item, AddedItems = AddedItems()) }
+                        if (prefs.getBoolean("SWITCHMYAPI",true))
                         item { TimeStampItem() }
                     }
                     item { Spacer(modifier = Modifier.height(innerPaddings.calculateBottomPadding())) }
                 }
-                if(prefs.getBoolean("SWITCHADD",true))
                 AddButton(isVisible = shouldShowAddButton,innerPaddings)
                 PullRefreshIndicator(refreshing, states, Modifier.align(Alignment.TopCenter))
             }

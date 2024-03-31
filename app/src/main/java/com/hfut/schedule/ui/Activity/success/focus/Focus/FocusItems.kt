@@ -66,6 +66,7 @@ import com.hfut.schedule.logic.datamodel.Focus.AddFocus
 import com.hfut.schedule.logic.datamodel.MyList
 import com.hfut.schedule.logic.datamodel.Schedule
 import com.hfut.schedule.logic.utils.AddCalendar.AddCalendar
+import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.success.calendar.nonet.DetailInfos
 import com.hfut.schedule.ui.Activity.success.calendar.nonet.getCourseINFO
 import com.hfut.schedule.ui.Activity.success.search.Search.SchoolCard.SchoolCardItem
@@ -89,6 +90,7 @@ fun TodayCardItem(vmUI : UIViewModel) {
 @Composable
 fun MyScheuleItem(item : Int, MySchedule : MutableList<Schedule>,Future: Boolean ) {
 
+    if(prefs.getString("my","")?.contains("Schedule") == true) {
         val startTime = MySchedule[item].startTime
         val endTime = MySchedule[item].endTime
 
@@ -124,7 +126,7 @@ fun MyScheuleItem(item : Int, MySchedule : MutableList<Schedule>,Future: Boolean
             if(nowTime < getStartTime)
                 ScheduleItems(MySchedule = MySchedule, item = item,true)
         }
-
+    }
 }
 
 
@@ -175,7 +177,7 @@ fun ScheduleItems(MySchedule: MutableList<Schedule>, item : Int,Future : Boolean
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun WangkeItem(item : Int, MyWangKe: MutableList<MyList>) {
-
+    if(prefs.getString("my","")?.contains("Schedule") == true){
         val startTime = MyWangKe[item].startTime
         val endTime = MyWangKe[item].endTime
 
@@ -237,6 +239,7 @@ fun WangkeItem(item : Int, MyWangKe: MutableList<MyList>) {
                 )
             }
         }
+    }
 }
 
 
@@ -592,7 +595,7 @@ fun BoxScope.AddButton(isVisible: Boolean,innerPaddings : PaddingValues) {
 @Composable
 fun TimeStampItem() {
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-        Text(text = getTimeStamp(), color = Color.Gray, fontSize = 14.sp)
+        getTimeStamp()?.let { Text(text = it, color = Color.Gray, fontSize = 14.sp) }
     }
 }
 

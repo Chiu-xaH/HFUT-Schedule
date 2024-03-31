@@ -20,4 +20,14 @@
             android:targetClass="com.hfut.schedule.activity.LoginActivity"
             android:targetPackage="com.hfut.schedule" />
     </shortcut>
+    <shortcut
+        android:icon="@drawable/build_shortcut"
+        android:shortcutId="fix"
+        android:shortcutLongLabel="@string/fix"
+        android:shortcutShortLabel="@string/fix">
+        <intent
+            android:action="com.hfut.schedule.shortcuts"
+            android:targetClass="com.hfut.schedule.activity.FixActivity"
+            android:targetPackage="com.hfut.schedule" />
+    </shortcut>
 </shortcuts>

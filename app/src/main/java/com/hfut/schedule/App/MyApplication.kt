@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.logic.utils.APPVersion
+import com.hfut.schedule.logic.utils.CrashHandler
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
@@ -137,6 +138,7 @@ class MyApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+       // CrashHandler(this)
         context = applicationContext
     }
 }

@@ -9,5 +9,7 @@
     <string name="title_activity_card">CardActivity</string>
     <string name="card">一卡通</string>
     <string name="main">主界面</string>
+    <string name="fix">修复</string>
     <string name="title_activity_grade">GradeActivity</string>
+    <string name="title_activity_fix">FixActivity</string>
 </resources>

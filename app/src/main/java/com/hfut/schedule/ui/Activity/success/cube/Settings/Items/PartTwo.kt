@@ -51,12 +51,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.activity.CardActivity
+import com.hfut.schedule.activity.FixActivity
 import com.hfut.schedule.logic.dao.dataBase
 import com.hfut.schedule.logic.utils.APPVersion
 import com.hfut.schedule.logic.utils.ShareAPK.ShareAPK
 import com.hfut.schedule.logic.utils.SharePrefs.SaveBoolean
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.StartUri.StartUri
+import com.hfut.schedule.ui.Activity.success.BugShare
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Monet.MonetColorItem
 import com.hfut.schedule.ui.Activity.success.cube.Settings.getMyVersion
 import com.hfut.schedule.ui.Activity.success.cube.Settings.getUpdates
@@ -248,16 +251,13 @@ fun PartTwo() {
     }
 
     ListItem(
-        headlineContent = { Text(text = "抹掉数据") },
-        supportingContent = { Text(text = "当数据异常或冲突崩溃时,可抹掉数据,然后重新登录")},
-        leadingContent = { Icon(painterResource(R.drawable.delete), contentDescription = "Localized description",) },
-        modifier = Modifier.clickable{ showDialog = true }
-    )
-    ListItem(
-        headlineContent = { Text(text = "问题检测") },
-        supportingContent = { Text(text = "当数据异常时,可尝试检测状态")},
+        headlineContent = { Text(text = "修复") },
+        supportingContent = { Text(text = "当出现问题时,可从此处进入或长按桌面图标选择修复")},
         leadingContent = { Icon(painterResource(R.drawable.build), contentDescription = "Localized description",) },
-        modifier = Modifier.clickable{ showDialog = true }
+        modifier = Modifier.clickable{
+            val it = Intent(MyApplication.context, FixActivity::class.java).apply { addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) }
+            MyApplication.context.startActivity(it)
+        }
     )
 }
 

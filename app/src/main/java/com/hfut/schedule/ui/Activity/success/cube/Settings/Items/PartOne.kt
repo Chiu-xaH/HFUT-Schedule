@@ -37,6 +37,14 @@ import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.success.search.Search.LePaoYun.InfoSet
 
 
+fun apiCheck() : Boolean {
+    try {
+        val username = prefs.getString("Username","")?.toInt()
+        return username in 2023218488 until 2023218533
+    } catch (e : Exception) {
+        return false
+    }
+}
 @SuppressLint("SuspiciousIndentation")
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -44,9 +52,11 @@ import com.hfut.schedule.ui.Activity.success.search.Search.LePaoYun.InfoSet
 fun PartOne(vm : LoginSuccessViewModel, showlable : Boolean, showlablechanged :(Boolean) -> Unit, ifSaved : Boolean, blur : Boolean, blurchanged :(Boolean) -> Unit) {
     val switch_focus = prefs.getBoolean("SWITCHFOCUS",true)
     var showfocus by remember { mutableStateOf(switch_focus) }
-
+    val switch_api = SharePrefs.prefs.getBoolean("SWITCHMYAPI", apiCheck())
+    var showapi by remember { mutableStateOf(switch_api) }
     SaveBoolean("SWITCH",true,showlable)
     SaveBoolean("SWITCHBLUR",true,blur)
+    SaveBoolean("SWITCHMYAPI",false,showapi)
 
     val switch_faststart = SharePrefs.prefs.getBoolean("SWITCHFASTSTART",prefs.getString("TOKEN","")?.isNotEmpty() ?: false)
     var faststart by remember { mutableStateOf(switch_faststart) }
@@ -118,17 +128,6 @@ fun PartOne(vm : LoginSuccessViewModel, showlable : Boolean, showlablechanged :(
         }
     }
 
-    var showBottomSheet_focus by remember { mutableStateOf(false) }
-    var sheetState_focus = rememberModalBottomSheetState()
-    if (showBottomSheet_focus) {
-        ModalBottomSheet(
-            onDismissRequest = { showBottomSheet_focus = false },
-            sheetState = sheetState_focus
-        ) {
-            FocusSetting()
-            Spacer(modifier = Modifier.height(100.dp))
-        }
-    }
 
 
     var showBottomSheet_arrange by remember { mutableStateOf(false) }
@@ -151,10 +150,11 @@ fun PartOne(vm : LoginSuccessViewModel, showlable : Boolean, showlablechanged :(
         modifier = Modifier.clickable {  showBottomSheet_arrange = true }
     )
     ListItem(
-        headlineContent = { Text(text = "自定义 聚焦") },
-        supportingContent = { Text(text = "自定义聚焦的内容及信息来源") },
-        leadingContent = { Icon(painterResource(R.drawable.edit), contentDescription = "Localized description",) },
-        modifier = Modifier.clickable { showBottomSheet_focus = true }
+        headlineContent = { Text(text = "网络接口") },
+        supportingContent = { Text(text = "本接口为23地科提供了除学校系统之外的聚焦信息") },
+        leadingContent = { Icon(painterResource(R.drawable.api), contentDescription = "Localized description",) },
+        trailingContent = { Switch(checked = showapi, onCheckedChange = {showapich -> showapi = showapich }) },
+        modifier = Modifier.clickable { showapi = !showapi }
     )
     ListItem(
             headlineContent = { Text(text = "云运动 信息配置") },
@@ -185,4 +185,6 @@ fun PartOne(vm : LoginSuccessViewModel, showlable : Boolean, showlablechanged :(
            // }
            // MyApplication.context.startActivity(it) }
    // )
+
+
 }

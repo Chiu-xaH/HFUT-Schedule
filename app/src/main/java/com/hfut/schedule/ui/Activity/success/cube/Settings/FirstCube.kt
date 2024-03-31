@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.MyAPIItem
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.PartTwo
-import com.hfut.schedule.ui.Activity.success.cube.Settings.Test.debug
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -21,6 +20,6 @@ fun FirstCube() {
     MyAPIItem()
     Spacer(modifier = Modifier.height(5.dp))
     PartTwo()
-    debug()
+    //debug()
 
 }
