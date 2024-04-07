@@ -35,6 +35,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -68,6 +69,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.jsoup.select.Evaluator.IsOnlyChild
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
@@ -133,7 +135,46 @@ fun XuanquUI(vm : LoginSuccessViewModel) {
                     containerColor = Color.Transparent,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
-                title = { Text("寝室卫生评分查询") }
+                title = { Text("寝室卫生评分查询") },
+                actions = {
+                    Row(modifier = Modifier.padding(horizontal = 15.dp)) {
+                        if(showitem4)
+                        IconButton(onClick = {RoomNumber = RoomNumber.replaceFirst(".$".toRegex(), "")}) {
+                            Icon(painter = painterResource(R.drawable.backspace), contentDescription = "description") }
+                        FilledTonalIconButton(onClick = {
+                            CoroutineScope(Job()).launch {
+                                async {
+                                    Save("BuildNumber", BuildingsNumber)
+                                    Save("RoomNumber", RoomNumber)
+                                    SharePrefs.SaveBoolean("NS",true,NSBoolean)
+                                    showitem4 = false
+                                }
+                                async {
+                                    Handler(Looper.getMainLooper()).post{
+                                        vm.XuanquData.value = "{}"
+                                    }
+                                    clicked = true
+                                    loading = true
+                                    Save("Room",code)
+                                    Save("XUANQUroom",BuildingsNumber + NS + RoomNumber)
+                                    vm.SearchXuanqu(BuildingsNumber + NS + RoomNumber) }.await()
+                                async {
+                                    Handler(Looper.getMainLooper()).post{
+                                        vm.XuanquData.observeForever { result ->
+                                            // Log.d("r",result)
+                                            if(result.contains("div")) {
+                                                CoroutineScope(Job()).launch {
+                                                    async { loading = false }
+                                                    async { getXuanqu(vm) }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }) { Icon(painter = painterResource(R.drawable.search), contentDescription = "description") }
+                    }
+                }
             )
         },
     ) { innerPadding ->
@@ -150,7 +191,7 @@ fun XuanquUI(vm : LoginSuccessViewModel) {
 
                     AssistChip(
                         onClick = { showitem = true },
-                        label = { Text(text = "选择楼栋 ${BuildingsNumber}") },
+                        label = { Text(text = "楼栋 ${BuildingsNumber}") },
                         //leadingIcon = { Icon(painter = painterResource(R.drawable.add), contentDescription = "description") }
                     )
 
@@ -165,59 +206,12 @@ fun XuanquUI(vm : LoginSuccessViewModel) {
 
                     AssistChip(
                         onClick = { showitem4 = !showitem4 },
-                        label = { Text(text = "房间号 ${RoomNumber}") },
+                        label = { Text(text = "寝室 ${RoomNumber}") },
                         //leadingIcon = { Icon(painter = painterResource(R.drawable.add), contentDescription = "description") }
                     )
                 }
 
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 0.dp), horizontalArrangement = Arrangement.Start){
 
-                    AssistChip(
-                        onClick = { RoomNumber = RoomNumber.replaceFirst(".$".toRegex(), "") },
-                        label = { Text(text = "删除") },
-                        leadingIcon = { Icon(painter = painterResource(R.drawable.close), contentDescription = "description") }
-                    )
-                    Spacer(modifier = Modifier.width(10.dp))
-                    AssistChip(
-                        onClick = {
-                            CoroutineScope(Job()).launch {
-                                async {
-                                    Save("BuildNumber", BuildingsNumber)
-                                    Save("RoomNumber", RoomNumber)
-                                    SharePrefs.SaveBoolean("NS",true,NSBoolean)
-                                    showitem4 = false
-                                }
-                                async {
-                                    Handler(Looper.getMainLooper()).post{
-                                        vm.XuanquData.value = "{}"
-                                    }
-                                            clicked = true
-                                            loading = true
-                                            Save("Room",code)
-                                            Save("XUANQUroom",BuildingsNumber + NS + RoomNumber)
-                                            vm.SearchXuanqu(BuildingsNumber + NS + RoomNumber) }.await()
-                                async {
-                                        Handler(Looper.getMainLooper()).post{
-                                            vm.XuanquData.observeForever { result ->
-                                               // Log.d("r",result)
-                                                if(result.contains("div")) {
-                                                    CoroutineScope(Job()).launch {
-                                                        async { loading = false }
-                                                        async { getXuanqu(vm) }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                }
-                            }
-                        },
-                        label = { Text(text = "搜索") },
-                        leadingIcon = { Icon(painter = painterResource(R.drawable.search), contentDescription = "description") }
-                    )
-
-                }
                 Spacer(modifier = Modifier.height(7.dp))
 
 
@@ -237,7 +231,7 @@ fun XuanquUI(vm : LoginSuccessViewModel) {
                         OutlinedCard{
                             LazyColumn(modifier = Modifier.padding(horizontal = 10.dp)) {
                                 item {
-                                    Text(text = " 选取房间号", modifier = Modifier.padding(10.dp))
+                                    Text(text = " 选取寝室号", modifier = Modifier.padding(10.dp))
                                 }
                                 item {
                                     LazyRow {

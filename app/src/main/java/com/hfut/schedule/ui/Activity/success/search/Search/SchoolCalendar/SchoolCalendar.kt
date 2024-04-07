@@ -3,6 +3,7 @@ package com.hfut.schedule.ui.Activity.success.search.Search.SchoolCalendar
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -30,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.utils.StartUri
 import com.hfut.schedule.ui.Activity.success.search.Search.Electric.WebViewScreen
 import com.hfut.schedule.ui.UIUtils.MyToast
 import java.io.File
@@ -65,9 +67,11 @@ fun SchoolCalendar() {
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        actions = { IconButton(onClick = { showDialog = false }) {
-                            Icon(painterResource(id = R.drawable.close), contentDescription = "")
-                        }
+                        actions = {
+                            Row{
+                                IconButton(onClick = { StartUri.StartUri("https://sm.ms/image/9IgudCfOADF85Kw") }) { Icon(painterResource(id = R.drawable.net), contentDescription = "") }
+                                IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "") }
+                            }
                         },
                         title = { Text("校历") }
                     )

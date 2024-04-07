@@ -74,8 +74,8 @@ fun News(vm : LoginSuccessViewModel) {
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
     var input by remember { mutableStateOf( "") }
-    var onclick by remember { mutableStateOf(false) }
-    var loading by remember { mutableStateOf(false) }
+    var onclick by remember { mutableStateOf(true) }
+    var loading by remember { mutableStateOf(true) }
     ListItem(
         headlineContent = { Text(text = "新闻检索") },
         leadingContent = {
@@ -132,28 +132,8 @@ showBottomSheet = true
                                 IconButton(
                                     // shape = RoundedCornerShape(5.dp),
                                     onClick = {
-                                        CoroutineScope(Job()).launch{
-                                            async{
-                                               // Click(vm, input, 1)
-                                                vm.searchNews(BaseSixtyFourEncrypt.encodeToBase64(input))
-                                                loading = true
-                                                onclick = true
-                                                Handler(Looper.getMainLooper()).post{
-                                                    vm.NewsData.value = "{}"
-                                                }
-                                            }.await()
-                                            async {
-                                                Handler(Looper.getMainLooper()).post{
-                                                    vm.NewsData.observeForever { result ->
-                                                        if (result != null) {
-                                                            if (result.contains("<!DOCTYPE html>")) {
-                                                                loading = false
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
+                                        loading = true
+                                        onclick = true
                                     }) {
                                     Icon(painter = painterResource(R.drawable.search), contentDescription = "description")
                                 }
@@ -169,6 +149,27 @@ showBottomSheet = true
 
 
                     if(onclick){
+                        CoroutineScope(Job()).launch{
+                            async{
+                                // Click(vm, input, 1)
+                                vm.searchNews(BaseSixtyFourEncrypt.encodeToBase64(input))
+                                Handler(Looper.getMainLooper()).post{
+                                    vm.NewsData.value = "{}"
+                                }
+                            }.await()
+                            async {
+                                Handler(Looper.getMainLooper()).post{
+                                    vm.NewsData.observeForever { result ->
+                                        if (result != null) {
+                                            if (result.contains("<!DOCTYPE html>")) {
+                                                loading = false
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
                         AnimatedVisibility(
                             visible = loading,
                             enter = fadeIn(),
@@ -217,9 +218,11 @@ fun NewsItem(vm : LoginSuccessViewModel) {
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        actions = { IconButton(onClick = { showDialog = false }) {
-                            Icon(painterResource(id = R.drawable.close), contentDescription = "")
-                        }
+                        actions = {
+                            Row{
+                                IconButton(onClick = { StartUri.StartUri(links) }) { Icon(painterResource(id = R.drawable.net), contentDescription = "") }
+                                IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "") }
+                            }
                         },
                         title = { Text("新闻详情") }
                     )

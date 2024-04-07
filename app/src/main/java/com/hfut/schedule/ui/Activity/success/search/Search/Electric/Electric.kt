@@ -56,27 +56,7 @@ fun Electric(vm : LoginSuccessViewModel) {
             sheetState = sheetState
         ) {
 
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("宣区电费查询") }
-                    )
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    EleUI(vm)
-                    Spacer(modifier = Modifier.height(30.dp))
-                }
-                }
+            EleUI(vm = vm)
             }
         }
 
