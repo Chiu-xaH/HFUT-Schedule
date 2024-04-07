@@ -14,6 +14,7 @@ class MyApplication : Application() {
         //学籍照GET ： eams5-student/students/avatar/170317
         lateinit var context: Context
         val Blur = 20.dp
+        const val NewsURL = "https://news.hfut.edu.cn/"
         const val UpdateURL = "https://gitee.com/chiu-xah/HFUT-Schedule/"
         const val EleURL = "http://172.31.248.26:8988/"
         const val CommunityURL = "https://community.hfut.edu.cn/"
@@ -66,7 +67,6 @@ class MyApplication : Application() {
                 "  }\n" +
                 "}"
         const val NullBorrow = "{\"result\": {\"records\": []}}"
-        const val NullCardblance = "{\"data\":{\"card\":[{ \"db_balance\":0000}]}}"
         const val NullLePao = "{\"msg\" : \"获取失败\",\"data\" : {\"distance\" : \"0.0\"}}"
         const val NullGrades = "{\n" +
                 "    \"result\":{\n" +
@@ -74,12 +74,6 @@ class MyApplication : Application() {
                 "        \"classRanking\":\"登录失效\",\n" +
                 "        \"majorRanking\":\"登录失效\",\n" +
                 "        \"scoreInfoDTOList\":[]\n" +
-                "        }\n" +
-                "    }"
-        const val NullBill = "{\n" +
-                "    \"data\":{\n" +
-                "        \"records\":[],\n" +
-                "        \"pages\":0\n" +
                 "        }\n" +
                 "    }"
         const val NullExam =  "        <tbody>\n" +

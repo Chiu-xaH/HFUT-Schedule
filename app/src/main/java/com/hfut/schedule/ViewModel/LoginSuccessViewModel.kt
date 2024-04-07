@@ -20,6 +20,7 @@ import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuHTMLService
 import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuJSONServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.LePaoYunServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Login.LoginServiceCreator
+import com.hfut.schedule.logic.network.ServiceCreator.NewsServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.One.OneServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.OneGotoServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.SearchEleServiceCreator
@@ -30,6 +31,7 @@ import com.hfut.schedule.logic.network.api.FWDTService
 import com.hfut.schedule.logic.network.api.JxglstuService
 import com.hfut.schedule.logic.network.api.LePaoYunService
 import com.hfut.schedule.logic.network.api.LoginService
+import com.hfut.schedule.logic.network.api.NewsService
 import com.hfut.schedule.logic.network.api.OneService
 import com.hfut.schedule.logic.network.api.XuanquService
 import com.hfut.schedule.logic.network.api.ZJGDBillService
@@ -49,10 +51,25 @@ class LoginSuccessViewModel : ViewModel() {
     private val searchEle = SearchEleServiceCreator.create(FWDTService::class.java)
     private val CommunityLogin = LoginServiceCreator.create(CommunityService::class.java)
     private val Community = CommunitySreviceCreator.create(CommunityService::class.java)
+    private val News = NewsServiceCreator.create(NewsService::class.java)
     var studentId = MutableLiveData<Int>(99999)
     var lessonIds = MutableLiveData<List<Int>>()
     var token = MutableLiveData<String>()
 
+
+    val NewsData = MutableLiveData<String?>()
+    fun searchNews(title : String) {
+
+        val call = News.searchNews(1,title)
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                NewsData.value = response.body()?.string()
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
 
     fun GotoCommunity(cookie : String) {
 

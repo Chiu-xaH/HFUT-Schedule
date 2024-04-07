@@ -55,6 +55,7 @@ import com.hfut.schedule.ui.Activity.success.search.Search.Library.LibraryItem
 import com.hfut.schedule.ui.Activity.success.search.Search.Maps
 import com.hfut.schedule.ui.Activity.success.search.Search.More.More
 import com.hfut.schedule.ui.Activity.success.search.Search.MuCourse
+import com.hfut.schedule.ui.Activity.success.search.Search.News
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.NotificationsCenter
 import com.hfut.schedule.ui.Activity.success.search.Search.Pay
 import com.hfut.schedule.ui.Activity.success.search.Search.Person.PersonUI
@@ -322,7 +323,7 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
                             .weight(.5f),
                         shape = MaterialTheme.shapes.medium,
                     ){
-                        MuCourse()
+                        News(vm)
                     }
                     Spacer(modifier = Modifier.width(10.dp))
                     Card(
@@ -640,7 +641,7 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
                             .weight(.5f),
                         shape = MaterialTheme.shapes.medium,
                     ){
-                        MuCourse()
+                        News(vm)
                     }
                     Spacer(modifier = Modifier.width(10.dp))
                     Card(
