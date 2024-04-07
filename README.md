@@ -14,15 +14,16 @@
 
 2.读写日历（将事项作为日程写入日历）
 
-3.读取网络状态（判断是否连接校园网）
-
 ♢功能：
+
 ![image](https://github.com/Chiu-xaH/HFUT-Schedule/assets/116127902/421e3664-1cc9-485b-81ed-52354c9c79a4)
 
-
 ♢使用：
+
 环境要求：ARM架构，支持64 Bit软件、搭载Android 5.0 （SDK 24）以上版本的系统设备，要求设备已接入互联网
+
 安装与使用：下载好APK安装包后，进行安装，保证接入互联网的环境下，填入学号与信息门户密码，点击登录，等待加载完毕即可使用。
-![image](https://github.com/Chiu-xaH/HFUT-Schedule/assets/116127902/cf6bdb0b-4774-4670-9cbd-986322216f22)
+
+♢[更新日志(UPDATE.md)](https://github.com/Chiu-xaH/HFUT-Schedule/blob/main/UPDATE.md)
 
 
