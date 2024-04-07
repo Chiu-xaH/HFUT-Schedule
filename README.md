@@ -1,4 +1,4 @@
-![image](https://github.com/Chiu-xaH/HFUT-Schedule/assets/116127902/45c974b7-76e3-49a9-9008-9d5a72a35ddf)# HFUT-Schedule
+# HFUT-Schedule
 
 ♢概述:
 
