@@ -24,6 +24,6 @@
 
 安装与使用：下载好APK安装包后，进行安装，保证接入互联网的环境下，填入学号与信息门户密码，点击登录，等待加载完毕即可使用。
 
-♢更新日志：[更新](#update)
+♢更新日志：[更新](https://github.com/Chiu-xaH/HFUT-Schedule/blob/main/UPDATE.md)
 
 
