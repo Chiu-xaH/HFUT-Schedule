@@ -49,7 +49,6 @@ import com.hfut.schedule.logic.Enums.CardBarItems
 import com.hfut.schedule.logic.datamodel.NavigationBarItemData
 import com.hfut.schedule.logic.datamodel.zjgd.BillResponse
 import com.hfut.schedule.logic.datamodel.zjgd.records
-import com.hfut.schedule.logic.utils.ActivityCollecter
 import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
@@ -151,7 +150,6 @@ fun CardUI(vm : LoginSuccessViewModel, activity : Activity,vmUI : UIViewModel) {
                     actions = {
                         IconButton(onClick = {
                             //关闭
-                            ActivityCollecter.removeActivity(activity)
                         }) {
                             Icon(Icons.Filled.Close, contentDescription = "")
                         }

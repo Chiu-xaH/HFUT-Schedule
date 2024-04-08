@@ -1,15 +1,11 @@
-package com.hfut.schedule.ui.Activity.success.search.Search
+package com.hfut.schedule.ui.Activity.success.search.Search.Lab
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -30,23 +26,25 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.logic.utils.StartUri
-import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.ScrollText
-import com.hfut.schedule.ui.UIUtils.MyToast
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Pay() {
+fun Lab() {
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
-    val Savedusername = prefs.getString("Username", "")
+
+
     ListItem(
-        headlineContent = { Text(text = "教育邮箱") },
-        overlineContent = { ScrollText(text = "${Savedusername}@mail.hfut.edu.cn")},
-        leadingContent = { Icon(painter = painterResource(id = R.drawable.mail), contentDescription = "") },
+        headlineContent = { Text(text = "实验室") },
+        overlineContent = { Text(text = "云控")},
+        leadingContent = {
+            Icon(
+                painterResource(R.drawable.science),
+                contentDescription = "Localized description",
+            )
+        },
         modifier = Modifier.clickable {
-            StartUri.StartUri("https://email.mail.hfut.edu.cn/")
+            showBottomSheet = true
         }
     )
 
@@ -64,7 +62,7 @@ fun Pay() {
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        title = { Text("教育邮箱") }
+                        title = { Text("实验室") }
                     )
                 },) {innerPadding ->
                 Column(
@@ -72,33 +70,13 @@ fun Pay() {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ){
-                    MailUI()
+                    LabUI()
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
         }
     }
 }
-@Composable
-fun MailUI() {
 
-            Card(
-                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp),
-                shape = MaterialTheme.shapes.medium
-            ) {
-                ListItem(
-                    headlineContent = { Text(text = "") },
-                    supportingContent = {  Text(text ="" ) },
-                    leadingContent = {
-                        Icon(painterResource(R.drawable.net), contentDescription = "Localized description",)
-                    },
-                    modifier = Modifier.clickable {
-                        StartUri.StartUri("https://email.mail.hfut.edu.cn/")
-                    }
-                )
-            }
 
-}
+

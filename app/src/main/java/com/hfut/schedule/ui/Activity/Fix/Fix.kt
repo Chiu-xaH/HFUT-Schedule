@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.Activity.success
+package com.hfut.schedule.ui.Activity.Fix
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,9 +31,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.LoginViewModel
-import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.Enums.FixBarItems
 import com.hfut.schedule.logic.datamodel.NavigationBarItemData
 import com.hfut.schedule.logic.utils.AndroidVersion

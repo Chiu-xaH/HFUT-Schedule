@@ -9,13 +9,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.utils.OpenAlipay
+import com.hfut.schedule.logic.utils.StartApp
 
 @Composable
 fun HotWater() {
     ListItem(
         headlineContent = { Text(text = "热水机") },
         leadingContent = { Icon(painterResource(R.drawable.water_voc), contentDescription = "")},
-        modifier = Modifier.clickable { OpenAlipay.openAlipay(MyApplication.AlipayHotWaterURL) }
+        modifier = Modifier.clickable { StartApp.openAlipay(MyApplication.AlipayHotWaterURL) }
     )
 }

@@ -37,6 +37,6 @@ class CrashHandler(private val context: Context) : Thread.UncaughtExceptionHandl
     }
 
     private fun saveCrashLogToPrefs(throwable: Throwable) {
-        SharePrefs.Save("logs",throwable.stackTraceToString())
+        SharePrefs.Save("logs",GetDate.Date_yyyy_MM_dd + "\n" + throwable.stackTraceToString())
     }
 }

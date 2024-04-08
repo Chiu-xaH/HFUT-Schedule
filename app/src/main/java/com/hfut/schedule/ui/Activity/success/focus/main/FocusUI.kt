@@ -150,6 +150,8 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel,innerPaddings : 
                         }
                         //考试
                         items(getExam().size) { item -> ExamItems(item,true) }
+                        //网课
+                        items(MyWangKe().size) { item -> WangkeItem(item = item, MyWangKe = MyWangKe(),false) }
                     }
 
                     //当Tab为第二个时
@@ -159,7 +161,7 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel,innerPaddings : 
                             //日程
                             items(MySchedule().size) { item -> MyScheuleItem(item = item, MySchedule = MySchedule(),true)  }
                             //网课
-                            items(MyWangKe().size) { item -> WangkeItem(item = item, MyWangKe = MyWangKe()) }
+                            items(MyWangKe().size) { item -> WangkeItem(item = item, MyWangKe = MyWangKe(),true) }
                         }
 
                         //第二天课表

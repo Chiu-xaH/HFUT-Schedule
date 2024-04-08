@@ -143,7 +143,11 @@ fun ExamItems(item : Int,status : Boolean) {
                             else if(examdate.toInt() >= todaydate.toInt()) Icon(painterResource(R.drawable.schedule), contentDescription = "Localized description",)
                             else Icon(Icons.Filled.Check, contentDescription = "Localized description",)
                         },
-                        trailingContent = {if(examdate.toInt() < todaydate.toInt()) Text(text = "已结束")},
+                        trailingContent = {
+                            if(examdate.toInt() < todaydate.toInt()) Text(text = "已结束") 
+                            else if(examdate.toInt() == todaydate.toInt()) Text(text = "今日")
+                            else if(examdate.toInt() > todaydate.toInt()) Text(text = "待考")
+                                          },
                         colors =  if(examdate.toInt() >= todaydate.toInt())
                             ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
                         else ListItemDefaults.colors(),

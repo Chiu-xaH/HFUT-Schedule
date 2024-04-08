@@ -1,10 +1,17 @@
-package com.hfut.schedule.ui.Activity.success.search.Search.SchoolCalendar
+package com.hfut.schedule.ui.Activity.success.search.Search.News
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -22,32 +29,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.utils.StartApp
 import com.hfut.schedule.ui.Activity.success.search.Search.Electric.WebViewScreen
-import com.hfut.schedule.ui.UIUtils.MyToast
-import java.io.File
-import java.io.FileOutputStream
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SchoolCalendar() {
+fun NewsItem(vm : LoginSuccessViewModel) {
     var showDialog by remember { mutableStateOf(false) }
-    ListItem(
-        headlineContent = { Text(text = "校历") },
-        leadingContent = { Icon(painter = painterResource(id = R.drawable.calendar_view_day), contentDescription = "")},
-        modifier = Modifier.clickable {
-            showDialog = true
-        //    SavePictures()
-           // StartUri("https://sm.ms/image/9IgudCfOADF85Kw")
-            MyToast("即将打开网页链接,可自行下载保存图片")
-        }
-    )
-    
-
-
+    var links by remember { mutableStateOf("") }
     if (showDialog) {
         androidx.compose.ui.window.Dialog(
             onDismissRequest = { showDialog = false },
@@ -63,11 +57,12 @@ fun SchoolCalendar() {
                         ),
                         actions = {
                             Row{
-                                IconButton(onClick = { StartApp.StartUri("https://sm.ms/image/9IgudCfOADF85Kw") }) { Icon(painterResource(id = R.drawable.net), contentDescription = "") }
+                                IconButton(onClick = { StartApp.StartUri(links) }) { Icon(
+                                    painterResource(id = R.drawable.net), contentDescription = "") }
                                 IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "") }
                             }
                         },
-                        title = { Text("校历") }
+                        title = { Text("新闻详情") }
                     )
                 },
             ) { innerPadding ->
@@ -76,21 +71,41 @@ fun SchoolCalendar() {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    WebViewScreen(url = "https://sm.ms/image/9IgudCfOADF85Kw")
+                    WebViewScreen(url = links)
+                }
+            }
+        }
+    }
+
+    LazyColumn {
+        items(getNews(vm).size){ item ->
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                Column() {
+                    Card(
+                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 15.dp, vertical = 5.dp),
+                        shape = MaterialTheme.shapes.medium,
+                    ){
+                        ListItem(
+                            overlineContent = { getNews(vm)[item].date?.let { Text(text = it) } },
+                            headlineContent = { getNews(vm)[item].title?.let { Text(it) } },
+                            leadingContent = { Icon(painterResource(R.drawable.newspaper), contentDescription = "Localized description",) },
+                            trailingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "") },
+                            modifier = Modifier.clickable {
+                                val link = getNews(vm)[item].link
+                                if (link != null) {
+                                    if(link.contains("http")) link?.let { links = link }
+                                    else links = MyApplication.NewsURL + link
+                                }
+                                showDialog = true
+                            },
+                        )
+                    }
                 }
             }
         }
     }
 }
 
-fun SavePictures() {
-    val assetManager = MyApplication.context.assets
-    val inputStream = assetManager.open("Calendar.jpg")
-    val outputFile = File(MyApplication.context.filesDir,"Download/Calendar.jpg")
-    MyToast("保存成功")
-    if(!outputFile.parentFile.exists()) outputFile.parentFile.mkdirs()
-    val outputStream = FileOutputStream(outputFile)
-    inputStream.copyTo(outputStream)
-    inputStream.close()
-    outputStream.close()
-}

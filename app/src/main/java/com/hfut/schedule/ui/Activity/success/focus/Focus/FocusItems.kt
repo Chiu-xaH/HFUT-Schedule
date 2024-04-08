@@ -2,7 +2,6 @@ package com.hfut.schedule.ui.Activity.success.focus.Focus
 
 import android.annotation.SuppressLint
 import android.os.Build
-import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
@@ -67,6 +66,7 @@ import com.hfut.schedule.logic.datamodel.MyList
 import com.hfut.schedule.logic.datamodel.Schedule
 import com.hfut.schedule.logic.utils.AddCalendar.AddCalendar
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.StartApp
 import com.hfut.schedule.ui.Activity.success.calendar.nonet.DetailInfos
 import com.hfut.schedule.ui.Activity.success.calendar.nonet.getCourseINFO
 import com.hfut.schedule.ui.Activity.success.search.Search.SchoolCard.SchoolCardItem
@@ -166,7 +166,6 @@ fun ScheduleItems(MySchedule: MutableList<Schedule>, item : Int,Future : Boolean
                         Icon( painterResource(R.drawable.add_task),
                             contentDescription = "Localized description",)
                     }
-                    else Text(text = "进行中")
                 }
             )
         }
@@ -176,8 +175,8 @@ fun ScheduleItems(MySchedule: MutableList<Schedule>, item : Int,Future : Boolean
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun WangkeItem(item : Int, MyWangKe: MutableList<MyList>) {
-    if(prefs.getString("my","")?.contains("Schedule") == true){
+fun WangkeItem(item : Int, MyWangKe: MutableList<MyList>,Future: Boolean) {
+    if(prefs.getString("my","")?.contains("Schedule") == true) {
         val startTime = MyWangKe[item].startTime
         val endTime = MyWangKe[item].endTime
 
@@ -203,40 +202,68 @@ fun WangkeItem(item : Int, MyWangKe: MutableList<MyList>) {
 
         val nowTime = GetDate.Date_yyyy_MM_dd.replace("-","").toInt()
 
-        if(nowTime <= getEndTime) {
-            Card(
-                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp),
-                shape = MaterialTheme.shapes.medium,
-            ) {
 
-                ListItem(
-                    headlineContent = {  Text(text = MyWangKe[item].title) },
-                    overlineContent = { Text(text = MyWangKe[item].time) },
-                    supportingContent = { Text(text = MyWangKe[item].info)},
-                    leadingContent = {
-                        Icon(
-                            painterResource(R.drawable.net),
-                            contentDescription = "Localized description",
-                        )
-                    },
-                    trailingContent = {
-                        FilledTonalIconButton(
-                            onClick = {
-                                AddCalendar(startTime,endTime, MyWangKe[item].info, MyWangKe[item].title,MyWangKe[item].time)
-                                MyToast("添加到系统日历成功")
+        if(Future) {
+            if(nowTime < getEndTime) {
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 15.dp, vertical = 5.dp),
+                    shape = MaterialTheme.shapes.medium,
+                ) {
+
+                    ListItem(
+                        headlineContent = {  Text(text = MyWangKe[item].title) },
+                        overlineContent = { Text(text = MyWangKe[item].time) },
+                        supportingContent = { Text(text = MyWangKe[item].info)},
+                        leadingContent = {
+                            Icon(
+                                painterResource(R.drawable.net),
+                                contentDescription = "Localized description",
+                            )
+                        },
+                        trailingContent = {
+                            FilledTonalIconButton(
+                                onClick = {
+                                    AddCalendar(startTime,endTime, MyWangKe[item].info, MyWangKe[item].title,MyWangKe[item].time)
+                                    MyToast("添加到系统日历成功")
+                                }
+                            ) {
+                                Icon( painterResource(R.drawable.add_task),
+                                    contentDescription = "Localized description",)
                             }
-                        ) {
-                            Icon( painterResource(R.drawable.add_task),
-                                contentDescription = "Localized description",)
-                        }
-                    },
-                    modifier = Modifier.clickable {
-                        //AddCalendar(Place = MyWangKe()[item].info, Title = MyWangKe[item].title)
-                    }
-                )
+                        },
+                        modifier = Modifier.clickable { openOperation(MyWangKe[item].info) }
+                    )
+                }
+            }
+        } else {
+            if(nowTime == getEndTime) {
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 15.dp, vertical = 5.dp),
+                    shape = MaterialTheme.shapes.medium,
+                ) {
+
+                    ListItem(
+                        headlineContent = {  Text(text = MyWangKe[item].title) },
+                        overlineContent = { Text(text = MyWangKe[item].time) },
+                        supportingContent = { Text(text = MyWangKe[item].info)},
+                        leadingContent = {
+                            Icon(
+                                painterResource(R.drawable.net),
+                                contentDescription = "Localized description",
+                            )
+                        },
+                        trailingContent = {
+                           Text(text = "今日截止")
+                        },
+                        modifier = Modifier.clickable { openOperation(MyWangKe[item].info) }
+                    )
+                }
             }
         }
     }
@@ -307,7 +334,8 @@ fun TodayCourseItem(item : Int) {
                         painterResource(R.drawable.schedule),
                         contentDescription = "Localized description",
                     )
-                }, modifier = Modifier.clickable {
+                },
+                modifier = Modifier.clickable {
                     showBottomSheet = true
                 }
             )
@@ -380,7 +408,8 @@ fun TomorrowCourseItem(item : Int) {
                 leadingContent = { Icon(painterResource(R.drawable.exposure_plus_1), contentDescription = "Localized description",) },
                 modifier = Modifier.clickable {
                     showBottomSheet = true
-                }
+                },
+                trailingContent = { Text(text = "明日")}
             )
         }
     }

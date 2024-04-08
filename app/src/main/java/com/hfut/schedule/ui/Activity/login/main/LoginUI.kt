@@ -63,7 +63,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginViewModel
 import com.hfut.schedule.activity.LoginSuccessActivity
 import com.hfut.schedule.activity.SavedCoursesActivity
-import com.hfut.schedule.logic.utils.AESEncrypt
+import com.hfut.schedule.logic.utils.Encrypt
 import com.hfut.schedule.logic.utils.APPVersion
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.Save
@@ -77,7 +77,7 @@ import kotlinx.coroutines.launch
 
 fun LoginClick(vm : LoginViewModel,username : String,inputAES : String) {
     val cookie = prefs.getString("cookie", "")
-    val outputAES = cookie?.let { it1 -> AESEncrypt.encrypt(inputAES, it1) }
+    val outputAES = cookie?.let { it1 -> Encrypt.AESencrypt(inputAES, it1) }
     val ONE = "LOGIN_FLAVORING=$cookie"
     //保存账密
     Save("Username",username)

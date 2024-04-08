@@ -1,8 +1,7 @@
-package com.hfut.schedule.ui.Activity.success
+package com.hfut.schedule.ui.Activity.Fix
 
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.clickable
@@ -21,7 +20,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -42,15 +40,16 @@ import com.hfut.schedule.activity.LoginActivity
 import com.hfut.schedule.logic.utils.APPVersion
 import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.CrashHandler
+import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.logic.utils.StartUri
+import com.hfut.schedule.logic.utils.StartApp
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.Clear
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.apiCheck
-import com.hfut.schedule.ui.Activity.success.focus.Focus.TimeStampItem
 import com.hfut.schedule.ui.Activity.success.focus.Focus.getTimeStamp
 import com.hfut.schedule.ui.UIUtils.LittleDialog
 import com.hfut.schedule.ui.UIUtils.MyToast
+import kotlin.math.log
 
 @Composable
 fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel) {
@@ -122,7 +121,7 @@ fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel) {
         ListItem(
             headlineContent = { Text(text = "下载最新版本") },
             leadingContent = { Icon(painterResource(R.drawable.cloud_download), contentDescription = "Localized description",) },
-            modifier = Modifier.clickable{ StartUri.StartUri("https://gitee.com/chiu-xah/HFUT-Schedule/releases/tag/Android") }
+            modifier = Modifier.clickable{ StartApp.StartUri("https://gitee.com/chiu-xah/HFUT-Schedule/releases/tag/Android") }
         )
         ListItem(
             headlineContent = { Text(text = "联系开发者") },
@@ -205,10 +204,10 @@ fun DialogSample() {
 
 @Composable
 fun BugShare() {
+    val logs = prefs.getString("logs","")
     ListItem(
         headlineContent = { Text(text = "日志抓取") },
         leadingContent = { Icon(painterResource(R.drawable.monitor_heart), contentDescription = "Localized description",) },
-        overlineContent = { Text(text = "需在开发者指导下使用")},
         modifier = Modifier.clickable {
 
         },
@@ -223,11 +222,11 @@ fun BugShare() {
                         CrashHandler(MyApplication.context).disableLogging()
                         val shareIntent = Intent(Intent.ACTION_SEND).apply {
                             type = "text/plain"
-                            putExtra(Intent.EXTRA_TEXT, prefs.getString("logs",""))
+                            putExtra(Intent.EXTRA_TEXT, logs)
                             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         }
-                        MyApplication.context.startActivity(Intent.createChooser(shareIntent, "发送给开发者").addFlags(
-                            Intent.FLAG_ACTIVITY_NEW_TASK))
+                        MyApplication.context.startActivity(Intent.createChooser(shareIntent, "发送给开发者").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+                        SharePrefs.Save("logs","${GetDate.Date_yyyy_MM_dd} 已删除")
                     } catch (e : Exception) { MyToast("分享失败") }
                 }) { Icon(painter = painterResource(id =  R.drawable.ios_share ), contentDescription = "") }
             }

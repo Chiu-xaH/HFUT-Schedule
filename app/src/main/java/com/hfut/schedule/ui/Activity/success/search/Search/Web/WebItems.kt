@@ -20,9 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.utils.StartUri
-import com.hfut.schedule.ui.Activity.success.search.Search.News
-import com.hfut.schedule.ui.Activity.success.search.Search.Repair.Repair
+import com.hfut.schedule.logic.utils.StartApp
 
 @Composable
 fun WebItem() {
@@ -40,7 +38,7 @@ fun WebItem() {
             ListItem(
                 headlineContent = { Text(text = "信息门户") },
                 leadingContent = { Icon(painterResource(R.drawable.person), contentDescription = "Localized description",) },
-                modifier = Modifier.clickable { StartUri.StartUri("https://one.hfut.edu.cn/") }
+                modifier = Modifier.clickable { StartApp.StartUri("https://one.hfut.edu.cn/") }
             )
         }
         Spacer(modifier = Modifier.width(10.dp))
@@ -54,7 +52,7 @@ fun WebItem() {
             ListItem(
                 headlineContent = { Text(text = "学生教务") },
                 leadingContent = { Icon(painterResource(R.drawable.school), contentDescription = "Localized description",) },
-                modifier = Modifier.clickable { StartUri.StartUri("http://jxglstu.hfut.edu.cn/eams5-student/login?refer=http://jxglstu.hfut.edu.cn/eams5-student/home") }
+                modifier = Modifier.clickable { StartApp.StartUri("http://jxglstu.hfut.edu.cn/eams5-student/login?refer=http://jxglstu.hfut.edu.cn/eams5-student/home") }
             )
         }
     }
@@ -73,7 +71,7 @@ fun WebItem() {
             ListItem(
                 headlineContent = { Text(text = "邮箱系统") },
                 leadingContent = { Icon(painterResource(R.drawable.mail), contentDescription = "Localized description",) },
-                modifier = Modifier.clickable { StartUri.StartUri("https://email.mail.hfut.edu.cn/") }
+                modifier = Modifier.clickable { StartApp.StartUri("https://email.mail.hfut.edu.cn/") }
             )
         }
         Spacer(modifier = Modifier.width(10.dp))
@@ -87,7 +85,7 @@ fun WebItem() {
             ListItem(
                 headlineContent = { Text(text = "图书馆") },
                 leadingContent = { Icon(painterResource(R.drawable.book), contentDescription = "Localized description",) },
-                modifier = Modifier.clickable { StartUri.StartUri("http://lib.hfut.edu.cn/") }
+                modifier = Modifier.clickable { StartApp.StartUri("http://lib.hfut.edu.cn/") }
             )
         }
     }
@@ -106,7 +104,7 @@ fun WebItem() {
                 headlineContent = { Text(text = "服务大厅") },
                 overlineContent = { Text(text = "需接入校园网") },
                 leadingContent = { Icon(painterResource(R.drawable.credit_card), contentDescription = "Localized description",) },
-                modifier = Modifier.clickable { StartUri.StartUri("http://172.31.248.26:8088/") }
+                modifier = Modifier.clickable { StartApp.StartUri("http://172.31.248.26:8088/") }
             )
         }
         Spacer(modifier = Modifier.width(10.dp))
@@ -121,7 +119,7 @@ fun WebItem() {
                 headlineContent = { Text(text = "校园网服务") },
                 overlineContent = { Text(text = "接入校园网") },
                 leadingContent = { Icon(painterResource(R.drawable.wifi_tethering), contentDescription = "Localized description",) },
-                modifier = Modifier.clickable { StartUri.StartUri("https://172.18.7.2:8443/Self/nav_login") }
+                modifier = Modifier.clickable { StartApp.StartUri("https://172.18.7.2:8443/Self/nav_login") }
             )
         }
     }
@@ -139,7 +137,7 @@ fun WebItem() {
             ListItem(
                 headlineContent = { Text(text = "智慧社区") },
                 leadingContent = { Icon(painterResource(R.drawable.toll), contentDescription = "Localized description",) },
-                modifier = Modifier.clickable { StartUri.StartUri("https://community.hfut.edu.cn/myCommunity/index") }
+                modifier = Modifier.clickable { StartApp.StartUri("https://community.hfut.edu.cn/myCommunity/index") }
             )
         }
         Spacer(modifier = Modifier.width(10.dp))
@@ -153,7 +151,7 @@ fun WebItem() {
             ListItem(
                 headlineContent = { Text(text = "缴费平台") },
                 leadingContent = { Icon(painterResource(R.drawable.monetization_on), contentDescription = "Localized description",) },
-                modifier = Modifier.clickable { StartUri.StartUri("http://pay.hfut.edu.cn/payment/pay/payment.jsp") }
+                modifier = Modifier.clickable { StartApp.StartUri("http://pay.hfut.edu.cn/payment/pay/payment.jsp") }
             )
         }
     }
@@ -171,7 +169,7 @@ fun WebItem() {
             ListItem(
                 headlineContent = { Text(text = "工大官网") },
                 leadingContent = { Icon(painterResource(R.drawable.net), contentDescription = "Localized description",) },
-                modifier = Modifier.clickable { StartUri.StartUri("https://www.hfut.edu.cn/") }
+                modifier = Modifier.clickable { StartApp.StartUri("https://www.hfut.edu.cn/") }
             )
         }
         Spacer(modifier = Modifier.width(10.dp))
@@ -185,7 +183,7 @@ fun WebItem() {
             ListItem(
                 headlineContent = { Text(text = "WEBVPN") },
                 leadingContent = { Icon(painterResource(R.drawable.vpn_key), contentDescription = "Localized description",) },
-                modifier = Modifier.clickable { StartUri.StartUri("https://webvpn.hfut.edu.cn/") }
+                modifier = Modifier.clickable { StartApp.StartUri("https://webvpn.hfut.edu.cn/") }
             )
         }
     }
@@ -203,7 +201,7 @@ fun WebItem() {
             ListItem(
                 headlineContent = { Text(text = "报修") },
                 leadingContent = { Icon(painterResource(R.drawable.build), contentDescription = "Localized description",) },
-                modifier = Modifier.clickable { StartUri.StartUri("http://xcfw.hfut.edu.cn/school/index.html") }
+                modifier = Modifier.clickable { StartApp.StartUri("http://xcfw.hfut.edu.cn/school/index.html") }
             )
         }
         Spacer(modifier = Modifier.width(10.dp))

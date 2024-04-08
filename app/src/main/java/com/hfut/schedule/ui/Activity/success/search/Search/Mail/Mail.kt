@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.Activity.success.search.Search
+package com.hfut.schedule.ui.Activity.success.search.Search.Mail
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -7,9 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,40 +27,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.google.gson.Gson
-import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.datamodel.Community.BorrowRecords
-import com.hfut.schedule.logic.datamodel.Community.BorrowResponse
-import com.hfut.schedule.logic.datamodel.Lab
-import com.hfut.schedule.logic.datamodel.MyAPIResponse
-import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.StartUri
-import com.hfut.schedule.logic.utils.StartUri.StartUri
-import com.hfut.schedule.ui.Activity.success.search.Search.Library.getBorrow
-import com.hfut.schedule.ui.Activity.success.search.Search.Program.ProgramUI
-import com.hfut.schedule.ui.UIUtils.MyToast
+import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.StartApp
+import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.ScrollText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Lab() {
+fun Pay() {
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
-
-
+    val Savedusername = prefs.getString("Username", "")
     ListItem(
-        headlineContent = { Text(text = "实验室") },
-        overlineContent = { Text(text = "云控")},
-        leadingContent = {
-            Icon(
-                painterResource(R.drawable.science),
-                contentDescription = "Localized description",
-            )
-        },
+        headlineContent = { Text(text = "教育邮箱") },
+        overlineContent = { ScrollText(text = "${Savedusername}@mail.hfut.edu.cn")},
+        leadingContent = { Icon(painter = painterResource(id = R.drawable.mail), contentDescription = "") },
         modifier = Modifier.clickable {
-            showBottomSheet = true
+            StartApp.StartUri("https://email.mail.hfut.edu.cn/")
         }
     )
 
@@ -81,7 +62,7 @@ fun Lab() {
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        title = { Text("实验室") }
+                        title = { Text("教育邮箱") }
                     )
                 },) {innerPadding ->
                 Column(
@@ -89,18 +70,16 @@ fun Lab() {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ){
-                    LabUI()
+                    MailUI()
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
         }
     }
 }
-
 @Composable
-fun LabUI() {
-    LazyColumn {
-        item {
+fun MailUI() {
+
             Card(
                 elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
                 modifier = Modifier
@@ -109,53 +88,14 @@ fun LabUI() {
                 shape = MaterialTheme.shapes.medium
             ) {
                 ListItem(
-                    headlineContent = { Text(text = "这里是实验室,里面的选项会随云端发生变动,即使您不更新软件") },
-                    leadingContent = {
-                        Icon(painterResource(R.drawable.cloud_download), contentDescription = "Localized description",)
-                    },
-                    modifier = Modifier.clickable {
-                    }
-                )
-            }
-        }
-        items(getLab().size) { item ->
-            Card(
-                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp),
-                shape = MaterialTheme.shapes.medium
-            ) {
-                ListItem(
-                    headlineContent = { Text(text = getLab()[item].title) },
-                    supportingContent = {  Text(text = getLab()[item].info) },
+                    headlineContent = { Text(text = "") },
+                    supportingContent = {  Text(text ="" ) },
                     leadingContent = {
                         Icon(painterResource(R.drawable.net), contentDescription = "Localized description",)
                     },
-                    trailingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "" )},
                     modifier = Modifier.clickable {
-                        StartUri(getLab()[item].info)
+                        StartApp.StartUri("https://email.mail.hfut.edu.cn/")
                     }
                 )
             }
-        }
-    }
-}
-
-
-fun getLab() : MutableList<Lab>{
-    var Items = mutableListOf<Lab>()
-    val json = SharePrefs.prefs.getString("my","")
-    return try {
-        val item = Gson().fromJson(json, MyAPIResponse::class.java).Labs
-        for (i in 0 until item.size) {
-            val title = item[i].title
-            val info = item[i].info
-            val type = item[i].type
-            Items.add(Lab(title, info, type))
-        }
-        Items
-    } catch (e : Exception) {
-        Items
-    }
 }

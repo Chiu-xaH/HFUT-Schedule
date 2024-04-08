@@ -12,10 +12,7 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButtonColors
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemColors
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -27,12 +24,10 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.activity.CardActivity
-import com.hfut.schedule.logic.utils.OpenAlipay
+import com.hfut.schedule.logic.utils.StartApp
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.ui.Activity.success.focus.Focus.GetZjgdCard
 
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
@@ -67,7 +62,7 @@ fun SchoolCardItem(vmUI : UIViewModel) {
                 FilledTonalIconButton(
                     modifier = Modifier.scale(scale2.value),
                     interactionSource = interactionSource2,
-                    onClick = { OpenAlipay.openAlipay(MyApplication.AlipayCardURL) },
+                    onClick = { StartApp.openAlipay(MyApplication.AlipayCardURL) },
                 ) { Icon( painterResource(R.drawable.add), contentDescription = "Localized description",) }
         },
         colors = (

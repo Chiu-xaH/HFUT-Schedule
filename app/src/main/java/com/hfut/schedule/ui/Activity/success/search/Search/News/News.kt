@@ -1,9 +1,8 @@
-package com.hfut.schedule.ui.Activity.success.search.Search
+package com.hfut.schedule.ui.Activity.success.search.Search.News
 
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -17,11 +16,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -45,26 +39,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DialogProperties
-import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
-import com.hfut.schedule.logic.datamodel.NewsResponse
-import com.hfut.schedule.logic.utils.BaseSixtyFourEncrypt
-import com.hfut.schedule.logic.utils.StartUri
-import com.hfut.schedule.ui.Activity.success.search.Search.Electric.WebViewScreen
-import com.hfut.schedule.ui.Activity.success.search.Search.FailRate.Click
-import com.hfut.schedule.ui.Activity.success.search.Search.FailRate.FailRateUI
-import com.hfut.schedule.ui.Activity.success.search.Search.FailRate.getFailRate
-import com.hfut.schedule.ui.Activity.success.search.Search.FailRate.getLists
-import com.hfut.schedule.ui.Activity.success.search.Search.More.Login
-import com.hfut.schedule.ui.UIUtils.MyToast
+import com.hfut.schedule.logic.utils.Encrypt.encodeToBase64
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -152,7 +133,7 @@ showBottomSheet = true
                         CoroutineScope(Job()).launch{
                             async{
                                 // Click(vm, input, 1)
-                                vm.searchNews(BaseSixtyFourEncrypt.encodeToBase64(input))
+                                vm.searchNews(encodeToBase64(input))
                                 Handler(Looper.getMainLooper()).post{
                                     vm.NewsData.value = "{}"
                                 }
@@ -200,94 +181,4 @@ showBottomSheet = true
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun NewsItem(vm : LoginSuccessViewModel) {
-    var showDialog by remember { mutableStateOf(false) }
-    var links by remember { mutableStateOf("") }
-    if (showDialog) {
-        androidx.compose.ui.window.Dialog(
-            onDismissRequest = { showDialog = false },
-            properties = DialogProperties(usePlatformDefaultWidth = false)
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        actions = {
-                            Row{
-                                IconButton(onClick = { StartUri.StartUri(links) }) { Icon(painterResource(id = R.drawable.net), contentDescription = "") }
-                                IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "") }
-                            }
-                        },
-                        title = { Text("新闻详情") }
-                    )
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    WebViewScreen(url = links)
-                }
-            }
-        }
-    }
-
-    LazyColumn {
-        items(getNews(vm).size){ item ->
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                Column() {
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 15.dp, vertical = 5.dp),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        ListItem(
-                            overlineContent = { getNews(vm)[item].date?.let { Text(text = it) } },
-                            headlineContent = { getNews(vm)[item].title?.let { Text(it) } },
-                            leadingContent = { Icon(painterResource(R.drawable.newspaper), contentDescription = "Localized description",) },
-                            trailingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "")},
-                            modifier = Modifier.clickable {
-                                val link = getNews(vm)[item].link
-                                if (link != null) {
-                                    if(link.contains("http")) link?.let { links = link }
-                                    else links = MyApplication.NewsURL + link
-                                }
-                                showDialog = true
-                                 },
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-
-fun getNews(vm : LoginSuccessViewModel): MutableList<NewsResponse> {
-    var newsList = mutableListOf<NewsResponse>()
-    try {
-        val html= vm.NewsData.value
-        val doc: Document = Jsoup.parse(html)
-        val newsItems = doc.select("ul.list li")
-
-        for (item in newsItems) {
-            val date = item.select("i.timefontstyle252631").text()
-            val title = item.select("p.titlefontstyle252631").text()
-            val link = item.select("a").attr("href")
-            newsList.add(NewsResponse(title, date, link))
-        }
-        return newsList
-    } catch (e : Exception) {
-        return newsList
-    }
-}
 

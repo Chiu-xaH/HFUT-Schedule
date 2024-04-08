@@ -1,7 +1,6 @@
 package com.hfut.schedule.ui.Activity.card.function.main
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -36,7 +35,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.utils.GetDate
-import com.hfut.schedule.logic.utils.OpenAlipay
+import com.hfut.schedule.logic.utils.StartApp
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.card.bills.main.BillItem
 import com.hfut.schedule.ui.Activity.card.function.CardLimit
@@ -104,7 +103,7 @@ fun CardFunctions(vm : LoginSuccessViewModel,innerPaddings : PaddingValues,vmUI:
         ListItem(
             headlineContent = { Text(text = "充值跳转") },
             leadingContent = { Icon(painter = painterResource(id = R.drawable.add_card), contentDescription = "")},
-            modifier = Modifier.clickable { OpenAlipay.openAlipay(MyApplication.AlipayCardURL) }
+            modifier = Modifier.clickable { StartApp.openAlipay(MyApplication.AlipayCardURL) }
         )
         ListItem(
             headlineContent = { Text(text = "范围支出") },

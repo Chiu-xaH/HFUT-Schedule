@@ -59,8 +59,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.datamodel.SearchEleResponse
 import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.StartUri
-import com.hfut.schedule.ui.Activity.success.search.Search.Xuanqu.getXuanqu
+import com.hfut.schedule.logic.utils.StartApp
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.theme.FWDTColr
 import kotlinx.coroutines.CoroutineScope
@@ -203,7 +202,7 @@ fun EleUI(vm : LoginSuccessViewModel) {
                                 ),
                                 actions = {
                                     Row{
-                                        IconButton(onClick = { StartUri.StartUri( "http://172.31.248.26:8088") }) { Icon(painterResource(id = R.drawable.net), contentDescription = "", tint = Color.White) }
+                                        IconButton(onClick = { StartApp.StartUri( "http://172.31.248.26:8088") }) { Icon(painterResource(id = R.drawable.net), contentDescription = "", tint = Color.White) }
                                         IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "", tint = Color.White) }
                                     }
 
