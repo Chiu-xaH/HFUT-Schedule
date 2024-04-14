@@ -1,15 +1,9 @@
 package com.hfut.schedule.ui.Activity.card.main
 
 import android.app.Activity
-import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Divider
@@ -27,7 +21,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -52,7 +45,6 @@ import com.hfut.schedule.logic.datamodel.zjgd.records
 import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.ui.Activity.card.EcoUI
 import com.hfut.schedule.ui.Activity.card.bills.main.CardBills
 import com.hfut.schedule.ui.Activity.card.counts.main.CardCounts
 import com.hfut.schedule.ui.Activity.card.function.main.CardFunctions
@@ -176,12 +168,7 @@ fun CardUI(vm : LoginSuccessViewModel, activity : Activity,vmUI : UIViewModel) {
                     NavigationBarItemData(
                         CardBarItems.FUNCTION.name,"功能", painterResource(R.drawable.cube), painterResource(
                             R.drawable.deployed_code_filled)
-                    ),
-                    NavigationBarItemData(
-                        CardBarItems.ECO.name,"环保", painterResource(R.drawable.eco), painterResource(
-                            R.drawable.eco_filled)
                     )
-
                 )
                 items.forEach { item ->
                     val route = item.route
@@ -216,7 +203,6 @@ fun CardUI(vm : LoginSuccessViewModel, activity : Activity,vmUI : UIViewModel) {
             composable(CardBarItems.BILLS.name) { CardBills(vm,innerPadding,vmUI) }
             composable(CardBarItems.COUNT.name) {  CardCounts(vm, innerPadding) }
             composable(CardBarItems.FUNCTION.name) { CardFunctions(vm,innerPadding,vmUI) }
-            composable(CardBarItems.ECO.name) { EcoUI(innerPadding) }
         }
 
     }

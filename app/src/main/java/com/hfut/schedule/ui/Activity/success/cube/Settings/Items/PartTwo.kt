@@ -82,58 +82,42 @@ fun PartTwo() {
     MonetColorItem()
 
 
-    ListItem(
-        headlineContent = { Text(text = "主题色模式") },
-        supportingContent = {
-            if(automode)
-            Text(text = "已跟随系统,关闭开关可自定义")
-            else {
-                Column {
-                    Text(text = "选择深浅色主题,打开开关将跟随系统")
-                    Row {
-                        FilterChip(
-                            onClick = {
-                                select = true
-                                SaveBoolean("select",false,select)
-                            },
-                            label = { Text(text = "深色") }, selected = select)
-                        Spacer(modifier = Modifier.width(10.dp))
-                        FilterChip(
-                            onClick = {
-                                select = false
-                                SaveBoolean("select",false,select)
-                            },
-                            label = { Text(text = "浅色") }, selected = !select)
-                    }
-                }
-            }
-        },
-        trailingContent = { Switch(enabled = false,checked = automode, onCheckedChange = { modech -> automode = modech }) },
-        leadingContent = {
-            Icon(
-                painterResource(if(automode)R.drawable.routine else if(mode) R.drawable.light_mode else R.drawable.dark_mode ),
-                contentDescription = "Localized description",
-            )
-        },
-        modifier = Modifier.clickable{}
-    )
+  //  ListItem(
+    //    headlineContent = { Text(text = "主题色模式") },
+      //  supportingContent = {
+        //    if(automode)
+         //   Text(text = "已跟随系统,关闭开关可自定义")
+           // else {
+             //   Column {
+               //     Text(text = "选择深浅色主题,打开开关将跟随系统")
+             //       Row {
+               //         FilterChip(
+                 //           onClick = {
+                   //             select = true
+                     //           SaveBoolean("select",false,select)
+                       //     },
+                         //   label = { Text(text = "深色") }, selected = select)
+                       // Spacer(modifier = Modifier.width(10.dp))
+                       // FilterChip(
+                         //   onClick = {
+                           //     select = false
+                             //   SaveBoolean("select",false,select)
+                          //  },
+                //            label = { Text(text = "浅色") }, selected = !select)
+                 //   }
+               // }
+          ///  }
+       // },
+       // trailingContent = { Switch(enabled = false,checked = automode, onCheckedChange = { modech -> automode = modech }) },
+     //   leadingContent = {
+       //     Icon(
+         //       painterResource(if(automode)R.drawable.routine else if(mode) R.drawable.light_mode else R.drawable.dark_mode ),
+           //     contentDescription = "Localized description",
+           // )
+       // },
+       // modifier = Modifier.clickable{}
+   // )
 
-    //Spacer(modifier = Modifier.height(5.dp))
-    //Card(
-        //elevation = CardDefaults.cardElevation(
-          //  defaultElevation = 3.dp
-        //),
-        //modifier = Modifier
-           // .fillMaxWidth()
-         //   .padding(horizontal = 15.dp, vertical = 5.dp),
-       // shape = MaterialTheme.shapes.medium,
-     //   colors = CardDefaults.cardColors(if(showBadge)MaterialTheme.colorScheme.errorContainer else ListItemDefaults.containerColor)
-
-   // ){
-       // Row {
-         //   Text(text = "更新", color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp).weight(.5f))
-          //Text(text = "${if(!showBadge) "发现新版本" else ""}", color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp).weight(.5f))
-       // }
 
 
     var version by remember { mutableStateOf(getUpdates()) }
@@ -183,68 +167,10 @@ fun PartTwo() {
     //)
 
 
-    ListItem(
-        headlineContent = { Text(text = "联系开发者") },
-         supportingContent = { Text(text = "有更好的想法,或者反馈Bug,都可发邮件联系我")},
-        leadingContent = {
-            Icon(
-                painterResource(R.drawable.mail),
-                contentDescription = "Localized description",
-            )
-        },
-        modifier = Modifier.clickable{
-            val it = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:zsh0908@outlook.com"))
-            it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            MyApplication.context.startActivity(it)
-        }
-    )
+
 
     ListItem(
-        headlineContent = { Text(text = "开源主页") },
-        supportingContent = { Text(text = "欢迎来开源主页参观一下")},
-        leadingContent = {
-            Icon(
-                painterResource(R.drawable.net),
-                contentDescription = "Localized description",
-            )
-        },
-        modifier = Modifier.clickable{
-            //when(select) {
-             //   false -> StartUri("https://gitee.com/chiu-xah/HFUT-Schedule")
-                //true ->
-            StartUri("https://github.com/Chiu-xaH/HFUT-Schedule")
-          //  }
-        }
-    )
-
-    ListItem(
-        headlineContent = { Text(text = "推广本应用") },
-        supportingContent = { Text(text = "如果你觉得好用的话,可以替开发者多多推广")},
-        leadingContent = {
-            Icon(
-                painterResource(R.drawable.ios_share),
-                contentDescription = "Localized description",
-            )
-        },
-        modifier = Modifier.clickable{ ShareAPK() }
-    )
-
-
-    var showDialog by remember { mutableStateOf(false) }
-    if (showDialog) {
-        LittleDialog(
-            onDismissRequest = { showDialog = false },
-            onConfirmation = { Clear() },
-            dialogTitle = "警告",
-            dialogText = "确定要抹掉数据吗,抹掉数据后,应用将退出",
-            conformtext = "抹掉数据",
-            dismisstext = "取消"
-        )
-        //This will look like IOS!
-    }
-
-    ListItem(
-        headlineContent = { Text(text = "修复") },
+        headlineContent = { Text(text = "关于与修复") },
         supportingContent = { Text(text = "当出现问题时,可从此处进入或长按桌面图标选择修复")},
         leadingContent = { Icon(painterResource(R.drawable.build), contentDescription = "Localized description",) },
         modifier = Modifier.clickable{

@@ -51,16 +51,14 @@ import com.hfut.schedule.logic.utils.GetDate.Benweeks
 import com.hfut.schedule.logic.utils.GetDate.Date_MM_dd
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.ui.Activity.success.search.main.SearchScreen
+import com.hfut.schedule.ui.Activity.success.calendar.nonet.SaveCourse
+import com.hfut.schedule.ui.Activity.success.cube.Settings.getUpdates
 import com.hfut.schedule.ui.Activity.success.cube.main.SettingsScreen
 import com.hfut.schedule.ui.Activity.success.focus.main.TodayScreen
-import com.hfut.schedule.ui.Activity.success.search.main.getName
-import com.hfut.schedule.ui.Activity.success.calendar.nonet.SaveCourse
-
-import com.hfut.schedule.ui.Activity.success.cube.Settings.getMyVersion
-import com.hfut.schedule.ui.Activity.success.cube.Settings.getUpdates
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.NotificationItems
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.getNotifications
+import com.hfut.schedule.ui.Activity.success.search.main.SearchScreen
+import com.hfut.schedule.ui.Activity.success.search.main.getName
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 import dev.chrisbanes.haze.hazeChild

@@ -50,6 +50,7 @@ fun SettingsScreen(vm : LoginSuccessViewModel
 
             Text(text = "登录信息", color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp))
             PersonPart()
+
             Text(text = "API接口", color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp))
             MyAPIItem()
 

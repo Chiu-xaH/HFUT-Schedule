@@ -81,8 +81,8 @@ fun Fix(vm : LoginViewModel) {
                             R.drawable.build_filled)
                     ),
                     NavigationBarItemData(
-                        FixBarItems.Debug.name,"调试", painterResource(R.drawable.responsive_layout), painterResource(
-                            R.drawable.responsive_layout_filled)
+                        FixBarItems.About.name,"关于", painterResource(R.drawable.info), painterResource(
+                            R.drawable.info_filled)
                     )
                 )
                 items.forEach { item ->
@@ -116,7 +116,7 @@ fun Fix(vm : LoginViewModel) {
                 backgroundColor = MaterialTheme.colorScheme.surface,
             )) {
             composable(FixBarItems.Fix.name) { FixUI(innerPadding = innerPadding,vm) }
-            composable(FixBarItems.Debug.name) {  DebugUI(innerPadding = innerPadding) }
+            composable(FixBarItems.About.name) { AboutUI(innerPadding = innerPadding, vm = vm)}
         }
     }
 }

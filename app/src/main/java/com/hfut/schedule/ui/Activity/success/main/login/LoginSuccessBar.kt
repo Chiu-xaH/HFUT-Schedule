@@ -53,7 +53,6 @@ import com.hfut.schedule.logic.Enums.BottomBarItems
 import com.hfut.schedule.logic.utils.APPVersion
 import com.hfut.schedule.ui.Activity.success.calendar.login.CalendarScreen
 import com.hfut.schedule.ui.Activity.success.main.saved.texts
-import com.hfut.schedule.ui.Activity.success.cube.Settings.getMyVersion
 import com.hfut.schedule.ui.Activity.success.cube.Settings.getUpdates
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.NotificationItems
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.getNotifications

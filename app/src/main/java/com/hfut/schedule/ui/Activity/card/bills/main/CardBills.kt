@@ -7,12 +7,14 @@ import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,12 +23,18 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemColors
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,9 +42,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.datamodel.zjgd.BillResponse
@@ -79,6 +90,7 @@ fun BillItem(vm : LoginSuccessViewModel) :MutableList<records> {
 
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("SuspiciousIndentation")
 @Composable
 fun CardBills(vm : LoginSuccessViewModel,innerPaddings : PaddingValues,vmUI : UIViewModel) {
@@ -119,6 +131,19 @@ fun CardBills(vm : LoginSuccessViewModel,innerPaddings : PaddingValues,vmUI : UI
         }
 
 
+
+    var showBottomSheet by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState()
+    var Infonum by remember { mutableStateOf(0) }
+
+    if(showBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { showBottomSheet = false },
+            sheetState = sheetState
+        ){
+            BillsInfo(vm,Infonum)
+        }
+    }
 
     fun Updade() {
         CoroutineScope(Job()).apply {
@@ -166,23 +191,11 @@ fun CardBills(vm : LoginSuccessViewModel,innerPaddings : PaddingValues,vmUI : UI
                 if (page == 1)
                     item { CardRow(vm,false,vmUI) }
                 items(BillItem(vm).size) { item ->
-                    var num =( BillItem(vm)[item].tranamt ?: 1000 ).toString()
-                    //优化0.0X元Bug
-                    if(num.length == 1)
-                        num = "00$num"
-
-                    num = num.substring(0, num.length - 2) + "." + num.substring(num.length - 2)
-                    val big = BigDecimal(num)
-                    val num_float = big.toFloat()
-
-                    var name = BillItem(vm)[item].resume
+                    val bills = BillItem(vm)[item]
+                    var name = bills.resume
                     if (name.contains("有限公司")) name = name.replace("有限公司","")
 
-                    var pay = "$num_float 元"
-                    if (name.contains("充值") || name.contains("补助")) pay = "+$pay"
-                    else pay = "-$pay"
-
-                    val time = BillItem(vm)[item].effectdateStr
+                    val time =bills.effectdateStr
                     val getTime = time.substringBefore(" ")
 
 
@@ -200,13 +213,17 @@ fun CardBills(vm : LoginSuccessViewModel,innerPaddings : PaddingValues,vmUI : UI
                     ) {
                         ListItem(
                             headlineContent = { Text(text = name) },
-                            supportingContent = { Text(text = pay) },
+                            supportingContent = { Text(text = processTranamt(bills)) },
                             overlineContent = { Text(text = time) },
                             leadingContent = { BillsIcons(name) },
                             colors =
                             if(GetDate.Date_yyyy_MM_dd == getTime)
                                 ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.primaryContainer)
-                            else ListItemDefaults.colors()
+                            else ListItemDefaults.colors(),
+                            modifier = Modifier.clickable {
+                                Infonum = item
+                                showBottomSheet = true
+                            }
                         )
                     }
                 }
@@ -277,4 +294,94 @@ fun CardBills(vm : LoginSuccessViewModel,innerPaddings : PaddingValues,vmUI : UI
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BillsInfo(vm : LoginSuccessViewModel, Infonum : Int) {
+    val bills = BillItem(vm)[Infonum]
+
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            Column {
+                TopAppBar(
+                    colors = TopAppBarDefaults.mediumTopAppBarColors(
+                        containerColor = Color.Transparent,
+                        titleContentColor = MaterialTheme.colorScheme.primary,
+                    ),
+                    title = { Text("详情") },
+                )
+            }
+        },
+    ) {innerPadding ->
+        Column(modifier = Modifier.padding(innerPadding)) {
+            Card(
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 3.dp
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        horizontal = 15.dp,
+                        vertical = 5.dp
+                    ),
+                shape = MaterialTheme.shapes.medium,
+            ) {
+                ListItem(
+                    headlineContent = { Text( bills.resume.substringBefore("-") ) },
+                    leadingContent = {
+                        BillsIcons(bills.resume)
+                    },
+                    overlineContent = { Text(text = "商家")}
+                )
+                ListItem(
+                    headlineContent = { Text( bills.resume.substringAfter("-")) },
+                    leadingContent = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.credit_card),
+                            contentDescription = "Localized description",
+                        )
+                    },
+                    overlineContent = { Text(text = "类型 ${Text( bills.turnoverType)}")}
+                )
+                ListItem(
+                    headlineContent = { Text(  "入账 "+ bills.jndatetimeStr+ "\n出账 " + bills.effectdateStr ) },
+                    leadingContent = {
+                        Icon(
+                            painterResource(id = R.drawable.schedule),
+                            contentDescription = "Localized description",
+                        )
+                    },
+                    overlineContent = { Text(text = "时间")}
+                )
+
+                ListItem(
+                    headlineContent = { Text( processTranamt(bills)) },
+                    leadingContent = {
+                        Icon(
+                            painterResource(id = R.drawable.paid),
+                            contentDescription = "Localized description",
+                        )
+                    },
+                    overlineContent = { Text(text = "金额")}
+                )
+            }
+        }
+    }
+}
+
+
+fun processTranamt(bills : records) : String {
+    var num =( bills.tranamt ?: 1000 ).toString()
+    //优化0.0X元Bug
+    if(num.length == 1)
+        num = "00$num"
+    num = num.substring(0, num.length - 2) + "." + num.substring(num.length - 2)
+    val big = BigDecimal(num)
+    val num_float = big.toFloat()
+    var pay = "$num_float 元"
+    if (bills.resume.contains("充值") || bills.resume.contains("补助")) pay = "+ $pay"
+    else pay = "- $pay"
+    return pay
 }

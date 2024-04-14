@@ -28,6 +28,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.ScrollText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -43,7 +44,7 @@ fun XuanquItem(vm : LoginSuccessViewModel) {
 
 
     ListItem(
-        headlineContent = { Text(text = "寝室卫生评分") },
+        headlineContent = { ScrollText(text = "寝室卫生评分") },
         overlineContent = { Text(text = "宣城校区") },
         leadingContent = { Icon(painter = painterResource(R.drawable.psychiatry),"" ) },
         modifier = Modifier.clickable { showBottomSheet_Xuanqu = true }

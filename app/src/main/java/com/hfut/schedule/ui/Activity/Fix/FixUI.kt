@@ -85,14 +85,11 @@ fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel) {
                 leadingContent = { Icon(painterResource(R.drawable.info), contentDescription = "Localized description",) },
                 modifier = Modifier.clickable {}
             )
-            ListItem(
-                headlineContent = { Text(text = "致歉")},
-                supportingContent = { Text(text = "抱歉带来不好的体验 希望能向开发者及时反馈") },
-                leadingContent = { Icon(painterResource(R.drawable.sentiment_dissatisfied), contentDescription = "Localized description",) },
-                modifier = Modifier.clickable{  }
-            )
         }
         Spacer(modifier = Modifier.height(5.dp))
+
+
+
 
 
         ListItem(
@@ -107,7 +104,6 @@ fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel) {
         trailingContent = { Switch(checked = showapi, onCheckedChange = {showapich -> showapi = showapich }) },
         modifier = Modifier.clickable { showapi = !showapi }
         )
-        BugShare()
         ListItem(
             headlineContent = { Text(text = "刷新登录状态") },
             leadingContent = { Icon(painterResource(R.drawable.rotate_right), contentDescription = "Localized description",) },
@@ -123,20 +119,13 @@ fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel) {
             leadingContent = { Icon(painterResource(R.drawable.cloud_download), contentDescription = "Localized description",) },
             modifier = Modifier.clickable{ StartApp.StartUri("https://gitee.com/chiu-xah/HFUT-Schedule/releases/tag/Android") }
         )
+
         ListItem(
-            headlineContent = { Text(text = "联系开发者") },
-            leadingContent = {
-                Icon(
-                    painterResource(R.drawable.mail),
-                    contentDescription = "Localized description",
-                )
-            },
-            modifier = Modifier.clickable{
-                val it = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:zsh0908@outlook.com"))
-                it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                MyApplication.context.startActivity(it)
-            }
+            headlineContent = { Text(text = "抹掉数据") },
+            leadingContent = { Icon(painterResource(R.drawable.delete), contentDescription = "Localized description",) },
+            modifier = Modifier.clickable{ showDialog = true }
         )
+        BugShare()
         ListItem(
             headlineContent = { Text(text = "开发者接口") },
             overlineContent = { getTimeStamp()?.let { Text(text = it) } },
@@ -146,11 +135,9 @@ fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel) {
                 MyToast("正在更新信息")
             }
         )
-        ListItem(
-            headlineContent = { Text(text = "抹掉数据") },
-            leadingContent = { Icon(painterResource(R.drawable.delete), contentDescription = "Localized description",) },
-            modifier = Modifier.clickable{ showDialog = true }
-        )
+
+
+
         //Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding()))
     }
     if (showDialog) {
@@ -167,40 +154,17 @@ fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel) {
 
 }
 @Composable
-fun DebugUI(innerPadding : PaddingValues) {
+fun DebugUI(innerPadding : PaddingValues,vm : LoginViewModel) {
     Column (modifier = Modifier
         .verticalScroll(rememberScrollState())
         .padding(innerPadding)){
         Spacer(modifier = Modifier.height(5.dp))
-       /// DialogSample()
-    }
-
-}
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun DialogSample() {
-
-    var isExpanded by remember { mutableStateOf(false) }
-    val transition = updateTransition(targetState = isExpanded, label = "Stack Expand")
-    val blurRadius by transition.animateDp(label = "Title blur") { expanded ->
-        if (expanded) 8.dp else 0.dp
-    }
-
-    Button(onClick = { /*TODO*/ }, modifier = Modifier.blur(blurRadius, BlurredEdgeTreatment.Unbounded)) {
-        androidx.compose.material.Text(
-            text = "UI界面调试",
-            modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 24.dp)
-            // .align(Alignment.TopStart)
-
-        )
-    }
 
 
-    Button(onClick = { isExpanded = !isExpanded }) {
-        Text(text = "模糊")
+        //Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding()))
     }
 }
+
 
 @Composable
 fun BugShare() {

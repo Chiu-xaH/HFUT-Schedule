@@ -49,6 +49,8 @@ import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.datamodel.zjgd.BillResponse
 import com.hfut.schedule.logic.datamodel.zjgd.records
 import com.hfut.schedule.ui.Activity.card.BillsIcons
+import com.hfut.schedule.ui.Activity.card.bills.main.BillItem
+import com.hfut.schedule.ui.Activity.card.bills.main.processTranamt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -214,21 +216,9 @@ fun SearchBillsUI(vm : LoginSuccessViewModel) {
                                 }
 
                                 items(Items().size) { item ->
-                                    var num = Items()[item].tranamt.toString()
-                                    //优化0.0X元Bug
-                                    if(num.length == 1)
-                                        num = "00$num"
-
-                                    num = num.substring(0, num.length - 2) + "." + num.substring(num.length - 2)
-                                    val big = BigDecimal(num)
-                                    val num_float = big.toFloat()
 
                                     var name = Items()[item].resume
                                     if (name.contains("有限公司")) name = name.replace("有限公司","")
-
-                                    var pay = "$num_float 元"
-                                    if (name.contains("充值") || name.contains("补助")) pay = "+" + pay
-                                    else pay = "-$pay"
 
                                     Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)
                                     {
@@ -243,7 +233,7 @@ fun SearchBillsUI(vm : LoginSuccessViewModel) {
                                         ) {
                                             ListItem(
                                                 headlineContent = { Text(text = name) },
-                                                supportingContent = {Text(text = pay)},
+                                                supportingContent = {Text(text = processTranamt(BillItem(vm)[item]))},
                                                 overlineContent = {Text(text = Items()[item].effectdateStr)},
                                                 leadingContent = { BillsIcons(name) }
                                             )

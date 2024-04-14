@@ -90,9 +90,10 @@ fun TodayCardItem(vmUI : UIViewModel) {
 @Composable
 fun MyScheuleItem(item : Int, MySchedule : MutableList<Schedule>,Future: Boolean ) {
 
+    val MySchedules = MySchedule[item]
     if(prefs.getString("my","")?.contains("Schedule") == true) {
-        val startTime = MySchedule[item].startTime
-        val endTime = MySchedule[item].endTime
+        val startTime = MySchedules.startTime
+        val endTime = MySchedules.endTime
 
         //判断过期不显示信息
 
@@ -130,8 +131,13 @@ fun MyScheuleItem(item : Int, MySchedule : MutableList<Schedule>,Future: Boolean
 }
 
 
+@SuppressLint("SuspiciousIndentation")
 @Composable
 fun ScheduleItems(MySchedule: MutableList<Schedule>, item : Int,Future : Boolean) {
+    val MySchedules = MySchedule[item]
+    val time = MySchedules.time
+    val info = MySchedules.info
+    val title = MySchedules.title
 
         Card(
             elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
@@ -143,19 +149,19 @@ fun ScheduleItems(MySchedule: MutableList<Schedule>, item : Int,Future : Boolean
 
         ) {
             ListItem(
-                headlineContent = {  Text(text = MySchedule[item].title) },
-                overlineContent = {Text(text = MySchedule[item].time)},
-                supportingContent = { Text(text = MySchedule[item].info)},
-                leadingContent = { ScheduleIcons(title = MySchedule[item].title) },
+                headlineContent = {  Text(text = title) },
+                overlineContent = {Text(text = time)},
+                supportingContent = { Text(text = info)},
+                leadingContent = { ScheduleIcons(title = title) },
                 modifier = Modifier.clickable {},
                 trailingContent = {
                     if(Future)
                     FilledTonalIconButton(
                         onClick = {
                             try {
-                                var startTime = MySchedule[item].startTime
-                                var endTime = MySchedule[item].endTime
-                                AddCalendar(startTime,endTime, MySchedule[item].info, MySchedule[item].title,MySchedule[item].time)
+                                var startTime = MySchedules.startTime
+                                var endTime = MySchedules.endTime
+                                AddCalendar(startTime,endTime, info, title,time)
                                 MyToast("添加到系统日历成功")
                             } catch (e : SecurityException) {
                                 MyToast("未授予权限")
@@ -176,9 +182,14 @@ fun ScheduleItems(MySchedule: MutableList<Schedule>, item : Int,Future : Boolean
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun WangkeItem(item : Int, MyWangKe: MutableList<MyList>,Future: Boolean) {
+    val MyWangKes = MyWangKe[item]
+    val time = MyWangKes.time
+    val info = MyWangKes.info
+    val title = MyWangKes.title
+
     if(prefs.getString("my","")?.contains("Schedule") == true) {
-        val startTime = MyWangKe[item].startTime
-        val endTime = MyWangKe[item].endTime
+        val startTime = MyWangKes.startTime
+        val endTime = MyWangKes.endTime
 
         //判断过期不显示信息
         val startYear = startTime[0]
@@ -214,9 +225,9 @@ fun WangkeItem(item : Int, MyWangKe: MutableList<MyList>,Future: Boolean) {
                 ) {
 
                     ListItem(
-                        headlineContent = {  Text(text = MyWangKe[item].title) },
-                        overlineContent = { Text(text = MyWangKe[item].time) },
-                        supportingContent = { Text(text = MyWangKe[item].info)},
+                        headlineContent = {  Text(text = title) },
+                        overlineContent = { Text(text = time) },
+                        supportingContent = { Text(text = info)},
                         leadingContent = {
                             Icon(
                                 painterResource(R.drawable.net),
@@ -226,7 +237,7 @@ fun WangkeItem(item : Int, MyWangKe: MutableList<MyList>,Future: Boolean) {
                         trailingContent = {
                             FilledTonalIconButton(
                                 onClick = {
-                                    AddCalendar(startTime,endTime, MyWangKe[item].info, MyWangKe[item].title,MyWangKe[item].time)
+                                    AddCalendar(startTime,endTime, info, title,time)
                                     MyToast("添加到系统日历成功")
                                 }
                             ) {
@@ -234,7 +245,7 @@ fun WangkeItem(item : Int, MyWangKe: MutableList<MyList>,Future: Boolean) {
                                     contentDescription = "Localized description",)
                             }
                         },
-                        modifier = Modifier.clickable { openOperation(MyWangKe[item].info) }
+                        modifier = Modifier.clickable { openOperation(info) }
                     )
                 }
             }
@@ -249,9 +260,9 @@ fun WangkeItem(item : Int, MyWangKe: MutableList<MyList>,Future: Boolean) {
                 ) {
 
                     ListItem(
-                        headlineContent = {  Text(text = MyWangKe[item].title) },
-                        overlineContent = { Text(text = MyWangKe[item].time) },
-                        supportingContent = { Text(text = MyWangKe[item].info)},
+                        headlineContent = {  Text(text = title) },
+                        overlineContent = { Text(text = time) },
+                        supportingContent = { Text(text = info)},
                         leadingContent = {
                             Icon(
                                 painterResource(R.drawable.net),
@@ -261,7 +272,7 @@ fun WangkeItem(item : Int, MyWangKe: MutableList<MyList>,Future: Boolean) {
                         trailingContent = {
                            Text(text = "今日截止")
                         },
-                        modifier = Modifier.clickable { openOperation(MyWangKe[item].info) }
+                        modifier = Modifier.clickable { openOperation(info) }
                     )
                 }
             }
@@ -275,11 +286,13 @@ fun WangkeItem(item : Int, MyWangKe: MutableList<MyList>,Future: Boolean) {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TodayCourseItem(item : Int) {
+
     var week = GetDate.Benweeks.toInt()
 
     var weekday = GetDate.dayweek
     if(weekday == 0) weekday = 7
     //课程详情
+    val list = getCourseINFO(weekday,week)[item][0]
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
     if (showBottomSheet) {
@@ -297,7 +310,7 @@ fun TodayCourseItem(item : Int) {
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        title = { Text(getCourseINFO(weekday,week)[item][0].name) },
+                        title = { Text(list.name) },
                     )
                 },
             ) { innerPadding ->
@@ -306,7 +319,7 @@ fun TodayCourseItem(item : Int) {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    DetailInfos(getCourseINFO(weekday,week)[item][0])
+                    DetailInfos(list)
                 }
             }
         }
@@ -326,9 +339,9 @@ fun TodayCourseItem(item : Int) {
 
         ) {
             ListItem(
-                headlineContent = {  Text(text = getCourseINFO(weekday,week)[item][0].name) },
-                overlineContent = { Text(text = getCourseINFO(weekday,week)[item][0].classTime)},
-                supportingContent = { Text(text = getCourseINFO(weekday,week)[item][0].place)},
+                headlineContent = {  Text(text = list.name) },
+                overlineContent = { Text(text = list.classTime)},
+                supportingContent = { Text(text = list.place)},
                 leadingContent = {
                     Icon(
                         painterResource(R.drawable.schedule),
@@ -357,6 +370,7 @@ fun TomorrowCourseItem(item : Int) {
     }
 
     //课程详情
+    val list = getCourseINFO(weekdaytomorrow,week)[item][0]
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
     if (showBottomSheet) {
@@ -374,7 +388,7 @@ fun TomorrowCourseItem(item : Int) {
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        title = { Text(getCourseINFO(weekdaytomorrow,week)[item][0].name) },
+                        title = { Text(list.name) },
                     )
                 },
             ) { innerPadding ->
@@ -383,7 +397,7 @@ fun TomorrowCourseItem(item : Int) {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    DetailInfos(getCourseINFO(weekdaytomorrow,week)[item][0])
+                    DetailInfos(list)
                 }
             }
         }
@@ -402,9 +416,9 @@ fun TomorrowCourseItem(item : Int) {
             shape = MaterialTheme.shapes.medium,
             ) {
             ListItem(
-                headlineContent = {  Text(text = getCourseINFO(weekdaytomorrow,week)[item][0].name) },
-                overlineContent = {Text(text = getCourseINFO(weekdaytomorrow,week)[item][0].classTime)},
-                supportingContent = { Text(text = getCourseINFO(weekdaytomorrow,week)[item][0].place)},
+                headlineContent = {  Text(text = list.name) },
+                overlineContent = {Text(text = list.classTime)},
+                supportingContent = { Text(text = list.place)},
                 leadingContent = { Icon(painterResource(R.drawable.exposure_plus_1), contentDescription = "Localized description",) },
                 modifier = Modifier.clickable {
                     showBottomSheet = true
