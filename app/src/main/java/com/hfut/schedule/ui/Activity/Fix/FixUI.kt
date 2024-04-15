@@ -2,6 +2,7 @@ package com.hfut.schedule.ui.Activity.Fix
 
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.clickable
@@ -42,6 +43,7 @@ import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.CrashHandler
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.StartApp
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.Clear
@@ -168,9 +170,46 @@ fun DebugUI(innerPadding : PaddingValues,vm : LoginViewModel) {
 
 @Composable
 fun BugShare() {
+    var showDialog by remember { mutableStateOf(false) }
     val logs = prefs.getString("logs","")
+    if(showDialog) {
+        logs?.let {
+            LittleDialog(
+                onDismissRequest = { showDialog = false },
+                onConfirmation = {
+                    try {
+                        CrashHandler().disableLogging()
+                        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                            type = "text/plain"
+                            putExtra(Intent.EXTRA_TEXT, logs)
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        }
+                        MyApplication.context.startActivity(Intent.createChooser(shareIntent, "发送给开发者").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+                    } catch (e : Exception) { MyToast("分享失败") }
+                },
+                dialogTitle = "日志内容",
+                dialogText = it,
+                conformtext = "分享",
+                dismisstext = "取消"
+            )
+        }
+    }
+
+    ListItem(headlineContent = { Text(text = "aa") }, modifier = Modifier.clickable {
+        val list = listOf(0,1)
+        println(list[9])
+    })
     ListItem(
         headlineContent = { Text(text = "日志抓取") },
+        overlineContent = {
+            if (logs != null) {
+                if (logs.substringBefore("*").contains("-")) {
+                    if (logs != null) {
+                        Text(text = "已保存 ${logs.substringBefore("*")}")
+                    }
+                }
+            }
+        },
         leadingContent = { Icon(painterResource(R.drawable.monitor_heart), contentDescription = "Localized description",) },
         modifier = Modifier.clickable {
 
@@ -178,20 +217,16 @@ fun BugShare() {
         trailingContent = {
             Row{
                 FilledTonalIconButton(onClick = {
-                    CrashHandler(MyApplication.context).enableLogging()
+                    CrashHandler().enableLogging()
                     MyToast("日志抓取已开启,请复现崩溃的操作,当完成后,回此处点击分享")
                 }) { Icon(painter = painterResource(id =  R.drawable.slow_motion_video ), contentDescription = "") }
                 FilledTonalIconButton(onClick = {
-                    try {
-                        CrashHandler(MyApplication.context).disableLogging()
-                        val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                            type = "text/plain"
-                            putExtra(Intent.EXTRA_TEXT, logs)
-                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        }
-                        MyApplication.context.startActivity(Intent.createChooser(shareIntent, "发送给开发者").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-                        SharePrefs.Save("logs","${GetDate.Date_yyyy_MM_dd} 已删除")
-                    } catch (e : Exception) { MyToast("分享失败") }
+                    Log.d("s",logs.toString())
+                    if (logs != null) {
+                        if (logs.substringBefore("*").contains("-")) {
+                            if (logs != null) showDialog = true else MyToast("日志为空")
+                        } else MyToast("日志为空")
+                    } else MyToast("日志为空")
                 }) { Icon(painter = painterResource(id =  R.drawable.ios_share ), contentDescription = "") }
             }
         }
