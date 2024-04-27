@@ -35,7 +35,7 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.utils.StartApp
-import com.hfut.schedule.ui.Activity.success.search.Search.Electric.WebViewScreen
+import com.hfut.schedule.ui.UIUtils.WebViewScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

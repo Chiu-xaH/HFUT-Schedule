@@ -1,12 +1,5 @@
 package com.hfut.schedule.logic.utils
 
-import android.content.Context
-import android.content.Intent
-import android.content.SharedPreferences
-import android.net.Uri
-import android.util.Log
-import java.io.File
-
 class CrashHandler : Thread.UncaughtExceptionHandler {
     private val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
     private var isLoggingEnabled = false

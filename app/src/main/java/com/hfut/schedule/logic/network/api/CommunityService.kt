@@ -18,13 +18,14 @@ interface CommunityService {
     fun Login(@Query("ticket") ticket : String) : Call<ResponseBody>
 
     @GET("api/business/score/querytotalscore")
-    fun getTotalGrade(@Header("X-Access-Token") Token : String) : Call<ResponseBody>
+    fun getAvgGrade(@Header("X-Access-Token") Token : String) : Call<ResponseBody>
 
     @GET("api/business/score/scoreselect")
     fun getGrade(@Header("X-Access-Token") Token : String,
                  @Query("xn") year : String,
                  @Query("xq") term : String) : Call<ResponseBody>
-
+    @GET("api/business/score/querymyprogress")
+    fun getAllAvgGrade(@Header("X-Access-Token") Token : String) : Call<ResponseBody>
     @GET("api/business/coursefailrate/list")
     fun getFailRate(
         @Header("X-Access-Token") Token : String,
@@ -47,16 +48,24 @@ interface CommunityService {
     @GET("api/business/book/lending/lendingList?name=")
     fun getBorrowedBook(
         @Header("X-Access-Token") Token : String,
-        @Query("pageNo") page : String) : Call<ResponseBody>
+        @Query("pageNo") page : String,
+        @Query("pageSize") size : String) : Call<ResponseBody>
 
     @GET("api/business/book/lending/historyList?name=")
     fun getHistoyBook(
         @Header("X-Access-Token") Token : String,
-        @Query("pageNo") page : String) : Call<ResponseBody>
+        @Query("pageNo") page : String,
+        @Query("pageSize") size : String) : Call<ResponseBody>
+
+    @GET("api/business/book/lending/overdueList?name=")
+    fun getOverDueBook(
+        @Header("X-Access-Token") Token : String,
+        @Query("pageNo") page : String,
+        @Query("pageSize") size : String) : Call<ResponseBody>
 
     @GET("api/business/coursearrangement/listselect")
     fun getCourse(@Header("X-Access-Token") Token : String) : Call<ResponseBody>
 
-    @GET("api/business/trainingProgram/list")
-    fun getProgram(@Header("X-Access-Token") Token : String) : Call<ResponseBody>
+    @GET("api/mobile/community/homePage/today")
+    fun getToday(@Header("X-Access-Token") Token : String) : Call<ResponseBody>
 }

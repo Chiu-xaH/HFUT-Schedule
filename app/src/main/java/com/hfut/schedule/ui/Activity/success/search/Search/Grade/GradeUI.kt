@@ -79,7 +79,7 @@ fun GradeUI(ifSaved : Boolean,vm : LoginSuccessViewModel) {
 
                 val items = listOf(
                     NavigationBarItemData(
-                        GradeBarItems.GRADE.name,"成绩", painterResource(R.drawable.article), painterResource(
+                        GradeBarItems.GRADE.name,"学期", painterResource(R.drawable.article), painterResource(
                             R.drawable.article_filled)
                     ),
                     NavigationBarItemData(
@@ -127,7 +127,7 @@ fun GradeUI(ifSaved : Boolean,vm : LoginSuccessViewModel) {
                     else GradeItemUIJXGLSTU(innerPadding)
                 }
                 composable(GradeBarItems.COUNT.name) { 
-                    Text(text = "")
+                    GradeCountUI(innerPadding)
                 }
             }
         }

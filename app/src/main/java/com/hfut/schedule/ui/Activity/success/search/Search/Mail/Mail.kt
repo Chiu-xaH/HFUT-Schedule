@@ -31,7 +31,8 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.StartApp
-import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.ScrollText
+import com.hfut.schedule.ui.UIUtils.ScrollText
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

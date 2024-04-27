@@ -166,7 +166,7 @@ fun CardUI(vm : LoginSuccessViewModel, activity : Activity,vmUI : UIViewModel) {
                         painterResource(R.drawable.leaderboard_filled)
                     ),
                     NavigationBarItemData(
-                        CardBarItems.FUNCTION.name,"功能", painterResource(R.drawable.cube), painterResource(
+                        CardBarItems.FUNCTION.name,"功能", painterResource(R.drawable.deployed_code), painterResource(
                             R.drawable.deployed_code_filled)
                     )
                 )

@@ -2,6 +2,7 @@ package com.hfut.schedule.ui.Activity.success.focus.Focus
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
@@ -25,6 +26,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
@@ -57,20 +62,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
-import com.hfut.schedule.logic.utils.GetDate
+import com.hfut.schedule.logic.datamodel.Community.TodayResponse
+import com.hfut.schedule.logic.datamodel.Community.TodayResult
 import com.hfut.schedule.logic.datamodel.Focus.AddFocus
 import com.hfut.schedule.logic.datamodel.MyList
 import com.hfut.schedule.logic.datamodel.Schedule
 import com.hfut.schedule.logic.utils.AddCalendar.AddCalendar
+import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.logic.utils.StartApp
 import com.hfut.schedule.ui.Activity.success.calendar.nonet.DetailInfos
 import com.hfut.schedule.ui.Activity.success.calendar.nonet.getCourseINFO
 import com.hfut.schedule.ui.Activity.success.search.Search.SchoolCard.SchoolCardItem
 import com.hfut.schedule.ui.UIUtils.MyToast
+import com.hfut.schedule.ui.UIUtils.ScrollText
 
 
 @Composable
@@ -642,4 +651,84 @@ fun TimeStampItem() {
     }
 }
 
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun TodayUI() {
+
+    //判断明天是否有早八
+    var weekdaytomorrow = GetDate.dayweek + 1
+    var week = GetDate.Benweeks.toInt()
+    //当第二天为下一周的周一时，周数+1
+    when(weekdaytomorrow) {
+        1 -> week += 1
+    }
+    val time = getCourseINFO(weekdaytomorrow,week)[0][0].classTime.substringBefore(":")
+
+    //判断明天是否需要调休
+    var tiaoXiu by  remember { mutableStateOf(false) }
+    var tiaoXiuInfo by remember { mutableStateOf("") }
+    val schedule = MySchedule()
+    for(i in 0 until schedule.size) {
+        if(schedule[i].time.substringBefore(" ") == GetDate.tomorrow) {
+            tiaoXiu = true
+            tiaoXiuInfo = schedule[i].info
+        }
+    }
+
+    if(getToday()?.todayExam?.courseName == null &&
+        getToday()?.todayCourse?.courseName == null &&
+        getToday()?.todayActivity?.activityName == null &&
+        getToday()?.bookLending?.bookName == null) {
+         ListItem(
+              headlineContent = { ScrollText(text = if(tiaoXiu) "有调休安排" else if( time == "08")"明天有早八" else if(time == "10") "明天有早十"  else  "明天睡懒觉") },
+              overlineContent = { ScrollText(text = "聚焦通知") },
+              leadingContent = { Icon(painter = painterResource(if( time == "08") R.drawable.sentiment_sad else if (time == "10") R.drawable.sentiment_dissatisfied else R.drawable.sentiment_very_satisfied) , contentDescription = "")},
+         )
+        } else {
+            if(getToday()?.todayExam?.courseName != null) {
+                ListItem(
+                    headlineContent = { ScrollText(text = getToday()?.todayExam?.courseName.toString()) },
+                    overlineContent = { ScrollText(text = getToday()?.todayExam?.place + "  " + getToday()?.todayExam?.startTime) },
+                    leadingContent = { Icon(painter = painterResource(R.drawable.draw), contentDescription = "")},
+                )
+            }
+            if(getToday()?.todayCourse?.courseName != null) {
+                ListItem(
+                    headlineContent = { ScrollText(text = getToday()?.todayCourse?.courseName.toString()) },
+                    overlineContent = { ScrollText(text = getToday()?.todayCourse?.place + "  " + getToday()?.todayCourse?.startTime) },
+                    leadingContent = { Icon(painter = painterResource(R.drawable.calendar), contentDescription = "")},
+                )
+            }
+            if(getToday()?.bookLending?.bookName != null) {
+                ListItem(
+                    headlineContent = { ScrollText(text = getToday()?.bookLending?.bookName.toString()) },
+                    overlineContent = { ScrollText(text = getToday()?.bookLending?.returnTime.toString()) },
+                    leadingContent = { Icon(painter = painterResource(R.drawable.book), contentDescription = "")},
+                )
+            }
+            if(getToday()?.todayActivity?.activityName != null) {
+                ListItem(
+                    headlineContent = { ScrollText(text = getToday()?.todayActivity?.activityName.toString()) },
+                    overlineContent = { ScrollText(text = getToday()?.todayActivity?.startTime.toString()) },
+                    leadingContent = { Icon(painter = painterResource(R.drawable.schedule), contentDescription = "")},
+                )
+            }
+
+        }
+}
+
+fun getToday() : TodayResult? {
+    val json = prefs.getString("TodayNotice","")
+    return try {
+        val result = Gson().fromJson(json,TodayResponse::class.java).result
+        val course = result.todayCourse
+        val book = result.bookLending
+        val exam = result.todayExam
+        val activity = result.todayActivity
+        TodayResult(course,book,exam,activity)
+    } catch (e : Exception) {
+        null
+    }
+}
 

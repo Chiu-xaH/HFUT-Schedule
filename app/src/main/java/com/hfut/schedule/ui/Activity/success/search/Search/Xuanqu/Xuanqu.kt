@@ -1,8 +1,5 @@
 package com.hfut.schedule.ui.Activity.success.search.Search.Xuanqu
 
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,14 +23,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
-import com.hfut.schedule.logic.utils.SharePrefs.Save
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.ScrollText
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.hfut.schedule.ui.UIUtils.ScrollText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

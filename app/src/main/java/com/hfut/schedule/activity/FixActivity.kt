@@ -55,7 +55,7 @@ class FixActivity : ComponentActivity() {
                             color = MaterialTheme.colorScheme.background
                         ) {
                             TransparentSystemBars()
-
+                            Fix(vm)
                         }
                     }
                 }

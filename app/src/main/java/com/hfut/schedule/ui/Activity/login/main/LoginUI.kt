@@ -206,7 +206,7 @@ fun LoginUI(vm : LoginViewModel) {
                             BadgedBox(badge = {
                                 if (showBadge)
                                 Badge(modifier = Modifier.size(5.dp))
-                            }) { Icon(painterResource(id = R.drawable.cube), contentDescription = "主页") }
+                            }) { Icon(painterResource(id = R.drawable.deployed_code), contentDescription = "主页") }
                         }
                     //    Text(text = "   ")
                    /// }

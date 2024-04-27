@@ -61,6 +61,7 @@ import com.hfut.schedule.logic.datamodel.SearchEleResponse
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.StartApp
 import com.hfut.schedule.ui.UIUtils.MyToast
+import com.hfut.schedule.ui.UIUtils.WebViewScreen
 import com.hfut.schedule.ui.theme.FWDTColr
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job

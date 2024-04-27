@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.AssistChip
@@ -47,10 +48,12 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.activity.LoginActivity
+import com.hfut.schedule.logic.datamodel.Community.GradeAvgResponse
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.UIUtils.EmptyUI
+import com.hfut.schedule.ui.UIUtils.MyToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -65,6 +68,8 @@ fun TotaGrade() {
     val Class = result?.classRanking
     val Major = result?.majorRanking
     val TotalGPA = result?.gpa
+
+
 
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
         Column() {
@@ -86,6 +91,11 @@ fun TotaGrade() {
         }
     }
 }
+
+
+
+
+
 @Composable
 fun GradeItemUI(vm :LoginSuccessViewModel,innerPadding : PaddingValues) {
 

@@ -33,6 +33,7 @@ import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.ui.Activity.success.focus.Focus.TodayUI
 import com.hfut.schedule.ui.Activity.success.search.Search.Bus.SchoolBus
 import com.hfut.schedule.ui.Activity.success.search.Search.Electric.Electric
 import com.hfut.schedule.ui.Activity.success.search.Search.EmptyRoom.EmptyRoom
@@ -53,6 +54,7 @@ import com.hfut.schedule.ui.Activity.success.search.Search.Program.Program
 import com.hfut.schedule.ui.Activity.success.search.Search.Repair.Repair
 import com.hfut.schedule.ui.Activity.success.search.Search.SchoolCalendar.SchoolCalendar
 import com.hfut.schedule.ui.Activity.success.search.Search.SchoolCard.SchoolCardItem
+import com.hfut.schedule.ui.Activity.success.search.Search.SchoolCard.TodayAndCard
 import com.hfut.schedule.ui.Activity.success.search.Search.Second.Second
 import com.hfut.schedule.ui.Activity.success.search.Search.TotalCourse.CourseTotal
 import com.hfut.schedule.ui.Activity.success.search.Search.Web.WebUI
@@ -118,20 +120,7 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
         ) {
             Spacer(modifier = Modifier.height(5.dp))
             if (ifSaved){
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
-
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.1f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        SchoolCardItem(vmUI)
-                    }
-                }
+                TodayAndCard(vmUI)
                 Row(modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
@@ -711,12 +700,14 @@ fun Refresh(vm : LoginSuccessViewModel, rotating: MutableState<Boolean>) {
     CoroutineScope(Job()).launch {
         vm.apply {
             async {
-                async { CommuityTOKEN?.let { GetProgram(it) } }
-                async { CommuityTOKEN?.let { GetHistory(it,"1") } }
-                async { CommuityTOKEN?.let { GetCourse(it) } }
-                async { CommuityTOKEN?.let { Exam(it) } }
-                async { CommuityTOKEN?.let { GetBorrowed(it,"1") } }
-                async { CommuityTOKEN?.let { vm.getGrade(it,years+"-"+(years.toInt()+1),term) } }
+           //     async { CommuityTOKEN?.let { getOverDueBook(it,"1") } }
+             //   async { CommuityTOKEN?.let { GetHistory(it,"1") } }
+               /// async { CommuityTOKEN?.let { GetCourse(it) } }
+             //   async { CommuityTOKEN?.let { Exam(it) } }
+              //  async { CommuityTOKEN?.let { getAvgGrade(it) } }
+              //  async { CommuityTOKEN?.let { getAllAvgGrade(it) }  }
+               // async { CommuityTOKEN?.let { GetBorrowed(it,"1") } }
+               // async { CommuityTOKEN?.let { vm.getGrade(it,years+"-"+(years.toInt()+1),term) } }
             }.await()
             async {
                 Handler(Looper.getMainLooper()).post{

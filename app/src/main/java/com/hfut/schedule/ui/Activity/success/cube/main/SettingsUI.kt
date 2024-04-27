@@ -26,6 +26,7 @@ import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.PartOne
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.UpdateItem
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.UpdateUI
 import com.hfut.schedule.ui.Activity.success.cube.Settings.getUpdates
+import com.hfut.schedule.ui.UIUtils.DividerText
 
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("SuspiciousIndentation")
@@ -48,18 +49,18 @@ fun SettingsScreen(vm : LoginSuccessViewModel
 
             Spacer(modifier = Modifier.height(5.dp))
 
-            Text(text = "登录信息", color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp))
+            DividerText(text = "登录信息")
             PersonPart()
 
-            Text(text = "API接口", color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp))
+            DividerText(text = "API接口")
             MyAPIItem()
 
             if (APPVersion.getVersionName() != getUpdates().version) {
-                Text(text = "更新", color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp))
+                DividerText(text = "更新")
                 UpdateUI()
             }
 
-            Text(text = "应用设置", color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp))
+            DividerText(text = "应用设置")
             PartOne(vm,showlable,showlablechanged,ifSaved,blur,blurchanged)
             PartTwo()
 

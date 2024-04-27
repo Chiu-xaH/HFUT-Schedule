@@ -60,4 +60,9 @@ object GetDate {
     @RequiresApi(Build.VERSION_CODES.O)
     val formattedTime_Minute = currentTime.format(formatter_Minute)
 
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    val tomorrow = today.plusDays(1).format(DateTimeFormatter.ofPattern("MM-dd"))
+
 }

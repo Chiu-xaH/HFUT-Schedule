@@ -44,15 +44,16 @@ import com.hfut.schedule.ui.Activity.success.focus.Focus.MySchedule
 import com.hfut.schedule.ui.Activity.success.focus.Focus.MyScheuleItem
 import com.hfut.schedule.ui.Activity.success.focus.Focus.MyWangKe
 import com.hfut.schedule.ui.Activity.success.focus.Focus.TimeStampItem
-import com.hfut.schedule.ui.Activity.success.focus.Focus.TodayCardItem
 import com.hfut.schedule.ui.Activity.success.focus.Focus.TodayCourseItem
 import com.hfut.schedule.ui.Activity.success.focus.Focus.TomorrowCourseItem
 import com.hfut.schedule.ui.Activity.success.focus.Focus.WangkeItem
 import com.hfut.schedule.ui.Activity.success.focus.Focus.GetZjgdCard
 import com.hfut.schedule.ui.Activity.success.main.saved.NetWorkUpdate
 import com.hfut.schedule.ui.Activity.success.calendar.nonet.getCourseINFO
+import com.hfut.schedule.ui.Activity.success.focus.Focus.getTodayNet
 import com.hfut.schedule.ui.Activity.success.search.Search.Exam.ExamItems
 import com.hfut.schedule.ui.Activity.success.search.Search.Exam.getExam
+import com.hfut.schedule.ui.Activity.success.search.Search.SchoolCard.TodayAndCard
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -137,8 +138,15 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel,innerPaddings : 
                     //当Tab为第一个时
                     if (state == TAB_LEFT) {
                         //一卡通
-                        GetZjgdCard(vm,vmUI)
-                        item { TodayCardItem(vmUI) }
+                        CoroutineScope(Job()).launch {
+                            async { GetZjgdCard(vm,vmUI) }
+                            async { getTodayNet(vm,vmUI) }
+                        }
+
+                        item { TodayAndCard(vmUI) }
+
+                        //今天
+                       // item { TodayUI() }
                         //课表
                         if (GetDate.formattedTime_Hour.toInt() >= 19)
                             items(getCourseINFO(weekdaytomorrow,Nextweek).size) { item -> TomorrowCourseItem(item = item) }

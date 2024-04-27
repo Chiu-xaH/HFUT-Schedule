@@ -502,6 +502,40 @@ class LoginSuccessViewModel : ViewModel() {
             })
         }
     }
+    fun getAvgGrade(CommuityTOKEN: String) {
+
+        val call = CommuityTOKEN?.let { Community.getAvgGrade(it) }
+
+        if (call != null) {
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    val responses = response.body()?.string()
+                    SharePrefs.Save("Avg",responses )
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    t.printStackTrace()
+                }
+            })
+        }
+    }
+    fun getAllAvgGrade(CommuityTOKEN: String) {
+
+        val call = CommuityTOKEN?.let { Community.getAllAvgGrade(it) }
+
+        if (call != null) {
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    val responses = response.body()?.string()
+                    SharePrefs.Save("AvgAll",responses )
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    t.printStackTrace()
+                }
+            })
+        }
+    }
 
     val libraryData = MutableLiveData<String>()
     fun SearchBooks(CommuityTOKEN: String,name: String) {
@@ -540,8 +574,8 @@ class LoginSuccessViewModel : ViewModel() {
     }
 
     fun GetBorrowed(CommuityTOKEN: String,page : String) {
-
-        val call = CommuityTOKEN?.let { Community.getBorrowedBook(it,page) }
+        val size = prefs.getString("BookRequest","15")
+        val call = CommuityTOKEN?.let { size?.let { it1 -> Community.getBorrowedBook(it,page, it1) } }
 
         if (call != null) {
             call.enqueue(object : Callback<ResponseBody> {
@@ -555,8 +589,8 @@ class LoginSuccessViewModel : ViewModel() {
     }
 
     fun GetHistory(CommuityTOKEN: String,page : String) {
-
-        val call = CommuityTOKEN?.let { Community.getHistoyBook(it,page) }
+        val size = prefs.getString("BookRequest","15")
+        val call = CommuityTOKEN?.let { size?.let { it1 -> Community.getHistoyBook(it,page, it1) } }
 
         if (call != null) {
             call.enqueue(object : Callback<ResponseBody> {
@@ -568,15 +602,29 @@ class LoginSuccessViewModel : ViewModel() {
             })
         }
     }
-
-    fun GetProgram(CommuityTOKEN: String) {
-
-        val call = CommuityTOKEN?.let { Community.getProgram(it) }
+    fun getOverDueBook(CommuityTOKEN: String,page : String) {
+        val size = prefs.getString("BookRequest","15")
+        val call = CommuityTOKEN?.let { size?.let { it1 -> Community.getOverDueBook(it,page, it1) } }
 
         if (call != null) {
             call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    SharePrefs.Save("Program", response.body()?.string())
+                    SharePrefs.Save(LibraryItems.OVERDUE.name, response.body()?.string())
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+            })
+        }
+    }
+
+    fun getToday(CommuityTOKEN : String) {
+
+        val call = CommuityTOKEN?.let { Community.getToday(it) }
+
+        if (call != null) {
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    SharePrefs.Save("TodayNotice", response.body()?.string())
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }

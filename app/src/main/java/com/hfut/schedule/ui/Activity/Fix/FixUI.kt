@@ -171,6 +171,7 @@ fun DebugUI(innerPadding : PaddingValues,vm : LoginViewModel) {
 @Composable
 fun BugShare() {
     var showDialog by remember { mutableStateOf(false) }
+    var times by remember { mutableStateOf(5) }
     val logs = prefs.getString("logs","")
     if(showDialog) {
         logs?.let {
@@ -195,10 +196,10 @@ fun BugShare() {
         }
     }
 
-    ListItem(headlineContent = { Text(text = "aa") }, modifier = Modifier.clickable {
-        val list = listOf(0,1)
-        println(list[9])
-    })
+    if(times == 0) {
+            val list = listOf(0,1)
+            println(list[9])
+    }
     ListItem(
         headlineContent = { Text(text = "日志抓取") },
         overlineContent = {
@@ -212,7 +213,8 @@ fun BugShare() {
         },
         leadingContent = { Icon(painterResource(R.drawable.monitor_heart), contentDescription = "Localized description",) },
         modifier = Modifier.clickable {
-
+            times--
+            MyToast("点击${times}次后应用会崩溃,生成测试日志")
         },
         trailingContent = {
             Row{

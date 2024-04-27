@@ -52,6 +52,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.MonetColor.MonetUI
+import com.hfut.schedule.ui.UIUtils.ScrollText
 import kotlinx.coroutines.delay
 import org.jsoup.Jsoup
 
@@ -206,19 +207,3 @@ fun PersonPart() {
 }
 
 
-@Composable
-fun ScrollText(text : String) {
-    val scrollState = rememberScrollState()
-    LaunchedEffect(key1 = text ) {
-        delay(500L)
-        scrollState.animateScrollTo(scrollState.maxValue)
-        delay(4000L)
-        scrollState.animateScrollTo(0)
-    }
-
-    Text(
-        text = text, 
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
-        modifier = Modifier.horizontalScroll(scrollState)) 
-}

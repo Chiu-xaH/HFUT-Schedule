@@ -52,7 +52,10 @@ import com.hfut.schedule.activity.GradeActivity
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
-
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 
 @SuppressLint("SuspiciousIndentation")
@@ -73,7 +76,14 @@ fun Grade(vm : LoginSuccessViewModel,ifSaved : Boolean)  {
     else term = "2"
     var years = GetDate.Date_yyyy
     if (month <= 8) years = (years.toInt() - 1).toString()
-    CommuityTOKEN?.let { vm.getGrade(it,years+"-"+(years.toInt()+1),term) }
+
+    CoroutineScope(Job()).launch {
+        async{ CommuityTOKEN?.let { vm.getGrade(it,years+"-"+(years.toInt()+1),term) } }
+        async { CommuityTOKEN?.let { vm.getAvgGrade(it) } }
+        async {  CommuityTOKEN?.let { vm.getAllAvgGrade(it) } }
+    }
+
+
 
 
     ListItem(

@@ -1,13 +1,8 @@
 package com.hfut.schedule.ui.Activity.success.focus.Focus
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
-import android.view.animation.Transformation
-import androidx.compose.ui.graphics.TransformOrigin
-import androidx.lifecycle.LiveData
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
@@ -72,6 +67,11 @@ fun GetZjgdCard(vm : LoginSuccessViewModel,vmUI : UIViewModel) {
     }
 }
 
+fun getTodayNet(vm : LoginSuccessViewModel, vmUI : UIViewModel) {
+
+        val CommuityTOKEN = prefs.getString("TOKEN","")
+        CommuityTOKEN?.let { vm.getToday(it) }
+}
 @SuppressLint("Range")
 fun AddedItems() : MutableList<AddFocus> {
     var AddFocus = mutableListOf<AddFocus>()
