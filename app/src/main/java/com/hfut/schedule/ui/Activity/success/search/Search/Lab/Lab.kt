@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
+import com.hfut.schedule.ui.UIUtils.ScrollText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,7 +37,7 @@ fun Lab() {
 
     ListItem(
         headlineContent = { Text(text = "实验室") },
-        overlineContent = { Text(text = "云控")},
+        overlineContent = { ScrollText(text = "聚合常用网站") },
         leadingContent = {
             Icon(
                 painterResource(R.drawable.science),

@@ -403,20 +403,7 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
                 }
             } else {
 
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
-
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.1f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        SchoolCardItem(vmUI)
-                    }
-                }
+                TodayAndCard(vmUI)
                 Row(modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {

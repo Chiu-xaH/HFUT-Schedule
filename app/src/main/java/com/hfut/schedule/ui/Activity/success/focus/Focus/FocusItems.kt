@@ -682,8 +682,8 @@ fun TodayUI() {
         getToday()?.bookLending?.bookName == null) {
          ListItem(
               headlineContent = { ScrollText(text = if(tiaoXiu) "有调休安排" else if( time == "08")"明天有早八" else if(time == "10") "明天有早十"  else  "明天睡懒觉") },
-              overlineContent = { ScrollText(text = "聚焦通知") },
-              leadingContent = { Icon(painter = painterResource(if( time == "08") R.drawable.sentiment_sad else if (time == "10") R.drawable.sentiment_dissatisfied else R.drawable.sentiment_very_satisfied) , contentDescription = "")},
+              overlineContent = { ScrollText(text = "明天") },
+              leadingContent = { Icon(painter = painterResource(  if(tiaoXiu) R.drawable.error else if( time == "08") R.drawable.sentiment_sad else if (time == "10") R.drawable.sentiment_dissatisfied else R.drawable.sentiment_very_satisfied) , contentDescription = "")},
          )
         } else {
             if(getToday()?.todayExam?.courseName != null) {

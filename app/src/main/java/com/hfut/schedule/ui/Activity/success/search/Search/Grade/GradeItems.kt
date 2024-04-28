@@ -311,7 +311,7 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues) {
     if(getGradeJXGLSTU().size == 0) EmptyUI()
     else
     LazyColumn{
-        item { TotaGrade() }
+       // item { TotaGrade() }
         items(getGradeJXGLSTU().size) { item ->
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 Column() {
