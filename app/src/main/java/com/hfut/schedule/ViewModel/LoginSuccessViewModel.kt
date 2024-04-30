@@ -11,7 +11,7 @@ import com.google.gson.JsonPrimitive
 import com.hfut.schedule.logic.Enums.LibraryItems
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.logic.datamodel.Jxglstu.lessonIdsResponse
+import com.hfut.schedule.logic.datamodel.Jxglstu.lessonResponse
 import com.hfut.schedule.logic.datamodel.One.BorrowBooksResponse
 import com.hfut.schedule.logic.datamodel.One.SubBooksResponse
 import com.hfut.schedule.logic.datamodel.One.getTokenResponse
@@ -146,7 +146,8 @@ class LoginSuccessViewModel : ViewModel() {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                     val json = response.body()?.string()
                     if (json != null) {
-                        val id = Gson().fromJson(json, lessonIdsResponse::class.java)
+                        val id = Gson().fromJson(json, lessonResponse::class.java)
+                        SharePrefs.Save("courses",json)
                         lessonIds.value = id.lessonIds
                     }
                 }

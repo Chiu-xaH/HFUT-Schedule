@@ -676,7 +676,7 @@ fun TodayUI() {
         }
     }
 
-    if(getToday()?.todayExam?.courseName == null &&
+    if( getToday()?.todayExam?.courseName == null &&
         getToday()?.todayCourse?.courseName == null &&
         getToday()?.todayActivity?.activityName == null &&
         getToday()?.bookLending?.bookName == null) {
