@@ -15,8 +15,8 @@ android {
         applicationId "com.hfut.schedule"
         minSdk 24
         targetSdk 33
-        versionCode 84
-        versionName "4.4.1"
+        versionCode 85
+        versionName "4.4.1.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true

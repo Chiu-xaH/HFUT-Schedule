@@ -319,7 +319,7 @@ fun TodayCourseItem(item : Int) {
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        title = { Text(list.name) },
+                        title = { list.name?.let { Text(it) } },
                     )
                 },
             ) { innerPadding ->
@@ -348,7 +348,7 @@ fun TodayCourseItem(item : Int) {
 
         ) {
             ListItem(
-                headlineContent = {  Text(text = list.name) },
+                headlineContent = { list.name?.let { Text(text = it) } },
                 overlineContent = { Text(text = list.classTime)},
                 supportingContent = { Text(text = list.place)},
                 leadingContent = {
@@ -397,7 +397,7 @@ fun TomorrowCourseItem(item : Int) {
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        title = { Text(list.name) },
+                        title = { list.name?.let { Text(it) } },
                     )
                 },
             ) { innerPadding ->
@@ -425,7 +425,7 @@ fun TomorrowCourseItem(item : Int) {
             shape = MaterialTheme.shapes.medium,
             ) {
             ListItem(
-                headlineContent = {  Text(text = list.name) },
+                headlineContent = { list.name?.let { Text(text = it) } },
                 overlineContent = {Text(text = list.classTime)},
                 supportingContent = { Text(text = list.place)},
                 leadingContent = { Icon(painterResource(R.drawable.exposure_plus_1), contentDescription = "Localized description",) },
@@ -663,7 +663,11 @@ fun TodayUI() {
     when(weekdaytomorrow) {
         1 -> week += 1
     }
-    val time = getCourseINFO(weekdaytomorrow,week)[0][0].classTime.substringBefore(":")
+
+    val list = getCourseINFO(weekdaytomorrow,week)
+    val time = if(list.size < 1)
+        ""
+    else list[0][0].classTime
 
     //判断明天是否需要调休
     var tiaoXiu by  remember { mutableStateOf(false) }
