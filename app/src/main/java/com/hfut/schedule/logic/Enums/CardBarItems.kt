@@ -4,5 +4,5 @@ enum class CardBarItems {
     BILLS,
     COUNT,
     FUNCTION,
-    ECO
+    FOCUS
 }

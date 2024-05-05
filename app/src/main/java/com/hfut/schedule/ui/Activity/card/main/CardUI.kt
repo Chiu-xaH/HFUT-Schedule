@@ -38,6 +38,7 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
+import com.hfut.schedule.logic.Enums.BottomBarItems
 import com.hfut.schedule.logic.Enums.CardBarItems
 import com.hfut.schedule.logic.datamodel.NavigationBarItemData
 import com.hfut.schedule.logic.datamodel.zjgd.BillResponse
@@ -46,6 +47,7 @@ import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.card.bills.main.CardBills
+import com.hfut.schedule.ui.Activity.card.counts.CardHome
 import com.hfut.schedule.ui.Activity.card.counts.main.CardCounts
 import com.hfut.schedule.ui.Activity.card.function.main.CardFunctions
 import com.hfut.schedule.ui.Activity.success.focus.Focus.GetZjgdCard
@@ -70,7 +72,7 @@ fun CardUI(vm : LoginSuccessViewModel, activity : Activity,vmUI : UIViewModel) {
     val navController = rememberNavController()
     var page by remember { mutableStateOf(1) }
     var loading by remember { mutableStateOf(true) }
-
+    var bottomBarItems by remember { mutableStateOf(CardBarItems.BILLS) }
 
     GetZjgdCard(vm, vmUI)
 
@@ -147,6 +149,7 @@ fun CardUI(vm : LoginSuccessViewModel, activity : Activity,vmUI : UIViewModel) {
                         }
                     }
                 )
+                if(CardBarItems.COUNT != bottomBarItems)
                 Divider()
             }
         },
@@ -176,6 +179,12 @@ fun CardUI(vm : LoginSuccessViewModel, activity : Activity,vmUI : UIViewModel) {
                     NavigationBarItem(
                         selected = selected,
                         onClick = {
+                            when(item) {
+                                items[0] -> bottomBarItems = CardBarItems.BILLS
+                                items[1] -> bottomBarItems = CardBarItems.COUNT
+                                items[2] ->  bottomBarItems = CardBarItems.FUNCTION
+                            }
+                            //     atEnd = !atEnd
                             if (!selected) {
                                 navController.navigate(route) {
                                     popUpTo(navController.graph.startDestinationId) {
@@ -201,9 +210,8 @@ fun CardUI(vm : LoginSuccessViewModel, activity : Activity,vmUI : UIViewModel) {
                 backgroundColor = MaterialTheme.colorScheme.surface,
             )) {
             composable(CardBarItems.BILLS.name) { CardBills(vm,innerPadding,vmUI) }
-            composable(CardBarItems.COUNT.name) {  CardCounts(vm, innerPadding) }
+            composable(CardBarItems.COUNT.name) {  CardHome(innerPadding,vm,blur) }
             composable(CardBarItems.FUNCTION.name) { CardFunctions(vm,innerPadding,vmUI) }
         }
-
     }
 }
