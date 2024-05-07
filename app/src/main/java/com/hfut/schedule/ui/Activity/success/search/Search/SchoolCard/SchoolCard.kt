@@ -176,7 +176,6 @@ fun SchoolCardItem(vmUI : UIViewModel) {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TodayInfo() {
-
         if(getToday()?.todayExam?.courseName != null) {
             Card(
                 elevation = CardDefaults.cardElevation(
@@ -209,8 +208,8 @@ fun TodayInfo() {
             ){
                 ListItem(
                     headlineContent = { Text(text = getToday()?.todayCourse?.courseName.toString()) },
-                    overlineContent = { Text(text = getToday()?.todayCourse?.startTime + "~" + getToday()?.todayCourse?.endTime) },
-                    supportingContent = { Text(text = getToday()?.todayCourse?.place +  "  " + getToday()?.todayCourse?.className)},
+                    overlineContent = { Text(text = getToday()?.todayCourse?.startTime + "~" + getToday()?.todayCourse?.endTime +  "  " +  getToday()?.todayCourse?.place)},
+                    supportingContent = { getToday()?.todayCourse?.className?.let { Text(text = it) } },
                     leadingContent = { Icon(painter = painterResource(R.drawable.calendar), contentDescription = "")},
                 )
             }
@@ -252,6 +251,4 @@ fun TodayInfo() {
                 )
             }
         }
-
-
 }

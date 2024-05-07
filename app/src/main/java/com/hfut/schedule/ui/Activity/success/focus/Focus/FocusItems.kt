@@ -667,7 +667,7 @@ fun TodayUI() {
     val list = getCourseINFO(weekdaytomorrow,week)
     val time = if(list.size < 1)
         ""
-    else list[0][0].classTime
+    else list[0][0].classTime.substringBefore(":")
 
     //判断明天是否需要调休
     var tiaoXiu by  remember { mutableStateOf(false) }
@@ -684,8 +684,9 @@ fun TodayUI() {
         getToday()?.todayCourse?.courseName == null &&
         getToday()?.todayActivity?.activityName == null &&
         getToday()?.bookLending?.bookName == null) {
+
          ListItem(
-              headlineContent = { ScrollText(text = if(tiaoXiu) "有调休安排" else if( time == "08")"明天有早八" else if(time == "10") "明天有早十"  else  "明天睡懒觉") },
+              headlineContent = { ScrollText(text = if(tiaoXiu) "有调休安排" else if( time == "08")"明天有早八" else if(time == "10") "明天有早十"  else if(time == "14" || time == "16" || time == "19" )  "明天睡懒觉" else "聚焦通知") },
               overlineContent = { ScrollText(text = "明天") },
               leadingContent = { Icon(painter = painterResource(  if(tiaoXiu) R.drawable.error else if( time == "08") R.drawable.sentiment_sad else if (time == "10") R.drawable.sentiment_dissatisfied else R.drawable.sentiment_very_satisfied) , contentDescription = "")},
          )
