@@ -54,6 +54,7 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.UIUtils.EmptyUI
 import com.hfut.schedule.ui.UIUtils.MyToast
+import com.hfut.schedule.ui.UIUtils.ScrollText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -252,14 +253,9 @@ fun GradeItemUI(vm :LoginSuccessViewModel,innerPadding : PaddingValues) {
                                     shape = MaterialTheme.shapes.medium,
                                 ) {
                                     ListItem(
-                                        headlineContent = { Text("想查看更多详细信息请登录") },
-                                        supportingContent = { Text(text = "您现在使用的是Community接口,登陆后使用教务系统数据可查看详细成绩") },
-                                        leadingContent = {
-                                            Icon(
-                                                Icons.Filled.ArrowForward,
-                                                contentDescription = ""
-                                            )
-                                        },
+                                        headlineContent = { Text("查看分数详细请点击此处进入教务数据") },
+                                        supportingContent = { Text(text = "您现在使用的是智慧社区接口,使用教务系统数据可查看详细成绩") },
+                                        trailingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "") },
                                         modifier = Modifier.clickable {
                                             val it = Intent(MyApplication.context, LoginActivity::class.java).apply {
                                                 putExtra("nologin",false)

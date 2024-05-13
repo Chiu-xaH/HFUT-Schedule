@@ -671,12 +671,15 @@ fun TodayUI() {
 
     //判断明天是否需要调休
     var tiaoXiu by  remember { mutableStateOf(false) }
-    var tiaoXiuInfo by remember { mutableStateOf("") }
+  ///  var tiaoXiuInfo by remember { mutableStateOf("") }
     val schedule = MySchedule()
     for(i in 0 until schedule.size) {
-        if(schedule[i].time.substringBefore(" ") == GetDate.tomorrow) {
-            tiaoXiu = true
-            tiaoXiuInfo = schedule[i].info
+        val schedules = schedule[i]
+        if(schedules.title.contains("调休")) {
+            if(schedules.time.substringBefore(" ") == GetDate.tomorrow) {
+                tiaoXiu = true
+            //    tiaoXiuInfo = schedules.info
+            }
         }
     }
 
@@ -686,7 +689,7 @@ fun TodayUI() {
         getToday()?.bookLending?.bookName == null) {
 
          ListItem(
-              headlineContent = { ScrollText(text = if(tiaoXiu) "有调休安排" else if( time == "08")"明天有早八" else if(time == "10") "明天有早十"  else if(time == "14" || time == "16" || time == "19" )  "明天睡懒觉" else "聚焦通知") },
+              headlineContent = { ScrollText(text = if(tiaoXiu) "有调休安排" else if( time == "08")"明天有早八" else if(time == "10") "明天有早十"  else if(time == "14" || time == "16" || time == "19" )  "明天睡懒觉" else "明天没有课") },
               overlineContent = { ScrollText(text = "明天") },
               leadingContent = { Icon(painter = painterResource(  if(tiaoXiu) R.drawable.error else if( time == "08") R.drawable.sentiment_sad else if (time == "10") R.drawable.sentiment_dissatisfied else R.drawable.sentiment_very_satisfied) , contentDescription = "")},
          )
