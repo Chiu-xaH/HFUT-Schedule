@@ -123,10 +123,14 @@ fun MyWangKe() : MutableList<MyList> {
 
 fun getTimeStamp() : String? {
     val my = prefs.getString("my", MyApplication.NullMy)
-    if (my != null) {
-        if(my.contains("更新")) {
-            val data = Gson().fromJson(my, MyAPIResponse::class.java).TimeStamp
-            return data
-        } else return "未获取到"
-    } else return "未获取到"
+    return try {
+        if (my != null) {
+            if(my.contains("更新")) {
+                val data = Gson().fromJson(my, MyAPIResponse::class.java).TimeStamp
+                data
+            } else "未获取到"
+        } else "未获取到"
+    } catch (e : Exception) {
+        null
+    }
 }

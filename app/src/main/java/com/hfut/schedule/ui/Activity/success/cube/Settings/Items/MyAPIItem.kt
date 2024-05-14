@@ -10,6 +10,10 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -20,6 +24,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.datamodel.MyAPIResponse
 import com.hfut.schedule.logic.utils.GetDate
+import com.hfut.schedule.ui.UIUtils.DividerText
 
 @Composable
 fun MyAPIItem() {
@@ -28,7 +33,10 @@ fun MyAPIItem() {
     var title = data.title
     var content = data.info
     val version = data.version
+
     val celebration = data.celebration
+
+    var show by remember { mutableStateOf(data.show) }
 
 
     val id = prefs.getString("ChineseId", "")
@@ -43,26 +51,30 @@ fun MyAPIItem() {
         }
     }
 
+    if(show) {
+        DividerText(text = "API接口")
+        Card(
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 3.dp
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 15.dp, vertical = 5.dp),
+            shape = MaterialTheme.shapes.medium
 
-    Card(
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 3.dp
-        ),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 15.dp, vertical = 5.dp),
-        shape = MaterialTheme.shapes.medium
-
-    ){
-        ListItem(
-            headlineContent = {
-                Text(text = title, fontWeight = FontWeight.Bold)
-            },
-            supportingContent = { Text(text = content) },
-            leadingContent = { APIIcons(celebration = celebration) },
-            modifier = Modifier.clickable{}
-        )
+        ){
+            ListItem(
+                headlineContent = {
+                    Text(text = title, fontWeight = FontWeight.Bold)
+                },
+                supportingContent = { Text(text = content) },
+                leadingContent = { APIIcons(celebration = celebration) },
+                modifier = Modifier.clickable{}
+            )
+        }
     }
+
+
 }
 
 @Composable

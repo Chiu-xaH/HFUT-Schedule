@@ -8,6 +8,7 @@ data class MyAPIResponse (val SettingsInfo : SettingsInfo,
 data class SettingsInfo(val version : String,
                         val title : String,
                         val info : String,
+                        val show : Boolean,
                         val celebration : Boolean)
 
 data class Lessons(val MyList : List<MyList>,

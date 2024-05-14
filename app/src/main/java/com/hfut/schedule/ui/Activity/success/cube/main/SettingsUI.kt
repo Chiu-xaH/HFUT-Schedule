@@ -53,7 +53,8 @@ fun SettingsScreen(vm : LoginSuccessViewModel
             PersonPart()
 
 
-            DividerText(text = "API接口")
+
+
             MyAPIItem()
 
             if (APPVersion.getVersionName() != getUpdates().version) {
