@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginViewModel
+import com.hfut.schedule.activity.FixActivity
 import com.hfut.schedule.activity.LoginActivity
 import com.hfut.schedule.logic.utils.APPVersion
 import com.hfut.schedule.logic.utils.AndroidVersion
@@ -129,6 +130,14 @@ fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel) {
         )
         BugShare()
         ListItem(
+            headlineContent = { Text(text = "进入主界面") },
+            leadingContent = { Icon(painterResource(R.drawable.login), contentDescription = "Localized description",) },
+            modifier = Modifier.clickable {
+                val it = Intent(MyApplication.context, LoginActivity::class.java).apply { addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) }
+                MyApplication.context.startActivity(it)
+            }
+        )
+        ListItem(
             headlineContent = { Text(text = "开发者接口") },
             overlineContent = { getTimeStamp()?.let { Text(text = it) } },
             leadingContent = { Icon(painterResource(R.drawable.api), contentDescription = "Localized description",) },
@@ -218,6 +227,10 @@ fun BugShare() {
         },
         trailingContent = {
             Row{
+                FilledTonalIconButton(onClick = {
+
+                    MyToast("已将日志选项暴露在主活动中")
+                }) { Icon(painter = painterResource(id =  R.drawable.home ), contentDescription = "") }
                 FilledTonalIconButton(onClick = {
                     CrashHandler().enableLogging()
                     MyToast("日志抓取已开启,请复现崩溃的操作,当完成后,回此处点击分享")

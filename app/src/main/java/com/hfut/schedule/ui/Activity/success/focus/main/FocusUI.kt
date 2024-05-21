@@ -2,7 +2,9 @@ package com.hfut.schedule.ui.Activity.success.focus.main
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,19 +12,27 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.ExperimentalMaterialApi
+
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,7 +40,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.LoginViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
@@ -61,7 +74,7 @@ import kotlinx.coroutines.launch
 
 @SuppressLint("SuspiciousIndentation", "CoroutineCreationDuringComposition")
 @RequiresApi(Build.VERSION_CODES.O)
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel,innerPaddings : PaddingValues,blur : Boolean,vmUI : UIViewModel) {
 
@@ -91,6 +104,7 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel,innerPaddings : 
         }
     })
 
+    val shouldRefresh by remember { derivedStateOf { refreshing }}
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //布局///////////////////////////////////////
 
@@ -99,16 +113,25 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel,innerPaddings : 
             .fillMaxSize()
             ){
             Spacer(modifier = Modifier.height(innerPaddings.calculateTopPadding()))
-            var state by remember { mutableStateOf(TAB_LEFT) }
+           // val paperState = rememberPagerState { TAB_LEFT }
+            //var state by remember { mutableStateOf(TAB_LEFT) }
+
+
+            val pagerState = rememberPagerState(pageCount = { 2 })
             val titles = listOf("重要安排","其他事项")
+
             Column {
-                TabRow(selectedTabIndex = state) {
+                TabRow(selectedTabIndex = pagerState.currentPage) {
                     titles.forEachIndexed { index, title ->
                         Tab(
-                            selected = state == index,
-                            onClick = { state = index },
+                            selected = pagerState.currentPage == index,
+                            onClick = {
+                                scope.launch {
+                                    pagerState.animateScrollToPage(index)
+                                }
+                            },
                             text = { Text(text = title) },
-                            modifier = Modifier.background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = if(blur).5f else 1f))
+                             modifier = Modifier.background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = if(blur).5f else 1f))
                         )
                     }
                 }
@@ -116,11 +139,12 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel,innerPaddings : 
 
             Spacer(modifier = Modifier.height(10.dp))
 
+
             Box(modifier = Modifier
                 .fillMaxHeight()
                 .pullRefresh(states)){
                 val scrollstate = rememberLazyListState()
-                val shouldShowAddButton = scrollstate.firstVisibleItemScrollOffset  == 0
+                val shouldShowAddButton by remember { derivedStateOf { scrollstate.firstVisibleItemScrollOffset == 0 } }
                 var date = GetDate.Date_MM_dd
                 val todaydate = (date?.substring(0, 2) ) + date?.substring(3, 5)
                 var week = GetDate.Benweeks.toInt()
@@ -132,59 +156,90 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel,innerPaddings : 
                 //当第二天为下一周的周一时，周数+1
                 when(weekdaytomorrow) { 1 -> Nextweek += 1 }
                 when (weekdayToday) { 0 -> weekdayToday = 7 }
+                HorizontalPager(state = pagerState) { page ->
 
-                LazyColumn(state = scrollstate) {
+                        LazyColumn(state = scrollstate) {
 
-                    //当Tab为第一个时
-                    if (state == TAB_LEFT) {
-                        //一卡通
-                        CoroutineScope(Job()).launch {
-                            async { GetZjgdCard(vm,vmUI) }
-                            async { getTodayNet(vm,vmUI) }
+                            when(page) {
+                                TAB_LEFT -> {
+                                    //一卡通
+                                    CoroutineScope(Job()).launch {
+                                        async { GetZjgdCard(vm,vmUI) }
+                                        async { getTodayNet(vm,vmUI) }
+                                    }
+
+                                    item { TodayAndCard(vmUI) }
+                                    //课表
+                                    if (GetDate.formattedTime_Hour.toInt() >= 19)
+                                        items(getCourseINFO(weekdaytomorrow,Nextweek).size) { item -> TomorrowCourseItem(item = item) }
+                                    else
+                                        items(getCourseINFO(weekdayToday,week).size) { item -> TodayCourseItem(item = item) }
+                                    //日程
+                                    if (prefs.getBoolean("SWITCHMYAPI",true)){
+                                        items(MySchedule().size) { item -> MyScheuleItem(item = item, MySchedule = MySchedule(),false) }
+                                    }
+                                    //考试
+                                    items(getExam().size) { item -> ExamItems(item,true) }
+                                    //网课
+                                    items(MyWangKe().size) { item -> WangkeItem(item = item, MyWangKe = MyWangKe(),false) }
+                                }
+                                TAB_RIGHT -> {
+                                    if (prefs.getBoolean("SWITCHMYAPI",true)) {
+                                        //日程
+                                        items(MySchedule().size) { item -> MyScheuleItem(item = item, MySchedule = MySchedule(),true)  }
+                                        //网课
+                                        items(MyWangKe().size) { item -> WangkeItem(item = item, MyWangKe = MyWangKe(),true) }
+                                    }
+
+                                    //第二天课表
+                                    if (GetDate.formattedTime_Hour.toInt() < 19)
+                                        items(getCourseINFO(weekdaytomorrow,Nextweek).size) { item -> TomorrowCourseItem(item = item) }
+
+                                    items(AddedItems().size){ item -> AddItem(item = item, AddedItems = AddedItems()) }
+                                    if (prefs.getBoolean("SWITCHMYAPI",true))
+                                        item { TimeStampItem() }
+                                }
+                            }
+
+                            item { Spacer(modifier = Modifier.height(innerPaddings.calculateBottomPadding())) }
                         }
-
-                        item { TodayAndCard(vmUI) }
-
-                        //今天
-                       // item { TodayUI() }
-                        //课表
-                        if (GetDate.formattedTime_Hour.toInt() >= 19)
-                            items(getCourseINFO(weekdaytomorrow,Nextweek).size) { item -> TomorrowCourseItem(item = item) }
-                        else
-                            items(getCourseINFO(weekdayToday,week).size) { item -> TodayCourseItem(item = item) }
-                        //日程
-                        if (prefs.getBoolean("SWITCHMYAPI",true)){
-                            items(MySchedule().size) { item -> MyScheuleItem(item = item, MySchedule = MySchedule(),false) }
-                        }
-                        //考试
-                        items(getExam().size) { item -> ExamItems(item,true) }
-                        //网课
-                        items(MyWangKe().size) { item -> WangkeItem(item = item, MyWangKe = MyWangKe(),false) }
-                    }
-
-                    //当Tab为第二个时
-                    if (state == TAB_RIGHT) {
-
-                        if (prefs.getBoolean("SWITCHMYAPI",true)) {
-                            //日程
-                            items(MySchedule().size) { item -> MyScheuleItem(item = item, MySchedule = MySchedule(),true)  }
-                            //网课
-                            items(MyWangKe().size) { item -> WangkeItem(item = item, MyWangKe = MyWangKe(),true) }
-                        }
-
-                        //第二天课表
-                        if (GetDate.formattedTime_Hour.toInt() < 19)
-                            items(getCourseINFO(weekdaytomorrow,Nextweek).size) { item -> TomorrowCourseItem(item = item) }
-
-                        items(AddedItems().size){ item -> AddItem(item = item, AddedItems = AddedItems()) }
-                        if (prefs.getBoolean("SWITCHMYAPI",true))
-                        item { TimeStampItem() }
-                    }
-                    item { Spacer(modifier = Modifier.height(innerPaddings.calculateBottomPadding())) }
                 }
                 AddButton(isVisible = shouldShowAddButton,innerPaddings)
                 PullRefreshIndicator(refreshing, states, Modifier.align(Alignment.TopCenter))
             }
 
         }
+}
+
+
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun Test() {
+    // Display 10 items
+    val pagerState = rememberPagerState(pageCount = { 2 })
+    val titles = listOf("重要安排","其他事项")
+
+    Column {
+        TabRow(selectedTabIndex = pagerState.currentPage) {
+            titles.forEachIndexed { index, title ->
+                Tab(
+                    selected = pagerState.currentPage == index,
+                    onClick = {
+                        CoroutineScope(Job()).launch {
+                            pagerState.animateScrollToPage(index)
+                        }
+                    },
+                    text = { Text(text = title) },
+                   // modifier = Modifier.background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = if(blur).5f else 1f))
+                )
+            }
+        }
+    }
+      Spacer(modifier = Modifier.height(100.dp))
+
+    HorizontalPager(state = pagerState) { page ->
+        // Our page content
+        Icon(painter = painterResource(id = R.drawable.info), contentDescription = "", modifier = Modifier.size(300.dp))
+    }
 }

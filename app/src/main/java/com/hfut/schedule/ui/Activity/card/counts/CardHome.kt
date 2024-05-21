@@ -8,6 +8,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -25,6 +27,8 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
@@ -52,6 +56,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -71,7 +76,9 @@ import com.hfut.schedule.ui.Activity.card.counts.main.CardCounts
 import com.hfut.schedule.ui.Activity.card.counts.main.getbillmonth
 import com.hfut.schedule.ui.Activity.card.counts.main.monthCount
 import com.hfut.schedule.ui.Activity.card.function.main.todayCount
+import com.hfut.schedule.ui.UIUtils.DevelopingUI
 import com.hfut.schedule.ui.UIUtils.DividerText
+import com.hfut.schedule.ui.UIUtils.EmptyUI
 import com.hfut.schedule.ui.UIUtils.MyToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -80,22 +87,27 @@ import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.math.RoundingMode
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CardHome(innerPadding : PaddingValues,vm : LoginSuccessViewModel,blur : Boolean) {
     val TAB_DAY = 0
     val TAB_WEEK = 1
     val TAB_MONTH = 2
     val TAB_TERM = 3
+    val scope = rememberCoroutineScope()
+    val pagerState = rememberPagerState(pageCount = { 4 })
     Column(modifier = Modifier.padding(innerPadding)) {
         //Spacer(modifier = Modifier.height(5.dp))
         var state by remember { mutableStateOf(TAB_DAY) }
         val titles = listOf("日","周","月","学期")
         Column {
-            TabRow(selectedTabIndex = state) {
+            TabRow(selectedTabIndex = pagerState.currentPage) {
                 titles.forEachIndexed { index, title ->
                     Tab(
-                        selected = state == index,
-                        onClick = { state = index },
+                        selected = pagerState.currentPage == index,
+                        onClick = { scope.launch {
+                            pagerState.animateScrollToPage(index)
+                        } },
                         text = { Text(text = title) },
                         modifier = Modifier.background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = if(blur).5f else 1f))
                     )
@@ -103,39 +115,20 @@ fun CardHome(innerPadding : PaddingValues,vm : LoginSuccessViewModel,blur : Bool
             }
         }
         Spacer(modifier = Modifier.height(5.dp))
-        if(state == TAB_MONTH) {
-            monthCount(vm)
-        } else {
-            LazyColumn() {
-                when (state) {
-                    TAB_DAY -> items(BillItem(vm).size) { item -> todayCount(vm, item) }
-
-                    TAB_WEEK -> {
-                        item {
-                            Card(
-                                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 15.dp, vertical = 5.dp),
-                                shape = MaterialTheme.shapes.medium
-                            ) {
-                                ListItem(headlineContent = { Text(text = "正在开发") })
-                            }
+        HorizontalPager(state = pagerState) { page ->
+            if(page == TAB_MONTH) {
+                monthCount(vm)
+            } else {
+                LazyColumn() {
+                    when (page) {
+                        TAB_DAY ->  {
+                            if(BillItem(vm).size == 0) item {EmptyUI()}
+                            else { items(BillItem(vm).size) { item -> todayCount(vm, item) } }
                         }
-                    }
 
-                    TAB_TERM -> {
-                        item {
-                            Card(
-                                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 15.dp, vertical = 5.dp),
-                                shape = MaterialTheme.shapes.medium
-                            ) {
-                                ListItem(headlineContent = { Text(text = "正在开发") })
-                            }
-                        }
+                        TAB_WEEK ->  item { DevelopingUI() }
+
+                        TAB_TERM -> item { DevelopingUI() }
                     }
                 }
             }

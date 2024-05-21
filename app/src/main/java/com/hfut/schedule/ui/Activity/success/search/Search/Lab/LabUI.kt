@@ -31,7 +31,7 @@ fun LabUI() {
                 shape = MaterialTheme.shapes.medium
             ) {
                 ListItem(
-                    headlineContent = { Text(text = "这里是实验室,里面的选项会随云端发生变动,即使您不更新软件") },
+                    headlineContent = { Text(text = "这里是实验室,选项会随云端发生变动,即使您不更新软件") },
                     leadingContent = {
                         Icon(painterResource(R.drawable.cloud_download), contentDescription = "Localized description",)
                     },
@@ -50,10 +50,7 @@ fun LabUI() {
             ) {
                 ListItem(
                     headlineContent = { Text(text = getLab()[item].title) },
-                    supportingContent = {  Text(text = getLab()[item].info) },
-                    leadingContent = {
-                        Icon(painterResource(R.drawable.net), contentDescription = "Localized description",)
-                    },
+                    leadingContent = { Icon(painterResource(R.drawable.net), contentDescription = "Localized description",) },
                     trailingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "" ) },
                     modifier = Modifier.clickable {
                         StartApp.StartUri(getLab()[item].info)
