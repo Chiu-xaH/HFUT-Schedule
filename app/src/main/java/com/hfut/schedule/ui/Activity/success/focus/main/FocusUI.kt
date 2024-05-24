@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -65,7 +66,9 @@ import com.hfut.schedule.ui.Activity.success.main.saved.NetWorkUpdate
 import com.hfut.schedule.ui.Activity.success.calendar.nonet.getCourseINFO
 import com.hfut.schedule.ui.Activity.success.focus.Focus.getTodayNet
 import com.hfut.schedule.ui.Activity.success.search.Search.Exam.ExamItems
+import com.hfut.schedule.ui.Activity.success.search.Search.Exam.JxglstuExamUI
 import com.hfut.schedule.ui.Activity.success.search.Search.Exam.getExam
+import com.hfut.schedule.ui.Activity.success.search.Search.Exam.getExamJXGLSTU
 import com.hfut.schedule.ui.Activity.success.search.Search.SchoolCard.TodayAndCard
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -76,16 +79,16 @@ import kotlinx.coroutines.launch
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
-fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel,innerPaddings : PaddingValues,blur : Boolean,vmUI : UIViewModel) {
+fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel,innerPaddings : PaddingValues,blur : Boolean,vmUI : UIViewModel,ifSaved : Boolean) {
 
     val  TAB_LEFT = 0
     val TAB_RIGHT = 1
 
 /////////////////////////////////////////逻辑函数区/////////////////////////////////////////////////
-
+    CoroutineScope(Job()).launch{ async { NetWorkUpdate(vm,vm2,vmUI) } }
 //Today操作区///////////////////////////////////////////////////////////////////////////////////////////////////
 
-    CoroutineScope(Job()).launch{ async { NetWorkUpdate(vm,vm2,vmUI) } }
+
 
     //刷新
     var refreshing by remember { mutableStateOf(false) }
@@ -179,7 +182,8 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel,innerPaddings : 
                                         items(MySchedule().size) { item -> MyScheuleItem(item = item, MySchedule = MySchedule(),false) }
                                     }
                                     //考试
-                                    items(getExam().size) { item -> ExamItems(item,true) }
+                                    if(ifSaved) items(getExam().size) { item -> ExamItems(item,true,) }
+                                    else items(getExamJXGLSTU()) { item -> JxglstuExamUI(item,false) }
                                     //网课
                                     items(MyWangKe().size) { item -> WangkeItem(item = item, MyWangKe = MyWangKe(),false) }
                                 }

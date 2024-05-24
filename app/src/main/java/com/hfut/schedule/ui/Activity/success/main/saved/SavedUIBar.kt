@@ -229,7 +229,7 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
             )) {
             composable(BottomBarItems.COURSES.name) { SaveCourse(showAll, innerPadding,vmUI) }
             composable(BottomBarItems.FOCUS.name) {
-                TodayScreen(vm,vm2,innerPadding, blur,vmUI)
+                TodayScreen(vm,vm2,innerPadding, blur,vmUI,true)
                 //Test()
             }
             composable(BottomBarItems.SEARCH.name) { SearchScreen(vm,true,innerPadding,vmUI) }

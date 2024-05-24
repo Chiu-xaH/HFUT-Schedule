@@ -142,7 +142,7 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
                             .weight(.5f),
                         shape = MaterialTheme.shapes.medium,
                     ){
-                        Exam(vm)
+                        Exam(vm,ifSaved)
                     }
                 }
                 Row(modifier = Modifier
@@ -425,7 +425,7 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
                             .weight(.5f),
                         shape = MaterialTheme.shapes.medium,
                     ){
-                        Exam(vm)
+                        Exam(vm,false)
                     }
                 }
                 Row(modifier = Modifier

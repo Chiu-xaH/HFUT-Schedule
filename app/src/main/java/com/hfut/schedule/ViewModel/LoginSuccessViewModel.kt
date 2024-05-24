@@ -484,6 +484,18 @@ class LoginSuccessViewModel : ViewModel() {
         }
     }
 
+    fun getExamJXGLSTU(cookie: String) {
+        val call = JxglstuJSON.getExam(cookie,studentId.value.toString())
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                SharePrefs.Save("examJXGLSTU", response.body()?.string())
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
+
     var GradeData = MutableLiveData<String?>()
     fun getGrade(CommuityTOKEN: String,year : String,term : String) {
 

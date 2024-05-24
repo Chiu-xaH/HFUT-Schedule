@@ -28,6 +28,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -150,13 +151,18 @@ fun SchoolCardItem(vmUI : UIViewModel) {
         } else "一卡通")},
         leadingContent = { Icon(painterResource(R.drawable.credit_card), contentDescription = "Localized description",) },
         trailingContent={
+            if (test != null) {
                 FilledTonalIconButton(
                     modifier = Modifier
                         .scale(scale2.value)
                         .size(30.dp),
                     interactionSource = interactionSource2,
                     onClick = { StartApp.openAlipay(MyApplication.AlipayCardURL) },
+                    colors =  if(test.length <= 4) {
+                        IconButtonDefaults.filledTonalIconButtonColors(MaterialTheme.colorScheme.error.copy(alpha = 0.1f))
+                    } else IconButtonDefaults.filledTonalIconButtonColors()
                 ) { Icon( painterResource(R.drawable.add), contentDescription = "Localized description",) }
+            }
         },
         colors = (
             if (test != null) {

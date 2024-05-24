@@ -58,7 +58,11 @@ interface JxglstuService {
     @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.17")
     fun getGrade(@Header("Cookie") Cookie : String,
                  @Path("studentId") studentId : String) : Call<ResponseBody>
-
+    //考试查询   XML
+    @GET("for-std/exam-arrange/info/{studentId}")
+    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.17")
+    fun getExam(@Header("Cookie") Cookie : String,
+                @Path("studentId") studentId : String) : Call<ResponseBody>
 }
 
 
