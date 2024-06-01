@@ -60,6 +60,7 @@ import com.hfut.schedule.ui.Activity.success.focus.Focus.MySchedule
 import com.hfut.schedule.ui.Activity.success.focus.Focus.TodayUI
 import com.hfut.schedule.ui.Activity.success.focus.Focus.getToday
 import com.hfut.schedule.ui.Activity.success.search.Search.Lab.LabUI
+import com.hfut.schedule.ui.UIUtils.EmptyUI
 import com.hfut.schedule.ui.UIUtils.ScrollText
 
 
@@ -182,6 +183,9 @@ fun SchoolCardItem(vmUI : UIViewModel) {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TodayInfo() {
+    if(getToday()?.todayExam?.courseName == null && getToday()?.todayCourse?.courseName == null && getToday()?.bookLending?.bookName == null && getToday()?.todayActivity?.activityName == null) {
+        EmptyUI()
+    }
         if(getToday()?.todayExam?.courseName != null) {
             Card(
                 elevation = CardDefaults.cardElevation(

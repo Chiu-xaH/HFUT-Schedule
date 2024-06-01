@@ -11,12 +11,13 @@ import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.activity.LoginActivity
+import com.hfut.schedule.ui.UIUtils.ScrollText
 
 @Composable
 fun More() {
     ListItem(
         headlineContent = { Text(text = "登录教务") },
-        supportingContent = { Text(text = "当前未登录教务,部分功能不可用,可从此登录")},
+        overlineContent = { ScrollText(text = "当前未登录教务,部分功能不可用,可从此登录") },
         leadingContent = { Icon(painter = painterResource(R.drawable.login), contentDescription = "") },
         modifier = Modifier.clickable {
            Login()

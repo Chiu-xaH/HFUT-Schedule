@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.Activity.success.search.Search.FailRate
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -100,7 +101,7 @@ fun FailRateUI(vm : LoginSuccessViewModel) {
                 ) {
                     LazyColumn{
                         items(getLists(num,vm).size){ item ->
-                            val rate = getLists(num,vm)[item].failRate * 100
+                            val rate = (1 - getLists(num,vm)[item].successRate) * 100
                             val formattedNumber = String.format("%.2f", rate)
                             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                                 Column() {
@@ -121,7 +122,7 @@ fun FailRateUI(vm : LoginSuccessViewModel) {
                                             supportingContent = { Text("人数: 挂科 ${getLists(num,vm)[item].failCount} | 总 ${getLists(num,vm)[item].totalCount}") },
                                             overlineContent = { Text(text = "${getLists(num,vm)[item].xn}年 第${getLists(num,vm)[item].xq}学期")},
                                             leadingContent = { Icon(painterResource(R.drawable.article), contentDescription = "Localized description",) },
-                                            trailingContent = { Text("挂科率 ${formattedNumber} %") },
+                                            trailingContent = { Text("挂科率 $formattedNumber %") },
                                             modifier = Modifier.clickable {},
                                         )
                                     }

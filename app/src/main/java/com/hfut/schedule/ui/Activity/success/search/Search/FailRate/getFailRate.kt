@@ -1,11 +1,11 @@
 package com.hfut.schedule.ui.Activity.success.search.Search.FailRate
 
+import android.util.Log
 import com.google.gson.Gson
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.datamodel.Community.FailRateRecord
 import com.hfut.schedule.logic.datamodel.Community.FailRateResponse
 import com.hfut.schedule.logic.datamodel.Community.courseFailRateDTOList
-import com.hfut.schedule.logic.utils.SharePrefs
 
 fun getFailRate(vm : LoginSuccessViewModel)  :  MutableList<FailRateRecord>{
     val json = vm.FailRateData.value
@@ -40,8 +40,8 @@ fun getLists(item : Int,vm : LoginSuccessViewModel) :  MutableList<courseFailRat
                 val avarange = list[j].avgScore
                 val totalNum = list[j].totalCount
                 val failNum = list[j].failCount
-                val failRate = list[j].failRate
-                Addlists.add(courseFailRateDTOList(list[j].xn,list[j].xq,avarange,totalNum,failNum,failRate))
+                val successRate = list[j].successRate
+                Addlists.add(courseFailRateDTOList(list[j].xn,list[j].xq,avarange,totalNum,failNum,successRate))
             }
         }
     }

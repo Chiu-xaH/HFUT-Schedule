@@ -18,7 +18,7 @@ import com.hfut.schedule.R
 @Composable
 fun EmptyUI() {
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center){
-        Icon(painter = painterResource(id = R.drawable.error), contentDescription = "",Modifier.size(100.dp), tint = MaterialTheme.colorScheme.primary)
+        Icon(painter = painterResource(id = R.drawable.manga), contentDescription = "",Modifier.size(100.dp), tint = MaterialTheme.colorScheme.primary)
     }
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center){
         Text(text = "结果为空", color = MaterialTheme.colorScheme.primary)
@@ -28,7 +28,7 @@ fun EmptyUI() {
 @Composable
 fun DevelopingUI() {
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center){
-        Icon(painter = painterResource(id = R.drawable.error), contentDescription = "",Modifier.size(100.dp), tint = MaterialTheme.colorScheme.primary)
+        Icon(painter = painterResource(id = R.drawable.sdk), contentDescription = "",Modifier.size(100.dp), tint = MaterialTheme.colorScheme.primary)
     }
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center){
         Text(text = "正在开发", color = MaterialTheme.colorScheme.primary)
