@@ -38,6 +38,7 @@ import com.hfut.schedule.logic.utils.ShareAPK
 import com.hfut.schedule.logic.utils.StartApp
 import com.hfut.schedule.ui.Activity.success.cube.Settings.getUpdates
 import com.hfut.schedule.ui.Activity.success.focus.Focus.getTimeStamp
+import com.hfut.schedule.ui.UIUtils.DevelopingUI
 import com.hfut.schedule.ui.UIUtils.MyToast
 
 @Composable
@@ -60,6 +61,11 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel) {
 
         }
         Spacer(modifier = Modifier.height(5.dp))
+
+
+        DevelopingUI()
+        Spacer(modifier = Modifier.height(5.dp))
+
 
 
         ListItem(

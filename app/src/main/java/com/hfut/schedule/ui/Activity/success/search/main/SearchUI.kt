@@ -49,6 +49,7 @@ import com.hfut.schedule.ui.Activity.success.search.Search.More.More
 import com.hfut.schedule.ui.Activity.success.search.Search.News.News
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.NotificationsCenter
 import com.hfut.schedule.ui.Activity.success.search.Search.Mail.Pay
+import com.hfut.schedule.ui.Activity.success.search.Search.Map
 import com.hfut.schedule.ui.Activity.success.search.Search.Person.PersonUI
 import com.hfut.schedule.ui.Activity.success.search.Search.Program.Program
 import com.hfut.schedule.ui.Activity.success.search.Search.Repair.Repair
@@ -59,6 +60,7 @@ import com.hfut.schedule.ui.Activity.success.search.Search.Second.Second
 import com.hfut.schedule.ui.Activity.success.search.Search.TotalCourse.CourseTotal
 import com.hfut.schedule.ui.Activity.success.search.Search.Web.WebUI
 import com.hfut.schedule.ui.Activity.success.search.Search.Xuanqu.XuanquItem
+import com.hfut.schedule.ui.Activity.success.search.Search.courseSearch
 import com.hfut.schedule.ui.Activity.success.search.Search.loginWeb
 import com.hfut.schedule.ui.UIUtils.MyToast
 import dev.chrisbanes.haze.HazeState
@@ -120,608 +122,322 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
 
         ) {
             Spacer(modifier = Modifier.height(5.dp))
-            if (ifSaved){
-                TodayAndCard(vmUI)
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
+            TodayAndCard(vmUI)
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
 
-                        Card(
-                            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(.5f),
-                            shape = MaterialTheme.shapes.medium,
-                        ){
-                            Grade(vm,true)
-                        }
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        Exam(vm,ifSaved)
-                    }
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    shape = MaterialTheme.shapes.medium,
+                ){
+                    Grade(vm,true)
                 }
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
-
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        FailRate(vm)
-                    }
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        LibraryItem(vm)
-                    }
+                Spacer(modifier = Modifier.width(10.dp))
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    shape = MaterialTheme.shapes.medium,
+                ){
+                    Exam(vm,ifSaved)
                 }
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
+            }
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
 
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        CourseTotal(vm)
-                    }
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        if (info != null)
-                            if(info.isNotEmpty())
-                                PersonUI(true)
-                    }
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    shape = MaterialTheme.shapes.medium,
+                ){
+                    FailRate(vm)
                 }
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
-
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        WebUI()
-                    }
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        LePaoYun(vm)
-                    }
+                Spacer(modifier = Modifier.width(10.dp))
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    shape = MaterialTheme.shapes.medium,
+                ){
+                    LibraryItem(vm)
                 }
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
+            }
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
 
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        Electric(vm)
-                    }
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        XuanquItem(vm)
-                    }
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    shape = MaterialTheme.shapes.medium,
+                ){
+                    CourseTotal(vm)
                 }
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
-
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        SchoolCalendar()
-                    }
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        SchoolBus()
-                    }
+                Spacer(modifier = Modifier.width(10.dp))
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    shape = MaterialTheme.shapes.medium,
+                ){
+                    if (info != null)
+                        if(info.isNotEmpty())
+                            PersonUI(ifSaved)
                 }
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
+            }
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
 
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        NotificationsCenter()
-                    }
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        HotWater()
-                    }
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    shape = MaterialTheme.shapes.medium,
+                ){
+                    WebUI()
                 }
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
-
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        News(vm)
-                    }
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        Repair()
-                    }
+                Spacer(modifier = Modifier.width(10.dp))
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    shape = MaterialTheme.shapes.medium,
+                ){
+                    LePaoYun(vm)
                 }
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
+            }
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
 
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        Lab()
-                    }
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        Pay()
-                    }
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    shape = MaterialTheme.shapes.medium,
+                ){
+                    Electric(vm)
                 }
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
-
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        Second()
-                    }
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        Estimate()
-                    }
+                Spacer(modifier = Modifier.width(10.dp))
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    shape = MaterialTheme.shapes.medium,
+                ){
+                    XuanquItem(vm)
                 }
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
+            }
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
 
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        Program(vm,true)
-                    }
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        EmptyRoom(vm,true)
-                    }
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    shape = MaterialTheme.shapes.medium,
+                ){
+                    SchoolCalendar()
                 }
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
-
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        loginWeb(vmUI)
-                    }
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        More()
-                    }
+                Spacer(modifier = Modifier.width(10.dp))
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    shape = MaterialTheme.shapes.medium,
+                ){
+                    SchoolBus()
                 }
-            } else {
+            }
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
 
-                TodayAndCard(vmUI)
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
-
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        Grade(vm,false)
-                    }
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        Exam(vm,false)
-                    }
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    shape = MaterialTheme.shapes.medium,
+                ){
+                    NotificationsCenter()
                 }
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
-
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        FailRate(vm)
-                    }
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        LibraryItem(vm)
-                    }
+                Spacer(modifier = Modifier.width(10.dp))
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    shape = MaterialTheme.shapes.medium,
+                ){
+                    HotWater()
                 }
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
+            }
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
 
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        CourseTotal(vm)
-                    }
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        PersonUI(false)
-                    }
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    shape = MaterialTheme.shapes.medium,
+                ){
+                    News(vm)
                 }
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
-
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        WebUI()
-                    }
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        LePaoYun(vm)
-                    }
+                Spacer(modifier = Modifier.width(10.dp))
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    shape = MaterialTheme.shapes.medium,
+                ){
+                    Repair()
                 }
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
+            }
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
 
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        Electric(vm)
-                    }
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        XuanquItem(vm)
-                    }
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    shape = MaterialTheme.shapes.medium,
+                ){
+                    Lab()
                 }
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
-
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        Program(vm,false)
-                    }
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        EmptyRoom(vm,false)
-                    }
+                Spacer(modifier = Modifier.width(10.dp))
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    shape = MaterialTheme.shapes.medium,
+                ){
+                    Pay()
                 }
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
+            }
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
 
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        SchoolCalendar()
-                    }
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        SchoolBus()
-                    }
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    shape = MaterialTheme.shapes.medium,
+                ){
+                    Second()
                 }
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
-
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        NotificationsCenter()
-                    }
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        HotWater()
-                    }
+                Spacer(modifier = Modifier.width(10.dp))
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    shape = MaterialTheme.shapes.medium,
+                ){
+                    Estimate()
                 }
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
+            }
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
 
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        News(vm)
-                    }
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        Repair()
-                    }
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    shape = MaterialTheme.shapes.medium,
+                ){
+                    Program(vm,ifSaved)
                 }
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
-
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        Second()
-                    }
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        Estimate()
-                    }
+                Spacer(modifier = Modifier.width(10.dp))
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    shape = MaterialTheme.shapes.medium,
+                ){
+                    EmptyRoom(vm,ifSaved)
                 }
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
+            }
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
 
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        Lab()
-                    }
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        Pay()
-                    }
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    shape = MaterialTheme.shapes.medium,
+                ){
+                    loginWeb(vmUI)
+                }
+                Spacer(modifier = Modifier.width(10.dp))
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    shape = MaterialTheme.shapes.medium,
+                ){
+                    courseSearch(ifSaved,vm)
+                }
+            }
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
+
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    shape = MaterialTheme.shapes.medium,
+                ){
+                    Map()
+                }
+                Spacer(modifier = Modifier.width(10.dp))
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    shape = MaterialTheme.shapes.medium,
+                ){
+                    if (ifSaved)
+                    More()
                 }
             }
              Spacer(modifier = Modifier.height(innerPaddings.calculateBottomPadding()))
         }
-
-}
-
-fun Refresh(vm : LoginSuccessViewModel, rotating: MutableState<Boolean>) {
-    Handler(Looper.getMainLooper()).post{vm.ExamData.value = "{}"}
-    val CommuityTOKEN = prefs.getString("TOKEN","")
-    var term = ""
-    val month = GetDate.Date_MM.toInt()
-    if( month >= 9 || month <= 2) term = "1"
-    else term = "2"
-    var years = GetDate.Date_yyyy
-    if (month <= 8) years = (years.toInt() - 1).toString()
-    rotating.value = true
-    CoroutineScope(Job()).launch {
-        vm.apply {
-            async {
-           //     async { CommuityTOKEN?.let { getOverDueBook(it,"1") } }
-             //   async { CommuityTOKEN?.let { GetHistory(it,"1") } }
-               /// async { CommuityTOKEN?.let { GetCourse(it) } }
-             //   async { CommuityTOKEN?.let { Exam(it) } }
-              //  async { CommuityTOKEN?.let { getAvgGrade(it) } }
-              //  async { CommuityTOKEN?.let { getAllAvgGrade(it) }  }
-               // async { CommuityTOKEN?.let { GetBorrowed(it,"1") } }
-               // async { CommuityTOKEN?.let { vm.getGrade(it,years+"-"+(years.toInt()+1),term) } }
-            }.await()
-            async {
-                Handler(Looper.getMainLooper()).post{
-                    vm.ExamData.observeForever { result ->
-                        if (result != null) {
-                            if(result.contains("操作成功")) {
-                                MyToast("刷新成功")
-                                rotating.value = false
-                            } else if (vm.ExamData.value == "错误") {
-                                MyToast("请求失败")
-                                rotating.value = false
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
 }

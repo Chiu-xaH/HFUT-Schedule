@@ -43,6 +43,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -642,7 +643,7 @@ fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues,vmUI : UIViewModel
 
             Box( modifier = Modifier.pullRefresh(states)) {
                 val scrollstate = rememberLazyGridState()
-                val shouldShowAddButton = scrollstate.firstVisibleItemScrollOffset == 0
+                val shouldShowAddButton by remember { derivedStateOf { scrollstate.firstVisibleItemScrollOffset == 0 } }
 
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(if(showAll)7 else 5),

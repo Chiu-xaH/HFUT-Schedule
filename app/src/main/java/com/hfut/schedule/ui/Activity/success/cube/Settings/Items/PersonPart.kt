@@ -112,7 +112,7 @@ fun PersonPart() {
                 ListItem(
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.person), contentDescription = "")},
                     headlineContent = { name?.let { Text(text = it) } },
-                    trailingContent = { Icon(painterResource(id = if(expandItems) R.drawable.expand_content else R.drawable.collapse_content), contentDescription = "")},
+                    trailingContent = { Icon(painterResource(id = if(expandItems) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "")},
                     colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                     modifier = Modifier.clickable {
                         expandItems = !expandItems

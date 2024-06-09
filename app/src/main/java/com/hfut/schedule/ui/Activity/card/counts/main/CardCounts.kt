@@ -48,6 +48,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -151,7 +152,7 @@ fun CardCounts(vm : LoginSuccessViewModel,innerPaddings : PaddingValues) {
         val sheetState = rememberModalBottomSheetState()
         var showBottomSheet by remember { mutableStateOf(false) }
         val scrollstate = rememberLazyListState()
-        val shouldShowAddButton = scrollstate.firstVisibleItemScrollOffset  == 0
+        val shouldShowAddButton by remember { derivedStateOf { scrollstate.firstVisibleItemScrollOffset == 0 } }
 
         if (showBottomSheet) {
             ModalBottomSheet(

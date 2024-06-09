@@ -63,6 +63,17 @@ interface JxglstuService {
     @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.17")
     fun getExam(@Header("Cookie") Cookie : String,
                 @Path("studentId") studentId : String) : Call<ResponseBody>
+
+    //开课查询   JSON
+    @GET("for-std/lesson-search/semester/{semester}/search/{studentId}")
+    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.17")
+    fun searchCourse(@Header("Cookie") Cookie : String,
+                     @Path("studentId") studentId : String,
+                     @Path("semester") semester : Int,
+                     @Query("nameZhLike") className : String?,
+                     @Query("queryPage__") queryPage : String,
+                     @Query("courseNameZhLike") courseName : String?
+                     ) : Call<ResponseBody>
 }
 
 

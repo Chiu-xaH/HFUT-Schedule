@@ -77,7 +77,7 @@ fun loginWeb(vmUI : UIViewModel) {
 
     ListItem(
         headlineContent = { ScrollText(text = "校园网登录") },
-        overlineContent = { ScrollText(text = "快速通道")},
+       // overlineContent = { ScrollText(text = "快速通道")},
         leadingContent = {
             Icon(
                 painterResource(R.drawable.net),
@@ -120,8 +120,15 @@ fun loginWeb(vmUI : UIViewModel) {
 
 @Composable
 fun loginWebUI(vmUI : UIViewModel) {
-    DevelopingUI()
-    Spacer(modifier = Modifier.height(5.dp))
+
+    var textStatus by  remember { mutableStateOf("请确定已连接校园网") }
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center){
+        Icon(painter = painterResource(id = R.drawable.net), contentDescription = "",Modifier.size(100.dp), tint = MaterialTheme.colorScheme.primary)
+    }
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center){
+        Text(text = textStatus, color = MaterialTheme.colorScheme.primary)
+    }
+    Spacer(modifier = Modifier.height(15.dp))
 
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -152,9 +159,11 @@ fun loginWebUI(vmUI : UIViewModel) {
                     if(result.contains("登录成功")) {
                        // loading = false
                         text = "已登录"
-                        MyToast("已登录")
+                        textStatus = "已登录"
+                    //    MyToast("已登录")
                     } else if(result == "Error") {
-                        MyToast("网络错误")
+                     ///   MyToast("网络错误")
+                        textStatus = "网络错误"
                     }
                 }
             }

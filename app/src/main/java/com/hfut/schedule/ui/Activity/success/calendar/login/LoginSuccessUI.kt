@@ -39,6 +39,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -888,7 +889,7 @@ fun CalendarScreen(showAll : Boolean,vm : LoginSuccessViewModel,grade : String,i
                         .fillMaxHeight()
                     ) {
                         val scrollstate = rememberLazyGridState()
-                        val shouldShowAddButton = scrollstate.firstVisibleItemScrollOffset == 0
+                        val shouldShowAddButton by remember { derivedStateOf { scrollstate.firstVisibleItemScrollOffset == 0 } }
 
                         LazyVerticalGrid(
                             columns = GridCells.Fixed(if(showAll)7 else 5),

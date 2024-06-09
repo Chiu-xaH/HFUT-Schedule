@@ -200,6 +200,20 @@ class LoginSuccessViewModel : ViewModel() {
         })
     }
 
+    val courseData = MutableLiveData<String?>()
+    fun searchCourse(cookie: String, className : String?,courseName : String?, semester : Int) {
+        val call = JxglstuJSON.searchCourse(cookie,studentId.value.toString(),semester,className,"1,20",courseName)
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                courseData.value = response?.body()?.string()
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
+
+
     fun OneGoto(cookie : String)  {// 创建一个Call对象，用于发送异步请求
 
         val call = OneGoto.OneGoto(cookie)

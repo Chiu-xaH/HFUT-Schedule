@@ -1,6 +1,7 @@
 package com.hfut.schedule.ui.Activity.success.search.Search.TotalCourse
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -36,21 +37,26 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.datamodel.Jxglstu.CourseSearchResponse
+import com.hfut.schedule.logic.datamodel.Jxglstu.courseType
 import com.hfut.schedule.logic.datamodel.Jxglstu.lessonResponse
 import com.hfut.schedule.logic.datamodel.Jxglstu.lessons
+import com.hfut.schedule.logic.datamodel.Jxglstu.teacher
+import com.hfut.schedule.logic.datamodel.Jxglstu.teacherAssignmentList2
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.UIUtils.EmptyUI
 import com.hfut.schedule.ui.UIUtils.ScrollText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CourseTotalUI() {
+fun CourseTotalUI(json : String?) {
 
 
     var numItem by remember { mutableStateOf(0) }
 
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
+    //val json = prefs.getString("courses","")
     if (showBottomSheet) {
 
         ModalBottomSheet(
@@ -66,7 +72,7 @@ fun CourseTotalUI() {
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        title = { Text(getTotalCourse()[numItem].course.nameZh) }
+                        title = { Text(getTotalCourse(json)[numItem].course.nameZh) }
                     )
                 },
             ) { innerPadding ->
@@ -75,16 +81,17 @@ fun CourseTotalUI() {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    DetailItems(numItem)
+                    DetailItems(numItem,json)
                 }
             }
         }
     }
-    if(getTotalCourse().size != 0) {
+    if(getTotalCourse(json).size != 0) {
         LazyColumn {
-            item { Another() }
-            items(getTotalCourse().size) { item ->
-                val list = getTotalCourse()[item]
+
+            item{ SemsterInfo(json) }
+            items(getTotalCourse(json).size) { item ->
+                val list = getTotalCourse(json)[item]
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                     Column() {
                         Card(
@@ -146,49 +153,12 @@ fun courseIcons(name : String) {
     else if(name.contains("国际教育")) Icon(painterResource(R.drawable.publics), contentDescription = "Localized description",)
     else Icon(painterResource(R.drawable.calendar_view_month), contentDescription = "Localized description",)
 }
-@Composable
-fun Another() {
-    var num = 0.0
-    for(i in 0 until getTotalCourse().size) {
-        val credit = getTotalCourse()[i].course.credits
-        if (credit != null) {
-            num += credit
-        }
-    }
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-        Column() {
-            Card(
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 3.dp
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        horizontal = 15.dp,
-                        vertical = 5.dp
-                    ),
-                shape = MaterialTheme.shapes.medium,
-            ){
-                ListItem(
-                   /// overlineContent = { Text(text = "")},
-                    headlineContent = {  Text("学分合计 $num") },
-                    leadingContent = { Icon(
-                        painterResource(R.drawable.category),
-                        contentDescription = "Localized description",
-                    ) },
-                    modifier = Modifier.clickable {},
-                    colors = ListItemDefaults.colors(MaterialTheme.colorScheme.primaryContainer)
-                )
-            }
-        }
-    }
-}
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun DetailItems(item : Int) {
+fun DetailItems(item : Int,json: String?) {
 
-    val lists = getTotalCourse()[item]
+    val lists = getTotalCourse(json)[item]
 
     LazyColumn {
         item{
@@ -198,7 +168,7 @@ fun DetailItems(item : Int) {
                     Row {
                         if(lists.stdCount != null)
                         ListItem(
-                            overlineContent = { Text("人数") },
+                            overlineContent = { Text("人数" ) },
                             headlineContent = { Text(lists.stdCount.toString()) },
 
                             //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
@@ -264,10 +234,18 @@ fun DetailItems(item : Int) {
                         )
                     }
                     Row {
-                        val teacherList =  lists.teacherAssignmentList[0]
+                        val teacherList =  if(lists.teacherAssignmentList?.isNotEmpty() == true) lists.teacherAssignmentList?.get(0) else teacherAssignmentList2(
+                            teacher(courseType("无信息"),
+                                courseType("无信息"),
+                                null
+                            ),null)
                         ListItem(
                             overlineContent = { ScrollText("教师(默认展示第一位)") },
-                            headlineContent = { ScrollText( teacherList.teacher.person.nameZh.toString() ) },
+                            headlineContent = {
+                                if (teacherList != null) {
+                                    ScrollText( teacherList.teacher.person.nameZh.toString() )
+                                }
+                            },
                             //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
                             leadingContent = {
                                 Icon(
@@ -280,8 +258,16 @@ fun DetailItems(item : Int) {
                                 .weight(.5f),
                         )
                         ListItem(
-                            headlineContent = { ScrollText( teacherList.teacher.title.nameZh.toString()  +" " + (teacherList?.teacher?.type?.nameZh ?: "")) },
-                            overlineContent = { Text(text =  if(teacherList.age  != null)  "年龄 " + teacherList.age else "年龄未知") },
+                            headlineContent = {
+                                if (teacherList != null) {
+                                    ScrollText( teacherList.teacher.title.nameZh.toString()  +" " + (teacherList?.teacher?.type?.nameZh ?: ""))
+                                }
+                            },
+                            overlineContent = {
+                                if (teacherList != null) {
+                                    Text(text =  if(teacherList.age  != null)  "年龄 " + teacherList.age else "年龄未知")
+                                }
+                            },
 
                             //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
                             leadingContent = {
@@ -310,8 +296,8 @@ fun DetailItems(item : Int) {
                                 .weight(.5f),
                         )
                         ListItem(
-                            overlineContent = { Text("考察方式") },
-                            headlineContent = { ScrollText(lists.examMode.nameZh.toString()) },
+                            overlineContent = { Text("考察方式 ${lists.examMode.nameZh.toString() }") },
+                            headlineContent = { ScrollText(if(lists.planExamWeek != null)"预计第${lists.planExamWeek.toString()}周" else "无时间") },
 
                             //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
                             leadingContent = {
@@ -376,17 +362,31 @@ fun DetailItems(item : Int) {
     }
 }
 
-fun getTotalCourse(): MutableList<lessons>  {
+fun getTotalCourse(json : String?): MutableList<lessons>  {
     var list = mutableListOf<lessons>()
-    val json = prefs.getString("courses","")
-    return try {
-        val result = Gson().fromJson(json,lessonResponse::class.java).lessons
-        for (i in result.indices) {
-            val courses = result[i]
-            list.add(lessons(courses.nameZh,courses.remark,courses.scheduleText,courses.stdCount,courses.course,courses.courseType,courses.openDepartment,courses.examMode,courses.scheduleWeeksInfo,courses.teacherAssignmentList))
-        }
-        list
+
+    try {
+        if (json != null) {
+            if(json.contains("lessonIds")) {
+                var result = Gson().fromJson(json,lessonResponse::class.java).lessons
+
+
+                for (i in result.indices) {
+                    val courses = result[i]
+                    list.add(lessons(courses.nameZh,courses.remark,courses.scheduleText,courses.stdCount,courses.course,courses.courseType,courses.openDepartment,courses.examMode,courses.scheduleWeeksInfo,courses.planExamWeek,courses.teacherAssignmentList,courses.semester))
+                }
+                return list
+            }
+            else {
+                val result = Gson().fromJson(json,CourseSearchResponse::class.java).data
+                for (i in result.indices) {
+                    val courses = result[i].lesson
+                    list.add(lessons(courses.nameZh,courses.remark,courses.scheduleText,courses.stdCount,courses.course,courses.courseType,courses.openDepartment,courses.examMode,courses.scheduleWeeksInfo,courses.planExamWeek,courses.teacherAssignmentList,courses.semester))
+                }
+                return list
+            }
+        } else return list
     } catch (e : Exception) {
-        list
+        return list
     }
 }

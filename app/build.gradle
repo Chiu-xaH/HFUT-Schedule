@@ -8,6 +8,14 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        chiu {
+            storeFile file('D:\\文档\\Android Sign Key\\Chiu-xaH.jks')
+            storePassword 'zhaosihan0908'
+            keyAlias 'Chiu-xaH'
+            keyPassword 'zhaosihan0908'
+        }
+    }
     namespace 'com.hfut.schedule'
     compileSdk 34
 
@@ -15,8 +23,8 @@ android {
         applicationId "com.hfut.schedule"
         minSdk 24
         targetSdk 33
-        versionCode 92
-        versionName "4.4.3.1"
+        versionCode 93
+        versionName "4.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
@@ -27,6 +35,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.chiu
         }
     }
     compileOptions {
@@ -71,6 +80,7 @@ dependencies {
     implementation platform('androidx.compose:compose-bom:2023.03.00')
     implementation platform('androidx.compose:compose-bom:2023.03.00')
     implementation platform('androidx.compose:compose-bom:2023.03.00')
+    implementation files('libs\\Lite3DMap_1.3.2_AMapSearch_9.7.2_AMapLocation_6.4.5_20240508.jar')
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'

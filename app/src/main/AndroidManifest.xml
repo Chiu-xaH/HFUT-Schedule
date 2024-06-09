@@ -19,6 +19,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.App.Starting"
         tools:targetApi="31">
+        <meta-data
+            android:name="com.amap.api.v2.apikey"
+            android:value="1cdad5eb7c48146529a11e50e9c6ad1b"/>
         <activity
             android:name=".activity.FixActivity"
             android:exported="true"

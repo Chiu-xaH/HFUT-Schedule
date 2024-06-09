@@ -14,6 +14,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -43,7 +44,7 @@ fun CourseTotal(vm :LoginSuccessViewModel) {
     val sheetState_Total = rememberModalBottomSheetState()
     var showBottomSheet_Total by remember { mutableStateOf(false) }
     val CommuityTOKEN = prefs.getString("TOKEN","")
-
+    val json = prefs.getString("courses","")
 
     ListItem(
         headlineContent = { Text(text = "课程汇总") },
@@ -82,9 +83,57 @@ fun CourseTotal(vm :LoginSuccessViewModel) {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ){
-                    CourseTotalUI()
+                    CourseTotalUI(json)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
+            }
+        }
+    }
+}
+
+fun periodsSum() : Double {
+    var num = 0.0
+    val json = prefs.getString("courses","")
+    for(i in 0 until getTotalCourse(json).size) {
+        val credit = getTotalCourse(json)[i].course.credits
+        if (credit != null) {
+            num += credit
+        }
+    }
+    return num
+}
+
+
+@Composable
+fun SemsterInfo(json : String?) {
+
+    val semsterInfo = getTotalCourse(json)[0].semester
+
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+        Column() {
+            Card(
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 3.dp
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        horizontal = 15.dp,
+                        vertical = 5.dp
+                    ),
+                shape = MaterialTheme.shapes.medium,
+            ){
+                ListItem(
+                     overlineContent = { Text(text = semsterInfo.startDate + " ~ " + semsterInfo.endDate)},
+                    headlineContent = {  Text(semsterInfo.nameZh) },
+                    leadingContent = { Icon(
+                        painterResource(R.drawable.category),
+                        contentDescription = "Localized description",
+                    ) },
+                    modifier = Modifier.clickable {},
+                    colors = ListItemDefaults.colors(MaterialTheme.colorScheme.primaryContainer),
+                    trailingContent = { if (json != null) { if(json.contains("lessonIds"))Text(text = "学分 ${periodsSum()}") } }
+                )
             }
         }
     }

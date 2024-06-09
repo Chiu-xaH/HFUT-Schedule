@@ -19,3 +19,18 @@ fun WebViewScreen(url: String) {
         modifier = Modifier.fillMaxSize()
     )
 }
+
+@Composable
+fun mapScreen() {
+    AndroidView(
+        factory = { context ->
+            com.amap.api.maps.MapView(context).apply {
+                onCreate(null)
+            }
+        },update = {mapView ->
+            mapView.getMapAsyn {  }
+
+        },
+        modifier = Modifier.fillMaxSize()
+    )
+}

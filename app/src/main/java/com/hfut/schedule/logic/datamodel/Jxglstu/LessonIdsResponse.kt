@@ -10,7 +10,9 @@ data class lessons(val nameZh : String?,
                    val openDepartment : courseType,
                    val examMode : courseType,
                    val scheduleWeeksInfo : String?,
-                   val teacherAssignmentList : List<teacherAssignmentList2>)
+                   val planExamWeek : Int?,
+                   val teacherAssignmentList : List<teacherAssignmentList2>?
+                   ,val semester : semester)
 data class scheduleText(val dateTimePlacePersonText : dateTimePlacePersonText )
 data class dateTimePlacePersonText(val textZh : String?)
 
@@ -21,3 +23,9 @@ data class teacherAssignmentList2(val teacher : teacher,val age : Int?)
 data class teacher(val person : courseType,
                    val title : courseType,
                    val type : courseType?)
+
+
+data class semester(val id : Int,
+                    val nameZh : String,
+                    val startDate : String,
+                    val endDate : String)
