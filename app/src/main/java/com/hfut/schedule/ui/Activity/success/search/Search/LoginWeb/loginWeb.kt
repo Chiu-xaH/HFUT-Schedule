@@ -1,24 +1,11 @@
-package com.hfut.schedule.ui.Activity.success.search.Search
+package com.hfut.schedule.ui.Activity.success.search.Search.LoginWeb
 
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -35,22 +22,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.ui.Activity.success.search.Search.Web.WebItem
-import com.hfut.schedule.ui.UIUtils.DevelopingUI
-import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.ScrollText
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import org.jsoup.Jsoup
-
 
 fun getIdentifyID() : String? {
     return try {
@@ -100,7 +79,7 @@ fun loginWeb(vmUI : UIViewModel) {
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        title = { Text("校园网登录 快速通道") }
+                        title = { Text("校园网登录") }
                     )
                 },) { innerPadding ->
                 Column(
@@ -118,57 +97,3 @@ fun loginWeb(vmUI : UIViewModel) {
 
 
 
-@Composable
-fun loginWebUI(vmUI : UIViewModel) {
-
-    var textStatus by  remember { mutableStateOf("请确定已连接校园网") }
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center){
-        Icon(painter = painterResource(id = R.drawable.net), contentDescription = "",Modifier.size(100.dp), tint = MaterialTheme.colorScheme.primary)
-    }
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center){
-        Text(text = textStatus, color = MaterialTheme.colorScheme.primary)
-    }
-    Spacer(modifier = Modifier.height(15.dp))
-
-    val interactionSource = remember { MutableInteractionSource() }
-    val isPressed by interactionSource.collectIsPressedAsState()
-    val scale = animateFloatAsState(
-        targetValue = if (isPressed) 0.8f else 1f, // 按下时为0.9，松开时为1
-        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-        label = "" // 使用弹簧动画
-    )
-
-    var text by  remember { mutableStateOf("登录") }
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-        Button(
-            onClick = {
-                vmUI.loginWeb()
-            },modifier = Modifier
-                .scale(scale.value),
-            interactionSource = interactionSource,) {
-            Text(text = text)
-        }
-    }
-
-    //var loading by remember { mutableStateOf(true) }
-    CoroutineScope(Job()).launch {
-        Handler(Looper.getMainLooper()).post{
-            vmUI.resultValue.observeForever { result ->
-                if (result != null) {
-                    //Log.d("ew",result)
-                    if(result.contains("登录成功")) {
-                       // loading = false
-                        text = "已登录"
-                        textStatus = "已登录"
-                    //    MyToast("已登录")
-                    } else if(result == "Error") {
-                     ///   MyToast("网络错误")
-                        textStatus = "网络错误"
-                    }
-                }
-            }
-        }
-    }
-
-   // Text(text = if(loading) "未登录" else "已登录")
-}

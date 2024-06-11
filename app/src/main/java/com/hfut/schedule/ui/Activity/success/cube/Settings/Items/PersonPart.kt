@@ -135,7 +135,7 @@ fun PersonPart() {
                         Row {
                             ListItem(
                                 overlineContent = { Text(text = "学号") },
-                                headlineContent = { studentnumber?.let { Text(text = it) } },
+                                headlineContent = { studentnumber?.let { ScrollText(text = it) } },
                                 leadingContent = {
                                     Icon(
                                         painterResource(R.drawable.badge),

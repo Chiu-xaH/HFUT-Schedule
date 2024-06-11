@@ -2,8 +2,6 @@ package com.hfut.schedule.ui.Activity.success.search.main
 
 import android.annotation.SuppressLint
 import android.os.Build
-import android.os.Handler
-import android.os.Looper
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,7 +20,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,7 +30,6 @@ import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.ui.Activity.success.focus.Focus.TodayUI
 import com.hfut.schedule.ui.Activity.success.search.Search.Bus.SchoolBus
 import com.hfut.schedule.ui.Activity.success.search.Search.Electric.Electric
 import com.hfut.schedule.ui.Activity.success.search.Search.EmptyRoom.EmptyRoom
@@ -49,26 +45,24 @@ import com.hfut.schedule.ui.Activity.success.search.Search.More.More
 import com.hfut.schedule.ui.Activity.success.search.Search.News.News
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.NotificationsCenter
 import com.hfut.schedule.ui.Activity.success.search.Search.Mail.Pay
-import com.hfut.schedule.ui.Activity.success.search.Search.Map
+import com.hfut.schedule.ui.Activity.success.search.Search.Map.Map
 import com.hfut.schedule.ui.Activity.success.search.Search.Person.PersonUI
 import com.hfut.schedule.ui.Activity.success.search.Search.Program.Program
 import com.hfut.schedule.ui.Activity.success.search.Search.Repair.Repair
 import com.hfut.schedule.ui.Activity.success.search.Search.SchoolCalendar.SchoolCalendar
-import com.hfut.schedule.ui.Activity.success.search.Search.SchoolCard.SchoolCardItem
 import com.hfut.schedule.ui.Activity.success.search.Search.SchoolCard.TodayAndCard
 import com.hfut.schedule.ui.Activity.success.search.Search.Second.Second
 import com.hfut.schedule.ui.Activity.success.search.Search.TotalCourse.CourseTotal
 import com.hfut.schedule.ui.Activity.success.search.Search.Web.WebUI
 import com.hfut.schedule.ui.Activity.success.search.Search.Xuanqu.XuanquItem
-import com.hfut.schedule.ui.Activity.success.search.Search.courseSearch
-import com.hfut.schedule.ui.Activity.success.search.Search.loginWeb
+import com.hfut.schedule.ui.Activity.success.search.Search.CourseSearch.courseSearch
+import com.hfut.schedule.ui.Activity.success.search.Search.LoginWeb.loginWeb
 import com.hfut.schedule.ui.UIUtils.MyToast
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
 import org.jsoup.Jsoup
 
 

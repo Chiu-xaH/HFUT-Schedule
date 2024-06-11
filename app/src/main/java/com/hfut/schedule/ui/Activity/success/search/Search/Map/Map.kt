@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.Activity.success.search.Search
+package com.hfut.schedule.ui.Activity.success.search.Search.Map
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
