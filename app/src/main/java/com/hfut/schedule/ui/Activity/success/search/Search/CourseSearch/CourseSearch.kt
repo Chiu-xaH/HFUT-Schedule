@@ -73,6 +73,7 @@ fun courseSearch(ifSaved :  Boolean,vm : LoginSuccessViewModel) {
 
     ListItem(
         headlineContent = { ScrollText(text = "开课查询") },
+        overlineContent = { Text(text = "查询下学期")},
         leadingContent = {
             Icon(
                 painterResource(R.drawable.search),

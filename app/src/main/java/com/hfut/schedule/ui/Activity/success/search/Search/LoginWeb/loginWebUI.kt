@@ -2,7 +2,6 @@ package com.hfut.schedule.ui.Activity.success.search.Search.LoginWeb
 
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -30,15 +29,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.UIViewModel
+import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.getWeb
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import org.jsoup.Jsoup
 
 @Composable
 fun loginWebUI(vmUI : UIViewModel) {
 
-    var textStatus by  remember { mutableStateOf("请确定已连接校园网") }
+    var textStatus by  remember { mutableStateOf("已用 ${vmUI.webValue.value?.flow ?: "登录获取"}MB\n余额 ￥${vmUI.webValue.value?.fee?: "登录获取"}") }
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center){
         Icon(painter = painterResource(id = R.drawable.net), contentDescription = "",
             Modifier.size(100.dp), tint = MaterialTheme.colorScheme.primary)
@@ -59,11 +58,36 @@ fun loginWebUI(vmUI : UIViewModel) {
     var textLogin by  remember { mutableStateOf("登录") }
     var textLogout by  remember { mutableStateOf("注销") }
     vmUI.getWebInfo()
+    getWeb(vmUI)
+
+
+
+    CoroutineScope(Job()).launch {
+        Handler(Looper.getMainLooper()).post{
+            vmUI.resultValue.observeForever { result ->
+                if (result != null) {
+                    if(result.contains("登录成功") && !result.contains("已使用")) {
+                        vmUI.getWebInfo()
+                        textLogin = "已登录"
+                        textLogout = "注销"
+                       // textStatus = "已登录"
+                    } else if(result == "Error") {
+                        textStatus = "网络错误"
+                    } else if(result.contains("已使用")) {
+                        textLogout = "已注销"
+                      //  textStatus = "已注销"
+                        textLogin   = "登录"
+                    }
+                }
+            }
+        }
+    }
+
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
         Button(
             onClick = {
                 vmUI.loginWeb()
-                vmUI.loginWeb2()
+               // vmUI.loginWeb2()
             },modifier = Modifier
                 .scale(scale.value),
             interactionSource = interactionSource,) {
@@ -81,40 +105,9 @@ fun loginWebUI(vmUI : UIViewModel) {
             Text(text = textLogout)
         }
     }
-
-    CoroutineScope(Job()).launch {
-        Handler(Looper.getMainLooper()).post{
-            vmUI.resultValue.observeForever { result ->
-                if (result != null) {
-                    if(result.contains("登录成功") && !result.contains("已使用")) {
-                        vmUI.getWebInfo()
-                        textLogin = "已登录"
-                        textLogout = "注销"
-                        textStatus = "已登录"
-                    } else if(result == "Error") {
-                        textStatus = "网络错误"
-                    } else if(result.contains("已使用")) {
-                        textLogout = "已注销"
-                        textStatus = "已注销"
-                        textLogin   = "登录"
-                    }
-                }
-            }
-            vmUI.infoValue.observeForever { result ->
-                if (result != null) {
-                   // Log.d("ew",result)
-                  //  Log.d("sss0",result)
-                    if(result.contains("flow")) {
-                      //  Log.d("sss0",result)
-                       textStatus = "已使用 ${getWebInfos(result).flow} MB\n余额 ${getWebInfos(result).fee}"
-                    }
-                }
-            }
-        }
-    }
 }
 
-fun getWebInfos(html : String) : webInfo {
+fun getWebInfos(html : String) : WebInfo {
 
     try {
         //本段照搬前端
@@ -131,11 +124,11 @@ fun getWebInfos(html : String) : webInfo {
         val resultFee = (fee1 / 100000).toString()
         val resultFlow : String = ((flow1 / 1024).toString() + flow3 + (flow0 / 1024)).substringBefore(".")
 
-        return webInfo(resultFee,resultFlow)
+        return WebInfo(resultFee,resultFlow)
     } catch (e : Exception) {
-        return webInfo("未获取到数据","未获取到数据")
+        return WebInfo("未获取到数据","未获取到数据")
     }
 
 }
 
-data class webInfo(val fee : String,val flow : String)
+data class WebInfo(val fee : String, val flow : String)

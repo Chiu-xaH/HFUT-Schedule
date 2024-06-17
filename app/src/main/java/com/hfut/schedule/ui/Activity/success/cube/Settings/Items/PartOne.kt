@@ -8,15 +8,21 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,6 +30,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
@@ -142,6 +149,37 @@ fun PartOne(vm : LoginSuccessViewModel, showlable : Boolean, showlablechanged :(
         }
     }
 
+    var showBottomSheet_card by remember { mutableStateOf(false) }
+    var sheetState_card = rememberModalBottomSheetState()
+    if (showBottomSheet_card) {
+        ModalBottomSheet(
+            onDismissRequest = { showBottomSheet_card = false },
+            sheetState = sheetState_card
+        ) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        title = { Text("即时卡片设置") },
+                    )
+                },
+            ) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                ) {
+                    FocusCardSettings()
+                    Spacer(modifier = Modifier.height(100.dp))
+                }
+            }
+        }
+    }
+
 
     ListItem(
         headlineContent = { Text(text = "请求范围") },
@@ -173,6 +211,14 @@ fun PartOne(vm : LoginSuccessViewModel, showlable : Boolean, showlablechanged :(
             putExtra("nologin",false)
         }
             MyApplication.context.startActivity(it) }
+    )
+
+
+    ListItem(
+        headlineContent = { Text(text = "即时卡片设置") },
+        supportingContent = { Text(text = "即时卡片位于聚焦首页，现在您可自定义卡片") },
+        leadingContent = { Icon(painterResource(R.drawable.stacks), contentDescription = "Localized description",) },
+        modifier = Modifier.clickable { showBottomSheet_card = true }
     )
    // ListItem(
      //   headlineContent = { Text(text = "简化选项布局") },

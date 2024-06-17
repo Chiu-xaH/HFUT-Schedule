@@ -17,6 +17,7 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -78,23 +79,9 @@ import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.success.calendar.nonet.DetailInfos
 import com.hfut.schedule.ui.Activity.success.calendar.nonet.getCourseINFO
 import com.hfut.schedule.ui.Activity.success.search.Search.SchoolCard.SchoolCardItem
+import com.hfut.schedule.ui.Activity.success.search.Search.SchoolCard.TodayInfo
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.ScrollText
-
-
-@Composable
-fun TodayCardItem(vmUI : UIViewModel) {
-    Card(
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 3.dp
-        ),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 15.dp, vertical = 5.dp),
-        shape = MaterialTheme.shapes.medium
-
-    ){ SchoolCardItem(vmUI) }
-}
 
 @Composable
 fun MyScheuleItem(item : Int, MySchedule : MutableList<Schedule>,Future: Boolean ) {
@@ -652,10 +639,42 @@ fun TimeStampItem() {
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TodayUI() {
+    ////////////////////////////////////////////////////////////
+    val sheetState = rememberModalBottomSheetState()
+    var showBottomSheet by  remember { mutableStateOf(false) }
+    if (showBottomSheet ) {
+        ModalBottomSheet(
+            onDismissRequest = { showBottomSheet = false },
+            sheetState = sheetState
+        ) {
 
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        title = { Text("聚焦通知") }
+                    )
+                },) {innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                ){
+                    TodayInfo()
+                }
+            }
+        }
+    }
+
+    //////////////////////////////////////////////////////////////////////////
     //判断明天是否有早八
     var weekdaytomorrow = GetDate.dayweek + 1
     var week = GetDate.Benweeks.toInt()
@@ -683,16 +702,17 @@ fun TodayUI() {
         }
     }
 
-    if( getToday()?.todayExam?.courseName == null &&
-        getToday()?.todayCourse?.courseName == null &&
-        getToday()?.todayActivity?.activityName == null &&
-        getToday()?.bookLending?.bookName == null) {
+    Box(modifier = Modifier.clickable { showBottomSheet = true }) {
+        if( getToday()?.todayExam?.courseName == null &&
+            getToday()?.todayCourse?.courseName == null &&
+            getToday()?.todayActivity?.activityName == null &&
+            getToday()?.bookLending?.bookName == null) {
 
-         ListItem(
-              headlineContent = { ScrollText(text = if(tiaoXiu) "有调休安排" else if( time == "08")"明天有早八" else if(time == "10") "明天有早十"  else if(time == "14" || time == "16" || time == "19" )  "明天睡懒觉" else "明天没有课") },
-              overlineContent = { ScrollText(text = "明天") },
-              leadingContent = { Icon(painter = painterResource(  if(tiaoXiu) R.drawable.error else if( time == "08") R.drawable.sentiment_sad else if (time == "10") R.drawable.sentiment_dissatisfied else R.drawable.sentiment_very_satisfied) , contentDescription = "")},
-         )
+            ListItem(
+                headlineContent = { ScrollText(text = if(tiaoXiu) "有调休安排" else if( time == "08")"明天有早八" else if(time == "10") "明天有早十"  else if(time == "14" || time == "16" || time == "19" )  "明天睡懒觉" else "明天没有课") },
+                overlineContent = { ScrollText(text = "明天") },
+                leadingContent = { Icon(painter = painterResource(  if(tiaoXiu) R.drawable.error else if( time == "08") R.drawable.sentiment_sad else if (time == "10") R.drawable.sentiment_dissatisfied else R.drawable.sentiment_very_satisfied) , contentDescription = "")},
+            )
         } else {
             if(getToday()?.todayExam?.courseName != null) {
                 ListItem(
@@ -724,6 +744,8 @@ fun TodayUI() {
             }
 
         }
+    }
+
 }
 
 fun getToday() : TodayResult? {

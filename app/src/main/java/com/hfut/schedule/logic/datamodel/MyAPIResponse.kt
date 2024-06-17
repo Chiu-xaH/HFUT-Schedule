@@ -4,7 +4,8 @@ data class MyAPIResponse (val SettingsInfo : SettingsInfo,
                           val semesterId : String,
                           val TimeStamp : String,
                           val Labs : List<Lab>,
-                          val Notifications : List<Notifications>)
+                          val Notifications : List<Notifications>,
+                          val SchoolCalendar : String)
 data class SettingsInfo(val version : String,
                         val title : String,
                         val info : String,

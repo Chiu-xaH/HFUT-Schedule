@@ -50,6 +50,7 @@ import com.hfut.schedule.ui.Activity.card.function.CardLimit
 import com.hfut.schedule.ui.Activity.card.function.SearchBillsUI
 import com.hfut.schedule.ui.Activity.card.function.SelecctDateRange
 import com.hfut.schedule.ui.UIUtils.MyToast
+import com.hfut.schedule.ui.UIUtils.ScrollText
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -206,17 +207,17 @@ fun CardRow(vm : LoginSuccessViewModel,show : Boolean,vmUI : UIViewModel) {
     ) {
         Row {
             ListItem(
-                headlineContent = { Text(text = "余额 ￥${vmUI.CardValue.value?.now ?: now}") },
+                headlineContent = { ScrollText(text = "余额 ￥${vmUI.CardValue.value?.now ?: now}") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(.5f)
                     .clickable { StartApp.openAlipay(MyApplication.AlipayCardURL) },
-                overlineContent = { Text(text = "待圈存 ￥${vmUI.CardValue.value?.settle ?: settle}") },
+                overlineContent = { ScrollText(text = "待圈存 ￥${vmUI.CardValue.value?.settle ?: settle}") },
                 leadingContent = { Icon(painterResource(R.drawable.account_balance_wallet), contentDescription = "Localized description",) },
                 colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
             )
             ListItem(
-                headlineContent = { Text(text = "￥${str}") },
+                headlineContent = { ScrollText(text = "￥${str}") },
                 overlineContent = { Text(text = " 今日消费") },
                 leadingContent = { Icon(painterResource(R.drawable.send_money), contentDescription = "Localized description",) },
                 colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer),

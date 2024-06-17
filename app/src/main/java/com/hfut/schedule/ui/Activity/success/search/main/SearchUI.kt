@@ -31,9 +31,10 @@ import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.success.search.Search.Bus.SchoolBus
+import com.hfut.schedule.ui.Activity.success.search.Search.CourseSearch.courseSearch
 import com.hfut.schedule.ui.Activity.success.search.Search.Electric.Electric
 import com.hfut.schedule.ui.Activity.success.search.Search.EmptyRoom.EmptyRoom
-import com.hfut.schedule.ui.Activity.success.search.Search.Estimate.Estimate
+import com.hfut.schedule.ui.Activity.success.search.Search.Survey.Survey
 import com.hfut.schedule.ui.Activity.success.search.Search.Exam.Exam
 import com.hfut.schedule.ui.Activity.success.search.Search.FailRate.FailRate
 import com.hfut.schedule.ui.Activity.success.search.Search.Grade.Grade
@@ -41,22 +42,21 @@ import com.hfut.schedule.ui.Activity.success.search.Search.HotWater.HotWater
 import com.hfut.schedule.ui.Activity.success.search.Search.Lab.Lab
 import com.hfut.schedule.ui.Activity.success.search.Search.LePaoYun.LePaoYun
 import com.hfut.schedule.ui.Activity.success.search.Search.Library.LibraryItem
+import com.hfut.schedule.ui.Activity.success.search.Search.LoginWeb.LoginWeb
+import com.hfut.schedule.ui.Activity.success.search.Search.Mail.Pay
+import com.hfut.schedule.ui.Activity.success.search.Search.Map.Map
 import com.hfut.schedule.ui.Activity.success.search.Search.More.More
 import com.hfut.schedule.ui.Activity.success.search.Search.News.News
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.NotificationsCenter
-import com.hfut.schedule.ui.Activity.success.search.Search.Mail.Pay
-import com.hfut.schedule.ui.Activity.success.search.Search.Map.Map
 import com.hfut.schedule.ui.Activity.success.search.Search.Person.PersonUI
 import com.hfut.schedule.ui.Activity.success.search.Search.Program.Program
 import com.hfut.schedule.ui.Activity.success.search.Search.Repair.Repair
 import com.hfut.schedule.ui.Activity.success.search.Search.SchoolCalendar.SchoolCalendar
-import com.hfut.schedule.ui.Activity.success.search.Search.SchoolCard.TodayAndCard
+import com.hfut.schedule.ui.Activity.success.search.Search.SchoolCard.SchoolCardItem
 import com.hfut.schedule.ui.Activity.success.search.Search.Second.Second
 import com.hfut.schedule.ui.Activity.success.search.Search.TotalCourse.CourseTotal
 import com.hfut.schedule.ui.Activity.success.search.Search.Web.WebUI
 import com.hfut.schedule.ui.Activity.success.search.Search.Xuanqu.XuanquItem
-import com.hfut.schedule.ui.Activity.success.search.Search.CourseSearch.courseSearch
-import com.hfut.schedule.ui.Activity.success.search.Search.LoginWeb.loginWeb
 import com.hfut.schedule.ui.UIUtils.MyToast
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
@@ -103,7 +103,7 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
     if(GetDate.formattedTime_Hour.toInt() in 5..6) text = "起的好早呀"
     if(GetDate.formattedTime_Hour.toInt() in 18..23) text = "晚上好"
     if(GetDate.formattedTime_Hour.toInt() in 0..4) text = "熬夜也要早睡哦"
-
+    
     val hazeState = remember { HazeState() }
 
 
@@ -116,7 +116,19 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
 
         ) {
             Spacer(modifier = Modifier.height(5.dp))
-            TodayAndCard(vmUI)
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
+
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    shape = MaterialTheme.shapes.medium,
+                ){
+                    SchoolCardItem(vmUI,false)
+                }
+            }
             Row(modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
@@ -128,7 +140,7 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
                         .weight(.5f),
                     shape = MaterialTheme.shapes.medium,
                 ){
-                    Grade(vm,true)
+                    Grade(vm,ifSaved)
                 }
                 Spacer(modifier = Modifier.width(10.dp))
                 Card(
@@ -226,7 +238,7 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
                         .weight(.5f),
                     shape = MaterialTheme.shapes.medium,
                 ){
-                    Electric(vm)
+                    Electric(vm,false,vmUI)
                 }
                 Spacer(modifier = Modifier.width(10.dp))
                 Card(
@@ -356,7 +368,7 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
                         .weight(.5f),
                     shape = MaterialTheme.shapes.medium,
                 ){
-                    Estimate()
+                    Survey(ifSaved,vm)
                 }
             }
             Row(modifier = Modifier
@@ -394,7 +406,7 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
                         .weight(.5f),
                     shape = MaterialTheme.shapes.medium,
                 ){
-                    loginWeb(vmUI)
+                    LoginWeb(vmUI,false)
                 }
                 Spacer(modifier = Modifier.width(10.dp))
                 Card(

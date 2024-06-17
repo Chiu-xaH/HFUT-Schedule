@@ -28,6 +28,8 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.getWeb
 import com.hfut.schedule.ui.UIUtils.ScrollText
 import org.jsoup.Jsoup
 
@@ -49,20 +51,17 @@ fun getIdentifyID() : String? {
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun loginWeb(vmUI : UIViewModel) {
+fun LoginWeb(vmUI : UIViewModel, card : Boolean) {
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
 
+    val memoryWeb = prefs.getString("memoryWeb","0")
+  //  val memory = prefs.getString("memoryWeb","0")
 
     ListItem(
-        headlineContent = { ScrollText(text = "校园网登录") },
-       // overlineContent = { ScrollText(text = "快速通道")},
-        leadingContent = {
-            Icon(
-                painterResource(R.drawable.net),
-                contentDescription = "Localized description",
-            )
-        },
+        headlineContent = { if(!card)Text(text = "校园网") else ScrollText(text = "${vmUI.webValue.value?.flow?: memoryWeb} MB") },
+        overlineContent = { if(!card)ScrollText(text = "${vmUI.webValue.value?.flow?: memoryWeb} MB") else Text(text = "校园网")},
+        leadingContent = { Icon(painterResource(R.drawable.net), contentDescription = "Localized description",) },
         modifier = Modifier.clickable { showBottomSheet = true }
     )
 
@@ -79,7 +78,7 @@ fun loginWeb(vmUI : UIViewModel) {
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        title = { Text("校园网登录") }
+                        title = { Text("校园网") }
                     )
                 },) { innerPadding ->
                 Column(

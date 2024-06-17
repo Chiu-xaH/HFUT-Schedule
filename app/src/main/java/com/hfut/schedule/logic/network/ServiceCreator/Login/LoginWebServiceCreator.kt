@@ -15,6 +15,20 @@ object LoginWebServiceCreator {
         .addConverterFactory(ScalarsConverterFactory.create())
         .build()
 
+
+    fun <T> create(service: Class<T>): T = retrofit.create(service)
+    inline fun <reified  T> create() : T = create(T::class.java)
+}
+
+object LoginWebServiceCreator2 {
+
+
+    val retrofit = Retrofit.Builder()
+        .baseUrl(MyApplication.loginWebURL2)
+        .addConverterFactory(ScalarsConverterFactory.create())
+        .build()
+
+
     fun <T> create(service: Class<T>): T = retrofit.create(service)
     inline fun <reified  T> create() : T = create(T::class.java)
 }

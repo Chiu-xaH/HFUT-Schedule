@@ -288,7 +288,7 @@ fun EleUI(vm : LoginSuccessViewModel) {
                                     items(5) { items ->
                                         IconButton(onClick = {
                                             if (RoomNumber.length < 3)
-                                                RoomNumber = RoomNumber + items.toString()
+                                                RoomNumber += items.toString()
                                             else Toast.makeText(
                                                 MyApplication.context,
                                                 "三位数",
@@ -304,7 +304,7 @@ fun EleUI(vm : LoginSuccessViewModel) {
                                         val num = items + 5
                                         IconButton(onClick = {
                                             if (RoomNumber.length < 3)
-                                                RoomNumber = RoomNumber + num
+                                                RoomNumber += num
                                             else Toast.makeText(MyApplication.context, "三位数", Toast.LENGTH_SHORT).show()
                                         }) { Text(text = num.toString()) }
                                     }

@@ -51,6 +51,7 @@ import com.hfut.schedule.logic.utils.AddCalendar
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.ui.Activity.success.search.Search.More.Login
 import com.hfut.schedule.ui.UIUtils.EmptyUI
 import com.hfut.schedule.ui.UIUtils.MyToast
 
@@ -79,9 +80,18 @@ fun Exam(vm : LoginSuccessViewModel,ifSaved : Boolean) {
             }
         },
         modifier = Modifier.clickable {
-            showBottomSheet_Exam = true
-            if(ifSaved) Save("ExamNum", getNewExam().size.toString())
-             else Save("ExamNum", getExamJXGLSTU().size.toString())
+
+
+            if(ifSaved)  {
+                Login()
+                Save("ExamNum", getNewExam().size.toString())
+            }
+            else {
+                showBottomSheet_Exam = true
+                Save("ExamNum", getExamJXGLSTU().size.toString())
+            }
+
+
         }
     )
 
@@ -180,7 +190,7 @@ fun ExamItems(item : Int,status : Boolean) {
 
 }
 
-
+//status参数判断是聚焦还是界面，若为聚焦则解析显示未考的，若为界面都显示
 @Composable
 fun JxglstuExamUI(item : Map<String,String>,status : Boolean) {
     var date = GetDate.Date_MM_dd

@@ -2,7 +2,6 @@ package com.hfut.schedule.ui.Activity.success.focus.main
 
 import android.annotation.SuppressLint
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,18 +19,15 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.ExperimentalMaterialApi
-
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,7 +36,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
@@ -50,10 +44,12 @@ import com.hfut.schedule.ViewModel.LoginViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.ui.Activity.success.calendar.nonet.getCourseINFO
+import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.FocusCard
 import com.hfut.schedule.ui.Activity.success.focus.Focus.AddButton
 import com.hfut.schedule.ui.Activity.success.focus.Focus.AddItem
 import com.hfut.schedule.ui.Activity.success.focus.Focus.AddedItems
-import com.hfut.schedule.ui.UIUtils.MyToast
+import com.hfut.schedule.ui.Activity.success.focus.Focus.GetZjgdCard
 import com.hfut.schedule.ui.Activity.success.focus.Focus.MySchedule
 import com.hfut.schedule.ui.Activity.success.focus.Focus.MyScheuleItem
 import com.hfut.schedule.ui.Activity.success.focus.Focus.MyWangKe
@@ -61,15 +57,11 @@ import com.hfut.schedule.ui.Activity.success.focus.Focus.TimeStampItem
 import com.hfut.schedule.ui.Activity.success.focus.Focus.TodayCourseItem
 import com.hfut.schedule.ui.Activity.success.focus.Focus.TomorrowCourseItem
 import com.hfut.schedule.ui.Activity.success.focus.Focus.WangkeItem
-import com.hfut.schedule.ui.Activity.success.focus.Focus.GetZjgdCard
-import com.hfut.schedule.ui.Activity.success.main.saved.NetWorkUpdate
-import com.hfut.schedule.ui.Activity.success.calendar.nonet.getCourseINFO
 import com.hfut.schedule.ui.Activity.success.focus.Focus.getTodayNet
-import com.hfut.schedule.ui.Activity.success.search.Search.Exam.ExamItems
+import com.hfut.schedule.ui.Activity.success.main.saved.NetWorkUpdate
 import com.hfut.schedule.ui.Activity.success.search.Search.Exam.JxglstuExamUI
-import com.hfut.schedule.ui.Activity.success.search.Search.Exam.getExam
 import com.hfut.schedule.ui.Activity.success.search.Search.Exam.getExamJXGLSTU
-import com.hfut.schedule.ui.Activity.success.search.Search.SchoolCard.TodayAndCard
+import com.hfut.schedule.ui.UIUtils.MyToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -85,7 +77,7 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel,innerPaddings : 
     val TAB_RIGHT = 1
 
 /////////////////////////////////////////逻辑函数区/////////////////////////////////////////////////
-    CoroutineScope(Job()).launch{ async { NetWorkUpdate(vm,vm2,vmUI) } }
+    CoroutineScope(Job()).launch{ async { NetWorkUpdate(vm,vm2,vmUI,ifSaved) } }
 //Today操作区///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -98,7 +90,7 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel,innerPaddings : 
         scope.launch {
             async {
                 refreshing = true
-                NetWorkUpdate(vm,vm2,vmUI)
+                NetWorkUpdate(vm,vm2,vmUI,ifSaved)
             }.await()
             async {
                 refreshing = false
@@ -166,12 +158,12 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel,innerPaddings : 
                             when(page) {
                                 TAB_LEFT -> {
                                     //一卡通
-                                    CoroutineScope(Job()).launch {
-                                        async { GetZjgdCard(vm,vmUI) }
-                                        async { getTodayNet(vm,vmUI) }
-                                    }
+                                  //  CoroutineScope(Job()).launch {
+                                //        async { GetZjgdCard(vm,vmUI) }
+                               //         async { getTodayNet(vm,vmUI) }
+                               ///     }
 
-                                    item { TodayAndCard(vmUI) }
+                                    item { FocusCard(vmUI,vm) }
                                     //课表
                                     if (GetDate.formattedTime_Hour.toInt() >= 19)
                                         items(getCourseINFO(weekdaytomorrow,Nextweek).size) { item -> TomorrowCourseItem(item = item) }
@@ -182,8 +174,9 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel,innerPaddings : 
                                         items(MySchedule().size) { item -> MyScheuleItem(item = item, MySchedule = MySchedule(),false) }
                                     }
                                     //考试
-                                    if(ifSaved) items(getExam().size) { item -> ExamItems(item,true,) }
-                                    else items(getExamJXGLSTU()) { item -> JxglstuExamUI(item,false) }
+                                  //  if(ifSaved) items(getExam().size) { item -> ExamItems(item,true,) }
+                                  //  else
+                                    items(getExamJXGLSTU()) { item -> JxglstuExamUI(item,false) }
                                     //网课
                                     items(MyWangKe().size) { item -> WangkeItem(item = item, MyWangKe = MyWangKe(),false) }
                                 }

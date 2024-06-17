@@ -74,6 +74,33 @@ interface JxglstuService {
                      @Query("queryPage__") queryPage : String,
                      @Query("courseNameZhLike") courseName : String?
                      ) : Call<ResponseBody>
+
+    //获取教评列表
+    @GET("for-std/lesson-survey/{semester}/search/{studentId}")
+    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.17")
+    fun getSurveyList(@Header("Cookie") Cookie : String,
+                      @Path("studentId") studentId : String,
+                      @Path("semester") semester : Int,) : Call<ResponseBody>
+
+    //获取具体教评内容
+    @GET("for-std/lesson-survey/start-survey/{teacherId}/get-data")
+    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.17")
+    fun getSurveyInfo(@Header("Cookie") Cookie : String,
+                      @Path("teacherId") teacherId : String) : Call<ResponseBody>
+
+    //获取具体教评内容
+    @GET("for-std/lesson-survey/start-survey/{teacherId}")
+    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.17")
+    fun getSurveyToken(@Header("Cookie") Cookie : String,
+                      @Path("teacherId") teacherId : String,
+                       @Query("REDIRECT_URL") REDIRECT_URL : String) : Call<ResponseBody>
+
+    //提交教评
+    @POST("for-std/lesson-survey/submit-survey")
+    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.17")
+    fun postSurvey(@Header("Cookie") Cookie : String,
+                   @Body json: JsonObject) : Call<ResponseBody>
+
 }
 
 

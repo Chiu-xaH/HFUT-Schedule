@@ -18,6 +18,7 @@ import com.hfut.schedule.logic.datamodel.One.getTokenResponse
 import com.hfut.schedule.logic.network.ServiceCreator.CommunitySreviceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuHTMLServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuJSONServiceCreator
+import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuSurveyServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.LePaoYunServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Login.LoginServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.NewsServiceCreator
@@ -35,6 +36,7 @@ import com.hfut.schedule.logic.network.api.NewsService
 import com.hfut.schedule.logic.network.api.OneService
 import com.hfut.schedule.logic.network.api.XuanquService
 import com.hfut.schedule.logic.network.api.ZJGDBillService
+import com.hfut.schedule.logic.utils.SharePrefs.Save
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -52,6 +54,7 @@ class LoginSuccessViewModel : ViewModel() {
     private val CommunityLogin = LoginServiceCreator.create(CommunityService::class.java)
     private val Community = CommunitySreviceCreator.create(CommunityService::class.java)
     private val News = NewsServiceCreator.create(NewsService::class.java)
+    private val JxglstuSurvey = JxglstuSurveyServiceCreator.create(JxglstuService::class.java)
     var studentId = MutableLiveData<Int>(99999)
     var lessonIds = MutableLiveData<List<Int>>()
     var token = MutableLiveData<String>()
@@ -212,7 +215,55 @@ class LoginSuccessViewModel : ViewModel() {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
+    val surveyListData = MutableLiveData<String?>()
+    fun getSurveyList(cookie: String, semester : Int) {
+        val call = JxglstuJSON.getSurveyList(cookie,studentId.value.toString(),semester)
 
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                surveyListData.value = response?.body()?.string()
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
+    val surveyData = MutableLiveData<String?>()
+    fun getSurvey(cookie: String, id : String) {
+        val call = JxglstuJSON.getSurveyInfo(cookie,id)
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                surveyData.value = response?.body()?.string()
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
+    fun getSurveyToken(cookie: String, id : String) {
+        val call = JxglstuJSON.getSurveyToken(cookie,id,"/for-std/lesson-survey/semester-index/${studentId.value}")
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+        //         Log.d("cookies",response?.headers().toString())
+                 Save("SurveyCookie",response?.headers().toString().substringAfter("Set-Cookie:").substringBefore(";"))
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
+
+    val surveyPostData = MutableLiveData<String?>()
+    fun postSurvey(cookie : String,json: JsonObject){
+        val call = JxglstuJSON.postSurvey(cookie,json)
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                surveyPostData.value = response?.body()?.string()
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
 
     fun OneGoto(cookie : String)  {// 创建一个Call对象，用于发送异步请求
 

@@ -23,8 +23,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.window.DialogProperties
+import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.datamodel.MyAPIResponse
+import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.StartApp
 import com.hfut.schedule.ui.UIUtils.WebViewScreen
 import com.hfut.schedule.ui.UIUtils.MyToast
@@ -45,8 +48,8 @@ fun SchoolCalendar() {
             MyToast("即将打开网页链接,可自行下载保存图片")
         }
     )
-    
 
+    val url = Gson().fromJson(prefs.getString("my",MyApplication.NullMy),MyAPIResponse::class.java).SchoolCalendar
 
     if (showDialog) {
         androidx.compose.ui.window.Dialog(
@@ -63,7 +66,7 @@ fun SchoolCalendar() {
                         ),
                         actions = {
                             Row{
-                                IconButton(onClick = { StartApp.StartUri("https://sm.ms/image/9IgudCfOADF85Kw") }) { Icon(painterResource(id = R.drawable.net), contentDescription = "") }
+                                IconButton(onClick = { StartApp.StartUri(url) }) { Icon(painterResource(id = R.drawable.net), contentDescription = "") }
                                 IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "") }
                             }
                         },
@@ -76,7 +79,7 @@ fun SchoolCalendar() {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    WebViewScreen(url = "https://sm.ms/image/9IgudCfOADF85Kw")
+                    WebViewScreen(url)
                 }
             }
         }
