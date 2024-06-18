@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Card
@@ -46,18 +45,10 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.Enums.PostMode
-import com.hfut.schedule.logic.datamodel.Jxglstu.SurveyResponse
-import com.hfut.schedule.logic.datamodel.Jxglstu.SurveyTeacherResponse
-import com.hfut.schedule.logic.datamodel.Jxglstu.blankQuestions
-import com.hfut.schedule.logic.datamodel.Jxglstu.lessonSurveyTasks
-import com.hfut.schedule.logic.datamodel.Jxglstu.options
-import com.hfut.schedule.logic.datamodel.Jxglstu.radioQuestions
 import com.hfut.schedule.logic.datamodel.MyAPIResponse
 import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.logic.utils.SharePrefs.SaveInt
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.MyAPIItem
 import com.hfut.schedule.ui.Activity.success.search.Search.More.Login
 import com.hfut.schedule.ui.UIUtils.LittleDialog
 import com.hfut.schedule.ui.UIUtils.MyToast
@@ -216,8 +207,8 @@ fun teacherList(vm : LoginSuccessViewModel,refresh : (Boolean) -> Unit) {
                                 }
                                 FilledTonalIconButton(
                                     onClick = {
-                                       // showDialog = true
-                                        MyToast("下版本开放")
+                                        showDialog = true
+                                       // MyToast("下版本开放")
                                         postMode = PostMode.BAD
                                     }) {
                                     Icon(
