@@ -165,7 +165,7 @@ fun teacherList(vm : LoginSuccessViewModel,refresh : (Boolean) -> Unit) {
         LittleDialog(
             onDismissRequest = { showDialog = false },
             onConfirmation = {
-                val result = postResult(vm,postMode)
+                val result = selectMode(vm,postMode)
                 if(result) {
                     showDialog = false
                     showBottomSheet = false
@@ -213,17 +213,6 @@ fun teacherList(vm : LoginSuccessViewModel,refresh : (Boolean) -> Unit) {
                                     }) {
                                     Icon(
                                         painter = painterResource(R.drawable.thumb_down),
-                                        contentDescription = "description"
-                                    )
-                                }
-                                FilledTonalIconButton(
-                                    onClick = {
-                                       //showDialog = true
-                                        MyToast("下版本开放")
-                                        postMode = PostMode.NORMAL
-                                    }) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.arrow_upward),
                                         contentDescription = "description"
                                     )
                                 }

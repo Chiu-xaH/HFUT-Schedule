@@ -26,8 +26,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.google.gson.Gson
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
+import com.hfut.schedule.logic.datamodel.MyAPIResponse
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.success.search.Search.Bus.SchoolBus
@@ -47,6 +50,7 @@ import com.hfut.schedule.ui.Activity.success.search.Search.Mail.Pay
 import com.hfut.schedule.ui.Activity.success.search.Search.Map.Map
 import com.hfut.schedule.ui.Activity.success.search.Search.More.More
 import com.hfut.schedule.ui.Activity.success.search.Search.News.News
+import com.hfut.schedule.ui.Activity.success.search.Search.NextCourse
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.NotificationsCenter
 import com.hfut.schedule.ui.Activity.success.search.Search.Person.PersonUI
 import com.hfut.schedule.ui.Activity.success.search.Search.Program.Program
@@ -432,18 +436,20 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
                 ){
                     Map()
                 }
-                Spacer(modifier = Modifier.width(10.dp))
-                Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(.5f),
-                    shape = MaterialTheme.shapes.medium,
-                ){
-                    if (ifSaved)
-                    More()
-                }
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Card(
+                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(.5f),
+                        shape = MaterialTheme.shapes.medium,
+                    ){
+                        if(ifSaved)
+                            More()
+                    }
             }
+
+
              Spacer(modifier = Modifier.height(innerPaddings.calculateBottomPadding()))
         }
 }

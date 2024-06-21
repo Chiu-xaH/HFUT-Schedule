@@ -22,15 +22,18 @@ fun WebViewScreen(url: String) {
 
 @Composable
 fun mapScreen() {
-    AndroidView(
-        factory = { context ->
-            com.amap.api.maps.MapView(context).apply {
-                onCreate(null)
-            }
-        },update = {mapView ->
-            mapView.getMapAsyn {  }
+   // val myWebView = MyWebView(MyApplication.context)
+    //v/al maWenViewWrapper = MAWebViewWrapper(myWebView)
 
-        },
-        modifier = Modifier.fillMaxSize()
-    )
+
+   // val aMapWrapper = AMapWrapper(MyApplication.context,maWenViewWrapper)
+    //aMapWrapper.onCreate()
+    //aMapWrapper.getMapAsyn()
+   // AndroidView(
+     //   factory = { context ->
+       //     com.amap.
+       // },
+       // modifier = Modifier.fillMaxSize()
+    //)
 }
+

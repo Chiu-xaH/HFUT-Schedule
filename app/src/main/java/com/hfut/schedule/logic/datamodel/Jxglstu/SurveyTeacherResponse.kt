@@ -26,3 +26,5 @@ data class PostSurvey(val surveyAssoc : Int,
                       val blankQuestionAnswers : List<blankQuestionAnswer>)
 data class radioQuestionAnswer(val questionId : String, val optionName : String)
 data class blankQuestionAnswer(val questionId : String, val content : String)
+data class saveListChoice(val radioQuestionAnswers: List<radioQuestionAnswer>)
+data class saveListInput(val blankQuestionAnswers : List<blankQuestionAnswer>)

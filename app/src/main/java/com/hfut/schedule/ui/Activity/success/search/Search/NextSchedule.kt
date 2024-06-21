@@ -1,5 +1,7 @@
-package com.hfut.schedule.ui.Activity.success.search.Search.LoginWeb
+package com.hfut.schedule.ui.Activity.success.search.Search
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -27,53 +30,30 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.UIViewModel
-import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.getWeb
+import com.hfut.schedule.ui.Activity.success.calendar.DatumUI
+import com.hfut.schedule.ui.Activity.success.search.Search.More.Login
 import com.hfut.schedule.ui.UIUtils.ScrollText
-import org.jsoup.Jsoup
-import java.math.BigDecimal
-import java.math.RoundingMode
+import com.hfut.schedule.ui.UIUtils.mapScreen
 
-fun getIdentifyID() : String? {
-    return try {
-        val info = SharePrefs.prefs.getString("info","")
-        val doc = info?.let { Jsoup.parse(it) }
-        val chineseid = doc?.select("li.list-group-item.text-right:contains(证件号) span")?.last()?.text()
-        val seven = chineseid?.takeLast(7)
-        var id = ""
-        if (seven != null) {
-            if(seven.last() == 'X') id = seven.take(6)
-            else id = seven.takeLast(6)
-        }
-        id
-    } catch (e : Exception) {
-        null
-    }
-}
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginWeb(vmUI : UIViewModel, card : Boolean) {
+fun NextCourse(vmUI : UIViewModel,ifSaved : Boolean) {
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
 
-    val memoryWeb = prefs.getString("memoryWeb","0")
-  //  val memory = prefs.getString("memoryWeb","0")
+    TextButton(onClick = {
+        if(ifSaved) {
+            if(prefs.getInt("FIRST",0) != 0)
+                showBottomSheet = true
+            else Login()
+        } else showBottomSheet = true
+    }) {
+        Icon(painter = painterResource(id =  R.drawable.loupe), contentDescription = "")
+    }
 
-    val flow = vmUI.webValue.value?.flow?: memoryWeb
-    val gB = (flow?.toDouble() ?: 0.0) / 1024
-    val bd = BigDecimal(gB)
-    val str = bd.setScale(2, RoundingMode.HALF_UP).toString()
 
-    val bd2 = BigDecimal(((flow?.toDouble() ?: 0.0) / 20480) * 100)
-    val precent = bd2.setScale(1, RoundingMode.HALF_UP).toString()
-
-    ListItem(
-        headlineContent = { if(!card)Text(text = "校园网") else ScrollText(text = "${str}GB") },
-        overlineContent = { if(!card)ScrollText(text = "${vmUI.webValue.value?.flow?: memoryWeb}MB") else Text(text = "校园网 ${precent}%")},
-        leadingContent = { Icon(painterResource(R.drawable.net), contentDescription = "Localized description",) },
-        modifier = Modifier.clickable { showBottomSheet = true }
-    )
 
     if (showBottomSheet) {
         ModalBottomSheet(
@@ -88,7 +68,7 @@ fun LoginWeb(vmUI : UIViewModel, card : Boolean) {
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        title = { Text("校园网") }
+                        title = { Text("下学期课程表") }
                     )
                 },) { innerPadding ->
                 Column(
@@ -96,13 +76,10 @@ fun LoginWeb(vmUI : UIViewModel, card : Boolean) {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    loginWebUI(vmUI)
+                    prefs.getString("gradeNext","23")?.let { DatumUI(true, it, innerPadding, vmUI) }
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
         }
     }
 }
-
-
-

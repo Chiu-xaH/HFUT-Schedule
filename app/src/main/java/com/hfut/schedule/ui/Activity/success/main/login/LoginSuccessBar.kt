@@ -36,6 +36,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
@@ -50,13 +51,16 @@ import com.hfut.schedule.ui.Activity.success.search.main.SearchScreen
 import com.hfut.schedule.ui.Activity.success.cube.main.SettingsScreen
 import com.hfut.schedule.ui.Activity.success.focus.main.TodayScreen
 import com.hfut.schedule.logic.Enums.BottomBarItems
+import com.hfut.schedule.logic.datamodel.MyAPIResponse
 import com.hfut.schedule.logic.utils.APPVersion
 import com.hfut.schedule.ui.Activity.success.calendar.login.CalendarScreen
 import com.hfut.schedule.ui.Activity.success.main.saved.texts
 import com.hfut.schedule.ui.Activity.success.cube.Settings.getUpdates
+import com.hfut.schedule.ui.Activity.success.search.Search.NextCourse
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.NotificationItems
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.getNotifications
 import com.hfut.schedule.ui.UIUtils.MyToast
+import com.hfut.schedule.ui.UIUtils.ScrollText
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 import dev.chrisbanes.haze.hazeChild
@@ -145,9 +149,13 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel,vm
                         containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = if(blur).50f else 1f),
                         titleContentColor = MaterialTheme.colorScheme.primary,
                     ),
-                    title = { Text(texts(vm,bottomBarItems)) },
+                    title = { ScrollText(texts(vm,bottomBarItems)) },
                     actions = {
                         if(bottomBarItems == BottomBarItems.COURSES) {
+                            if(Gson().fromJson(prefs.getString("my",MyApplication.NullMy),
+                                    MyAPIResponse::class.java).Next) {
+                                NextCourse(vmUI, false)
+                            }
                             TextButton(onClick = { showAll = !showAll }) {
                                 BadgedBox(badge = {
                                     if (findCourse) Badge()

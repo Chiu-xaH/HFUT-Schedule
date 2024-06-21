@@ -48,6 +48,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 @Composable
 fun FocusCardSettings() {
@@ -237,7 +239,8 @@ fun getEle(vm : LoginSuccessViewModel,vmUI : UIViewModel) {
                     if (result?.contains("query_elec_roominfo") == true) {
                         var msg = Gson().fromJson(result, SearchEleResponse::class.java).query_elec_roominfo.errmsg
                         if(msg.contains("剩余金额")) {
-                            vmUI.electricValue.value = msg.substringAfter("剩余金额").substringAfter(":").substring(0,5)
+                            val bd = BigDecimal(msg.substringAfter("剩余金额").substringAfter(":"))
+                            vmUI.electricValue.value =  bd.setScale(2, RoundingMode.HALF_UP).toString()
                             Save("memoryEle",vmUI.electricValue.value)
                         }
                     }

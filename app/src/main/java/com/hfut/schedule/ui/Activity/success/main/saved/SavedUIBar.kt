@@ -37,12 +37,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.LoginViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.Enums.BottomBarItems
+import com.hfut.schedule.logic.datamodel.MyAPIResponse
 import com.hfut.schedule.logic.datamodel.NavigationBarItemData
 import com.hfut.schedule.logic.utils.APPVersion
 import com.hfut.schedule.logic.utils.AndroidVersion
@@ -56,6 +58,7 @@ import com.hfut.schedule.ui.Activity.success.cube.Settings.getUpdates
 import com.hfut.schedule.ui.Activity.success.cube.main.SettingsScreen
 import com.hfut.schedule.ui.Activity.success.focus.main.Test
 import com.hfut.schedule.ui.Activity.success.focus.main.TodayScreen
+import com.hfut.schedule.ui.Activity.success.search.Search.NextCourse
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.NotificationItems
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.getNotifications
 import com.hfut.schedule.ui.Activity.success.search.main.SearchScreen
@@ -147,6 +150,9 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
                     title = { Text(texts(vm,bottomBarItems)) },
                     actions = {
                         if(bottomBarItems == BottomBarItems.COURSES) {
+                            if(Gson().fromJson(prefs.getString("my",MyApplication.NullMy),
+                                    MyAPIResponse::class.java).Next)
+                                NextCourse(vmUI, true)
                             TextButton(onClick = { showAll = !showAll }) {
                                 BadgedBox(badge = {
                                     if (findCourse) Badge()
@@ -256,7 +262,7 @@ fun texts(vm : LoginSuccessViewModel,num : BottomBarItems) : String {
                 6 -> chinesenumber = "六"
                 0 -> chinesenumber = "日"
             }
-            return "今天  第${Benweeks}周  周$chinesenumber  $Date_MM_dd"
+            return "$Date_MM_dd  第${Benweeks}周  周$chinesenumber"
         }
         BottomBarItems.FOCUS -> {
             val dayweek = GetDate.dayweek
@@ -271,7 +277,7 @@ fun texts(vm : LoginSuccessViewModel,num : BottomBarItems) : String {
                 6 -> chinesenumber = "六"
                 0 -> chinesenumber = "日"
             }
-            return "今天  第${Benweeks}周  周$chinesenumber  $Date_MM_dd"
+            return "今天  $Date_MM_dd  第${Benweeks}周  周$chinesenumber"
         }
         BottomBarItems.SEARCH -> {
             var text  = "你好"

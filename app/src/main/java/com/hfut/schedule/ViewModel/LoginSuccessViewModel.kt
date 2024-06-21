@@ -709,5 +709,44 @@ class LoginSuccessViewModel : ViewModel() {
             })
         }
     }
+    var lessonIdsNext = MutableLiveData<List<Int>>()
+    fun getLessonIdsNext(cookie : String, bizTypeId : String,studentid : String) {
+        //bizTypeId为年级数，例如23  //dataId为学生ID  //semesterId为学期Id，例如23-24第一学期为234
 
+        val call = (prefs.getString("semesterId","234")?.toInt()?.plus(20)).toString()
+            ?.let { JxglstuJSON.getLessonIds(cookie,bizTypeId, it,studentid) }
+
+        if (call != null) {
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    val json = response.body()?.string()
+                    if (json != null) {
+                        val id = Gson().fromJson(json, lessonResponse::class.java)
+                        SharePrefs.Save("coursesNext",json)
+                        lessonIdsNext.value = id.lessonIds
+                    }
+                }
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+            })
+        }
+    }
+
+   // val datumDataNext = MutableLiveData<String?>()
+    fun getDatumNext(cookie : String,lessonid: JsonObject) {
+
+        val lessonIdsArray = JsonArray()
+        lessonIds.value?.forEach {lessonIdsArray.add(JsonPrimitive(it))}
+
+        val call = JxglstuJSON.getDatum(cookie,lessonid)
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                val body = response.body()?.string()
+            //    datumDataNext.value = body
+                SharePrefs.Save("jsonNext", body)
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
 }

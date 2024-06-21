@@ -110,6 +110,7 @@ fun LoginClick(vm : LoginViewModel,username : String,inputAES : String) {
                             }
                             vm.location.value.toString().contains("ticket") -> {
                                     Toast.makeText(MyApplication.context, "登陆成功", Toast.LENGTH_SHORT).show()
+                                Save("gradeNext",username.substring(2,4))
                                     val it = Intent(MyApplication.context, LoginSuccessActivity::class.java).apply {
                                         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                                         putExtra("Grade", username.substring(2, 4))
