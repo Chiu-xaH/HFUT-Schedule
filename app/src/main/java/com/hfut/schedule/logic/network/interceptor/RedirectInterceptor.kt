@@ -5,7 +5,7 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import okhttp3.Interceptor
 import okhttp3.Response
 
-class RedirectInterceptor : Interceptor {
+class RedirectInterceptor() : Interceptor {
         override fun intercept(chain: Interceptor.Chain): Response {
             val request = chain.request()
             val response = chain.proceed(request)
@@ -13,6 +13,7 @@ class RedirectInterceptor : Interceptor {
                 val location = response.header("Location").toString()
               //  Log.d("l",location)
                 val ticket = location.substringAfter("=")
+
                 SharePrefs.Save("TICKET",ticket)
                 val newRequest = request.newBuilder()
                     .url(location)

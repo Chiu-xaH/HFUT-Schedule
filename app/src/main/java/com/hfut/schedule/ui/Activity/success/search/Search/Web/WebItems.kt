@@ -52,7 +52,7 @@ fun WebItem() {
             ListItem(
                 headlineContent = { Text(text = "学生教务") },
                 leadingContent = { Icon(painterResource(R.drawable.school), contentDescription = "Localized description",) },
-                modifier = Modifier.clickable { StartApp.StartUri("http://jxglstu.hfut.edu.cn/eams5-student/login?refer=http://jxglstu.hfut.edu.cn/eams5-student/home") }
+                modifier = Modifier.clickable { StartApp.StartUri("http://jxglstu.hfut.edu.cn/eams5-student") }
             )
         }
     }
@@ -213,9 +213,9 @@ fun WebItem() {
             shape = MaterialTheme.shapes.medium,
         ){
             ListItem(
-                headlineContent = { Text(text = "") },
+                headlineContent = { Text(text = "大创系统") },
                 leadingContent = { Icon(Icons.Filled.MoreVert, contentDescription = "Localized description",) },
-                modifier = Modifier.clickable {  }
+                modifier = Modifier.clickable { StartApp.StartUri("http://dcxt.hfut.edu.cn/") }
             )
         }
     }

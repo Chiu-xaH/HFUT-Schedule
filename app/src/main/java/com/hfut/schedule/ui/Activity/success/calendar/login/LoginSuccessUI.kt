@@ -732,6 +732,17 @@ fun CalendarScreen(showAll : Boolean,vm : LoginSuccessViewModel,grade : String,i
             }
         }
 
+      ///  CoroutineScope(Job()).launch {
+         //   async {  }.await()
+           // async {
+             //   delay(2000)
+               // vm.goToJwglapp(cookies)
+         //       val tickets = vm.loginURL.value?.substringAfter("ticket=")
+                //Log.d("ticket",tickets.toString())
+         //       tickets?.let { vm.loginJwglapp(it) }
+           // }.await()
+       // }
+
         //获取慧新易校
        // val AuthObserver = Observer<String?> { result ->
         //    if (result != null) {

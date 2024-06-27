@@ -48,7 +48,7 @@ class LoginActivity : ComponentActivity() {
     private val vmUI by lazy { ViewModelProvider(this).get(UIViewModel::class.java) }
     private val viewModel: MainViewModel by viewModels()
     private val switchColor= prefs.getBoolean("SWITCHCOLOR",true)
-
+    val switch_server = SharePrefs.prefs.getBoolean("SWITCHSERVER", true)
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SuspiciousIndentation", "MissingInflatedId")
 
@@ -105,6 +105,9 @@ class LoginActivity : ComponentActivity() {
                 }
                 launch { vmUI.getUpdate() }
                 launch { vm.My() }
+                if(switch_server) {
+                    launch { vm2.getData() }
+                }
             }
 
     }

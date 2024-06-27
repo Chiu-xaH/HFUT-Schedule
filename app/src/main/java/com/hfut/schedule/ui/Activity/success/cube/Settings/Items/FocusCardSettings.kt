@@ -92,7 +92,10 @@ fun FocusCardSettings() {
             .padding(horizontal = 15.dp, vertical = 5.dp),
         shape = MaterialTheme.shapes.medium,
     ){
-        ListItem(headlineContent = { Text(text = "打开开关则会在APP启动时自动获取信息,并显示在聚焦即时卡片内，如需减少性能开销可按需开启或关闭") })
+        ListItem(headlineContent = { Text(text = "打开开关则会在APP启动时自动获取信息,并显示在聚焦即时卡片内，如需减少性能开销可按需开启或关闭") }, leadingContent = { Icon(
+            painter = painterResource(id = R.drawable.info),
+            contentDescription = ""
+        )})
     }
 
 
@@ -140,6 +143,16 @@ fun FocusCardSettings() {
         headlineContent = { Text(text = "绩点排名")} ,
         leadingContent = { Icon(painter = painterResource(id = R.drawable.hive), contentDescription = "")},
         trailingContent = { Switch(checked = false, onCheckedChange = {}, enabled = false)}
+    )
+    ListItem(
+        headlineContent = { Text(text = "寝室评分")} ,
+        leadingContent = { Icon(painter = painterResource(id = R.drawable.psychiatry), contentDescription = "")},
+        trailingContent = { Switch(checked = false, onCheckedChange = {}, enabled = false)}
+    )
+    ListItem(
+        headlineContent = { Text(text = "图书借阅")} ,
+        leadingContent = { Icon(painter = painterResource(id = R.drawable.book), contentDescription = "")},
+        trailingContent = { Switch(checked = true, onCheckedChange = {}, enabled = false)}
     )
 }
 

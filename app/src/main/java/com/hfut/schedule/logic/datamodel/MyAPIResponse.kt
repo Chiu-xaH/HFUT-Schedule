@@ -6,7 +6,9 @@ data class MyAPIResponse (val SettingsInfo : SettingsInfo,
                           val Labs : List<Lab>,
                           val Notifications : List<Notifications>,
                           val SchoolCalendar : String,
-                          val Next : Boolean)
+                          val Next : Boolean,
+                          val API : String,
+                          val useNewAPI : Boolean)
 data class SettingsInfo(val version : String,
                         val title : String,
                         val info : String,

@@ -141,23 +141,12 @@ fun PartTwo() {
             else Toast.makeText(MyApplication.context,"与云端版本一致",Toast.LENGTH_SHORT).show()
         }
     )
-
-       // ListItem(
-         //   headlineContent = { Text(text = "已上架到 奇妙应用") },
-            ///supportingContent = { Text(text = "欢迎前往主页,也可以更新哦")},
-          //  leadingContent = {
-               // BadgedBox(badge = {
-                 //   if(showBadge)
-                   //     Badge(modifier = Modifier.size(7.dp)) }) {
-              //      Icon(painterResource(R.drawable.shopping_bag), contentDescription = "Localized description",)
-              //  }
-            //},
-           // modifier = Modifier.clickable{
-           //     StartUri("https://www.magicalapk.com/appview?id=1710340624330")
-          //  }
-        //)
-  //  }
-    //Spacer(modifier = Modifier.height(5.dp))
+    ListItem(
+        headlineContent = { Text(text = "用户统计数据") },
+        supportingContent = { Text(text = "允许上传非敏感数据,以帮助更好的改进体验") },
+        leadingContent = { Icon(painterResource(R.drawable.cloud_upload), contentDescription = "Localized description",) },
+        trailingContent = {Switch(checked = false, onCheckedChange = {}, enabled = false)}
+    )
 
    // ListItem(
      //   headlineContent = { Text(text = "降级到3.X版本 (4.0 限定选项)") },

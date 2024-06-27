@@ -549,7 +549,7 @@ fun BoxScope.AddButton(isVisible: Boolean,innerPaddings : PaddingValues) {
                             modifier = Modifier.clickable {}
                         )
                     }
-                    
+
                     Spacer(modifier = Modifier.height(10.dp))
 
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
@@ -614,21 +614,21 @@ fun BoxScope.AddButton(isVisible: Boolean,innerPaddings : PaddingValues) {
     }
 
 
-        AnimatedVisibility(
-            visible = isVisible,
-            enter = scaleIn() ,
-            exit = scaleOut(),
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(innerPaddings)
-                .padding(horizontal = 15.dp, vertical = 15.dp)
-        ) {
-            if (isVisible) {
-                FloatingActionButton(
-                    onClick = { showBottomSheet = true },
-                ) { Icon(Icons.Filled.Add, "Add Button") }
-            }
+    AnimatedVisibility(
+        visible = isVisible,
+        enter = scaleIn() ,
+        exit = scaleOut(),
+        modifier = Modifier
+            .align(Alignment.BottomEnd)
+            .padding(innerPaddings)
+            .padding(horizontal = 15.dp, vertical = 15.dp)
+    ) {
+        if (isVisible) {
+            FloatingActionButton(
+                onClick = { showBottomSheet = true },
+            ) { Icon(Icons.Filled.Add, "Add Button") }
         }
+    }
 }
 
 @Composable

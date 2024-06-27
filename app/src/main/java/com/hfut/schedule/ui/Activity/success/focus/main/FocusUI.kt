@@ -43,6 +43,7 @@ import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.LoginViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.utils.GetDate
+import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.success.calendar.nonet.getCourseINFO
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.FocusCard
@@ -58,6 +59,9 @@ import com.hfut.schedule.ui.Activity.success.focus.Focus.TodayCourseItem
 import com.hfut.schedule.ui.Activity.success.focus.Focus.TomorrowCourseItem
 import com.hfut.schedule.ui.Activity.success.focus.Focus.WangkeItem
 import com.hfut.schedule.ui.Activity.success.focus.Focus.getTodayNet
+import com.hfut.schedule.ui.Activity.success.focus.getResult
+import com.hfut.schedule.ui.Activity.success.focus.newScheduleItems
+import com.hfut.schedule.ui.Activity.success.focus.newWangkeItem
 import com.hfut.schedule.ui.Activity.success.main.saved.NetWorkUpdate
 import com.hfut.schedule.ui.Activity.success.search.Search.Exam.JxglstuExamUI
 import com.hfut.schedule.ui.Activity.success.search.Search.Exam.getExamJXGLSTU
@@ -100,6 +104,7 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel,innerPaddings : 
     })
 
     val shouldRefresh by remember { derivedStateOf { refreshing }}
+    val switch_server = SharePrefs.prefs.getBoolean("SWITCHSERVER", false)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //布局///////////////////////////////////////
 
@@ -171,21 +176,32 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel,innerPaddings : 
                                         items(getCourseINFO(weekdayToday,week).size) { item -> TodayCourseItem(item = item) }
                                     //日程
                                     if (prefs.getBoolean("SWITCHMYAPI",true)){
+                                        if(!switch_server)
                                         items(MySchedule().size) { item -> MyScheuleItem(item = item, MySchedule = MySchedule(),false) }
+                                        else items(getResult(true).size) {item -> newScheduleItems(MySchedule = getResult(true), item, false)}
                                     }
                                     //考试
                                   //  if(ifSaved) items(getExam().size) { item -> ExamItems(item,true,) }
                                   //  else
                                     items(getExamJXGLSTU()) { item -> JxglstuExamUI(item,false) }
                                     //网课
+                                    if(!switch_server)
                                     items(MyWangKe().size) { item -> WangkeItem(item = item, MyWangKe = MyWangKe(),false) }
+                                    else items(getResult(false).size) {item -> newWangkeItem(item, MyWangKe = getResult(false), Future = false)  }
                                 }
                                 TAB_RIGHT -> {
                                     if (prefs.getBoolean("SWITCHMYAPI",true)) {
-                                        //日程
-                                        items(MySchedule().size) { item -> MyScheuleItem(item = item, MySchedule = MySchedule(),true)  }
-                                        //网课
-                                        items(MyWangKe().size) { item -> WangkeItem(item = item, MyWangKe = MyWangKe(),true) }
+                                        if(!switch_server) {
+                                            //日程
+                                            items(MySchedule().size) { item -> MyScheuleItem(item = item, MySchedule = MySchedule(),true)  }
+                                            //网课
+                                            items(MyWangKe().size) { item -> WangkeItem(item = item, MyWangKe = MyWangKe(),true) }
+                                        } else {
+                                            //日程
+                                            items(getResult(true).size) { item -> newScheduleItems(getResult(true), item,false)  }
+                                            //网课
+                                            items(getResult(false).size) { item -> newWangkeItem(item = item, MyWangKe = getResult(false),true) }
+                                        }
                                     }
 
                                     //第二天课表

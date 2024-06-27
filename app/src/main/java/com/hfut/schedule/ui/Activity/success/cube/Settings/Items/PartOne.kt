@@ -33,15 +33,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.activity.LoginActivity
+import com.hfut.schedule.logic.datamodel.MyAPIResponse
 import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.SaveBoolean
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.success.search.Search.LePaoYun.InfoSet
+import com.hfut.schedule.ui.UIUtils.MyToast
 
 
 fun apiCheck() : Boolean {
@@ -64,10 +67,15 @@ fun PartOne(vm : LoginSuccessViewModel, showlable : Boolean, showlablechanged :(
     SaveBoolean("SWITCH",true,showlable)
     SaveBoolean("SWITCHBLUR",true,blur)
     SaveBoolean("SWITCHMYAPI",false,showapi)
-
+    val my = prefs.getString("my","")
     val switch_faststart = SharePrefs.prefs.getBoolean("SWITCHFASTSTART",prefs.getString("TOKEN","")?.isNotEmpty() ?: false)
     var faststart by remember { mutableStateOf(switch_faststart) }
     SaveBoolean("SWITCHFASTSTART",prefs.getString("TOKEN","")?.isNotEmpty() ?: false,faststart)
+
+    val deault = try { Gson().fromJson(my,MyAPIResponse::class.java).useNewAPI } catch (e : Exception) { true }
+    val switch_server = SharePrefs.prefs.getBoolean("SWITCHSERVER",deault )
+    var server by remember { mutableStateOf(switch_server) }
+    SaveBoolean("SWITCHSERVER",deault,server)
 
 
     ListItem(
@@ -90,6 +98,13 @@ fun PartOne(vm : LoginSuccessViewModel, showlable : Boolean, showlablechanged :(
         leadingContent = { Icon(painterResource(R.drawable.speed), contentDescription = "Localized description",) },
         trailingContent = { Switch(checked = faststart, onCheckedChange = {faststartch -> faststart = faststartch }) },
         modifier = Modifier.clickable { faststart = !faststart }
+    )
+    ListItem(
+        headlineContent = { Text(text = "云端交互(Beta) & 新聚焦接口") },
+        supportingContent = { Text(text = "打开后,部分信息将回传云端,不包括用户敏感信息,即使关闭状态下仍保持部分必须云端数据交换")},
+        leadingContent = { Icon(painterResource(R.drawable.filter_drama), contentDescription = "Localized description",) },
+        trailingContent = { Switch(checked = server, onCheckedChange = {serverch -> server = serverch }, enabled = true) },
+        modifier = Modifier.clickable { server = !server }
     )
     if(ifSaved)
     ListItem(
@@ -164,7 +179,7 @@ fun PartOne(vm : LoginSuccessViewModel, showlable : Boolean, showlablechanged :(
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        title = { Text("即时卡片设置") },
+                        title = { Text("预加载") },
                     )
                 },
             ) { innerPadding ->
@@ -215,9 +230,9 @@ fun PartOne(vm : LoginSuccessViewModel, showlable : Boolean, showlablechanged :(
 
 
     ListItem(
-        headlineContent = { Text(text = "即时卡片设置") },
-        supportingContent = { Text(text = "即时卡片位于聚焦首页，现在您可自定义卡片") },
-        leadingContent = { Icon(painterResource(R.drawable.stacks), contentDescription = "Localized description",) },
+        headlineContent = { Text(text = "预加载") },
+        supportingContent = { Text(text = "启动APP时会自动加载或更新一些即时数据,您可按需调整") },
+        leadingContent = { Icon(painterResource(R.drawable.reset_iso), contentDescription = "Localized description",) },
         modifier = Modifier.clickable { showBottomSheet_card = true }
     )
    // ListItem(

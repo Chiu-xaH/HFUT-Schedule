@@ -16,6 +16,7 @@ import com.hfut.schedule.logic.datamodel.One.BorrowBooksResponse
 import com.hfut.schedule.logic.datamodel.One.SubBooksResponse
 import com.hfut.schedule.logic.datamodel.One.getTokenResponse
 import com.hfut.schedule.logic.network.ServiceCreator.CommunitySreviceCreator
+import com.hfut.schedule.logic.network.ServiceCreator.JwglappServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuHTMLServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuJSONServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuSurveyServiceCreator
@@ -29,6 +30,7 @@ import com.hfut.schedule.logic.network.ServiceCreator.XuanquServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.ZJGDBillServiceCreator
 import com.hfut.schedule.logic.network.api.CommunityService
 import com.hfut.schedule.logic.network.api.FWDTService
+import com.hfut.schedule.logic.network.api.JwglappService
 import com.hfut.schedule.logic.network.api.JxglstuService
 import com.hfut.schedule.logic.network.api.LePaoYunService
 import com.hfut.schedule.logic.network.api.LoginService
@@ -37,6 +39,8 @@ import com.hfut.schedule.logic.network.api.OneService
 import com.hfut.schedule.logic.network.api.XuanquService
 import com.hfut.schedule.logic.network.api.ZJGDBillService
 import com.hfut.schedule.logic.utils.SharePrefs.Save
+import com.hfut.schedule.ui.Activity.success.focus.ServerService
+import com.hfut.schedule.ui.Activity.success.focus.ServerServiceCreator
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -52,12 +56,28 @@ class LoginSuccessViewModel : ViewModel() {
     private val LePaoYun = LePaoYunServiceCreator.create(LePaoYunService::class.java)
     private val searchEle = SearchEleServiceCreator.create(FWDTService::class.java)
     private val CommunityLogin = LoginServiceCreator.create(CommunityService::class.java)
+    private val JwglappLogin = JwglappServiceCreator.create(JwglappService::class.java)
     private val Community = CommunitySreviceCreator.create(CommunityService::class.java)
+    private val Jwglapp = JwglappServiceCreator.create(JwglappService::class.java)
     private val News = NewsServiceCreator.create(NewsService::class.java)
     private val JxglstuSurvey = JxglstuSurveyServiceCreator.create(JxglstuService::class.java)
+    private val server = ServerServiceCreator.create(ServerService::class.java)
+
     var studentId = MutableLiveData<Int>(99999)
     var lessonIds = MutableLiveData<List<Int>>()
     var token = MutableLiveData<String>()
+
+    //val newFocus = MutableLiveData<String>()
+    fun getData() {
+        val call = server.getData()
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                Save("newFocus",response?.body()?.string())
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
 
 
     val NewsData = MutableLiveData<String?>()
