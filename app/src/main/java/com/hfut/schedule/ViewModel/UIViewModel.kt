@@ -20,6 +20,7 @@ class UIViewModel : ViewModel()  {
     private val Gitee = GiteeServiceCreator.create(GiteeService::class.java)
     private val LoginWeb = LoginWebServiceCreator.create(LoginWebsService::class.java)
     private val LoginWeb2 = LoginWebServiceCreator.create(LoginWebsService::class.java)
+
     val findNewCourse = MutableLiveData<Boolean>()
     var CardValue = MutableLiveData<ReturnCard>()
     var electricValue = MutableLiveData<String?>()

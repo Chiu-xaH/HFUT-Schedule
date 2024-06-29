@@ -1,7 +1,9 @@
 package com.hfut.schedule.ViewModel
 
 //import com.hfut.schedule.logic.network.ServiceCreator.Login.OneGetNewTicketServiceCreator.client
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
@@ -39,9 +41,11 @@ import com.hfut.schedule.logic.network.api.OneService
 import com.hfut.schedule.logic.network.api.XuanquService
 import com.hfut.schedule.logic.network.api.ZJGDBillService
 import com.hfut.schedule.logic.utils.SharePrefs.Save
-import com.hfut.schedule.ui.Activity.success.focus.ServerService
-import com.hfut.schedule.ui.Activity.success.focus.ServerServiceCreator
+import com.hfut.schedule.logic.network.api.ServerService
+import com.hfut.schedule.logic.network.ServiceCreator.ServerServiceCreator
+import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.getUserInfo
 import okhttp3.ResponseBody
+import org.jsoup.Jsoup
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -73,6 +77,24 @@ class LoginSuccessViewModel : ViewModel() {
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 Save("newFocus",response?.body()?.string())
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun postUser() {
+        val data = getUserInfo()
+        val call = server.postUse(
+            dateTime = data.dateTime,
+            deviceName = data.deviceName ?: "空",
+            appVersion = data.appVersionName,
+            systemVersion = data.systemVersion,
+            studentID = data.studentID ?: "空",
+            user = data.name ?: "空")
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                //response?.body()?.string()?.let { Log.d("恢复", it) }
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }

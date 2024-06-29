@@ -18,12 +18,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
-import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.datamodel.MyAPIResponse
-import com.hfut.schedule.logic.datamodel.MyList
-import com.hfut.schedule.logic.datamodel.Schedule
+import com.hfut.schedule.logic.datamodel.ServerResponse
+import com.hfut.schedule.logic.datamodel.newSchedule
 import com.hfut.schedule.logic.utils.AddCalendar
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.SharePrefs
@@ -47,7 +45,7 @@ fun getResult(mode : Boolean): MutableList<newSchedule> {
     val listSchedule = mutableListOf<newSchedule>()
     val listWangke = mutableListOf<newSchedule>()
     return try {
-        val json = Gson().fromJson(prefs.getString("newFocus",""),APIResponse::class.java)
+        val json = Gson().fromJson(prefs.getString("newFocus",""), ServerResponse::class.java)
         val schedule = json.Schedule
         val wangke = json.Wangke
 

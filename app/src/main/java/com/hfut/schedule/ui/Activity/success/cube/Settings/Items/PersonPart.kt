@@ -1,5 +1,7 @@
 package com.hfut.schedule.ui.Activity.success.cube.Settings.Items
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -49,6 +51,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.glance.appwidget.lazy.LazyVerticalGrid
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.datamodel.UserInfo
+import com.hfut.schedule.logic.utils.APPVersion
+import com.hfut.schedule.logic.utils.AndroidVersion
+import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.MonetColor.MonetUI
@@ -206,4 +212,26 @@ fun PersonPart() {
     }
 }
 
+
+@RequiresApi(Build.VERSION_CODES.O)
+fun getUserInfo() : UserInfo {
+
+    val info = SharePrefs.prefs.getString("info","")
+
+    val doc = info?.let { Jsoup.parse(it) }
+    val studentnumber = doc?.select("li.list-group-item.text-right:contains(学号) span")?.last()?.text()
+    val name = doc?.select("li.list-group-item.text-right:contains(中文姓名) span")?.last()?.text()
+
+
+    val date = GetDate.Date_yyyy_MM_dd
+    val time = "${GetDate.formattedTime_Hour}:${GetDate.formattedTime_Minute}:00"
+    val dateTime = "$date $time"
+
+
+    val appVersion = APPVersion.getVersionName()
+    val androidSDK = AndroidVersion.sdkInt
+    val device = Build.MODEL
+
+    return UserInfo(name,studentnumber,dateTime, appVersionName = appVersion, systemVersion = androidSDK, deviceName = device)
+}
 

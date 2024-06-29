@@ -47,8 +47,8 @@ interface JxglstuService {
     @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.17")
     fun getInfo(@Header("Cookie") Cookie : String,
                 @Path("studentId") studentId : String) : Call<ResponseBody>
-    //培养方案 XML
-    @GET("for-std/program/info/{studentId}")
+    //培养方案 JSON
+    @GET("for-std/program/root-module-json/{studentId}")
     @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.17")
     fun getProgram(@Header("Cookie") Cookie : String,
                 @Path("studentId") studentId : String) : Call<ResponseBody>

@@ -1,11 +1,11 @@
 package com.hfut.schedule.logic.datamodel.Jxglstu
 
-data class ProgramResponse(val children : List<ProgramResponse>?,
+data class ProgramResponse(val children : List<ProgramResponse>,
                            val type : Type?,
                            val requireInfo : RequireInfo?,
                            val remark : String?,
                            val reference : Boolean,
-                           val planCourses : List<PlanCourses>?,
+                           val planCourses : List<PlanCourses>,
                            //val periodInfoRatio : PeriodInfoRatio,
                            val sumChildrenNum : Int,
                            val sumChildrenRequiredCredits : Double,
@@ -25,15 +25,20 @@ data class RequireInfo(val requiredSubModuleNum : Double,
                        val requiredCourseNum : Int,
                        val totalTheoryPeriods : Int,
                        val totalTheoryCredits : Double,
+                       val requiredCredits : Double?,
                        val totalPracticePeriods : Int,
                        val totalPracticeCredits : Double,
                        val requiredTotalPeriods : Int,)
 
-data class PlanCourses(val readableTerms : List<String>,
-                       val readableSuggestTerms : List<String>,val remark : String,
+data class PlanCourses(val readableTerms : List<Int>,
+                       val readableSuggestTerms : List<String>,
+                       val remark : String,val course : course,
+                       val openDepartment : courseType
 )
 //readableTerms开课学期，readableSuggestTerms建议修读学期
 
 //data class PeriodInfoRatio()
+
+
 
 

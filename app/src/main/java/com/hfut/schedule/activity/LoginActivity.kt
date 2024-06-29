@@ -1,7 +1,6 @@
 package com.hfut.schedule.activity
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -36,8 +35,6 @@ import com.hfut.schedule.ui.MonetColor.SettingsProvider
 import com.hfut.schedule.ui.UIUtils.TransparentSystemBars
 import com.hfut.schedule.ui.theme.MonetColor
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -48,7 +45,9 @@ class LoginActivity : ComponentActivity() {
     private val vmUI by lazy { ViewModelProvider(this).get(UIViewModel::class.java) }
     private val viewModel: MainViewModel by viewModels()
     private val switchColor= prefs.getBoolean("SWITCHCOLOR",true)
-    val switch_server = SharePrefs.prefs.getBoolean("SWITCHSERVER", true)
+    val switchServer = SharePrefs.prefs.getBoolean("SWITCHSERVER", true)
+    val switchUpload = prefs.getBoolean("SWITCHUPLOAD",true )
+    var value = 0
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SuspiciousIndentation", "MissingInflatedId")
 
@@ -105,9 +104,12 @@ class LoginActivity : ComponentActivity() {
                 }
                 launch { vmUI.getUpdate() }
                 launch { vm.My() }
-                if(switch_server) {
-                    launch { vm2.getData() }
-                }
+                if(switchServer) { launch { vm2.getData() } }
+                if(switchUpload && value == 0) {
+                    launch {
+                    vm2.postUser()
+                    value++
+                } }
             }
 
     }
