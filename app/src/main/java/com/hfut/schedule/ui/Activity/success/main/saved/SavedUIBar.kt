@@ -56,7 +56,6 @@ import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.success.calendar.nonet.SaveCourse
 import com.hfut.schedule.ui.Activity.success.cube.Settings.getUpdates
 import com.hfut.schedule.ui.Activity.success.cube.main.SettingsScreen
-import com.hfut.schedule.ui.Activity.success.focus.main.Test
 import com.hfut.schedule.ui.Activity.success.focus.main.TodayScreen
 import com.hfut.schedule.ui.Activity.success.search.Search.NextCourse
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.NotificationItems

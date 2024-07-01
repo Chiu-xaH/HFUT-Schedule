@@ -223,36 +223,3 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel,innerPaddings : 
 
         }
 }
-
-
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun Test() {
-    // Display 10 items
-    val pagerState = rememberPagerState(pageCount = { 2 })
-    val titles = listOf("重要安排","其他事项")
-
-    Column {
-        TabRow(selectedTabIndex = pagerState.currentPage) {
-            titles.forEachIndexed { index, title ->
-                Tab(
-                    selected = pagerState.currentPage == index,
-                    onClick = {
-                        CoroutineScope(Job()).launch {
-                            pagerState.animateScrollToPage(index)
-                        }
-                    },
-                    text = { Text(text = title) },
-                   // modifier = Modifier.background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = if(blur).5f else 1f))
-                )
-            }
-        }
-    }
-      Spacer(modifier = Modifier.height(100.dp))
-
-    HorizontalPager(state = pagerState) { page ->
-        // Our page content
-        Icon(painter = painterResource(id = R.drawable.info), contentDescription = "", modifier = Modifier.size(300.dp))
-    }
-}

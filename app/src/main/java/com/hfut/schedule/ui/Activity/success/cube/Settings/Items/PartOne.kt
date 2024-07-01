@@ -179,7 +179,7 @@ fun PartOne(vm : LoginSuccessViewModel, showlable : Boolean, showlablechanged :(
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        title = { Text("预加载") },
+                        title = { Text("预加载 即时卡片设置") },
                     )
                 },
             ) { innerPadding ->
@@ -230,7 +230,7 @@ fun PartOne(vm : LoginSuccessViewModel, showlable : Boolean, showlablechanged :(
 
 
     ListItem(
-        headlineContent = { Text(text = "预加载") },
+        headlineContent = { Text(text = "预加载 即时卡片设置") },
         supportingContent = { Text(text = "启动APP时会自动加载或更新一些即时数据,您可按需调整") },
         leadingContent = { Icon(painterResource(R.drawable.reset_iso), contentDescription = "Localized description",) },
         modifier = Modifier.clickable { showBottomSheet_card = true }

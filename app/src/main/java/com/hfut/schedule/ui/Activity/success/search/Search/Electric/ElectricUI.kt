@@ -58,6 +58,7 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.datamodel.SearchEleResponse
+import com.hfut.schedule.logic.utils.ClipBoard
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.StartApp
 import com.hfut.schedule.ui.UIUtils.MyToast
@@ -81,7 +82,9 @@ fun EleUI(vm : LoginSuccessViewModel) {
     val SavedEndNumber = SharePrefs.prefs.getString("EndNumber", "")
     var EndNumber by remember { mutableStateOf(SavedEndNumber ?: "") }
 
-    var input = "300"+BuildingsNumber+RoomNumber+EndNumber
+    var region by remember { mutableStateOf("选择南北") }
+
+    var input = "300$BuildingsNumber$RoomNumber$EndNumber"
     var jsons = "{ \"query_elec_roominfo\": { \"aid\":\"0030000000007301\", \"account\": \"24027\",\"room\": { \"roomid\": \"${input}\", \"room\": \"${input}\" },  \"floor\": { \"floorid\": \"\", \"floor\": \"\" }, \"area\": { \"area\": \"\", \"areaname\": \"\" }, \"building\": { \"buildingid\": \"\", \"building\": \"\" },\"extdata\":\"info1=\" } }"
 
 
@@ -92,6 +95,16 @@ fun EleUI(vm : LoginSuccessViewModel) {
     var showDialog by remember { mutableStateOf(false) }
     var Result by remember { mutableStateOf("") }
     var Result2 by remember { mutableStateOf("") }
+
+
+
+    when(EndNumber) {
+        "11"-> region = "南边照明"
+        "12" -> region = "南边空调"
+        "21" -> region = "北边照明"
+        "22" -> region = "北边空调"
+        else -> region = "选择南北"
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -107,7 +120,11 @@ fun EleUI(vm : LoginSuccessViewModel) {
                         if(showitem4)
                             IconButton(onClick = {RoomNumber = RoomNumber.replaceFirst(".$".toRegex(), "")}) {
                                 Icon(painter = painterResource(R.drawable.backspace), contentDescription = "description") }
-                        FilledTonalIconButton(onClick = { showDialog=true }) {
+                        FilledTonalIconButton(onClick = {
+                            showDialog=true
+                            ClipBoard.copy(input)
+                            MyToast("已将房间号复制到剪切板")
+                        }) {
                             Icon(painter = painterResource(id = R.drawable.add), contentDescription = "")
                         }
                         FilledTonalIconButton(onClick = {
@@ -246,7 +263,7 @@ fun EleUI(vm : LoginSuccessViewModel) {
                             else -> Toast.makeText(MyApplication.context,"请选择楼栋", Toast.LENGTH_SHORT).show()
                         }
                     },
-                    label = { Text(text = "选择南北") },
+                    label = { Text(text = region) },
                     //    leadingIcon = { Icon(painter = painterResource(R.drawable.calendar), contentDescription = "description") }
                 )
 

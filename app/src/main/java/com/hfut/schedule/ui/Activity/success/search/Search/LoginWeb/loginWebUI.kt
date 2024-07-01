@@ -52,7 +52,7 @@ fun loginWebUI(vmUI : UIViewModel) {
     val str = bd.setScale(2, RoundingMode.HALF_UP).toString()
     var textStatus by  remember { mutableStateOf("已用 ${flow}MB (${str}GB)\n余额 ￥${vmUI.webValue.value?.fee?: "0"}") }
 
-    val bd2 = BigDecimal(((flow?.toDouble() ?: 0.0) / 20480) * 100)
+    val bd2 = BigDecimal(((flow?.toDouble() ?: 0.0) / 40960) * 100)
     val precent = bd2.setScale(2, RoundingMode.HALF_UP).toString()
        // return str
 
@@ -64,7 +64,8 @@ fun loginWebUI(vmUI : UIViewModel) {
         shape = MaterialTheme.shapes.medium,
     ){
         ListItem(
-            headlineContent = { Text(text = "月免费额度 20GB") },
+            overlineContent = { Text(text = "(我也不确定,反正>20G)")},
+            headlineContent = { Text(text = "月免费额度 40GB") },
             trailingContent = { Text(text = "已用 ${precent}%")},
             leadingContent = { Icon(painterResource(R.drawable.net), contentDescription = "Localized description",) },
             modifier = Modifier.clickable {
@@ -156,7 +157,7 @@ fun getWebInfos(html : String) : WebInfo {
         var flow3 = "."
         if (flow0 / 1024 < 10) flow3 = ".00"
         else { if (flow0 / 1024 < 100) flow3 = ".0"; }
-        val resultFee = (fee1 / 100000).toString()
+        val resultFee = (fee1 / 10000).toString()
         val resultFlow : String = ((flow1 / 1024).toString() + flow3 + (flow0 / 1024)).substringBefore(".")
 
         return WebInfo(resultFee,resultFlow)
