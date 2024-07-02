@@ -238,7 +238,7 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
                 //Test()
             }
             composable(BottomBarItems.SEARCH.name) { SearchScreen(vm,true,innerPadding,vmUI) }
-            composable(BottomBarItems.SETTINGS.name) { SettingsScreen(vm,showlable, showlablechanged = { showlablech -> showlable = showlablech},true,innerPadding, blur,blurchanged = { blurch -> blur = blurch})
+            composable(BottomBarItems.SETTINGS.name) { SettingsScreen(vm,showlable, showlablechanged = { showlablech -> showlable = showlablech},true,innerPadding, blur,blurchanged = { blurch -> blur = blurch},vm2)
             }
         }
     }

@@ -66,56 +66,17 @@ fun Clear() {
 @Composable
 fun PartTwo() {
 
-    val Saveselect = prefs.getBoolean("select",false)
-    var select by remember { mutableStateOf(Saveselect) }
-
-    var automode by remember { mutableStateOf(true) }
-    var mode by remember { mutableStateOf(true) }
-
     MonetColorItem()
 
-
-  //  ListItem(
-    //    headlineContent = { Text(text = "主题色模式") },
-      //  supportingContent = {
-        //    if(automode)
-         //   Text(text = "已跟随系统,关闭开关可自定义")
-           // else {
-             //   Column {
-               //     Text(text = "选择深浅色主题,打开开关将跟随系统")
-             //       Row {
-               //         FilterChip(
-                 //           onClick = {
-                   //             select = true
-                     //           SaveBoolean("select",false,select)
-                       //     },
-                         //   label = { Text(text = "深色") }, selected = select)
-                       // Spacer(modifier = Modifier.width(10.dp))
-                       // FilterChip(
-                         //   onClick = {
-                           //     select = false
-                             //   SaveBoolean("select",false,select)
-                          //  },
-                //            label = { Text(text = "浅色") }, selected = !select)
-                 //   }
-               // }
-          ///  }
-       // },
-       // trailingContent = { Switch(enabled = false,checked = automode, onCheckedChange = { modech -> automode = modech }) },
-     //   leadingContent = {
-       //     Icon(
-         //       painterResource(if(automode)R.drawable.routine else if(mode) R.drawable.light_mode else R.drawable.dark_mode ),
-           //     contentDescription = "Localized description",
-           // )
-       // },
-       // modifier = Modifier.clickable{}
-   // )
-
-
-
-    val switch_upload = SharePrefs.prefs.getBoolean("SWITCHUPLOAD",true )
-    var upload by remember { mutableStateOf(switch_upload) }
-    SaveBoolean("SWITCHUPLOAD",true,upload)
+    ListItem(
+        headlineContent = { Text(text = "关于 疑难解答 修复") },
+        supportingContent = { Text(text = "当出现问题时,可从此处进入或长按桌面图标选择修复")},
+        leadingContent = { Icon(painterResource(R.drawable.build), contentDescription = "Localized description",) },
+        modifier = Modifier.clickable{
+            val it = Intent(MyApplication.context, FixActivity::class.java).apply { addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) }
+            MyApplication.context.startActivity(it)
+        }
+    )
 
 
     var version by remember { mutableStateOf(getUpdates()) }
@@ -135,34 +96,8 @@ fun PartTwo() {
         },
         modifier = Modifier.clickable{
             if (version.version != APPVersion.getVersionName())
-                StartUri("https://gitee.com/chiu-xah/HFUT-Schedule/releases/tag/Android")
+                StartUri(MyApplication.DownloadURL)
             else Toast.makeText(MyApplication.context,"与云端版本一致",Toast.LENGTH_SHORT).show()
-        }
-    )
-    ListItem(
-        headlineContent = { Text(text = "用户统计数据") },
-        supportingContent = { Text(text = "允许上传非敏感数据,以帮助更好的改进体验") },
-        leadingContent = { Icon(painterResource(R.drawable.cloud_upload), contentDescription = "Localized description",) },
-        trailingContent = {Switch(checked = upload, onCheckedChange = { uploadch -> upload = uploadch }, enabled = true)}
-    )
-
-   // ListItem(
-     //   headlineContent = { Text(text = "降级到3.X版本 (4.0 限定选项)") },
-      //  supportingContent = { Text(text = "由于4.0初期存在若干Bug,如影响使用,可点击此选项获取上版")},
-       // leadingContent = { Icon(painterResource(R.drawable.trending_down), contentDescription = "Localized description",) },
-        //modifier = Modifier.clickable{ StartUri("https://gitee.com/chiu-xah/HFUT-Schedule/releases/tag/Memory") }
-    //)
-
-
-
-
-    ListItem(
-        headlineContent = { Text(text = "关于与修复") },
-        supportingContent = { Text(text = "当出现问题时,可从此处进入或长按桌面图标选择修复")},
-        leadingContent = { Icon(painterResource(R.drawable.build), contentDescription = "Localized description",) },
-        modifier = Modifier.clickable{
-            val it = Intent(MyApplication.context, FixActivity::class.java).apply { addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) }
-            MyApplication.context.startActivity(it)
         }
     )
 }
@@ -197,7 +132,7 @@ fun UpdateItem() {
             IconButton(onClick = { expandItems = !expandItems }) { Icon(painterResource(id = if(!expandItems) R.drawable.expand_content else R.drawable.collapse_content), contentDescription = "")
             }
             },
-        modifier = Modifier.clickable{ StartUri("https://gitee.com/chiu-xah/HFUT-Schedule/releases/tag/Android") },
+        modifier = Modifier.clickable{ StartUri(MyApplication.DownloadURL) },
         colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
     )
 

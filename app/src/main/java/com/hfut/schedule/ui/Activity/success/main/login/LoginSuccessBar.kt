@@ -235,7 +235,7 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel,vm
             composable(BottomBarItems.COURSES.name) { CalendarScreen(showAll,vm,grade,innerPadding,vmUI) }
             composable(BottomBarItems.FOCUS.name) { TodayScreen(vm,vm2,innerPadding,blur,vmUI,false) }
             composable(BottomBarItems.SEARCH.name) { SearchScreen(vm,false,innerPadding,vmUI) }
-            composable(BottomBarItems.SETTINGS.name) { SettingsScreen(vm, showlable, showlablechanged = {showlablech -> showlable = showlablech}, false,innerPadding,blur,blurchanged = {blurch -> blur = blurch}) }
+            composable(BottomBarItems.SETTINGS.name) { SettingsScreen(vm, showlable, showlablechanged = {showlablech -> showlable = showlablech}, false,innerPadding,blur,blurchanged = {blurch -> blur = blurch},vm2) }
         }
     }
 }

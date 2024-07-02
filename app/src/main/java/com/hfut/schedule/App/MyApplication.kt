@@ -15,6 +15,7 @@ class MyApplication : Application() {
         lateinit var context: Context
         val Blur = 20.dp
         const val NewsURL = "https://news.hfut.edu.cn/"
+        const val DownloadURL = "https://gitee.com/chiu-xah/HFUT-Schedule/releases/tag/Android"
         const val ServerURL = ""
         const val JwglappURL = "https://jwglapp.hfut.edu.cn/"
         const val UpdateURL = "https://gitee.com/chiu-xah/HFUT-Schedule/"
