@@ -184,7 +184,16 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel) {
                 else Toast.makeText(MyApplication.context,"与云端版本一致", Toast.LENGTH_SHORT).show()
             }
         )
-
+        ListItem(
+            headlineContent = { Text(text = "版本日志") },
+            supportingContent = { Text("查看历代版本的更新内容") },
+            leadingContent = {
+                    Icon(painterResource(R.drawable.crossword), contentDescription = "Localized description",)
+            },
+            modifier = Modifier.clickable{
+                StartApp.StartUri("https://github.com/Chiu-xaH/HFUT-Schedule/blob/main/UPDATE.md")
+            }
+        )
 
         //Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding()))
     }

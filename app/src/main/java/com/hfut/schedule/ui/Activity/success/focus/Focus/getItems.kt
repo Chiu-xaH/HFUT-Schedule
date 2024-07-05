@@ -10,7 +10,6 @@ import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.dao.dataBase
 import com.hfut.schedule.logic.datamodel.Focus.AddFocus
 import com.hfut.schedule.logic.datamodel.MyAPIResponse
-import com.hfut.schedule.logic.datamodel.MyList
 import com.hfut.schedule.logic.datamodel.Schedule
 import com.hfut.schedule.logic.datamodel.zjgd.BalanceResponse
 import com.hfut.schedule.logic.datamodel.zjgd.ReturnCard
@@ -21,7 +20,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import java.lang.Exception
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -106,8 +104,8 @@ fun MySchedule() : MutableList<Schedule> {
     }
 }
 
-fun MyWangKe() : MutableList<MyList> {
-    var Wabgke = mutableListOf<MyList>()
+fun MyWangKe() : MutableList<Schedule> {
+    var Wabgke = mutableListOf<Schedule>()
     return try {
         val my = prefs.getString("my", MyApplication.NullMy)
         val data = Gson().fromJson(my, MyAPIResponse::class.java).Lessons

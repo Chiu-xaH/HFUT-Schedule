@@ -2,7 +2,6 @@ package com.hfut.schedule.ui.Activity.success.focus.Focus
 
 import android.annotation.SuppressLint
 import android.os.Build
-import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
@@ -27,10 +26,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
@@ -66,19 +61,17 @@ import androidx.compose.ui.unit.sp
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
-import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.datamodel.Community.TodayResponse
 import com.hfut.schedule.logic.datamodel.Community.TodayResult
 import com.hfut.schedule.logic.datamodel.Focus.AddFocus
-import com.hfut.schedule.logic.datamodel.MyList
 import com.hfut.schedule.logic.datamodel.Schedule
 import com.hfut.schedule.logic.utils.AddCalendar.AddCalendar
 import com.hfut.schedule.logic.utils.GetDate
+import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.success.calendar.nonet.DetailInfos
 import com.hfut.schedule.ui.Activity.success.calendar.nonet.getCourseINFO
-import com.hfut.schedule.ui.Activity.success.search.Search.SchoolCard.SchoolCardItem
+import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.apiCheck
 import com.hfut.schedule.ui.Activity.success.search.Search.SchoolCard.TodayInfo
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.ScrollText
@@ -134,7 +127,12 @@ fun ScheduleItems(MySchedule: MutableList<Schedule>, item : Int,Future : Boolean
     val time = MySchedules.time
     val info = MySchedules.info
     val title = MySchedules.title
+    val showPublic = MySchedules.showPublic
+    val switch_api = SharePrefs.prefs.getBoolean("SWITCHMYAPI", apiCheck())
 
+
+    @Composable
+    fun Item() {
         Card(
             elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
             modifier = Modifier
@@ -152,126 +150,153 @@ fun ScheduleItems(MySchedule: MutableList<Schedule>, item : Int,Future : Boolean
                 modifier = Modifier.clickable {},
                 trailingContent = {
                     if(Future)
-                    FilledTonalIconButton(
-                        onClick = {
-                            try {
-                                var startTime = MySchedules.startTime
-                                var endTime = MySchedules.endTime
-                                AddCalendar(startTime,endTime, info, title,time)
-                                MyToast("添加到系统日历成功")
-                            } catch (e : SecurityException) {
-                                MyToast("未授予权限")
-                                e.printStackTrace()
+                        FilledTonalIconButton(
+                            onClick = {
+                                try {
+                                    var startTime = MySchedules.startTime
+                                    var endTime = MySchedules.endTime
+                                    AddCalendar(startTime,endTime, info, title,time)
+                                    MyToast("添加到系统日历成功")
+                                } catch (e : SecurityException) {
+                                    MyToast("未授予权限")
+                                    e.printStackTrace()
+                                }
                             }
+                        ) {
+                            Icon( painterResource(R.drawable.add_task),
+                                contentDescription = "Localized description",)
                         }
-                    ) {
-                        Icon( painterResource(R.drawable.add_task),
-                            contentDescription = "Localized description",)
-                    }
                 }
             )
         }
+    }
 
+    if(switch_api) {
+        //正常接受所有来自服务器的信息
+        Item()
+    } else {
+        //仅接受showPublic为true
+        if(showPublic) {
+            Item()
+        }
+    }
 }
 
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun WangkeItem(item : Int, MyWangKe: MutableList<MyList>,Future: Boolean) {
+fun WangkeItem(item : Int, MyWangKe: MutableList<Schedule>,Future: Boolean) {
     val MyWangKes = MyWangKe[item]
     val time = MyWangKes.time
     val info = MyWangKes.info
     val title = MyWangKes.title
+    val showPublic = MyWangKes.showPublic
 
-    if(prefs.getString("my","")?.contains("Schedule") == true) {
-        val startTime = MyWangKes.startTime
-        val endTime = MyWangKes.endTime
+    @Composable
+    fun Item() {
+        if(prefs.getString("my","")?.contains("Schedule") == true) {
+            val startTime = MyWangKes.startTime
+            val endTime = MyWangKes.endTime
 
-        //判断过期不显示信息
-        val startYear = startTime[0]
-        var startMonth = startTime[1]
-        var startDay = startTime[2]
-        var startDateStr = startTime[2].toString()
-        var startMonthStr = startTime[1].toString()
-        if(startDay < 10) startDateStr = "0$startDay"
-        if(startMonth < 10) startMonthStr = "0$startMonth"
-        val getStartTime = "${startYear}${startMonthStr}${startDateStr}".toInt()
+            //判断过期不显示信息
+            val startYear = startTime[0]
+            var startMonth = startTime[1]
+            var startDay = startTime[2]
+            var startDateStr = startTime[2].toString()
+            var startMonthStr = startTime[1].toString()
+            if(startDay < 10) startDateStr = "0$startDay"
+            if(startMonth < 10) startMonthStr = "0$startMonth"
+            val getStartTime = "${startYear}${startMonthStr}${startDateStr}".toInt()
 
-        val endYear = endTime[0]
-        var endMonth = endTime[1]
-        var endDay = endTime[2]
-        var endDateStr = endTime[2].toString()
-        var endMonthStr = endTime[1].toString()
-        if(endDay < 10) endDateStr = "0$endDay"
-        if(endMonth < 10) endMonthStr = "0$endMonth"
-        val getEndTime = "${endYear}${endMonthStr}${endDateStr}".toInt()
-
-
-        val nowTime = GetDate.Date_yyyy_MM_dd.replace("-","").toInt()
+            val endYear = endTime[0]
+            var endMonth = endTime[1]
+            var endDay = endTime[2]
+            var endDateStr = endTime[2].toString()
+            var endMonthStr = endTime[1].toString()
+            if(endDay < 10) endDateStr = "0$endDay"
+            if(endMonth < 10) endMonthStr = "0$endMonth"
+            val getEndTime = "${endYear}${endMonthStr}${endDateStr}".toInt()
 
 
-        if(Future) {
-            if(nowTime < getEndTime) {
-                Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 15.dp, vertical = 5.dp),
-                    shape = MaterialTheme.shapes.medium,
-                ) {
+            val nowTime = GetDate.Date_yyyy_MM_dd.replace("-","").toInt()
 
-                    ListItem(
-                        headlineContent = {  Text(text = title) },
-                        overlineContent = { Text(text = time) },
-                        supportingContent = { Text(text = info)},
-                        leadingContent = {
-                            Icon(
-                                painterResource(R.drawable.net),
-                                contentDescription = "Localized description",
-                            )
-                        },
-                        trailingContent = {
-                            FilledTonalIconButton(
-                                onClick = {
-                                    AddCalendar(startTime,endTime, info, title,time)
-                                    MyToast("添加到系统日历成功")
+
+            if(Future) {
+                if(nowTime < getEndTime) {
+                    Card(
+                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 15.dp, vertical = 5.dp),
+                        shape = MaterialTheme.shapes.medium,
+                    ) {
+
+                        ListItem(
+                            headlineContent = {  Text(text = title) },
+                            overlineContent = { Text(text = time) },
+                            supportingContent = { Text(text = info)},
+                            leadingContent = {
+                                Icon(
+                                    painterResource(R.drawable.net),
+                                    contentDescription = "Localized description",
+                                )
+                            },
+                            trailingContent = {
+                                FilledTonalIconButton(
+                                    onClick = {
+                                        AddCalendar(startTime,endTime, info, title,time)
+                                        MyToast("添加到系统日历成功")
+                                    }
+                                ) {
+                                    Icon( painterResource(R.drawable.add_task),
+                                        contentDescription = "Localized description",)
                                 }
-                            ) {
-                                Icon( painterResource(R.drawable.add_task),
-                                    contentDescription = "Localized description",)
-                            }
-                        },
-                        modifier = Modifier.clickable { openOperation(info) }
-                    )
+                            },
+                            modifier = Modifier.clickable { openOperation(info) }
+                        )
+                    }
                 }
-            }
-        } else {
-            if(nowTime == getEndTime) {
-                Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 15.dp, vertical = 5.dp),
-                    shape = MaterialTheme.shapes.medium,
-                ) {
+            } else {
+                if(nowTime == getEndTime) {
+                    Card(
+                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 15.dp, vertical = 5.dp),
+                        shape = MaterialTheme.shapes.medium,
+                    ) {
 
-                    ListItem(
-                        headlineContent = {  Text(text = title) },
-                        overlineContent = { Text(text = time) },
-                        supportingContent = { Text(text = info)},
-                        leadingContent = {
-                            Icon(
-                                painterResource(R.drawable.net),
-                                contentDescription = "Localized description",
-                            )
-                        },
-                        trailingContent = {
-                           Text(text = "今日截止")
-                        },
-                        modifier = Modifier.clickable { openOperation(info) }
-                    )
+                        ListItem(
+                            headlineContent = {  Text(text = title) },
+                            overlineContent = { Text(text = time) },
+                            supportingContent = { Text(text = info)},
+                            leadingContent = {
+                                Icon(
+                                    painterResource(R.drawable.net),
+                                    contentDescription = "Localized description",
+                                )
+                            },
+                            trailingContent = {
+                                Text(text = "今日截止")
+                            },
+                            modifier = Modifier.clickable { openOperation(info) }
+                        )
+                    }
                 }
             }
+        }
+    }
+
+    val switch_api = SharePrefs.prefs.getBoolean("SWITCHMYAPI", apiCheck())
+
+
+    if(switch_api) {
+        //正常接受所有来自服务器的信息
+        Item()
+    } else {
+        //仅接受showPublic为true
+        if(showPublic) {
+            Item()
         }
     }
 }

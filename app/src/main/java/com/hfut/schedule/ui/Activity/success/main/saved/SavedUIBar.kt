@@ -3,7 +3,12 @@ package com.hfut.schedule.ui.Activity.success.main.saved
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
 import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,6 +34,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -69,7 +75,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-@SuppressLint("SuspiciousIndentation", "CoroutineCreationDuringComposition")
+@SuppressLint("SuspiciousIndentation", "CoroutineCreationDuringComposition",
+    "UnusedMaterial3ScaffoldPaddingParameter"
+)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationGraphicsApi::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -175,70 +183,96 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
             }
         },
         bottomBar = {
-            Divider()
-            NavigationBar(containerColor = if(blur) MaterialTheme.colorScheme.primaryContainer.copy(.25f) else ListItemDefaults.containerColor ,
-                modifier = Modifier
-                    .hazeChild(state = hazeState, blurRadius = MyApplication.Blur, tint = Color.Transparent, noiseFactor = 0f)) {
-            //    val image = AnimatedImageVector.animatedVectorResource(R.drawable.ic_hourglass_animated)
-              //  var atEnd by remember { mutableStateOf(false) }
+            Column {
+                Divider()
+                NavigationBar(containerColor = if(blur) MaterialTheme.colorScheme.primaryContainer.copy(.25f) else ListItemDefaults.containerColor ,
+                    modifier = Modifier
+                        .hazeChild(state = hazeState, blurRadius = MyApplication.Blur, tint = Color.Transparent, noiseFactor = 0f)) {
+                    //    val image = AnimatedImageVector.animatedVectorResource(R.drawable.ic_hourglass_animated)
+                    //  var atEnd by remember { mutableStateOf(false) }
 
-                val items = listOf(
-                    NavigationBarItemData(BottomBarItems.COURSES.name, "课程表", painterResource(R.drawable.calendar ), painterResource(R.drawable.calendar_month_filled)),
-                    NavigationBarItemData(BottomBarItems.FOCUS.name,"聚焦", painterResource(R.drawable.lightbulb), painterResource(R.drawable.lightbulb_filled)),
-                    NavigationBarItemData(BottomBarItems.SEARCH.name,"查询中心", painterResource(R.drawable.search),painterResource(R.drawable.search_filledx)),
-                    NavigationBarItemData(BottomBarItems.SETTINGS.name,"选项", painterResource(if (getUpdates().version == APPVersion.getVersionName())R.drawable.deployed_code else R.drawable.deployed_code_update), painterResource(if (getUpdates().version == APPVersion.getVersionName()) R.drawable.deployed_code_filled else R.drawable.deployed_code_update_filled ))
-                )
-                items.forEach { item ->
-                    val route = item.route
-                    val selected = navController.currentBackStackEntryAsState().value?.destination?.route == route
-                    NavigationBarItem(
-                        selected = selected,
-                        alwaysShowLabel = showlable,
-                        enabled = isEnabled,
-                        onClick = {
-                            if(item == items[0]) bottomBarItems = BottomBarItems.COURSES
-                            if(item == items[1]) bottomBarItems = BottomBarItems.FOCUS
-                            if(item == items[2]) bottomBarItems = BottomBarItems.SEARCH
-                            if(item == items[3]) bottomBarItems = BottomBarItems.SETTINGS
-                           //     atEnd = !atEnd
-                            if (!selected) {
-                                navController.navigate(route) {
-                                    popUpTo(navController.graph.startDestinationId) {
-                                        saveState = true
-                                    }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            }
-                        },
-                        label = { Text(text = item.label) },
-                        icon = {
-                            BadgedBox(badge = {
-                                if (item == items[3]){
-                                    if (showBadge)
-                                    Badge{ Text(text = "1")}
-                                }
-                            }) { Icon(if(selected)item.filledIcon else item.icon, contentDescription = item.label) }
-                        }
+                    val items = listOf(
+                        NavigationBarItemData(BottomBarItems.COURSES.name, "课程表", painterResource(R.drawable.calendar ), painterResource(R.drawable.calendar_month_filled)),
+                        NavigationBarItemData(BottomBarItems.FOCUS.name,"聚焦", painterResource(R.drawable.lightbulb), painterResource(R.drawable.lightbulb_filled)),
+                        NavigationBarItemData(BottomBarItems.SEARCH.name,"查询中心", painterResource(R.drawable.search),painterResource(R.drawable.search_filledx)),
+                        NavigationBarItemData(BottomBarItems.SETTINGS.name,"选项", painterResource(if (getUpdates().version == APPVersion.getVersionName())R.drawable.deployed_code else R.drawable.deployed_code_update), painterResource(if (getUpdates().version == APPVersion.getVersionName()) R.drawable.deployed_code_filled else R.drawable.deployed_code_update_filled ))
                     )
+                    items.forEach { item ->
+                        val route = item.route
+                        val selected = navController.currentBackStackEntryAsState().value?.destination?.route == route
+                        NavigationBarItem(
+                            selected = selected,
+                            alwaysShowLabel = showlable,
+                            enabled = isEnabled,
+                            onClick = {
+                                if(item == items[0]) bottomBarItems = BottomBarItems.COURSES
+                                if(item == items[1]) bottomBarItems = BottomBarItems.FOCUS
+                                if(item == items[2]) bottomBarItems = BottomBarItems.SEARCH
+                                if(item == items[3]) bottomBarItems = BottomBarItems.SETTINGS
+                                //     atEnd = !atEnd
+                                if (!selected) {
+                                    navController.navigate(route) {
+                                        popUpTo(navController.graph.startDestinationId) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
+                                }
+                            },
+                            label = { Text(text = item.label) },
+                            icon = {
+                                BadgedBox(badge = {
+                                    if (item == items[3]){
+                                        if (showBadge)
+                                            Badge{ Text(text = "1")}
+                                    }
+                                }) { Icon(if(selected)item.filledIcon else item.icon, contentDescription = item.label) }
+                            }
+                        )
+                    }
                 }
             }
         }
     ) { innerPadding ->
-        NavHost(navController = navController, startDestination = first, modifier = Modifier
-          //  .padding(innerPadding)
-            //.fillMaxSize()
+        NavHost(
+            navController = navController,
+            startDestination = first,
+            enterTransition = {
+                scaleIn(animationSpec = tween(durationMillis = 200)) + expandVertically(expandFrom = Alignment.CenterVertically)
+            },
+            exitTransition = {
+                scaleOut(animationSpec = tween(durationMillis = 200)) + shrinkVertically(shrinkTowards = Alignment.CenterVertically)
+            },
+            modifier = Modifier
             .haze(
                 state = hazeState,
                 backgroundColor = MaterialTheme.colorScheme.surface,
             )) {
-            composable(BottomBarItems.COURSES.name) { SaveCourse(showAll, innerPadding,vmUI) }
+            composable(BottomBarItems.COURSES.name) {
+            Scaffold {
+                SaveCourse(showAll, innerPadding,vmUI)
+            }
+
+            }
             composable(BottomBarItems.FOCUS.name) {
-                TodayScreen(vm,vm2,innerPadding, blur,vmUI,true)
+                Scaffold {
+                    TodayScreen(vm,vm2,innerPadding, blur,vmUI,true)
+                }
+
                 //Test()
             }
-            composable(BottomBarItems.SEARCH.name) { SearchScreen(vm,true,innerPadding,vmUI) }
-            composable(BottomBarItems.SETTINGS.name) { SettingsScreen(vm,showlable, showlablechanged = { showlablech -> showlable = showlablech},true,innerPadding, blur,blurchanged = { blurch -> blur = blurch},vm2)
+            composable(BottomBarItems.SEARCH.name) {
+                Scaffold {
+                    SearchScreen(vm,true,innerPadding,vmUI)
+                }
+
+            }
+            composable(BottomBarItems.SETTINGS.name) {
+                Scaffold {
+                    SettingsScreen(vm,showlable, showlablechanged = { showlablech -> showlable = showlablech},true,innerPadding, blur,blurchanged = { blurch -> blur = blurch},vm2)
+                }
+
             }
         }
     }

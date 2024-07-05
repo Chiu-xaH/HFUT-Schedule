@@ -7,7 +7,8 @@ data class newSchedule(
     val info: String,
     val remark : String,
     var startTime : String,
-    var endTime : String
+    var endTime : String,
+    val showPublic : Boolean?
 )
 data class UserInfo(val name : String?,
                     val studentID : String?,

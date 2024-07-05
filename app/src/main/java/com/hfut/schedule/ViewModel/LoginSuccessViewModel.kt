@@ -93,13 +93,32 @@ class LoginSuccessViewModel : ViewModel() {
             studentID = data.studentID ?: "空",
             user = data.name ?: "空")
         call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                //response?.body()?.string()?.let { Log.d("恢复", it) }
-            }
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {}
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun feedBack(info : String,contact : String?) {
+        val data = getUserInfo()
+        val time = data.dateTime
+        val version = data.appVersionName
+        val name = data.name
+
+        val call = server.feedBack(
+            dateTime = time,
+            appVersion = version,
+            user = name ?: "空",
+            info = info,
+            contact = contact)
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {}
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
+
 
 
     val NewsData = MutableLiveData<String?>()

@@ -36,7 +36,7 @@ import com.hfut.schedule.ui.UIUtils.ScrollText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Pay() {
+fun Mail() {
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
     val Savedusername = prefs.getString("Username", "")

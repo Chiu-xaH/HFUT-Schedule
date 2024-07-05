@@ -2,10 +2,15 @@ package com.hfut.schedule.ui.Activity.Fix
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -16,18 +21,23 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -44,6 +54,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.LoginViewModel
 import com.hfut.schedule.activity.FixActivity
 import com.hfut.schedule.activity.LoginActivity
@@ -58,14 +69,20 @@ import com.hfut.schedule.logic.utils.StartApp
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.Clear
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.apiCheck
 import com.hfut.schedule.ui.Activity.success.focus.Focus.getTimeStamp
+import com.hfut.schedule.ui.Activity.success.search.Search.FailRate.Click
 import com.hfut.schedule.ui.Activity.success.search.Search.LoginWeb.loginWebUI
 import com.hfut.schedule.ui.UIUtils.LittleDialog
 import com.hfut.schedule.ui.UIUtils.MyToast
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import kotlin.math.log
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel) {
+fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel,vm2 : LoginSuccessViewModel) {
     var showDialog by remember { mutableStateOf(false) }
     val switch_faststart = SharePrefs.prefs.getBoolean("SWITCHFASTSTART",
         SharePrefs.prefs.getString("TOKEN","")?.isNotEmpty() ?: false)
@@ -105,6 +122,18 @@ fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel) {
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
+        }
+    }
+
+    val sheetState_feedBack = rememberModalBottomSheetState()
+    var showBottomSheet_feedBack by remember { mutableStateOf(false) }
+
+    if (showBottomSheet_feedBack) {
+        ModalBottomSheet(
+            onDismissRequest = { showBottomSheet_feedBack = false },
+            sheetState = sheetState_feedBack
+        ) {
+            feedBackUI(vm2)
         }
     }
 
@@ -182,19 +211,10 @@ fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel) {
             }
         )
         ListItem(
-            headlineContent = { Text(text = "联系开发者") },
-         //   overlineContent = { Text(text = "有什么更好的建议吗,或者发现了问题纰漏,可以给我发邮件哦")},
-            leadingContent = {
-                Icon(
-                    painterResource(R.drawable.mail),
-                    contentDescription = "Localized description",
-                )
-            },
-            modifier = Modifier.clickable{
-                val it = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:zsh0908@outlook.com"))
-                it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                MyApplication.context.startActivity(it)
-            }
+            headlineContent = { Text(text = "反馈") },
+            supportingContent = { Text(text = "直接输入内容,将会发送至开发者的服务器")},
+            leadingContent = { Icon(painterResource(R.drawable.feedback), contentDescription = "Localized description",) },
+            modifier = Modifier.clickable{ showBottomSheet_feedBack = true }
         )
 
         ListItem(
@@ -284,10 +304,6 @@ fun BugShare() {
         trailingContent = {
             Row{
                 FilledTonalIconButton(onClick = {
-
-                    MyToast("已将日志选项暴露在主活动中")
-                }) { Icon(painter = painterResource(id =  R.drawable.home ), contentDescription = "") }
-                FilledTonalIconButton(onClick = {
                     CrashHandler().enableLogging()
                     MyToast("日志抓取已开启,请复现崩溃的操作,当完成后,回此处点击分享")
                 }) { Icon(painter = painterResource(id =  R.drawable.slow_motion_video ), contentDescription = "") }
@@ -361,5 +377,112 @@ fun questionItem(title : String,
             headlineContent = { Text(text = title) },
             supportingContent = { Text(text = info) }
         )
+    }
+}
+
+fun sendToMe() {
+    val it = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:zsh0908@outlook.com"))
+    it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    MyApplication.context.startActivity(it)
+}
+@RequiresApi(Build.VERSION_CODES.O)
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun feedBackUI(vm : LoginSuccessViewModel) {
+    var input by remember { mutableStateOf("") }
+    var inputContact by remember { mutableStateOf("") }
+
+
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                colors = TopAppBarDefaults.mediumTopAppBarColors(
+                    containerColor = Color.Transparent,
+                    titleContentColor = MaterialTheme.colorScheme.primary,
+                ),
+                title = { Text("反馈") },
+                actions = {
+                    FilledTonalIconButton(
+                        modifier = Modifier.padding(horizontal = 15.dp),
+                        onClick = {
+                            if(input == "") {
+                                MyToast("请输入内容")
+                            } else {
+                                vm.feedBack(input,inputContact)
+                                MyToast("已提交,可关闭此界面")
+                            }
+                    }) {
+                        Icon(Icons.Filled.Check, contentDescription = "")
+                    }
+                }
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+        ) {
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                TextField(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 15.dp),
+                    value = input,
+                    onValueChange = {
+                        input = it
+                    },
+                    label = { Text("反馈内容" ) },
+                    shape = MaterialTheme.shapes.medium,
+                    colors = TextFieldDefaults.textFieldColors(
+                        focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
+                        unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
+                    ),
+                )
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                TextField(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 15.dp),
+                    value = inputContact,
+                    onValueChange = { inputContact = it },
+                    label = { Text("你的联系方式(可不填)" ) },
+                    singleLine = true,
+                    shape = MaterialTheme.shapes.medium,
+                    colors = TextFieldDefaults.textFieldColors(
+                        focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
+                        unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
+                    ),
+                )
+            }
+            Spacer(modifier = Modifier.height(5.dp))
+            Card(
+                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp, vertical = 5.dp),
+                shape = MaterialTheme.shapes.medium
+            ) {
+                ListItem(
+                    headlineContent = { Text(text = "或者通过电子邮件联系") },
+                    leadingContent = { Icon(painter = painterResource(id = R.drawable.mail), contentDescription ="" )},
+                    modifier = Modifier.clickable { sendToMe() }
+                )
+            }
+            Card(
+                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp, vertical = 5.dp),
+                shape = MaterialTheme.shapes.medium
+            ) {
+                ListItem(
+                    headlineContent = { Text(text = "提交时会自动提交当前APP版本、日期时间等信息，以协助开发者分析反馈内容") },
+                    leadingContent = { Icon(painter = painterResource(id = R.drawable.info), contentDescription ="" )},
+                )
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+        }
     }
 }

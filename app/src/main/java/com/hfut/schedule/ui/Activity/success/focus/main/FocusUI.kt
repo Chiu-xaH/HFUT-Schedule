@@ -24,6 +24,7 @@ import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
@@ -47,6 +48,7 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.success.calendar.nonet.getCourseINFO
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.FocusCard
+import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.apiCheck
 import com.hfut.schedule.ui.Activity.success.focus.Focus.AddButton
 import com.hfut.schedule.ui.Activity.success.focus.Focus.AddItem
 import com.hfut.schedule.ui.Activity.success.focus.Focus.AddedItems
@@ -104,7 +106,7 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel,innerPaddings : 
     })
 
     val shouldRefresh by remember { derivedStateOf { refreshing }}
-    val switch_server = SharePrefs.prefs.getBoolean("SWITCHSERVER", false)
+    val switch_server = false
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //布局///////////////////////////////////////
 
@@ -148,7 +150,7 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel,innerPaddings : 
                 var date = GetDate.Date_MM_dd
                 val todaydate = (date?.substring(0, 2) ) + date?.substring(3, 5)
                 var week = GetDate.Benweeks.toInt()
-
+              //  val switch_api = SharePrefs.prefs.getBoolean("SWITCHMYAPI", apiCheck())
                 var weekdaytomorrow = GetDate.dayweek + 1
                 var weekdayToday = GetDate.dayweek
                 var Nextweek = GetDate.Benweeks.toInt()
@@ -158,15 +160,16 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel,innerPaddings : 
                 when (weekdayToday) { 0 -> weekdayToday = 7 }
                 HorizontalPager(state = pagerState) { page ->
 
+                    Scaffold { innerPaddings->
                         LazyColumn(state = scrollstate) {
 
                             when(page) {
                                 TAB_LEFT -> {
                                     //一卡通
-                                  //  CoroutineScope(Job()).launch {
-                                //        async { GetZjgdCard(vm,vmUI) }
-                               //         async { getTodayNet(vm,vmUI) }
-                               ///     }
+                                    //  CoroutineScope(Job()).launch {
+                                    //        async { GetZjgdCard(vm,vmUI) }
+                                    //         async { getTodayNet(vm,vmUI) }
+                                    ///     }
 
                                     item { FocusCard(vmUI,vm) }
                                     //课表
@@ -175,22 +178,22 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel,innerPaddings : 
                                     else
                                         items(getCourseINFO(weekdayToday,week).size) { item -> TodayCourseItem(item = item) }
                                     //日程
-                                    if (prefs.getBoolean("SWITCHMYAPI",true)){
+                               //     if (switch_api){
                                         if(!switch_server)
-                                        items(MySchedule().size) { item -> MyScheuleItem(item = item, MySchedule = MySchedule(),false) }
+                                            items(MySchedule().size) { item -> MyScheuleItem(item = item, MySchedule = MySchedule(),false) }
                                         else items(getResult(true).size) {item -> newScheduleItems(MySchedule = getResult(true), item, false)}
-                                    }
+                               //     }
                                     //考试
-                                  //  if(ifSaved) items(getExam().size) { item -> ExamItems(item,true,) }
-                                  //  else
+                                    //  if(ifSaved) items(getExam().size) { item -> ExamItems(item,true,) }
+                                    //  else
                                     items(getExamJXGLSTU()) { item -> JxglstuExamUI(item,false) }
                                     //网课
                                     if(!switch_server)
-                                    items(MyWangKe().size) { item -> WangkeItem(item = item, MyWangKe = MyWangKe(),false) }
+                                        items(MyWangKe().size) { item -> WangkeItem(item = item, MyWangKe = MyWangKe(),false) }
                                     else items(getResult(false).size) {item -> newWangkeItem(item, MyWangKe = getResult(false), Future = false)  }
                                 }
                                 TAB_RIGHT -> {
-                                    if (prefs.getBoolean("SWITCHMYAPI",true)) {
+                                   // if (switch_api) {
                                         if(!switch_server) {
                                             //日程
                                             items(MySchedule().size) { item -> MyScheuleItem(item = item, MySchedule = MySchedule(),true)  }
@@ -202,20 +205,22 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel,innerPaddings : 
                                             //网课
                                             items(getResult(false).size) { item -> newWangkeItem(item = item, MyWangKe = getResult(false),true) }
                                         }
-                                    }
+                                  //  }
 
                                     //第二天课表
                                     if (GetDate.formattedTime_Hour.toInt() < 19)
                                         items(getCourseINFO(weekdaytomorrow,Nextweek).size) { item -> TomorrowCourseItem(item = item) }
 
                                     items(AddedItems().size){ item -> AddItem(item = item, AddedItems = AddedItems()) }
-                                    if (prefs.getBoolean("SWITCHMYAPI",true))
-                                        item { TimeStampItem() }
+
+                                    item { TimeStampItem() }
                                 }
                             }
 
                             item { Spacer(modifier = Modifier.height(innerPaddings.calculateBottomPadding())) }
                         }
+                    }
+
                 }
                 AddButton(isVisible = shouldShowAddButton,innerPaddings)
                 PullRefreshIndicator(refreshing, states, Modifier.align(Alignment.TopCenter))

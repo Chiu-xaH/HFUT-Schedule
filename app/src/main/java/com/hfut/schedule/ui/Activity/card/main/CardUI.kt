@@ -1,9 +1,15 @@
 package com.hfut.schedule.ui.Activity.card.main
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Divider
@@ -26,6 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -60,6 +67,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
+@SuppressLint("SuspiciousIndentation", "UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CardUI(vm : LoginSuccessViewModel, activity : Activity,vmUI : UIViewModel) {
@@ -204,14 +212,35 @@ fun CardUI(vm : LoginSuccessViewModel, activity : Activity,vmUI : UIViewModel) {
             }
         }
     ) {innerPadding ->
-        NavHost(navController = navController, startDestination = CardBarItems.BILLS.name, modifier = Modifier
+        NavHost(navController = navController,
+            startDestination = CardBarItems.BILLS.name,
+            enterTransition = {
+                scaleIn(animationSpec = tween(durationMillis = 250)) + expandVertically(expandFrom = Alignment.CenterVertically)
+            },
+            exitTransition = {
+                scaleOut(animationSpec = tween(durationMillis = 250)) + shrinkVertically(shrinkTowards = Alignment.CenterVertically)
+            },
+            modifier = Modifier
             .haze(
                 state = hazeState,
                 backgroundColor = MaterialTheme.colorScheme.surface,
             )) {
-            composable(CardBarItems.BILLS.name) { CardBills(vm,innerPadding,vmUI) }
-            composable(CardBarItems.COUNT.name) {  CardHome(innerPadding,vm,blur) }
-            composable(CardBarItems.FUNCTION.name) { CardFunctions(vm,innerPadding,vmUI) }
+            composable(CardBarItems.BILLS.name) {
+                Scaffold {
+                    CardBills(vm,innerPadding,vmUI)
+                }
+
+            }
+            composable(CardBarItems.COUNT.name) {
+                Scaffold {
+                    CardHome(innerPadding,vm,blur)
+                }
+            }
+            composable(CardBarItems.FUNCTION.name) {
+                Scaffold {
+                    CardFunctions(vm,innerPadding,vmUI)
+                }
+            }
         }
     }
 }

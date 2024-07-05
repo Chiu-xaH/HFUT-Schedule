@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -54,6 +56,8 @@ fun NextCourse(vmUI : UIViewModel,ifSaved : Boolean) {
     }
 
 
+    var showAll by remember { mutableStateOf(false) }
+
 
     if (showBottomSheet) {
         ModalBottomSheet(
@@ -68,7 +72,12 @@ fun NextCourse(vmUI : UIViewModel,ifSaved : Boolean) {
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        title = { Text("下学期课程表") }
+                        title = { Text("下学期课程表") },
+                        actions = {
+                            TextButton(onClick = { showAll = !showAll }) {
+                                Icon(painter = painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "")
+                            }
+                        }
                     )
                 },) { innerPadding ->
                 Column(
@@ -76,7 +85,7 @@ fun NextCourse(vmUI : UIViewModel,ifSaved : Boolean) {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    prefs.getString("gradeNext","23")?.let { DatumUI(true, it, innerPadding, vmUI) }
+                    prefs.getString("gradeNext","23")?.let { DatumUI(showAll, it, innerPadding, vmUI) }
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }

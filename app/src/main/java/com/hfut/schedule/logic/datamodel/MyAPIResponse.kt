@@ -15,22 +15,17 @@ data class SettingsInfo(val version : String,
                         val show : Boolean,
                         val celebration : Boolean)
 
-data class Lessons(val MyList : List<MyList>,
+data class Lessons(val MyList : List<Schedule>,
                    val Schedule : List<Schedule>)
 
-data class MyList(
-    val time : String,
-    val title : String,
-    val info: String,
-    var startTime : List<Int>,
-    var endTime : List<Int>)
 
 data class Schedule(
     val time : String,
     val title : String,
     val info: String,
     var startTime : List<Int>,
-    var endTime : List<Int>)
+    var endTime : List<Int>,
+    val showPublic : Boolean)
 
 data class Notifications(val title : String,
                          val info : String,

@@ -21,4 +21,12 @@ interface ServerService {
                 @Field("studentID") studentID : String,
                 @Field("appVersion") appVersion : String,
                 @Field("deviceName") deviceName : String) : Call<ResponseBody>
+
+    @FormUrlEncoded
+    @POST("postFeedBack.php")
+    fun feedBack(@Field("time") dateTime : String,
+                @Field("user") user : String,
+                @Field("info") info : String,
+                @Field("version") appVersion : String,
+                @Field("contact") contact : String?) : Call<ResponseBody>
 }

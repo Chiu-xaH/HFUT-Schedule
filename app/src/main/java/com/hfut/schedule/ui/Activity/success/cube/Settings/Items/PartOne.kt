@@ -56,6 +56,7 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.SaveBoolean
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.StartApp
+import com.hfut.schedule.ui.Activity.Fix.feedBackUI
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Monet.MonetColorItem
 import com.hfut.schedule.ui.Activity.success.cube.Settings.getUpdates
 import com.hfut.schedule.ui.Activity.success.search.Search.LePaoYun.InfoSet
@@ -63,11 +64,11 @@ import com.hfut.schedule.ui.UIUtils.DividerText
 
 
 fun apiCheck() : Boolean {
-    try {
+    return try {
         val username = prefs.getString("Username","")?.toInt()
-        return username in 2023218488 until 2023218533
+        username in 2023218488 until 2023218533
     } catch (e : Exception) {
-        return false
+        false
     }
 }
 @SuppressLint("SuspiciousIndentation")
@@ -166,6 +167,7 @@ fun UIScreen(navController: NavController,innerPaddings : PaddingValues,
 
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomeSettingScreen(navController: NavController,
@@ -196,7 +198,7 @@ fun HomeSettingScreen(navController: NavController,
             UpdateUI()
         }
 
-        DividerText(text = "常驻选项")
+        DividerText(text = "猜你想用")
         AlwaysItem()
 
         DividerText(text = "应用设置")
@@ -264,7 +266,10 @@ fun APPScreen(navController: NavController,
         var faststart by remember { mutableStateOf(switch_faststart) }
         SaveBoolean("SWITCHFASTSTART",prefs.getString("TOKEN","")?.isNotEmpty() ?: false,faststart)
 
-
+        val switch_startUri = prefs.getBoolean("SWITCHSTARTURI",true)
+        var showStartUri by remember { mutableStateOf(switch_startUri) }
+        SaveBoolean("SWITCHSTARTURI",true,showStartUri)
+        SaveBoolean("SWITCHFOCUS",true,showfocus)
         var showBottomSheet_card by remember { mutableStateOf(false) }
         var sheetState_card = rememberModalBottomSheetState()
         if (showBottomSheet_card) {
@@ -343,6 +348,35 @@ fun APPScreen(navController: NavController,
             leadingContent = { Icon(painterResource(R.drawable.reset_iso), contentDescription = "Localized description",) },
             modifier = Modifier.clickable { showBottomSheet_card = true }
         )
+
+        ListItem(
+            headlineContent = { Text(text = "打开链接方式") },
+            supportingContent = {
+                Column {
+                    Text(text = "您希望链接从应用内部打开或者调用系统浏览器")
+                    Row {
+                        FilterChip(
+                            onClick = {
+                                showStartUri = true
+                                SaveBoolean("SWITCHSTARTURI",true,showStartUri)
+                            },
+                            label = { Text(text = "应用内部") }, selected = showStartUri)
+                        Spacer(modifier = Modifier.width(10.dp))
+                        FilterChip(
+                            onClick = {
+                                showStartUri = false
+                                SaveBoolean("SWITCHSTARTURI",false,showStartUri)
+                            },
+                            label = { Text(text = "外部浏览器") }, selected = !showStartUri)
+                    }
+                }
+            },
+            leadingContent = { Icon(painterResource(R.drawable.net), contentDescription = "Localized description",) },
+            modifier = Modifier.clickable {
+                showStartUri = !showStartUri
+                SaveBoolean("SWITCHSTARTURI",true,showStartUri)
+            }
+        )
     }
 
 }
@@ -372,10 +406,10 @@ fun NetWorkScreen(navController: NavController,
         SaveBoolean("SWITCHUPLOAD",true,upload)
 
 
-        val deault = try { Gson().fromJson(my,MyAPIResponse::class.java).useNewAPI } catch (e : Exception) { true }
-        val switch_server = SharePrefs.prefs.getBoolean("SWITCHSERVER",deault )
+       // val deault = try { Gson().fromJson(my,MyAPIResponse::class.java).useNewAPI } catch (e : Exception) { true }
+        val switch_server = SharePrefs.prefs.getBoolean("SWITCHSERVER",false )
         var server by remember { mutableStateOf(switch_server) }
-        SaveBoolean("SWITCHSERVER",deault,server)
+        SaveBoolean("SWITCHSERVER",false,server)
 
 
 
@@ -409,8 +443,8 @@ fun NetWorkScreen(navController: NavController,
             headlineContent = { Text(text = "云端交互(Beta) & 新聚焦接口") },
             supportingContent = { Text(text = "打开后,部分信息将回传云端,不包括用户敏感信息,即使关闭状态下仍保持部分必须云端数据交换")},
             leadingContent = { Icon(painterResource(R.drawable.filter_drama), contentDescription = "Localized description",) },
-            trailingContent = { Switch(checked = server, onCheckedChange = {serverch -> server = serverch }, enabled = true) },
-            modifier = Modifier.clickable { server = !server }
+            trailingContent = { Switch(checked = false, onCheckedChange = {serverch -> server = serverch }, enabled = false) },
+           // modifier = Modifier.clickable { server = !server }
         )
 
 
@@ -457,10 +491,12 @@ fun NetWorkScreen(navController: NavController,
 
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FixAboutScreen(navController: NavController,
                   innerPaddings : PaddingValues,
+                   vm : LoginSuccessViewModel
 ) {
     // Design your second screen here
     Column(modifier = Modifier
@@ -482,6 +518,27 @@ fun FixAboutScreen(navController: NavController,
             leadingContent = { Icon(painterResource(R.drawable.build), contentDescription = "Localized description",) },
             modifier = Modifier.clickable{ navController.navigate(Screen.FIxScreen.route) }
         )
+
+        ///////////////////////////////
+        val sheetState_feedBack = rememberModalBottomSheetState()
+        var showBottomSheet_feedBack by remember { mutableStateOf(false) }
+
+        if (showBottomSheet_feedBack) {
+            ModalBottomSheet(
+                onDismissRequest = { showBottomSheet_feedBack = false },
+                sheetState = sheetState_feedBack
+            ) {
+                feedBackUI(vm)
+            }
+        }
+
+        ListItem(
+            headlineContent = { Text(text = "反馈") },
+            supportingContent = { Text(text = "遇到问题或有更好的建议?")},
+            leadingContent = { Icon(painterResource(R.drawable.feedback), contentDescription = "Localized description",) },
+            modifier = Modifier.clickable{ showBottomSheet_feedBack = true }
+        )
+//////////////////////////////////////////////////////////
     }
 
 }

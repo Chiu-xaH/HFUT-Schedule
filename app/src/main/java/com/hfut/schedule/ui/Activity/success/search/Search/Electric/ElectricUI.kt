@@ -203,40 +203,46 @@ fun EleUI(vm : LoginSuccessViewModel) {
                     showitem3 = false })
             }
 
+
             if (BuildingsNumber == "0") BuildingsNumber = ""
 
+            val switch_startUri = SharePrefs.prefs.getBoolean("SWITCHSTARTURI",true)
             if (showDialog) {
-                androidx.compose.ui.window.Dialog(
-                    onDismissRequest = { showDialog = false },
-                    properties = DialogProperties(usePlatformDefaultWidth = false)
-                ) {
-                    Scaffold(
-                        modifier = Modifier.fillMaxSize(),
-                        topBar = {
-                            TopAppBar(
-                                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                                    containerColor = FWDTColr,
-                                    titleContentColor = Color.White,
-                                ),
-                                actions = {
-                                    Row{
-                                        IconButton(onClick = { StartApp.StartUri( "http://172.31.248.26:8088") }) { Icon(painterResource(id = R.drawable.net), contentDescription = "", tint = Color.White) }
-                                        IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "", tint = Color.White) }
-                                    }
+                if(switch_startUri) {
+                    androidx.compose.ui.window.Dialog(
+                        onDismissRequest = { showDialog = false },
+                        properties = DialogProperties(usePlatformDefaultWidth = false)
+                    ) {
+                        Scaffold(
+                            modifier = Modifier.fillMaxSize(),
+                            topBar = {
+                                TopAppBar(
+                                    colors = TopAppBarDefaults.mediumTopAppBarColors(
+                                        containerColor = FWDTColr,
+                                        titleContentColor = Color.White,
+                                    ),
+                                    actions = {
+                                        Row{
+                                            IconButton(onClick = { StartApp.StartUri( "http://172.31.248.26:8088") }) { Icon(painterResource(id = R.drawable.net), contentDescription = "", tint = Color.White) }
+                                            IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "", tint = Color.White) }
+                                        }
 
-                                },
-                                title = { Text("服务大厅") }
-                            )
-                        },
-                    ) { innerPadding ->
-                        Column(
-                            modifier = Modifier
-                                .padding(innerPadding)
-                                .fillMaxSize()
-                        ) {
-                            WebViewScreen(url = "http://172.31.248.26:8088")
+                                    },
+                                    title = { Text("服务大厅") }
+                                )
+                            },
+                        ) { innerPadding ->
+                            Column(
+                                modifier = Modifier
+                                    .padding(innerPadding)
+                                    .fillMaxSize()
+                            ) {
+                                WebViewScreen(url = "http://172.31.248.26:8088")
+                            }
                         }
                     }
+                } else {
+                    StartApp.StartUri("http://172.31.248.26:8088")
                 }
             }
 

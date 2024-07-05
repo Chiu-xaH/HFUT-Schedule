@@ -3,8 +3,27 @@ package com.hfut.schedule.ui.Activity.success.cube.main
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.EaseIn
+import androidx.compose.animation.core.EaseOut
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideIn
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -33,7 +52,7 @@ import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.Screen
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.UIScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
-@SuppressLint("SuspiciousIndentation")
+@SuppressLint("SuspiciousIndentation", "UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(vm : LoginSuccessViewModel
@@ -61,14 +80,55 @@ fun SettingsScreen(vm : LoginSuccessViewModel
                     Icon(Icons.Filled.ArrowBack, contentDescription = "")
                 }
         }) { innerPadding ->
-            NavHost(navController = navController, startDestination = Screen.HomeScreen.route) {
-                composable(Screen.HomeScreen.route) { HomeSettingScreen(navController,vm, showlable, showlablechanged, ifSaved, innerPaddings, blur, blurchanged) }
-                composable(Screen.UIScreen.route) { UIScreen(navController, innerPaddings,showlable, showlablechanged,blur, blurchanged) }
-                composable(Screen.APPScreen.route) { APPScreen(navController, innerPaddings,ifSaved) }
-                composable(Screen.FIxAboutScreen.route) { FixAboutScreen(navController, innerPaddings) }
-                composable(Screen.NetWorkScreen.route) { NetWorkScreen(navController, innerPaddings,ifSaved) }
-                composable(FixBarItems.Fix.name) { FixUI(innerPadding = innerPaddings,vm1) }
-                composable(FixBarItems.About.name) { AboutUI(innerPadding = innerPaddings, vm1) }
+            NavHost(
+                navController = navController,
+                startDestination = Screen.HomeScreen.route,
+                enterTransition = {
+                    scaleIn(animationSpec = tween(durationMillis = 250)) + expandVertically(expandFrom = Alignment.CenterVertically)
+                },
+                exitTransition = {
+                    scaleOut(animationSpec = tween(durationMillis = 250)) + shrinkVertically(shrinkTowards = Alignment.CenterVertically)
+                }
+            ) {
+
+                composable(Screen.HomeScreen.route) {
+                    Scaffold {
+                        HomeSettingScreen(navController,vm, showlable, showlablechanged, ifSaved, innerPaddings, blur, blurchanged)
+                    }
+                }
+                composable(Screen.UIScreen.route) {
+                Scaffold {
+                    UIScreen(navController, innerPaddings,showlable, showlablechanged,blur, blurchanged)
+                  }
+                }
+                composable(Screen.APPScreen.route) {
+                    Scaffold {
+                        APPScreen(navController, innerPaddings,ifSaved)
+                    }
+                }
+                composable(Screen.FIxAboutScreen.route) {
+                Scaffold {
+                    FixAboutScreen(navController, innerPaddings,vm)
+                }
+
+                }
+                composable(Screen.NetWorkScreen.route) {
+                Scaffold {
+                    NetWorkScreen(navController, innerPaddings,ifSaved)
+                   }
+                }
+                composable(FixBarItems.Fix.name) {
+                Scaffold {
+                    FixUI(innerPadding = innerPaddings,vm1,vm)
+                }
+
+                }
+                composable(FixBarItems.About.name) {
+                    Scaffold {
+                        AboutUI(innerPadding = innerPaddings, vm1)
+                    }
+
+                }
             }
         }
     }

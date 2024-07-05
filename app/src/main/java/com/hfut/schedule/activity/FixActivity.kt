@@ -1,9 +1,11 @@
 package com.hfut.schedule.activity
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -11,6 +13,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
+import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.LoginViewModel
 import com.hfut.schedule.activity.ui.theme.肥工课程表Theme
 import com.hfut.schedule.logic.utils.SharePrefs
@@ -26,7 +29,9 @@ class FixActivity : ComponentActivity() {
     private val switchColor= SharePrefs.prefs.getBoolean("SWITCHCOLOR",true)
     private val viewModel: MainViewModel by viewModels()
     private val vm by lazy { ViewModelProvider(this).get(LoginViewModel::class.java) }
+    private val vm2 by lazy { ViewModelProvider(this).get(LoginSuccessViewModel::class.java) }
    // private val vmUI by lazy { ViewModelProvider(this).get(UIViewModel::class.java) }
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -39,7 +44,7 @@ class FixActivity : ComponentActivity() {
                         color = MaterialTheme.colorScheme.background
                     ) {
                         TransparentSystemBars()
-                        Fix(vm)
+                        Fix(vm,vm2)
                     }
                 }
             } else {
@@ -55,7 +60,7 @@ class FixActivity : ComponentActivity() {
                             color = MaterialTheme.colorScheme.background
                         ) {
                             TransparentSystemBars()
-                            Fix(vm)
+                            Fix(vm,vm2)
                         }
                     }
                 }

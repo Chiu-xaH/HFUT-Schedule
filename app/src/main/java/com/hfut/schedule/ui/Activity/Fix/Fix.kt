@@ -1,5 +1,13 @@
 package com.hfut.schedule.ui.Activity.Fix
 
+import android.annotation.SuppressLint
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Divider
@@ -22,6 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -31,6 +40,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.LoginViewModel
 import com.hfut.schedule.logic.Enums.FixBarItems
 import com.hfut.schedule.logic.datamodel.NavigationBarItemData
@@ -40,9 +50,11 @@ import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 import dev.chrisbanes.haze.hazeChild
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Fix(vm : LoginViewModel) {
+fun Fix(vm : LoginViewModel,vm2 : LoginSuccessViewModel) {
     val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR", AndroidVersion.sdkInt >= 32)
     var blur by remember { mutableStateOf(switchblur) }
     val hazeState = remember { HazeState() }
@@ -110,13 +122,30 @@ fun Fix(vm : LoginViewModel) {
             }
         }
     ) {innerPadding ->
-        NavHost(navController = navController, startDestination = FixBarItems.Fix.name, modifier = Modifier
+        NavHost(navController = navController,
+            startDestination = FixBarItems.Fix.name,
+            enterTransition = {
+                scaleIn(animationSpec = tween(durationMillis = 250)) + expandVertically(expandFrom = Alignment.CenterVertically)
+            },
+            exitTransition = {
+                scaleOut(animationSpec = tween(durationMillis = 250)) + shrinkVertically(shrinkTowards = Alignment.CenterVertically)
+            },
+            modifier = Modifier
             .haze(
                 state = hazeState,
                 backgroundColor = MaterialTheme.colorScheme.surface,
             )) {
-            composable(FixBarItems.Fix.name) { FixUI(innerPadding = innerPadding,vm) }
-            composable(FixBarItems.About.name) { AboutUI(innerPadding = innerPadding, vm = vm)}
+            composable(FixBarItems.Fix.name) {
+                Scaffold {
+                    FixUI(innerPadding = innerPadding,vm, vm2)
+                }
+
+            }
+            composable(FixBarItems.About.name) {
+                Scaffold {
+                    AboutUI(innerPadding = innerPadding, vm = vm)
+                }
+            }
         }
     }
 }

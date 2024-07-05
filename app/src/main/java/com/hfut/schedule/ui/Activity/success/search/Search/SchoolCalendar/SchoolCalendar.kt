@@ -27,6 +27,7 @@ import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.datamodel.MyAPIResponse
+import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.StartApp
 import com.hfut.schedule.ui.UIUtils.WebViewScreen
@@ -51,37 +52,43 @@ fun SchoolCalendar() {
 
     val url = Gson().fromJson(prefs.getString("my",MyApplication.NullMy),MyAPIResponse::class.java).SchoolCalendar
 
+    val switch_startUri = SharePrefs.prefs.getBoolean("SWITCHSTARTURI",true)
+
     if (showDialog) {
-        androidx.compose.ui.window.Dialog(
-            onDismissRequest = { showDialog = false },
-            properties = DialogProperties(usePlatformDefaultWidth = false)
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        actions = {
-                            Row{
-                                IconButton(onClick = { StartApp.StartUri(url) }) { Icon(painterResource(id = R.drawable.net), contentDescription = "") }
-                                IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "") }
-                            }
-                        },
-                        title = { Text("校历") }
-                    )
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    WebViewScreen(url)
+        if(switch_startUri) {
+            androidx.compose.ui.window.Dialog(
+                onDismissRequest = { showDialog = false },
+                properties = DialogProperties(usePlatformDefaultWidth = false)
+            ) {
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    topBar = {
+                        TopAppBar(
+                            colors = TopAppBarDefaults.mediumTopAppBarColors(
+                                containerColor = Color.Transparent,
+                                titleContentColor = MaterialTheme.colorScheme.primary,
+                            ),
+                            actions = {
+                                Row{
+                                    IconButton(onClick = { StartApp.StartUri(url) }) { Icon(painterResource(id = R.drawable.net), contentDescription = "") }
+                                    IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "") }
+                                }
+                            },
+                            title = { Text("校历") }
+                        )
+                    },
+                ) { innerPadding ->
+                    Column(
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .fillMaxSize()
+                    ) {
+                        WebViewScreen(url)
+                    }
                 }
             }
+        } else {
+            StartApp.StartUri(url)
         }
     }
 }

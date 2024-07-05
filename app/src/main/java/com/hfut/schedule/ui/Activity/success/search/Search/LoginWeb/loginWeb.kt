@@ -43,8 +43,8 @@ fun getIdentifyID() : String? {
         val seven = chineseid?.takeLast(7)
         var id = ""
         if (seven != null) {
-            if(seven.last() == 'X') id = seven.take(6)
-            else id = seven.takeLast(6)
+            id = if(seven.last() == 'X') seven.take(6)
+            else seven.takeLast(6)
         }
         id
     } catch (e : Exception) {
@@ -65,13 +65,16 @@ fun LoginWeb(vmUI : UIViewModel, card : Boolean) {
     val bd = BigDecimal(gB)
     val str = bd.setScale(2, RoundingMode.HALF_UP).toString()
 
-    val bd2 = BigDecimal(((flow?.toDouble() ?: 0.0) / 20480) * 100)
+    val bd2 = BigDecimal(((flow?.toDouble() ?: 0.0) / 40960) * 100)
     val precent = bd2.setScale(1, RoundingMode.HALF_UP).toString()
 
     ListItem(
         headlineContent = { if(!card)Text(text = "校园网") else ScrollText(text = "${str}GB") },
         overlineContent = { if(!card)ScrollText(text = "${vmUI.webValue.value?.flow?: memoryWeb}MB") else Text(text = "校园网 ${precent}%")},
-        leadingContent = { Icon(painterResource(R.drawable.net), contentDescription = "Localized description",) },
+        leadingContent = { Icon(
+            painterResource(R.drawable.net),
+            contentDescription = "Localized description",
+        ) },
         modifier = Modifier.clickable { showBottomSheet = true }
     )
 
