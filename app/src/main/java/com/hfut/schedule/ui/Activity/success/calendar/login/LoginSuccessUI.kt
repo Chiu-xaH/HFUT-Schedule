@@ -805,6 +805,7 @@ fun CalendarScreen(showAll : Boolean,vm : LoginSuccessViewModel,grade : String,i
                                 }
 
                                 async { vm.getInfo(cookie!!) }
+                                async { cookie?.let { vm.getPhoto(it) } }
                                 async { vm.getProgram(cookie!!) }
                             }
                         }

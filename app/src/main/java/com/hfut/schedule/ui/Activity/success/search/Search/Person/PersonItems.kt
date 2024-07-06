@@ -2,10 +2,16 @@ package com.hfut.schedule.ui.Activity.success.search.Search.Person
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.BitmapFactory
+import android.util.Base64
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -17,23 +23,33 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.logic.utils.ClipBoard
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.ui.UIUtils.MyToast
 import org.jsoup.Jsoup
 
 
 
 
 @SuppressLint("SuspiciousIndentation")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun PersonItems(ifSaved : Boolean) {
 
    // val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
 
+
+    val cookie = SharePrefs.prefs.getString("redirect", "")
+    val photo = prefs.getString("photo",null)
 
     val info = prefs.getString("info","")
 
@@ -87,7 +103,10 @@ fun PersonItems(ifSaved : Boolean) {
                         contentDescription = "Localized description",
                     )
                 },
-                modifier = Modifier.clickable {}
+                modifier = Modifier.clickable {
+                    ClipBoard.copy(name)
+                    MyToast("已复制到剪切板")
+                }
             )
 
             ListItem(
@@ -98,7 +117,10 @@ fun PersonItems(ifSaved : Boolean) {
                         contentDescription = "Localized description",
                     )
                 },
-                modifier = Modifier.clickable {}
+                modifier = Modifier.clickable {
+                    ClipBoard.copy(studentnumber)
+                    MyToast("已复制到剪切板")
+                }
             )
 
 
@@ -112,7 +134,10 @@ fun PersonItems(ifSaved : Boolean) {
                         contentDescription = "Localized description",
                     )
                 },
-                modifier = Modifier.clickable {}
+                modifier = Modifier.clickable {
+                    ClipBoard.copy(benorsshuo)
+                    MyToast("已复制到剪切板")
+                }
             )
 
             ListItem(
@@ -123,7 +148,10 @@ fun PersonItems(ifSaved : Boolean) {
                         contentDescription = "Localized description",
                     )
                 },
-                modifier = Modifier.clickable {}
+                modifier = Modifier.clickable {
+                    ClipBoard.copy(school)
+                    MyToast("已复制到剪切板")
+                }
             )
 
 
@@ -135,7 +163,10 @@ fun PersonItems(ifSaved : Boolean) {
                         contentDescription = "Localized description",
                     )
                 },
-                modifier = Modifier.clickable {}
+                modifier = Modifier.clickable {
+                    ClipBoard.copy(yuanxi)
+                    MyToast("已复制到剪切板")
+                }
             )
 
 
@@ -147,7 +178,10 @@ fun PersonItems(ifSaved : Boolean) {
                         contentDescription = "Localized description",
                     )
                 },
-                modifier = Modifier.clickable {}
+                modifier = Modifier.clickable {
+                    ClipBoard.copy(zhuanye)
+                    MyToast("已复制到剪切板")
+                }
             )
 
             ListItem(
@@ -158,7 +192,10 @@ fun PersonItems(ifSaved : Boolean) {
                         contentDescription = "Localized description",
                     )
                 },
-                modifier = Modifier.clickable {}
+                modifier = Modifier.clickable {
+                    ClipBoard.copy(classes)
+                    MyToast("已复制到剪切板")
+                }
             )
 
 
@@ -170,7 +207,10 @@ fun PersonItems(ifSaved : Boolean) {
                         contentDescription = "Localized description",
                     )
                 },
-                modifier = Modifier.clickable {}
+                modifier = Modifier.clickable {
+                    ClipBoard.copy(home)
+                    MyToast("已复制到剪切板")
+                }
             )
 
             ListItem(
@@ -181,18 +221,38 @@ fun PersonItems(ifSaved : Boolean) {
                         contentDescription = "Localized description",
                     )
                 },
-                modifier = Modifier.clickable {}
+                modifier = Modifier.clickable {
+                    ClipBoard.copy(chineseid)
+                    MyToast("已复制到剪切板")
+                }
             )
-            if(!ifSaved)
+           // if(!ifSaved)
             ListItem(
-                headlineContent = { Text(text = "获取人像照片") },
+                headlineContent = { Text(text = "学籍照") },
+                trailingContent = {
+                    if(photo != null) {
+                        val byteArray = Base64.decode(photo, Base64.DEFAULT)
+                        val bitmap = BitmapFactory.decodeByteArray(byteArray , 0, byteArray.size)
+                        val imageBitmap = bitmap.asImageBitmap()
+                        Image(bitmap = imageBitmap,
+                            contentDescription = "Displayed image",
+                            modifier = Modifier.size(130.dp).padding(10.dp))
+                    }
+
+                },
                 leadingContent = {
                     Icon(
                         painterResource(R.drawable.background_replace),
                         contentDescription = "Localized description",
                     )
                 },
-                modifier = Modifier.clickable {}
+                modifier = Modifier.combinedClickable(
+                    onDoubleClick = null,
+                    onClick = { },
+                    onLongClick = {
+                        //保存
+                    }
+                )
             )
         }
     }

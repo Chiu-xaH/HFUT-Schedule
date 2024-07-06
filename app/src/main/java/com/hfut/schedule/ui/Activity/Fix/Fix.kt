@@ -46,6 +46,7 @@ import com.hfut.schedule.logic.Enums.FixBarItems
 import com.hfut.schedule.logic.datamodel.NavigationBarItemData
 import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 import dev.chrisbanes.haze.hazeChild
@@ -57,6 +58,7 @@ import dev.chrisbanes.haze.hazeChild
 fun Fix(vm : LoginViewModel,vm2 : LoginSuccessViewModel) {
     val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR", AndroidVersion.sdkInt >= 32)
     var blur by remember { mutableStateOf(switchblur) }
+    var animation by remember { mutableStateOf(prefs.getInt("ANIMATION",MyApplication.Animation)) }
     val hazeState = remember { HazeState() }
     val navController = rememberNavController()
     Scaffold(
@@ -82,53 +84,58 @@ fun Fix(vm : LoginViewModel,vm2 : LoginSuccessViewModel) {
             }
         },
         bottomBar = {
-            Divider()
-            NavigationBar(containerColor = if(blur) MaterialTheme.colorScheme.primaryContainer.copy(.25f) else ListItemDefaults.containerColor ,
-                modifier = Modifier
-                    .hazeChild(state = hazeState, blurRadius = MyApplication.Blur, tint = Color.Transparent, noiseFactor = 0f)) {
+            Column {
+                Divider()
+                NavigationBar(containerColor = if(blur) MaterialTheme.colorScheme.primaryContainer.copy(.25f) else ListItemDefaults.containerColor ,
+                    modifier = Modifier
+                        .hazeChild(state = hazeState, blurRadius = MyApplication.Blur, tint = Color.Transparent, noiseFactor = 0f)) {
 
-                val items = listOf(
-                    NavigationBarItemData(
-                        FixBarItems.Fix.name,"修复", painterResource(R.drawable.build), painterResource(
-                            R.drawable.build_filled)
-                    ),
-                    NavigationBarItemData(
-                        FixBarItems.About.name,"关于", painterResource(R.drawable.info), painterResource(
-                            R.drawable.info_filled)
+                    val items = listOf(
+                        NavigationBarItemData(
+                            FixBarItems.Fix.name,"修复", painterResource(R.drawable.build), painterResource(
+                                R.drawable.build_filled)
+                        ),
+                        NavigationBarItemData(
+                            FixBarItems.About.name,"关于", painterResource(R.drawable.info), painterResource(
+                                R.drawable.info_filled)
+                        )
                     )
-                )
-                items.forEach { item ->
-                    val route = item.route
-                    val selected = navController.currentBackStackEntryAsState().value?.destination?.route == route
-                    NavigationBarItem(
-                        selected = selected,
-                        onClick = {
-                            if (!selected) {
-                                navController.navigate(route) {
-                                    popUpTo(navController.graph.startDestinationId) {
-                                        saveState = true
+                    items.forEach { item ->
+                        val route = item.route
+                        val selected = navController.currentBackStackEntryAsState().value?.destination?.route == route
+                        NavigationBarItem(
+                            selected = selected,
+                            onClick = {
+                                if (!selected) {
+                                    navController.navigate(route) {
+                                        popUpTo(navController.graph.startDestinationId) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
                                     }
-                                    launchSingleTop = true
-                                    restoreState = true
                                 }
+                            },
+                            label = { Text(text = item.label) },
+                            icon = {
+                                BadgedBox(badge = {}) { Icon(if(selected)item.filledIcon else item.icon, contentDescription = item.label) }
                             }
-                        },
-                        label = { Text(text = item.label) },
-                        icon = {
-                            BadgedBox(badge = {}) { Icon(if(selected)item.filledIcon else item.icon, contentDescription = item.label) }
-                        }
-                    )
+                        )
+                    }
                 }
             }
+
         }
     ) {innerPadding ->
         NavHost(navController = navController,
             startDestination = FixBarItems.Fix.name,
             enterTransition = {
-                scaleIn(animationSpec = tween(durationMillis = 250)) + expandVertically(expandFrom = Alignment.CenterVertically)
+                scaleIn(animationSpec = tween(durationMillis = animation)) +
+                        expandVertically(expandFrom = Alignment.Top,animationSpec = tween(durationMillis = animation))
             },
             exitTransition = {
-                scaleOut(animationSpec = tween(durationMillis = 250)) + shrinkVertically(shrinkTowards = Alignment.CenterVertically)
+                scaleOut(animationSpec = tween(durationMillis = animation)) +
+                        shrinkVertically(shrinkTowards = Alignment.Top,animationSpec = tween(durationMillis = animation))
             },
             modifier = Modifier
             .haze(

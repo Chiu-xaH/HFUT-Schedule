@@ -87,6 +87,7 @@ import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.math.RoundingMode
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CardHome(innerPadding : PaddingValues,vm : LoginSuccessViewModel,blur : Boolean) {
@@ -116,21 +117,24 @@ fun CardHome(innerPadding : PaddingValues,vm : LoginSuccessViewModel,blur : Bool
         }
         Spacer(modifier = Modifier.height(5.dp))
         HorizontalPager(state = pagerState) { page ->
-            if(page == TAB_MONTH) {
-                monthCount(vm)
-            } else {
-                LazyColumn() {
-                    when (page) {
-                        TAB_DAY ->  {
-                            if(BillItem(vm).size == 0) item {EmptyUI()}
-                            else { items(BillItem(vm).size) { item -> todayCount(vm, item) } }
+            Scaffold { it->
+                if(page == TAB_MONTH) {
+                    monthCount(vm)
+                } else {
+                    LazyColumn() {
+                        when (page) {
+                            TAB_DAY ->  {
+                                if(BillItem(vm).size == 0) item {EmptyUI()}
+                                else { items(BillItem(vm).size) { item -> todayCount(vm, item) } }
+                            }
+
+                            TAB_WEEK ->  item { DevelopingUI() }
+
+                            TAB_TERM -> item { DevelopingUI() }
                         }
-
-                        TAB_WEEK ->  item { DevelopingUI() }
-
-                        TAB_TERM -> item { DevelopingUI() }
                     }
                 }
+                Spacer(modifier = Modifier.padding(it))
             }
         }
     }

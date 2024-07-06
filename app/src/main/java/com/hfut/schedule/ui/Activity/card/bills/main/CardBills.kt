@@ -346,7 +346,7 @@ fun BillsInfo(vm : LoginSuccessViewModel, Infonum : Int) {
                     overlineContent = { Text(text = "类型 ${Text( bills.turnoverType)}")}
                 )
                 ListItem(
-                    headlineContent = { Text(  "入账 "+ bills.jndatetimeStr+ "\n出账 " + bills.effectdateStr ) },
+                    headlineContent = { Text(  "出账 "+ bills.jndatetimeStr+ "\n入账 " + bills.effectdateStr ) },
                     leadingContent = {
                         Icon(
                             painterResource(id = R.drawable.schedule),

@@ -32,6 +32,10 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -39,9 +43,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.LoginViewModel
 import com.hfut.schedule.logic.Enums.FixBarItems
+import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.Fix.AboutUI
 import com.hfut.schedule.ui.Activity.Fix.FixUI
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.APPScreen
@@ -62,11 +68,12 @@ fun SettingsScreen(vm : LoginSuccessViewModel
                    innerPaddings : PaddingValues,
                    blur : Boolean,
                    blurchanged : (Boolean) -> Unit,
-                   vm1 : LoginViewModel
+                   vm1 : LoginViewModel,
 ) {
 
     val navController = rememberNavController()
 
+    var animation by remember { mutableStateOf(prefs.getInt("ANIMATION",MyApplication.Animation)) }
     Box{
         Scaffold(floatingActionButton = {
             //如果界面处于Screen.HomeScreen.route则不显示
@@ -84,10 +91,10 @@ fun SettingsScreen(vm : LoginSuccessViewModel
                 navController = navController,
                 startDestination = Screen.HomeScreen.route,
                 enterTransition = {
-                    scaleIn(animationSpec = tween(durationMillis = 250)) + expandVertically(expandFrom = Alignment.CenterVertically)
+                    scaleIn(animationSpec = tween(durationMillis = animation)) + expandVertically(expandFrom = Alignment.CenterVertically,animationSpec = tween(durationMillis = animation))
                 },
                 exitTransition = {
-                    scaleOut(animationSpec = tween(durationMillis = 250)) + shrinkVertically(shrinkTowards = Alignment.CenterVertically)
+                    scaleOut(animationSpec = tween(durationMillis = animation)) + shrinkVertically(shrinkTowards = Alignment.CenterVertically,animationSpec = tween(durationMillis = animation))
                 }
             ) {
 

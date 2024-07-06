@@ -14,6 +14,7 @@ class MyApplication : Application() {
         //学籍照GET ： eams5-student/students/avatar/170317
         lateinit var context: Context
         val Blur = 20.dp
+        val Animation = 400
         const val NewsURL = "https://news.hfut.edu.cn/"
         const val DownloadURL = "https://gitee.com/chiu-xah/HFUT-Schedule/releases/tag/Android"
         const val ServerURL = ""

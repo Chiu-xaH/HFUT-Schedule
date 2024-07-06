@@ -27,6 +27,8 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -61,6 +63,8 @@ import com.hfut.schedule.ui.Activity.success.cube.Settings.Monet.MonetColorItem
 import com.hfut.schedule.ui.Activity.success.cube.Settings.getUpdates
 import com.hfut.schedule.ui.Activity.success.search.Search.LePaoYun.InfoSet
 import com.hfut.schedule.ui.UIUtils.DividerText
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 
 fun apiCheck() : Boolean {
@@ -84,7 +88,7 @@ fun PartOne(vm : LoginSuccessViewModel,
             navController: NavController) {
     ListItem(
         headlineContent = { Text(text = "界面显示") },
-        supportingContent = { Text(text = "实时模糊 莫奈取色")},
+        supportingContent = { Text(text = "实时模糊 莫奈取色 动画时长")},
         leadingContent = {
             Icon(painter = painterResource(id = R.drawable.stacks), contentDescription ="" )
         },
@@ -92,7 +96,7 @@ fun PartOne(vm : LoginSuccessViewModel,
     )
     ListItem(
         headlineContent = { Text(text = "应用行为") },
-        supportingContent = { Text(text = "快速启动 预加载")},
+        supportingContent = { Text(text = "快速启动 预加载 主页面")},
         leadingContent = {
             Icon(painter = painterResource(id = R.drawable.empty_dashboard), contentDescription ="" )
         },
@@ -100,7 +104,7 @@ fun PartOne(vm : LoginSuccessViewModel,
     )
     ListItem(
         headlineContent = { Text(text = "网络相关") },
-        supportingContent = { Text(text = "云端接口 请求范围")},
+        supportingContent = { Text(text = "云端接口 请求范围 登录状态")},
         leadingContent = {
             Icon(painter = painterResource(id = R.drawable.net), contentDescription ="" )
         },
@@ -108,7 +112,7 @@ fun PartOne(vm : LoginSuccessViewModel,
     )
     ListItem(
         headlineContent = { Text(text = "维护关于") },
-        supportingContent = { Text(text = "疑难修复 联系与分享")},
+        supportingContent = { Text(text = "疑难修复 反馈信息 分享推广")},
         leadingContent = {
             Icon(painter = painterResource(id = R.drawable.responsive_layout), contentDescription ="" )
         },
@@ -147,6 +151,11 @@ fun UIScreen(navController: NavController,innerPaddings : PaddingValues,
         SaveBoolean("SWITCH",true,showlable)
         SaveBoolean("SWITCHBLUR",true,blur)
 
+        var sliderPosition by remember { mutableStateOf((prefs.getInt("ANIMATION",MyApplication.Animation)).toFloat()) }
+        val bd = BigDecimal(sliderPosition.toString())
+        val str = bd.setScale(0, RoundingMode.HALF_UP).toString()
+        SharePrefs.SaveInt("ANIMATION",sliderPosition.toInt())
+
         ListItem(
             headlineContent = { Text(text = "底栏标签") },
             supportingContent = { Text(text = "屏幕底部的Tab栏底栏标签")},
@@ -156,10 +165,41 @@ fun UIScreen(navController: NavController,innerPaddings : PaddingValues,
         )
         ListItem(
             headlineContent = { Text(text = "实时模糊") },
-            supportingContent = { Text(text = if(AndroidVersion.sdkInt >= 32) "开启后将会转换部分渲染为实时模糊" else "需为 Android 13+")},
+            supportingContent = {
+                    if(AndroidVersion.sdkInt >= 32) {
+                        Text(text = "开启后将会转换部分渲染为实时模糊")
+                    } else {
+                        Text(text = "需为 Android 13+")
+                    }
+                                },
             leadingContent = { Icon(painterResource(R.drawable.deblur), contentDescription = "Localized description",) },
             trailingContent = {  Switch(checked = blur, onCheckedChange = blurchanged, enabled = AndroidVersion.sdkInt >= 32 ) },
             modifier = Modifier.clickable { blurchanged }
+        )
+        ListItem(
+            headlineContent = { Text(text = "转场动画") },
+            supportingContent = {
+                                Column {
+                                    Text(text = "时长 $str 毫秒 重启后生效")
+                                    Slider(
+                                        value = sliderPosition,
+                                        onValueChange = {
+                                            sliderPosition = it
+                                            SharePrefs.SaveInt("ANIMATION",sliderPosition.toInt())
+                                                        },
+                                        colors = SliderDefaults.colors(
+                                            thumbColor = MaterialTheme.colorScheme.secondary,
+                                            activeTrackColor = MaterialTheme.colorScheme.secondary,
+                                            inactiveTrackColor = MaterialTheme.colorScheme.secondaryContainer,
+                                        ),
+                                        steps = 19,
+                                        valueRange = 0f..1000f
+                                    )
+                                }
+            },
+            leadingContent = { Icon(painterResource(R.drawable.animation), contentDescription = "Localized description",) },
+            trailingContent = {  Switch(checked = true, onCheckedChange = null, enabled = false ) },
+            modifier = Modifier.clickable {  }
         )
 
         MonetColorItem()

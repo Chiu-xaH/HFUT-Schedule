@@ -2,9 +2,12 @@ package com.hfut.schedule.ui.Activity.success.main.saved
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
@@ -63,6 +66,7 @@ import com.hfut.schedule.ui.Activity.success.calendar.nonet.SaveCourse
 import com.hfut.schedule.ui.Activity.success.cube.Settings.getUpdates
 import com.hfut.schedule.ui.Activity.success.cube.main.SettingsScreen
 import com.hfut.schedule.ui.Activity.success.focus.main.TodayScreen
+import com.hfut.schedule.ui.Activity.success.search.Search.More.Login
 import com.hfut.schedule.ui.Activity.success.search.Search.NextCourse
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.NotificationItems
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.getNotifications
@@ -97,8 +101,9 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
    // val savenum = prefs.getInt("GradeNum",0) + prefs.getInt("ExamNum",0) + prefs.getInt("Notifications",0)
     //val getnum = getGrade().size + getExam().size + getNotifications().size
     //if (savenum != getnum) showBadge2 = true
+    var animation by remember { mutableStateOf(prefs.getInt("ANIMATION",MyApplication.Animation)) }
 
-
+    //Log.d("动画",animation.toString())
 //判定是否以聚焦作为第一页
     var first : String = when (prefs.getBoolean("SWITCHFOCUS",true)) {
         true -> BottomBarItems.FOCUS.name
@@ -176,6 +181,11 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
                                 }
                             }
                         }
+                        if(bottomBarItems == BottomBarItems.SEARCH) {
+                            TextButton(onClick = { Login() }) {
+                                Icon(painter = painterResource(id =  R.drawable.login), contentDescription = "")
+                            }
+                        }
                     },
                 )
                 if(bottomBarItems != BottomBarItems.FOCUS)
@@ -239,10 +249,12 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
             navController = navController,
             startDestination = first,
             enterTransition = {
-                scaleIn(animationSpec = tween(durationMillis = 200)) + expandVertically(expandFrom = Alignment.CenterVertically)
+                        scaleIn(animationSpec = tween(durationMillis = animation)) +
+                        expandVertically(expandFrom = Alignment.Top,animationSpec = tween(durationMillis = animation))
             },
             exitTransition = {
-                scaleOut(animationSpec = tween(durationMillis = 200)) + shrinkVertically(shrinkTowards = Alignment.CenterVertically)
+                        scaleOut(animationSpec = tween(durationMillis = animation)) +
+                        shrinkVertically(shrinkTowards = Alignment.Top,animationSpec = tween(durationMillis = animation))
             },
             modifier = Modifier
             .haze(

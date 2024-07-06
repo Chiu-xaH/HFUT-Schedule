@@ -101,6 +101,10 @@ interface JxglstuService {
     fun postSurvey(@Header("Cookie") Cookie : String,
                    @Body json: JsonObject) : Call<ResponseBody>
 
+    //获取学籍照片
+    @GET("students/avatar/{studentId}")
+    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.17")
+    fun getPhoto(@Header("Cookie") Cookie : String,  @Path("studentId") studentId : String,) : Call<ResponseBody>
 }
 
 

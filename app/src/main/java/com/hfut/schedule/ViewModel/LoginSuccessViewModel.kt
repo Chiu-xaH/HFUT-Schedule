@@ -2,6 +2,7 @@ package com.hfut.schedule.ViewModel
 
 //import com.hfut.schedule.logic.network.ServiceCreator.Login.OneGetNewTicketServiceCreator.client
 import android.os.Build
+import android.util.Base64
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.MutableLiveData
@@ -325,6 +326,25 @@ class LoginSuccessViewModel : ViewModel() {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
+    //val photo = MutableLiveData<ByteArray>()
+    fun getPhoto(cookie : String){
+        val call = JxglstuJSON.getPhoto(cookie,studentId.value.toString())
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                //保存图片
+                // 将响应体转换为字节数组
+                val bytes = response.body()?.bytes()
+                // 将字节数组转换为Base64编码的字符串
+                val base64String = Base64.encodeToString(bytes, Base64.DEFAULT)
+                // 保存编码后的字符串
+                Save("photo",base64String)
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
+
 
     fun OneGoto(cookie : String)  {// 创建一个Call对象，用于发送异步请求
 

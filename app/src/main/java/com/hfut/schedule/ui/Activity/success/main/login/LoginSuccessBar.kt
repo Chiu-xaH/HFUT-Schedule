@@ -83,6 +83,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel,vmUI : UIViewModel) {
 
+    var animation by remember { mutableStateOf(prefs.getInt("ANIMATION",MyApplication.Animation)) }
     val switch = prefs.getBoolean("SWITCH",true)
     val navController = rememberNavController()
     var isEnabled by remember { mutableStateOf(false) }
@@ -241,10 +242,12 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel,vm
         NavHost(navController = navController,
             startDestination = BottomBarItems.COURSES.name,
             enterTransition = {
-                scaleIn(animationSpec = tween(durationMillis = 200)) + expandVertically(expandFrom = Alignment.CenterVertically)
+                scaleIn(animationSpec = tween(durationMillis = animation)) +
+                        expandVertically(expandFrom = Alignment.Top,animationSpec = tween(durationMillis = animation))
             },
             exitTransition = {
-                scaleOut(animationSpec = tween(durationMillis = 200)) + shrinkVertically(shrinkTowards = Alignment.CenterVertically)
+                scaleOut(animationSpec = tween(durationMillis = animation)) +
+                        shrinkVertically(shrinkTowards = Alignment.Top,animationSpec = tween(durationMillis = animation))
             },
             modifier = Modifier
             .haze(
@@ -269,7 +272,7 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel,vm
                 Scaffold {
                     SettingsScreen(
                         vm, showlable, showlablechanged = {showlablech -> showlable = showlablech},
-                        false,innerPadding,blur,blurchanged = {blurch -> blur = blurch},vm2) }
+                        false,innerPadding,blur,blurchanged = {blurch -> blur = blurch},vm2 ) }
             }
         }
     }
