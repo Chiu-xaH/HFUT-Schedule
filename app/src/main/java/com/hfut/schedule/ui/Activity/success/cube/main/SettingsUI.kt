@@ -56,6 +56,7 @@ import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.HomeSettingScre
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.NetWorkScreen
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.Screen
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.UIScreen
+import com.hfut.schedule.ui.Activity.success.cube.Settings.TEST
 
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("SuspiciousIndentation", "UnusedMaterial3ScaffoldPaddingParameter")
@@ -117,7 +118,6 @@ fun SettingsScreen(vm : LoginSuccessViewModel
                 Scaffold {
                     FixAboutScreen(navController, innerPaddings,vm)
                 }
-
                 }
                 composable(Screen.NetWorkScreen.route) {
                 Scaffold {
@@ -128,13 +128,16 @@ fun SettingsScreen(vm : LoginSuccessViewModel
                 Scaffold {
                     FixUI(innerPadding = innerPaddings,vm1,vm)
                 }
-
                 }
                 composable(FixBarItems.About.name) {
                     Scaffold {
                         AboutUI(innerPadding = innerPaddings, vm1)
                     }
-
+                }
+                composable("DEBUG") {
+                    Scaffold {
+                        TEST(innerPadding)
+                    }
                 }
             }
         }

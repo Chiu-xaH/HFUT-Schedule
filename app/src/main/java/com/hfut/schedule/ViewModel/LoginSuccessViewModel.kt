@@ -1,6 +1,7 @@
 package com.hfut.schedule.ViewModel
 
 //import com.hfut.schedule.logic.network.ServiceCreator.Login.OneGetNewTicketServiceCreator.client
+import android.annotation.SuppressLint
 import android.os.Build
 import android.util.Base64
 import android.util.Log
@@ -120,7 +121,133 @@ class LoginSuccessViewModel : ViewModel() {
         })
     }
 
+    val verifyData = MutableLiveData<String?>()
+    @SuppressLint("SuspiciousIndentation")
+    fun verify(cookie: String) {
+        val call = JxglstuJSON.verify(cookie)
 
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if (response.isSuccessful) {
+                    verifyData.value = response.code().toString()
+                } else {
+                    verifyData.value = response.code().toString()
+                    Log.e("Error", "Response code: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                t.printStackTrace()
+            }
+        })
+    }
+
+
+    val selectCourseData = MutableLiveData<String?>()
+    @SuppressLint("SuspiciousIndentation")
+    fun getSelectCourse(cookie: String) {
+        val call = prefs.getString("Username","2023XXXXXX")?.let {
+            JxglstuJSON.getSelectCourse(
+                it.substring(2,4),
+                studentId.value.toString(), cookie)
+        }
+
+        if (call != null) {
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    if (response.isSuccessful) {
+                        selectCourseData.value = response.body()?.string()
+                    } else {
+                        Log.e("Error", "Response code: ${response.code()}")
+                    }
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    t.printStackTrace()
+                }
+            })
+        }
+    }
+
+    val selectCourseInfoData = MutableLiveData<String?>()
+    @SuppressLint("SuspiciousIndentation")
+    fun getSelectCourseInfo(cookie: String,id : Int) {
+        val call = JxglstuJSON.getSelectCourseInfo(id,cookie)
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    selectCourseInfoData.value = response.body()?.string()
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                t.printStackTrace()
+            }
+        })
+    }
+
+    val stdCountData = MutableLiveData<String?>()
+    @SuppressLint("SuspiciousIndentation")
+    fun getSCount(cookie: String,id : Int) {
+        val call = JxglstuJSON.getCount(id,cookie)
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                stdCountData.value = response.body()?.string()
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                t.printStackTrace()
+            }
+        })
+    }
+
+    val requestIdData = MutableLiveData<String?>()
+    @SuppressLint("SuspiciousIndentation")
+    fun getRequestID(cookie: String,lessonId : String,courseId : String,type : String) {
+        val call = JxglstuJSON.getRequestID(studentId.value.toString(),lessonId,courseId,cookie,type)
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                requestIdData.value = response.body()?.string()
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                t.printStackTrace()
+            }
+        })
+    }
+
+    val selectedData = MutableLiveData<String?>()
+    @SuppressLint("SuspiciousIndentation")
+    fun getSelectedCourse(cookie: String,courseId : String) {
+        val call = JxglstuJSON.getSelectedCourse(studentId.value.toString(),courseId,cookie)
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                selectedData.value = response.body()?.string()
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                t.printStackTrace()
+            }
+        })
+    }
+
+    val selectResultData = MutableLiveData<String?>()
+    @SuppressLint("SuspiciousIndentation")
+    fun postSelect(cookie: String,requestId : String) {
+        val call = JxglstuJSON.postSelect(studentId.value.toString(), requestId,cookie)
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                selectResultData.value = response.body()?.string()
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                t.printStackTrace()
+            }
+        })
+    }
 
     val NewsData = MutableLiveData<String?>()
     fun searchNews(title : String) {
@@ -271,7 +398,7 @@ class LoginSuccessViewModel : ViewModel() {
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                courseData.value = response?.body()?.string()
+                courseData.value = response?.code().toString()
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }

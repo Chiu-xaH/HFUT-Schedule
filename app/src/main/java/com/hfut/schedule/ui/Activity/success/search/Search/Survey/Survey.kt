@@ -137,7 +137,7 @@ fun SurveyUI(vm : LoginSuccessViewModel) {
             Spacer(modifier = Modifier.height(5.dp))
             CircularProgressIndicator()
         }
-    }////加载动画居中，3s后消失
+    }
 
 
     AnimatedVisibility(

@@ -4,6 +4,8 @@ import com.google.gson.JsonObject
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
@@ -105,6 +107,74 @@ interface JxglstuService {
     @GET("students/avatar/{studentId}")
     @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.17")
     fun getPhoto(@Header("Cookie") Cookie : String,  @Path("studentId") studentId : String,) : Call<ResponseBody>
+
+
+    //先验证,否则无法爬选课信息
+    @GET("for-std/course-select")
+    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.17")
+    fun verify(@Header("Cookie") Cookie : String,) : Call<ResponseBody>
+
+    //获取选课
+    @FormUrlEncoded
+    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0","Content-Type: application/x-www-form-urlencoded")
+    @POST("ws/for-std/course-select/open-turns")
+    fun getSelectCourse(
+        @Field("bizTypeId") grade: String,
+        @Field("studentId") studentId: String,
+        @Header("Cookie") cookie: String
+    ): Call<ResponseBody>
+
+    //获取具体的选课
+    @FormUrlEncoded
+    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0","Content-Type: application/x-www-form-urlencoded")
+    @POST("ws/for-std/course-select/addable-lessons")
+    fun getSelectCourseInfo (
+        @Field("turnId") turnId: Int,
+        @Header("Cookie") cookie: String
+    ): Call<ResponseBody>
+
+    //选课人数
+    @FormUrlEncoded
+    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0","Content-Type: application/x-www-form-urlencoded")
+    @POST("ws/for-std/course-select/std-count")
+    fun getCount (
+        @Field("lessonIds[]") id: Int,
+        @Header("Cookie") cookie: String
+    ): Call<ResponseBody>
+
+    //准备选/退课请求，add选课drop退课
+    @FormUrlEncoded
+    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0","Content-Type: application/x-www-form-urlencoded")
+    @POST("ws/for-std/course-select/{type}-request")
+    fun getRequestID (
+        @Field("studentAssoc") studentId: String,
+        @Field("lessonAssoc") lessonId: String,
+        @Field("courseSelectTurnAssoc") courseId: String,
+        @Header("Cookie") cookie: String,
+        @Path("type") type : String
+    ): Call<ResponseBody>
+
+    //选/退课
+    @FormUrlEncoded
+    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0","Content-Type: application/x-www-form-urlencoded")
+    @POST("ws/for-std/course-select/add-drop-response")
+    fun postSelect (
+        @Field("studentId") studentId: String,
+        @Field("requestId") requestId: String,
+        @Header("Cookie") cookie: String
+    ): Call<ResponseBody>
+
+    //获取已经选的课
+    @FormUrlEncoded
+    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0","Content-Type: application/x-www-form-urlencoded")
+    @POST("ws/for-std/course-select/selected-lessons")
+    fun getSelectedCourse (
+        @Field("studentId") studentId: String,
+        @Field("turnId") courseId : String,
+        @Header("Cookie") cookie: String
+    ): Call<ResponseBody>
+
+
 }
 
 

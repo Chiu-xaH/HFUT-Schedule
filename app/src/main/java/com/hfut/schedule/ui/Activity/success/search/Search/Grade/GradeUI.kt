@@ -1,11 +1,16 @@
 package com.hfut.schedule.ui.Activity.success.search.Search.Grade
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -31,6 +36,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.compose.NavHost
@@ -99,10 +105,19 @@ fun GradeUI(ifSaved : Boolean,vm : LoginSuccessViewModel) {
                         )
                     )
                     items.forEach { item ->
+                        val interactionSource = remember { MutableInteractionSource() }
+                        val isPressed by interactionSource.collectIsPressedAsState()
+                        val scale = animateFloatAsState(
+                            targetValue = if (isPressed) 0.8f else 1f, // 按下时为0.9，松开时为1
+                            animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
+                            label = "" // 使用弹簧动画
+                        )
                         val route = item.route
                         val selected = navController.currentBackStackEntryAsState().value?.destination?.route == route
                         NavigationBarItem(
                             selected = selected,
+                            modifier = Modifier.scale(scale.value),
+                            interactionSource = interactionSource,
                             onClick = {
                                 if (!selected) {
                                     navController.navigate(route) {

@@ -132,6 +132,8 @@ sealed class Screen(val route: String) {
     object FIxScreen : Screen(FixBarItems.Fix.name)
     object AboutScreen : Screen(FixBarItems.About.name)
 
+    object DebugScreen : Screen("DEBUG")
+
 }
 
 
@@ -234,8 +236,10 @@ fun HomeSettingScreen(navController: NavController,
         MyAPIItem()
 
         if (APPVersion.getVersionName() != getUpdates().version) {
-            DividerText(text = "更新版本")
-            UpdateUI()
+            if(!APPVersion.getVersionName().contains("Preview")) {
+                DividerText(text = "更新版本")
+                UpdateUI()
+            }
         }
 
         DividerText(text = "猜你想用")
@@ -577,6 +581,14 @@ fun FixAboutScreen(navController: NavController,
             supportingContent = { Text(text = "遇到问题或有更好的建议?")},
             leadingContent = { Icon(painterResource(R.drawable.feedback), contentDescription = "Localized description",) },
             modifier = Modifier.clickable{ showBottomSheet_feedBack = true }
+        )
+
+        if(APPVersion.getVersionName().contains("Preview"))
+        ListItem(
+            headlineContent = { Text(text = "测试 调试") },
+            supportingContent = { Text(text = "用户禁入!")},
+            leadingContent = { Icon(painterResource(R.drawable.error), contentDescription = "Localized description",) },
+            modifier = Modifier.clickable{ navController.navigate(Screen.DebugScreen.route) }
         )
 //////////////////////////////////////////////////////////
     }

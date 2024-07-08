@@ -40,7 +40,7 @@ fun Map() {
     ListItem(
         headlineContent = { ScrollText(text = "校园地图") },
         leadingContent = { Icon(painter = painterResource(id = R.drawable.map), contentDescription = "") },
-            overlineContent = { ScrollText(text = "高德地图SDK测试") },
+     //       overlineContent = { ScrollText(text = "高德地图SDK测试") },
         modifier = Modifier.clickable {
                 showBottomSheet = true
         }

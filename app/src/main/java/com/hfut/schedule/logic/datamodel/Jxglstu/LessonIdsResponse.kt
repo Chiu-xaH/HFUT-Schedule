@@ -17,7 +17,7 @@ data class scheduleText(val dateTimePlacePersonText : dateTimePlacePersonText )
 data class dateTimePlacePersonText(val textZh : String?)
 
 data class course(val nameZh : String,val credits : Double?)
-data class courseType(val nameZh: String,)
+data class courseType(val nameZh: String)
 
 data class teacherAssignmentList2(val teacher : teacher,val age : Int?)
 data class teacher(val person : courseType,

@@ -57,6 +57,7 @@ import com.hfut.schedule.ui.Activity.success.search.Search.Second.Second
 import com.hfut.schedule.ui.Activity.success.search.Search.TotalCourse.CourseTotal
 import com.hfut.schedule.ui.Activity.success.search.Search.Web.WebUI
 import com.hfut.schedule.ui.Activity.success.search.Search.Xuanqu.XuanquItem
+import com.hfut.schedule.ui.Activity.success.search.Search.selectCourse
 import com.hfut.schedule.ui.UIUtils.MyToast
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
@@ -430,19 +431,45 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
                         .weight(.5f),
                     shape = MaterialTheme.shapes.medium,
                 ){
+                    selectCourse(ifSaved,vm)
+                }
+                Spacer(modifier = Modifier.width(10.dp))
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    shape = MaterialTheme.shapes.medium,
+                ){
                     Map()
                 }
+            }
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
+
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    shape = MaterialTheme.shapes.medium,
+                ){
+                    if(ifSaved)
+                        More()
+                }
                     Spacer(modifier = Modifier.width(10.dp))
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
-                        if(ifSaved)
-                            More()
-                    }
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    shape = MaterialTheme.shapes.medium,
+                ){
+
+                }
+
+
             }
 
 
