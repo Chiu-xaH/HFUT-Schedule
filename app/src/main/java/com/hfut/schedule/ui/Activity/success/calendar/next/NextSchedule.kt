@@ -1,18 +1,14 @@
-package com.hfut.schedule.ui.Activity.success.search.Search
+package com.hfut.schedule.ui.Activity.success.calendar.next
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -33,10 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.ui.Activity.success.calendar.DatumUI
 import com.hfut.schedule.ui.Activity.success.search.Search.More.Login
-import com.hfut.schedule.ui.UIUtils.ScrollText
-import com.hfut.schedule.ui.UIUtils.mapScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)

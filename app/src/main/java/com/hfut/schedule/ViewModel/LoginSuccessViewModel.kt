@@ -45,6 +45,7 @@ import com.hfut.schedule.logic.network.api.ZJGDBillService
 import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.logic.network.api.ServerService
 import com.hfut.schedule.logic.network.ServiceCreator.ServerServiceCreator
+import com.hfut.schedule.logic.utils.SharePrefs.SaveInt
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.getUserInfo
 import okhttp3.ResponseBody
 import org.jsoup.Jsoup
@@ -69,7 +70,7 @@ class LoginSuccessViewModel : ViewModel() {
     private val JxglstuSurvey = JxglstuSurveyServiceCreator.create(JxglstuService::class.java)
     private val server = ServerServiceCreator.create(ServerService::class.java)
 
-    var studentId = MutableLiveData<Int>(99999)
+    var studentId = MutableLiveData<Int>(prefs.getInt("STUDENTID",99999))
     var lessonIds = MutableLiveData<List<Int>>()
     var token = MutableLiveData<String>()
 
@@ -293,7 +294,7 @@ class LoginSuccessViewModel : ViewModel() {
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                SharePrefs.Save("grade", response.body()?.string())
+                Save("grade", response.body()?.string())
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -320,6 +321,7 @@ class LoginSuccessViewModel : ViewModel() {
                 if (response.headers()["Location"].toString().contains("/eams5-student/for-std/course-table/info/")) {
                     studentId.value = response.headers()["Location"].toString()
                         .substringAfter("/eams5-student/for-std/course-table/info/").toInt()
+                    SaveInt("STUDENTID",studentId.value ?: 99999)
                 } else studentId.value = 99999
             }
 
@@ -339,7 +341,7 @@ class LoginSuccessViewModel : ViewModel() {
                     val json = response.body()?.string()
                     if (json != null) {
                         val id = Gson().fromJson(json, lessonResponse::class.java)
-                        SharePrefs.Save("courses",json)
+                        Save("courses",json)
                         lessonIds.value = id.lessonIds
                     }
                 }
@@ -360,7 +362,7 @@ class LoginSuccessViewModel : ViewModel() {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 val body = response.body()?.string()
                 datumData.value = body
-                SharePrefs.Save("json", body)
+                Save("json", body)
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -372,7 +374,7 @@ class LoginSuccessViewModel : ViewModel() {
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                SharePrefs.Save("info", response.body()?.string())
+                Save("info", response.body()?.string())
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -385,7 +387,7 @@ class LoginSuccessViewModel : ViewModel() {
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                SharePrefs.Save("program", response.body()?.string())
+                Save("program", response.body()?.string())
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -522,7 +524,7 @@ class LoginSuccessViewModel : ViewModel() {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 val body = response.body()?.string()
                 CardData.value = body
-                SharePrefs.Save("cardyue",body )
+                Save("cardyue",body )
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -538,7 +540,7 @@ class LoginSuccessViewModel : ViewModel() {
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                SharePrefs.Save("changeResult", response.body()?.string())
+                Save("changeResult", response.body()?.string())
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -606,7 +608,7 @@ class LoginSuccessViewModel : ViewModel() {
                     val data = Gson().fromJson(json, getTokenResponse::class.java)
                     if (data.msg == "success") {
                         token.value = data.data.access_token
-                        SharePrefs.Save("bearer", data.data.access_token)
+                        Save("bearer", data.data.access_token)
                     }
                 }
 
@@ -642,10 +644,10 @@ class LoginSuccessViewModel : ViewModel() {
                 if (json.toString().contains("success")) {
                     val data = Gson().fromJson(json, BorrowBooksResponse::class.java)
                         val borrow = data.data.toString()
-                    SharePrefs.Save("borrow",borrow)
+                    Save("borrow",borrow)
 
                 }
-                 else SharePrefs.Save("borrow","未获取")
+                 else Save("borrow","未获取")
 
             }
 
@@ -663,9 +665,9 @@ class LoginSuccessViewModel : ViewModel() {
                 if (json.toString().contains("success")) {
                     val data = Gson().fromJson(json, SubBooksResponse::class.java)
                         val sub = data.data.toString()
-                    SharePrefs.Save("sub", sub)
+                    Save("sub", sub)
                 }
-                else SharePrefs.Save("borrow","0")
+                else Save("borrow","0")
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -680,7 +682,7 @@ class LoginSuccessViewModel : ViewModel() {
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                SharePrefs.Save("emptyjson", response.body()?.string())
+                Save("emptyjson", response.body()?.string())
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -709,7 +711,7 @@ class LoginSuccessViewModel : ViewModel() {
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                SharePrefs.Save("LePaoYun", response.body()?.string())
+                Save("LePaoYun", response.body()?.string())
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -744,7 +746,7 @@ class LoginSuccessViewModel : ViewModel() {
             call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                     val responses = response.body()?.string()
-                    SharePrefs.Save("Exam", responses)
+                    Save("Exam", responses)
                     ExamData.value = responses
                     ExamCodeData.value = response.code()
                 }
@@ -756,13 +758,17 @@ class LoginSuccessViewModel : ViewModel() {
             })
         }
     }
-
+    val examCode = MutableLiveData<Int>()
     fun getExamJXGLSTU(cookie: String) {
         val call = JxglstuJSON.getExam(cookie,studentId.value.toString())
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                SharePrefs.Save("examJXGLSTU", response.body()?.string())
+                val code = response?.code()
+                if(code == 200) {
+                    Save("examJXGLSTU", response.body()?.string())
+                }
+                examCode.value = response?.code()
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -778,7 +784,7 @@ class LoginSuccessViewModel : ViewModel() {
             call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                         val responses = response.body()?.string()
-                        SharePrefs.Save("Grade",responses )
+                        Save("Grade",responses )
                         GradeData.value = responses
                 }
 
@@ -796,7 +802,7 @@ class LoginSuccessViewModel : ViewModel() {
             call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                     val responses = response.body()?.string()
-                    SharePrefs.Save("Avg",responses )
+                    Save("Avg",responses )
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
@@ -813,7 +819,7 @@ class LoginSuccessViewModel : ViewModel() {
             call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                     val responses = response.body()?.string()
-                    SharePrefs.Save("AvgAll",responses )
+                    Save("AvgAll",responses )
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
@@ -833,7 +839,7 @@ class LoginSuccessViewModel : ViewModel() {
             call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                     libraryData.value = response.body()?.string()
-                    SharePrefs.Save("Library", response.body()?.string())
+                    Save("Library", response.body()?.string())
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
@@ -851,7 +857,7 @@ class LoginSuccessViewModel : ViewModel() {
         if (call != null) {
             call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    SharePrefs.Save("Course", response.body()?.string())
+                    Save("Course", response.body()?.string())
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -866,7 +872,7 @@ class LoginSuccessViewModel : ViewModel() {
         if (call != null) {
             call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    SharePrefs.Save(LibraryItems.BORROWED.name, response.body()?.string())
+                    Save(LibraryItems.BORROWED.name, response.body()?.string())
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -881,7 +887,7 @@ class LoginSuccessViewModel : ViewModel() {
         if (call != null) {
             call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    SharePrefs.Save(LibraryItems.HISTORY.name, response.body()?.string())
+                    Save(LibraryItems.HISTORY.name, response.body()?.string())
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -895,7 +901,7 @@ class LoginSuccessViewModel : ViewModel() {
         if (call != null) {
             call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    SharePrefs.Save(LibraryItems.OVERDUE.name, response.body()?.string())
+                    Save(LibraryItems.OVERDUE.name, response.body()?.string())
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -910,7 +916,7 @@ class LoginSuccessViewModel : ViewModel() {
         if (call != null) {
             call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    SharePrefs.Save("TodayNotice", response.body()?.string())
+                    Save("TodayNotice", response.body()?.string())
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -930,7 +936,7 @@ class LoginSuccessViewModel : ViewModel() {
                     val json = response.body()?.string()
                     if (json != null) {
                         val id = Gson().fromJson(json, lessonResponse::class.java)
-                        SharePrefs.Save("coursesNext",json)
+                        Save("coursesNext",json)
                         lessonIdsNext.value = id.lessonIds
                     }
                 }
@@ -951,7 +957,7 @@ class LoginSuccessViewModel : ViewModel() {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 val body = response.body()?.string()
             //    datumDataNext.value = body
-                SharePrefs.Save("jsonNext", body)
+                Save("jsonNext", body)
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }

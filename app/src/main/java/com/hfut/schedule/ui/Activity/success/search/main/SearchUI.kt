@@ -57,7 +57,7 @@ import com.hfut.schedule.ui.Activity.success.search.Search.Second.Second
 import com.hfut.schedule.ui.Activity.success.search.Search.TotalCourse.CourseTotal
 import com.hfut.schedule.ui.Activity.success.search.Search.Web.WebUI
 import com.hfut.schedule.ui.Activity.success.search.Search.Xuanqu.XuanquItem
-import com.hfut.schedule.ui.Activity.success.search.Search.selectCourse
+import com.hfut.schedule.ui.Activity.success.search.Search.SelectCourse.selectCourse
 import com.hfut.schedule.ui.UIUtils.MyToast
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze

@@ -2,6 +2,8 @@ package com.hfut.schedule.ui.Activity.success.main.saved
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.Spring
@@ -9,8 +11,6 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
@@ -47,6 +47,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Observer
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -73,11 +74,13 @@ import com.hfut.schedule.ui.Activity.success.cube.Settings.getUpdates
 import com.hfut.schedule.ui.Activity.success.cube.main.SettingsScreen
 import com.hfut.schedule.ui.Activity.success.focus.main.TodayScreen
 import com.hfut.schedule.ui.Activity.success.search.Search.More.Login
-import com.hfut.schedule.ui.Activity.success.search.Search.NextCourse
+import com.hfut.schedule.ui.Activity.success.calendar.next.NextCourse
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.NotificationItems
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.getNotifications
 import com.hfut.schedule.ui.Activity.success.search.main.SearchScreen
 import com.hfut.schedule.ui.Activity.success.search.main.getName
+import com.hfut.schedule.ui.UIUtils.DevelopingUI
+import com.hfut.schedule.ui.UIUtils.ScrollText
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 import dev.chrisbanes.haze.hazeChild
@@ -122,6 +125,25 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
 
+    var ifSaved by remember { mutableStateOf(true) }
+
+    val ExamObserver = Observer<Int> { result ->
+      //  Log.d("re",result.toString())
+        when(result) {
+            200 -> {
+                ifSaved = false
+                //登录Token未过期
+            }
+            else -> {
+                ifSaved = true
+            }
+        }
+    }
+
+
+    Handler(Looper.getMainLooper()).post { vm.examCode.observeForever(ExamObserver) }
+
+
     if (showBottomSheet) {
         SharePrefs.Save("Notifications", getNotifications().size.toString())
         ModalBottomSheet(onDismissRequest = { showBottomSheet = false }, sheetState = sheetState, modifier = Modifier) {
@@ -165,7 +187,7 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
                         containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = if(blur).50f else 1f),
                         titleContentColor = MaterialTheme.colorScheme.primary,
                     ),
-                    title = { Text(texts(vm,bottomBarItems)) },
+                    title = { ScrollText(texts(vm,bottomBarItems)) },
                     actions = {
                         if(bottomBarItems == BottomBarItems.COURSES) {
                             if(Gson().fromJson(prefs.getString("my",MyApplication.NullMy),
@@ -188,8 +210,12 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
                             }
                         }
                         if(bottomBarItems == BottomBarItems.SEARCH) {
-                            TextButton(onClick = { Login() }) {
-                                Icon(painter = painterResource(id =  R.drawable.login), contentDescription = "")
+                            if(ifSaved) {
+                                TextButton(onClick = { Login() }) {
+                                    Icon(painter = painterResource(id =  R.drawable.login), contentDescription = "")
+                                }
+                            } else {
+                                Text(text = "已登录",Modifier.padding(horizontal = 15.dp), color = MaterialTheme.colorScheme.primary)
                             }
                         }
                     },
@@ -285,20 +311,20 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
             }
             composable(BottomBarItems.FOCUS.name) {
                 Scaffold {
-                    TodayScreen(vm,vm2,innerPadding, blur,vmUI,true)
+                    TodayScreen(vm,vm2,innerPadding, blur,vmUI,ifSaved)
                 }
 
                 //Test()
             }
             composable(BottomBarItems.SEARCH.name) {
                 Scaffold {
-                    SearchScreen(vm,true,innerPadding,vmUI)
+                    SearchScreen(vm,ifSaved,innerPadding,vmUI)
                 }
 
             }
             composable(BottomBarItems.SETTINGS.name) {
                 Scaffold {
-                    SettingsScreen(vm,showlable, showlablechanged = { showlablech -> showlable = showlablech},true,innerPadding, blur,blurchanged = { blurch -> blur = blurch},vm2)
+                    SettingsScreen(vm,showlable, showlablechanged = { showlablech -> showlable = showlablech},ifSaved,innerPadding, blur,blurchanged = { blurch -> blur = blurch},vm2)
                 }
 
             }

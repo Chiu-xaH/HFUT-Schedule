@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.Activity.success.search.Search
+package com.hfut.schedule.ui.Activity.success.search.Search.SelectCourse
 
 import android.os.Handler
 import android.os.Looper
@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
@@ -51,14 +50,12 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
-import com.hfut.schedule.logic.datamodel.Jxglstu.SelectCourse
-import com.hfut.schedule.logic.datamodel.Jxglstu.SelectCourseInfo
+import com.hfut.schedule.logic.Enums.SelectType
 import com.hfut.schedule.logic.datamodel.Jxglstu.SelectPostResponse
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.success.search.Search.More.Login
 import com.hfut.schedule.ui.UIUtils.LittleDialog
-import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.ScrollText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -290,12 +287,6 @@ fun selectCourseList(vm: LoginSuccessViewModel) {
     }
 }
 
-fun getSelectCourseList(vm : LoginSuccessViewModel) : List<SelectCourse> {
-    val json = vm.selectCourseData.value
-    val courses: List<SelectCourse> = Gson().fromJson(json, object : TypeToken<List<SelectCourse>>() {}.type)
-    return courses
-}
-
 @Composable
 fun selectCourseInfoLoad(courseId : Int, vm: LoginSuccessViewModel) {
     var loading by remember { mutableStateOf(true) }
@@ -347,12 +338,6 @@ fun selectCourseInfoLoad(courseId : Int, vm: LoginSuccessViewModel) {
     }
 }
 
-
-fun getSelectCourseInfo(vm : LoginSuccessViewModel) : List<SelectCourseInfo>  {
-    val json = vm.selectCourseInfoData.value
-    val courses: List<SelectCourseInfo> = Gson().fromJson(json, object : TypeToken<List<SelectCourseInfo>>() {}.type)
-    return courses
-}
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun selectCourseInfo(vm: LoginSuccessViewModel,courseId : Int) {
@@ -386,7 +371,7 @@ fun selectCourseInfo(vm: LoginSuccessViewModel,courseId : Int) {
                 Column(modifier = Modifier
                     .padding(innerPadding)
                     .fillMaxSize()) {
-                    selectCourseResultLoad(vm,courseId,lessonId,SelectType.add.name)
+                    selectCourseResultLoad(vm,courseId,lessonId, SelectType.add.name)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
@@ -464,9 +449,6 @@ fun selectCourseInfo(vm: LoginSuccessViewModel,courseId : Int) {
     }
 }
 
-enum class SelectType {
-    add,drop
-}
 fun parseDynamicJson(jsonString: String): Map<String, Int> {
     val gson = Gson()
     val mapType = object : TypeToken<Map<String, Int>>() {}.type
@@ -704,7 +686,7 @@ fun haveSelectedCourse(vm: LoginSuccessViewModel,courseId : Int) {
                 Column(modifier = Modifier
                     .padding(innerPadding)
                     .fillMaxSize()) {
-                    selectCourseResultLoad(vm,courseId,lessonId,SelectType.drop.name)
+                    selectCourseResultLoad(vm,courseId,lessonId, SelectType.drop.name)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
@@ -753,10 +735,4 @@ fun haveSelectedCourse(vm: LoginSuccessViewModel,courseId : Int) {
             }
         }
     }
-}
-
-fun getSelectedCourse(vm : LoginSuccessViewModel) : List<SelectCourseInfo>  {
-    val json = vm.selectedData.value
-    val courses: List<SelectCourseInfo> = Gson().fromJson(json, object : TypeToken<List<SelectCourseInfo>>() {}.type)
-    return courses
 }

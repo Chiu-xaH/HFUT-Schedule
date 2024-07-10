@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Divider
-import androidx.compose.material.IconButton
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -57,7 +56,6 @@ import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.datamodel.NavigationBarItemData
 import com.hfut.schedule.logic.utils.AndroidVersion
-import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.ui.Activity.success.search.main.SearchScreen
 import com.hfut.schedule.ui.Activity.success.cube.main.SettingsScreen
@@ -68,10 +66,9 @@ import com.hfut.schedule.logic.utils.APPVersion
 import com.hfut.schedule.ui.Activity.success.calendar.login.CalendarScreen
 import com.hfut.schedule.ui.Activity.success.main.saved.texts
 import com.hfut.schedule.ui.Activity.success.cube.Settings.getUpdates
-import com.hfut.schedule.ui.Activity.success.search.Search.NextCourse
+import com.hfut.schedule.ui.Activity.success.calendar.next.NextCourse
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.NotificationItems
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.getNotifications
-import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.ScrollText
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
