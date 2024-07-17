@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -21,6 +23,7 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.LoginSuccessViewModelFactory
 import com.hfut.schedule.ViewModel.LoginViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.activity.ui.theme.肥工课程表Theme
@@ -35,13 +38,15 @@ import com.hfut.schedule.ui.MonetColor.SettingsProvider
 import com.hfut.schedule.ui.UIUtils.TransparentSystemBars
 import com.hfut.schedule.ui.theme.MonetColor
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class LoginActivity : ComponentActivity() {
     private val startAcitivity = prefs.getBoolean("SWITCHFASTSTART",prefs.getString("TOKEN","")?.isNotEmpty() ?: false)
     private val vm by lazy { ViewModelProvider(this).get(LoginViewModel::class.java) }
-    private val vm2 by lazy { ViewModelProvider(this).get(LoginSuccessViewModel::class.java) }
+    private val vm2 by lazy { ViewModelProvider(this, LoginSuccessViewModelFactory(false)).get(LoginSuccessViewModel::class.java) }
+
     private val vmUI by lazy { ViewModelProvider(this).get(UIViewModel::class.java) }
     private val viewModel: MainViewModel by viewModels()
     private val switchColor= prefs.getBoolean("SWITCHCOLOR",true)
@@ -101,6 +106,32 @@ class LoginActivity : ComponentActivity() {
                     launch { vm.getCookie() }
                     launch { SharePrefs.Save("tip","0") }
                     launch {  vm.getKey() }
+                    launch {
+                        async {vm.getTicket()}.await()
+                        async {
+                            Handler(Looper.getMainLooper()).post{
+                                vm.webVpnTicket.observeForever { result ->
+                                    // Log.d("sss",result.toString())
+                                    if (result != null) {
+                                        if (result.contains("wengine_vpn_ticketwebvpn_hfut_edu_cn")) {
+                                            val ticket = result.substringAfter("wengine_vpn_ticketwebvpn_hfut_edu_cn=").substringBefore(";")
+                                            vm.putKey(ticket)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        async {
+                            Handler(Looper.getMainLooper()).post{
+                                vm.status.observeForever { result ->
+                                    // Log.d("sss",result.toString())
+                                    if (result == 200) {
+                                        vm.getKeyWebVpn()
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
                 launch { vmUI.getUpdate() }
                 launch { vm.My() }

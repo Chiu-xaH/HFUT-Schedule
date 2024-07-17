@@ -20,6 +20,7 @@ import androidx.compose.material.Divider
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -42,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Observer
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -61,12 +63,15 @@ import com.hfut.schedule.ui.Activity.success.search.main.SearchScreen
 import com.hfut.schedule.ui.Activity.success.cube.main.SettingsScreen
 import com.hfut.schedule.ui.Activity.success.focus.main.TodayScreen
 import com.hfut.schedule.logic.Enums.BottomBarItems
+import com.hfut.schedule.logic.Enums.BottomBarItems.*
 import com.hfut.schedule.logic.datamodel.MyAPIResponse
 import com.hfut.schedule.logic.utils.APPVersion
 import com.hfut.schedule.ui.Activity.success.calendar.login.CalendarScreen
 import com.hfut.schedule.ui.Activity.success.main.saved.texts
 import com.hfut.schedule.ui.Activity.success.cube.Settings.getUpdates
 import com.hfut.schedule.ui.Activity.success.calendar.next.NextCourse
+import com.hfut.schedule.ui.Activity.success.calendar.nonet.SaveCourse
+import com.hfut.schedule.ui.Activity.success.search.Search.More.Login
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.NotificationItems
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.getNotifications
 import com.hfut.schedule.ui.UIUtils.ScrollText
@@ -84,14 +89,14 @@ import kotlinx.coroutines.launch
 )
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel,vmUI : UIViewModel) {
+fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel,vmUI : UIViewModel,webVpn : Boolean) {
 
     var animation by remember { mutableStateOf(prefs.getInt("ANIMATION",MyApplication.Animation)) }
     val switch = prefs.getBoolean("SWITCH",true)
     val navController = rememberNavController()
     var isEnabled by remember { mutableStateOf(false) }
     var showlable by remember { mutableStateOf(switch) }
-    var bottomBarItems by remember { mutableStateOf(BottomBarItems.COURSES) }
+    var bottomBarItems by remember { mutableStateOf(COURSES) }
     val hazeState = remember { HazeState() }
     var showBadge by remember { mutableStateOf(false) }
     if (getUpdates().version != APPVersion.getVersionName()) showBadge = true
@@ -120,7 +125,7 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel,vm
     }
 
     var showAll by remember { mutableStateOf(false) }
-
+    var swapUI by remember { mutableStateOf(false) }
 
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -163,28 +168,39 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel,vm
                     ),
                     title = { ScrollText(texts(vm,bottomBarItems)) },
                     actions = {
-                        if(bottomBarItems == BottomBarItems.COURSES) {
-                            if(Gson().fromJson(prefs.getString("my",MyApplication.NullMy),
-                                    MyAPIResponse::class.java).Next) {
-                                NextCourse(vmUI, false)
+                        when(bottomBarItems) {
+                            COURSES -> {
+                                FilledTonalButton(onClick = {
+                                    swapUI = !swapUI
+                                }) {
+                                    Text(text = if(!swapUI)"教务" else "社区" )
+                                }
+                                if(Gson().fromJson(prefs.getString("my",MyApplication.NullMy),
+                                        MyAPIResponse::class.java).Next) {
+                                    NextCourse(vmUI, false)
+                                }
+                                TextButton(onClick = { showAll = !showAll }) {
+                                    BadgedBox(badge = {
+                                        if (findCourse) Badge()
+                                    }) { Icon(painter = painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "") }
+                                }
                             }
-                            TextButton(onClick = { showAll = !showAll }) {
-                                BadgedBox(badge = {
-                                    if (findCourse) Badge()
-                                }) { Icon(painter = painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "") }
+                            FOCUS -> {
+                                TextButton(onClick = { showBottomSheet = true }) {
+                                    BadgedBox(badge = {
+                                        if (getNotifications().size.toString() != prefs.getString("Notifications",""))
+                                            Badge()
+                                    }) { Icon(painterResource(id = R.drawable.notifications), contentDescription = "") }
+                                }
                             }
-                        }
-                        if(bottomBarItems == BottomBarItems.FOCUS) {
-                            TextButton(onClick = { showBottomSheet = true }) {
-                                BadgedBox(badge = {
-                                    if (getNotifications().size.toString() != prefs.getString("Notifications",""))
-                                        Badge()
-                                }) { Icon(painterResource(id = R.drawable.notifications), contentDescription = "") }
+                            SEARCH -> {
+                                Text(text = if(webVpn)"外地访问" else "已登录",Modifier.padding(horizontal = 15.dp), color = MaterialTheme.colorScheme.primary)
                             }
+                            SETTINGS -> null
                         }
                     },
                 )
-                if(bottomBarItems != BottomBarItems.FOCUS)
+                if(bottomBarItems != FOCUS)
                 Divider()
             }
         },
@@ -197,10 +213,11 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel,vm
                     modifier = Modifier.hazeChild(state = hazeState, blurRadius = MyApplication.Blur, tint = Color.Transparent, noiseFactor = 0f)
                 ) {
                     val items = listOf(
-                        NavigationBarItemData(BottomBarItems.COURSES.name, "课程表", painterResource(R.drawable.calendar),painterResource(R.drawable.calendar_month_filled)),
-                        NavigationBarItemData(BottomBarItems.FOCUS.name,"聚焦", painterResource(R.drawable.lightbulb),painterResource(R.drawable.lightbulb_filled)),
-                        NavigationBarItemData(BottomBarItems.SEARCH.name,"查询中心", painterResource(R.drawable.search), painterResource(R.drawable.search_filledx)),
-                        NavigationBarItemData(BottomBarItems.SETTINGS.name,"选项", painterResource(if (getUpdates().version == APPVersion.getVersionName())R.drawable.
+                        NavigationBarItemData(COURSES.name, "课程表", painterResource(R.drawable.calendar),painterResource(R.drawable.calendar_month_filled)),
+                        NavigationBarItemData(FOCUS.name,"聚焦", painterResource(R.drawable.lightbulb),painterResource(R.drawable.lightbulb_filled)),
+                        NavigationBarItemData(SEARCH.name,"查询中心", painterResource(R.drawable.search), painterResource(R.drawable.search_filledx)),
+                        NavigationBarItemData(
+                            SETTINGS.name,"选项", painterResource(if (getUpdates().version == APPVersion.getVersionName())R.drawable.
                         deployed_code else R.drawable.deployed_code_update), painterResource(if (getUpdates().version == APPVersion.getVersionName()) R.drawable.deployed_code_filled else R.drawable.deployed_code_update_filled ))
 
                     )
@@ -222,10 +239,10 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel,vm
                             enabled = isEnabled,
                             onClick = {
                                 Save("tip","0000")
-                                if(item == items[0]) bottomBarItems = BottomBarItems.COURSES
-                                if(item == items[1]) bottomBarItems = BottomBarItems.FOCUS
-                                if(item == items[2]) bottomBarItems = BottomBarItems.SEARCH
-                                if(item == items[3]) bottomBarItems = BottomBarItems.SETTINGS
+                                if(item == items[0]) bottomBarItems = COURSES
+                                if(item == items[1]) bottomBarItems = FOCUS
+                                if(item == items[2]) bottomBarItems = SEARCH
+                                if(item == items[3]) bottomBarItems = SETTINGS
                                 if (!selected) {
                                     navController.navigate(route) {
                                         popUpTo(navController.graph.startDestinationId) {
@@ -252,7 +269,7 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel,vm
         }
     ) { innerPadding ->
         NavHost(navController = navController,
-            startDestination = BottomBarItems.COURSES.name,
+            startDestination = COURSES.name,
             enterTransition = {
                 scaleIn(animationSpec = tween(durationMillis = animation)) +
                         expandVertically(expandFrom = Alignment.Top,animationSpec = tween(durationMillis = animation))
@@ -265,22 +282,23 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel,vm
             .haze(
                 state = hazeState,
                 backgroundColor = MaterialTheme.colorScheme.surface,)) {
-            composable(BottomBarItems.COURSES.name) {
+            composable(COURSES.name) {
                 Scaffold {
-                    CalendarScreen(showAll,vm,grade,innerPadding,vmUI)
+                    if(!swapUI) CalendarScreen(showAll,vm,grade,innerPadding,vmUI,webVpn,vm2,true)
+                    else SaveCourse(showAll, innerPadding,vmUI)
                 }
             }
-            composable(BottomBarItems.FOCUS.name) {
+            composable(FOCUS.name) {
                 Scaffold {
-                    TodayScreen(vm,vm2,innerPadding,blur,vmUI,false)
+                    TodayScreen(vm,vm2,innerPadding,blur,vmUI,false,webVpn)
                 }
             }
-            composable(BottomBarItems.SEARCH.name) {
+            composable(SEARCH.name) {
                 Scaffold {
-                    SearchScreen(vm,false,innerPadding,vmUI)
+                    SearchScreen(vm,false,innerPadding,vmUI,webVpn)
                 }
             }
-            composable(BottomBarItems.SETTINGS.name) {
+            composable(SETTINGS.name) {
                 Scaffold {
                     SettingsScreen(
                         vm, showlable, showlablechanged = {showlablech -> showlable = showlablech},

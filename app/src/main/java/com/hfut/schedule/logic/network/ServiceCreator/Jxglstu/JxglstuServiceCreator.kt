@@ -8,17 +8,28 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 
 object JxglstuHTMLServiceCreator {
+    fun getRetrofit(useAlternativeUrl: Boolean): Retrofit {
+        val baseUrl = if (useAlternativeUrl) {
+            MyApplication.JxglstuWebVpnURL
+        } else {
+            MyApplication.JxglstuURL
+        }
 
+        return Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .addConverterFactory(ScalarsConverterFactory.create())
+            .build()
+    }
 
-    val retrofit = Retrofit.Builder()
-       .baseUrl(MyApplication.JxglstuURL)
-       .addConverterFactory(ScalarsConverterFactory.create())
-        .build()
+    fun <T> create(service: Class<T>, useAlternativeUrl: Boolean): T {
+        return getRetrofit(useAlternativeUrl).create(service)
+    }
 
-
-    fun <T> create(service: Class<T>): T = retrofit.create(service)
-    inline fun <reified  T> create() : T = create(T::class.java)
+    inline fun <reified T> create(useAlternativeUrl: Boolean): T {
+        return create(T::class.java, useAlternativeUrl)
+    }
 }
+
 
 object JxglstuJSONServiceCreator {
 
@@ -26,33 +37,55 @@ object JxglstuJSONServiceCreator {
         .followRedirects(false)
         .build()
 
-    val retrofit = Retrofit.Builder()
-        .baseUrl(MyApplication.JxglstuURL)
-        .client(Client)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
+    fun getRetrofit(useAlternativeUrl: Boolean): Retrofit {
+        val baseUrl = if (useAlternativeUrl) {
+            MyApplication.JxglstuWebVpnURL
+        } else {
+            MyApplication.JxglstuURL
+        }
 
+        return Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .client(Client)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
 
-    fun <T> create(service: Class<T>): T = retrofit.create(service)
-    inline fun <reified  T> create() : T = create(T::class.java)
+    fun <T> create(service: Class<T>, useAlternativeUrl: Boolean): T {
+        return getRetrofit(useAlternativeUrl).create(service)
+    }
 
+    inline fun <reified T> create(useAlternativeUrl: Boolean): T {
+        return create(T::class.java, useAlternativeUrl)
+    }
 }
+
 object JxglstuSurveyServiceCreator {
-
-
 
     val Client = OkHttpClient.Builder()
         .followRedirects(false)
         .addInterceptor(SurveyTokenInterceptor())
         .build()
 
-    val retrofit = Retrofit.Builder()
-        .baseUrl(MyApplication.JxglstuURL)
-        .client(Client)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
+    fun getRetrofit(useAlternativeUrl: Boolean): Retrofit {
+        val baseUrl = if (useAlternativeUrl) {
+            MyApplication.JxglstuWebVpnURL
+        } else {
+            MyApplication.JxglstuURL
+        }
 
+        return Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .client(Client)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
 
-    fun <T> create(service: Class<T>): T = retrofit.create(service)
-    inline fun <reified  T> create() : T = create(T::class.java)
+    fun <T> create(service: Class<T>, useAlternativeUrl: Boolean): T {
+        return getRetrofit(useAlternativeUrl).create(service)
+    }
+
+    inline fun <reified T> create(useAlternativeUrl: Boolean): T {
+        return create(T::class.java, useAlternativeUrl)
+    }
 }

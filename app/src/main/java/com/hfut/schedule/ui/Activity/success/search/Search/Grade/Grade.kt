@@ -61,8 +61,8 @@ import kotlinx.coroutines.launch
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Grade(vm : LoginSuccessViewModel,ifSaved : Boolean)  {
-    val cookie = prefs.getString("redirect", "")
+fun Grade(vm : LoginSuccessViewModel,ifSaved : Boolean,webVpn : Boolean)  {
+    val cookie = if(!webVpn) prefs.getString("redirect", "")  else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket","")
 
     if(!ifSaved)
     vm.getGrade(cookie!!)
@@ -102,6 +102,7 @@ fun Grade(vm : LoginSuccessViewModel,ifSaved : Boolean)  {
             //showBottomSheet_Grade = true
             val it = Intent(MyApplication.context, GradeActivity::class.java).apply {
                 putExtra("saved",ifSaved)
+                putExtra("webVpn",webVpn)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
             MyApplication.context.startActivity(it)

@@ -8,6 +8,7 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
@@ -45,6 +46,7 @@ import com.hfut.schedule.logic.network.api.ZJGDBillService
 import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.logic.network.api.ServerService
 import com.hfut.schedule.logic.network.ServiceCreator.ServerServiceCreator
+import com.hfut.schedule.logic.network.api.WebVpnService
 import com.hfut.schedule.logic.utils.SharePrefs.SaveInt
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.getUserInfo
 import okhttp3.ResponseBody
@@ -53,9 +55,19 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class LoginSuccessViewModel : ViewModel() {
-    private val JxglstuJSON = JxglstuJSONServiceCreator.create(JxglstuService::class.java)
-    private val JxglstuHTML = JxglstuHTMLServiceCreator.create(JxglstuService::class.java)
+class LoginSuccessViewModelFactory(private val webVpn: Boolean) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(LoginSuccessViewModel::class.java)) {
+            return LoginSuccessViewModel(webVpn) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
+    }
+}
+
+
+class LoginSuccessViewModel(webVpn : Boolean) : ViewModel() {
+    private val JxglstuJSON = JxglstuJSONServiceCreator.create(JxglstuService::class.java,webVpn)
+    private val JxglstuHTML = JxglstuHTMLServiceCreator.create(JxglstuService::class.java,webVpn)
     private val OneGoto = OneGotoServiceCreator.create(LoginService::class.java)
     private val One = OneServiceCreator.create(OneService::class.java)
     private val ZJGDBill = ZJGDBillServiceCreator.create(ZJGDBillService::class.java)
@@ -67,13 +79,13 @@ class LoginSuccessViewModel : ViewModel() {
     private val Community = CommunitySreviceCreator.create(CommunityService::class.java)
     private val Jwglapp = JwglappServiceCreator.create(JwglappService::class.java)
     private val News = NewsServiceCreator.create(NewsService::class.java)
-    private val JxglstuSurvey = JxglstuSurveyServiceCreator.create(JxglstuService::class.java)
+    private val JxglstuSurvey = JxglstuSurveyServiceCreator.create(JxglstuService::class.java,webVpn)
     private val server = ServerServiceCreator.create(ServerService::class.java)
 
-    var studentId = MutableLiveData<Int>(prefs.getInt("STUDENTID",99999))
+    var studentId = MutableLiveData<Int>(prefs.getInt("STUDENTID",0))
     var lessonIds = MutableLiveData<List<Int>>()
     var token = MutableLiveData<String>()
-
+    var webVpn = webVpn
     //val newFocus = MutableLiveData<String>()
     fun getData() {
         val call = server.getData()
@@ -316,13 +328,14 @@ class LoginSuccessViewModel : ViewModel() {
 
         val call = JxglstuJSON.getStudentId(cookie)
 
+        //Log.d("web",webVpn.toString())
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.headers()["Location"].toString().contains("/eams5-student/for-std/course-table/info/")) {
                     studentId.value = response.headers()["Location"].toString()
                         .substringAfter("/eams5-student/for-std/course-table/info/").toInt()
-                    SaveInt("STUDENTID",studentId.value ?: 99999)
-                } else studentId.value = 99999
+                    SaveInt("STUDENTID",studentId.value ?: 0)
+                }
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -463,11 +476,15 @@ class LoginSuccessViewModel : ViewModel() {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 //保存图片
                 // 将响应体转换为字节数组
-                val bytes = response.body()?.bytes()
-                // 将字节数组转换为Base64编码的字符串
-                val base64String = Base64.encodeToString(bytes, Base64.DEFAULT)
-                // 保存编码后的字符串
-                Save("photo",base64String)
+                try {
+                    val bytes = response.body()?.bytes()
+                    // 将字节数组转换为Base64编码的字符串
+                    val base64String = Base64.encodeToString(bytes, Base64.DEFAULT)
+                    // 保存编码后的字符串
+                    Save("photo",base64String)
+                } catch (e : Exception) {
+
+                }
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }

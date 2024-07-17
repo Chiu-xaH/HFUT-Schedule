@@ -26,3 +26,23 @@ object LoginServiceCreator {
     inline fun <reified  T> create() : T = create(T::class.java)
 
 }
+object LoginWebVpnServiceCreator {
+
+ //   val Client = OkHttpClient.Builder()
+        //.followRedirects(false)
+      //  .addInterceptor(RedirectInterceptor())
+     //   .build()
+//
+
+    val retrofit = Retrofit.Builder()
+        .baseUrl(MyApplication.WebVpnURL)
+      //  .client(Client)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+
+
+    fun <T> create(service: Class<T>): T = retrofit.create(service)
+    inline fun <reified  T> create() : T = create(T::class.java)
+
+}

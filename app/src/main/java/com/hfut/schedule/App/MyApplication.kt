@@ -10,11 +10,15 @@ import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
 class MyApplication : Application() {
+
     companion object {
         //学籍照GET ： eams5-student/students/avatar/170317
         lateinit var context: Context
         val Blur = 20.dp
         val Animation = 400
+        const val JxglstuURL = "http://jxglstu.hfut.edu.cn/eams5-student/"
+        const val JxglstuWebVpnURL = "https://webvpn.hfut.edu.cn/http/77726476706e69737468656265737421faef469034247d1e760e9cb8d6502720ede479/eams5-student/"
+        const val WebVpnURL = "https://webvpn.hfut.edu.cn/"
         const val NewsURL = "https://news.hfut.edu.cn/"
         const val DownloadURL = "https://gitee.com/chiu-xah/HFUT-Schedule/releases/tag/Android"
         const val ServerURL = ""
@@ -28,7 +32,7 @@ class MyApplication : Application() {
         const val AlipayHotWaterURL = "alipays://platformapi/startapp?appId=20000067&url=https://puwise.com/p?i=x4nNVOVYX6kp"
         const val OneURL = "https://one.hfut.edu.cn/"
         const val LoginURL = "https://cas.hfut.edu.cn/"
-        const val JxglstuURL = "http://jxglstu.hfut.edu.cn/eams5-student/"
+
         const val MyURL = "https://chiu-xah.github.io/"
         const val XuanquURL = "http://39.106.82.121/"
         const val loginWebURL = "http://172.18.3.3/"

@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.LoginSuccessViewModelFactory
 import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.activity.ui.theme.肥工课程表Theme
 import com.hfut.schedule.logic.utils.SharePrefs
@@ -41,12 +42,15 @@ import com.hfut.schedule.ui.theme.MonetColor
 class GradeActivity : ComponentActivity() {
     private val switchColor= SharePrefs.prefs.getBoolean("SWITCHCOLOR",true)
     private val viewModel: MainViewModel by viewModels()
-    private val vm by lazy { ViewModelProvider(this).get(LoginSuccessViewModel::class.java) }
+    var webVpn = false
+    private val vm by lazy { ViewModelProvider(this, LoginSuccessViewModelFactory(webVpn)).get(LoginSuccessViewModel::class.java) }
+
     //private val vmUI by lazy { ViewModelProvider(this).get(UIViewModel::class.java) }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         val ifSaved = intent.getBooleanExtra("saved",true)
+        webVpn = intent.getBooleanExtra("webVpn",false)
         setContent {
             if(!switchColor) {
                 肥工课程表Theme {

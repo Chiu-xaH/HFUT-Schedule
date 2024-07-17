@@ -77,13 +77,13 @@ import kotlinx.coroutines.launch
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
-fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel,innerPaddings : PaddingValues,blur : Boolean,vmUI : UIViewModel,ifSaved : Boolean) {
+fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel,innerPaddings : PaddingValues,blur : Boolean,vmUI : UIViewModel,ifSaved : Boolean,webVpn : Boolean) {
 
     val  TAB_LEFT = 0
     val TAB_RIGHT = 1
 
 /////////////////////////////////////////逻辑函数区/////////////////////////////////////////////////
-    CoroutineScope(Job()).launch{ async { NetWorkUpdate(vm,vm2,vmUI,ifSaved) } }
+    CoroutineScope(Job()).launch{ async { NetWorkUpdate(vm,vm2,vmUI,webVpn) } }
 //Today操作区///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -96,7 +96,7 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel,innerPaddings : 
         scope.launch {
             async {
                 refreshing = true
-                NetWorkUpdate(vm,vm2,vmUI,ifSaved)
+                NetWorkUpdate(vm,vm2,vmUI,webVpn)
             }.await()
             async {
                 refreshing = false

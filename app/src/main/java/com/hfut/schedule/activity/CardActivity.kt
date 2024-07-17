@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.LoginSuccessViewModelFactory
 import com.hfut.schedule.ViewModel.LoginViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.activity.ui.theme.肥工课程表Theme
@@ -28,7 +29,8 @@ class CardActivity : ComponentActivity() {
     private val switchColor= SharePrefs.prefs.getBoolean("SWITCHCOLOR",true)
     private val viewModel: MainViewModel by viewModels()
     private val vmMy by lazy { ViewModelProvider(this).get(LoginViewModel::class.java) }
-    private val vm by lazy { ViewModelProvider(this).get(LoginSuccessViewModel::class.java) }
+    private val vm by lazy { ViewModelProvider(this, LoginSuccessViewModelFactory(false)).get(LoginSuccessViewModel::class.java) }
+
     private val vmUI by lazy { ViewModelProvider(this).get(UIViewModel::class.java) }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -30,6 +30,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -74,9 +76,9 @@ import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-
-fun LoginClick(vm : LoginViewModel,username : String,inputAES : String) {
-    val cookie = prefs.getString("cookie", "")
+//登录方法，auto代表前台调用
+fun LoginClick(vm : LoginViewModel,username : String,inputAES : String,webVpn : Boolean) {
+    val cookie = prefs.getString(if(!webVpn)"cookie" else "webVpnKey", "")
     val outputAES = cookie?.let { it1 -> Encrypt.AESencrypt(inputAES, it1) }
     val ONE = "LOGIN_FLAVORING=$cookie"
     //保存账密
@@ -84,7 +86,7 @@ fun LoginClick(vm : LoginViewModel,username : String,inputAES : String) {
     Save("Password",inputAES)
     //登录
     if (username.length != 10) MyToast("请输入正确的账号")
-    else outputAES?.let { it1 -> vm.login(username, it1,ONE) }
+    else outputAES?.let { it1 -> vm.login(username, it1,ONE,webVpn) }
     //登陆判定机制
     CoroutineScope(Job()).launch {
         Handler(Looper.getMainLooper()).post{
@@ -101,7 +103,21 @@ fun LoginClick(vm : LoginViewModel,username : String,inputAES : String) {
                         MyToast("账号或密码错误")
                         vm.getCookie()
                     }
-                    "200" -> MyToast("请输入正确的账号")
+                    "200" -> {
+                        if(!webVpn)
+                        MyToast("请输入正确的账号")
+                        else {
+                            Toast.makeText(MyApplication.context, "登陆成功", Toast.LENGTH_SHORT).show()
+                            vm.loginJxglstu()
+                            Save("gradeNext",username.substring(2,4))
+                            val it = Intent(MyApplication.context, LoginSuccessActivity::class.java).apply {
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                putExtra("Grade", username.substring(2, 4))
+                                putExtra("webVpn",webVpn)
+                            }
+                            MyApplication.context.startActivity(it)
+                        }
+                    }
                     "302" -> {
                         when {
                             vm.location.value.toString() == MyApplication.RedirectURL -> {
@@ -110,10 +126,11 @@ fun LoginClick(vm : LoginViewModel,username : String,inputAES : String) {
                             }
                             vm.location.value.toString().contains("ticket") -> {
                                     Toast.makeText(MyApplication.context, "登陆成功", Toast.LENGTH_SHORT).show()
-                                Save("gradeNext",username.substring(2,4))
+                                    Save("gradeNext",username.substring(2,4))
                                     val it = Intent(MyApplication.context, LoginSuccessActivity::class.java).apply {
                                         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                                         putExtra("Grade", username.substring(2, 4))
+                                        putExtra("webVpn",webVpn)
                                     }
                                     MyApplication.context.startActivity(it)
                             }
@@ -234,6 +251,7 @@ fun TwoTextField(vm : LoginViewModel) {
 
     var username by remember { mutableStateOf(Savedusername ?: "") }
     var inputAES by remember { mutableStateOf(Savedpassword ?: "") }
+    var webVpn by remember { mutableStateOf(false) }
 
     // 创建一个动画值，根据按钮的按下状态来改变阴影的大小
 
@@ -325,7 +343,7 @@ fun TwoTextField(vm : LoginViewModel) {
             Button(
                 onClick = {
                     val cookie = SharePrefs.prefs.getString("cookie", "")
-                    if (cookie != null) LoginClick(vm,username,inputAES)
+                    if (cookie != null) LoginClick(vm,username,inputAES,webVpn)
                     }, modifier = Modifier.scale(scale.value),
                 interactionSource = interactionSource
 
@@ -339,6 +357,21 @@ fun TwoTextField(vm : LoginViewModel) {
                 interactionSource = interactionSource2,
 
                 ) { Text("免登录") }
+        }
+       // Spacer(modifier = Modifier.height(10.dp))
+
+        Row (modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center){
+            TextButton(
+                onClick = {webVpn = !webVpn},
+                content = {
+                    Checkbox(checked = webVpn, onCheckedChange = {change -> webVpn = change})
+                    Text(text = "外地访问")
+                },
+                //colors = ButtonColors(Color.Transparent,Color.Transparent,Color.Transparent,Color.Transparent,Color.Transparent)
+            )
+        //    Checkbox(checked = webVpn, onCheckedChange = {change -> webVpn = change})
+           // Spacer(modifier = Modifier.width(15.dp))
+
         }
     }
 }

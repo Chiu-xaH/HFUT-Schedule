@@ -90,7 +90,7 @@ fun getName(vm : LoginSuccessViewModel) : String? {
 @SuppressLint("CoroutineCreationDuringComposition", "SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : PaddingValues,vmUI : UIViewModel) {
+fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : PaddingValues,vmUI : UIViewModel,webVpn : Boolean) {
 
     getName(vm)
     val info = prefs.getString("info","")
@@ -141,7 +141,7 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
                         .weight(.5f),
                     shape = MaterialTheme.shapes.medium,
                 ){
-                    Grade(vm,ifSaved)
+                    Grade(vm,ifSaved,webVpn)
                 }
                 Spacer(modifier = Modifier.width(10.dp))
                 Card(

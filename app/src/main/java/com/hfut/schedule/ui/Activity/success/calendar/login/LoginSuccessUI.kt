@@ -57,6 +57,7 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.LoginViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.datamodel.Community.LoginCommunityResponse
 import com.hfut.schedule.logic.datamodel.Jxglstu.datumResponse
@@ -65,6 +66,8 @@ import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.SaveInt
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.ui.Activity.login.main.LoginClick
+import com.hfut.schedule.ui.Activity.success.search.Search.TotalCourse.getTotalCourse
 import com.hfut.schedule.ui.UIUtils.MyToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -72,14 +75,22 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class, ExperimentalAnimationApi::class)
 @SuppressLint("SuspiciousIndentation", "CoroutineCreationDuringComposition")
 @Composable
-fun CalendarScreen(showAll : Boolean,vm : LoginSuccessViewModel,grade : String,innerPadding : PaddingValues,vmUI : UIViewModel) {
+fun CalendarScreen(showAll : Boolean,
+                   vm : LoginSuccessViewModel,
+                   grade : String,
+                   innerPadding : PaddingValues,
+                   vmUI : UIViewModel,
+                   webVpn : Boolean,
+                   vm2 : LoginViewModel,
+                   load : Boolean) {
 
-    var loading by remember { mutableStateOf(true) }
+    var loading by remember { mutableStateOf(load) }
 
     var table_1_1 by rememberSaveable { mutableStateOf("") }
     var table_1_2 by rememberSaveable { mutableStateOf("") }
@@ -205,7 +216,12 @@ fun CalendarScreen(showAll : Boolean,vm : LoginSuccessViewModel,grade : String,i
         sheet_6_1, sheet_6_2, sheet_6_3, sheet_6_4, sheet_6_5
     )
 
-    var Bianhuaweeks by rememberSaveable { mutableStateOf(GetDate.weeksBetween) }
+    var Bianhuaweeks by rememberSaveable { mutableStateOf(
+        if(GetDate.weeksBetween > 20) {
+            getNewWeek()
+        } else GetDate.weeksBetween
+    ) }
+
 
     //填充UI与更新
     fun Update() {
@@ -680,193 +696,248 @@ fun CalendarScreen(showAll : Boolean,vm : LoginSuccessViewModel,grade : String,i
 
     }
 //////////////////////////////////////////////////////////////////////////////////
-    val cookie = prefs.getString("redirect", "")
-    var num2 = 1
-   // val grade = intent.getStringExtra("Grade")
-    val ONE = prefs.getString("ONE","")
-    val TGC = prefs.getString("TGC","")
-    val cardvalue = prefs.getString("borrow","")
-    val cookies = "$ONE;$TGC"
-    val ticket = prefs.getString("TICKET","")
-   // val jsons = prefs.getString("LoginCommunity",MyApplication.NullLoginCommunity)
-    val CommuityTOKEN = prefs.getString("TOKEN", "")
-    var a by rememberSaveable { mutableStateOf(0) }
-    val job = Job()
-    val job2 = Job()
-    val scope = CoroutineScope(job)
 
-    CoroutineScope(job2).launch {
-          val token = prefs.getString("bearer", "")
+   if(load) {
+        val cookie = if (!webVpn) prefs.getString(
+            "redirect",
+            ""
+        ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
+        var num2 = 1
+        // val grade = intent.getStringExtra("Grade")
+        val ONE = prefs.getString("ONE", "")
+        val TGC = prefs.getString("TGC", "")
+        val cardvalue = prefs.getString("borrow", "")
+        val cookies = "$ONE;$TGC"
+        val ticket = prefs.getString("TICKET", "")
+        // val jsons = prefs.getString("LoginCommunity",MyApplication.NullLoginCommunity)
+        val CommuityTOKEN = prefs.getString("TOKEN", "")
+        var a by rememberSaveable { mutableStateOf(0) }
+        val job = Job()
+        val job2 = Job()
+        val scope = CoroutineScope(job)
 
-        //检测若登陆成功（200）则解析出CommunityTOKEN
-        val LoginCommunityObserver = Observer<String?> { result ->
-            if (result != null) {
-                if (result.contains("200") && result.contains("token")) {
-                    val result = Gson().fromJson(result, LoginCommunityResponse::class.java)
-                    val token = result.result.token
-                    SharePrefs.Save("TOKEN", token)
-                    if(num2 == 1) {
-                        MyToast("Community登陆成功")
-                        num2++
-                    }
-                }
-            }
-        }
+        CoroutineScope(job2).launch {
+            val token = prefs.getString("bearer", "")
 
-        //检测CommunityTOKEN的可用性
-        val ExamObserver = Observer<Int> { result ->
-            if (result != null) {
-                //若不可用则执行登录流程
-                if(result == 500) {
-                    async {
-                        async { vm.GotoCommunity(cookies) }.await()
-                        async {
-                            delay(1000)
-                            ticket?.let { vm.LoginCommunity(it) }
-                        }.await()
-                        async {
-                            Handler(Looper.getMainLooper()).post { vm.LoginCommunityData.observeForever(LoginCommunityObserver) }
+            //检测若登陆成功（200）则解析出CommunityTOKEN
+            val LoginCommunityObserver = Observer<String?> { result ->
+                if (result != null) {
+                    if (result.contains("200") && result.contains("token")) {
+                        val result = Gson().fromJson(result, LoginCommunityResponse::class.java)
+                        val token = result.result.token
+                        SharePrefs.Save("TOKEN", token)
+                        if (num2 == 1) {
+                            MyToast("Community登陆成功")
+                            num2++
                         }
                     }
                 }
             }
-        }
 
-      ///  CoroutineScope(Job()).launch {
-         //   async {  }.await()
-           // async {
-             //   delay(2000)
-               // vm.goToJwglapp(cookies)
-         //       val tickets = vm.loginURL.value?.substringAfter("ticket=")
-                //Log.d("ticket",tickets.toString())
-         //       tickets?.let { vm.loginJwglapp(it) }
-           // }.await()
-       // }
-
-        //获取慧新易校
-       // val AuthObserver = Observer<String?> { result ->
-        //    if (result != null) {
-       //        if(result.contains("成功")) MyToast("一卡通登陆成功")
-      //          else
-     //       }
-   //     }
-
-
-
-        //检测慧新易校可用性
-        val auth = prefs.getString("auth","")
-        if (prefs.getString("auth", "") == "") vm.OneGotoCard("$ONE;$TGC")
-
-        async { vm.OneGotoCard("$ONE;$TGC") }
-        async { CommuityTOKEN?.let { vm.Exam(it) } }
-
-        Handler(Looper.getMainLooper()).post { vm.ExamCodeData.observeForever(ExamObserver) }
-
-        //慧新易校获取TOKEN
-        //val liushui = prefs.getString("cardliushui", MyApplication.NullBill)
-        //if (liushui != null) {
-
-
-               //
-        ///}
-
-        //登录信息门户的接口,还没做重构（懒）
-               if (token != null) {
-                 if (token.contains("AT") && cardvalue != "未获取") {
-                   async { vm.getSubBooks("Bearer $token") }
-                 async { vm.getBorrowBooks("Bearer $token") }
-           } else {
-             async {
-               async { vm.OneGoto(cookies) }.await()
-             async {
-               delay(500)
-             vm.getToken()
-            }.await()
-             }
-            }
-          }
-    }
-    val nextBoolean = try {
-        Gson().fromJson(prefs.getString("my",""),MyAPIResponse::class.java).Next
-    } catch (e : Exception) { false }
-    if(nextBoolean) SaveInt("FIRST",1)
-
-    scope.launch {
-
-//加载其他教务信息////////////////////////////////////////////////////////////////////////////////////////////////////
-        launch {
-                    val studentIdObserver = Observer<Int> { result ->
-                        if (result != 99999) {
-                            SharePrefs.Save("studentId", result.toString())
-                            CoroutineScope(Job()).launch {
-                                async { grade?.let { vm.getLessonIds(cookie!!, it, result.toString()) } }
-                                if(nextBoolean) {
-                                    async { grade?.let { vm.getLessonIdsNext(cookie!!, it, result.toString()) }  }
+            //检测CommunityTOKEN的可用性
+            val ExamObserver = Observer<Int> { result ->
+                if (result != null) {
+                    //若不可用则执行登录流程
+                    if (result == 500) {
+                        async {
+                            async { vm.GotoCommunity(cookies) }.await()
+                            async {
+                                delay(1000)
+                                ticket?.let { vm.LoginCommunity(it) }
+                            }.await()
+                            async {
+                                Handler(Looper.getMainLooper()).post {
+                                    vm.LoginCommunityData.observeForever(
+                                        LoginCommunityObserver
+                                    )
                                 }
-
-                                async { vm.getInfo(cookie!!) }
-                                async { cookie?.let { vm.getPhoto(it) } }
-                                async { vm.getProgram(cookie!!) }
                             }
                         }
                     }
-                    val lessonIdObserver = Observer<List<Int>> { result ->
-                        if (result.toString() != "") {
-                            val lessonIdsArray = JsonArray()
-                            result?.forEach { lessonIdsArray.add(JsonPrimitive(it)) }
-                            val jsonObject = JsonObject().apply {
-                                add("lessonIds", lessonIdsArray)//课程ID
-                                addProperty("studentId", vm.studentId.value)//学生ID
-                                addProperty("weekIndex", "")
-                            }
-                            vm.getDatum(cookie!!, jsonObject)
-                            vm.studentId.removeObserver(studentIdObserver)
-                        }
-                    }
-            val lessonIdObserverNext = Observer<List<Int>> { result ->
-                if (result.toString() != "") {
-                    val lessonIdsArray = JsonArray()
-                    result?.forEach { lessonIdsArray.add(JsonPrimitive(it)) }
-                    val jsonObject = JsonObject().apply {
-                        add("lessonIds", lessonIdsArray)//课程ID
-                        addProperty("studentId", vm.studentId.value)//学生ID
-                        addProperty("weekIndex", "")
-                    }
-                    vm.getDatumNext(cookie!!, jsonObject)
-                   // vm.lessonIdsNext.removeObserver(lessonIdObserver)
                 }
             }
-                    val datumObserver = Observer<String?> { result ->
-                        if (result != null) {
-                            if (result.contains("result")) {
-                                CoroutineScope(Job()).launch {
-                                    async { if(showAll) UpdateAll() else Update() }.await()
-                                    async { Handler(Looper.getMainLooper()).post { vm.lessonIds.removeObserver(lessonIdObserver) } }
-                                    async {
-                                        delay(200)
-                                        a++
-                                        loading = false
+
+            ///  CoroutineScope(Job()).launch {
+            //   async {  }.await()
+            // async {
+            //   delay(2000)
+            // vm.goToJwglapp(cookies)
+            //       val tickets = vm.loginURL.value?.substringAfter("ticket=")
+            //Log.d("ticket",tickets.toString())
+            //       tickets?.let { vm.loginJwglapp(it) }
+            // }.await()
+            // }
+
+            //获取慧新易校
+            // val AuthObserver = Observer<String?> { result ->
+            //    if (result != null) {
+            //        if(result.contains("成功")) MyToast("一卡通登陆成功")
+            //          else
+            //       }
+            //     }
+
+
+            //检测慧新易校可用性
+            val auth = prefs.getString("auth", "")
+            if (prefs.getString("auth", "") == "") vm.OneGotoCard("$ONE;$TGC")
+
+            async { vm.OneGotoCard("$ONE;$TGC") }
+            async { CommuityTOKEN?.let { vm.Exam(it) } }
+
+            Handler(Looper.getMainLooper()).post { vm.ExamCodeData.observeForever(ExamObserver) }
+
+            //慧新易校获取TOKEN
+            //val liushui = prefs.getString("cardliushui", MyApplication.NullBill)
+            //if (liushui != null) {
+
+
+            //
+            ///}
+
+            //登录信息门户的接口,还没做重构（懒）
+            if (token != null) {
+                if (token.contains("AT") && cardvalue != "未获取") {
+                    async { vm.getSubBooks("Bearer $token") }
+                    async { vm.getBorrowBooks("Bearer $token") }
+                } else {
+                    async {
+                        async { vm.OneGoto(cookies) }.await()
+                        async {
+                            delay(500)
+                            vm.getToken()
+                        }.await()
+                    }
+                }
+            }
+        }
+        val nextBoolean = try {
+            Gson().fromJson(prefs.getString("my", ""), MyAPIResponse::class.java).Next
+        } catch (e: Exception) {
+            false
+        }
+        if (nextBoolean) SaveInt("FIRST", 1)
+
+
+        scope.launch {
+//加载其他教务信息////////////////////////////////////////////////////////////////////////////////////////////////////
+            // async {
+            //   if(webVpn) {
+            //     prefs.getString("Password","")?.let { prefs.getString("Username","")?.let { it1 -> LoginClick(vm2, it1, it,true) } }
+            //   delay(200)
+            // }
+            // }.await()
+            async {
+                val studentIdObserver = Observer<Int> { result ->
+                    if (result != 0) {
+                        //Log.d("result",result.toString())
+                        SharePrefs.Save("studentId", result.toString())
+                        CoroutineScope(Job()).launch {
+                            async {
+                                grade?.let {
+                                    vm.getLessonIds(
+                                        cookie!!,
+                                        it,
+                                        result.toString()
+                                    )
+                                }
+                            }
+                            if (nextBoolean) {
+                                async {
+                                    grade?.let {
+                                        vm.getLessonIdsNext(
+                                            cookie!!,
+                                            it,
+                                            result.toString()
+                                        )
                                     }
                                 }
-                            } else MyToast("数据为空,尝试刷新")
+                            }
+
+                            async { vm.getInfo(cookie!!) }
+                            async { cookie?.let { vm.getPhoto(it) } }
+                            async { vm.getProgram(cookie!!) }
                         }
-                    }
+                    } else {
+                        ///Log.d("result0",result.toString())
+                        /*
 
-                    async { vm.getStudentId(cookie!!) }.await()
+                        val studentid = prefs.getInt("STUDENTID",99999)
+                         if(studentid != 0) {
+                             CoroutineScope(Job()).launch {
+                                 async { grade?.let { vm.getLessonIds(cookie!!, it, studentid.toString()) } }
+                                 if(nextBoolean) { async { grade?.let { vm.getLessonIdsNext(cookie!!, it, studentid.toString()) }  } }
 
-                    Handler(Looper.getMainLooper()).post {
-                        vm.studentId.observeForever(studentIdObserver)
-                        vm.lessonIds.observeForever(lessonIdObserver)
-                        vm.datumData.observeForever(datumObserver)
-                        if(nextBoolean)
-                        vm.lessonIdsNext.observeForever(lessonIdObserverNext)
+                                 async { vm.getInfo(cookie!!) }
+                                 async { cookie?.let { vm.getPhoto(it) } }
+                                 async { vm.getProgram(cookie!!) }
+                             }
+                         }
+                      */
                     }
                 }
+                val lessonIdObserver = Observer<List<Int>> { result ->
+                    if (result.toString() != "") {
+                        val lessonIdsArray = JsonArray()
+                        result?.forEach { lessonIdsArray.add(JsonPrimitive(it)) }
+                        val jsonObject = JsonObject().apply {
+                            add("lessonIds", lessonIdsArray)//课程ID
+                            addProperty("studentId", vm.studentId.value)//学生ID
+                            addProperty("weekIndex", "")
+                        }
+                        vm.getDatum(cookie!!, jsonObject)
+                        vm.studentId.removeObserver(studentIdObserver)
+                    }
+                }
+                val lessonIdObserverNext = Observer<List<Int>> { result ->
+                    if (result.toString() != "") {
+                        val lessonIdsArray = JsonArray()
+                        result?.forEach { lessonIdsArray.add(JsonPrimitive(it)) }
+                        val jsonObject = JsonObject().apply {
+                            add("lessonIds", lessonIdsArray)//课程ID
+                            addProperty("studentId", vm.studentId.value)//学生ID
+                            addProperty("weekIndex", "")
+                        }
+                        vm.getDatumNext(cookie!!, jsonObject)
+                        // vm.lessonIdsNext.removeObserver(lessonIdObserver)
+                    }
+                }
+                val datumObserver = Observer<String?> { result ->
+                    if (result != null) {
+                        if (result.contains("result")) {
+                            CoroutineScope(Job()).launch {
+                                async { if (showAll) UpdateAll() else Update() }.await()
+                                async {
+                                    Handler(Looper.getMainLooper()).post {
+                                        vm.lessonIds.removeObserver(
+                                            lessonIdObserver
+                                        )
+                                    }
+                                }
+                                async {
+                                    delay(200)
+                                    a++
+                                    loading = false
+                                }
+                            }
+                        } else MyToast("数据为空,尝试刷新")
+                    }
+                }
+
+                async { vm.getStudentId(cookie!!) }.await()
+
+                Handler(Looper.getMainLooper()).post {
+                    vm.studentId.observeForever(studentIdObserver)
+                    vm.lessonIds.observeForever(lessonIdObserver)
+                    vm.datumData.observeForever(datumObserver)
+                    if (nextBoolean)
+                        vm.lessonIdsNext.observeForever(lessonIdObserverNext)
+                }
+            }
+        }
+
+        if (a > 0) job.cancel()
+        if (prefs.getString("tip", "0") != "0") loading = false
     }
-
-    if(a > 0) job.cancel()
-    if (prefs.getString("tip", "0") != "0") loading  = false
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -902,7 +973,7 @@ fun CalendarScreen(showAll : Boolean,vm : LoginSuccessViewModel,grade : String,i
 
                     LazyVerticalGrid(columns = GridCells.Fixed(if(showAll)7 else 5),modifier = Modifier.padding(horizontal = 10.dp)){
                         items(if(showAll)7 else 5) { item ->
-                            if (GetDate.Benweeks > 0)
+                            if (GetDate.Benweeks in 1..20)
                                 Text(
                                     text = mondayOfCurrentWeek.plusDays(item.toLong()).toString()
                                         .substringAfter("-") ,
@@ -1028,5 +1099,17 @@ fun CalendarScreen(showAll : Boolean,vm : LoginSuccessViewModel,grade : String,i
 
 }
 
-
+@RequiresApi(Build.VERSION_CODES.O)
+fun getNewWeek() : Long {
+    return try {
+        val jxglstuJson = prefs.getString("courses","")
+        val resultJxglstu = getTotalCourse(jxglstuJson)[0].semester.startDate
+        val firstWeekStartJxglstu: LocalDate = LocalDate.parse(resultJxglstu)
+        val weeksBetweenJxglstu = ChronoUnit.WEEKS.between(firstWeekStartJxglstu, GetDate.today) + 1
+        Log.d("w",weeksBetweenJxglstu.toString())
+        weeksBetweenJxglstu  //固定本周
+    } catch (e : Exception) {
+        GetDate.Benweeks
+    }
+}
 

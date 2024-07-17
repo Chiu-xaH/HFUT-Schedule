@@ -14,9 +14,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 
-suspend fun NetWorkUpdate(vm : LoginSuccessViewModel, vm2 : LoginViewModel,vmUI : UIViewModel,ifSaved : Boolean){
+suspend fun NetWorkUpdate(vm : LoginSuccessViewModel, vm2 : LoginViewModel,vmUI : UIViewModel,webVpn : Boolean){
     val CommuityTOKEN = SharePrefs.prefs.getString("TOKEN","")
-    val cookie = prefs.getString("redirect", "")
+    val cookie = if(!webVpn) prefs.getString("redirect", "")  else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket","")
     CoroutineScope(Job()).apply {
         async { MyWangKe() }
         async { vm2.My() }

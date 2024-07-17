@@ -18,6 +18,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.LoginSuccessViewModelFactory
 import com.hfut.schedule.ViewModel.LoginViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.activity.ui.theme.肥工课程表Theme
@@ -37,7 +38,9 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class LoginSuccessActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
-    private val vm by lazy { ViewModelProvider(this).get(LoginSuccessViewModel::class.java) }
+    var webVpn = false
+    private val vm by lazy { ViewModelProvider(this, LoginSuccessViewModelFactory(webVpn)).get(LoginSuccessViewModel::class.java) }
+
     private val vm2 by lazy { ViewModelProvider(this).get(LoginViewModel::class.java) }
     private val switchColor= prefs.getBoolean("SWITCHCOLOR",true)
     private val vmUI by lazy { ViewModelProvider(this).get(UIViewModel::class.java) }
@@ -47,6 +50,7 @@ class LoginSuccessActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         val grade = intent.getStringExtra("Grade")
+        webVpn = intent.getBooleanExtra("webVpn",false)
         setContent {
             if(switchColor) {
                 SettingsProvider {
@@ -58,7 +62,7 @@ class LoginSuccessActivity : ComponentActivity() {
                             color = MaterialTheme.colorScheme.background
                         ) {
                             TransparentSystemBars()
-                            grade?.let { SuccessUI(vm, it,vm2,vmUI) }
+                            grade?.let { SuccessUI(vm, it,vm2,vmUI,webVpn) }
                         }
                     }
                 }
@@ -69,7 +73,7 @@ class LoginSuccessActivity : ComponentActivity() {
                         color = MaterialTheme.colorScheme.background
                     ) {
                         TransparentSystemBars()
-                        grade?.let { SuccessUI(vm, it,vm2,vmUI) }
+                        grade?.let { SuccessUI(vm, it,vm2,vmUI,webVpn) }
                     }
                 }
             }
