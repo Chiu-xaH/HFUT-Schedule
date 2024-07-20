@@ -58,6 +58,7 @@ import com.hfut.schedule.ui.Activity.success.search.Search.TotalCourse.CourseTot
 import com.hfut.schedule.ui.Activity.success.search.Search.Web.WebUI
 import com.hfut.schedule.ui.Activity.success.search.Search.Xuanqu.XuanquItem
 import com.hfut.schedule.ui.Activity.success.search.Search.SelectCourse.selectCourse
+import com.hfut.schedule.ui.Activity.success.search.Search.Transfer.Transfer
 import com.hfut.schedule.ui.UIUtils.MyToast
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
@@ -455,8 +456,7 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
                         .weight(.5f),
                     shape = MaterialTheme.shapes.medium,
                 ){
-                    if(ifSaved)
-                        More()
+                   Transfer(ifSaved, vm)
                 }
                     Spacer(modifier = Modifier.width(10.dp))
                 Card(

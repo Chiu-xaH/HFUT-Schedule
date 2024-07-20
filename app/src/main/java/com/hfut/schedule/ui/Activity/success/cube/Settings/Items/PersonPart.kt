@@ -223,6 +223,7 @@ fun getUserInfo() : UserInfo {
     val name = doc?.select("li.list-group-item.text-right:contains(中文姓名) span")?.last()?.text()
 
 
+
     val date = GetDate.Date_yyyy_MM_dd
     val time = "${GetDate.formattedTime_Hour}:${GetDate.formattedTime_Minute}:00"
     val dateTime = "$date $time"

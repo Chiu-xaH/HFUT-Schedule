@@ -49,6 +49,7 @@ import com.hfut.schedule.logic.network.ServiceCreator.ServerServiceCreator
 import com.hfut.schedule.logic.network.api.WebVpnService
 import com.hfut.schedule.logic.utils.SharePrefs.SaveInt
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.getUserInfo
+import com.hfut.schedule.ui.Activity.success.search.Search.Transfer.CampusId
 import okhttp3.ResponseBody
 import org.jsoup.Jsoup
 import retrofit2.Call
@@ -262,6 +263,26 @@ class LoginSuccessViewModel(webVpn : Boolean) : ViewModel() {
         })
     }
 
+    val transferData = MutableLiveData<String?>()
+    fun getTransfer(cookie: String,campus: CampusId) {
+        val campusId = when(campus) {
+            CampusId.XUANCHENG -> 3
+            CampusId.HEFEI -> 1
+        }
+        val call = studentId.value?.let { JxglstuJSON.getTransfer(cookie,true, campusId, it) }
+
+        if (call != null) {
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    transferData.value = response.body()?.string()
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+            })
+        }
+    }
+
+
     val NewsData = MutableLiveData<String?>()
     fun searchNews(title : String) {
 
@@ -275,6 +296,7 @@ class LoginSuccessViewModel(webVpn : Boolean) : ViewModel() {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
+
 
     fun GotoCommunity(cookie : String) {
 
