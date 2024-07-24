@@ -51,7 +51,6 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
-import com.hfut.schedule.logic.Enums.BottomBarItems
 import com.hfut.schedule.logic.Enums.CardBarItems
 import com.hfut.schedule.logic.datamodel.NavigationBarItemData
 import com.hfut.schedule.logic.datamodel.zjgd.BillResponse
@@ -59,10 +58,10 @@ import com.hfut.schedule.logic.datamodel.zjgd.records
 import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.ui.Activity.card.HomeScreen
 import com.hfut.schedule.ui.Activity.card.bills.main.CardBills
 import com.hfut.schedule.ui.Activity.card.counts.CardHome
-import com.hfut.schedule.ui.Activity.card.counts.main.CardCounts
-import com.hfut.schedule.ui.Activity.card.function.main.CardFunctions
+import com.hfut.schedule.ui.Activity.card.turnToBottomBar
 import com.hfut.schedule.ui.Activity.success.focus.Focus.GetZjgdCard
 import com.hfut.schedule.ui.UIUtils.MyToast
 import dev.chrisbanes.haze.HazeState
@@ -176,16 +175,16 @@ fun CardUI(vm : LoginSuccessViewModel, activity : Activity,vmUI : UIViewModel) {
 
                     val items = listOf(
                         NavigationBarItemData(
+                            CardBarItems.HOME.name,"卡包", painterResource(R.drawable.credit_card), painterResource(
+                                R.drawable.credit_card_filled)
+                        ),
+                        NavigationBarItemData(
                             CardBarItems.BILLS.name,"账单", painterResource(R.drawable.receipt_long), painterResource(
                                 R.drawable.receipt_long_filled)
                         ),
                         NavigationBarItemData(
                             CardBarItems.COUNT.name,"统计", painterResource(R.drawable.leaderboard),
                             painterResource(R.drawable.leaderboard_filled)
-                        ),
-                        NavigationBarItemData(
-                            CardBarItems.FUNCTION.name,"功能", painterResource(R.drawable.deployed_code), painterResource(
-                                R.drawable.deployed_code_filled)
                         )
                     )
                     items.forEach { item ->
@@ -204,20 +203,12 @@ fun CardUI(vm : LoginSuccessViewModel, activity : Activity,vmUI : UIViewModel) {
                             interactionSource = interactionSource,
                             onClick = {
                                 when(item) {
-                                    items[0] -> bottomBarItems = CardBarItems.BILLS
-                                    items[1] -> bottomBarItems = CardBarItems.COUNT
-                                    items[2] ->  bottomBarItems = CardBarItems.FUNCTION
+                                    items[0] -> bottomBarItems = CardBarItems.HOME
+                                    items[1] -> bottomBarItems = CardBarItems.BILLS
+                                    items[2] -> bottomBarItems = CardBarItems.COUNT
                                 }
                                 //     atEnd = !atEnd
-                                if (!selected) {
-                                    navController.navigate(route) {
-                                        popUpTo(navController.graph.startDestinationId) {
-                                            saveState = true
-                                        }
-                                        launchSingleTop = true
-                                        restoreState = true
-                                    }
-                                }
+                                if (!selected) { turnToBottomBar(navController, route) }
                             },
                             label = { Text(text = item.label) },
                             icon = {
@@ -231,7 +222,7 @@ fun CardUI(vm : LoginSuccessViewModel, activity : Activity,vmUI : UIViewModel) {
         }
     ) {innerPadding ->
         NavHost(navController = navController,
-            startDestination = CardBarItems.BILLS.name,
+            startDestination = CardBarItems.HOME.name,
             enterTransition = {
                 scaleIn(animationSpec = tween(durationMillis = animation)) +
                         expandVertically(expandFrom = Alignment.Top,animationSpec = tween(durationMillis = animation))
@@ -245,6 +236,11 @@ fun CardUI(vm : LoginSuccessViewModel, activity : Activity,vmUI : UIViewModel) {
                 state = hazeState,
                 backgroundColor = MaterialTheme.colorScheme.surface,
             )) {
+            composable(CardBarItems.HOME.name) {
+                Scaffold {
+                    HomeScreen(innerPadding,vm,navController,vmUI)
+                }
+            }
             composable(CardBarItems.BILLS.name) {
                 Scaffold {
                     CardBills(vm,innerPadding,vmUI)
@@ -254,11 +250,6 @@ fun CardUI(vm : LoginSuccessViewModel, activity : Activity,vmUI : UIViewModel) {
             composable(CardBarItems.COUNT.name) {
                 Scaffold {
                     CardHome(innerPadding,vm,blur)
-                }
-            }
-            composable(CardBarItems.FUNCTION.name) {
-                Scaffold {
-                    CardFunctions(vm,innerPadding,vmUI)
                 }
             }
         }

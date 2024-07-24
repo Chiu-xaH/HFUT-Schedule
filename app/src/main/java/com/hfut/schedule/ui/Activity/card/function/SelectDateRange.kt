@@ -15,9 +15,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DateRangePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
@@ -51,62 +57,69 @@ fun SelecctDateRange(vm : LoginSuccessViewModel) {
         label = " " // 使用弹簧动画
     )
 
-    Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Top) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 12.dp, end = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                colors = TopAppBarDefaults.mediumTopAppBarColors(
+                    containerColor = Color.Transparent,
+                    titleContentColor = MaterialTheme.colorScheme.primary,
+                ),
+                title = { Text("范围支出") },
+                actions = {
+                    FilledTonalButton(
+                        modifier = Modifier.scale(scale.value).padding(horizontal = 15.dp),
+                        interactionSource = interactionSource,
+                        //shape = MaterialTheme.shapes.small,
+                        onClick = {
+                            val formatter = SimpleDateFormat("yyyy-MM-dd")
 
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End){
-                OutlinedButton(
-                    modifier = Modifier.scale(scale.value),
-                    interactionSource = interactionSource,
-                    shape = MaterialTheme.shapes.small,
-                    onClick = {
-                        val formatter = SimpleDateFormat("yyyy-MM-dd")
+                            val startDate = Date(state.selectedStartDateMillis!!)
+                            val endDate = Date(state.selectedEndDateMillis!!)
 
-                        val startDate = Date(state.selectedStartDateMillis!!)
-                        val endDate = Date(state.selectedEndDateMillis!!)
+                            val startDateString = formatter.format(startDate)
+                            val endDateString = formatter.format(endDate)
 
-                        val startDateString = formatter.format(startDate)
-                        val endDateString = formatter.format(endDate)
-
-                        val auth = prefs.getString("auth", "")
-                        CoroutineScope(Job()).apply {
-                            launch {
-                                async {
-                                    Handler(Looper.getMainLooper()).post{
-                                        vm.RangeData.value = "{}"
-                                    }
-                                    vm.searchDate("bearer " + auth, startDateString, endDateString)
-                                }.await()
-                                async {
-                                    Handler(Looper.getMainLooper()).post{
-                                        vm.RangeData.observeForever { result ->
-                                            if(result.contains("操作成功")){
-                                                val data = Gson().fromJson(result, BillRangeResponse::class.java)
-                                                var zhichu = data.data.expenses
-                                                zhichu = zhichu / 100
-                                                MyToast("共支出 ${zhichu} 元")
+                            val auth = prefs.getString("auth", "")
+                            CoroutineScope(Job()).apply {
+                                launch {
+                                    async {
+                                        Handler(Looper.getMainLooper()).post{
+                                            vm.RangeData.value = "{}"
+                                        }
+                                        vm.searchDate("bearer " + auth, startDateString, endDateString)
+                                    }.await()
+                                    async {
+                                        Handler(Looper.getMainLooper()).post{
+                                            vm.RangeData.observeForever { result ->
+                                                if(result.contains("操作成功")){
+                                                    val data = Gson().fromJson(result, BillRangeResponse::class.java)
+                                                    var zhichu = data.data.expenses
+                                                    zhichu = zhichu / 100
+                                                    MyToast("共支出 ${zhichu} 元")
+                                                }
                                             }
                                         }
                                     }
                                 }
                             }
-                        }
-                    },
-                    enabled = state.selectedEndDateMillis != null
-                ) {
-                    Text(text = "查看总支出")
+                        },
+                        enabled = state.selectedEndDateMillis != null
+                    ) {
+                        Text(text = "查看总支出")
+                    }
                 }
-            }
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+        ) {
+            DateRangePicker(state = state,
+                modifier = Modifier.weight(1f), title = { Text(text = "")},
+            )
         }
-        DateRangePicker(state = state,
-            modifier = Modifier.weight(1f), title = { Text(text = "")},
-          )
     }
-
 }

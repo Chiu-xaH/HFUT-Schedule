@@ -736,21 +736,19 @@ fun CalendarScreen(showAll : Boolean,
 
             //检测CommunityTOKEN的可用性
             val ExamObserver = Observer<Int> { result ->
-                if (result != null) {
-                    //若不可用则执行登录流程
-                    if (result == 500) {
+                Log.d("result",(result == 500).toString())
+                if (result == 500) {
+                    CoroutineScope(Job()).async {
+                        async { vm.GotoCommunity(cookies) }.await()
                         async {
-                            async { vm.GotoCommunity(cookies) }.await()
-                            async {
-                                delay(1000)
-                                ticket?.let { vm.LoginCommunity(it) }
-                            }.await()
-                            async {
-                                Handler(Looper.getMainLooper()).post {
-                                    vm.LoginCommunityData.observeForever(
-                                        LoginCommunityObserver
-                                    )
-                                }
+                            delay(1000)
+                            ticket?.let { vm.LoginCommunity(it) }
+                        }.await()
+                        async {
+                            Handler(Looper.getMainLooper()).post {
+                                vm.LoginCommunityData.observeForever(
+                                    LoginCommunityObserver
+                                )
                             }
                         }
                     }
@@ -1106,7 +1104,6 @@ fun getNewWeek() : Long {
         val resultJxglstu = getTotalCourse(jxglstuJson)[0].semester.startDate
         val firstWeekStartJxglstu: LocalDate = LocalDate.parse(resultJxglstu)
         val weeksBetweenJxglstu = ChronoUnit.WEEKS.between(firstWeekStartJxglstu, GetDate.today) + 1
-        Log.d("w",weeksBetweenJxglstu.toString())
         weeksBetweenJxglstu  //固定本周
     } catch (e : Exception) {
         GetDate.Benweeks

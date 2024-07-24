@@ -50,6 +50,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.activity.FixActivity
 import com.hfut.schedule.activity.LoginActivity
+import com.hfut.schedule.logic.Enums.CardBarItems
 import com.hfut.schedule.logic.Enums.FixBarItems
 import com.hfut.schedule.logic.datamodel.MyAPIResponse
 import com.hfut.schedule.logic.utils.APPVersion
@@ -133,6 +134,10 @@ sealed class Screen(val route: String) {
     object AboutScreen : Screen(FixBarItems.About.name)
 
     object DebugScreen : Screen("DEBUG")
+    object CardBillsScreen : Screen(CardBarItems.BILLS.name)
+
+    object CardCountScreen : Screen(CardBarItems.COUNT.name)
+    object CardHomeScreen : Screen(CardBarItems.HOME.name)
 
 }
 

@@ -18,6 +18,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -36,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
@@ -51,102 +53,12 @@ import com.hfut.schedule.ui.Activity.card.function.SearchBillsUI
 import com.hfut.schedule.ui.Activity.card.function.SelecctDateRange
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.ScrollText
+import com.hfut.schedule.ui.UIUtils.WebViewScreen
 import java.math.BigDecimal
 import java.math.RoundingMode
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CardFunctions(vm : LoginSuccessViewModel,innerPaddings : PaddingValues,vmUI: UIViewModel) {
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .verticalScroll(rememberScrollState())) {
-
-
-
-        val sheetState_Range = rememberModalBottomSheetState()
-        var showBottomSheet_Range by remember { mutableStateOf(false) }
-
-        val sheetState_Search = rememberModalBottomSheetState()
-        var showBottomSheet_Search by remember { mutableStateOf(false) }
-
-        val sheetState_Settings = rememberModalBottomSheetState()
-        var showBottomSheet_Settings by remember { mutableStateOf(false) }
-
-        if(showBottomSheet_Range) {
-            ModalBottomSheet(
-                onDismissRequest = {
-                    showBottomSheet_Range = false
-                },
-                sheetState = sheetState_Range
-            ) { SelecctDateRange(vm) }
-        }
-
-        if (showBottomSheet_Search) {
-            ModalBottomSheet(
-                onDismissRequest = {
-                    showBottomSheet_Search = false
-                },
-                sheetState = sheetState_Search
-            ) { SearchBillsUI(vm) }
-        }
-
-        if (showBottomSheet_Settings) {
-            ModalBottomSheet(
-                onDismissRequest = {
-                    showBottomSheet_Settings = false
-                },
-                sheetState = sheetState_Settings
-            ) { CardLimit(vm) }
-        }
-
-        Spacer(modifier = Modifier.height(innerPaddings.calculateTopPadding()))
-
-
-        Spacer(modifier = Modifier.height(5.dp))
-
-        CardRow(vm,true,vmUI)
-
-        Spacer(modifier = Modifier.height(5.dp))
-
-        ListItem(
-            headlineContent = { Text(text = "充值跳转") },
-            leadingContent = { Icon(painter = painterResource(id = R.drawable.add_card), contentDescription = "")},
-            modifier = Modifier.clickable { StartApp.openAlipay(MyApplication.AlipayCardURL) }
-        )
-        ListItem(
-            headlineContent = { Text(text = "范围支出") },
-            leadingContent = { Icon(painter = painterResource(id = R.drawable.settings_ethernet), contentDescription = "")},
-            modifier = Modifier.clickable { showBottomSheet_Range = true }
-        )
-        ListItem(
-            headlineContent = { Text(text = "搜索账单") },
-            leadingContent = { Icon(painter = painterResource(id = R.drawable.search), contentDescription = "")},
-            modifier = Modifier.clickable { showBottomSheet_Search = true }
-        )
-        ListItem(
-            headlineContent = { Text(text = "限额修改") },
-            leadingContent = { Icon(painter = painterResource(id = R.drawable.price_change), contentDescription = "")},
-            modifier = Modifier.clickable { showBottomSheet_Settings = true }
-        )
-        ListItem(
-            headlineContent = { Text(text = "挂失解挂") },
-            leadingContent = { Icon(painter = painterResource(id = R.drawable.error), contentDescription = "")},
-            modifier = Modifier.clickable { MyToast("暂未开发") }
-        )
-        ListItem(
-            headlineContent = { Text(text = "账单导出") },
-            leadingContent = { Icon(painter = painterResource(id = R.drawable.arrow_upward), contentDescription = "")},
-            modifier = Modifier.clickable { MyToast("暂未开发") }
-        )
-        Spacer(modifier = Modifier.height(innerPaddings.calculateBottomPadding()))
-    }
-}
-
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun CardRow(vm : LoginSuccessViewModel,show : Boolean,vmUI : UIViewModel) {
+fun CardRow(vm : LoginSuccessViewModel,vmUI : UIViewModel) {
     var todaypay = 0.0
     var date = GetDate.Date_yyyy_MM_dd
 
@@ -178,7 +90,7 @@ fun CardRow(vm : LoginSuccessViewModel,show : Boolean,vmUI : UIViewModel) {
 
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
-    var Infonum by remember { mutableStateOf(0) }
+
 
     if(showBottomSheet) {
         ModalBottomSheet(

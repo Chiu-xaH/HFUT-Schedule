@@ -37,24 +37,33 @@ fun GetZjgdCard(vm : LoginSuccessViewModel,vmUI : UIViewModel) {
                     vm.CardData.observeForever { result ->
                         if (result != null) {
                             if(result.contains("操作成功")) {
-                                val yuedata = Gson().fromJson(result, BalanceResponse::class.java)
-                                var num = yuedata.data.card[0].db_balance.toString()
+                                val yuedata = Gson().fromJson(result, BalanceResponse::class.java).data.card[0]
+                                val limite = transferNum(yuedata.autotrans_limite)
+                                val amt = transferNum(yuedata.autotrans_amt)
+                                val name = yuedata.name
+                                val account = yuedata.account
+                              //  var num = yuedata.db_balance.toString()
                                 //待圈存
-                                var num_settle = yuedata.data.card[0].unsettle_amount.toString()
-                                var num_float = num.toFloat()
-                                var num_settle_float = num_settle.toFloat()
-                                num_float /= 100
-                                val now = num_float.toString()
-                                SharePrefs.Save("card_now", num_float.toString())
-                                num_settle_float /= 100
-                                val settle = num_settle_float.toString()
-                                SharePrefs.Save("card_settle", num_settle_float.toString())
-                                num_float += num_settle_float
-                                val bd = BigDecimal(num_float.toString())
+                              //  var num_settle = yuedata.unsettle_amount.toString()
+                              //  var num_float = num.toFloat()
+                            //    var num_settle_float = num_settle.toFloat()
+                              //  num_float /= 100
+                              //  val now = num_float.toString()
+                                var now = transferNum(yuedata.db_balance)
+                                SharePrefs.Save("card_now", now.toString())
+                            //    num_settle_float /= 100
+                              //  val settle = num_settle_float.toString()
+                                var settle = transferNum(yuedata.unsettle_amount)
+                                SharePrefs.Save("card_settle", settle.toString())
+                                now += settle
+                                val bd = BigDecimal(now.toString())
                                 val str = bd.setScale(2, RoundingMode.HALF_UP).toString()
                                 val balance = str
                                 SharePrefs.Save("card", str)
-                                vmUI.CardValue.value = ReturnCard(balance, settle, now)
+                                SharePrefs.Save("card_account", account)
+                                SharePrefs.Save("card_limit", limite.toString())
+                                SharePrefs.Save("card_amt", amt.toString())
+                                vmUI.CardValue.value = ReturnCard(balance, settle.toString(), now.toString(),amt.toString(),limite.toString(),name)
                                 //return ReturnCard(balance, settle, now)
                             }
                         }
@@ -63,6 +72,13 @@ fun GetZjgdCard(vm : LoginSuccessViewModel,vmUI : UIViewModel) {
             }
         }
     }
+}
+
+fun transferNum(num : Int) : Float {
+    var num_float = num.toFloat()
+    num_float /= 100
+    val settle = num_float
+    return settle
 }
 
 fun getTodayNet(vm : LoginSuccessViewModel, vmUI : UIViewModel) {

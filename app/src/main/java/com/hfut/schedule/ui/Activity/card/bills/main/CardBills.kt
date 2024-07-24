@@ -151,7 +151,7 @@ fun CardBills(vm : LoginSuccessViewModel,innerPaddings : PaddingValues,vmUI : UI
                 async {
                     page = 1
                     loading = true
-                    vm.CardGet("bearer " + auth,page)
+                    vm.CardGet("bearer $auth",page)
                 }.await()
                 async {
                     Handler(Looper.getMainLooper()).post {
@@ -189,7 +189,7 @@ fun CardBills(vm : LoginSuccessViewModel,innerPaddings : PaddingValues,vmUI : UI
             LazyColumn() {
                 item { Spacer(modifier = Modifier.height(innerPaddings.calculateTopPadding())) }
                 if (page == 1)
-                    item { CardRow(vm,false,vmUI) }
+                    item { CardRow(vm,vmUI) }
                 items(BillItem(vm).size) { item ->
                     val bills = BillItem(vm)[item]
                     var name = bills.resume

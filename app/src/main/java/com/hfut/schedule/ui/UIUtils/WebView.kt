@@ -16,6 +16,7 @@ fun WebViewScreen(url: String) {
         factory = { context ->
             WebView(context).apply {
                 settings.javaScriptEnabled = true
+                settings.domStorageEnabled = true
                 loadUrl(url)
                 webViewClient = object : WebViewClient() {
                     override fun shouldOverrideUrlLoading(

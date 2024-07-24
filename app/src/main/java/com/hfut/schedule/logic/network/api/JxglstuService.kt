@@ -174,6 +174,11 @@ interface JxglstuService {
         @Header("Cookie") cookie: String
     ): Call<ResponseBody>
 
+    //我的档案（个人信息的补充）
+    @GET("my/profile")
+    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0","Content-Type: application/x-www-form-urlencoded")
+    fun getMyProfile( @Header("Cookie") cookie: String) : Call<ResponseBody>
+
     //转专业申请列表
     //batchId 1为合肥校区 3为宣城校区
     @GET("for-std/change-major-apply/get-applies")
@@ -184,6 +189,19 @@ interface JxglstuService {
         @Query("batchId") campusId : Int,
         @Query("studentId") studentId : Int
     ): Call<ResponseBody>
+
+    //我的转专业申请
+    @GET("for-std/change-major-apply/get-my-applies")
+    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0","Content-Type: application/x-www-form-urlencoded")
+    fun getMyTransfer(
+        @Header("Cookie") cookie: String,
+        @Query("batchId") campusId : Int,
+        @Query("studentId") studentId : Int
+    ): Call<ResponseBody>
+
+    //提交转专业申请
+    
+    //撤销转专业申请
 }
 
 
