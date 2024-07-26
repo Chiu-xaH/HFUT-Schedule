@@ -48,6 +48,7 @@ import com.hfut.schedule.ui.Activity.success.search.Search.Map.Map
 import com.hfut.schedule.ui.Activity.success.search.Search.More.More
 import com.hfut.schedule.ui.Activity.success.search.Search.News.News
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.NotificationsCenter
+import com.hfut.schedule.ui.Activity.success.search.Search.Pay
 import com.hfut.schedule.ui.Activity.success.search.Search.Person.PersonUI
 import com.hfut.schedule.ui.Activity.success.search.Search.Program.Program
 import com.hfut.schedule.ui.Activity.success.search.Search.Repair.Repair
@@ -58,7 +59,9 @@ import com.hfut.schedule.ui.Activity.success.search.Search.TotalCourse.CourseTot
 import com.hfut.schedule.ui.Activity.success.search.Search.Web.WebUI
 import com.hfut.schedule.ui.Activity.success.search.Search.Xuanqu.XuanquItem
 import com.hfut.schedule.ui.Activity.success.search.Search.SelectCourse.selectCourse
+import com.hfut.schedule.ui.Activity.success.search.Search.ToadyCampus
 import com.hfut.schedule.ui.Activity.success.search.Search.Transfer.Transfer
+import com.hfut.schedule.ui.Activity.success.search.Search.Work
 import com.hfut.schedule.ui.UIUtils.MyToast
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
@@ -200,9 +203,7 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
                         .weight(.5f),
                     shape = MaterialTheme.shapes.medium,
                 ){
-                    if (info != null)
-                        if(info.isNotEmpty())
-                            PersonUI(ifSaved)
+                    PersonUI(ifSaved)
                 }
             }
             Row(modifier = Modifier
@@ -418,7 +419,7 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
                         .weight(.5f),
                     shape = MaterialTheme.shapes.medium,
                 ){
-                    courseSearch(ifSaved,vm)
+                    ToadyCampus(ifSaved)
                 }
             }
             Row(modifier = Modifier
@@ -466,13 +467,33 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
                         .weight(.5f),
                     shape = MaterialTheme.shapes.medium,
                 ){
-
+                    courseSearch(ifSaved,vm)
                 }
-
-
             }
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
 
-
-             Spacer(modifier = Modifier.height(innerPaddings.calculateBottomPadding()))
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    shape = MaterialTheme.shapes.medium,
+                ){
+                    Work(ifSaved)
+                }
+                Spacer(modifier = Modifier.width(10.dp))
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    shape = MaterialTheme.shapes.medium,
+                ){
+                    Pay(ifSaved)
+                }
+            }
+             Spacer(modifier = Modifier.height(5.dp))
         }
 }

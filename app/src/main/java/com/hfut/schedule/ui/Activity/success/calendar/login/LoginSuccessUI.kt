@@ -850,8 +850,8 @@ fun CalendarScreen(showAll : Boolean,
                                     }
                                 }
                             }
-
                             async { vm.getInfo(cookie!!) }
+                            if(prefs.getString("photo","") == null || prefs.getString("photo","") == "")
                             async { cookie?.let { vm.getPhoto(it) } }
                             async { vm.getProgram(cookie!!) }
                         }

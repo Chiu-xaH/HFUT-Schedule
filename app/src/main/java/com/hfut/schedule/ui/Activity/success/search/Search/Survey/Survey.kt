@@ -64,7 +64,7 @@ fun Survey(ifSaved : Boolean,vm : LoginSuccessViewModel){
     var showBottomSheet by remember { mutableStateOf(false) }
 
     ListItem(
-        headlineContent = { Text(text = "教师评教")},
+        headlineContent = { Text(text = "评教")},
         leadingContent = { Icon(painter = painterResource(id = R.drawable.verified), contentDescription = "")},
         modifier = Modifier.clickable {
             if(ifSaved) Login() else

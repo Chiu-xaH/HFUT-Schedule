@@ -58,10 +58,10 @@ fun News(vm : LoginSuccessViewModel) {
     var onclick by remember { mutableStateOf(true) }
     var loading by remember { mutableStateOf(true) }
     ListItem(
-        headlineContent = { Text(text = "新闻检索") },
+        headlineContent = { Text(text = "新闻公告") },
         leadingContent = {
             Icon(
-                painterResource(R.drawable.newspaper),
+                painterResource(R.drawable.stream),
                 contentDescription = "Localized description",
             )
         },

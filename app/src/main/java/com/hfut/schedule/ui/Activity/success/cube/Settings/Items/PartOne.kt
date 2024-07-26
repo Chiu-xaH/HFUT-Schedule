@@ -253,9 +253,7 @@ fun HomeSettingScreen(navController: NavController,
         DividerText(text = "应用设置")
         PartOne(vm,showlable,showlablechanged,ifSaved,blur,blurchanged,navController)
 
-        Spacer(modifier = Modifier
-            .height(innerPaddings.calculateBottomPadding())
-            .height(5.dp))
+        Spacer(modifier = Modifier.height(5.dp))
     }
 
 }
