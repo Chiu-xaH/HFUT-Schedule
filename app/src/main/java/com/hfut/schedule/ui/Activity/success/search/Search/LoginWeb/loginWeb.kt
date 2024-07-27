@@ -2,12 +2,15 @@ package com.hfut.schedule.ui.Activity.success.search.Search.LoginWeb
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -25,12 +28,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
+import com.hfut.schedule.logic.utils.ClipBoard
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.StartApp
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.getWeb
+import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.ScrollText
+import com.hfut.schedule.ui.UIUtils.WebViewScreen
+import com.hfut.schedule.ui.theme.FWDTColr
 import org.jsoup.Jsoup
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -53,7 +64,7 @@ fun getIdentifyID() : String? {
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginWeb(vmUI : UIViewModel, card : Boolean) {
+fun LoginWeb(vmUI : UIViewModel, card : Boolean,vm :  LoginSuccessViewModel) {
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
 
@@ -78,6 +89,50 @@ fun LoginWeb(vmUI : UIViewModel, card : Boolean) {
         modifier = Modifier.clickable { showBottomSheet = true }
     )
 
+    var showDialog by remember { mutableStateOf(false) }
+
+    val auth = SharePrefs.prefs.getString("auth","")
+    val url = MyApplication.ZJGDBillURL + "charge-app/?name=pays&appsourse=ydfwpt&id=281&name=pays&paymentUrl=http://121.251.19.62/plat&token=" + auth
+    val switch_startUri = SharePrefs.prefs.getBoolean("SWITCHSTARTURI",true)
+    if (showDialog) {
+        if(switch_startUri) {
+            androidx.compose.ui.window.Dialog(
+                onDismissRequest = { showDialog = false },
+                properties = DialogProperties(usePlatformDefaultWidth = false)
+            ) {
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    topBar = {
+                        TopAppBar(
+                            colors = TopAppBarDefaults.mediumTopAppBarColors(
+                                containerColor = FWDTColr,
+                                titleContentColor = Color.White,
+                            ),
+                            actions = {
+                                Row{
+                                    IconButton(onClick = { StartApp.StartUri( url) }) { Icon(painterResource(id = R.drawable.net), contentDescription = "", tint = Color.White) }
+                                    IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "", tint = Color.White) }
+                                }
+
+                            },
+                            title = { Text("网费缴纳") }
+                        )
+                    },
+                ) { innerPadding ->
+                    Column(
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .fillMaxSize()
+                    ) {
+                        WebViewScreen(url)
+                    }
+                }
+            }
+        } else {
+            StartApp.StartUri(url)
+        }
+    }
+
     if (showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
@@ -91,7 +146,15 @@ fun LoginWeb(vmUI : UIViewModel, card : Boolean) {
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        title = { Text("校园网") }
+                        title = { Text("校园网") },
+                        actions = {
+                            FilledTonalIconButton(onClick = {
+                                showDialog = true
+                            }, modifier = Modifier.padding(horizontal = 15.dp)
+                            ) {
+                                Icon(painter = painterResource(id = R.drawable.add), contentDescription = "")
+                            }
+                        }
                     )
                 },) { innerPadding ->
                 Column(
@@ -99,7 +162,7 @@ fun LoginWeb(vmUI : UIViewModel, card : Boolean) {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    loginWebUI(vmUI)
+                    loginWebUI(vmUI,vm)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }

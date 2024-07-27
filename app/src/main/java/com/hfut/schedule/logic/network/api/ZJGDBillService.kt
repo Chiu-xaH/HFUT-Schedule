@@ -48,7 +48,13 @@ interface ZJGDBillService {
         @Body json: JsonObject ) : Call<ResponseBody>
 
     //查询  feeitemid为281为网费，261为电费
-    //@POST("charge/feeitem/getThirdData")
+    @FormUrlEncoded
+    @POST("charge/feeitem/getThirdData")
+    fun getFee(@Header("synjones-auth") auth : String,
+               @Field("feeitemid") typeId : String,
+               @Field("type") IEC : String,
+               @Field("level") level : String?,
+               @Field("room") room : String?) : Call<ResponseBody>
     //交费支付 电费 网费
     //@POST("blade-pay/pay")
     //查询限额

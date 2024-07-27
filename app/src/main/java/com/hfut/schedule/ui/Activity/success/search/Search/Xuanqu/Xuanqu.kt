@@ -34,8 +34,7 @@ fun XuanquItem(vm : LoginSuccessViewModel) {
 
 
     ListItem(
-        headlineContent = { ScrollText(text = "寝室卫生评分") },
-        overlineContent = { Text(text = "宣城校区") },
+        headlineContent = { ScrollText(text = "寝室评分") },
         leadingContent = { Icon(painter = painterResource(R.drawable.psychiatry),"" ) },
         modifier = Modifier.clickable { showBottomSheet_Xuanqu = true }
     )

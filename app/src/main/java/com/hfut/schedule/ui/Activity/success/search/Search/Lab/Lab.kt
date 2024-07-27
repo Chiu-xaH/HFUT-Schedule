@@ -37,7 +37,6 @@ fun Lab() {
 
     ListItem(
         headlineContent = { Text(text = "实验室") },
-        overlineContent = { ScrollText(text = "聚合常用网站") },
         leadingContent = {
             Icon(
                 painterResource(R.drawable.science),

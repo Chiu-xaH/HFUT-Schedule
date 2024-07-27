@@ -7,13 +7,21 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,16 +30,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.utils.ClipBoard
+import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.StartApp
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.ScrollText
+import com.hfut.schedule.ui.UIUtils.WebViewScreen
+import com.hfut.schedule.ui.theme.FWDTColr
 
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -73,10 +87,52 @@ fun Electric(vm : LoginSuccessViewModel,card : Boolean,vmUI : UIViewModel) {
         }
     val showAdd = prefs.getBoolean("SWITCHELEADD",true)
     val memoryEle = prefs.getString("memoryEle","0")
+    var showDialog by remember { mutableStateOf(false) }
+    val auth = SharePrefs.prefs.getString("auth","")
+    val url = MyApplication.ZJGDBillURL + "charge-app/?name=pays&appsourse=ydfwpt&id=261&name=pays&paymentUrl=http://121.251.19.62/plat&token=" + auth
 
+    val switch_startUri = SharePrefs.prefs.getBoolean("SWITCHSTARTURI",true)
+    if (showDialog) {
+        if(switch_startUri) {
+            androidx.compose.ui.window.Dialog(
+                onDismissRequest = { showDialog = false },
+                properties = DialogProperties(usePlatformDefaultWidth = false)
+            ) {
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    topBar = {
+                        TopAppBar(
+                            colors = TopAppBarDefaults.mediumTopAppBarColors(
+                                containerColor = FWDTColr,
+                                titleContentColor = Color.White,
+                            ),
+                            actions = {
+                                Row{
+                                    IconButton(onClick = { StartApp.StartUri( url) }) { Icon(painterResource(id = R.drawable.net), contentDescription = "", tint = Color.White) }
+                                    IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "", tint = Color.White) }
+                                }
+
+                            },
+                            title = { Text("宣城校区 电费缴纳") }
+                        )
+                    },
+                ) { innerPadding ->
+                    Column(
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .fillMaxSize()
+                    ) {
+                        WebViewScreen(url)
+                    }
+                }
+            }
+        } else {
+            StartApp.StartUri(url)
+        }
+    }
     ListItem(
         headlineContent = { if(!card)Text(text = "寝室电费") else ScrollText(text = "￥${vmUI.electricValue.value ?: memoryEle}") },
-        overlineContent = { if(!card) ScrollText(text = "校园网 宣城校区") else ScrollText(text = room)},
+        overlineContent = { if(!card) ScrollText(text = "￥${vmUI.electricValue.value ?: memoryEle}") else ScrollText(text = room)},
         leadingContent = { Icon(painterResource(R.drawable.flash_on), contentDescription = "Localized description",) },
         trailingContent = {
             if(card && showAdd)
@@ -86,7 +142,7 @@ fun Electric(vm : LoginSuccessViewModel,card : Boolean,vmUI : UIViewModel) {
                     .size(30.dp),
                 interactionSource = interactionSource,
                 onClick = {
-                    StartApp.StartUri("http://172.31.248.26:8088")
+                   showDialog = true
                    // ClipBoard.copy(input)
                   //  MyToast("已将房间号复制到剪切板")
                           },

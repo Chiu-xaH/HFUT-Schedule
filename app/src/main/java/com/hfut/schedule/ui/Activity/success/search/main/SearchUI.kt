@@ -251,7 +251,7 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
                         .weight(.5f),
                     shape = MaterialTheme.shapes.medium,
                 ){
-                    XuanquItem(vm)
+                    LoginWeb(vmUI,false,vm)
                 }
             }
             Row(modifier = Modifier
@@ -275,7 +275,7 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
                         .weight(.5f),
                     shape = MaterialTheme.shapes.medium,
                 ){
-                    LoginWeb(vmUI,false)
+                    XuanquItem(vm)
                 }
             }
             Row(modifier = Modifier

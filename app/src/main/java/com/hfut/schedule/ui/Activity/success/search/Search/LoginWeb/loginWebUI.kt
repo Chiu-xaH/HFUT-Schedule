@@ -33,9 +33,10 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
+import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.getWeb
+import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.getWebNew
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -45,7 +46,7 @@ import java.math.RoundingMode
 
 
 @Composable
-fun loginWebUI(vmUI : UIViewModel) {
+fun loginWebUI(vmUI : UIViewModel,vm : LoginSuccessViewModel) {
     val memoryWeb = SharePrefs.prefs.getString("memoryWeb","0")
     val flow = vmUI.webValue.value?.flow ?: memoryWeb
     val bd = BigDecimal((flow?.toDouble() ?: 0.0) / 1024)
@@ -64,8 +65,7 @@ fun loginWebUI(vmUI : UIViewModel) {
         shape = MaterialTheme.shapes.medium,
     ){
         ListItem(
-            overlineContent = { Text(text = "(我也不确定,反正>20G)")},
-            headlineContent = { Text(text = "月免费额度 40GB") },
+            headlineContent = { Text(text = "月免费额度 50GB") },
             trailingContent = { Text(text = "已用 ${precent}%")},
             leadingContent = { Icon(painterResource(R.drawable.net), contentDescription = "Localized description",) },
             modifier = Modifier.clickable {
@@ -94,7 +94,7 @@ fun loginWebUI(vmUI : UIViewModel) {
     var textLogin by  remember { mutableStateOf("登录") }
     var textLogout by  remember { mutableStateOf("注销") }
     vmUI.getWebInfo()
-    getWeb(vmUI)
+    getWebNew(vm,vmUI)
 
 
 

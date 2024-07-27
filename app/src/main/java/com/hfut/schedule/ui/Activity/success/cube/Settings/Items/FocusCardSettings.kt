@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -43,6 +44,8 @@ import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.datamodel.SearchEleResponse
+import com.hfut.schedule.logic.datamodel.zjgd.FeeResponse
+import com.hfut.schedule.logic.datamodel.zjgd.FeeType
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
@@ -51,9 +54,9 @@ import com.hfut.schedule.ui.Activity.success.focus.Focus.TodayUI
 import com.hfut.schedule.ui.Activity.success.focus.Focus.getTodayNet
 import com.hfut.schedule.ui.Activity.success.search.Search.Electric.Electric
 import com.hfut.schedule.ui.Activity.success.search.Search.LoginWeb.LoginWeb
+import com.hfut.schedule.ui.Activity.success.search.Search.LoginWeb.WebInfo
 import com.hfut.schedule.ui.Activity.success.search.Search.LoginWeb.getWebInfos
 import com.hfut.schedule.ui.Activity.success.search.Search.SchoolCard.SchoolCardItem
-import com.hfut.schedule.ui.UIUtils.ScrollText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -219,11 +222,11 @@ fun FocusCard(vmUI : UIViewModel,vm : LoginSuccessViewModel) {
     CoroutineScope(Job()).launch {
         async {
             if(showWeb)
-                getWeb(vmUI)
+                getWebNew(vm,vmUI)
         }
         async {
             if(showEle)
-                getEle(vm, vmUI)
+                getEleNew(vm, vmUI)
         }
         async {
             if(showToday)
@@ -266,7 +269,7 @@ fun FocusCard(vmUI : UIViewModel,vm : LoginSuccessViewModel) {
                 if(showWeb)
                 Box(modifier = Modifier
                     .weight(.5f)) {
-                    LoginWeb(vmUI,true)
+                    LoginWeb(vmUI,true,vm)
                 }
             }
             if(showCountDown || showShortCut)
@@ -284,7 +287,7 @@ fun FocusCard(vmUI : UIViewModel,vm : LoginSuccessViewModel) {
         }
     }
 }
-
+//废弃旧的方法
 fun getWeb(vmUI : UIViewModel)  {
     CoroutineScope(Job()).launch {
         Handler(Looper.getMainLooper()).post{
@@ -298,6 +301,31 @@ fun getWeb(vmUI : UIViewModel)  {
         }
     }
 }
+
+fun getWebNew(vm: LoginSuccessViewModel, vmUI : UIViewModel)  {
+    val auth = prefs.getString("auth","")
+    CoroutineScope(Job()).launch {
+        async { vm.getFee("bearer $auth",FeeType.WEB) }
+        Handler(Looper.getMainLooper()).post{
+            vm.infoValue.observeForever { result ->
+                if (result != null)
+                    if(result.contains("success")) {
+                        val data = Gson().fromJson(result,FeeResponse::class.java).map.showData
+
+                       vmUI.webValue.value = data["本期已使用流量"]?.let {
+                           data["储值余额"]?.let { it1 ->
+                               WebInfo(
+                                   it1.substringBefore("（"),
+                                   it.substringBefore("（"))
+                           }
+                       }
+                        SharePrefs.Save("memoryWeb", vmUI.webValue.value?.flow)
+                    }
+            }
+        }
+    }
+}
+//废弃旧的方法
 fun getEle(vm : LoginSuccessViewModel,vmUI : UIViewModel) {
     val BuildingsNumber = prefs.getString("BuildNumber", "0")
     val RoomNumber = prefs.getString("RoomNumber", "")
@@ -316,6 +344,32 @@ fun getEle(vm : LoginSuccessViewModel,vmUI : UIViewModel) {
                         if(msg.contains("剩余金额")) {
                             val bd = BigDecimal(msg.substringAfter("剩余金额").substringAfter(":"))
                             vmUI.electricValue.value =  bd.setScale(2, RoundingMode.HALF_UP).toString()
+                            Save("memoryEle",vmUI.electricValue.value)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+fun getEleNew(vm : LoginSuccessViewModel, vmUI : UIViewModel) {
+    val BuildingsNumber = prefs.getString("BuildNumber", "0")
+    val RoomNumber = prefs.getString("RoomNumber", "")
+    val EndNumber = prefs.getString("EndNumber", "")
+
+    var input = "300$BuildingsNumber$RoomNumber$EndNumber"
+    val auth = prefs.getString("auth","")
+
+    CoroutineScope(Job()).launch {
+        async { vm.getFee("bearer $auth", FeeType.ELECTRIC, room = input) }.await()
+        async {
+            Handler(Looper.getMainLooper()).post{
+                vm.ElectricData.observeForever { result ->
+                    if (result?.contains("success") == true) {
+                        val data = Gson().fromJson(result,FeeResponse::class.java).map.showData
+                        for ((key, value) in data) {
+                            val bd = BigDecimal(value.substringAfter("剩余金额:"))
+                            vmUI.electricValue.value = bd.setScale(2, RoundingMode.HALF_UP).toString()
                             Save("memoryEle",vmUI.electricValue.value)
                         }
                     }

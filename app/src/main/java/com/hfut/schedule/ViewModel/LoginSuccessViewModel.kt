@@ -20,6 +20,8 @@ import com.hfut.schedule.logic.datamodel.Jxglstu.lessonResponse
 import com.hfut.schedule.logic.datamodel.One.BorrowBooksResponse
 import com.hfut.schedule.logic.datamodel.One.SubBooksResponse
 import com.hfut.schedule.logic.datamodel.One.getTokenResponse
+import com.hfut.schedule.logic.datamodel.zjgd.FeeType
+import com.hfut.schedule.logic.datamodel.zjgd.FeeType.*
 import com.hfut.schedule.logic.network.ServiceCreator.CommunitySreviceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.JwglappServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuHTMLServiceCreator
@@ -572,6 +574,37 @@ class LoginSuccessViewModel(webVpn : Boolean) : ViewModel() {
 
     }
 
+    val infoValue = MutableLiveData<String?>()
+
+    fun getFee(auth: String,type : FeeType,level : String? = null,room : String? = null) {
+
+        val feeitemid = when(type) {
+            WEB -> "281"
+            ELECTRIC -> "261"
+        }
+        val levels = when(type) {
+            WEB -> "0"
+            ELECTRIC -> null
+        }
+        val rooms = when(type) {
+            WEB -> null
+            ELECTRIC -> room
+        }
+        val call = ZJGDBill.getFee(auth, IEC = "IEC", typeId = feeitemid, room = rooms, level = levels)
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                val responseBody = response?.body()?.string()
+                when(type) {
+                    WEB -> infoValue.value = responseBody
+                    ELECTRIC ->  ElectricData.value = responseBody
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
+
 
     fun changeLimit(auth: String,json: JsonObject) {
 
@@ -658,7 +691,7 @@ class LoginSuccessViewModel(webVpn : Boolean) : ViewModel() {
 
     }
 
-    val ElectricData = MutableLiveData<String>()
+    val ElectricData = MutableLiveData<String?>()
     fun searchEle(jsondata : String) {
         val call = searchEle.searchEle(jsondata,"synjones.onecard.query.elec.roominfo",true)
         call.enqueue(object : Callback<ResponseBody> {

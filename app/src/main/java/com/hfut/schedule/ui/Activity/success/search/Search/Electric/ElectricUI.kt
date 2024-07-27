@@ -58,6 +58,8 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.datamodel.SearchEleResponse
+import com.hfut.schedule.logic.datamodel.zjgd.FeeResponse
+import com.hfut.schedule.logic.datamodel.zjgd.FeeType
 import com.hfut.schedule.logic.utils.ClipBoard
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.StartApp
@@ -68,6 +70,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 fun EleUIs() {
 
@@ -85,7 +89,7 @@ fun EleUI(vm : LoginSuccessViewModel) {
     var region by remember { mutableStateOf("选择南北") }
 
     var input = "300$BuildingsNumber$RoomNumber$EndNumber"
-    var jsons = "{ \"query_elec_roominfo\": { \"aid\":\"0030000000007301\", \"account\": \"24027\",\"room\": { \"roomid\": \"${input}\", \"room\": \"${input}\" },  \"floor\": { \"floorid\": \"\", \"floor\": \"\" }, \"area\": { \"area\": \"\", \"areaname\": \"\" }, \"building\": { \"buildingid\": \"\", \"building\": \"\" },\"extdata\":\"info1=\" } }"
+   // var jsons = "{ \"query_elec_roominfo\": { \"aid\":\"0030000000007301\", \"account\": \"24027\",\"room\": { \"roomid\": \"${input}\", \"room\": \"${input}\" },  \"floor\": { \"floorid\": \"\", \"floor\": \"\" }, \"area\": { \"area\": \"\", \"areaname\": \"\" }, \"building\": { \"buildingid\": \"\", \"building\": \"\" },\"extdata\":\"info1=\" } }"
 
 
     var showitem by remember { mutableStateOf(false) }
@@ -105,7 +109,7 @@ fun EleUI(vm : LoginSuccessViewModel) {
         "22" -> region = "北边空调"
         else -> region = "选择南北"
     }
-
+    val auth = SharePrefs.prefs.getString("auth","")
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -121,9 +125,9 @@ fun EleUI(vm : LoginSuccessViewModel) {
                             IconButton(onClick = {RoomNumber = RoomNumber.replaceFirst(".$".toRegex(), "")}) {
                                 Icon(painter = painterResource(R.drawable.backspace), contentDescription = "description") }
                         FilledTonalIconButton(onClick = {
-                            showDialog=true
+                            showDialog = true
                             ClipBoard.copy(input)
-                            MyToast("已将房间号复制到剪切板")
+                            MyToast("已将房间号复制到剪切板,请在打开页面支付")
                         }) {
                             Icon(painter = painterResource(id = R.drawable.add), contentDescription = "")
                         }
@@ -138,15 +142,17 @@ fun EleUI(vm : LoginSuccessViewModel) {
                                     SharePrefs.Save("EndNumber", EndNumber)
                                     SharePrefs.Save("RoomNumber", RoomNumber)
                                 }
-                                async { vm.searchEle(jsons) }.await()
+                                async { vm.getFee("bearer $auth", FeeType.ELECTRIC, room = input) }.await()
+                               // async { vm.searchEle(jsons) }.await()
                                 async {
                                     Handler(Looper.getMainLooper()).post{
                                         vm.ElectricData.observeForever { result ->
-                                            if (result?.contains("query_elec_roominfo") == true) {
-                                                val msg = Gson().fromJson(result, SearchEleResponse::class.java).query_elec_roominfo.errmsg
-                                                Result = msg
-                                                // MyToast(msg)
-                                            } else if (vm.ElectricData.value?.contains("失败") == true) vm.ElectricData.value?.let { MyToast(it) }
+                                            if (result?.contains("success") == true) {
+                                                val data = Gson().fromJson(result, FeeResponse::class.java).map.showData
+                                                for ((key, value) in data) {
+                                                    Result = value
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -206,6 +212,7 @@ fun EleUI(vm : LoginSuccessViewModel) {
 
             if (BuildingsNumber == "0") BuildingsNumber = ""
 
+            val url = MyApplication.ZJGDBillURL + "charge-app/?name=pays&appsourse=ydfwpt&id=261&name=pays&paymentUrl=http://121.251.19.62/plat&token=" + auth
             val switch_startUri = SharePrefs.prefs.getBoolean("SWITCHSTARTURI",true)
             if (showDialog) {
                 if(switch_startUri) {
@@ -223,12 +230,12 @@ fun EleUI(vm : LoginSuccessViewModel) {
                                     ),
                                     actions = {
                                         Row{
-                                            IconButton(onClick = { StartApp.StartUri( "http://172.31.248.26:8088") }) { Icon(painterResource(id = R.drawable.net), contentDescription = "", tint = Color.White) }
+                                            IconButton(onClick = { StartApp.StartUri( url) }) { Icon(painterResource(id = R.drawable.net), contentDescription = "", tint = Color.White) }
                                             IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "", tint = Color.White) }
                                         }
 
                                     },
-                                    title = { Text("服务大厅") }
+                                    title = { Text("宣城校区 电费缴纳") }
                                 )
                             },
                         ) { innerPadding ->
@@ -237,12 +244,12 @@ fun EleUI(vm : LoginSuccessViewModel) {
                                     .padding(innerPadding)
                                     .fillMaxSize()
                             ) {
-                                WebViewScreen(url = "http://172.31.248.26:8088")
+                                WebViewScreen(url)
                             }
                         }
                     }
                 } else {
-                    StartApp.StartUri("http://172.31.248.26:8088")
+                    StartApp.StartUri(url)
                 }
             }
 

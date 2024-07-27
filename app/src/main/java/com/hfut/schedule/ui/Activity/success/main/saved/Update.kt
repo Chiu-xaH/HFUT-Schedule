@@ -3,6 +3,7 @@ package com.hfut.schedule.ui.Activity.success.main.saved
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.LoginViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
+import com.hfut.schedule.logic.datamodel.zjgd.FeeType
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.success.focus.Focus.AddedItems
@@ -16,6 +17,7 @@ import kotlinx.coroutines.async
 
 suspend fun NetWorkUpdate(vm : LoginSuccessViewModel, vm2 : LoginViewModel,vmUI : UIViewModel,webVpn : Boolean){
     val CommuityTOKEN = SharePrefs.prefs.getString("TOKEN","")
+    val auth = prefs.getString("auth","")
     val cookie = if(!webVpn) prefs.getString("redirect", "")  else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket","")
     CoroutineScope(Job()).apply {
         async { MyWangKe() }
@@ -23,8 +25,6 @@ suspend fun NetWorkUpdate(vm : LoginSuccessViewModel, vm2 : LoginViewModel,vmUI 
         async { MySchedule() }
         async { AddedItems() }
         async { getNotifications() }
-      //  if(ifSaved)   async { CommuityTOKEN?.let { vm.Exam(it) } }
-    //    else
         async { vm.getExamJXGLSTU(cookie!!) }
         async { vm.getPay() }
         async { CommuityTOKEN?.let { vm.GetCourse(it) } }
