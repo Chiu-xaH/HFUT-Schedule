@@ -30,6 +30,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.App.MyApplication.Companion.maxFreeFlow
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
@@ -65,6 +66,7 @@ fun getIdentifyID() : String? {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginWeb(vmUI : UIViewModel, card : Boolean,vm :  LoginSuccessViewModel) {
+
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
 
@@ -76,7 +78,7 @@ fun LoginWeb(vmUI : UIViewModel, card : Boolean,vm :  LoginSuccessViewModel) {
     val bd = BigDecimal(gB)
     val str = bd.setScale(2, RoundingMode.HALF_UP).toString()
 
-    val bd2 = BigDecimal(((flow?.toDouble() ?: 0.0) / 40960) * 100)
+    val bd2 = BigDecimal(((flow?.toDouble() ?: 0.0) / (1024 * MyApplication.maxFreeFlow)) * 100)
     val precent = bd2.setScale(1, RoundingMode.HALF_UP).toString()
 
     ListItem(

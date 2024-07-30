@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
@@ -53,7 +54,7 @@ fun loginWebUI(vmUI : UIViewModel,vm : LoginSuccessViewModel) {
     val str = bd.setScale(2, RoundingMode.HALF_UP).toString()
     var textStatus by  remember { mutableStateOf("已用 ${flow}MB (${str}GB)\n余额 ￥${vmUI.webValue.value?.fee?: "0"}") }
 
-    val bd2 = BigDecimal(((flow?.toDouble() ?: 0.0) / 40960) * 100)
+    val bd2 = BigDecimal(((flow?.toDouble() ?: 0.0) / (1024 * MyApplication.maxFreeFlow)) * 100)
     val precent = bd2.setScale(2, RoundingMode.HALF_UP).toString()
        // return str
 

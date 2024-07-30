@@ -414,7 +414,7 @@ fun HomeScreen(innerPadding : PaddingValues,vm : LoginSuccessViewModel,navContro
                     headlineContent = { Text(text = "网电缴费") },
                     supportingContent = { Text(text = "查询网电使用情况并缴费")},
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.corporate_fare), contentDescription = "")},
-                    modifier = Modifier.clickable { MyToast("暂未开发") }
+                    modifier = Modifier.clickable { MyToast("请转到APP首页查询中心") }
                 )
                 ListItem(
                     headlineContent = { Text(text = "实体卡复制") },

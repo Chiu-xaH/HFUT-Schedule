@@ -8,7 +8,6 @@ import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Header
-import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Query
 
@@ -55,14 +54,25 @@ interface ZJGDBillService {
                @Field("type") IEC : String,
                @Field("level") level : String?,
                @Field("room") room : String?) : Call<ResponseBody>
-    //交费支付 电费 网费
-    //@POST("blade-pay/pay")
-    //查询限额
-
-    //付款码
-
+    //交费支付 3步走
+    @FormUrlEncoded
+    @POST("blade-pay/pay")
+    fun pay(@Header("synjones-auth") auth : String,
+            //同上 网费/电费
+            @Field("feeitemid") typeId : Int?,
+            //支付金额
+            @Field("tranamt") pay : Int?,
+            @Field("flag") flag : String?,
+            @Field("paystep") paystep : Int,
+            //寝室房间
+            @Field("third_party") json : String?,
+            @Field("paytypeid") paytypeid : Int?,
+            @Field("paytype") paytype : String?,
+            @Field("orderid") orderid : String?,
+            //经过随机排序后的支付密码（身份证后六位）
+            @Field("password") password : String?,
+            @Field("uuid") cardId : String?,
+            @Field("isWX") isWX : Int?
+            ) : Call<ResponseBody>
     //挂失解挂
-
-    //状态获取
-
 }

@@ -1,7 +1,9 @@
 package com.hfut.schedule.ui.Activity.success.search.Search.Electric
 
+import android.annotation.SuppressLint
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -30,16 +32,19 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -63,19 +68,23 @@ import com.hfut.schedule.logic.datamodel.zjgd.FeeType
 import com.hfut.schedule.logic.utils.ClipBoard
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.StartApp
+import com.hfut.schedule.ui.Activity.success.search.Search.LoginWeb.loginWebUI
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.WebViewScreen
+import com.hfut.schedule.ui.UIUtils.WheelPicker
 import com.hfut.schedule.ui.theme.FWDTColr
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import java.math.BigDecimal
 import java.math.RoundingMode
 
 fun EleUIs() {
 
 }
+@SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EleUI(vm : LoginSuccessViewModel) {
@@ -100,7 +109,41 @@ fun EleUI(vm : LoginSuccessViewModel) {
     var Result by remember { mutableStateOf("") }
     var Result2 by remember { mutableStateOf("") }
 
+    var showButton by remember { mutableStateOf(false) }
+    var showAdd by remember { mutableStateOf(false) }
+    var payNumber by remember { mutableStateOf("") }
+    val sheetState = rememberModalBottomSheetState()
+    var showBottomSheet by remember { mutableStateOf(false) }
 
+    var json by remember { mutableStateOf("") }
+    if (showBottomSheet) {
+
+        ModalBottomSheet(
+            onDismissRequest = { showBottomSheet = false },
+            sheetState = sheetState
+        ) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        title = { Text("支付订单确认") },
+                    )
+                },) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                ) {
+                    var roomInfo by remember { mutableStateOf("${BuildingsNumber}号楼${RoomNumber}寝室${region}") }
+                    PayFor(vm,payNumber,roomInfo,json)
+                }
+            }
+        }
+    }
 
     when(EndNumber) {
         "11"-> region = "南边照明"
@@ -123,6 +166,9 @@ fun EleUI(vm : LoginSuccessViewModel) {
                     Row(modifier = Modifier.padding(horizontal = 15.dp)) {
                         if(showitem4)
                             IconButton(onClick = {RoomNumber = RoomNumber.replaceFirst(".$".toRegex(), "")}) {
+                                Icon(painter = painterResource(R.drawable.backspace), contentDescription = "description") }
+                        if(showAdd)
+                            IconButton(onClick = {payNumber = payNumber.replaceFirst(".$".toRegex(), "")}) {
                                 Icon(painter = painterResource(R.drawable.backspace), contentDescription = "description") }
                         FilledTonalIconButton(onClick = {
                             showDialog = true
@@ -148,10 +194,17 @@ fun EleUI(vm : LoginSuccessViewModel) {
                                     Handler(Looper.getMainLooper()).post{
                                         vm.ElectricData.observeForever { result ->
                                             if (result?.contains("success") == true) {
-                                                val data = Gson().fromJson(result, FeeResponse::class.java).map.showData
-                                                for ((key, value) in data) {
+                                                showButton = true
+                                                val jsons = Gson().fromJson(result, FeeResponse::class.java).map
+                                                val data = jsons.showData
+                                                for ((_, value) in data) {
                                                     Result = value
                                                 }
+
+                                                val jsonObject = JSONObject(result)
+                                                val dataObject = jsonObject.getJSONObject("map").getJSONObject("data")
+                                                dataObject.put("myCustomInfo", "房间：$input")
+                                                json = dataObject.toString()
                                             }
                                         }
                                     }
@@ -367,10 +420,67 @@ fun EleUI(vm : LoginSuccessViewModel) {
                         headlineContent = {  Text(text = Result) },
                         supportingContent = { Text(text = Result2)},
                         leadingContent = { Icon(painterResource(R.drawable.flash_on), contentDescription = "Localized description",) },
+                        trailingContent = {
+                            if(showButton)
+                            FilledTonalButton(onClick = { if(showAdd && payNumber != "") showBottomSheet = true   else showAdd = true }) { Text(text = if(showAdd && payNumber != "") "提交订单" else "快速充值") }
+                                          },
                         modifier = Modifier.clickable {}
                     )
                 }
             }
+            
+            //充值界面
+            AnimatedVisibility(
+                visible = showAdd,
+                enter = slideInVertically(
+                    initialOffsetY = { -40 }
+                ) + expandVertically(
+                    expandFrom = Alignment.Top
+                ) + scaleIn(
+                    // Animate scale from 0f to 1f using the top center as the pivot point.
+                    transformOrigin = TransformOrigin(0.5f, 0f)
+                ) + fadeIn(initialAlpha = 0.3f),
+                exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
+            ){
+                Row (modifier = Modifier.padding(horizontal = 15.dp)){
+                    OutlinedCard{
+                        LazyColumn(modifier = Modifier.padding(horizontal = 10.dp)) {
+                            item {
+                                Text(text = "选取金额 ￥${payNumber}", modifier = Modifier.padding(10.dp))
+                            }
+                            item {
+                                LazyRow {
+                                    items(5) { items ->
+                                        IconButton(onClick = {
+                                            if (payNumber.length < 3)
+                                                payNumber += items.toString()
+                                            else Toast.makeText(
+                                                MyApplication.context,
+                                                "最高999元",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }) { Text(text = items.toString()) }
+                                    }
+                                }
+                            }
+                            item {
+                                LazyRow {
+                                    items(5) { items ->
+                                        val num = items + 5
+                                        IconButton(onClick = {
+                                            if (payNumber.length < 3)
+                                                payNumber += num
+                                            else Toast.makeText(MyApplication.context, "最高999元", Toast.LENGTH_SHORT).show()
+                                        }) { Text(text = num.toString()) }
+                                    }
+                                }
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(10.dp))
+                    }
+                }
+            }
+            
             Spacer(modifier = Modifier.height(30.dp))
         }
     }

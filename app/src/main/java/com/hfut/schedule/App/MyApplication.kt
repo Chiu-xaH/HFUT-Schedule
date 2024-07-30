@@ -16,6 +16,7 @@ class MyApplication : Application() {
         lateinit var context: Context
         val Blur = 20.dp
         val Animation = 400
+        const val maxFreeFlow = 50
         const val JxglstuURL = "http://jxglstu.hfut.edu.cn/eams5-student/"
         const val JxglstuWebVpnURL = "https://webvpn.hfut.edu.cn/http/77726476706e69737468656265737421faef469034247d1e760e9cb8d6502720ede479/eams5-student/"
         const val WebVpnURL = "https://webvpn.hfut.edu.cn/"

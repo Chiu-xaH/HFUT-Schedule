@@ -14,7 +14,6 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import com.hfut.schedule.logic.Enums.LibraryItems
-import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.datamodel.Jxglstu.lessonResponse
 import com.hfut.schedule.logic.datamodel.One.BorrowBooksResponse
@@ -48,12 +47,10 @@ import com.hfut.schedule.logic.network.api.ZJGDBillService
 import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.logic.network.api.ServerService
 import com.hfut.schedule.logic.network.ServiceCreator.ServerServiceCreator
-import com.hfut.schedule.logic.network.api.WebVpnService
 import com.hfut.schedule.logic.utils.SharePrefs.SaveInt
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.getUserInfo
 import com.hfut.schedule.ui.Activity.success.search.Search.Transfer.CampusId
 import okhttp3.ResponseBody
-import org.jsoup.Jsoup
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -599,6 +596,85 @@ class LoginSuccessViewModel(webVpn : Boolean) : ViewModel() {
                     WEB -> infoValue.value = responseBody
                     ELECTRIC ->  ElectricData.value = responseBody
                 }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
+
+    val orderIdData = MutableLiveData<String?>()
+    fun payStep1(auth: String,json: String,pay : Int) {
+
+        val call = ZJGDBill.pay(
+            auth = auth,
+            pay = pay,
+            flag = "choose",
+            paystep = 0,
+            json = json,
+            typeId = 261,
+            isWX = null,
+            orderid = null,
+            password = null,
+            paytype = null,
+            paytypeid = null,
+            cardId = null
+        )
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                orderIdData.value = response.body()?.string()
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
+    val uuIdData = MutableLiveData<String?>()
+    fun payStep2(auth: String,orderId : String) {
+
+        val call = ZJGDBill.pay(
+            auth = auth,
+            pay = null,
+            flag = null,
+            paystep = 2,
+            json = null,
+            typeId = 261,
+            isWX = null,
+            orderid = orderId,
+            password = null,
+            paytype = "CARDTSM",
+            paytypeid = 101,
+            cardId = null
+        )
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                uuIdData.value = response.body()?.string()
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
+    val payResultData = MutableLiveData<String?>()
+    fun payStep3(auth: String,orderId : String,password : String,uuid : String) {
+
+        val call = ZJGDBill.pay(
+            auth = auth,
+            pay = null,
+            flag = null,
+            paystep = 2,
+            json = null,
+            typeId = 261,
+            isWX = 0,
+            orderid = orderId,
+            password = password,
+            paytype = "CARDTSM",
+            paytypeid = 101,
+            cardId = uuid
+        )
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                payResultData.value = response.body()?.string()
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
