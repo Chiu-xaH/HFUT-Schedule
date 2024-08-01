@@ -46,6 +46,7 @@ import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.datamodel.LePaoYun.LePaoYunHomeResponse
+import com.hfut.schedule.logic.utils.StartApp
 import com.hfut.schedule.ui.UIUtils.LittleDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -54,11 +55,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 fun OpenLePao() {
-    val intent = MyApplication.context.packageManager.getLaunchIntentForPackage("com.yunzhi.tiyu")
-    intent?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-
-    if (intent != null) MyApplication.context.startActivity(intent)
-    else  Toast.makeText(MyApplication.context, "没有找到这个应用", Toast.LENGTH_SHORT).show()
+    StartApp.startLaunchAPK("com.yunzhi.tiyu","云运动")
 }
 fun Update(vm : LoginSuccessViewModel) {
     val token =  prefs.getString("Yuntoken","")?.trim()
@@ -102,7 +99,7 @@ fun LePaoYun(vm : LoginSuccessViewModel) {
         leadingContent = { Icon(painter = painterResource(id = R.drawable.mode_of_travel), contentDescription = "")},
         modifier = Modifier.clickable {
             if (msg != null) {
-                if (!msg.contains("成功")) showDialog = true
+                if (!msg.contains("成功"))  OpenLePao()
                 else  showBottomSheet = true
             }
         }

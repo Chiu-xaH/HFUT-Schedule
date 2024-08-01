@@ -127,7 +127,7 @@ fun LibraryItem(vm : LoginSuccessViewModel) {
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        title = { Text("图书服务") }
+                        title = { Text("图书") }
                     )
                 },
             ) { innerPadding ->

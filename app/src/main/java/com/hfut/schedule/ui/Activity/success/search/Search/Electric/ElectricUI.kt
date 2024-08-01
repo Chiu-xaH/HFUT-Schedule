@@ -52,11 +52,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
@@ -67,9 +69,12 @@ import com.hfut.schedule.logic.datamodel.zjgd.FeeResponse
 import com.hfut.schedule.logic.datamodel.zjgd.FeeType
 import com.hfut.schedule.logic.utils.ClipBoard
 import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.StartApp
 import com.hfut.schedule.ui.Activity.success.search.Search.LoginWeb.loginWebUI
+import com.hfut.schedule.ui.UIUtils.DividerText
 import com.hfut.schedule.ui.UIUtils.MyToast
+import com.hfut.schedule.ui.UIUtils.ScrollText
 import com.hfut.schedule.ui.UIUtils.WebViewScreen
 import com.hfut.schedule.ui.UIUtils.WheelPicker
 import com.hfut.schedule.ui.theme.FWDTColr
@@ -138,8 +143,12 @@ fun EleUI(vm : LoginSuccessViewModel) {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    var roomInfo by remember { mutableStateOf("${BuildingsNumber}号楼${RoomNumber}寝室${region}") }
-                    PayFor(vm,payNumber,roomInfo,json)
+                    val roomInfo by remember { mutableStateOf("${BuildingsNumber}号楼${RoomNumber}寝室${region}") }
+                    var int by remember { mutableStateOf(payNumber.toInt()) }
+                    if(int > 0) {
+                        PayFor(vm,int,roomInfo,json)
+                    } else MyToast("输入数值")
+
                 }
             }
         }
@@ -153,6 +162,7 @@ fun EleUI(vm : LoginSuccessViewModel) {
         else -> region = "选择南北"
     }
     val auth = SharePrefs.prefs.getString("auth","")
+    //var roomInfo  = "${BuildingsNumber}号楼${RoomNumber}寝室${region}"
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -161,7 +171,7 @@ fun EleUI(vm : LoginSuccessViewModel) {
                     containerColor = Color.Transparent,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
-                title = { Text("宣区电费查询") },
+                title = { Text("寝室电费-宣城校区") },
                 actions = {
                     Row(modifier = Modifier.padding(horizontal = 15.dp)) {
                         if(showitem4)
@@ -170,13 +180,6 @@ fun EleUI(vm : LoginSuccessViewModel) {
                         if(showAdd)
                             IconButton(onClick = {payNumber = payNumber.replaceFirst(".$".toRegex(), "")}) {
                                 Icon(painter = painterResource(R.drawable.backspace), contentDescription = "description") }
-                        FilledTonalIconButton(onClick = {
-                            showDialog = true
-                            ClipBoard.copy(input)
-                            MyToast("已将房间号复制到剪切板,请在打开页面支付")
-                        }) {
-                            Icon(painter = painterResource(id = R.drawable.add), contentDescription = "")
-                        }
                         FilledTonalIconButton(onClick = {
                             CoroutineScope(Job()).launch {
                                 async {
@@ -187,7 +190,8 @@ fun EleUI(vm : LoginSuccessViewModel) {
                                     SharePrefs.Save("BuildNumber", BuildingsNumber)
                                     SharePrefs.Save("EndNumber", EndNumber)
                                     SharePrefs.Save("RoomNumber", RoomNumber)
-                                }
+                                    SharePrefs.Save("RoomText","${BuildingsNumber}号楼${RoomNumber}寝室${region}" )
+                                }.await()
                                 async { vm.getFee("bearer $auth", FeeType.ELECTRIC, room = input) }.await()
                                // async { vm.searchEle(jsons) }.await()
                                 async {
@@ -347,89 +351,7 @@ fun EleUI(vm : LoginSuccessViewModel) {
 
             Spacer(modifier = Modifier.height(7.dp))
 
-
-            AnimatedVisibility(
-                visible = showitem4,
-                enter = slideInVertically(
-                    initialOffsetY = { -40 }
-                ) + expandVertically(
-                    expandFrom = Alignment.Top
-                ) + scaleIn(
-                    // Animate scale from 0f to 1f using the top center as the pivot point.
-                    transformOrigin = TransformOrigin(0.5f, 0f)
-                ) + fadeIn(initialAlpha = 0.3f),
-                exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
-            ){
-                Row (modifier = Modifier.padding(horizontal = 15.dp)){
-                    OutlinedCard{
-                        LazyColumn(modifier = Modifier.padding(horizontal = 10.dp)) {
-                            item {
-                                Text(text = " 选取寝室号", modifier = Modifier.padding(10.dp))
-                            }
-                            item {
-                                LazyRow {
-                                    items(5) { items ->
-                                        IconButton(onClick = {
-                                            if (RoomNumber.length < 3)
-                                                RoomNumber += items.toString()
-                                            else Toast.makeText(
-                                                MyApplication.context,
-                                                "三位数",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        }) { Text(text = items.toString()) }
-                                    }
-                                }
-                            }
-                            item {
-                                LazyRow {
-                                    items(5) { items ->
-                                        val num = items + 5
-                                        IconButton(onClick = {
-                                            if (RoomNumber.length < 3)
-                                                RoomNumber += num
-                                            else Toast.makeText(MyApplication.context, "三位数", Toast.LENGTH_SHORT).show()
-                                        }) { Text(text = num.toString()) }
-                                    }
-                                }
-                            }
-                        }
-                        Spacer(modifier = Modifier.height(10.dp))
-                    }
-                }
-            }
-
-            if(Result.contains("剩余金额")){
-                Result2 = "剩余金额 " +Result.substringAfter("剩余金额")
-                Result2 = Result2.replace(":","")
-                Result = Result.substringBefore("剩余金额").replace(":","")
-            } else if(Result.contains("无法获取房间信息") || Result.contains("hfut")) Result2 = "失败"
-
-            Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
-                Spacer(modifier = Modifier.height(100.dp))
-                Card(
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = 3.dp
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 15.dp, vertical = 5.dp),
-                    shape = MaterialTheme.shapes.medium,
-                ) {
-                    ListItem(
-                        headlineContent = {  Text(text = Result) },
-                        supportingContent = { Text(text = Result2)},
-                        leadingContent = { Icon(painterResource(R.drawable.flash_on), contentDescription = "Localized description",) },
-                        trailingContent = {
-                            if(showButton)
-                            FilledTonalButton(onClick = { if(showAdd && payNumber != "") showBottomSheet = true   else showAdd = true }) { Text(text = if(showAdd && payNumber != "") "提交订单" else "快速充值") }
-                                          },
-                        modifier = Modifier.clickable {}
-                    )
-                }
-            }
-            
-            //充值界面
+//充值界面
             AnimatedVisibility(
                 visible = showAdd,
                 enter = slideInVertically(
@@ -480,8 +402,132 @@ fun EleUI(vm : LoginSuccessViewModel) {
                     }
                 }
             }
+            Spacer(modifier = Modifier.height(7.dp))
+            AnimatedVisibility(
+                visible = showitem4,
+                enter = slideInVertically(
+                    initialOffsetY = { -40 }
+                ) + expandVertically(
+                    expandFrom = Alignment.Top
+                ) + scaleIn(
+                    // Animate scale from 0f to 1f using the top center as the pivot point.
+                    transformOrigin = TransformOrigin(0.5f, 0f)
+                ) + fadeIn(initialAlpha = 0.3f),
+                exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
+            ){
+                Row (modifier = Modifier.padding(horizontal = 15.dp)){
+                    OutlinedCard{
+                        LazyColumn(modifier = Modifier.padding(horizontal = 10.dp)) {
+                            item {
+                                Text(text = " 选取寝室号", modifier = Modifier.padding(10.dp))
+                            }
+                            item {
+                                LazyRow {
+                                    items(5) { items ->
+                                        IconButton(onClick = {
+                                            if (RoomNumber.length < 3)
+                                                RoomNumber += items.toString()
+                                            else Toast.makeText(
+                                                MyApplication.context,
+                                                "三位数",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }) { Text(text = items.toString()) }
+                                    }
+                                }
+                            }
+                            item {
+                                LazyRow {
+                                    items(5) { items ->
+                                        val num = items + 5
+                                        IconButton(onClick = {
+                                            if (RoomNumber.length < 3)
+                                                RoomNumber += num
+                                            else Toast.makeText(MyApplication.context, "三位数", Toast.LENGTH_SHORT).show()
+                                        }) { Text(text = num.toString()) }
+                                    }
+                                }
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(10.dp))
+                    }
+                }
+            }
+            var show by remember { mutableStateOf(false) }
+
+            if(Result.contains("剩余金额")){
+                Result2 = "剩余金额 " +Result.substringAfter("剩余金额")
+                Result2 = Result2.replace(":","")
+                Result = Result.substringBefore("剩余金额").replace(":","")
+                show = true
+
+            } else if(Result.contains("无法获取房间信息") || Result.contains("hfut")) Result2 = "失败"
+
+             DividerText(text = "查询结果")
+             if(show) {
+                 val bd = BigDecimal(Result2.substringAfter(" "))
+                val num = bd.setScale(2, RoundingMode.HALF_UP).toString()
+                Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
+                    Spacer(modifier = Modifier.height(100.dp))
+                    Card(
+                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 15.dp, vertical = 5.dp),
+                        shape = MaterialTheme.shapes.medium,
+                    ) {
+                        ListItem(
+                            headlineContent = {  Text(text = "￥$num", fontSize = 28.sp) },
+                            trailingContent = {
+                                if(showButton)
+                                    FilledTonalButton(onClick = { if(showAdd && payNumber != "") showBottomSheet = true   else showAdd = true }) { Text(text = if(showAdd && payNumber != "") "提交订单" else "快速充值") }
+                            }
+                        )
+                        ListItem(
+                            headlineContent = { Text(text =  "房间号 " + Result.substringAfter(" ")) },
+                            leadingContent = { Icon(painter = painterResource(id = R.drawable.tag), contentDescription = "")}
+                        )
+                        prefs.getString("RoomText",null)?.let {
+                            ListItem(
+                                headlineContent = { Text(text = it)  },
+                                leadingContent = { Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")}
+                            )
+                        }
+                    }
+                }
+            } else {
+                Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
+                    Spacer(modifier = Modifier.height(100.dp))
+                    Card(
+                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 15.dp, vertical = 5.dp),
+                        shape = MaterialTheme.shapes.medium,
+                    ) {
+                        ListItem(headlineContent = { Text(text = "￥XX.XX", fontSize = 28.sp, modifier = Modifier.blur(5.dp)) },)
+                        ListItem(
+                            headlineContent = { Text(text =  "房间号 " + " 300XXXXX1", modifier = Modifier.blur(5.dp)) },
+                            leadingContent = { Icon(painter = painterResource(id = R.drawable.tag), contentDescription = "")}
+                        )
+                        ListItem(
+                            headlineContent = { Text(text = "X号楼XXX寝室方向设施" , modifier = Modifier.blur(5.dp)) },
+                            leadingContent = { Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")}
+                        )
+                    }
+                }
+            }
+
+
+
             
             Spacer(modifier = Modifier.height(30.dp))
         }
     }
+}
+
+
+@Composable
+fun searchResult(roomInfo : String) {
+
 }

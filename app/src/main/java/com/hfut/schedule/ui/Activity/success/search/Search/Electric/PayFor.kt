@@ -12,6 +12,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -62,7 +63,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PayFor(vm : LoginSuccessViewModel,payNumber : String,roomInfo : String,json : String) {
+fun PayFor(vm : LoginSuccessViewModel,payNumber : Int,roomInfo : String,json : String) {
     var showDialog by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -138,15 +139,16 @@ fun PayFor(vm : LoginSuccessViewModel,payNumber : String,roomInfo : String,json 
         Button(onClick = { showDialog = true },
             interactionSource = interactionSource,
             modifier = Modifier
-            .weight(1f) .scale(scale.value)
-            .padding(horizontal = 15.dp)) {
+                .weight(1f)
+                .scale(scale.value)
+                .padding(horizontal = 15.dp)) {
             Text(text = "支付")
         }
     }
 }
 
 @Composable
-fun payStatusUI(vm : LoginSuccessViewModel,payNumber : String,json: String) {
+fun payStatusUI(vm : LoginSuccessViewModel,payNumber : Int,json: String) {
 
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
@@ -204,28 +206,31 @@ fun payStatusUI(vm : LoginSuccessViewModel,payNumber : String,json: String) {
     }
 
 
-    AnimatedVisibility(
-        visible = loading,
-        enter = fadeIn(),
-        exit = fadeOut()
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
+    Box {
+        AnimatedVisibility(
+            visible = loading,
+            enter = fadeIn(),
+            exit = fadeOut()
         ) {
-            Spacer(modifier = Modifier.height(5.dp))
-            CircularProgressIndicator()
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Spacer(modifier = Modifier.height(5.dp))
+                CircularProgressIndicator()
+            }
+        }
+
+
+        AnimatedVisibility(
+            visible = !loading,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            statusUI(iconId = R.drawable.send_money, text = msg)
         }
     }
 
-
-    AnimatedVisibility(
-        visible = !loading,
-        enter = fadeIn(),
-        exit = fadeOut()
-    ) {
-        statusUI(iconId = R.drawable.send_money, text = msg)
-    }
 }
 
 fun getPsk(key : String) : String {

@@ -37,6 +37,7 @@ import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.datamodel.Community.CourseTotalResponse
 import com.hfut.schedule.logic.datamodel.Community.courseBasicInfoDTOList
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.ui.UIUtils.ScrollText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -125,7 +126,7 @@ fun SemsterInfo(json : String?) {
             ){
                 ListItem(
                      overlineContent = { Text(text = semsterInfo.startDate + " ~ " + semsterInfo.endDate)},
-                    headlineContent = {  Text(semsterInfo.nameZh) },
+                    headlineContent = {  ScrollText(semsterInfo.nameZh) },
                     leadingContent = { Icon(
                         painterResource(R.drawable.category),
                         contentDescription = "Localized description",

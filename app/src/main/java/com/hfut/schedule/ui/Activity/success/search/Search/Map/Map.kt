@@ -42,7 +42,8 @@ fun Map() {
         leadingContent = { Icon(painter = painterResource(id = R.drawable.map), contentDescription = "") },
      //       overlineContent = { ScrollText(text = "高德地图SDK测试") },
         modifier = Modifier.clickable {
-                showBottomSheet = true
+            MyToast("暂未开发")
+                //showBottomSheet = true
         }
     )
 

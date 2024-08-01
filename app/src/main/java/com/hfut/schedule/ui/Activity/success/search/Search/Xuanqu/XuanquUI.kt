@@ -79,7 +79,7 @@ fun space(space : Boolean) {
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@SuppressLint("CoroutineCreationDuringComposition")
+@SuppressLint("CoroutineCreationDuringComposition", "SuspiciousIndentation")
 @Composable
 fun XuanquUI(vm : LoginSuccessViewModel) {
     val Savedcode = prefs.getString("Room","")
@@ -135,7 +135,7 @@ fun XuanquUI(vm : LoginSuccessViewModel) {
                     containerColor = Color.Transparent,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
-                title = { Text("寝室卫生评分查询") },
+                title = { Text("寝室评分-宣城校区") },
                 actions = {
                     Row(modifier = Modifier.padding(horizontal = 15.dp)) {
                         if(showitem4)
