@@ -269,10 +269,9 @@ fun XuanquUI(vm : LoginSuccessViewModel) {
                         }
                     }
                 }
-             //   if(showitem4) {
 
-               // }
                 Row{ space(space) }
+
 
                 if (clicked) {
                     space  = false

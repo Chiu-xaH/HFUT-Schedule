@@ -42,6 +42,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.google.gson.Gson
@@ -63,7 +64,10 @@ import com.hfut.schedule.ui.Activity.Fix.feedBackUI
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Monet.MonetColorItem
 import com.hfut.schedule.ui.Activity.success.cube.Settings.getUpdates
 import com.hfut.schedule.ui.Activity.success.search.Search.LePaoYun.InfoSet
+import com.hfut.schedule.ui.Activity.success.search.Search.Survey.getSemseter
+import com.hfut.schedule.ui.Activity.success.search.Search.Survey.getSemseterCloud
 import com.hfut.schedule.ui.UIUtils.DividerText
+import com.hfut.schedule.ui.UIUtils.MyToast
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -332,7 +336,7 @@ fun APPScreen(navController: NavController,
                                 containerColor = Color.Transparent,
                                 titleContentColor = MaterialTheme.colorScheme.primary,
                             ),
-                            title = { Text("预加载 即时卡片设置") },
+                            title = { Text("即时卡片") },
                         )
                     },
                 ) { innerPadding ->
@@ -388,16 +392,29 @@ fun APPScreen(navController: NavController,
                 }
             )
 
+        ListItem(
+            headlineContent = { Text(text = "学期") },
+            leadingContent = {
+                Icon(painter = painterResource(id = R.drawable.approval), contentDescription = "")
+            },
+            supportingContent = {
+                Column {
+                    Text(text = "全局学期 ${getSemseter(getSemseterCloud())}", fontWeight = FontWeight.Bold)
+                    Text(text = "其他部分功能如教评、成绩等需要在全局学期下切换学期的，可在相应功能区切换")
+                }
+            },
+            modifier = Modifier.clickable {  MyToast("全局学期不可修改,受服务器云控") }
+        )
 
         ListItem(
-            headlineContent = { Text(text = "预加载 即时卡片设置") },
+            headlineContent = { Text(text = "即时卡片") },
             supportingContent = { Text(text = "启动APP时会自动加载或更新一些即时数据,您可按需调整") },
             leadingContent = { Icon(painterResource(R.drawable.reset_iso), contentDescription = "Localized description",) },
             modifier = Modifier.clickable { showBottomSheet_card = true }
         )
 
         ListItem(
-            headlineContent = { Text(text = "打开链接方式") },
+            headlineContent = { Text(text = "打开外部链接") },
             supportingContent = {
                 Column {
                     Text(text = "您希望链接从应用内部打开或者调用系统浏览器")
@@ -424,6 +441,8 @@ fun APPScreen(navController: NavController,
                 SaveBoolean("SWITCHSTARTURI",true,showStartUri)
             }
         )
+
+
     }
 
 }
@@ -538,6 +557,7 @@ fun NetWorkScreen(navController: NavController,
 
 }
 
+@SuppressLint("SuspiciousIndentation")
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

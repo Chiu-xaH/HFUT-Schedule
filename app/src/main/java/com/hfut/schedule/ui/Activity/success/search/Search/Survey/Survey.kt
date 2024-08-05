@@ -133,7 +133,7 @@ fun SurveyUI(vm : LoginSuccessViewModel) {
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(false) }
     val cookie = SharePrefs.prefs.getString("redirect", "")
-    var semsters = Gson().fromJson(prefs.getString("my",MyApplication.NullMy),MyAPIResponse::class.java).semesterId.toInt()
+    var semsters = getSemseterCloud()
     var semester by remember { mutableStateOf(semsters) }
 
     LaunchedEffect(semester) {
@@ -379,4 +379,7 @@ fun getSemseter(semster : Int) : String {
 
     val years= (year + (codes - code) / 4) + 1
     return years.toString() +  "~" + (years + 1).toString() + "年第" +  upordown + "学期"
+}
+fun getSemseterCloud() : Int {
+    return Gson().fromJson(prefs.getString("my",MyApplication.NullMy),MyAPIResponse::class.java).semesterId.toInt()
 }

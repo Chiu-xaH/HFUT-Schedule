@@ -65,7 +65,7 @@ fun Grade(vm : LoginSuccessViewModel,ifSaved : Boolean,webVpn : Boolean)  {
     val cookie = if(!webVpn) prefs.getString("redirect", "")  else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket","")
 
     if(!ifSaved)
-    vm.getGrade(cookie!!)
+    vm.getGrade(cookie!!,null)
 
     val sheetState_Grade = rememberModalBottomSheetState()
     var showBottomSheet_Grade by remember { mutableStateOf(false) }

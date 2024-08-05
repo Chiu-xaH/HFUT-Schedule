@@ -5,7 +5,8 @@ data class TransferData(val registrationConditions : String?,
                     //    val changeMajorBatch : changeMajorBatch,
                         val department : courseType,
                         val major : courseType,
-                        val preparedStdCount : Int,val applyStdCount : Int)
+                        val preparedStdCount : Int,
+                        val applyStdCount : Int)
 data class changeMajorBatch(val nameZh : String,
                             val applyStartTime : String,
                             val applyEndTime : String,
@@ -13,3 +14,6 @@ data class changeMajorBatch(val nameZh : String,
                             val enrollEndTime : String,
                             val inGrade : String,
                             val applyLimitCount : Int)
+
+data class MyApplyResponse(val models : List<MyApplyModels>)
+data class MyApplyModels(val changeMajorSubmit : TransferData,val applyStatus : String?)

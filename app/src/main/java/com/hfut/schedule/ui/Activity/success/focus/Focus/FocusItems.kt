@@ -73,6 +73,9 @@ import com.hfut.schedule.ui.Activity.success.calendar.nonet.DetailInfos
 import com.hfut.schedule.ui.Activity.success.calendar.nonet.getCourseINFO
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.apiCheck
 import com.hfut.schedule.ui.Activity.success.search.Search.SchoolCard.TodayInfo
+import com.hfut.schedule.ui.Activity.success.search.Search.Survey.getSemseter
+import com.hfut.schedule.ui.Activity.success.search.Search.Survey.getSemseterCloud
+import com.hfut.schedule.ui.UIUtils.BottomTip
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.ScrollText
 
@@ -658,9 +661,12 @@ fun BoxScope.AddButton(isVisible: Boolean,innerPaddings : PaddingValues) {
 
 @Composable
 fun TimeStampItem() {
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-        getTimeStamp()?.let { Text(text = it, color = Color.Gray, fontSize = 14.sp) }
-    }
+    BottomTip(getTimeStamp())
+}
+
+@Composable
+fun SemsterTip() {
+    BottomTip(getSemseter(getSemseterCloud()))
 }
 
 

@@ -282,6 +282,26 @@ class LoginSuccessViewModel(webVpn : Boolean) : ViewModel() {
     }
 
 
+    val myApplyData = MutableLiveData<String?>()
+    fun getMyApply(cookie: String,campus: CampusId) {
+        val campusId = when(campus) {
+            CampusId.XUANCHENG -> 3
+            CampusId.HEFEI -> 1
+        }
+        val call = studentId.value?.let { JxglstuJSON.getMyTransfer(cookie, campusId, it) }
+
+        if (call != null) {
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    myApplyData.value = response.body()?.string()
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+            })
+        }
+    }
+
+
     val NewsData = MutableLiveData<String?>()
     fun searchNews(title : String) {
 
@@ -322,8 +342,8 @@ class LoginSuccessViewModel(webVpn : Boolean) : ViewModel() {
         })
     }
 
-    fun getGrade(cookie: String) {
-        val call = JxglstuJSON.getGrade(cookie,studentId.value.toString())
+    fun getGrade(cookie: String,semester: Int?) {
+        val call = JxglstuJSON.getGrade(cookie,studentId.value.toString(), semester)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {

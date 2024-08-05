@@ -38,6 +38,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -67,6 +68,9 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.SaveInt
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.login.main.LoginClick
+import com.hfut.schedule.ui.Activity.success.focus.Focus.SemsterTip
+import com.hfut.schedule.ui.Activity.success.search.Search.Survey.getSemseter
+import com.hfut.schedule.ui.Activity.success.search.Search.Survey.getSemseterCloud
 import com.hfut.schedule.ui.Activity.success.search.Search.TotalCourse.getTotalCourse
 import com.hfut.schedule.ui.UIUtils.MyToast
 import kotlinx.coroutines.CoroutineScope
@@ -1065,6 +1069,19 @@ fun CalendarScreen(showAll : Boolean,
                                         Text(text = "第 $annumber 周",)
                                     }
                                 }
+                            }
+                        }
+                        androidx.compose.animation.AnimatedVisibility(
+                            visible = !shouldShowAddButton,
+                            enter = scaleIn(),
+                            exit = scaleOut(),
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .padding(innerPadding)
+                                .padding(horizontal = 15.dp, vertical = 15.dp)
+                        ) {
+                            TextButton(onClick = {  }) {
+                                Text(text = getSemseter(getSemseterCloud()))
                             }
                         }
 

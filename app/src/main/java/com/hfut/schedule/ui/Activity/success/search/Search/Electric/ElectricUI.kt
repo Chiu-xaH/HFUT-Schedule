@@ -470,7 +470,7 @@ fun EleUI(vm : LoginSuccessViewModel) {
                 Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
                     Spacer(modifier = Modifier.height(100.dp))
                     Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 15.dp, vertical = 5.dp),
@@ -484,36 +484,32 @@ fun EleUI(vm : LoginSuccessViewModel) {
                             }
                         )
                         ListItem(
-                            headlineContent = { Text(text =  "房间号 " + Result.substringAfter(" ")) },
-                            leadingContent = { Icon(painter = painterResource(id = R.drawable.tag), contentDescription = "")}
+                            headlineContent = { prefs.getString("RoomText",null)?.let { Text(text = it) } },
+                            overlineContent = { Text(text =  "房间号 " + Result.substringAfter(" ")) },
+                            leadingContent = { Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")}
                         )
-                        prefs.getString("RoomText",null)?.let {
-                            ListItem(
-                                headlineContent = { Text(text = it)  },
-                                leadingContent = { Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")}
-                            )
-                        }
                     }
                 }
             } else {
                 Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
                     Spacer(modifier = Modifier.height(100.dp))
                     Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 15.dp, vertical = 5.dp),
                         shape = MaterialTheme.shapes.medium,
                     ) {
-                        ListItem(headlineContent = { Text(text = "￥XX.XX", fontSize = 28.sp, modifier = Modifier.blur(5.dp)) },)
-                        ListItem(
-                            headlineContent = { Text(text =  "房间号 " + " 300XXXXX1", modifier = Modifier.blur(5.dp)) },
-                            leadingContent = { Icon(painter = painterResource(id = R.drawable.tag), contentDescription = "")}
-                        )
-                        ListItem(
-                            headlineContent = { Text(text = "X号楼XXX寝室方向设施" , modifier = Modifier.blur(5.dp)) },
-                            leadingContent = { Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")}
-                        )
+                        Column(modifier = Modifier.blur(5.dp)) {
+                            ListItem(
+                                headlineContent = { Text(text = "￥XX.XX", fontSize = 28.sp) },
+                                trailingContent = { FilledTonalButton(onClick = { null }) { Text(text = "提交订单") } })
+                            ListItem(
+                                overlineContent = {Text( text = "X号楼XXX寝室方向设施" )},
+                                headlineContent = { Text(text =  "房间号 " + " 300XXXXX1") },
+                                leadingContent = { Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")}
+                            )
+                        }
                     }
                 }
             }

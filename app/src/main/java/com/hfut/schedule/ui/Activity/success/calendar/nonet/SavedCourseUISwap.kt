@@ -29,7 +29,6 @@ import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -37,8 +36,10 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -57,11 +58,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.App.MyApplication
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.datamodel.Community.courseDetailDTOList
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.GetDate.Benweeks
+import com.hfut.schedule.ui.Activity.success.focus.Focus.SemsterTip
+import com.hfut.schedule.ui.Activity.success.search.Search.Survey.getSemseter
+import com.hfut.schedule.ui.Activity.success.search.Search.Survey.getSemseterCloud
 import com.hfut.schedule.ui.UIUtils.MyToast
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -644,7 +647,6 @@ fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues,vmUI : UIViewModel
             Box( modifier = Modifier.pullRefresh(states)) {
                 val scrollstate = rememberLazyGridState()
                 val shouldShowAddButton by remember { derivedStateOf { scrollstate.firstVisibleItemScrollOffset == 0 } }
-
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(if(showAll)7 else 5),
                     modifier = Modifier.padding(7.dp),
@@ -720,6 +722,20 @@ fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues,vmUI : UIViewModel
                 }
 
                 androidx.compose.animation.AnimatedVisibility(
+                    visible = !shouldShowAddButton,
+                    enter = scaleIn(),
+                    exit = scaleOut(),
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(innerPaddings)
+                        .padding(horizontal = 15.dp, vertical = 15.dp)
+                ) {
+                    TextButton(onClick = {  }) {
+                        Text(text = getSemseter(getSemseterCloud()))
+                    }
+                }
+
+                androidx.compose.animation.AnimatedVisibility(
                     visible = shouldShowAddButton,
                     enter = scaleIn(),
                     exit = scaleOut(),
@@ -741,5 +757,7 @@ fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues,vmUI : UIViewModel
                 }
                 PullRefreshIndicator(refreshing, states, Modifier.align(Alignment.TopCenter))
             }
+
+
         }
 }
