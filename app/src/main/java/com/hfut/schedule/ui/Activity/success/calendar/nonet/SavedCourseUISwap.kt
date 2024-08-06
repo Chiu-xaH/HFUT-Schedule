@@ -2,6 +2,7 @@ package com.hfut.schedule.ui.Activity.success.calendar.nonet
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.fonts.FontStyle
 import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -30,6 +31,7 @@ import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
@@ -53,7 +55,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -655,6 +662,7 @@ fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues,vmUI : UIViewModel
                     items(if(showAll)42 else 30) { cell ->
                         var texts = if(showAll)tableall[cell] else table[cell]
                         Card(
+                            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
                             shape = MaterialTheme.shapes.extraSmall,
                             modifier = Modifier
                                 .height(125.dp)
@@ -731,7 +739,14 @@ fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues,vmUI : UIViewModel
                         .padding(horizontal = 15.dp, vertical = 15.dp)
                 ) {
                     TextButton(onClick = {  }) {
-                        Text(text = getSemseter(getSemseterCloud()))
+                        Text(
+                            text = getSemseter(getSemseterCloud()),
+                            style = TextStyle(shadow = Shadow(
+                                color = Color.Gray,
+                                offset = Offset(5.0f,5.0f),
+                                blurRadius = 10.0f
+                            ))
+                        )
                     }
                 }
 

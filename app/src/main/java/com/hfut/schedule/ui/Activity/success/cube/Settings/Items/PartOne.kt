@@ -3,7 +3,6 @@ package com.hfut.schedule.ui.Activity.success.cube.Settings.Items
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -19,7 +18,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
@@ -45,15 +43,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
-import com.hfut.schedule.activity.FixActivity
 import com.hfut.schedule.activity.LoginActivity
 import com.hfut.schedule.logic.Enums.CardBarItems
 import com.hfut.schedule.logic.Enums.FixBarItems
-import com.hfut.schedule.logic.datamodel.MyAPIResponse
 import com.hfut.schedule.logic.utils.APPVersion
 import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.SharePrefs
@@ -61,7 +56,9 @@ import com.hfut.schedule.logic.utils.SharePrefs.SaveBoolean
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.StartApp
 import com.hfut.schedule.ui.Activity.Fix.feedBackUI
+
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Monet.MonetColorItem
+import com.hfut.schedule.ui.Activity.success.cube.Settings.VersionInfo
 import com.hfut.schedule.ui.Activity.success.cube.Settings.getUpdates
 import com.hfut.schedule.ui.Activity.success.search.Search.LePaoYun.InfoSet
 import com.hfut.schedule.ui.Activity.success.search.Search.Survey.getSemseter
@@ -262,13 +259,42 @@ fun HomeSettingScreen(navController: NavController,
 
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlwaysItem() {
     var version by remember { mutableStateOf(getUpdates()) }
     var showBadge by remember { mutableStateOf(false) }
     if (version.version != APPVersion.getVersionName()) showBadge = true
-
-
+    val sheetState = rememberModalBottomSheetState()
+    var showBottomSheet by remember { mutableStateOf(false) }
+    if (showBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { showBottomSheet = false },
+            sheetState = sheetState
+        ) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        title = { Text("本版本新特性") },
+                    )
+                },
+            ) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .verticalScroll(rememberScrollState())
+                        .fillMaxSize()
+                ) {
+                    VersionInfo()
+                }
+            }
+        }
+    }
     ListItem(
         headlineContent = { Text(text = "刷新登录状态") },
         supportingContent = { Text(text = "如果一卡通或者考试成绩等无法查询,可能是登陆过期,需重新登录一次") },
@@ -282,7 +308,7 @@ fun AlwaysItem() {
     )
     if (APPVersion.getVersionName() == getUpdates().version)
         ListItem(
-            headlineContent = { Text(text = "检查更新") },
+            headlineContent = { Text(text = "查看本版本新特性") },
             supportingContent = { Text(text = if(version.version == APPVersion.getVersionName()) "当前为最新版本 ${APPVersion.getVersionName()}" else "当前版本  ${APPVersion.getVersionName()}\n最新版本  ${version.version}") },
             leadingContent = {
                 BadgedBox(badge = {
@@ -294,7 +320,9 @@ fun AlwaysItem() {
             modifier = Modifier.clickable{
                 if (version.version != APPVersion.getVersionName())
                     StartApp.StartUri(MyApplication.DownloadURL)
-                else Toast.makeText(MyApplication.context,"与云端版本一致", Toast.LENGTH_SHORT).show()
+                else {
+                    showBottomSheet = true
+                }
             }
         )
 
@@ -347,6 +375,38 @@ fun APPScreen(navController: NavController,
                     ) {
                         FocusCardSettings()
                         Spacer(modifier = Modifier.height(100.dp))
+                    }
+                }
+            }
+        }
+
+
+        val sheetState = rememberModalBottomSheetState()
+        var showBottomSheet by remember { mutableStateOf(false) }
+        if (showBottomSheet) {
+            ModalBottomSheet(
+                onDismissRequest = { showBottomSheet = false },
+                sheetState = sheetState
+            ) {
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    topBar = {
+                        TopAppBar(
+                            colors = TopAppBarDefaults.mediumTopAppBarColors(
+                                containerColor = Color.Transparent,
+                                titleContentColor = MaterialTheme.colorScheme.primary,
+                            ),
+                            title = { Text("本版本新特性") },
+                        )
+                    },
+                ) { innerPadding ->
+                    Column(
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .verticalScroll(rememberScrollState())
+                            .fillMaxSize()
+                    ) {
+                        VersionInfo()
                     }
                 }
             }
@@ -440,6 +500,13 @@ fun APPScreen(navController: NavController,
                 showStartUri = !showStartUri
                 SaveBoolean("SWITCHSTARTURI",true,showStartUri)
             }
+        )
+
+        ListItem(
+            headlineContent = { Text(text = "本版本新特性") },
+            supportingContent = { Text(text = "查看此版本的更新内容")},
+            modifier = Modifier.clickable { showBottomSheet = true },
+            leadingContent = { Icon(painter = painterResource(id = R.drawable.sdk), contentDescription = "")}
         )
 
 

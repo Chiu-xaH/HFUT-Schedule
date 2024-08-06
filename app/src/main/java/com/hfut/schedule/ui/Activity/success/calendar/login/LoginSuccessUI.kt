@@ -48,7 +48,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -1081,10 +1084,17 @@ fun CalendarScreen(showAll : Boolean,
                                 .padding(horizontal = 15.dp, vertical = 15.dp)
                         ) {
                             TextButton(onClick = {  }) {
-                                Text(text = getSemseter(getSemseterCloud()))
+                                Text(
+                                    text = getSemseter(getSemseterCloud()),
+                                    style = TextStyle(shadow = Shadow(
+                                        color = Color.Gray,
+                                        offset = Offset(5.0f,5.0f),
+                                        blurRadius = 10.0f
+                                    )
+                                    )
+                                )
                             }
                         }
-
                         androidx.compose.animation.AnimatedVisibility(
                             visible = shouldShowAddButton,
                             enter = scaleIn(),
