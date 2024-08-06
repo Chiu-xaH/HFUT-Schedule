@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.Activity.success.search.Search
+package com.hfut.schedule.ui.Activity.success.search.Search.Work
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -23,23 +23,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.utils.StartApp
 import com.hfut.schedule.ui.UIUtils.MyToast
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ToadyCampus(ifSaved : Boolean){
+fun Work(ifSaved : Boolean){
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
 
     ListItem(
-        overlineContent = { Text(text = "今日校园") },
-        headlineContent = { Text(text = "学工系统") },
-        leadingContent = { Icon(painter = painterResource(id = R.drawable.handshake), contentDescription = "") },
+        headlineContent = { Text(text = "实习") },
+        leadingContent = { Icon(painter = painterResource(id = R.drawable.work), contentDescription = "") },
         modifier = Modifier.clickable {
             //if(ifSaved) Login() else
-            // showBottomSheet = true
-            StartApp.startLaunchAPK("com.wisedu.cpdaily","今日校园")
+               // showBottomSheet = true
+            MyToast("暂未开发")
         }
     )
     if (showBottomSheet) {
@@ -55,7 +53,7 @@ fun ToadyCampus(ifSaved : Boolean){
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        title = { Text("学工系统") },
+                        title = { Text("实习") },
                     )
                 },
             ) { innerPadding ->

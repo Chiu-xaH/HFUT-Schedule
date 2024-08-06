@@ -57,6 +57,7 @@ import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.ui.Activity.success.search.Search.Person.getPersonInfo
 import com.hfut.schedule.ui.MonetColor.MonetUI
 import com.hfut.schedule.ui.UIUtils.ScrollText
 import kotlinx.coroutines.delay
@@ -65,33 +66,6 @@ import org.jsoup.Jsoup
 @Composable
 fun PersonPart() {
 
-
-    val info = SharePrefs.prefs.getString("info","")
-
-
-    val doc = info?.let { Jsoup.parse(it) }
-    val studentnumber = doc?.select("li.list-group-item.text-right:contains(学号) span")?.last()?.text()
-    val name = doc?.select("li.list-group-item.text-right:contains(中文姓名) span")?.last()?.text()
-  //  val chineseid = doc?.select("li.list-group-item.text-right:contains(证件号) span")?.last()?.text()
-    val elements = doc?.select("dl dt, dl dd")
-
-    val infoMap = mutableMapOf<String, String>()
-    if (elements != null) {
-        for (i in 0 until elements.size step 2) {
-            val key = elements[i].text()
-            val value = elements[i+1].text()
-            infoMap[key] = value
-        }
-    }
-
-    //SharePrefs.Save("ChineseId",chineseid)
-
-    //val benorsshuo =infoMap[elements?.get(8)?.text()]
-    val yuanxi =infoMap[elements?.get(10)?.text()]
-    val zhuanye =infoMap[elements?.get(12)?.text()]
-    val classes =infoMap[elements?.get(16)?.text()]
-    val school =infoMap[elements?.get(18)?.text()]
-    //val home =infoMap[elements?.get(80)?.text()]
 
 
     var expandItems by remember { mutableStateOf(prefs.getBoolean("expandPerson",true)) }
@@ -117,7 +91,7 @@ fun PersonPart() {
                 
                 ListItem(
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.person), contentDescription = "")},
-                    headlineContent = { name?.let { Text(text = it) } },
+                    headlineContent = { getPersonInfo().name?.let { Text(text = it) } },
                     trailingContent = { Icon(painterResource(id = if(expandItems) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "")},
                     colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                     modifier = Modifier.clickable {
@@ -141,7 +115,7 @@ fun PersonPart() {
                         Row {
                             ListItem(
                                 overlineContent = { Text(text = "学号") },
-                                headlineContent = { studentnumber?.let { ScrollText(text = it) } },
+                                headlineContent = { getPersonInfo().username?.let { ScrollText(text = it) } },
                                 leadingContent = {
                                     Icon(
                                         painterResource(R.drawable.badge),
@@ -159,7 +133,7 @@ fun PersonPart() {
                                         contentDescription = "Localized description",
                                     )
                                 },
-                                headlineContent = { classes?.let { ScrollText(text = it)} },
+                                headlineContent = { getPersonInfo().classes?.let { ScrollText(text = it)} },
                                 modifier = Modifier.weight(0.5f),
                                 colors = ListItemDefaults.colors(containerColor = Color.Transparent)
                             )
@@ -173,7 +147,7 @@ fun PersonPart() {
                                         contentDescription = "Localized description",
                                     )
                                 },
-                                headlineContent = { school?.let { ScrollText(text = it) } },
+                                headlineContent = { getPersonInfo().school?.let { ScrollText(text = it) } },
                                 modifier = Modifier.weight(0.5f),
                                 colors = ListItemDefaults.colors(containerColor = Color.Transparent)
                             )
@@ -185,7 +159,7 @@ fun PersonPart() {
                                         contentDescription = "Localized description",
                                     )
                                 },
-                                headlineContent = { yuanxi?.let { ScrollText(text = it) } },
+                                headlineContent = { getPersonInfo().department?.let { ScrollText(text = it) } },
                                 modifier = Modifier.weight(0.5f),
                                 colors = ListItemDefaults.colors(containerColor = Color.Transparent)
                             )
@@ -199,7 +173,7 @@ fun PersonPart() {
                                         contentDescription = "Localized description",
                                     )
                                 },
-                                headlineContent = { zhuanye?.let { ScrollText(text = it) } }
+                                headlineContent = { getPersonInfo().major?.let { ScrollText(text = it) } }
                                 ,
                                 modifier = Modifier.weight(1f),
                                 colors = ListItemDefaults.colors(containerColor = Color.Transparent),
@@ -216,14 +190,6 @@ fun PersonPart() {
 @RequiresApi(Build.VERSION_CODES.O)
 fun getUserInfo() : UserInfo {
 
-    val info = SharePrefs.prefs.getString("info","")
-
-    val doc = info?.let { Jsoup.parse(it) }
-    val studentnumber = doc?.select("li.list-group-item.text-right:contains(学号) span")?.last()?.text()
-    val name = doc?.select("li.list-group-item.text-right:contains(中文姓名) span")?.last()?.text()
-
-
-
     val date = GetDate.Date_yyyy_MM_dd
     val time = "${GetDate.formattedTime_Hour}:${GetDate.formattedTime_Minute}:00"
     val dateTime = "$date $time"
@@ -233,6 +199,6 @@ fun getUserInfo() : UserInfo {
     val androidSDK = AndroidVersion.sdkInt
     val device = Build.MODEL
 
-    return UserInfo(name,studentnumber,dateTime, appVersionName = appVersion, systemVersion = androidSDK, deviceName = device)
+    return UserInfo(getPersonInfo().name,getPersonInfo().username,dateTime, appVersionName = appVersion, systemVersion = androidSDK, deviceName = device)
 }
 

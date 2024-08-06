@@ -6,6 +6,7 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -24,6 +26,7 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,15 +34,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.getWebNew
+import com.hfut.schedule.ui.UIUtils.ScrollText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -58,32 +66,6 @@ fun loginWebUI(vmUI : UIViewModel,vm : LoginSuccessViewModel) {
     val precent = bd2.setScale(2, RoundingMode.HALF_UP).toString()
        // return str
 
-    Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 15.dp, vertical = 5.dp),
-        shape = MaterialTheme.shapes.medium,
-    ){
-        ListItem(
-            headlineContent = { Text(text = "月免费额度 50GB") },
-            trailingContent = { Text(text = "已用 ${precent}%")},
-            leadingContent = { Icon(painterResource(R.drawable.net), contentDescription = "Localized description",) },
-            modifier = Modifier.clickable {
-
-            },
-        )
-    }
-    Spacer(modifier = Modifier.height(5.dp))
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center){
-        Icon(painter = painterResource(id = R.drawable.net), contentDescription = "",
-            Modifier.size(100.dp), tint = MaterialTheme.colorScheme.primary)
-    }
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center){
-        Text(text = textStatus, color = MaterialTheme.colorScheme.primary)
-    }
-    Spacer(modifier = Modifier.height(15.dp))
-
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
     val scale = animateFloatAsState(
@@ -96,6 +78,69 @@ fun loginWebUI(vmUI : UIViewModel,vm : LoginSuccessViewModel) {
     var textLogout by  remember { mutableStateOf("注销") }
     vmUI.getWebInfo()
     getWebNew(vm,vmUI)
+
+    Card(
+        elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 15.dp, vertical = 5.dp),
+        shape = MaterialTheme.shapes.medium,
+    ) {
+        val scrollState = rememberScrollState()
+        LaunchedEffect(key1 = textStatus.substringBefore("\n") ) {
+            delay(500L)
+            scrollState.animateScrollTo(scrollState.maxValue)
+            delay(4000L)
+            scrollState.animateScrollTo(0)
+        }
+
+
+        ListItem(
+            headlineContent = {
+                Text(
+                    text = textStatus.substringBefore("\n"),
+                    fontSize = 28.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.horizontalScroll(scrollState))
+            }
+        )
+        ListItem(
+            headlineContent = { Text(text = textStatus.substringAfter("\n")) },
+            leadingContent = { Icon(painter = painterResource(id = R.drawable.paid), contentDescription = "")},
+            trailingContent = {
+                Button(
+                    onClick = {
+                        vmUI.loginWeb()
+                        // vmUI.loginWeb2()
+                    },modifier = Modifier
+                        .scale(scale.value),
+                    interactionSource = interactionSource,) {
+                    Text(text = textLogin)
+                }
+            }
+        )
+        Row {
+            ListItem(
+                modifier = Modifier.weight(.5f),
+                overlineContent = { Text(text = "月免费额度 50GB") },
+                headlineContent = { Text(text = "已用 ${precent} %", fontWeight = FontWeight.Bold)},
+                leadingContent = { Icon(painterResource(R.drawable.percent), contentDescription = "Localized description",) },
+                trailingContent = {
+                    Button(
+                        onClick = {
+                            vmUI.logoutWeb()
+                        },
+                        //modifier = Modifier
+                        //  .scale(scale.value),
+                        //interactionSource = interactionSource,
+                    ) {
+                        Text(text = textLogout)
+                    }
+                }
+            )
+        }
+    }
 
 
 
@@ -121,26 +166,9 @@ fun loginWebUI(vmUI : UIViewModel,vm : LoginSuccessViewModel) {
     }
 
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-        Button(
-            onClick = {
-                vmUI.loginWeb()
-               // vmUI.loginWeb2()
-            },modifier = Modifier
-                .scale(scale.value),
-            interactionSource = interactionSource,) {
-            Text(text = textLogin)
-        }
+
         Spacer(modifier = Modifier.width(10.dp))
-        Button(
-            onClick = {
-                vmUI.logoutWeb()
-            },
-            //modifier = Modifier
-              //  .scale(scale.value),
-            //interactionSource = interactionSource,
-            ) {
-            Text(text = textLogout)
-        }
+
     }
 }
 

@@ -55,7 +55,7 @@ import com.hfut.schedule.logic.datamodel.zjgd.records
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.ui.Activity.card.function.main.CardRow
+import com.hfut.schedule.ui.Activity.card.bills.CardRow
 import com.hfut.schedule.ui.Activity.card.BillsIcons
 import com.hfut.schedule.ui.UIUtils.MyToast
 import kotlinx.coroutines.CoroutineScope

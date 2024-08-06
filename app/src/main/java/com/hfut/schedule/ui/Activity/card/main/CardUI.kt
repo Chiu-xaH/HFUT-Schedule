@@ -58,10 +58,10 @@ import com.hfut.schedule.logic.datamodel.zjgd.records
 import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.ui.Activity.card.HomeScreen
+import com.hfut.schedule.ui.Activity.card.function.main.HomeScreen
 import com.hfut.schedule.ui.Activity.card.bills.main.CardBills
 import com.hfut.schedule.ui.Activity.card.counts.CardHome
-import com.hfut.schedule.ui.Activity.card.turnToBottomBar
+import com.hfut.schedule.ui.Activity.card.function.main.turnToBottomBar
 import com.hfut.schedule.ui.Activity.success.focus.Focus.GetZjgdCard
 import com.hfut.schedule.ui.UIUtils.MyToast
 import dev.chrisbanes.haze.HazeState

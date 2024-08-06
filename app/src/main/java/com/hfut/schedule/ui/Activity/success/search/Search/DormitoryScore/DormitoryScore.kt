@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.Activity.success.search.Search.Xuanqu
+package com.hfut.schedule.ui.Activity.success.search.Search.DormitoryScore
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,7 +11,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -27,7 +26,7 @@ import com.hfut.schedule.ui.UIUtils.ScrollText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun XuanquItem(vm : LoginSuccessViewModel) {
+fun DormitoryScoreItem(vm : LoginSuccessViewModel) {
     vm.XuanquData.value = "{}"
     val sheetState_Xuanqu = rememberModalBottomSheetState()
     var showBottomSheet_Xuanqu by remember { mutableStateOf(false) }
@@ -48,7 +47,7 @@ fun XuanquItem(vm : LoginSuccessViewModel) {
         ) {
             Column() {
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
-                ) { XuanquUI(vm) }
+                ) { DormitoryScoreUI(vm) }
                 Spacer(modifier = Modifier.height(20.dp))
             }
         }

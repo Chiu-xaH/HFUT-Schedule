@@ -6,6 +6,7 @@ import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -454,6 +455,7 @@ fun EleUI(vm : LoginSuccessViewModel) {
                 }
             }
             var show by remember { mutableStateOf(false) }
+            val blurSize by animateDpAsState(targetValue = if (!show) 10.dp else 0.dp, label = "")
 
             if(Result.contains("剩余金额")){
                 Result2 = "剩余金额 " +Result.substringAfter("剩余金额")
@@ -464,55 +466,36 @@ fun EleUI(vm : LoginSuccessViewModel) {
             } else if(Result.contains("无法获取房间信息") || Result.contains("hfut")) Result2 = "失败"
 
              DividerText(text = "查询结果")
-             if(show) {
-                 val bd = BigDecimal(Result2.substringAfter(" "))
-                val num = bd.setScale(2, RoundingMode.HALF_UP).toString()
+          //   if(show) {
+
                 Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
                     Spacer(modifier = Modifier.height(100.dp))
                     Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 15.dp, vertical = 5.dp),
                         shape = MaterialTheme.shapes.medium,
                     ) {
-                        ListItem(
-                            headlineContent = {  Text(text = "￥$num", fontSize = 28.sp) },
-                            trailingContent = {
-                                if(showButton)
-                                    FilledTonalButton(onClick = { if(showAdd && payNumber != "") showBottomSheet = true   else showAdd = true }) { Text(text = if(showAdd && payNumber != "") "提交订单" else "快速充值") }
-                            }
-                        )
-                        ListItem(
-                            headlineContent = { prefs.getString("RoomText",null)?.let { Text(text = it) } },
-                            overlineContent = { Text(text =  "房间号 " + Result.substringAfter(" ")) },
-                            leadingContent = { Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")}
-                        )
-                    }
-                }
-            } else {
-                Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
-                    Spacer(modifier = Modifier.height(100.dp))
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 15.dp, vertical = 5.dp),
-                        shape = MaterialTheme.shapes.medium,
-                    ) {
-                        Column(modifier = Modifier.blur(5.dp)) {
+                        Column(modifier = Modifier.blur(blurSize)) {
                             ListItem(
-                                headlineContent = { Text(text = "￥XX.XX", fontSize = 28.sp) },
-                                trailingContent = { FilledTonalButton(onClick = { null }) { Text(text = "提交订单") } })
+                                headlineContent = { Text(text = if(!show)"￥XX.XX" else {     "￥${BigDecimal(Result2.substringAfter(" ")).setScale(2, RoundingMode.HALF_UP).toString()}"
+                                }, fontSize = 28.sp) },
+                                trailingContent = {
+                                    if(show) {
+                                        if(showButton)
+                                            FilledTonalButton(onClick = { if(showAdd && payNumber != "") showBottomSheet = true   else showAdd = true }) { Text(text = if(showAdd && payNumber != "") "提交订单" else "快速充值") }
+                                    } else FilledTonalButton(onClick = { null }) { Text(text = "提交订单") } }
+                            )
                             ListItem(
-                                overlineContent = {Text( text = "X号楼XXX寝室方向设施" )},
-                                headlineContent = { Text(text =  "房间号 " + " 300XXXXX1") },
+                                overlineContent = {Text( text = if(!show)"房间号 " + " 300XXXXX1" else "房间号 " + Result.substringAfter(" ")  )},
+                                headlineContent = { (if(!show)"X号楼XXX寝室方向设施" else prefs.getString("RoomText",null))?.let { Text(text = it) } },
                                 leadingContent = { Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")}
                             )
                         }
                     }
                 }
-            }
+
 
 
 

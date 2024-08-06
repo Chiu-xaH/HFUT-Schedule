@@ -1,9 +1,8 @@
-package com.hfut.schedule.ui.Activity.success.search.Search.Xuanqu
+package com.hfut.schedule.ui.Activity.success.search.Search.DormitoryScore
 
 import android.annotation.SuppressLint
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -27,7 +26,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -63,13 +61,10 @@ import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.logic.datamodel.XuanquResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.jsoup.select.Evaluator.IsOnlyChild
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
@@ -81,7 +76,7 @@ fun space(space : Boolean) {
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("CoroutineCreationDuringComposition", "SuspiciousIndentation")
 @Composable
-fun XuanquUI(vm : LoginSuccessViewModel) {
+fun DormitoryScoreUI(vm : LoginSuccessViewModel) {
     val Savedcode = prefs.getString("Room","")
     var code by remember { mutableStateOf(Savedcode ?: "") }
     var clicked by remember { mutableStateOf(false) }
@@ -165,7 +160,7 @@ fun XuanquUI(vm : LoginSuccessViewModel) {
                                             if(result.contains("div")) {
                                                 CoroutineScope(Job()).launch {
                                                     async { loading = false }
-                                                    async { getXuanqu(vm) }
+                                                    async { getDormitoryScore(vm) }
                                                 }
                                             }
                                         }
@@ -294,7 +289,7 @@ fun XuanquUI(vm : LoginSuccessViewModel) {
                         exit = fadeOut()
                     ){
                         LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.padding(horizontal = 5.dp)) {
-                            getXuanqu(vm)?.let {
+                            getDormitoryScore(vm)?.let {
                                 items(it.size) { item ->
                                     Card(
                                         elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
@@ -304,8 +299,8 @@ fun XuanquUI(vm : LoginSuccessViewModel) {
                                         shape = MaterialTheme.shapes.medium
                                     ) {
                                         ListItem(
-                                            headlineContent = { getXuanqu(vm)?.get(item)?.let { it1 -> Text(text = it1.date) } },
-                                            supportingContent = { Text(text =  "${getXuanqu(vm)?.get(item)?.score} 分")}
+                                            headlineContent = { getDormitoryScore(vm)?.get(item)?.let { it1 -> Text(text = it1.date) } },
+                                            supportingContent = { Text(text =  "${getDormitoryScore(vm)?.get(item)?.score} 分")}
                                         )
                                     }
                                 }

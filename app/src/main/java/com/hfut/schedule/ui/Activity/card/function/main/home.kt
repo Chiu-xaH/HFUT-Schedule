@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.Activity.card
+package com.hfut.schedule.ui.Activity.card.function.main
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -6,7 +6,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -17,17 +16,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
@@ -68,12 +63,10 @@ import com.hfut.schedule.ui.Activity.card.bills.main.BillItem
 import com.hfut.schedule.ui.Activity.card.function.CardLimit
 import com.hfut.schedule.ui.Activity.card.function.SearchBillsUI
 import com.hfut.schedule.ui.Activity.card.function.SelecctDateRange
-import com.hfut.schedule.ui.Activity.card.function.main.TodayBills
+import com.hfut.schedule.ui.Activity.card.bills.TodayBills
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.getUserInfo
 import com.hfut.schedule.ui.Activity.success.focus.Focus.GetZjgdCard
-import com.hfut.schedule.ui.Activity.success.main.saved.NetWorkUpdate
 import com.hfut.schedule.ui.Activity.success.search.Search.More.Login
-import com.hfut.schedule.ui.Activity.success.search.Search.News.NewsItem
 import com.hfut.schedule.ui.UIUtils.DividerText
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.WebViewScreen
@@ -357,7 +350,7 @@ fun HomeScreen(innerPadding : PaddingValues,vm : LoginSuccessViewModel,navContro
                                     overlineContent = { Text(text = "今日支出")},
                                     leadingContent = { Icon(painter = painterResource(id = R.drawable.send_money), contentDescription = "")})
                             }
-                            limitRow(vmUI)
+                          //  limitRow(vmUI)
                         }
                     }
                 }

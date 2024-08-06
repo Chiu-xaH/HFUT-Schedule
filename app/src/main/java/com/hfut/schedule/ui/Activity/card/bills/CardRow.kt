@@ -1,9 +1,8 @@
-package com.hfut.schedule.ui.Activity.card.function.main
+package com.hfut.schedule.ui.Activity.card.bills
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 
 import androidx.compose.foundation.layout.Spacer
@@ -12,13 +11,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -37,7 +33,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DialogProperties
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
@@ -48,12 +43,7 @@ import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.card.BillsIcons
 import com.hfut.schedule.ui.Activity.card.bills.main.BillItem
 import com.hfut.schedule.ui.Activity.card.bills.main.processTranamt
-import com.hfut.schedule.ui.Activity.card.function.CardLimit
-import com.hfut.schedule.ui.Activity.card.function.SearchBillsUI
-import com.hfut.schedule.ui.Activity.card.function.SelecctDateRange
-import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.ScrollText
-import com.hfut.schedule.ui.UIUtils.WebViewScreen
 import java.math.BigDecimal
 import java.math.RoundingMode
 @OptIn(ExperimentalMaterial3Api::class)

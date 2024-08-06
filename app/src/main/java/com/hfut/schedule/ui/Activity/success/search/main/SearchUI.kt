@@ -45,10 +45,9 @@ import com.hfut.schedule.ui.Activity.success.search.Search.Library.LibraryItem
 import com.hfut.schedule.ui.Activity.success.search.Search.LoginWeb.LoginWeb
 import com.hfut.schedule.ui.Activity.success.search.Search.Mail.Mail
 import com.hfut.schedule.ui.Activity.success.search.Search.Map.Map
-import com.hfut.schedule.ui.Activity.success.search.Search.More.More
 import com.hfut.schedule.ui.Activity.success.search.Search.News.News
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.NotificationsCenter
-import com.hfut.schedule.ui.Activity.success.search.Search.Pay
+import com.hfut.schedule.ui.Activity.success.search.Search.Pay.Pay
 import com.hfut.schedule.ui.Activity.success.search.Search.Person.PersonUI
 import com.hfut.schedule.ui.Activity.success.search.Search.Program.Program
 import com.hfut.schedule.ui.Activity.success.search.Search.Repair.Repair
@@ -57,11 +56,11 @@ import com.hfut.schedule.ui.Activity.success.search.Search.SchoolCard.SchoolCard
 import com.hfut.schedule.ui.Activity.success.search.Search.Second.Second
 import com.hfut.schedule.ui.Activity.success.search.Search.TotalCourse.CourseTotal
 import com.hfut.schedule.ui.Activity.success.search.Search.Web.WebUI
-import com.hfut.schedule.ui.Activity.success.search.Search.Xuanqu.XuanquItem
+import com.hfut.schedule.ui.Activity.success.search.Search.DormitoryScore.DormitoryScoreItem
 import com.hfut.schedule.ui.Activity.success.search.Search.SelectCourse.selectCourse
-import com.hfut.schedule.ui.Activity.success.search.Search.ToadyCampus
+import com.hfut.schedule.ui.Activity.success.search.Search.TodayCampus.ToadyCampus
 import com.hfut.schedule.ui.Activity.success.search.Search.Transfer.Transfer
-import com.hfut.schedule.ui.Activity.success.search.Search.Work
+import com.hfut.schedule.ui.Activity.success.search.Search.Work.Work
 import com.hfut.schedule.ui.UIUtils.MyToast
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
@@ -275,7 +274,7 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
                         .weight(.5f),
                     shape = MaterialTheme.shapes.medium,
                 ){
-                    XuanquItem(vm)
+                    DormitoryScoreItem(vm)
                 }
             }
             Row(modifier = Modifier
