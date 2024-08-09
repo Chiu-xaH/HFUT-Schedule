@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -32,6 +33,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -45,6 +48,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.WriterException
@@ -56,6 +60,9 @@ import com.hfut.schedule.logic.utils.APPVersion
 import com.hfut.schedule.logic.utils.ClipBoard
 import com.hfut.schedule.logic.utils.ShareAPK
 import com.hfut.schedule.logic.utils.StartApp
+import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.Screen
+import com.hfut.schedule.ui.Activity.success.cube.Settings.VersionInfo
+import com.hfut.schedule.ui.Activity.success.cube.Settings.VersionInfoCard
 import com.hfut.schedule.ui.Activity.success.cube.Settings.getUpdates
 import com.hfut.schedule.ui.UIUtils.DevelopingUI
 import com.hfut.schedule.ui.UIUtils.MyToast
@@ -63,7 +70,7 @@ import java.util.Hashtable
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel) {
+fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean,navController : NavController) {
     Column (modifier = Modifier
         .verticalScroll(rememberScrollState())
         .padding(innerPadding)){
@@ -77,7 +84,9 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel) {
                 sheetState = sheetState
             ) {
                 Column {
-                    Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
+                    Row(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
                         val qrPainter = createQRCodeBitmap(MyApplication.DownloadURL,1000,1000)
                         qrPainter?.let { Image(it.asImageBitmap(), contentDescription = "") }
                     }
@@ -86,27 +95,41 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel) {
 
             }
         }
-
-        Card(
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 3.dp
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 15.dp, vertical = 5.dp),
-            shape = MaterialTheme.shapes.medium
-
-        ){
-
-
+        val sheetState_version = rememberModalBottomSheetState()
+        var showBottomSheet_version by remember { mutableStateOf(false) }
+        if (showBottomSheet_version) {
+            ModalBottomSheet(
+                onDismissRequest = { showBottomSheet_version = false },
+                sheetState = sheetState_version
+            ) {
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    topBar = {
+                        TopAppBar(
+                            colors = TopAppBarDefaults.mediumTopAppBarColors(
+                                containerColor = androidx.compose.ui.graphics.Color.Transparent,
+                                titleContentColor = MaterialTheme.colorScheme.primary,
+                            ),
+                            title = { Text("本版本新特性") },
+                        )
+                    },
+                ) { innerPadding ->
+                    Column(
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .verticalScroll(rememberScrollState())
+                            .fillMaxSize()
+                    ) {
+                        VersionInfo()
+                    }
+                }
+            }
         }
-        Spacer(modifier = Modifier.height(5.dp))
-
-
-        DevelopingUI()
-        Spacer(modifier = Modifier.height(5.dp))
-
-
+        if(!cubeShow) {
+            Spacer(modifier = Modifier.height(5.dp))
+            VersionInfoCard()
+            Spacer(modifier = Modifier.height(18.dp))
+        }
 
         ListItem(
             headlineContent = { Text(text = "开源主页") },
@@ -184,6 +207,14 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel) {
                 else Toast.makeText(MyApplication.context,"与云端版本一致", Toast.LENGTH_SHORT).show()
             }
         )
+
+        ListItem(
+            headlineContent = { Text(text = "本版本新特性") },
+            supportingContent = { Text(text = "查看此版本的更新内容")},
+            modifier = Modifier.clickable { showBottomSheet_version = true },
+            leadingContent = { Icon(painter = painterResource(id = R.drawable.sdk), contentDescription = "")}
+        )
+
         ListItem(
             headlineContent = { Text(text = "版本日志") },
             supportingContent = { Text("查看历代版本的更新内容") },
@@ -195,7 +226,25 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel) {
             }
         )
 
-        //Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding()))
+        if(cubeShow) {
+
+            ListItem(
+                headlineContent = { Text(text = "疑难解答 修复") },
+                supportingContent = { Text(text = "当出现问题时,可从此处进入或长按桌面图标选择修复")},
+                leadingContent = { Icon(painterResource(R.drawable.build), contentDescription = "Localized description",) },
+                modifier = Modifier.clickable{ navController.navigate(Screen.FIxScreen.route) }
+            )
+
+            ///////////////////////////////
+
+            if(APPVersion.getVersionName().contains("Preview"))
+                ListItem(
+                    headlineContent = { Text(text = "测试 调试") },
+                    supportingContent = { Text(text = "用户禁入!")},
+                    leadingContent = { Icon(painterResource(R.drawable.error), contentDescription = "Localized description",) },
+                    modifier = Modifier.clickable{ navController.navigate(Screen.DebugScreen.route) }
+                )
+        }
     }
 }
 

@@ -165,7 +165,7 @@ fun Fix(vm : LoginViewModel,vm2 : LoginSuccessViewModel) {
             }
             composable(FixBarItems.About.name) {
                 Scaffold {
-                    AboutUI(innerPadding = innerPadding, vm = vm)
+                    AboutUI(innerPadding = innerPadding, vm,false,navController)
                 }
             }
         }

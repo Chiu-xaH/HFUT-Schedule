@@ -30,6 +30,7 @@ import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.ui.Activity.success.calendar.next.NextCourse
 import com.hfut.schedule.ui.Activity.success.search.Search.Bus.SchoolBus
 import com.hfut.schedule.ui.Activity.success.search.Search.CourseSearch.courseSearch
 import com.hfut.schedule.ui.Activity.success.search.Search.Electric.Electric
@@ -61,6 +62,7 @@ import com.hfut.schedule.ui.Activity.success.search.Search.SelectCourse.selectCo
 import com.hfut.schedule.ui.Activity.success.search.Search.TodayCampus.ToadyCampus
 import com.hfut.schedule.ui.Activity.success.search.Search.Transfer.Transfer
 import com.hfut.schedule.ui.Activity.success.search.Search.Work.Work
+import com.hfut.schedule.ui.UIUtils.BottomTip
 import com.hfut.schedule.ui.UIUtils.MyToast
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
@@ -125,34 +127,21 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
                 .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
 
                 Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    shape = MaterialTheme.shapes.medium,
-                ){
-                    SchoolCardItem(vmUI,false)
-                }
-            }
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
-
-                Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(.5f),
-                    shape = MaterialTheme.shapes.medium,
+                    shape = MaterialTheme.shapes.small,
                 ){
-                    Grade(vm,ifSaved,webVpn)
+                    SchoolCardItem(vmUI,true)
                 }
                 Spacer(modifier = Modifier.width(10.dp))
                 Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(.5f),
-                    shape = MaterialTheme.shapes.medium,
+                    shape = MaterialTheme.shapes.small,
                 ){
                     Exam(vm,ifSaved)
                 }
@@ -160,47 +149,95 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
             Row(modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
-
                 Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(.5f),
-                    shape = MaterialTheme.shapes.medium,
+                    shape = MaterialTheme.shapes.small,
                 ){
-                    FailRate(vm)
+                    Electric(vm,false,vmUI)
                 }
                 Spacer(modifier = Modifier.width(10.dp))
                 Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(.5f),
-                    shape = MaterialTheme.shapes.medium,
+                    shape = MaterialTheme.shapes.small,
                 ){
-                    LibraryItem(vm)
+                    LoginWeb(vmUI,false,vm)
                 }
-            }
+        }
             Row(modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
 
                 Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(.5f),
-                    shape = MaterialTheme.shapes.medium,
+                    shape = MaterialTheme.shapes.small,
+                ){
+                    Mail()
+                }
+                Spacer(modifier = Modifier.width(10.dp))
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    shape = MaterialTheme.shapes.small,
+                ){
+                    LibraryItem(vm)
+                }
+        }
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
+
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    shape = MaterialTheme.shapes.small,
+                ){
+                    Grade(vm,ifSaved,webVpn)
+                }
+                Spacer(modifier = Modifier.width(10.dp))
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    shape = MaterialTheme.shapes.small,
+                ){
+                    FailRate(vm)
+                }
+            }
+
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
+
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    shape = MaterialTheme.shapes.small,
                 ){
                     CourseTotal(vm)
                 }
                 Spacer(modifier = Modifier.width(10.dp))
                 Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(.5f),
-                    shape = MaterialTheme.shapes.medium,
+                    shape = MaterialTheme.shapes.small,
                 ){
                     PersonUI(ifSaved)
                 }
@@ -210,69 +247,46 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
                 .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
 
                 Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(.5f),
-                    shape = MaterialTheme.shapes.medium,
+                    shape = MaterialTheme.shapes.small,
                 ){
                     WebUI()
                 }
                 Spacer(modifier = Modifier.width(10.dp))
                 Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(.5f),
-                    shape = MaterialTheme.shapes.medium,
+                    shape = MaterialTheme.shapes.small,
                 ){
                     Repair()
                 }
             }
+
             Row(modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
 
                 Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(.5f),
-                    shape = MaterialTheme.shapes.medium,
-                ){
-                    Electric(vm,false,vmUI)
-                }
-                Spacer(modifier = Modifier.width(10.dp))
-                Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(.5f),
-                    shape = MaterialTheme.shapes.medium,
-                ){
-                    LoginWeb(vmUI,false,vm)
-                }
-            }
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
-
-                Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(.5f),
-                    shape = MaterialTheme.shapes.medium,
+                    shape = MaterialTheme.shapes.small,
                 ){
                     Lab()
                 }
                 Spacer(modifier = Modifier.width(10.dp))
                 Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(.5f),
-                    shape = MaterialTheme.shapes.medium,
+                    shape = MaterialTheme.shapes.small,
                 ){
                     DormitoryScoreItem(vm)
                 }
@@ -282,21 +296,21 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
                 .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
 
                 Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(.5f),
-                    shape = MaterialTheme.shapes.medium,
+                    shape = MaterialTheme.shapes.small,
                 ){
                     NotificationsCenter()
                 }
                 Spacer(modifier = Modifier.width(10.dp))
                 Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(.5f),
-                    shape = MaterialTheme.shapes.medium,
+                    shape = MaterialTheme.shapes.small,
                 ){
                     Survey(ifSaved,vm)
                 }
@@ -306,21 +320,21 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
                 .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
 
                 Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(.5f),
-                    shape = MaterialTheme.shapes.medium,
+                    shape = MaterialTheme.shapes.small,
                 ){
                     News(vm)
                 }
                 Spacer(modifier = Modifier.width(10.dp))
                 Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(.5f),
-                    shape = MaterialTheme.shapes.medium,
+                    shape = MaterialTheme.shapes.small,
                 ){
                     Program(vm,ifSaved)
                 }
@@ -330,21 +344,21 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
                 .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
 
                 Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(.5f),
-                    shape = MaterialTheme.shapes.medium,
+                    shape = MaterialTheme.shapes.small,
                 ){
                     SchoolCalendar()
                 }
                 Spacer(modifier = Modifier.width(10.dp))
                 Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(.5f),
-                    shape = MaterialTheme.shapes.medium,
+                    shape = MaterialTheme.shapes.small,
                 ){
                     SchoolBus()
                 }
@@ -354,23 +368,23 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
                 .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
 
                 Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(.5f),
-                    shape = MaterialTheme.shapes.medium,
+                    shape = MaterialTheme.shapes.small,
                 ){
                     Second()
                 }
                 Spacer(modifier = Modifier.width(10.dp))
                 Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(.5f),
-                    shape = MaterialTheme.shapes.medium,
+                    shape = MaterialTheme.shapes.small,
                 ){
-                    HotWater()
+                    NextCourse(ifSaved,vmUI)
                 }
             }
             Row(modifier = Modifier
@@ -378,21 +392,21 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
                 .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
 
                 Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(.5f),
-                    shape = MaterialTheme.shapes.medium,
+                    shape = MaterialTheme.shapes.small,
                 ){
-                   LePaoYun(vm)
+                   HotWater()
                 }
                 Spacer(modifier = Modifier.width(10.dp))
                 Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(.5f),
-                    shape = MaterialTheme.shapes.medium,
+                    shape = MaterialTheme.shapes.small,
                 ){
                     EmptyRoom(vm,ifSaved)
                 }
@@ -402,21 +416,21 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
                 .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
 
                 Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(.5f),
-                    shape = MaterialTheme.shapes.medium,
+                    shape = MaterialTheme.shapes.small,
                 ){
-                    Mail()
+                    LePaoYun(vm)
                 }
                 Spacer(modifier = Modifier.width(10.dp))
                 Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(.5f),
-                    shape = MaterialTheme.shapes.medium,
+                    shape = MaterialTheme.shapes.small,
                 ){
                     ToadyCampus(ifSaved)
                 }
@@ -426,21 +440,21 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
                 .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
 
                 Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(.5f),
-                    shape = MaterialTheme.shapes.medium,
+                    shape = MaterialTheme.shapes.small,
                 ){
                     selectCourse(ifSaved,vm)
                 }
                 Spacer(modifier = Modifier.width(10.dp))
                 Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(.5f),
-                    shape = MaterialTheme.shapes.medium,
+                    shape = MaterialTheme.shapes.small,
                 ){
                     Map()
                 }
@@ -450,21 +464,21 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
                 .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
 
                 Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(.5f),
-                    shape = MaterialTheme.shapes.medium,
+                    shape = MaterialTheme.shapes.small,
                 ){
                    Transfer(ifSaved, vm)
                 }
                     Spacer(modifier = Modifier.width(10.dp))
                 Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(.5f),
-                    shape = MaterialTheme.shapes.medium,
+                    shape = MaterialTheme.shapes.small,
                 ){
                     courseSearch(ifSaved,vm)
                 }
@@ -474,21 +488,21 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
                 .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
 
                 Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(.5f),
-                    shape = MaterialTheme.shapes.medium,
+                    shape = MaterialTheme.shapes.small,
                 ){
                     Work(ifSaved)
                 }
                 Spacer(modifier = Modifier.width(10.dp))
                 Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(.5f),
-                    shape = MaterialTheme.shapes.medium,
+                    shape = MaterialTheme.shapes.small,
                 ){
                     Pay(ifSaved)
                 }

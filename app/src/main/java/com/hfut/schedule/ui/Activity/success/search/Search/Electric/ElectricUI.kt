@@ -6,7 +6,12 @@ import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -54,6 +59,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.res.painterResource
@@ -121,6 +127,8 @@ fun EleUI(vm : LoginSuccessViewModel) {
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
 
+    var show by remember { mutableStateOf(false) }
+
     var json by remember { mutableStateOf("") }
     if (showBottomSheet) {
 
@@ -182,6 +190,7 @@ fun EleUI(vm : LoginSuccessViewModel) {
                             IconButton(onClick = {payNumber = payNumber.replaceFirst(".$".toRegex(), "")}) {
                                 Icon(painter = painterResource(R.drawable.backspace), contentDescription = "description") }
                         FilledTonalIconButton(onClick = {
+                            show = false
                             CoroutineScope(Job()).launch {
                                 async {
                                     showitem4 = false
@@ -210,6 +219,7 @@ fun EleUI(vm : LoginSuccessViewModel) {
                                                 val dataObject = jsonObject.getJSONObject("map").getJSONObject("data")
                                                 dataObject.put("myCustomInfo", "房间：$input")
                                                 json = dataObject.toString()
+                                                show = false
                                             }
                                         }
                                     }
@@ -454,8 +464,11 @@ fun EleUI(vm : LoginSuccessViewModel) {
                     }
                 }
             }
-            var show by remember { mutableStateOf(false) }
-            val blurSize by animateDpAsState(targetValue = if (!show) 10.dp else 0.dp, label = "")
+
+            val blurSize by animateDpAsState(
+                targetValue = if (!show) 10.dp else 0.dp, label = ""
+                ,animationSpec = tween(MyApplication.Animation, easing = LinearOutSlowInEasing),
+            )
 
             if(Result.contains("剩余金额")){
                 Result2 = "剩余金额 " +Result.substringAfter("剩余金额")
@@ -465,6 +478,13 @@ fun EleUI(vm : LoginSuccessViewModel) {
 
             } else if(Result.contains("无法获取房间信息") || Result.contains("hfut")) Result2 = "失败"
 
+
+            val scale = animateFloatAsState(
+                targetValue = if (!show) 0.95f else 1f, // 按下时为0.9，松开时为1
+                //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
+                animationSpec = tween(MyApplication.Animation, easing = LinearOutSlowInEasing),
+                label = "" // 使用弹簧动画
+            )
              DividerText(text = "查询结果")
           //   if(show) {
 
@@ -473,7 +493,7 @@ fun EleUI(vm : LoginSuccessViewModel) {
                     Card(
                         elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
                         modifier = Modifier
-                            .fillMaxWidth()
+                            .fillMaxWidth().scale(scale.value)
                             .padding(horizontal = 15.dp, vertical = 5.dp),
                         shape = MaterialTheme.shapes.medium,
                     ) {
@@ -485,7 +505,7 @@ fun EleUI(vm : LoginSuccessViewModel) {
                                     if(show) {
                                         if(showButton)
                                             FilledTonalButton(onClick = { if(showAdd && payNumber != "") showBottomSheet = true   else showAdd = true }) { Text(text = if(showAdd && payNumber != "") "提交订单" else "快速充值") }
-                                    } else FilledTonalButton(onClick = { null }) { Text(text = "提交订单") } }
+                                    } else FilledTonalButton(onClick = { null }) { Text(text = "快速充值") } }
                             )
                             ListItem(
                                 overlineContent = {Text( text = if(!show)"房间号 " + " 300XXXXX1" else "房间号 " + Result.substringAfter(" ")  )},

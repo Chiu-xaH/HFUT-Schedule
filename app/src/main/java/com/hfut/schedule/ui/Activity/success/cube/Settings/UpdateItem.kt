@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.Activity.success.cube.Settings
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -19,8 +20,10 @@ import com.hfut.schedule.logic.utils.APPVersion
 import com.hfut.schedule.ui.UIUtils.DividerText
 import com.hfut.schedule.ui.UIUtils.ScrollText
 
+
+@SuppressLint("SuspiciousIndentation")
 @Composable
-fun VersionInfo() {
+fun VersionInfoCard() {
     if(APPVersion.getVersionName().contains("Preview")) {
         Card(
             elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
@@ -30,33 +33,41 @@ fun VersionInfo() {
             shape = MaterialTheme.shapes.medium,
         ) { ListItem(headlineContent = { Text(text = APPVersion.getVersionName(), fontSize = 28.sp) }) }
     } else
-    Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 15.dp, vertical = 5.dp),
-        shape = MaterialTheme.shapes.medium,
-    ) {
-        ListItem(headlineContent = { Text(text = "聚在工大 " + APPVersion.getVersionName(), fontSize = 28.sp) })
-        Row {
-            ListItem(
-                overlineContent = { Text(text = "2024-08-06") },
-                leadingContent = { Icon(painter = painterResource(id = R.drawable.sdk), contentDescription = "") },
-                headlineContent = { ScrollText(text = "第${APPVersion.getVersionCode()}次更新") },
-                modifier = Modifier.weight(.5f)
-            )
-            ListItem(
-                headlineContent = { ScrollText(text = "Chiu-xaH") },
-                overlineContent = { Text(text = "构建") },
-                leadingContent = { Icon(painter = painterResource(id = R.drawable.support), contentDescription = "") },
-                modifier = Modifier.weight(.5f)
-            )
-        }
+        Card(
+            elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 15.dp, vertical = 5.dp),
+            shape = MaterialTheme.shapes.medium,
+        ) {
+            ListItem(headlineContent = { Text(text = "聚在工大 " + APPVersion.getVersionName(), fontSize = 28.sp) })
+            Row {
+                ListItem(
+                    overlineContent = { Text(text = "2024-08-10") },
+                    leadingContent = { Icon(painter = painterResource(id = R.drawable.sdk), contentDescription = "") },
+                    headlineContent = { ScrollText(text = "第${APPVersion.getVersionCode()}次更新") },
+                    modifier = Modifier.weight(.5f)
+                )
+                ListItem(
+                    headlineContent = { ScrollText(text = "Chiu-xaH") },
+                    overlineContent = { Text(text = "构建") },
+                    leadingContent = { Icon(painter = painterResource(id = R.drawable.support), contentDescription = "") },
+                    modifier = Modifier.weight(.5f)
+                )
+            }
 
-    }
+        }
+}
+
+
+@SuppressLint("SuspiciousIndentation")
+@Composable
+fun VersionInfo() {
+    VersionInfoCard()
     DividerText(text = "新特性")
-    UpdateItems("新增 查看本版本新特性","位于选项-应用行为", UpdateType.ADD)
-    UpdateItems("优化 部分界面的显示与层次",null, UpdateType.OPTIMIZE)
+    UpdateItems("优化 查询中心的显示",null, UpdateType.OPTIMIZE)
+    UpdateItems("优化 维护关于选项的嵌套冗余",null, UpdateType.OPTIMIZE)
+    UpdateItems("优化 部分界面的显示与动画",null, UpdateType.OPTIMIZE)
 }
 
 enum class UpdateType {

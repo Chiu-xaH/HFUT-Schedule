@@ -46,6 +46,7 @@ import androidx.navigation.NavController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.LoginViewModel
 import com.hfut.schedule.activity.LoginActivity
 import com.hfut.schedule.logic.Enums.CardBarItems
 import com.hfut.schedule.logic.Enums.FixBarItems
@@ -55,6 +56,7 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.SaveBoolean
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.StartApp
+import com.hfut.schedule.ui.Activity.Fix.AboutUI
 import com.hfut.schedule.ui.Activity.Fix.feedBackUI
 
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Monet.MonetColorItem
@@ -381,36 +383,6 @@ fun APPScreen(navController: NavController,
         }
 
 
-        val sheetState = rememberModalBottomSheetState()
-        var showBottomSheet by remember { mutableStateOf(false) }
-        if (showBottomSheet) {
-            ModalBottomSheet(
-                onDismissRequest = { showBottomSheet = false },
-                sheetState = sheetState
-            ) {
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    topBar = {
-                        TopAppBar(
-                            colors = TopAppBarDefaults.mediumTopAppBarColors(
-                                containerColor = Color.Transparent,
-                                titleContentColor = MaterialTheme.colorScheme.primary,
-                            ),
-                            title = { Text("本版本新特性") },
-                        )
-                    },
-                ) { innerPadding ->
-                    Column(
-                        modifier = Modifier
-                            .padding(innerPadding)
-                            .verticalScroll(rememberScrollState())
-                            .fillMaxSize()
-                    ) {
-                        VersionInfo()
-                    }
-                }
-            }
-        }
 
         ListItem(
             headlineContent = { Text(text = "快速启动") },
@@ -502,12 +474,6 @@ fun APPScreen(navController: NavController,
             }
         )
 
-        ListItem(
-            headlineContent = { Text(text = "本版本新特性") },
-            supportingContent = { Text(text = "查看此版本的更新内容")},
-            modifier = Modifier.clickable { showBottomSheet = true },
-            leadingContent = { Icon(painter = painterResource(id = R.drawable.sdk), contentDescription = "")}
-        )
 
 
     }
@@ -620,67 +586,6 @@ fun NetWorkScreen(navController: NavController,
             leadingContent = { Icon(painterResource(R.drawable.cloud_upload), contentDescription = "Localized description",) },
             trailingContent = {Switch(checked = upload, onCheckedChange = { uploadch -> upload = uploadch }, enabled = true)}
         )
-    }
-
-}
-
-@SuppressLint("SuspiciousIndentation")
-@RequiresApi(Build.VERSION_CODES.O)
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun FixAboutScreen(navController: NavController,
-                  innerPaddings : PaddingValues,
-                   vm : LoginSuccessViewModel
-) {
-    // Design your second screen here
-    Column(modifier = Modifier
-        .verticalScroll(rememberScrollState())
-        .fillMaxSize()
-        .padding(innerPaddings)) {
-        Spacer(modifier = Modifier.height(5.dp))
-
-        ListItem(
-            headlineContent = { Text(text = "关于") },
-            supportingContent = { Text(text = "分享本应用,联系我")},
-            leadingContent = { Icon(painterResource(R.drawable.info), contentDescription = "Localized description",) },
-            modifier = Modifier.clickable{ navController.navigate(Screen.AboutScreen.route) }
-        )
-
-        ListItem(
-            headlineContent = { Text(text = "疑难解答 修复") },
-            supportingContent = { Text(text = "当出现问题时,可从此处进入或长按桌面图标选择修复")},
-            leadingContent = { Icon(painterResource(R.drawable.build), contentDescription = "Localized description",) },
-            modifier = Modifier.clickable{ navController.navigate(Screen.FIxScreen.route) }
-        )
-
-        ///////////////////////////////
-        val sheetState_feedBack = rememberModalBottomSheetState()
-        var showBottomSheet_feedBack by remember { mutableStateOf(false) }
-
-        if (showBottomSheet_feedBack) {
-            ModalBottomSheet(
-                onDismissRequest = { showBottomSheet_feedBack = false },
-                sheetState = sheetState_feedBack
-            ) {
-                feedBackUI(vm)
-            }
-        }
-
-        ListItem(
-            headlineContent = { Text(text = "反馈") },
-            supportingContent = { Text(text = "遇到问题或有更好的建议?")},
-            leadingContent = { Icon(painterResource(R.drawable.feedback), contentDescription = "Localized description",) },
-            modifier = Modifier.clickable{ showBottomSheet_feedBack = true }
-        )
-
-        if(APPVersion.getVersionName().contains("Preview"))
-        ListItem(
-            headlineContent = { Text(text = "测试 调试") },
-            supportingContent = { Text(text = "用户禁入!")},
-            leadingContent = { Icon(painterResource(R.drawable.error), contentDescription = "Localized description",) },
-            modifier = Modifier.clickable{ navController.navigate(Screen.DebugScreen.route) }
-        )
-//////////////////////////////////////////////////////////
     }
 
 }

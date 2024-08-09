@@ -68,7 +68,8 @@ fun Exam(vm : LoginSuccessViewModel,ifSaved : Boolean) {
     else vm.getExamJXGLSTU(cookie.toString())
 
     ListItem(
-        headlineContent = { Text(text = "考试  ${if(ifSaved) getNewExam().size else getExamJXGLSTU().size} 门") },
+        headlineContent = { Text(text = "考试") },
+        overlineContent = { Text(text = "${if(ifSaved) getNewExam().size else getExamJXGLSTU().size} 门")},
         leadingContent = {
             BadgedBox(badge = {
                 if(prefs.getString("ExamNum","0") != getNewExam().size.toString())

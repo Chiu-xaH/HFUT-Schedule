@@ -90,12 +90,12 @@ fun LePaoYun(vm : LoginSuccessViewModel) {
     val msg = prefs.getString("msg","")
 
     ListItem(
-        headlineContent = {
+        headlineContent = { Text(text = "云运动") },
+        overlineContent = {
             if (msg != null) {
-                if (msg.contains("成功")) Text(text = "云运动  ${distance} km")
-                else Text(text = "云运动")
-            }
-                          },
+                if (msg.contains("成功")) Text(text = "已跑 ${distance} km") else Text(text = "未获取里程")
+            } else Text(text = "未获取里程")
+        },
         leadingContent = { Icon(painter = painterResource(id = R.drawable.mode_of_travel), contentDescription = "")},
         modifier = Modifier.clickable {
             if (msg != null) {

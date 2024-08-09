@@ -71,7 +71,8 @@ fun LibraryItem(vm : LoginSuccessViewModel) {
     CommuityTOKEN?.let { vm.GetHistory(it,"1") }
 
     ListItem(
-        headlineContent = { Text(text = "图书  ${getBorrow(LibraryItems.BORROWED.name).size} 本") },
+        headlineContent = { Text(text = "图书") },
+        overlineContent = { Text(text = "已借 ${getBorrow(LibraryItems.BORROWED.name).size} 本")},
         leadingContent = {
             Icon(
                 painterResource(R.drawable.book),

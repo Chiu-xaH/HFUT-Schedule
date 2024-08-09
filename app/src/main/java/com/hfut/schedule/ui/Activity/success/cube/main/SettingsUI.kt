@@ -3,27 +3,13 @@ package com.hfut.schedule.ui.Activity.success.cube.main
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.core.EaseIn
-import androidx.compose.animation.core.EaseOut
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.slideIn
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -39,7 +25,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -52,7 +37,6 @@ import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.Fix.AboutUI
 import com.hfut.schedule.ui.Activity.Fix.FixUI
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.APPScreen
-import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.FixAboutScreen
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.HomeSettingScreen
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.NetWorkScreen
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.Screen
@@ -117,7 +101,7 @@ fun SettingsScreen(vm : LoginSuccessViewModel
                 }
                 composable(Screen.FIxAboutScreen.route) {
                 Scaffold {
-                    FixAboutScreen(navController, innerPaddings,vm)
+                    AboutUI(innerPadding = innerPaddings, vm1,true,navController)
                 }
                 }
                 composable(Screen.NetWorkScreen.route) {
@@ -132,7 +116,7 @@ fun SettingsScreen(vm : LoginSuccessViewModel
                 }
                 composable(FixBarItems.About.name) {
                     Scaffold {
-                        AboutUI(innerPadding = innerPaddings, vm1)
+
                     }
                 }
                 composable("DEBUG") {
