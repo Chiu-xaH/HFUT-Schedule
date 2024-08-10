@@ -11,6 +11,8 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
@@ -302,10 +304,12 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
             navController = navController,
             startDestination = first,
             enterTransition = {
+                     //   fadeIn(animationSpec = tween(durationMillis = animation)) +
                         scaleIn(animationSpec = tween(durationMillis = animation)) +
                         expandVertically(expandFrom = Alignment.Top,animationSpec = tween(durationMillis = animation))
             },
             exitTransition = {
+                      //  fadeOut(animationSpec = tween(durationMillis = animation)) +
                         scaleOut(animationSpec = tween(durationMillis = animation)) +
                         shrinkVertically(shrinkTowards = Alignment.Top,animationSpec = tween(durationMillis = animation))
             },

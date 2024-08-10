@@ -65,9 +65,8 @@ fun VersionInfoCard() {
 fun VersionInfo() {
     VersionInfoCard()
     DividerText(text = "新特性")
-    UpdateItems("优化 查询中心的显示",null, UpdateType.OPTIMIZE)
-    UpdateItems("优化 维护关于选项的嵌套冗余",null, UpdateType.OPTIMIZE)
-    UpdateItems("优化 部分界面的显示与动画",null, UpdateType.OPTIMIZE)
+    UpdateItems("修复 查询中心部分文字由于屏幕宽度较小而错位 Bug",null, UpdateType.FIX)
+    UpdateItems("优化 部分界面的显示与动画效果",null, UpdateType.OPTIMIZE)
 }
 
 enum class UpdateType {

@@ -63,7 +63,7 @@ val showAdd = prefs.getBoolean("SWITCHCARDADD",true)
     ListItem(
         headlineContent = { if(cardBool) ScrollText(text = "￥$test") else Text(text = "一卡通 ￥$test") },
         overlineContent = { if(cardBool) {
-            Text(
+            ScrollText(
                 if (test != null) {
                     if(test.length <= 4){
                         "余额不足"

@@ -6,6 +6,10 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,15 +35,20 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
@@ -210,7 +219,7 @@ fun FocusCardSettings() {
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun FocusCard(vmUI : UIViewModel,vm : LoginSuccessViewModel) {
+fun FocusCard(vmUI : UIViewModel,vm : LoginSuccessViewModel,refreshing : Boolean) {
     val showEle = prefs.getBoolean("SWITCHELE",true)
     val showToday = prefs.getBoolean("SWITCHTODAY",true)
     val showWeb = prefs.getBoolean("SWITCHWEB",true)
@@ -218,6 +227,16 @@ fun FocusCard(vmUI : UIViewModel,vm : LoginSuccessViewModel) {
     val showCountDown = prefs.getBoolean("SWITCHCOUNTDOWN",false)
     val showShortCut = prefs.getBoolean("SWITCHSHORTCUT",false)
 
+    val scale = animateFloatAsState(
+        targetValue = if (refreshing) 0.95f else 1f, // 按下时为0.9，松开时为1
+        //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
+        animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
+        label = "" // 使用弹簧动画
+    )
+    val blurSize by animateDpAsState(
+        targetValue = if (refreshing) 10.dp else 0.dp, label = ""
+        ,animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
+    )
 
     CoroutineScope(Job()).launch {
         async {
@@ -245,45 +264,49 @@ fun FocusCard(vmUI : UIViewModel,vm : LoginSuccessViewModel) {
         Card(
             elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .scale(scale.value),
             shape = MaterialTheme.shapes.medium,
         ){
-            if(showCard || showToday)
-            Row {
-                if(showCard)
-                Box(modifier = Modifier.weight(.5f)) {
-                    SchoolCardItem(vmUI,true)
-                }
-                if(showToday)
-                Box(modifier = Modifier
-                    .weight(.5f)) {
-                    TodayUI()
-                }
+            Column(modifier = Modifier.blur(blurSize)) {
+                if(showCard || showToday)
+                    Row {
+                        if(showCard)
+                            Box(modifier = Modifier.weight(.5f)) {
+                                SchoolCardItem(vmUI,true)
+                            }
+                        if(showToday)
+                            Box(modifier = Modifier
+                                .weight(.5f)) {
+                                TodayUI()
+                            }
+                    }
+                if(showWeb || showEle)
+                    Row {
+                        if(showEle)
+                            Box(modifier = Modifier.weight(.5f)) {
+                                Electric(vm,true,vmUI)
+                            }
+                        if(showWeb)
+                            Box(modifier = Modifier
+                                .weight(.5f)) {
+                                LoginWeb(vmUI,true,vm)
+                            }
+                    }
+                if(showCountDown || showShortCut)
+                    Row {
+                        if(showCountDown)
+                            Box(modifier = Modifier.weight(.5f)) {
+                                countDownUI()
+                            }
+                        if(showShortCut)
+                            Box(modifier = Modifier
+                                .weight(.5f)) {
+                                shortCut()
+                            }
+                    }
             }
-            if(showWeb || showEle)
-            Row {
-                if(showEle)
-                Box(modifier = Modifier.weight(.5f)) {
-                    Electric(vm,true,vmUI)
-                }
-                if(showWeb)
-                Box(modifier = Modifier
-                    .weight(.5f)) {
-                    LoginWeb(vmUI,true,vm)
-                }
-            }
-            if(showCountDown || showShortCut)
-                Row {
-                    if(showCountDown)
-                        Box(modifier = Modifier.weight(.5f)) {
-                            countDownUI()
-                        }
-                    if(showShortCut)
-                        Box(modifier = Modifier
-                            .weight(.5f)) {
-                            shortCut()
-                        }
-                }
+
         }
     }
 }

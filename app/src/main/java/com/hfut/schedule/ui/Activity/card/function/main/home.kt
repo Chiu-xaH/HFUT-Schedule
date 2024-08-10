@@ -3,6 +3,10 @@ package com.hfut.schedule.ui.Activity.card.function.main
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
@@ -43,6 +47,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -266,6 +272,16 @@ fun HomeScreen(innerPadding : PaddingValues,vm : LoginSuccessViewModel,navContro
     }
 
 
+    val scale = animateFloatAsState(
+        targetValue = if (refreshing) 0.95f else 1f, // 按下时为0.9，松开时为1
+        //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
+        animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
+        label = "" // 使用弹簧动画
+    )
+    val blurSize by animateDpAsState(
+        targetValue = if (refreshing) 10.dp else 0.dp, label = ""
+        ,animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
+    )
     Box(modifier = Modifier
         .fillMaxHeight()
         .pullRefresh(states)) {
@@ -279,16 +295,11 @@ fun HomeScreen(innerPadding : PaddingValues,vm : LoginSuccessViewModel,navContro
                 Card(
                     elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .fillMaxWidth().scale(scale.value)
                         .padding(horizontal = 15.dp, vertical = 5.dp),
                     shape = MaterialTheme.shapes.medium
                 ) {
-                    AnimatedVisibility(
-                        visible = !refreshing,
-                        enter = fadeIn(),
-                        exit = fadeOut()
-                    ) {
-                        Column {
+                        Column(modifier = Modifier.blur(blurSize)) {
                             ListItem(
                                 headlineContent = { Text(text = "$name 校园一卡通") },
                                 trailingContent = {
@@ -352,7 +363,6 @@ fun HomeScreen(innerPadding : PaddingValues,vm : LoginSuccessViewModel,navContro
                             }
                           //  limitRow(vmUI)
                         }
-                    }
                 }
                 DividerText(text = "功能")
                 ListItem(

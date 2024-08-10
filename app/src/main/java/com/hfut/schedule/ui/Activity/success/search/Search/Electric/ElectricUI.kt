@@ -467,7 +467,7 @@ fun EleUI(vm : LoginSuccessViewModel) {
 
             val blurSize by animateDpAsState(
                 targetValue = if (!show) 10.dp else 0.dp, label = ""
-                ,animationSpec = tween(MyApplication.Animation, easing = LinearOutSlowInEasing),
+                ,animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
             )
 
             if(Result.contains("剩余金额")){
@@ -482,7 +482,7 @@ fun EleUI(vm : LoginSuccessViewModel) {
             val scale = animateFloatAsState(
                 targetValue = if (!show) 0.95f else 1f, // 按下时为0.9，松开时为1
                 //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-                animationSpec = tween(MyApplication.Animation, easing = LinearOutSlowInEasing),
+                animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
                 label = "" // 使用弹簧动画
             )
              DividerText(text = "查询结果")
