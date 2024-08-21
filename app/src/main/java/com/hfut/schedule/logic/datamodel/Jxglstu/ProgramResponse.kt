@@ -39,6 +39,29 @@ data class PlanCourses(val readableTerms : List<Int>,
 
 //data class PeriodInfoRatio()
 
+data class InProgramResponse(val ProgramShow : List<ProgramShow>)
+
+data class ProgramPartOne(val type : String?,
+                          val requiedCredits : Double?,
+                          val partChildren : List<ProgramResponse?>,
+                          val partCourse : List<PlanCourses>)
+data class ProgramPartTwo(val type : String?,
+                          val requiedCredits : Double?,
+                          val part : List<PlanCourses>)
+data class ProgramPartThree(val term : Int?,
+                            val name : String,
+                            val credit : Double?,
+                            val depart :String)
+data class ProgramShow(val name : String,
+                       val type : String?,
+                       val credit : Double?,
+                       val term : List<Int?>,
+                       val studyMust : Boolean?,
+                       val school : String?,
+                       val remark : String?)
+
+data class ProgramCompletionResponse(val total : item,val other : List<item>)
+data class item(val name : String,val actual : Double,val full : Double)
 
 
 

@@ -2,7 +2,6 @@ package com.hfut.schedule.ui.Activity.success.calendar.nonet
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.fonts.FontStyle
 import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -11,7 +10,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.animation.with
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,8 +24,8 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -38,7 +37,6 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -55,11 +53,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -69,7 +65,6 @@ import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.datamodel.Community.courseDetailDTOList
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.GetDate.Benweeks
-import com.hfut.schedule.ui.Activity.success.focus.Focus.SemsterTip
 import com.hfut.schedule.ui.Activity.success.search.Search.Survey.getSemseter
 import com.hfut.schedule.ui.Activity.success.search.Search.Survey.getSemseterCloud
 import com.hfut.schedule.ui.UIUtils.MyToast
@@ -85,98 +80,98 @@ import java.time.LocalDate
 @Composable
 fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues,vmUI : UIViewModel) {
 
-    var table_1_1 by rememberSaveable { mutableStateOf("") }
-    var table_1_2 by rememberSaveable { mutableStateOf("") }
-    var table_1_3 by rememberSaveable { mutableStateOf("") }
-    var table_1_4 by rememberSaveable { mutableStateOf("") }
-    var table_1_5 by rememberSaveable { mutableStateOf("") }
-    var table_2_1 by rememberSaveable { mutableStateOf("") }
-    var table_2_2 by rememberSaveable { mutableStateOf("") }
-    var table_2_3 by rememberSaveable { mutableStateOf("") }
-    var table_2_4 by rememberSaveable { mutableStateOf("") }
-    var table_2_5 by rememberSaveable { mutableStateOf("") }
-    var table_3_1 by rememberSaveable { mutableStateOf("") }
-    var table_3_2 by rememberSaveable { mutableStateOf("") }
-    var table_3_3 by rememberSaveable { mutableStateOf("") }
-    var table_3_4 by rememberSaveable { mutableStateOf("") }
-    var table_3_5 by rememberSaveable { mutableStateOf("") }
-    var table_4_1 by rememberSaveable { mutableStateOf("") }
-    var table_4_2 by rememberSaveable { mutableStateOf("") }
-    var table_4_3 by rememberSaveable { mutableStateOf("") }
-    var table_4_4 by rememberSaveable { mutableStateOf("") }
-    var table_4_5 by rememberSaveable { mutableStateOf("") }
-    var table_5_1 by rememberSaveable { mutableStateOf("") }
-    var table_5_2 by rememberSaveable { mutableStateOf("") }
-    var table_5_3 by rememberSaveable { mutableStateOf("") }
-    var table_5_4 by rememberSaveable { mutableStateOf("") }
-    var table_5_5 by rememberSaveable { mutableStateOf("") }
-    var table_6_1 by rememberSaveable { mutableStateOf("") }
-    var table_6_2 by rememberSaveable { mutableStateOf("") }
-    var table_6_3 by rememberSaveable { mutableStateOf("") }
-    var table_6_4 by rememberSaveable { mutableStateOf("") }
-    var table_6_5 by rememberSaveable { mutableStateOf("") }
-    var table_1_6 by rememberSaveable { mutableStateOf("") }
-    var table_1_7 by rememberSaveable { mutableStateOf("") }
-    var table_2_6 by rememberSaveable { mutableStateOf("") }
-    var table_2_7 by rememberSaveable { mutableStateOf("") }
-    var table_3_6 by rememberSaveable { mutableStateOf("") }
-    var table_3_7 by rememberSaveable { mutableStateOf("") }
-    var table_4_6 by rememberSaveable { mutableStateOf("") }
-    var table_4_7 by rememberSaveable { mutableStateOf("") }
-    var table_5_6 by rememberSaveable { mutableStateOf("") }
-    var table_5_7 by rememberSaveable { mutableStateOf("") }
-    var table_6_6 by rememberSaveable { mutableStateOf("") }
-    var table_6_7 by rememberSaveable { mutableStateOf("") }
+    val table_1_1 by rememberSaveable { mutableStateOf("") }
+    val table_1_2 by rememberSaveable { mutableStateOf("") }
+    val table_1_3 by rememberSaveable { mutableStateOf("") }
+    val table_1_4 by rememberSaveable { mutableStateOf("") }
+    val table_1_5 by rememberSaveable { mutableStateOf("") }
+    val table_2_1 by rememberSaveable { mutableStateOf("") }
+    val table_2_2 by rememberSaveable { mutableStateOf("") }
+    val table_2_3 by rememberSaveable { mutableStateOf("") }
+    val table_2_4 by rememberSaveable { mutableStateOf("") }
+    val table_2_5 by rememberSaveable { mutableStateOf("") }
+    val table_3_1 by rememberSaveable { mutableStateOf("") }
+    val table_3_2 by rememberSaveable { mutableStateOf("") }
+    val table_3_3 by rememberSaveable { mutableStateOf("") }
+    val table_3_4 by rememberSaveable { mutableStateOf("") }
+    val table_3_5 by rememberSaveable { mutableStateOf("") }
+    val table_4_1 by rememberSaveable { mutableStateOf("") }
+    val table_4_2 by rememberSaveable { mutableStateOf("") }
+    val table_4_3 by rememberSaveable { mutableStateOf("") }
+    val table_4_4 by rememberSaveable { mutableStateOf("") }
+    val table_4_5 by rememberSaveable { mutableStateOf("") }
+    val table_5_1 by rememberSaveable { mutableStateOf("") }
+    val table_5_2 by rememberSaveable { mutableStateOf("") }
+    val table_5_3 by rememberSaveable { mutableStateOf("") }
+    val table_5_4 by rememberSaveable { mutableStateOf("") }
+    val table_5_5 by rememberSaveable { mutableStateOf("") }
+    val table_6_1 by rememberSaveable { mutableStateOf("") }
+    val table_6_2 by rememberSaveable { mutableStateOf("") }
+    val table_6_3 by rememberSaveable { mutableStateOf("") }
+    val table_6_4 by rememberSaveable { mutableStateOf("") }
+    val table_6_5 by rememberSaveable { mutableStateOf("") }
+    val table_1_6 by rememberSaveable { mutableStateOf("") }
+    val table_1_7 by rememberSaveable { mutableStateOf("") }
+    val table_2_6 by rememberSaveable { mutableStateOf("") }
+    val table_2_7 by rememberSaveable { mutableStateOf("") }
+    val table_3_6 by rememberSaveable { mutableStateOf("") }
+    val table_3_7 by rememberSaveable { mutableStateOf("") }
+    val table_4_6 by rememberSaveable { mutableStateOf("") }
+    val table_4_7 by rememberSaveable { mutableStateOf("") }
+    val table_5_6 by rememberSaveable { mutableStateOf("") }
+    val table_5_7 by rememberSaveable { mutableStateOf("") }
+    val table_6_6 by rememberSaveable { mutableStateOf("") }
+    val table_6_7 by rememberSaveable { mutableStateOf("") }
 
 
-    var sheet_1_1 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_1_2  = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_1_3 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_1_4 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_1_5 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_2_1 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_2_2 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_2_3 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_2_4 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_2_5 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_3_1 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_3_2  = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_3_3 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_3_4  = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_3_5  = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_4_1  = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_4_2  = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_4_3 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_4_4 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_4_5 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_5_1 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_5_2  = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_5_3 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_5_4 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_5_5 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_6_1 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_6_2  = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_6_3 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_6_4 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_6_5 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_1_6= courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_1_7= courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_2_6 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_2_7= courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_3_6= courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_3_7= courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_4_6 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_4_7= courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_5_6 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_5_7 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_6_6= courseDetailDTOList(0,0,"","","", listOf(0),0,"")
-    var sheet_6_7= courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_1_1 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_1_2  = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_1_3 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_1_4 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_1_5 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_2_1 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_2_2 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_2_3 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_2_4 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_2_5 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_3_1 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_3_2  = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_3_3 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_3_4  = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_3_5  = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_4_1  = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_4_2  = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_4_3 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_4_4 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_4_5 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_5_1 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_5_2  = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_5_3 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_5_4 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_5_5 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_6_1 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_6_2  = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_6_3 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_6_4 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_6_5 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_1_6= courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_1_7= courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_2_6 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_2_7= courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_3_6= courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_3_7= courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_4_6 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_4_7= courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_5_6 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_5_7 = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_6_6= courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+    val sheet_6_7= courseDetailDTOList(0,0,"","","", listOf(0),0,"")
 
 
 
     //切换周数
     var Bianhuaweeks by rememberSaveable { mutableStateOf(GetDate.weeksBetween) }
-    var date by rememberSaveable { mutableStateOf(LocalDate.now()) }
+    //var date by rememberSaveable { mutableStateOf(LocalDate.now()) }
 
     val tableall = arrayOf(
         table_1_1, table_1_2, table_1_3, table_1_4, table_1_5,table_1_6,table_1_7,
@@ -570,12 +565,15 @@ fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues,vmUI : UIViewModel
         UpdatesAll()//填充UI与更新
     } else Toast.makeText(MyApplication.context,"本地数据为空,请登录以更新数据",Toast.LENGTH_SHORT).show()
 
+  //  var showAlls by remember { mutableStateOf(false) }
+    //showAlls = showAll
+
 
     //刷新
     var refreshing by remember { mutableStateOf(false) }
     // 用协程模拟一个耗时加载
     val scope = rememberCoroutineScope()
-    var states = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
+    val states = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
         scope.launch {
             async {
                 refreshing = true
@@ -628,7 +626,8 @@ fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues,vmUI : UIViewModel
 
 
 
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize()
+        ) {
             Spacer(modifier = Modifier.height(innerPaddings.calculateTopPadding()))
             Spacer(modifier = Modifier.height(5.dp))
 
@@ -651,7 +650,11 @@ fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues,vmUI : UIViewModel
                 }
             }
 
-            Box( modifier = Modifier.pullRefresh(states)) {
+            Box(
+                modifier = Modifier
+                    .pullRefresh(states)
+
+            ) {
                 val scrollstate = rememberLazyGridState()
                 val shouldShowAddButton by remember { derivedStateOf { scrollstate.firstVisibleItemScrollOffset == 0 } }
                 LazyVerticalGrid(
@@ -660,7 +663,7 @@ fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues,vmUI : UIViewModel
                     state = scrollstate
                 ) {
                     items(if(showAll)42 else 30) { cell ->
-                        var texts = if(showAll)tableall[cell] else table[cell]
+                        val texts = if(showAll)tableall[cell] else table[cell]
                         Card(
                             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
                             shape = MaterialTheme.shapes.extraSmall,
@@ -696,7 +699,7 @@ fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues,vmUI : UIViewModel
                                     today = today.minusDays(7)
                                 }
                             },
-                        ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
+                        ) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Add Button") }
                     }
                 }
 
@@ -713,14 +716,15 @@ fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues,vmUI : UIViewModel
                     if (shouldShowAddButton) {
                         ExtendedFloatingActionButton(
                             onClick = {
-                                Bianhuaweeks = GetDate.Benweeks
+                                Bianhuaweeks = Benweeks
                                 today = LocalDate.now()
                             },
                         ) {
                             AnimatedContent(
                                 targetState = Bianhuaweeks,
-                                transitionSpec = {  scaleIn(animationSpec = tween(500)
-                                ) with scaleOut(animationSpec = tween(500))
+                                transitionSpec = {
+                                    scaleIn(animationSpec = tween(500)
+                                    ) togetherWith scaleOut(animationSpec = tween(500))
                                 }, label = ""
                             ){annumber ->
                                 Text(text = "第 $annumber 周",)
@@ -767,7 +771,7 @@ fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues,vmUI : UIViewModel
                                     today = today.plusDays(7)
                                 }
                             },
-                        ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
+                        ) { Icon(Icons.AutoMirrored.Filled.ArrowForward, "Add Button") }
                     }
                 }
                 PullRefreshIndicator(refreshing, states, Modifier.align(Alignment.TopCenter))

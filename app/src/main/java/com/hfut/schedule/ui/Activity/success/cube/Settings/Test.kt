@@ -3,7 +3,6 @@ package com.hfut.schedule.ui.Activity.success.cube.Settings
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.animateDpAsState
@@ -18,6 +17,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.rememberTransformableState
+import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,19 +31,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.Text
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.SearchBar
-import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -50,12 +45,8 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.isTraversalGroup
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.glance.appwidget.Tracing.enabled
 import com.hfut.schedule.R
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -71,7 +62,8 @@ fun TEST(innerPaddings : PaddingValues) {
         Spacer(modifier = Modifier.height(innerPaddings.calculateTopPadding()))
 
         Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
-            AnimatedVectorDrawable()
+            //AnimatedVectorDrawable()
+            TransformableSample()
         }
 
      // //  AnimatedVectorDrawable()
@@ -133,7 +125,6 @@ private fun AnimationSpecTween(enabled: Boolean) {
     // [END android_compose_animations_spec_tween]
 }
 
-@OptIn(ExperimentalAnimationGraphicsApi::class)
 @Composable
 fun AnimatedVectorDrawable() {
 
@@ -141,7 +132,7 @@ fun AnimatedVectorDrawable() {
 
     val size by animateDpAsState(
         targetValue = if (big) 300.dp else 50.dp,
-        animationSpec = spring(Spring.DampingRatioHighBouncy, Spring.StiffnessLow, 0.1.dp,) ,
+        animationSpec = spring(Spring.DampingRatioHighBouncy, Spring.StiffnessLow, 0.1.dp) ,
         label = ""
     )
     val size2 by animateDpAsState(
@@ -160,3 +151,32 @@ fun AnimatedVectorDrawable() {
 
 }
 private fun Offset.toIntOffset() = IntOffset(x.roundToInt(), y.roundToInt())
+@Composable
+ fun TransformableSample() {
+    // set up all transformation states
+    var scale by remember { mutableStateOf(1f) }
+    val rotation by remember { mutableStateOf(0f) }
+    val offset by remember { mutableStateOf(Offset.Zero) }
+    val state = rememberTransformableState { zoomChange, _, _ ->
+        scale *= zoomChange
+    }
+    Box(
+        Modifier
+            // apply other transformations like rotation and zoom
+            // on the pizza slice emoji
+            .graphicsLayer(
+                scaleX = scale,
+                scaleY = scale,
+                rotationZ = rotation,
+                translationX = offset.x,
+                translationY = offset.y
+            )
+            // add transformable to listen to multitouch transformation events
+            // after offset
+            .transformable(state = state)
+            .background(Color.Blue)
+            .fillMaxSize()
+            .size(50.dp)
+    )
+}
+

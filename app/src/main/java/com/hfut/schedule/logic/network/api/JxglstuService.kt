@@ -203,6 +203,13 @@ interface JxglstuService {
     //提交转专业申请
     
     //撤销转专业申请
+
+    //获取培养方案完成情况
+    @GET("ws/student/home-page/programCompletionPreview")
+    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0","Content-Type: application/x-www-form-urlencoded")
+    fun getProgramCompletion(
+        @Header("Cookie") cookie: String
+    ): Call<ResponseBody>
 }
 
 

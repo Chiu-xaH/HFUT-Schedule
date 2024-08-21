@@ -308,6 +308,7 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues) {
     else
     LazyColumn{
        // item { TotaGrade() }
+        item { Spacer(modifier = Modifier.height(5.dp)) }
         items(getGradeJXGLSTU().size) { item ->
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 Column() {

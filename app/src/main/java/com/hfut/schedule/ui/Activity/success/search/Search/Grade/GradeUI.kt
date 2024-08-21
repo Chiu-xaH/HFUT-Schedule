@@ -1,6 +1,7 @@
 package com.hfut.schedule.ui.Activity.success.search.Search.Grade
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -38,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -64,6 +66,7 @@ fun GradeUI(ifSaved : Boolean,vm : LoginSuccessViewModel) {
     var blur by remember { mutableStateOf(switchblur) }
     val hazeState = remember { HazeState() }
     val navController = rememberNavController()
+    val context = LocalContext.current
     var animation by remember { mutableStateOf(prefs.getInt("ANIMATION",MyApplication.Animation)) }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -78,7 +81,7 @@ fun GradeUI(ifSaved : Boolean,vm : LoginSuccessViewModel) {
                     title = { Text("成绩") },
                     actions = {
                         IconButton(onClick = {
-                            //关闭
+                            (context as? Activity)?.finish()
                         }) {
                             Icon(Icons.Filled.Close, contentDescription = "")
                         }

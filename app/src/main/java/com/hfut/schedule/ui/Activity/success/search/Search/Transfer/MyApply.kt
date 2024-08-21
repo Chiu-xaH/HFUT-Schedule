@@ -2,26 +2,19 @@ package com.hfut.schedule.ui.Activity.success.search.Search.Transfer
 
 import android.os.Handler
 import android.os.Looper
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
@@ -44,14 +37,12 @@ import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.utils.ReservDecimal
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.ui.Activity.success.search.Search.Person.getPersonInfo
+import com.hfut.schedule.ui.UIUtils.CardForListColor
 import com.hfut.schedule.ui.UIUtils.ScrollText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import org.jsoup.Jsoup
-import java.math.BigDecimal
-import java.math.RoundingMode
 
 @Composable
 fun MyApply(vm: LoginSuccessViewModel) {
@@ -82,11 +73,18 @@ fun MyApply(vm: LoginSuccessViewModel) {
     }
 
     val scale = animateFloatAsState(
-        targetValue = if (loading) 0.95f else 1f, // 按下时为0.9，松开时为1
+        targetValue = if (loading) 0.9f else 1f, // 按下时为0.9，松开时为1
         //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
         animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
         label = "" // 使用弹簧动画
     )
+    val scale2 = animateFloatAsState(
+        targetValue = if (loading) 0.97f else 1f, // 按下时为0.9，松开时为1
+        //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
+        animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
+        label = "" // 使用弹簧动画
+    )
+
     val blurSize by animateDpAsState(
         targetValue = if (loading) 10.dp else 0.dp, label = ""
         ,animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
@@ -101,11 +99,12 @@ fun MyApply(vm: LoginSuccessViewModel) {
         Card(
                 elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
                 modifier = Modifier
-                    .fillMaxWidth().scale(scale.value)
+                    .fillMaxWidth().scale(scale2.value)
                     .padding(horizontal = 15.dp, vertical = 5.dp),
                 shape = MaterialTheme.shapes.medium,
+            colors = CardForListColor()
             ) {
-                Column (modifier = Modifier.blur(blurSize)){
+                Column (modifier = Modifier.blur(blurSize).scale(scale.value)){
 
                         ListItem(headlineContent = { Text(text = if(getApplyStatus(vm) == true) "转入申请已通过" else " 状态未知或未通过", fontSize = 28.sp) })
 

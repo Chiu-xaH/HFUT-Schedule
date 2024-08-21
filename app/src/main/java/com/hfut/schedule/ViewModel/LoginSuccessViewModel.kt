@@ -434,14 +434,32 @@ class LoginSuccessViewModel(webVpn : Boolean) : ViewModel() {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
-
+    val ProgramData = MutableLiveData<String?>()
 
     fun getProgram(cookie: String) {
         val call = JxglstuJSON.getProgram(cookie,studentId.value.toString())
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                Save("program", response.body()?.string())
+                val body = response.body()?.string()
+                Save("program", body)
+                ProgramData.value = body
+
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
+
+    val ProgramCompletionData = MutableLiveData<String?>()
+
+    fun getProgramCompletion(cookie: String) {
+        val call = JxglstuJSON.getProgramCompletion(cookie)
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                val body = response.body()?.string()
+                ProgramCompletionData.value = body
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -449,12 +467,14 @@ class LoginSuccessViewModel(webVpn : Boolean) : ViewModel() {
     }
 
     val courseData = MutableLiveData<String?>()
+    val courseRsponseData = MutableLiveData<String?>()
     fun searchCourse(cookie: String, className : String?,courseName : String?, semester : Int) {
         val call = JxglstuJSON.searchCourse(cookie,studentId.value.toString(),semester,className,"1,20",courseName)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 courseData.value = response?.code().toString()
+                courseRsponseData.value = response?.body()?.string()
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }

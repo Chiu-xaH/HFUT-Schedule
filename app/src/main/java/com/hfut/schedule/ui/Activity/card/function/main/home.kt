@@ -2,13 +2,10 @@ package com.hfut.schedule.ui.Activity.card.function.main
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -65,14 +62,15 @@ import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.StartApp
+import com.hfut.schedule.ui.Activity.card.bills.TodayBills
 import com.hfut.schedule.ui.Activity.card.bills.main.BillItem
 import com.hfut.schedule.ui.Activity.card.function.CardLimit
 import com.hfut.schedule.ui.Activity.card.function.SearchBillsUI
 import com.hfut.schedule.ui.Activity.card.function.SelecctDateRange
-import com.hfut.schedule.ui.Activity.card.bills.TodayBills
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.getUserInfo
 import com.hfut.schedule.ui.Activity.success.focus.Focus.GetZjgdCard
 import com.hfut.schedule.ui.Activity.success.search.Search.More.Login
+import com.hfut.schedule.ui.UIUtils.CardForListColor
 import com.hfut.schedule.ui.UIUtils.DividerText
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.WebViewScreen
@@ -102,7 +100,7 @@ fun HomeScreen(innerPadding : PaddingValues,vm : LoginSuccessViewModel,navContro
                 delay(500)
                 refreshing = false
                 loading = false
-                MyToast("刷新成功")
+               // MyToast("刷新成功")
             }
         }
     })
@@ -273,7 +271,13 @@ fun HomeScreen(innerPadding : PaddingValues,vm : LoginSuccessViewModel,navContro
 
 
     val scale = animateFloatAsState(
-        targetValue = if (refreshing) 0.95f else 1f, // 按下时为0.9，松开时为1
+        targetValue = if (refreshing) 0.9f else 1f, // 按下时为0.9，松开时为1
+        //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
+        animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
+        label = "" // 使用弹簧动画
+    )
+    val scale2 = animateFloatAsState(
+        targetValue = if (refreshing) 0.97f else 1f, // 按下时为0.9，松开时为1
         //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
         animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
         label = "" // 使用弹簧动画
@@ -295,11 +299,12 @@ fun HomeScreen(innerPadding : PaddingValues,vm : LoginSuccessViewModel,navContro
                 Card(
                     elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
                     modifier = Modifier
-                        .fillMaxWidth().scale(scale.value)
+                        .fillMaxWidth().scale(scale2.value)
                         .padding(horizontal = 15.dp, vertical = 5.dp),
-                    shape = MaterialTheme.shapes.medium
+                    shape = MaterialTheme.shapes.medium,
+                    colors = CardForListColor()
                 ) {
-                        Column(modifier = Modifier.blur(blurSize)) {
+                        Column(modifier = Modifier.blur(blurSize).scale(scale.value)) {
                             ListItem(
                                 headlineContent = { Text(text = "$name 校园一卡通") },
                                 trailingContent = {
@@ -312,7 +317,7 @@ fun HomeScreen(innerPadding : PaddingValues,vm : LoginSuccessViewModel,navContro
                                             async {
                                                 delay(500)
                                                 refreshing = false
-                                                MyToast("刷新成功")
+                                               // MyToast("刷新成功")
                                             }
                                         }
                                     }) {
@@ -468,3 +473,4 @@ fun limitRow(vmUI : UIViewModel) {
             leadingContent = { Icon(painter = painterResource(id = R.drawable.do_not_disturb_on), contentDescription = "")})
     }
 }
+

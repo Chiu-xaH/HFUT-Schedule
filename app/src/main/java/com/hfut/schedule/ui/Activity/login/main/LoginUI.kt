@@ -1,6 +1,7 @@
 package com.hfut.schedule.ui.Activity.login.main
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -27,6 +28,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
@@ -55,6 +58,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -174,7 +178,7 @@ fun LoginUI(vm : LoginViewModel) {
 
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
-
+    val context = LocalContext.current
     var showBadge by remember { mutableStateOf(false) }
     if (APPVersion.getVersionName() != prefs.getString("version", APPVersion.getVersionName())) showBadge = true
     val hazeState = remember { HazeState() }
@@ -201,6 +205,7 @@ fun LoginUI(vm : LoginViewModel) {
                         .padding(innerPadding)
                         .verticalScroll(rememberScrollState())
                 ){
+
                     FirstCube()
                     Spacer(modifier = Modifier.height(20.dp))
                 }
@@ -226,6 +231,11 @@ fun LoginUI(vm : LoginViewModel) {
                                 Badge(modifier = Modifier.size(5.dp))
                             }) { Icon(painterResource(id = R.drawable.deployed_code), contentDescription = "主页") }
                         }
+                    IconButton(onClick = {
+                        (context as? Activity)?.finish()
+                    }) {
+                        Icon(painterResource(id = R.drawable.logout), contentDescription = "")
+                    }
                     //    Text(text = "   ")
                    /// }
                    

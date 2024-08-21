@@ -2,6 +2,7 @@ package com.hfut.schedule.ui.Activity.success.search.Search.CourseSearch
 
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -12,6 +13,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,10 +23,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
@@ -49,7 +56,10 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.ui.Activity.success.search.Search.Survey.getSemseter
+import com.hfut.schedule.ui.Activity.success.search.Search.Survey.getSemseterCloud
 import com.hfut.schedule.ui.Activity.success.search.Search.TotalCourse.CourseTotalUI
+import com.hfut.schedule.ui.UIUtils.MyToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -65,16 +75,18 @@ fun courseSearchUI(vm : LoginSuccessViewModel) {
     var loading by remember { mutableStateOf(false) }
 
     val cookie = SharePrefs.prefs.getString("redirect", "")
-    var showitem by remember { mutableStateOf(false) }
+   // var showitem by remember { mutableStateOf(false) }
 
-    val saveSem = SharePrefs.prefs.getString("semesterId","")?.toInt()
-    var semester by remember { mutableStateOf(saveSem) }
+   // val saveSem = SharePrefs.prefs.getString("semesterId","")?.toInt()
+   // var semester by remember { mutableStateOf(saveSem) }
 
-    var buttonText by remember { mutableStateOf( "本学期") }
+   // var buttonText by remember { mutableStateOf( "本学期") }
 
-    val radioOptions = listOf("上学期", "本学期", "下学期")
-    val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[1]) }
+   // val radioOptions = listOf("上学期", "本学期", "下学期")
+    //val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[1]) }
 
+    var semsters = getSemseterCloud()
+    var semester by remember { mutableStateOf(semsters) }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -86,27 +98,21 @@ fun courseSearchUI(vm : LoginSuccessViewModel) {
                 title = { Text("开课查询") },
                 actions = {
                     Row(modifier = Modifier.padding(horizontal = 15.dp)) {
-                        FilledTonalButton(onClick = { showitem = !showitem }) {
-                            Text(text = buttonText)
+                        FilledTonalButton(
+                            onClick = {
+                                MyToast("按钮已迁移到底部,可快速切换学期")
+                            }
+                        ){
+                            Text(text = "学期切换")
                         }
                         FilledTonalIconButton(
                             // shape = RoundedCornerShape(5.dp),
                             onClick = {
                                 CoroutineScope(Job()).launch {
                                     async {
-                                        cookie?.let {
-                                            semester?.let { it1 ->
-                                                vm.searchCourse(
-                                                    it,
-                                                    className,
-                                                    courseName,
-                                                    it1
-                                                )
-                                            }
-                                        }
+                                        cookie?.let { semester?.let { it1 -> vm.searchCourse(it, className, courseName, it1) } }
                                         loading = true
                                         onclick = true
-                                        showitem = false
                                         Handler(Looper.getMainLooper()).post {
                                             vm.courseData.value = "{}"
                                         }
@@ -115,7 +121,7 @@ fun courseSearchUI(vm : LoginSuccessViewModel) {
                                         Handler(Looper.getMainLooper()).post {
                                             vm.courseData.observeForever { result ->
                                                 if (result != null) {
-                                                    if (result.contains("data"))
+                                                    if (result == "200")
                                                         loading = false
                                                 }
                                             }
@@ -133,128 +139,186 @@ fun courseSearchUI(vm : LoginSuccessViewModel) {
             )
         },
     ) { innerPadding ->
-        Column(
+        Box(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
+            Column {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    TextField(
+                        modifier = Modifier
+                            .weight(.5f)
+                            .padding(horizontal = 7.dp),
+                        value = className,
+                        onValueChange = {
+                            className = it
+                        },
+                        label = { Text("教学班级" ) },
+                        singleLine = true,
+                        shape = MaterialTheme.shapes.medium,
+                        colors = TextFieldDefaults.textFieldColors(
+                            focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
+                            unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
+                        ),
+                    )
+                    TextField(
+                        modifier = Modifier
+                            .weight(.5f)
+                            .padding(horizontal = 7.dp),
+                        value = courseName,
+                        onValueChange = {
+                            courseName = it
+                        },
+                        label = { Text("课程名称" ) },
+                        singleLine = true,
+                        shape = MaterialTheme.shapes.medium,
+                        colors = TextFieldDefaults.textFieldColors(
+                            focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
+                            unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
+                        ),
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(7.dp))
+
+                if(onclick){
+                    AnimatedVisibility(
+                        visible = loading,
+                        enter = fadeIn(),
+                        exit = fadeOut()
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Spacer(modifier = Modifier.height(5.dp))
+                            CircularProgressIndicator()
+                        }
+                    }////加载动画居中，3s后消失
+
+                    AnimatedVisibility(
+                        visible = !loading,
+                        enter = fadeIn(),
+                        exit = fadeOut()
+                    ) {
+                        CourseTotalUI(json = vm.courseRsponseData.value)
+                    }
+                }
+
+
+
+                Spacer(modifier = Modifier.height(20.dp))
+            }
+            AnimatedVisibility(
+                visible = !loading,
+                enter = scaleIn(),
+                exit = scaleOut(),
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(horizontal = 15.dp, vertical = 15.dp)
+            ) {
+                FloatingActionButton(
+                    onClick = {
+                        semester -= 20
+                        CoroutineScope(Job()).launch {
+                            async {
+                                cookie?.let { semester?.let { it1 -> vm.searchCourse(it, className, courseName, it1) } }
+                                loading = true
+                                onclick = true
+                                Handler(Looper.getMainLooper()).post {
+                                    vm.courseData.value = "{}"
+                                }
+                            }.await()
+                            async {
+                                Handler(Looper.getMainLooper()).post {
+                                    vm.courseData.observeForever { result ->
+                                        if (result != null) {
+                                            if (result == "200")
+                                                loading = false
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
+            }
 
 
             AnimatedVisibility(
-                visible = showitem,
-                enter = slideInVertically(
-                    initialOffsetY = { -40 }
-                ) + expandVertically(
-                    expandFrom = Alignment.Top
-                ) + scaleIn(
-                    // Animate scale from 0f to 1f using the top center as the pivot point.
-                    transformOrigin = TransformOrigin(0.5f, 0f)
-                ) + fadeIn(initialAlpha = 0.3f),
-                exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
-            ){
-                Row(Modifier.selectableGroup()) {
-                    radioOptions.forEach { text ->
-                        Row(
-                            Modifier
-                                .fillMaxWidth()
-                                .height(56.dp)
-                                .weight(.33f)
-                                .selectable(
-                                    selected = (text == selectedOption),
-                                    onClick = {
-                                        onOptionSelected(text)
-                                        buttonText = text
-                                        when(text) {
-                                            "下学期" -> semester = semester?.plus(20)
-                                            "本学期" -> semester = saveSem
-                                            "上学期" -> semester = semester?.minus(20)
-                                        }
-                                    },
-                                    role = Role.RadioButton
-                                )
-                                .padding(horizontal = 15.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            RadioButton(
-                                selected = (text == selectedOption),
-                                onClick = null
-                            )
-                            Text(
-                                text = text,
-                                style = MaterialTheme.typography.bodyLarge,
-                                modifier = Modifier.padding(start = 10.dp)
-                            )
-                        }
-                    }
-                }
-            }
-
-            Row(
+                visible = !loading,
+                enter = scaleIn(),
+                exit = scaleOut(),
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp),
-                horizontalArrangement = Arrangement.Center
+                    .align(Alignment.BottomCenter)
+                    .padding(horizontal = 15.dp, vertical = 15.dp)
             ) {
-                TextField(
-                    modifier = Modifier
-                        .weight(.5f)
-                        .padding(horizontal = 7.dp),
-                    value = className,
-                    onValueChange = {
-                        className = it
+                ExtendedFloatingActionButton(
+                    onClick = {
+                        CoroutineScope(Job()).launch {
+                            async {
+                                cookie?.let { semester?.let { it1 -> vm.searchCourse(it, className, courseName, it1) } }
+                                loading = true
+                                onclick = true
+                                Handler(Looper.getMainLooper()).post {
+                                    vm.courseData.value = "{}"
+                                }
+                            }.await()
+                            async {
+                                Handler(Looper.getMainLooper()).post {
+                                    vm.courseData.observeForever { result ->
+                                        if (result != null) {
+                                            if (result == "200")
+                                                loading = false
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     },
-                    label = { Text("教学班级" ) },
-                    singleLine = true,
-                    shape = MaterialTheme.shapes.medium,
-                    colors = TextFieldDefaults.textFieldColors(
-                        focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                        unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-                    ),
-                )
-                TextField(
-                    modifier = Modifier
-                        .weight(.5f)
-                        .padding(horizontal = 7.dp),
-                    value = courseName,
-                    onValueChange = {
-                        courseName = it
-                    },
-                    label = { Text("课程名称" ) },
-                    singleLine = true,
-                    shape = MaterialTheme.shapes.medium,
-                    colors = TextFieldDefaults.textFieldColors(
-                        focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                        unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-                    ),
-                )
+                ) { Text(text = getSemseter(semester),) }
             }
 
-            Spacer(modifier = Modifier.height(7.dp))
-
-            if(onclick){
-                AnimatedVisibility(
-                    visible = loading,
-                    enter = fadeIn(),
-                    exit = fadeOut()
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Spacer(modifier = Modifier.height(5.dp))
-                        CircularProgressIndicator()
-                    }
-                }////加载动画居中，3s后消失
-
-                AnimatedVisibility(
-                    visible = !loading,
-                    enter = fadeIn(),
-                    exit = fadeOut()
-                ) {
-                    CourseTotalUI(json = vm.courseData.value)
-                }
+            AnimatedVisibility(
+                visible = !loading,
+                enter = scaleIn(),
+                exit = scaleOut(),
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(horizontal = 15.dp, vertical = 15.dp)
+            ) {
+                FloatingActionButton(
+                    onClick = {
+                        semester += 20
+                        CoroutineScope(Job()).launch {
+                            async {
+                                cookie?.let { semester?.let { it1 -> vm.searchCourse(it, className, courseName, it1) } }
+                                loading = true
+                                onclick = true
+                                Handler(Looper.getMainLooper()).post {
+                                    vm.courseData.value = "{}"
+                                }
+                            }.await()
+                            async {
+                                Handler(Looper.getMainLooper()).post {
+                                    vm.courseData.observeForever { result ->
+                                        if (result != null) {
+                                            if (result == "200")
+                                                loading = false
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
             }
-            Spacer(modifier = Modifier.height(20.dp))
         }
     }
 

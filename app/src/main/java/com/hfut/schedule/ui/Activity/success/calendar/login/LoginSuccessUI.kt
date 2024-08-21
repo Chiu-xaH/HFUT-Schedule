@@ -16,6 +16,7 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.with
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -51,6 +52,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -222,6 +224,9 @@ fun CalendarScreen(showAll : Boolean,
         sheet_5_1, sheet_5_2, sheet_5_3, sheet_5_4, sheet_5_5,
         sheet_6_1, sheet_6_2, sheet_6_3, sheet_6_4, sheet_6_5
     )
+  //  var showAlls by remember { mutableStateOf(false) }
+    //showAlls = showAll
+
 
     var Bianhuaweeks by rememberSaveable { mutableStateOf(
         if(GetDate.weeksBetween > 20) {
@@ -860,7 +865,6 @@ fun CalendarScreen(showAll : Boolean,
                             async { vm.getInfo(cookie!!) }
                             if(prefs.getString("photo","") == null || prefs.getString("photo","") == "")
                             async { cookie?.let { vm.getPhoto(it) } }
-                            async { vm.getProgram(cookie!!) }
                         }
                     } else {
                         ///Log.d("result0",result.toString())
@@ -880,6 +884,7 @@ fun CalendarScreen(showAll : Boolean,
                       */
                     }
                 }
+
                 val lessonIdObserver = Observer<List<Int>> { result ->
                     if (result.toString() != "") {
                         val lessonIdsArray = JsonArray()

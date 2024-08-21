@@ -1,6 +1,7 @@
 package com.hfut.schedule.ui.Activity.Fix
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.Spring
@@ -39,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -67,6 +69,7 @@ fun Fix(vm : LoginViewModel,vm2 : LoginSuccessViewModel) {
     var animation by remember { mutableStateOf(prefs.getInt("ANIMATION",MyApplication.Animation)) }
     val hazeState = remember { HazeState() }
     val navController = rememberNavController()
+    val context = LocalContext.current
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -80,7 +83,7 @@ fun Fix(vm : LoginViewModel,vm2 : LoginSuccessViewModel) {
                     title = { Text("修复与检测") },
                     actions = {
                         IconButton(onClick = {
-
+                            (context as? Activity)?.finish()
                         }) {
                             Icon(Icons.Filled.Close, contentDescription = "")
                         }

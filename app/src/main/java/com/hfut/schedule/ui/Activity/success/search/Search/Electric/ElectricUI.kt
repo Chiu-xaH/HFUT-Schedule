@@ -3,14 +3,11 @@ package com.hfut.schedule.ui.Activity.success.search.Search.Electric
 import android.annotation.SuppressLint
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -20,7 +17,6 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -71,19 +67,15 @@ import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
-import com.hfut.schedule.logic.datamodel.SearchEleResponse
 import com.hfut.schedule.logic.datamodel.zjgd.FeeResponse
 import com.hfut.schedule.logic.datamodel.zjgd.FeeType
-import com.hfut.schedule.logic.utils.ClipBoard
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.StartApp
-import com.hfut.schedule.ui.Activity.success.search.Search.LoginWeb.loginWebUI
+import com.hfut.schedule.ui.UIUtils.CardForListColor
 import com.hfut.schedule.ui.UIUtils.DividerText
 import com.hfut.schedule.ui.UIUtils.MyToast
-import com.hfut.schedule.ui.UIUtils.ScrollText
 import com.hfut.schedule.ui.UIUtils.WebViewScreen
-import com.hfut.schedule.ui.UIUtils.WheelPicker
 import com.hfut.schedule.ui.theme.FWDTColr
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -480,11 +472,18 @@ fun EleUI(vm : LoginSuccessViewModel) {
 
 
             val scale = animateFloatAsState(
-                targetValue = if (!show) 0.95f else 1f, // 按下时为0.9，松开时为1
+                targetValue = if (!show) 0.9f else 1f, // 按下时为0.9，松开时为1
                 //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
                 animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
                 label = "" // 使用弹簧动画
             )
+            val scale2 = animateFloatAsState(
+                targetValue = if (!show) 0.97f else 1f, // 按下时为0.9，松开时为1
+                //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
+                animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
+                label = "" // 使用弹簧动画
+            )
+
              DividerText(text = "查询结果")
           //   if(show) {
 
@@ -493,11 +492,15 @@ fun EleUI(vm : LoginSuccessViewModel) {
                     Card(
                         elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
                         modifier = Modifier
-                            .fillMaxWidth().scale(scale.value)
+                            .fillMaxWidth()
+                            .scale(scale2.value)
                             .padding(horizontal = 15.dp, vertical = 5.dp),
                         shape = MaterialTheme.shapes.medium,
+                        colors = CardForListColor()
                     ) {
-                        Column(modifier = Modifier.blur(blurSize)) {
+                        Column(modifier = Modifier
+                            .blur(blurSize)
+                            .scale(scale.value)) {
                             ListItem(
                                 headlineContent = { Text(text = if(!show)"￥XX.XX" else {     "￥${BigDecimal(Result2.substringAfter(" ")).setScale(2, RoundingMode.HALF_UP).toString()}"
                                 }, fontSize = 28.sp) },

@@ -1,10 +1,15 @@
 package com.hfut.schedule.ui.Activity.success.search.Search.Program
 
-import android.util.Log
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
-import com.hfut.schedule.logic.datamodel.Jxglstu.PlanCourses
+import com.hfut.schedule.logic.datamodel.Jxglstu.ProgramCompletionResponse
+import com.hfut.schedule.logic.datamodel.Jxglstu.ProgramPartOne
+import com.hfut.schedule.logic.datamodel.Jxglstu.ProgramPartThree
+import com.hfut.schedule.logic.datamodel.Jxglstu.ProgramPartTwo
 import com.hfut.schedule.logic.datamodel.Jxglstu.ProgramResponse
+import com.hfut.schedule.logic.datamodel.Jxglstu.ProgramShow
+import com.hfut.schedule.logic.datamodel.Jxglstu.item
 import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 
@@ -44,10 +49,12 @@ fun getProgram()  {
     }
 }
 
-fun getProgramListOne(): MutableList<ProgramPartOne> {
+fun getProgramListOne(vm : LoginSuccessViewModel,ifSaved : Boolean): MutableList<ProgramPartOne> {
     val list = mutableListOf<ProgramPartOne>()
     return try {
-        val json = prefs.getString("program","")
+        val json = if(ifSaved) {
+            prefs.getString("program","")
+        } else vm.ProgramData.value
         val result = Gson().fromJson(json,ProgramResponse::class.java)
         val children = result.children
         for(i in children.indices) {
@@ -63,10 +70,10 @@ fun getProgramListOne(): MutableList<ProgramPartOne> {
     }
 }
 
-fun getProgramListTwo(item : Int): MutableList<ProgramPartTwo> {
+fun getProgramListTwo(item : Int,vm : LoginSuccessViewModel,ifSaved : Boolean): MutableList<ProgramPartTwo> {
     val list = mutableListOf<ProgramPartTwo>()
     try {
-        val partl = getProgramListOne()[item]
+        val partl = getProgramListOne(vm,ifSaved)[item]
         //判断，在公共基础课程直接展开，不进入三级数组
         if(partl.partChildren.isEmpty()) {
             val part = partl.partCourse
@@ -90,10 +97,10 @@ fun getProgramListTwo(item : Int): MutableList<ProgramPartTwo> {
 
 
 
-fun getProgramListThree(item1 : Int,item2 : Int): MutableList<ProgramPartThree> {
+fun getProgramListThree(item1 : Int,item2 : Int,vm : LoginSuccessViewModel,ifSaved : Boolean): MutableList<ProgramPartThree> {
     val list = mutableListOf<ProgramPartThree>()
     try {
-        val partl = getProgramListTwo(item1)[item2]
+        val partl = getProgramListTwo(item1,vm,ifSaved)[item2]
         val partChilren = partl
         val part = partl.part
 
@@ -112,23 +119,17 @@ fun getProgramListThree(item1 : Int,item2 : Int): MutableList<ProgramPartThree> 
 }
 
 
-data class InProgramResponse(val ProgramShow : List<ProgramShow>)
+fun getProgramCompletion(vm: LoginSuccessViewModel) : ProgramCompletionResponse {
+    return try {
+        val json = vm.ProgramCompletionData.value
+        val listType = object : TypeToken<List<ProgramCompletionResponse>>() {}.type
+        val data : List<ProgramCompletionResponse> = Gson().fromJson(json, listType)
+        val list = data[0]
+        list
+    } catch (_: Exception) {
+        val nilItem = item("培养方案课程",0.0,0.0)
+        ProgramCompletionResponse(nilItem, listOf(nilItem,nilItem,nilItem))
+    }
+}
 
-data class ProgramPartOne(val type : String?,
-                          val requiedCredits : Double?,
-                          val partChildren : List<ProgramResponse?>,
-                          val partCourse : List<PlanCourses>)
-data class ProgramPartTwo(val type : String?,
-                          val requiedCredits : Double?,
-                          val part : List<PlanCourses>)
-data class ProgramPartThree(val term : Int?,
-                            val name : String,
-                            val credit : Double?,
-                            val depart :String)
-data class ProgramShow(val name : String,
-                       val type : String?,
-                       val credit : Double?,
-                       val term : List<Int?>,
-                       val studyMust : Boolean?,
-                       val school : String?,
-                       val remark : String?)
+
