@@ -13,6 +13,7 @@ import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
 import androidx.compose.animation.graphics.res.animatedVectorResource
 import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
 import androidx.compose.animation.graphics.vector.AnimatedImageVector
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -33,6 +34,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,16 +43,23 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
+import com.hfut.schedule.ui.Activity.card.counts.RadarChart
+import com.hfut.schedule.ui.Activity.card.counts.RadarData
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import kotlin.math.cos
 import kotlin.math.roundToInt
+import kotlin.math.sin
 
 @Composable
 fun TEST(innerPaddings : PaddingValues) {
@@ -63,7 +72,8 @@ fun TEST(innerPaddings : PaddingValues) {
 
         Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
             //AnimatedVectorDrawable()
-            TransformableSample()
+            //TransformableSample()
+            RadarChartPreview()
         }
 
      // //  AnimatedVectorDrawable()
@@ -152,7 +162,7 @@ fun AnimatedVectorDrawable() {
 }
 private fun Offset.toIntOffset() = IntOffset(x.roundToInt(), y.roundToInt())
 @Composable
- fun TransformableSample() {
+fun TransformableSample() {
     // set up all transformation states
     var scale by remember { mutableStateOf(1f) }
     val rotation by remember { mutableStateOf(0f) }
@@ -180,3 +190,17 @@ private fun Offset.toIntOffset() = IntOffset(x.roundToInt(), y.roundToInt())
     )
 }
 
+
+
+@Composable
+@Preview
+fun RadarChartPreview() {
+    val data = listOf(
+        RadarData("Speed", 0.8f),
+        RadarData("Accuracy", 0.6f),
+        RadarData("Power", 0.7f),
+        RadarData("Endurance", 0.9f),
+        RadarData("Agility", 0.5f)
+    )
+    RadarChart(data = data, modifier = Modifier.size(300.dp))
+}

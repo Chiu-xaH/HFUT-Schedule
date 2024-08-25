@@ -207,11 +207,9 @@ fun courseSearchUI(vm : LoginSuccessViewModel) {
                         enter = fadeIn(),
                         exit = fadeOut()
                     ) {
-                        CourseTotalUI(json = vm.courseRsponseData.value)
+                        CourseTotalUI(json = vm.courseRsponseData.value,true)
                     }
                 }
-
-
 
                 Spacer(modifier = Modifier.height(20.dp))
             }

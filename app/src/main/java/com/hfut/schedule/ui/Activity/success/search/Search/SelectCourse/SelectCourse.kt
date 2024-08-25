@@ -119,7 +119,7 @@ fun selectCourse(ifSaved : Boolean,vm : LoginSuccessViewModel) {
             Icon(painter = painterResource(id = R.drawable.ads_click), contentDescription = "")
         },
         modifier = Modifier.clickable {
-            if(!ifSaved) showDialog = true
+            if(!ifSaved) showBottomSheet = true
             else Login()
         }
     )

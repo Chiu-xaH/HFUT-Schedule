@@ -87,7 +87,7 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean
                     Row(modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
-                        val qrPainter = createQRCodeBitmap(MyApplication.DownloadURL,1000,1000)
+                        val qrPainter = createQRCodeBitmap(MyApplication.UpdateURL + "releases/tag/Android",1000,1000)
                         qrPainter?.let { Image(it.asImageBitmap(), contentDescription = "") }
                     }
                     Spacer(modifier = Modifier.height(15.dp))
@@ -179,7 +179,7 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean
                 },
                 onLongClick = { ShareAPK.ShareAPK() },
                 onDoubleClick = {
-                    ClipBoard.copy(MyApplication.DownloadURL)
+                    ClipBoard.copy(MyApplication.UpdateURL + "releases/tag/Android")
                     MyToast("已将下载链接复制到剪切板")
                 }
 
@@ -203,7 +203,7 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean
             },
             modifier = Modifier.clickable{
                 if (version.version != APPVersion.getVersionName())
-                    StartApp.StartUri(MyApplication.DownloadURL)
+                    StartApp.StartUri(MyApplication.UpdateURL + "releases/download/Android/${version.version}.apk")
                 else Toast.makeText(MyApplication.context,"与云端版本一致", Toast.LENGTH_SHORT).show()
             }
         )

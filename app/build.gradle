@@ -23,8 +23,8 @@ android {
         applicationId "com.hfut.schedule"
         minSdk 24
         targetSdk 33
-        versionCode 123
-        versionName "4.9.6"
+        versionCode 125
+        versionName "4.9.7.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
@@ -131,7 +131,8 @@ dependencies {
     var hilt_version = "2.31-alpha"
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
-
+    //图表库
+    //implementation 'com.github.AAChartModel:AAChartCore-Kotlin:-SNAPSHOT'
     def hilt_lifecycle_viewmodel = "1.0.0-alpha03"
     implementation "androidx.hilt:hilt-lifecycle-viewmodel:$hilt_lifecycle_viewmodel"
     kapt "androidx.hilt:hilt-compiler:$hilt_lifecycle_viewmodel"

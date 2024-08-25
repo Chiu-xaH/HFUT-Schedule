@@ -27,7 +27,18 @@ class UIViewModel : ViewModel()  {
     var webValue = MutableLiveData<WebInfo>()
    // var CardAuth = MutableLiveData<String?>(prefs.getString("auth",""))
 
+    fun download(version : String) {
 
+        val call = Gitee.download(version)
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
     fun getUpdate() {
 
         val call = Gitee.getUpdate()

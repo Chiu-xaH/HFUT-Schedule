@@ -184,7 +184,7 @@ fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel,vm2 : LoginSuccessVie
         ListItem(
             headlineContent = { Text(text = "下载最新版本") },
             leadingContent = { Icon(painterResource(R.drawable.cloud_download), contentDescription = "Localized description",) },
-            modifier = Modifier.clickable{ StartApp.StartUri(MyApplication.DownloadURL) }
+            modifier = Modifier.clickable{ StartApp.StartUri(MyApplication.UpdateURL + "releases/tag/Android") }
         )
 
         ListItem(

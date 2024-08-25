@@ -28,6 +28,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -62,6 +64,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
@@ -72,6 +75,7 @@ import com.hfut.schedule.logic.datamodel.zjgd.FeeType
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.StartApp
+import com.hfut.schedule.ui.UIUtils.BottomTip
 import com.hfut.schedule.ui.UIUtils.CardForListColor
 import com.hfut.schedule.ui.UIUtils.DividerText
 import com.hfut.schedule.ui.UIUtils.MyToast
@@ -177,9 +181,6 @@ fun EleUI(vm : LoginSuccessViewModel) {
                     Row(modifier = Modifier.padding(horizontal = 15.dp)) {
                         if(showitem4)
                             IconButton(onClick = {RoomNumber = RoomNumber.replaceFirst(".$".toRegex(), "")}) {
-                                Icon(painter = painterResource(R.drawable.backspace), contentDescription = "description") }
-                        if(showAdd)
-                            IconButton(onClick = {payNumber = payNumber.replaceFirst(".$".toRegex(), "")}) {
                                 Icon(painter = painterResource(R.drawable.backspace), contentDescription = "description") }
                         FilledTonalIconButton(onClick = {
                             show = false
@@ -312,21 +313,79 @@ fun EleUI(vm : LoginSuccessViewModel) {
                     StartApp.StartUri(url)
                 }
             }
+            var showDialog2 by remember { mutableStateOf(false) }
+            if(showDialog2)
+            Dialog(onDismissRequest = { showDialog2 = false }) {
+                Column {
+                    Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
+                        OutlinedCard{
+                            LazyColumn(modifier = Modifier.padding(horizontal = 10.dp)) {
+                                item {
+                                    Text(text = "选取金额 ￥${payNumber}", modifier = Modifier.padding(10.dp))
+                                }
+                                item {
+                                    LazyRow {
+                                        items(5) { items ->
+                                            IconButton(onClick = {
+                                                if (payNumber.length < 3)
+                                                    payNumber += items.toString()
+                                                else Toast.makeText(
+                                                    MyApplication.context,
+                                                    "最高999元",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }) { Text(text = items.toString()) }
+                                        }
+                                    }
+                                }
+                                item {
+                                    LazyRow {
+                                        items(5) { items ->
+                                            val num = items + 5
+                                            IconButton(onClick = {
+                                                if (payNumber.length < 3)
+                                                    payNumber += num
+                                                else Toast.makeText(MyApplication.context, "最高999元", Toast.LENGTH_SHORT).show()
+                                            }) { Text(text = num.toString()) }
+                                        }
+                                    }
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(10.dp))
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
+                        FilledTonalIconButton(
+                            onClick = {payNumber = payNumber.replaceFirst(".$".toRegex(), "")},
+                            modifier = Modifier.padding(horizontal = 5.dp)
+                        ) {
+                            Icon(painter = painterResource(R.drawable.backspace), contentDescription = "description")
+                        }
 
+                        FilledTonalIconButton(
+                            onClick = {
+                                showDialog2 = false
+                                if(payNumber != "" && payNumber != "0" && payNumber != "00" && payNumber != "000")
+                                showBottomSheet = true
+                                      },
+                            modifier = Modifier.padding(horizontal = 5.dp)
+                        ) {
+                            Icon(Icons.Filled.Check, contentDescription = "description")
+                        }
+                    }
+                }
+            }
             Row(modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 15.dp, vertical = 0.dp), horizontalArrangement = Arrangement.Start){
-
-                Spacer(modifier = Modifier.width(10.dp))
+                .padding(horizontal = 15.dp, vertical = 0.dp), horizontalArrangement = Arrangement.Start) {
 
                 AssistChip(
                     onClick = { showitem = true },
-                    label = { Text(text = "楼栋 ${BuildingsNumber}") },
-                    //leadingIcon = { Icon(painter = painterResource(R.drawable.add), contentDescription = "description") }
+                    label = { Text(text = "楼栋 $BuildingsNumber") }
                 )
 
                 Spacer(modifier = Modifier.width(10.dp))
-
 
                 AssistChip(
                     onClick = {
@@ -340,71 +399,18 @@ fun EleUI(vm : LoginSuccessViewModel) {
                     //    leadingIcon = { Icon(painter = painterResource(R.drawable.calendar), contentDescription = "description") }
                 )
 
-
                 Spacer(modifier = Modifier.width(10.dp))
                 AssistChip(
                     onClick = { showitem4 = !showitem4 },
                     label = { Text(text = "寝室 ${RoomNumber}") },
                     //leadingIcon = { Icon(painter = painterResource(R.drawable.add), contentDescription = "description") }
                 )
-
-
             }
 
 
-            Spacer(modifier = Modifier.height(7.dp))
+           // Spacer(modifier = Modifier.height(7.dp))
 
 //充值界面
-            AnimatedVisibility(
-                visible = showAdd,
-                enter = slideInVertically(
-                    initialOffsetY = { -40 }
-                ) + expandVertically(
-                    expandFrom = Alignment.Top
-                ) + scaleIn(
-                    // Animate scale from 0f to 1f using the top center as the pivot point.
-                    transformOrigin = TransformOrigin(0.5f, 0f)
-                ) + fadeIn(initialAlpha = 0.3f),
-                exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
-            ){
-                Row (modifier = Modifier.padding(horizontal = 15.dp)){
-                    OutlinedCard{
-                        LazyColumn(modifier = Modifier.padding(horizontal = 10.dp)) {
-                            item {
-                                Text(text = "选取金额 ￥${payNumber}", modifier = Modifier.padding(10.dp))
-                            }
-                            item {
-                                LazyRow {
-                                    items(5) { items ->
-                                        IconButton(onClick = {
-                                            if (payNumber.length < 3)
-                                                payNumber += items.toString()
-                                            else Toast.makeText(
-                                                MyApplication.context,
-                                                "最高999元",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        }) { Text(text = items.toString()) }
-                                    }
-                                }
-                            }
-                            item {
-                                LazyRow {
-                                    items(5) { items ->
-                                        val num = items + 5
-                                        IconButton(onClick = {
-                                            if (payNumber.length < 3)
-                                                payNumber += num
-                                            else Toast.makeText(MyApplication.context, "最高999元", Toast.LENGTH_SHORT).show()
-                                        }) { Text(text = num.toString()) }
-                                    }
-                                }
-                            }
-                        }
-                        Spacer(modifier = Modifier.height(10.dp))
-                    }
-                }
-            }
             Spacer(modifier = Modifier.height(7.dp))
             AnimatedVisibility(
                 visible = showitem4,
@@ -484,10 +490,9 @@ fun EleUI(vm : LoginSuccessViewModel) {
                 label = "" // 使用弹簧动画
             )
 
-             DividerText(text = "查询结果")
-          //   if(show) {
+            DividerText(text = "查询结果")
 
-                Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
+            Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
                     Spacer(modifier = Modifier.height(100.dp))
                     Card(
                         elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
@@ -507,7 +512,7 @@ fun EleUI(vm : LoginSuccessViewModel) {
                                 trailingContent = {
                                     if(show) {
                                         if(showButton)
-                                            FilledTonalButton(onClick = { if(showAdd && payNumber != "") showBottomSheet = true   else showAdd = true }) { Text(text = if(showAdd && payNumber != "") "提交订单" else "快速充值") }
+                                            FilledTonalButton(onClick = { if(showAdd && payNumber != "") showBottomSheet = true   else showDialog2 = true  }) { Text(text = if(showAdd && payNumber != "") "提交订单" else "快速充值") }
                                     } else FilledTonalButton(onClick = { null }) { Text(text = "快速充值") } }
                             )
                             ListItem(
@@ -518,12 +523,10 @@ fun EleUI(vm : LoginSuccessViewModel) {
                         }
                     }
                 }
+            Spacer(modifier = Modifier.height(10.dp))
+            BottomTip(str = "月末补贴 照明空调各￥15")
 
-
-
-
-            
-            Spacer(modifier = Modifier.height(30.dp))
+            //Spacer(modifier = Modifier.height(30.dp))
         }
     }
 }

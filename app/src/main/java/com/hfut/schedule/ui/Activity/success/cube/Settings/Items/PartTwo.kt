@@ -96,7 +96,7 @@ fun PartTwo() {
         },
         modifier = Modifier.clickable{
             if (version.version != APPVersion.getVersionName())
-                StartUri(MyApplication.DownloadURL)
+                StartUri(MyApplication.UpdateURL+ "releases/download/Android/${version.version}.apk")
             else Toast.makeText(MyApplication.context,"与云端版本一致",Toast.LENGTH_SHORT).show()
         }
     )
@@ -132,7 +132,7 @@ fun UpdateItem() {
             IconButton(onClick = { expandItems = !expandItems }) { Icon(painterResource(id = if(!expandItems) R.drawable.expand_content else R.drawable.collapse_content), contentDescription = "")
             }
             },
-        modifier = Modifier.clickable{ StartUri(MyApplication.DownloadURL) },
+        modifier = Modifier.clickable{ StartUri(MyApplication.UpdateURL+ "releases/download/Android/${version.version}.apk") },
         colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
     )
 

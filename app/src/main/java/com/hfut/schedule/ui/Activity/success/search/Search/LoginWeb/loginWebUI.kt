@@ -21,6 +21,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
@@ -42,8 +43,10 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
+import com.hfut.schedule.logic.utils.ReservDecimal
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.getWebNew
+import com.hfut.schedule.ui.UIUtils.DividerText
 import com.hfut.schedule.ui.UIUtils.ScrollText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -58,8 +61,11 @@ import java.math.RoundingMode
 fun loginWebUI(vmUI : UIViewModel,vm : LoginSuccessViewModel) {
     val memoryWeb = SharePrefs.prefs.getString("memoryWeb","0")
     val flow = vmUI.webValue.value?.flow ?: memoryWeb
-    val bd = BigDecimal((flow?.toDouble() ?: 0.0) / 1024)
-    val str = bd.setScale(2, RoundingMode.HALF_UP).toString()
+    val str = try {
+        ReservDecimal.reservDecimal((flow?.toDouble() ?: 0.0) / 1024,2)
+    } catch (_:Exception) {
+        0.0
+    }
     var textStatus by  remember { mutableStateOf("已用 ${flow}MB (${str}GB)\n余额 ￥${vmUI.webValue.value?.fee?: "0"}") }
 
     val bd2 = BigDecimal(((flow?.toDouble() ?: 0.0) / (1024 * MyApplication.maxFreeFlow)) * 100)
@@ -78,7 +84,7 @@ fun loginWebUI(vmUI : UIViewModel,vm : LoginSuccessViewModel) {
     var textLogout by  remember { mutableStateOf("注销") }
     vmUI.getWebInfo()
     getWebNew(vm,vmUI)
-
+    DividerText(text = "账户数据")
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
         modifier = Modifier
@@ -98,18 +104,21 @@ fun loginWebUI(vmUI : UIViewModel,vm : LoginSuccessViewModel) {
         ListItem(
             headlineContent = {
                 Text(
-                    text = textStatus.substringBefore("\n"),
+                    text = "已用 ${str} GB",
                     fontSize = 28.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.horizontalScroll(scrollState))
+            },
+            trailingContent = {
+                Text(text = "$flow MB")
             }
         )
         ListItem(
-            headlineContent = { Text(text = textStatus.substringAfter("\n")) },
+            headlineContent = { Text(text = "余额 ￥${vmUI.webValue.value?.fee?: "0"}") },
             leadingContent = { Icon(painter = painterResource(id = R.drawable.paid), contentDescription = "")},
             trailingContent = {
-                Button(
+                FilledTonalButton(
                     onClick = {
                         vmUI.loginWeb()
                         // vmUI.loginWeb2()
@@ -127,7 +136,7 @@ fun loginWebUI(vmUI : UIViewModel,vm : LoginSuccessViewModel) {
                 headlineContent = { Text(text = "已用 ${precent} %", fontWeight = FontWeight.Bold)},
                 leadingContent = { Icon(painterResource(R.drawable.percent), contentDescription = "Localized description",) },
                 trailingContent = {
-                    Button(
+                    FilledTonalButton (
                         onClick = {
                             vmUI.logoutWeb()
                         },
@@ -141,6 +150,35 @@ fun loginWebUI(vmUI : UIViewModel,vm : LoginSuccessViewModel) {
             )
         }
     }
+    DividerText(text = "使用说明")
+    ListItem(
+        headlineContent = { Text(text = "WLAN连接'hfut-wlan'后自动弹出认证") },
+        supportingContent = { Text(text = "校区内两大校园网中心位于图书馆、教室，WLAN质量最好") },
+        leadingContent = {
+            Icon(painter = painterResource(id = R.drawable.wifi_tethering), contentDescription = "")
+        }
+    )
+    ListItem(
+        headlineContent = { Text(text = "宿舍连接缆线后自动弹出认证") },
+        leadingContent = {
+            Icon(painter = painterResource(id = R.drawable.lan), contentDescription = "")
+        }
+    )
+    ListItem(
+        headlineContent = { Text(text = "认证初始密码位于 查询中心-个人信息") },
+        leadingContent = {
+            Icon(painter = painterResource(id = R.drawable.key), contentDescription = "")
+        }
+    )
+    ListItem(
+        headlineContent = { Text(text = "部分内网必须连接校园网打开") },
+        supportingContent = {
+                            Text(text = "学校提供WEBVPN供外网访问部分内网地址,可在 查询中心-网址导航 打开")
+        },
+        leadingContent = {
+            Icon(painter = painterResource(id = R.drawable.vpn_key), contentDescription = "")
+        }
+    )
 
 
 

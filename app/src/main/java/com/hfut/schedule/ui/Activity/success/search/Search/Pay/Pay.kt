@@ -1,5 +1,11 @@
 package com.hfut.schedule.ui.Activity.success.search.Search.Pay
 
+import android.os.Handler
+import android.os.Looper
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,24 +33,33 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.gson.Gson
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.datamodel.PayData
 import com.hfut.schedule.logic.datamodel.PayResponse
 import com.hfut.schedule.logic.utils.ClipBoard
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.StartApp
+import com.hfut.schedule.ui.UIUtils.CardForListColor
 import com.hfut.schedule.ui.UIUtils.DividerText
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.ScrollText
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Pay(ifSaved : Boolean) {
+fun Pay(ifSaved : Boolean,vm : LoginSuccessViewModel) {
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
  //   var showDialog by remember { mutableStateOf(false) }
@@ -71,14 +86,6 @@ fun Pay(ifSaved : Boolean) {
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
                         title = { Text("学费") },
-                        actions = {
-                            FilledTonalButton(
-                                onClick = { StartApp.StartUri(url) },
-                                modifier = Modifier.padding(horizontal = 15.dp)
-                            ) {
-                                Text(text = "缴费")
-                            }
-                        }
                     )
                 },
             ) { innerPadding ->
@@ -88,7 +95,7 @@ fun Pay(ifSaved : Boolean) {
                         .verticalScroll(rememberScrollState())
                         .fillMaxSize()
                 ) {
-                    PayUI(url)
+                    PayUI(url,vm)
                 }
             }
         }
@@ -96,39 +103,90 @@ fun Pay(ifSaved : Boolean) {
 }
 
 @Composable
-fun PayUI(url : String) {
-    val data = getPay()
+fun PayUI(url : String,vm: LoginSuccessViewModel) {
+    var loading by remember { mutableStateOf(true) }
+    var refresh by remember { mutableStateOf(true) }
+
+    if(refresh) {
+        loading = true
+        CoroutineScope(Job()).launch{
+            async{ vm.getPay() }.await()
+            async {
+                Handler(Looper.getMainLooper()).post{
+                    vm.PayData.observeForever { result ->
+                        if (result != null) {
+                            if(result.contains("{")) {
+                                loading = false
+                                refresh = false
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    val scale = animateFloatAsState(
+        targetValue = if (loading) 0.9f else 1f, // 按下时为0.9，松开时为1
+        //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
+        animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
+        label = "" // 使用弹簧动画
+    )
+    val scale2 = animateFloatAsState(
+        targetValue = if (loading) 0.97f else 1f, // 按下时为0.9，松开时为1
+        //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
+        animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
+        label = "" // 使用弹簧动画
+    )
+
+    val blurSize by animateDpAsState(
+        targetValue = if (loading) 10.dp else 0.dp, label = ""
+        ,animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
+    )
+
+
+    val data = getPay(vm)
     DividerText(text = "欠缴费用")
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxWidth().scale(scale2.value)
             .padding(horizontal = 15.dp, vertical = 5.dp),
         shape = MaterialTheme.shapes.medium,
+        colors = CardForListColor()
     ) {
-        ListItem(
-            headlineContent = { Text(text = "￥${data.total}", fontSize = 28.sp) }
-        )
-        Row {
+        Column (modifier = Modifier.blur(blurSize).scale(scale.value)) {
             ListItem(
-                headlineContent = { ScrollText(text = "学费 ￥${data.xf}") },
-                modifier = Modifier.weight(.5f)
+                headlineContent = { Text(text = "￥${if(!loading) data.total else "0.0"}", fontSize = 28.sp) },
+                trailingContent = {
+                    FilledTonalButton(
+                        onClick = { StartApp.StartUri(url) },
+                        modifier = Modifier.padding(horizontal = 15.dp)
+                    ) {
+                        Text(text = "缴费")
+                    }
+                }
             )
-            ListItem(
-                headlineContent = { ScrollText(text = "体检费 ￥${data.dstjf}") },
-                modifier = Modifier.weight(.5f)
-            )
+            Row {
+                ListItem(
+                    headlineContent = { ScrollText(text = "学费 ￥${if(!loading)data.xf else "0.0"}") },
+                    modifier = Modifier.weight(.5f)
+                )
+                ListItem(
+                    headlineContent = { ScrollText(text = "体检费 ￥${if(!loading) data.dstjf else "0.0"}") },
+                    modifier = Modifier.weight(.5f)
+                )
 
-        }
-        Row {
-            ListItem(
-                headlineContent = { ScrollText(text = "住宿费 ￥${data.zsf}") },
-                modifier = Modifier.weight(.5f)
-            )
-            ListItem(
-                headlineContent = { ScrollText(text = "军训费 ￥${data.dsjxf}") },
-                modifier = Modifier.weight(.5f)
-            )
+            }
+            Row {
+                ListItem(
+                    headlineContent = { ScrollText(text = "住宿费 ￥${if(!loading) data.zsf else "0.0"}") },
+                    modifier = Modifier.weight(.5f)
+                )
+                ListItem(
+                    headlineContent = { ScrollText(text = "军训费 ￥${if(!loading) data.dsjxf else "0.0"}") },
+                    modifier = Modifier.weight(.5f)
+                )
+            }
         }
     }
     DividerText(text = "缴费方式")
@@ -160,13 +218,6 @@ fun PayUI(url : String) {
         )
   //  }
     DividerText(text = "防骗警告")
-    Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 15.dp, vertical = 5.dp),
-        shape = MaterialTheme.shapes.medium,
-    ) {
         ListItem(
             headlineContent = { Text(text = "电子支付只能通过学校缴费平台官方链接(右上角按钮提供)发起,其余线上途径均需谨慎甄别!") },
             leadingContent = {Icon(
@@ -174,15 +225,16 @@ fun PayUI(url : String) {
                 contentDescription = ""
             )}
         )
-    }
+
 }
 
 
-fun getPay() : PayData {
+fun getPay(vm: LoginSuccessViewModel) : PayData {
     return try {
-        val json = prefs.getString("Onepay","")
-        Gson().fromJson(json,PayResponse::class.java).data
+        val json = vm.PayData.value
+        val data = Gson().fromJson(json,PayResponse::class.java).data
+        data
     } catch (e : Exception) {
-        PayData("0","0","0","0","0")
+        PayData("0.0","0.0","0.0","0.0","0.0")
     }
 }

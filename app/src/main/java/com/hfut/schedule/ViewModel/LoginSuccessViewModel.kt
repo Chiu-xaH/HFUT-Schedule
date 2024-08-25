@@ -877,6 +877,7 @@ class LoginSuccessViewModel(webVpn : Boolean) : ViewModel() {
         })
     }
 
+    val PayData = MutableLiveData<String?>()
     fun getPay()  {
 
         val call = prefs.getString("Username","")?.let { One.getPay(it) }
@@ -884,7 +885,7 @@ class LoginSuccessViewModel(webVpn : Boolean) : ViewModel() {
         if (call != null) {
             call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    Save("Onepay", response.body()?.string())
+                    PayData.value = response.body()?.string()
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }

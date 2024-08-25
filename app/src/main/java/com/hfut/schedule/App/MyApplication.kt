@@ -21,7 +21,7 @@ class MyApplication : Application() {
         const val JxglstuWebVpnURL = "https://webvpn.hfut.edu.cn/http/77726476706e69737468656265737421faef469034247d1e760e9cb8d6502720ede479/eams5-student/"
         const val WebVpnURL = "https://webvpn.hfut.edu.cn/"
         const val NewsURL = "https://news.hfut.edu.cn/"
-        const val DownloadURL = "https://gitee.com/chiu-xah/HFUT-Schedule/releases/tag/Android"
+        //const val DownloadURL = "https://gitee.com/chiu-xah/HFUT-Schedule/releases/tag/Android"
         const val ServerURL = ""
         const val JwglappURL = "https://jwglapp.hfut.edu.cn/"
         const val UpdateURL = "https://gitee.com/chiu-xah/HFUT-Schedule/"

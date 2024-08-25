@@ -505,7 +505,7 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
                         .weight(.5f),
                     shape = MaterialTheme.shapes.small,
                 ){
-                    Pay(ifSaved)
+                    Pay(ifSaved,vm)
                 }
             }
              Spacer(modifier = Modifier.height(5.dp))

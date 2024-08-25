@@ -53,7 +53,7 @@ fun Second() {
             )
         },
         modifier = Modifier.clickable {
-            showDialog= true
+            MyToast("请前往 第二课堂 微信小程序")
         }
     )
     val switch_startUri = SharePrefs.prefs.getBoolean("SWITCHSTARTURI",true)

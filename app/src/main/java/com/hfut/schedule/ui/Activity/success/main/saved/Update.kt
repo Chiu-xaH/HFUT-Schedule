@@ -26,7 +26,6 @@ suspend fun NetWorkUpdate(vm : LoginSuccessViewModel, vm2 : LoginViewModel,vmUI 
         async { AddedItems() }
         async { getNotifications() }
         async { vm.getExamJXGLSTU(cookie!!) }
-        async { vm.getPay() }
         async { CommuityTOKEN?.let { vm.GetCourse(it) } }
         async { GetZjgdCard(vm,vmUI) }.await()
     }

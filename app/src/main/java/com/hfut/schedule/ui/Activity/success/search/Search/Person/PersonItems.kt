@@ -266,7 +266,7 @@ fun PersonItems(ifSaved : Boolean) {
                     )
                     ListItem(
                         headlineContent = { getIdentifyID()?.let { Text(text = it) } },
-                        overlineContent = { Text(text = "一卡通初始密码")},
+                        overlineContent = { Text(text = "一卡通&校园网初始密码")},
                         modifier = Modifier.clickable {
                             ClipBoard.copy(getIdentifyID())
                             MyToast("已复制到剪切板")
@@ -366,33 +366,35 @@ data class PersonInfo(val name : String?,
 fun getPersonInfo() : PersonInfo {
  //   val cookie = SharePrefs.prefs.getString("redirect", "")
  //   val photo = prefs.getString("photo",null)
+    try {
+        val info = prefs.getString("info","")
 
-    val info = prefs.getString("info","")
 
+        val doc = info?.let { Jsoup.parse(it) }
+        val studentnumber = doc?.select("li.list-group-item.text-right:contains(学号) span")?.last()?.text()
+        val name = doc?.select("li.list-group-item.text-right:contains(中文姓名) span")?.last()?.text()
+        val chineseid = doc?.select("li.list-group-item.text-right:contains(证件号) span")?.last()?.text()
+        val elements = doc?.select("dl dt, dl dd")
 
-    val doc = info?.let { Jsoup.parse(it) }
-    val studentnumber = doc?.select("li.list-group-item.text-right:contains(学号) span")?.last()?.text()
-    val name = doc?.select("li.list-group-item.text-right:contains(中文姓名) span")?.last()?.text()
-    val chineseid = doc?.select("li.list-group-item.text-right:contains(证件号) span")?.last()?.text()
-    val elements = doc?.select("dl dt, dl dd")
-
-    val infoMap = mutableMapOf<String, String>()
-    if (elements != null) {
-        for (i in 0 until elements.size step 2) {
-            val key = elements[i].text()
-            val value = elements[i+1].text()
-            infoMap[key] = value
+        val infoMap = mutableMapOf<String, String>()
+        if (elements != null) {
+            for (i in 0 until elements.size step 2) {
+                val key = elements[i].text()
+                val value = elements[i+1].text()
+                infoMap[key] = value
+            }
         }
+
+        //SharePrefs.Save("ChineseId",chineseid)
+
+        val benorsshuo =infoMap[elements?.get(8)?.text()]
+        val yuanxi =infoMap[elements?.get(10)?.text()]
+        val zhuanye =infoMap[elements?.get(12)?.text()]
+        val classes =infoMap[elements?.get(16)?.text()]
+        val school =infoMap[elements?.get(18)?.text()]
+        val home =infoMap[elements?.get(80)?.text()]
+        return PersonInfo(name,studentnumber,chineseid,classes,zhuanye,yuanxi, school,benorsshuo,home)
+    } catch (_:Exception) {
+        return PersonInfo(null,null,null,null,null,null,null,null,null)
     }
-
-    //SharePrefs.Save("ChineseId",chineseid)
-
-    val benorsshuo =infoMap[elements?.get(8)?.text()]
-    val yuanxi =infoMap[elements?.get(10)?.text()]
-    val zhuanye =infoMap[elements?.get(12)?.text()]
-    val classes =infoMap[elements?.get(16)?.text()]
-    val school =infoMap[elements?.get(18)?.text()]
-    val home =infoMap[elements?.get(80)?.text()]
-
-    return PersonInfo(name,studentnumber,chineseid,classes,zhuanye,yuanxi, school,benorsshuo,home)
 }

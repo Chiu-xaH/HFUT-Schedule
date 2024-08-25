@@ -292,11 +292,11 @@ fun DormitoryScoreUI(vm : LoginSuccessViewModel) {
                             getDormitoryScore(vm)?.let {
                                 items(it.size) { item ->
                                     Card(
-                                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .padding(horizontal = 5.dp, vertical = 5.dp),
-                                        shape = MaterialTheme.shapes.medium
+                                        shape = MaterialTheme.shapes.small
                                     ) {
                                         ListItem(
                                             headlineContent = { getDormitoryScore(vm)?.get(item)?.let { it1 -> Text(text = it1.date) } },

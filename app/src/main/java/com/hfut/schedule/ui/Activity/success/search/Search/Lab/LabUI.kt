@@ -1,7 +1,10 @@
 package com.hfut.schedule.ui.Activity.success.search.Search.Lab
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -23,21 +26,16 @@ import com.hfut.schedule.logic.utils.StartApp
 fun LabUI() {
     LazyColumn {
         item {
-            Card(
-                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp),
-                shape = MaterialTheme.shapes.medium
-            ) {
+            Column {
                 ListItem(
-                    headlineContent = { Text(text = "这里是实验室,选项会随云端发生变动,即使您不更新软件") },
+                    headlineContent = { Text(text = "选项会随云端发生变动,即使不更新软件") },
                     leadingContent = {
                         Icon(painterResource(R.drawable.cloud_download), contentDescription = "Localized description",)
                     },
                     modifier = Modifier.clickable {
                     }
                 )
+                Spacer(modifier = Modifier.height(10.dp))
             }
         }
         items(getLab().size) { item ->

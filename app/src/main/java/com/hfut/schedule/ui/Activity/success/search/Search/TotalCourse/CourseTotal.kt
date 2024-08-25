@@ -84,7 +84,7 @@ fun CourseTotal(vm :LoginSuccessViewModel) {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ){
-                    CourseTotalUI(json)
+                    CourseTotalUI(json,false)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }

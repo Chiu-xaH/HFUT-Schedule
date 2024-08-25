@@ -4,22 +4,26 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.Divider
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.AssistChip
@@ -28,31 +32,48 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.activity.LoginActivity
-import com.hfut.schedule.logic.datamodel.Community.GradeAvgResponse
 import com.hfut.schedule.logic.utils.GetDate
+import com.hfut.schedule.logic.utils.ReservDecimal
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.ui.Activity.card.counts.RadarChart
+import com.hfut.schedule.ui.Activity.card.counts.RadarData
+import com.hfut.schedule.ui.UIUtils.CardForListColor
+import com.hfut.schedule.ui.UIUtils.DividerText
 import com.hfut.schedule.ui.UIUtils.EmptyUI
+import com.hfut.schedule.ui.UIUtils.LittleDialog
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.ScrollText
 import kotlinx.coroutines.CoroutineScope
@@ -60,6 +81,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.lang.Exception
 
 @Composable
 fun TotaGrade() {
@@ -301,9 +323,40 @@ fun GradeItemUI(vm :LoginSuccessViewModel,innerPadding : PaddingValues) {
     else { UIS() }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("SuspiciousIndentation")
 @Composable
 fun GradeItemUIJXGLSTU(innerPadding: PaddingValues) {
+    var showBottomSheet by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState()
+    var title by remember { mutableStateOf("成绩详情") }
+    var num by remember { mutableStateOf(0) }
+    if (showBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { showBottomSheet= false },
+            sheetState = sheetState
+        ) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        title = { Text(title) }
+                    )
+                },) {innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                ){
+                    GradeInfo(num)
+                }
+            }
+        }
+    }
     if(getGradeJXGLSTU().size == 0) EmptyUI()
     else
     LazyColumn{
@@ -324,11 +377,136 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues) {
                             overlineContent = { Text( "成绩  "+ getGradeJXGLSTU()[item].totalGrade + "  |  绩点  " + getGradeJXGLSTU()[item].GPA +  "  |  学分  " + getGradeJXGLSTU()[item].score) },
                             leadingContent = { Icon(painterResource(R.drawable.article), contentDescription = "Localized description",) },
                             supportingContent = { Text(getGradeJXGLSTU()[item].grade) },
-                            modifier = Modifier.clickable {},
+                            modifier = Modifier.clickable {
+                                title = getGradeJXGLSTU()[item].title
+                                num = item
+                                showBottomSheet = true
+                            },
                         )
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun GradeInfo(num : Int) {
+    val data = getGradeJXGLSTU()[num]
+    val list = data.grade.split(" ")
+    val radarList = mutableListOf<RadarData>()
+    list.forEach { item->
+        val label = item.substringBefore(":")
+        val score = try {
+            if(item.substringAfter(":").contains("中") || item.substringAfter(":").contains("及格")) .6f
+            else if(item.substringAfter(":").contains("高") || item.substringAfter(":").contains("优秀")) .9f
+            else if(item.substringAfter(":").contains("低")) .3f
+            else item.substringAfter(":").toFloat() / 100
+        } catch (_:Exception) {
+            if(item.substringAfter(":").contains("中") || item.substringAfter(":").contains("及格")) .6f
+            else if(item.substringAfter(":").contains("高") || item.substringAfter(":").contains("优秀")) .9f
+            else if(item.substringAfter(":").contains("低")) .3f
+            else 0f
+        }
+        radarList.add(RadarData(label,score))
+    }
+    val scrollState = rememberScrollState()
+    val GPA = getGradeJXGLSTU()[num].GPA
+    val title = "成绩 ${getGradeJXGLSTU()[num].totalGrade} 绩点 ${GPA} 学分 ${getGradeJXGLSTU()[num].score}"
+
+    var avgPingshi = 0f
+    var examScore = 0f
+    var count = 0
+    radarList.forEach{item->
+        if(!item.label.contains("期末")) {
+            avgPingshi += item.value
+            count++
+        } else {
+            examScore = item.value
+        }
+    }
+    if(count != 0)
+        avgPingshi /= count
+    else avgPingshi = 0f
+    if(examScore != 0f)
+        avgPingshi /= examScore
+    else avgPingshi = 0f
+
+    var showDialog by remember {
+        mutableStateOf(false)
+    }
+    if(showDialog) {
+        LittleDialog(
+            onDismissRequest = { showDialog = false },
+            onConfirmation = { showDialog = false},
+            dialogTitle = "提示",
+            dialogText = "平时因数=除去期末成绩各项平均分/期末分数,可大致反映最终成绩平时分占比\n越接近1则平衡,越>1则表明最终成绩可能更靠平时分,越<1表明最终成绩可能因平时分拖后腿",
+            conformtext ="好",
+            dismisstext ="关闭"
+        )
+    }
+
+    LaunchedEffect(key1 = title ) {
+        delay(500L)
+        scrollState.animateScrollTo(scrollState.maxValue)
+        delay(4000L)
+        scrollState.animateScrollTo(0)
+    }
+    DividerText(text = "雷达图")
+    Spacer(modifier = Modifier.height(10.dp))
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center){
+        RadarChart(data = radarList, modifier = Modifier.size(200.dp))
+    }
+    Spacer(modifier = Modifier.height(10.dp))
+    DividerText(text = "成绩详情")
+    Card(
+        elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 15.dp, vertical = 5.dp),
+        shape = MaterialTheme.shapes.medium,
+    ) {
+        ListItem(
+            headlineContent = {
+                Text(
+                    text = title,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.horizontalScroll(scrollState),
+                    fontSize = 28.sp)},
+        )
+        for(i in list.indices step 2)
+            Row {
+                ListItem(
+                    headlineContent = { ScrollText(text = list[i]) },
+                    modifier = Modifier.weight(.5f)
+                )
+                if(i+1 < list.size)
+                    ListItem(
+                        headlineContent = { ScrollText(text = list[i+1]) },
+                        modifier = Modifier.weight(.5f)
+                    )
+            }
+        Row{
+            ListItem(
+                leadingContent = { Icon(painter = painterResource(id = if(GPA.toFloat() >= 3.0)R.drawable.sentiment_very_satisfied else R.drawable.sentiment_dissatisfied), contentDescription = "") },
+                headlineContent = { ScrollText(text = if(GPA == "4")"满绩" else if(GPA == "3.7") "接近满绩" else if(GPA.toFloat() >= 3) "不错" else "有点薄弱"
+                ) },
+                modifier = Modifier.weight(.4f)
+            )
+            ListItem(
+                leadingContent = {
+                    Icon(painter = painterResource(R.drawable.percent), contentDescription = "")
+                },
+                headlineContent = {
+                                  ScrollText(text = "平时因数 ${if(avgPingshi != 0f)ReservDecimal.reservDecimal(avgPingshi.toDouble(),2) else "未知"}")
+                 },
+                modifier = Modifier
+                    .weight(.6f)
+                    .clickable {
+                        showDialog = true
+                    }
+            )
         }
     }
 }

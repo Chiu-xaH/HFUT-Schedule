@@ -29,11 +29,11 @@ fun WebItem() {
         .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
 
         Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(.5f),
-            shape = MaterialTheme.shapes.medium,
+            shape = MaterialTheme.shapes.small,
         ){
             ListItem(
                 headlineContent = { Text(text = "信息门户") },
@@ -43,11 +43,11 @@ fun WebItem() {
         }
         Spacer(modifier = Modifier.width(10.dp))
         Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(.5f),
-            shape = MaterialTheme.shapes.medium,
+            shape = MaterialTheme.shapes.small,
         ){
             ListItem(
                 headlineContent = { Text(text = "学生教务") },
@@ -62,11 +62,11 @@ fun WebItem() {
         .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
 
         Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(.5f),
-            shape = MaterialTheme.shapes.medium,
+            shape = MaterialTheme.shapes.small,
         ){
             ListItem(
                 headlineContent = { Text(text = "邮箱系统") },
@@ -76,11 +76,11 @@ fun WebItem() {
         }
         Spacer(modifier = Modifier.width(10.dp))
         Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(.5f),
-            shape = MaterialTheme.shapes.medium,
+            shape = MaterialTheme.shapes.small,
         ){
             ListItem(
                 headlineContent = { Text(text = "图书馆") },
@@ -94,11 +94,11 @@ fun WebItem() {
         .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
 
         Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(.5f),
-            shape = MaterialTheme.shapes.medium,
+            shape = MaterialTheme.shapes.small,
         ){
             ListItem(
                 headlineContent = { Text(text = "服务大厅") },
@@ -109,11 +109,11 @@ fun WebItem() {
         }
         Spacer(modifier = Modifier.width(10.dp))
         Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(.5f),
-            shape = MaterialTheme.shapes.medium,
+            shape = MaterialTheme.shapes.small,
         ){
             ListItem(
                 headlineContent = { Text(text = "校园网服务") },
@@ -128,11 +128,11 @@ fun WebItem() {
         .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
 
         Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(.5f),
-            shape = MaterialTheme.shapes.medium,
+            shape = MaterialTheme.shapes.small,
         ){
             ListItem(
                 headlineContent = { Text(text = "智慧社区") },
@@ -142,11 +142,11 @@ fun WebItem() {
         }
         Spacer(modifier = Modifier.width(10.dp))
         Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(.5f),
-            shape = MaterialTheme.shapes.medium,
+            shape = MaterialTheme.shapes.small,
         ){
             ListItem(
                 headlineContent = { Text(text = "缴费平台") },
@@ -160,11 +160,11 @@ fun WebItem() {
         .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
 
         Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(.5f),
-            shape = MaterialTheme.shapes.medium,
+            shape = MaterialTheme.shapes.small,
         ){
             ListItem(
                 headlineContent = { Text(text = "工大官网") },
@@ -174,11 +174,11 @@ fun WebItem() {
         }
         Spacer(modifier = Modifier.width(10.dp))
         Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(.5f),
-            shape = MaterialTheme.shapes.medium,
+            shape = MaterialTheme.shapes.small,
         ){
             ListItem(
                 headlineContent = { Text(text = "WEBVPN") },
@@ -192,11 +192,11 @@ fun WebItem() {
         .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
 
         Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(.5f),
-            shape = MaterialTheme.shapes.medium,
+            shape = MaterialTheme.shapes.small,
         ){
             ListItem(
                 headlineContent = { Text(text = "报修") },
@@ -206,11 +206,11 @@ fun WebItem() {
         }
         Spacer(modifier = Modifier.width(10.dp))
         Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(.5f),
-            shape = MaterialTheme.shapes.medium,
+            shape = MaterialTheme.shapes.small,
         ){
             ListItem(
                 headlineContent = { Text(text = "大创系统") },

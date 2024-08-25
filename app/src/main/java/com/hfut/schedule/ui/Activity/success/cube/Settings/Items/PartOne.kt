@@ -46,7 +46,6 @@ import androidx.navigation.NavController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
-import com.hfut.schedule.ViewModel.LoginViewModel
 import com.hfut.schedule.activity.LoginActivity
 import com.hfut.schedule.logic.Enums.CardBarItems
 import com.hfut.schedule.logic.Enums.FixBarItems
@@ -55,10 +54,7 @@ import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.SaveBoolean
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.logic.utils.StartApp
-import com.hfut.schedule.ui.Activity.Fix.AboutUI
-import com.hfut.schedule.ui.Activity.Fix.feedBackUI
-
+import com.hfut.schedule.logic.utils.StartApp.StartUri
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Monet.MonetColorItem
 import com.hfut.schedule.ui.Activity.success.cube.Settings.VersionInfo
 import com.hfut.schedule.ui.Activity.success.cube.Settings.getUpdates
@@ -321,7 +317,7 @@ fun AlwaysItem() {
             },
             modifier = Modifier.clickable{
                 if (version.version != APPVersion.getVersionName())
-                    StartApp.StartUri(MyApplication.DownloadURL)
+                    StartUri(MyApplication.UpdateURL+ "releases/download/Android/${version.version}.apk")
                 else {
                     showBottomSheet = true
                 }
