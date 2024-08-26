@@ -75,6 +75,7 @@ import com.hfut.schedule.ui.UIUtils.DividerText
 import com.hfut.schedule.ui.UIUtils.EmptyUI
 import com.hfut.schedule.ui.UIUtils.LittleDialog
 import com.hfut.schedule.ui.UIUtils.MyToast
+import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.ScrollText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -334,7 +335,8 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues) {
     if (showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet= false },
-            sheetState = sheetState
+            sheetState = sheetState,
+            shape = Round(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),

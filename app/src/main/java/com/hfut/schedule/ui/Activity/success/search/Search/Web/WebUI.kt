@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
+import com.hfut.schedule.ui.UIUtils.Round
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -49,7 +50,8 @@ fun WebUI() {
     if (showBottomSheet_Web) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet_Web = false },
-            sheetState = sheetState_Web
+            sheetState = sheetState_Web,
+            shape = Round(sheetState_Web)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),

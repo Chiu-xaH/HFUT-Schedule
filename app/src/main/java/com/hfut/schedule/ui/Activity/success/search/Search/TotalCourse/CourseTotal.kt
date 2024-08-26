@@ -37,6 +37,7 @@ import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.datamodel.Community.CourseTotalResponse
 import com.hfut.schedule.logic.datamodel.Community.courseBasicInfoDTOList
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.ScrollText
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,7 +66,8 @@ fun CourseTotal(vm :LoginSuccessViewModel) {
             onDismissRequest = {
                 showBottomSheet_Total = false
             },
-            sheetState = sheetState_Total
+            sheetState = sheetState_Total,
+            shape = Round(sheetState_Total)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),

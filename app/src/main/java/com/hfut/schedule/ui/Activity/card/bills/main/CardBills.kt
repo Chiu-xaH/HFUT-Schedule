@@ -58,6 +58,7 @@ import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.card.bills.CardRow
 import com.hfut.schedule.ui.Activity.card.BillsIcons
 import com.hfut.schedule.ui.UIUtils.MyToast
+import com.hfut.schedule.ui.UIUtils.Round
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -139,7 +140,8 @@ fun CardBills(vm : LoginSuccessViewModel,innerPaddings : PaddingValues,vmUI : UI
     if(showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState
+            sheetState = sheetState,
+            shape = Round(sheetState)
         ){
             BillsInfo(vm,Infonum)
         }

@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ui.UIUtils.Round
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,7 +36,8 @@ fun PersonUI(ifSaved : Boolean) {
             onDismissRequest = {
                 showBottomSheet_Person = false
             },
-            sheetState = sheetState_Person
+            sheetState = sheetState_Person,
+            shape = Round(sheetState_Person)
         ) { PersonItems(ifSaved) }
     }
 }

@@ -63,6 +63,7 @@ import com.hfut.schedule.ui.Activity.success.search.Search.Survey.getSemseter
 import com.hfut.schedule.ui.Activity.success.search.Search.Survey.getSemseterCloud
 import com.hfut.schedule.ui.UIUtils.DividerText
 import com.hfut.schedule.ui.UIUtils.MyToast
+import com.hfut.schedule.ui.UIUtils.Round
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -268,7 +269,8 @@ fun AlwaysItem() {
     if (showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState
+            sheetState = sheetState,
+            shape = Round(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
@@ -352,7 +354,8 @@ fun APPScreen(navController: NavController,
         if (showBottomSheet_card) {
             ModalBottomSheet(
                 onDismissRequest = { showBottomSheet_card = false },
-                sheetState = sheetState_card
+                sheetState = sheetState_card,
+                shape = Round(sheetState_card)
             ) {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
@@ -513,7 +516,8 @@ fun NetWorkScreen(navController: NavController,
         if (showBottomSheet_input) {
             ModalBottomSheet(
                 onDismissRequest = { showBottomSheet_input = false },
-                sheetState = sheetState_input
+                sheetState = sheetState_input,
+                shape = Round(sheetState_input)
             ) {
                 InfoSet()
                 Spacer(modifier = Modifier.height(100.dp))
@@ -527,7 +531,8 @@ fun NetWorkScreen(navController: NavController,
         if (showBottomSheet_arrange) {
             ModalBottomSheet(
                 onDismissRequest = { showBottomSheet_arrange = false },
-                sheetState = sheetState_arrange
+                sheetState = sheetState_arrange,
+                shape = Round(sheetState_arrange)
             ) {
                 RequestArrange()
                 Spacer(modifier = Modifier.height(100.dp))

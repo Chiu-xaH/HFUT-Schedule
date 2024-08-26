@@ -74,6 +74,7 @@ import com.hfut.schedule.ui.Activity.success.calendar.nonet.SaveCourse
 import com.hfut.schedule.ui.Activity.success.search.Search.More.Login
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.NotificationItems
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.getNotifications
+import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.ScrollText
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
@@ -131,7 +132,9 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel,vm
     var showBottomSheet by remember { mutableStateOf(false) }
     if (showBottomSheet) {
         Save("Notifications", getNotifications().size.toString())
-        ModalBottomSheet(onDismissRequest = { showBottomSheet = false }, sheetState = sheetState) {
+        ModalBottomSheet(onDismissRequest = { showBottomSheet = false }, sheetState = sheetState,
+            shape = Round(sheetState)
+        ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 topBar = {

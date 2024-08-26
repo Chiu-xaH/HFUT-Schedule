@@ -66,6 +66,7 @@ import com.hfut.schedule.ui.UIUtils.BottomTip
 import com.hfut.schedule.ui.UIUtils.CardForListColor
 import com.hfut.schedule.ui.UIUtils.DividerText
 import com.hfut.schedule.ui.UIUtils.MyToast
+import com.hfut.schedule.ui.UIUtils.Round
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -97,7 +98,8 @@ fun Program(vm : LoginSuccessViewModel,ifSaved : Boolean) {
     if (showBottomSheet_Program ) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet_Program = false },
-            sheetState = sheetState_Program
+            sheetState = sheetState_Program,
+            shape = Round(sheetState_Program)
         ) {
 
             Scaffold(
@@ -316,7 +318,8 @@ fun ProgramUI2(vm: LoginSuccessViewModel,ifSaved: Boolean) {
     if (showBottomSheet_Program ) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet_Program = false },
-            sheetState = sheetState_Program
+            sheetState = sheetState_Program,
+            shape = Round(sheetState_Program)
         ) {
 
             Scaffold(
@@ -392,7 +395,8 @@ fun ProgramUIInfo(num : Int,vm : LoginSuccessViewModel,ifSaved : Boolean) {
     if (showBottomSheet_Program ) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet_Program = false },
-            sheetState = sheetState_Program
+            sheetState = sheetState_Program,
+            shape = Round(sheetState_Program)
         ) {
 
             Scaffold(

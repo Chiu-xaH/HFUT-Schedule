@@ -29,6 +29,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.logic.utils.SharePrefs.SaveInt
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.ui.UIUtils.Round
 
 
 @SuppressLint("SuspiciousIndentation")
@@ -43,7 +44,9 @@ fun NotificationsCenter() {
 
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState) {
+            sheetState = sheetState,
+            shape = Round(sheetState)
+        ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 topBar = {

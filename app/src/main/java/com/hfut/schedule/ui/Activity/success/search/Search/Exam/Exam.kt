@@ -54,6 +54,7 @@ import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.success.search.Search.More.Login
 import com.hfut.schedule.ui.UIUtils.EmptyUI
 import com.hfut.schedule.ui.UIUtils.MyToast
+import com.hfut.schedule.ui.UIUtils.Round
 
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -102,7 +103,8 @@ fun Exam(vm : LoginSuccessViewModel,ifSaved : Boolean) {
             onDismissRequest = {
                 showBottomSheet_Exam = false
             },
-            sheetState = sheetState_Exam
+            sheetState = sheetState_Exam,
+            shape = Round(sheetState_Exam)
         ) {
 
             Scaffold(

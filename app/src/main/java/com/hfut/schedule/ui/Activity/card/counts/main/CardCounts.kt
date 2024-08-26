@@ -67,6 +67,7 @@ import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.ui.Activity.card.counts.drawLineChart
 import com.hfut.schedule.ui.UIUtils.MyToast
+import com.hfut.schedule.ui.UIUtils.Round
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -157,7 +158,8 @@ fun CardCounts(vm : LoginSuccessViewModel,innerPaddings : PaddingValues) {
         if (showBottomSheet) {
             ModalBottomSheet(
                 onDismissRequest = { showBottomSheet = false },
-                sheetState = sheetState
+                sheetState = sheetState,
+                shape = Round(sheetState)
             ) {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
@@ -434,7 +436,8 @@ fun monthCount(vm : LoginSuccessViewModel) {
         if (showBottomSheet) {
             ModalBottomSheet(
                 onDismissRequest = { showBottomSheet = false },
-                sheetState = sheetState
+                sheetState = sheetState,
+                shape = Round(sheetState)
             ) {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),

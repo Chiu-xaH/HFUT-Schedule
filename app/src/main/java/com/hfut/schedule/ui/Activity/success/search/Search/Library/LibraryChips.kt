@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.Enums.LibraryItems
+import com.hfut.schedule.ui.UIUtils.Round
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,7 +63,9 @@ fun LibraryChips() {
         )
     }
     if(showBottomSheet_History) {
-        ModalBottomSheet(onDismissRequest = { showBottomSheet_History = false }, sheetState = sheetState_History) {
+        ModalBottomSheet(onDismissRequest = { showBottomSheet_History = false }, sheetState = sheetState_History,
+            shape = Round(sheetState_History)
+        ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 topBar = {
@@ -84,7 +87,8 @@ fun LibraryChips() {
     }
 
     if(showBottomSheet_Borrow) {
-        ModalBottomSheet(onDismissRequest = { showBottomSheet_Borrow = false }, sheetState = sheetState_Borrow) {
+        ModalBottomSheet(onDismissRequest = { showBottomSheet_Borrow = false }, sheetState = sheetState_Borrow,
+            shape = Round(sheetState_Borrow)) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 topBar = {

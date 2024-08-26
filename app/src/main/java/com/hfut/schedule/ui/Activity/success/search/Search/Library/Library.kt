@@ -53,6 +53,7 @@ import com.hfut.schedule.logic.datamodel.Community.LibRecord
 import com.hfut.schedule.logic.datamodel.Community.LibraryResponse
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.ui.UIUtils.Round
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -117,7 +118,8 @@ fun LibraryItem(vm : LoginSuccessViewModel) {
 
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet_Library = false },
-            sheetState = sheetState_Library
+            sheetState = sheetState_Library,
+            shape = Round(sheetState_Library)
         ) {
          //  LibItem()
             Scaffold(

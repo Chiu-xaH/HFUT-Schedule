@@ -79,6 +79,7 @@ import com.hfut.schedule.ui.UIUtils.BottomTip
 import com.hfut.schedule.ui.UIUtils.CardForListColor
 import com.hfut.schedule.ui.UIUtils.DividerText
 import com.hfut.schedule.ui.UIUtils.MyToast
+import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.WebViewScreen
 import com.hfut.schedule.ui.theme.FWDTColr
 import kotlinx.coroutines.CoroutineScope
@@ -130,7 +131,8 @@ fun EleUI(vm : LoginSuccessViewModel) {
 
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState
+            sheetState = sheetState,
+            shape = Round(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),

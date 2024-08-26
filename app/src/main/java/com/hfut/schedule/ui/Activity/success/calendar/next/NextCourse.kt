@@ -39,6 +39,7 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.ui.Activity.success.search.Search.Library.getBorrow
 import com.hfut.schedule.ui.Activity.success.search.Search.More.Login
 import com.hfut.schedule.ui.UIUtils.MyToast
+import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.ScrollText
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -53,7 +54,8 @@ fun NextCourse(ifSaved : Boolean,vmUI : UIViewModel) {
     if (showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState
+            sheetState = sheetState,
+            shape = Round(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),

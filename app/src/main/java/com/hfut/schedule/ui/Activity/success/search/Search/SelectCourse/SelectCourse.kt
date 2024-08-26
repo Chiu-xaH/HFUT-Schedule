@@ -56,6 +56,7 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.success.search.Search.More.Login
 import com.hfut.schedule.ui.UIUtils.LittleDialog
+import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.ScrollText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -90,7 +91,8 @@ fun selectCourse(ifSaved : Boolean,vm : LoginSuccessViewModel) {
     if (showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState
+            sheetState = sheetState,
+            shape = Round(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
@@ -204,7 +206,8 @@ fun selectCourseList(vm: LoginSuccessViewModel) {
     if (showBottomSheet_selected) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet_selected = false },
-            sheetState = sheetState_selected
+            sheetState = sheetState_selected,
+            shape = Round(sheetState_selected)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
@@ -231,7 +234,8 @@ fun selectCourseList(vm: LoginSuccessViewModel) {
     if (showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState
+            sheetState = sheetState,
+            shape = Round(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
@@ -354,7 +358,8 @@ fun selectCourseInfo(vm: LoginSuccessViewModel,courseId : Int) {
     if (showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState
+            sheetState = sheetState,
+            shape = Round(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
@@ -381,7 +386,8 @@ fun selectCourseInfo(vm: LoginSuccessViewModel,courseId : Int) {
     if (showBottomSheet_info) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet_info = false },
-            sheetState = sheetState_info
+            sheetState = sheetState_info,
+            shape = Round(sheetState_info)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
@@ -642,7 +648,8 @@ fun haveSelectedCourse(vm: LoginSuccessViewModel,courseId : Int) {
     if (showBottomSheet_info) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet_info = false },
-            sheetState = sheetState_info
+            sheetState = sheetState_info,
+            shape = Round(sheetState_info)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
@@ -669,7 +676,8 @@ fun haveSelectedCourse(vm: LoginSuccessViewModel,courseId : Int) {
     if (showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState
+            sheetState = sheetState,
+            shape = Round(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),

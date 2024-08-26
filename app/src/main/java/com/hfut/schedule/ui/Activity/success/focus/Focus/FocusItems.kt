@@ -77,6 +77,7 @@ import com.hfut.schedule.ui.Activity.success.search.Search.Survey.getSemseter
 import com.hfut.schedule.ui.Activity.success.search.Search.Survey.getSemseterCloud
 import com.hfut.schedule.ui.UIUtils.BottomTip
 import com.hfut.schedule.ui.UIUtils.MyToast
+import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.ScrollText
 
 @Composable
@@ -323,7 +324,8 @@ fun TodayCourseItem(item : Int) {
 
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState
+            sheetState = sheetState,
+            shape = Round(sheetState)
         ) {
 
             Scaffold(
@@ -401,7 +403,8 @@ fun TomorrowCourseItem(item : Int) {
 
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState
+            sheetState = sheetState,
+            shape = Round(sheetState)
         ) {
 
             Scaffold(
@@ -526,7 +529,8 @@ fun BoxScope.AddButton(isVisible: Boolean,innerPaddings : PaddingValues) {
 
 
     if (showBottomSheet) {
-        ModalBottomSheet(onDismissRequest = { showBottomSheet = false },sheetState = sheetState) {
+        ModalBottomSheet(onDismissRequest = { showBottomSheet = false },sheetState = sheetState,
+            shape = Round(sheetState)) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 topBar = {
@@ -680,7 +684,8 @@ fun TodayUI() {
     if (showBottomSheet ) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState
+            sheetState = sheetState,
+            shape = Round(sheetState)
         ) {
 
             Scaffold(

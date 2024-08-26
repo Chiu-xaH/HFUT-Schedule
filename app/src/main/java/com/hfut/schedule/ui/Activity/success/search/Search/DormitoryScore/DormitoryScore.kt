@@ -22,6 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.ScrollText
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,7 +44,8 @@ fun DormitoryScoreItem(vm : LoginSuccessViewModel) {
             onDismissRequest = {
                 showBottomSheet_Xuanqu = false
             },
-            sheetState = sheetState_Xuanqu
+            sheetState = sheetState_Xuanqu,
+            shape = Round(sheetState_Xuanqu)
         ) {
             Column() {
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center

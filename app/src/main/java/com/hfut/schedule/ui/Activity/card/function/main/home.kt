@@ -73,6 +73,7 @@ import com.hfut.schedule.ui.Activity.success.search.Search.More.Login
 import com.hfut.schedule.ui.UIUtils.CardForListColor
 import com.hfut.schedule.ui.UIUtils.DividerText
 import com.hfut.schedule.ui.UIUtils.MyToast
+import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.WebViewScreen
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -208,7 +209,8 @@ fun HomeScreen(innerPadding : PaddingValues,vm : LoginSuccessViewModel,navContro
             onDismissRequest = {
                 showBottomSheet_NFC = false
             },
-            sheetState = sheetState_NFC
+            sheetState = sheetState_NFC,
+            shape = Round(sheetState_NFC)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
@@ -238,7 +240,8 @@ fun HomeScreen(innerPadding : PaddingValues,vm : LoginSuccessViewModel,navContro
             onDismissRequest = {
                 showBottomSheet_Range = false
             },
-            sheetState = sheetState_Range
+            sheetState = sheetState_Range,
+            shape = Round(sheetState_Range)
         ) { SelecctDateRange(vm) }
     }
 
@@ -247,7 +250,8 @@ fun HomeScreen(innerPadding : PaddingValues,vm : LoginSuccessViewModel,navContro
             onDismissRequest = {
                 showBottomSheet_Search = false
             },
-            sheetState = sheetState_Search
+            sheetState = sheetState_Search,
+            shape = Round(sheetState_Search)
         ) { SearchBillsUI(vm) }
     }
 
@@ -256,14 +260,16 @@ fun HomeScreen(innerPadding : PaddingValues,vm : LoginSuccessViewModel,navContro
             onDismissRequest = {
                 showBottomSheet_Settings = false
             },
-            sheetState = sheetState_Settings
+            sheetState = sheetState_Settings,
+            shape = Round(sheetState_Settings)
         ) { CardLimit(vm,vmUI) }
     }
 
     if(showBottomSheet_Toady) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet_Toady = false },
-            sheetState = sheetState_Today
+            sheetState = sheetState_Today,
+            shape = Round(sheetState_Today)
         ){
             TodayBills(vm)
         }

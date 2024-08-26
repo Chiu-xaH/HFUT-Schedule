@@ -66,6 +66,7 @@ import com.hfut.schedule.ui.Activity.success.cube.Settings.VersionInfoCard
 import com.hfut.schedule.ui.Activity.success.cube.Settings.getUpdates
 import com.hfut.schedule.ui.UIUtils.DevelopingUI
 import com.hfut.schedule.ui.UIUtils.MyToast
+import com.hfut.schedule.ui.UIUtils.Round
 import java.util.Hashtable
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
@@ -81,7 +82,8 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean
         if (showBottomSheet) {
             ModalBottomSheet(
                 onDismissRequest = { showBottomSheet = false },
-                sheetState = sheetState
+                sheetState = sheetState,
+                shape = Round(sheetState)
             ) {
                 Column {
                     Row(modifier = Modifier
@@ -100,7 +102,8 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean
         if (showBottomSheet_version) {
             ModalBottomSheet(
                 onDismissRequest = { showBottomSheet_version = false },
-                sheetState = sheetState_version
+                sheetState = sheetState_version,
+                shape = Round(sheetState_version)
             ) {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),

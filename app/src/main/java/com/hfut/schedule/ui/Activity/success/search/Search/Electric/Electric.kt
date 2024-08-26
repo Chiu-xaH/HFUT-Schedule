@@ -38,11 +38,10 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
-import com.hfut.schedule.logic.utils.ClipBoard
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.StartApp
-import com.hfut.schedule.ui.UIUtils.MyToast
+import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.ScrollText
 import com.hfut.schedule.ui.UIUtils.WebViewScreen
 import com.hfut.schedule.ui.theme.FWDTColr
@@ -54,6 +53,8 @@ fun Electric(vm : LoginSuccessViewModel,card : Boolean,vmUI : UIViewModel) {
 
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
+
+
 
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -80,6 +81,7 @@ fun Electric(vm : LoginSuccessViewModel,card : Boolean,vmUI : UIViewModel) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
             sheetState = sheetState
+            , shape = Round(sheetState)
         ) {
 
             EleUI(vm = vm)
@@ -154,3 +156,5 @@ fun Electric(vm : LoginSuccessViewModel,card : Boolean,vmUI : UIViewModel) {
         modifier = Modifier.clickable { showBottomSheet  = true }
     )
 }
+
+

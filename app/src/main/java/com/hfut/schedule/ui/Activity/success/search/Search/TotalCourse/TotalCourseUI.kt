@@ -47,6 +47,7 @@ import com.hfut.schedule.logic.datamodel.Jxglstu.teacher
 import com.hfut.schedule.logic.datamodel.Jxglstu.teacherAssignmentList2
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.UIUtils.EmptyUI
+import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.ScrollText
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -63,7 +64,8 @@ fun CourseTotalUI(json : String?,isSearch : Boolean) {
 
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState
+            sheetState = sheetState,
+            shape = Round(sheetState)
         ) {
 
             Scaffold(

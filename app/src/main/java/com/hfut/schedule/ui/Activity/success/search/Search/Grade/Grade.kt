@@ -52,6 +52,7 @@ import com.hfut.schedule.activity.GradeActivity
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.ui.UIUtils.Round
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -113,7 +114,8 @@ fun Grade(vm : LoginSuccessViewModel,ifSaved : Boolean,webVpn : Boolean)  {
     if (showBottomSheet_Grade) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet_Grade = false },
-            sheetState = sheetState_Grade
+            sheetState = sheetState_Grade,
+            shape = Round(sheetState_Grade)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),

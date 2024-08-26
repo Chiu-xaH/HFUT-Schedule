@@ -66,6 +66,7 @@ import com.hfut.schedule.ui.Activity.success.search.Search.LoginWeb.LoginWeb
 import com.hfut.schedule.ui.Activity.success.search.Search.LoginWeb.WebInfo
 import com.hfut.schedule.ui.Activity.success.search.Search.LoginWeb.getWebInfos
 import com.hfut.schedule.ui.Activity.success.search.Search.SchoolCard.SchoolCardItem
+import com.hfut.schedule.ui.UIUtils.Round
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -187,7 +188,8 @@ fun FocusCardSettings() {
     if(showBottomSheet && showShortCut) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState
+            sheetState = sheetState,
+            shape = Round(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),

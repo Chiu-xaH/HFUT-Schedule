@@ -73,6 +73,7 @@ import com.hfut.schedule.ui.Activity.success.search.Search.FailRate.Click
 import com.hfut.schedule.ui.Activity.success.search.Search.LoginWeb.loginWebUI
 import com.hfut.schedule.ui.UIUtils.LittleDialog
 import com.hfut.schedule.ui.UIUtils.MyToast
+import com.hfut.schedule.ui.UIUtils.Round
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -99,7 +100,8 @@ fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel,vm2 : LoginSuccessVie
     if (showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState
+            sheetState = sheetState,
+            shape = Round(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
@@ -131,7 +133,8 @@ fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel,vm2 : LoginSuccessVie
     if (showBottomSheet_feedBack) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet_feedBack = false },
-            sheetState = sheetState_feedBack
+            sheetState = sheetState_feedBack,
+            shape = Round(sheetState_feedBack)
         ) {
             feedBackUI(vm2)
         }

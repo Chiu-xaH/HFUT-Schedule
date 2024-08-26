@@ -84,6 +84,7 @@ import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.N
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.getNotifications
 import com.hfut.schedule.ui.Activity.success.search.main.SearchScreen
 import com.hfut.schedule.ui.Activity.success.search.main.getName
+import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.ScrollText
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
@@ -151,7 +152,9 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
 
     if (showBottomSheet) {
         SharePrefs.Save("Notifications", getNotifications().size.toString())
-        ModalBottomSheet(onDismissRequest = { showBottomSheet = false }, sheetState = sheetState, modifier = Modifier) {
+        ModalBottomSheet(onDismissRequest = { showBottomSheet = false }, sheetState = sheetState, modifier = Modifier,
+            shape = Round(sheetState)
+        ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 topBar = {

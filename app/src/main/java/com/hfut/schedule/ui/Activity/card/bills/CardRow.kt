@@ -43,6 +43,7 @@ import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.card.BillsIcons
 import com.hfut.schedule.ui.Activity.card.bills.main.BillItem
 import com.hfut.schedule.ui.Activity.card.bills.main.processTranamt
+import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.ScrollText
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -85,7 +86,8 @@ fun CardRow(vm : LoginSuccessViewModel,vmUI : UIViewModel) {
     if(showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState
+            sheetState = sheetState,
+            shape = Round(sheetState)
         ){
            TodayBills(vm)
         }

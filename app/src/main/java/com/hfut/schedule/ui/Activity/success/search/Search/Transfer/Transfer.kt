@@ -59,6 +59,7 @@ import com.hfut.schedule.ui.Activity.success.search.Search.More.Login
 import com.hfut.schedule.ui.Activity.success.search.Search.Survey.teacherList
 import com.hfut.schedule.ui.Activity.success.search.Search.TotalCourse.courseIcons
 import com.hfut.schedule.ui.UIUtils.MyToast
+import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.ScrollText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -89,7 +90,8 @@ fun Transfer(ifSaved : Boolean,vm : LoginSuccessViewModel){
     if (showBottomSheet_apply) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet_apply = false },
-            sheetState = sheetState_apply
+            sheetState = sheetState_apply,
+            shape = Round(sheetState_apply)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
@@ -116,7 +118,8 @@ fun Transfer(ifSaved : Boolean,vm : LoginSuccessViewModel){
     if (showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState
+            sheetState = sheetState,
+            shape = Round(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),

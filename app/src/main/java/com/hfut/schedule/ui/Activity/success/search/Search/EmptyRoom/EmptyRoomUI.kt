@@ -26,6 +26,7 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ui.Activity.success.search.Search.More.Login
+import com.hfut.schedule.ui.UIUtils.Round
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,7 +61,8 @@ fun EmptyRoom(vm : LoginSuccessViewModel,ifSaved : Boolean){
             onDismissRequest = {
                 showBottomSheet_EmptyRoom = false
             },
-            sheetState = sheetState_EmptyRoom
+            sheetState = sheetState_EmptyRoom,
+            shape = Round(sheetState_EmptyRoom)
         ) {
             Column() {
                 Row(
