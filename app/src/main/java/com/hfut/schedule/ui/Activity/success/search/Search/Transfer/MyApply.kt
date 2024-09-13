@@ -38,6 +38,7 @@ import com.hfut.schedule.logic.utils.ReservDecimal
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.ui.Activity.success.search.Search.Person.getPersonInfo
 import com.hfut.schedule.ui.UIUtils.CardForListColor
+import com.hfut.schedule.ui.UIUtils.DividerText
 import com.hfut.schedule.ui.UIUtils.ScrollText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -90,6 +91,7 @@ fun MyApply(vm: LoginSuccessViewModel) {
         ,animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
     )
 
+    DividerText(text = "我的申请")
     Box {
 
         val data = getMyTransfer(vm)
@@ -99,12 +101,15 @@ fun MyApply(vm: LoginSuccessViewModel) {
         Card(
                 elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
                 modifier = Modifier
-                    .fillMaxWidth().scale(scale2.value)
+                    .fillMaxWidth()
+                    .scale(scale2.value)
                     .padding(horizontal = 15.dp, vertical = 5.dp),
                 shape = MaterialTheme.shapes.medium,
             colors = CardForListColor()
             ) {
-                Column (modifier = Modifier.blur(blurSize).scale(scale.value)){
+                Column (modifier = Modifier
+                    .blur(blurSize)
+                    .scale(scale.value)){
 
                         ListItem(headlineContent = { Text(text = if(getApplyStatus(vm) == true) "转入申请已通过" else " 状态未知或未通过", fontSize = 28.sp) })
 
@@ -129,18 +134,31 @@ fun MyApply(vm: LoginSuccessViewModel) {
                                 headlineContent = { Text(text = "${data.applyStdCount} / ${data.preparedStdCount}", fontWeight = FontWeight.Bold ) },
                                 modifier = Modifier.weight(.5f)
                             )
-                            val res = data.preparedStdCount.toDouble() / data.applyStdCount.toDouble() * 100.0
                             ListItem(
-                                leadingContent = { Icon(painter = painterResource(id = R.drawable.percent), contentDescription = "") },
-                                headlineContent = { Text(text = if(!loading)
-                                    "${ReservDecimal.reservDecimal(res,1)} %" else "0 %", fontWeight = FontWeight.Bold) },
-                                overlineContent = { Text(text = "通过概率") },
+                                leadingContent = { Icon(painter = painterResource(id = R.drawable.group), contentDescription = "") },
+                                overlineContent = { ScrollText(text = "考核成绩") },
+                                headlineContent = { Text(text = "XX 第X名", fontWeight = FontWeight.Bold ) },
                                 modifier = Modifier.weight(.5f)
                             )
                         }
+                    Row {
+                        ListItem(
+                            leadingContent = { Icon(painter = painterResource(id = R.drawable.award_star), contentDescription = "") },
+                            overlineContent = { ScrollText(text = "绩点") },
+                            headlineContent = { Text(text = "X.X 第X名", fontWeight = FontWeight.Bold ) },
+                            modifier = Modifier.weight(.5f)
+                        )
+                        ListItem(
+                            leadingContent = { Icon(painter = painterResource(id = R.drawable.filter_vintage), contentDescription = "") },
+                            overlineContent = { ScrollText(text = "均分") },
+                            headlineContent = { Text(text = "XX 第X名", fontWeight = FontWeight.Bold ) },
+                            modifier = Modifier.weight(.5f)
+                        )
+                    }
                 }
             }
     }
+
 }
 
 

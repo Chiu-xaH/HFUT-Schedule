@@ -73,3 +73,8 @@ fun getApplyStatus(vm : LoginSuccessViewModel) : Boolean? {
         null
     }
 }
+
+data class MyApplyScore(val gpaValue : String,val gpaSort : String,val scoreValue : String,val scoreSort : String,val examValue : String,val examSort : String)
+
+fun getMyApplyScore()  {
+}

@@ -440,7 +440,7 @@ fun selectCourseInfo(vm: LoginSuccessViewModel,courseId : Int) {
                 ListItem(
                     headlineContent = { Text(text = lists.course.nameZh) },
                     overlineContent = { Text(text =   "已选 " + stdCount + " / " +lists.limitCount)},
-                    supportingContent = { Text(text = lists.nameZh)},
+                    supportingContent = { Text(text = lists.nameZh + "\n" + (lists.remark ?: ""))},
                     trailingContent = {  FilledTonalIconButton(onClick = {
                         lessonId = lists.id
                         showBottomSheet = true

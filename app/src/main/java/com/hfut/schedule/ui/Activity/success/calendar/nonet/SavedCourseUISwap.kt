@@ -3,6 +3,7 @@ package com.hfut.schedule.ui.Activity.success.calendar.nonet
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContent
@@ -173,6 +174,7 @@ fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues,vmUI : UIViewModel
     //切换周数
     var Bianhuaweeks by rememberSaveable { mutableStateOf(GetDate.weeksBetween) }
     //var date by rememberSaveable { mutableStateOf(LocalDate.now()) }
+  //  Log.d("本周", GetDate.a.toString())
 
     val tableall = arrayOf(
         table_1_1, table_1_2, table_1_3, table_1_4, table_1_5,table_1_6,table_1_7,

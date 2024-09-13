@@ -128,7 +128,7 @@ fun DetailInfos(sheet : courseDetailDTOList) {
                             }
                         )
                     }
-                    Card(
+                   /* Card(
                         elevation = CardDefaults.cardElevation(
                             defaultElevation = 3.dp
                         ),
@@ -140,7 +140,7 @@ fun DetailInfos(sheet : courseDetailDTOList) {
                             )
                             .clickable { },
                         shape = MaterialTheme.shapes.medium,
-                    ){
+                    ){*/
                         ListItem(
                             headlineContent = { Text( "更多信息请到课程汇总中查看") },
                             leadingContent = {
@@ -150,7 +150,7 @@ fun DetailInfos(sheet : courseDetailDTOList) {
                                 )
                             }
                         )
-                    }
+                  //  }
                 }
             }
         }

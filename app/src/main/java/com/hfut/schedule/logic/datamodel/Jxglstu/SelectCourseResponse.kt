@@ -14,6 +14,7 @@ data class SelectCourseInfo(val id : Int,
                             val courseType : courseType,
                             val examMode : courseType,
                             val limitCount : Int,
+                            val remark : String?,
                             val dateTimePlace : dateTimePlacePersonText)
 
 data class SelectPostResponse(val errorMessage : errorMessage?,

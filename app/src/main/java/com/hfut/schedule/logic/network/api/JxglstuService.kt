@@ -200,6 +200,8 @@ interface JxglstuService {
         @Query("studentId") studentId : Int
     ): Call<ResponseBody>
 
+    //获取转专业的分数
+
     //提交转专业申请
     
     //撤销转专业申请

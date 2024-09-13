@@ -65,39 +65,32 @@ fun RequestArrange() {
 
 @Composable
 fun ArrangeItem(Title : String,Icon : Int,SaveTitle : String) {
-    Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 15.dp, vertical = 5.dp),
-        shape = MaterialTheme.shapes.medium
-    ){
         var prefss = prefs.getString(SaveTitle,"15")
         var sliderPosition by remember { mutableStateOf(prefss!!.toFloat()) }
         val bd = BigDecimal(sliderPosition.toString())
         val str = bd.setScale(0, RoundingMode.HALF_UP).toString()
       //  var Num by remember { mutableStateOf(sliderPosition.toString()) }
         ListItem(
-            headlineContent = { Text(text = "${Title}   ${str} 条/页")},
-            leadingContent = { Icon(painterResource(id = Icon), contentDescription = "") }
+            headlineContent = { Text(text = "$Title   $str 条/页")},
+            leadingContent = { Icon(painterResource(id = Icon), contentDescription = "") },
+            supportingContent = {
+                Slider(
+                    value = sliderPosition,
+                    onValueChange = {
+                        sliderPosition = it
+                        val bd = BigDecimal(sliderPosition.toString())
+                        val str = bd.setScale(0, RoundingMode.HALF_UP).toString()
+                        SharePrefs.Save(SaveTitle,str)
+                    },
+                    colors = SliderDefaults.colors(
+                        thumbColor = MaterialTheme.colorScheme.secondary,
+                        activeTrackColor = MaterialTheme.colorScheme.secondary,
+                        inactiveTrackColor = MaterialTheme.colorScheme.secondaryContainer,
+                    ),
+                    steps = 24,
+                    valueRange = 5f..30f,
+                    modifier = Modifier.padding(horizontal = 25.dp)
+                )
+            }
         )
-
-        Slider(
-            value = sliderPosition,
-            onValueChange = {
-                sliderPosition = it
-                val bd = BigDecimal(sliderPosition.toString())
-                val str = bd.setScale(0, RoundingMode.HALF_UP).toString()
-                SharePrefs.Save(SaveTitle,str)
-                            },
-            colors = SliderDefaults.colors(
-                thumbColor = MaterialTheme.colorScheme.secondary,
-                activeTrackColor = MaterialTheme.colorScheme.secondary,
-                inactiveTrackColor = MaterialTheme.colorScheme.secondaryContainer,
-            ),
-            steps = 24,
-            valueRange = 5f..30f,
-            modifier = Modifier.padding(horizontal = 25.dp)
-        )
-    }
 }

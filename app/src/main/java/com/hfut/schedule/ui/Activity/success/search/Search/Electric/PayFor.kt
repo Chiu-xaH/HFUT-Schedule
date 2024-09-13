@@ -51,6 +51,8 @@ import com.hfut.schedule.logic.datamodel.zjgd.PayStep1Response
 import com.hfut.schedule.logic.datamodel.zjgd.PayStep2Response
 import com.hfut.schedule.logic.datamodel.zjgd.PayStep3Response
 import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.CirclePoint
+import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.KeyBoard
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.getUserInfo
 import com.hfut.schedule.ui.Activity.success.search.Search.LoginWeb.getIdentifyID
 import com.hfut.schedule.ui.UIUtils.LittleDialog
@@ -76,6 +78,7 @@ fun PayFor(vm : LoginSuccessViewModel,payNumber : Int,roomInfo : String,json : S
         animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
         label = "" // 使用弹簧动画
     )
+
     if(showDialog) {
         LittleDialog(
             onDismissRequest = { showDialog = false },
@@ -90,10 +93,57 @@ fun PayFor(vm : LoginSuccessViewModel,payNumber : Int,roomInfo : String,json : S
         )
     }
 
+    val psk = SharePrefs.prefs.getString("pins",null)
+    var password by remember { mutableStateOf("") }
+    var passwordStatus by remember { mutableStateOf("请输入密码") }
+    val sheetState_pin = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showBottomSheet_pin by remember { mutableStateOf(false) }
+
+    if (showBottomSheet_pin) {
+        if(password.length != 6) {
+            ModalBottomSheet(
+                onDismissRequest = {
+                    showBottomSheet_pin = false
+                },
+                sheetState = sheetState_pin,
+                // shape = Round(sheetState)
+            ) {
+                Column {
+                    CirclePoint(text = passwordStatus, password = password)
+                    Spacer(modifier = Modifier.height(20.dp))
+                    KeyBoard(
+                        modifier = Modifier.padding(horizontal = 15.dp),
+                        onKeyClick = { num ->
+                            if (password.length < 6) {
+                                password += num.toString()
+                            }
+                        },
+                        onBackspaceClick = {
+                            if (password.isNotEmpty()) {
+                                password = password.dropLast(1)
+                            }
+                        }
+                    )
+                }
+            }
+        } else {
+            //验证密码
+            if(psk == password) {
+                showBottomSheet = true
+            } else {
+                //密码错了
+                passwordStatus = "密码错误"
+                password = ""
+            }
+        }
+    }
+
     if (showBottomSheet) {
 
         ModalBottomSheet(
-            onDismissRequest = { showBottomSheet = false },
+            onDismissRequest = {
+                showBottomSheet = false
+                               },
             sheetState = sheetState,
             shape = Round(sheetState)
         ) {
@@ -138,7 +188,13 @@ fun PayFor(vm : LoginSuccessViewModel,payNumber : Int,roomInfo : String,json : S
     }
     Spacer(modifier = Modifier.height(20.dp))
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-        Button(onClick = { showDialog = true },
+        Button(onClick = {
+            if(!SharePrefs.prefs.getBoolean("SWITCHPIN",false))
+            showDialog = true
+            else {
+                showBottomSheet_pin = true
+            }
+        },
             interactionSource = interactionSource,
             modifier = Modifier
                 .weight(1f)

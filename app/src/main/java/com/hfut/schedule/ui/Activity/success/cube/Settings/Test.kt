@@ -2,6 +2,11 @@ package com.hfut.schedule.ui.Activity.success.cube.Settings
 
 
 import android.util.Log
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope.ResizeMode.Companion.RemeasureToBounds
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -35,14 +40,20 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetValue
@@ -64,20 +75,27 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.utils.APPVersion
 import com.hfut.schedule.ui.Activity.card.counts.RadarChart
 import com.hfut.schedule.ui.Activity.card.counts.RadarData
+import com.hfut.schedule.ui.UIUtils.CardForListColor
+import com.hfut.schedule.ui.UIUtils.MyToast
+import com.hfut.schedule.ui.UIUtils.Round
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun TEST(innerPaddings : PaddingValues) {
     Column (modifier = Modifier.padding(innerPaddings)){
@@ -121,7 +139,7 @@ fun TEST(innerPaddings : PaddingValues) {
             Button(
                 onClick = { showBottomSheet = true }
             ) {
-                Text("Display partial bottom sheet")
+                Text("打开底栏")
             }
 
             if (showBottomSheet) {
@@ -139,12 +157,69 @@ fun TEST(innerPaddings : PaddingValues) {
             }
         }
 
-        Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
-            //AnimatedVectorDrawable()
-            //TransformableSample()
-           Button(onClick = { showBottomSheet = true }) {
-               Text(text = "展开")
-           }
+
+
+        Spacer(modifier = Modifier.height(innerPaddings.calculateTopPadding()))
+
+        var showDetails by remember { mutableStateOf(false) }
+        SharedTransitionLayout {
+            AnimatedContent(targetState = showDetails, label = "") { inDetails->
+              //  if(showDetails) {
+                    if(!inDetails) {
+                        Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
+                            Card(
+                                elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
+                                modifier = Modifier
+                                    .width(200.dp)
+                                    .padding(horizontal = 15.dp, vertical = 5.dp)
+                                    .sharedBounds(
+                                        sharedContentState = rememberSharedContentState(key = "bounds"),
+                                        animatedVisibilityScope = this@AnimatedContent,
+                                        resizeMode = RemeasureToBounds
+                                    )
+                                ,
+                                shape = MaterialTheme.shapes.small,
+                                colors = CardForListColor()
+                            ) {
+                                ListItem(
+                                    headlineContent = { Text(text = "展开卡片") },
+                                    modifier = Modifier.clickable { showDetails = true }
+                                )
+                            }
+                        }
+                    } else  {
+                        //  Dialog(onDismissRequest = { showDetails = false }) {
+                        Card(
+                            elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 15.dp, vertical = 5.dp)
+                                .sharedBounds(
+                                    sharedContentState = rememberSharedContentState(key = "bounds"),
+                                    animatedVisibilityScope = this@AnimatedContent,
+                                    resizeMode = RemeasureToBounds
+                                )
+                            ,
+                            shape = MaterialTheme.shapes.medium,
+                            colors = CardForListColor()
+                        ) {
+                            ListItem(
+                                headlineContent = { Text(text = "标题1") },
+                                modifier = Modifier.clickable {showDetails = false}
+                            )
+                            ListItem(
+                                headlineContent = { Text(text = "标题2") },
+                                modifier = Modifier.clickable {}
+                            )
+                            ListItem(
+                                headlineContent = { Text(text = "标题3") },
+                                modifier = Modifier.clickable {}
+                            )
+                        }
+                        //   }
+                    }
+               // }
+            }
         }
 
      // //  AnimatedVectorDrawable()

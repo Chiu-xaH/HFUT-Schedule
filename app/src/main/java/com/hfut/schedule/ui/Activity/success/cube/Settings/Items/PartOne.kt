@@ -4,31 +4,40 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Divider
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -37,11 +46,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
@@ -52,6 +65,7 @@ import com.hfut.schedule.logic.Enums.FixBarItems
 import com.hfut.schedule.logic.utils.APPVersion
 import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.logic.utils.SharePrefs.SaveBoolean
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.StartApp.StartUri
@@ -64,6 +78,7 @@ import com.hfut.schedule.ui.Activity.success.search.Search.Survey.getSemseterClo
 import com.hfut.schedule.ui.UIUtils.DividerText
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.Round
+import com.hfut.schedule.ui.UIUtils.WebViewScreen
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -380,6 +395,38 @@ fun APPScreen(navController: NavController,
                 }
             }
         }
+        var showBottomSheet_lock by remember { mutableStateOf(false) }
+        var sheetState_lock = rememberModalBottomSheetState()
+        if (showBottomSheet_lock) {
+            ModalBottomSheet(
+                onDismissRequest = { showBottomSheet_lock = false },
+                sheetState = sheetState_lock,
+                shape = Round(sheetState_lock)
+            ) {
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    topBar = {
+                        TopAppBar(
+                            colors = TopAppBarDefaults.mediumTopAppBarColors(
+                                containerColor = Color.Transparent,
+                                titleContentColor = MaterialTheme.colorScheme.primary,
+                            ),
+                            title = { Text("支付设置") },
+                        )
+                    },
+                ) { innerPadding ->
+                    Column(
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .fillMaxSize()
+                    ) {
+                        LockUI()
+                        Spacer(modifier = Modifier.height(100.dp))
+                    }
+                }
+            }
+        }
+
 
 
 
@@ -473,7 +520,14 @@ fun APPScreen(navController: NavController,
             }
         )
 
-
+        ListItem(
+            headlineContent = { Text(text = "支付设置(Beta)") },
+            supportingContent = {
+                Text(text = "调用校园卡进行网电缴费时,启用生物识别快速验证")
+            },
+            leadingContent = { Icon(painterResource(R.drawable.lock), contentDescription = "Localized description",) },
+            modifier = Modifier.clickable { showBottomSheet_lock = true }
+        )
 
     }
 
@@ -591,3 +645,160 @@ fun NetWorkScreen(navController: NavController,
 
 }
 
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun LockUI() {
+    val switch_pin = SharePrefs.prefs.getBoolean("SWITCHPIN",false)
+    var pin by remember { mutableStateOf(switch_pin) }
+    SaveBoolean("SWITCHPIN", false,pin)
+
+    var psk = SharePrefs.prefs.getString("pins",null)
+   // var password by remember { mutableStateOf(psk ?: "") }
+    var input by remember { mutableStateOf("") }
+   // Save("pins",password )
+    var showDialog by remember { mutableStateOf(psk == null) }
+
+
+    var sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+
+    ListItem(
+        headlineContent = { Text(text = "需要密码") },
+        supportingContent = { Text(text = "在调用支付时选择是否需要验证") },
+        leadingContent = {
+            Icon(painter = painterResource(id = R.drawable.lock), contentDescription = "")
+        },
+        trailingContent = {
+            Switch(checked = pin, onCheckedChange = {_->
+                    showDialog = true
+            })
+        }
+    )
+
+   // if(pin) {
+        if (showDialog) {
+           // if(password.length != 6)
+            ModalBottomSheet(
+                onDismissRequest = { showDialog = false },
+                sheetState = sheetState,
+               // shape = Round(sheetState)
+            ) {
+                Column {
+                    CirclePoint(text = if(!pin)"录入新密码" else "请输入密码", password = input)
+                    Spacer(modifier = Modifier.height(20.dp))
+                    KeyBoard(
+                        modifier = Modifier.padding(horizontal = 15.dp),
+                        onKeyClick = { num ->
+                            if (input.length < 6) {
+                                input += num.toString()
+                            }
+                            if(input.length == 6) {
+                                if(pin) {
+                                    psk = SharePrefs.prefs.getString("pins",null)
+                                    if(input == psk) {
+                                        Save("pins",null)
+                                        pin = false
+                                        MyToast("已移除密码")
+                                        showDialog = false
+                                    } else {
+                                        input = ""
+                                    }
+
+                                } else {
+                                    Save("pins",input)
+                                    pin = true
+                                    showDialog = false
+                                    MyToast("新建密码成功 密码为${input}")
+                                }
+                            }
+                        },
+                        onBackspaceClick = {
+                            if (input.isNotEmpty()) {
+                                input = input.dropLast(1)
+                            }
+                        }
+                    )
+                }
+            }
+        }
+    if(pin)
+        ListItem(
+            headlineContent = { Text(text = "生物识别") },
+            supportingContent = { Text(text = "调用指纹传感器以免密码") },
+            leadingContent = {
+                Icon(painter = painterResource(id = R.drawable.how_to_reg), contentDescription = "")
+            },
+            modifier = Modifier.clickable {
+                MyToast("正在开发")
+            }
+        )
+    //}
+}
+
+@Composable
+fun KeyBoard(modifier : Modifier = Modifier,onKeyClick: (Int) -> Unit, onBackspaceClick: () -> Unit) {
+    Column(modifier = modifier) {
+        for(i in 1 until 8 step 3) {
+            Divider()
+            Row {
+                Key(num = i, modifier = Modifier
+                    .weight(.33f)
+                    .height(65.dp),onKeyClick = onKeyClick,
+                )
+                //Divider()
+                Key(num = i+1,modifier = Modifier
+                    .weight(.33f)
+                    .height(65.dp),onKeyClick = onKeyClick,)
+                //Divider()
+                Key(num = i+2,modifier = Modifier
+                    .weight(.33f)
+                    .height(65.dp),onKeyClick = onKeyClick,)
+            }
+        }
+        Divider()
+        Row {
+            TextButton(onClick = { /*TODO*/ }, modifier = Modifier
+                .weight(.33f)
+                .height(65.dp)
+                ,shape = RoundedCornerShape(0.dp)
+            ) {
+                Text("", fontSize = 13.sp)
+            }
+            //Divider()
+            Key(num = 0,modifier = Modifier
+                .weight(.33f)
+                .height(65.dp),onKeyClick = onKeyClick
+            )
+            //Divider()
+            TextButton(onClick =  onBackspaceClick , modifier = Modifier
+                .weight(.33f)
+                .height(65.dp),shape = RoundedCornerShape(0.dp)) {
+                Icon(painter = painterResource(id = R.drawable.backspace), contentDescription = "", modifier = Modifier.size(30.dp))
+            }
+        }
+       // Spacer(modifier = Modifier.height(10.dp))
+    }
+}
+@Composable
+fun Key(num : Int,modifier: Modifier = Modifier,onKeyClick: (Int) -> Unit) {
+    TextButton(onClick = { onKeyClick(num) }, modifier = modifier, shape = RoundedCornerShape(0.dp)) {
+        Text(num.toString(), fontSize = 28.sp)
+    }
+}
+
+@Composable
+fun CirclePoint(modifier: Modifier = Modifier,text : String,password : String) {
+    Column(modifier = modifier) {
+        Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
+            Text(text = text)
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+        Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
+            for(i in 0 until 6) {
+                Icon(painter = painterResource(id = if(i < password.length) R.drawable.circle_filled else R.drawable.circle), contentDescription = "",modifier = Modifier.padding(7.dp).size(17.dp),tint = MaterialTheme.colorScheme.primary)
+            }
+        }
+    }
+}

@@ -23,8 +23,8 @@ android {
         applicationId "com.hfut.schedule"
         minSdk 24
         targetSdk 33
-        versionCode 126
-        versionName "4.9.7.2"
+        versionCode 127
+        versionName "4.10"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
@@ -75,7 +75,10 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation platform('androidx.compose:compose-bom:2022.10.00')
+    //动画
     implementation 'androidx.compose.animation:animation-graphics-android:1.6.1'
+    implementation 'androidx.compose.animation:animation:1.7.0-beta06'
+
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation platform('androidx.compose:compose-bom:2023.03.00')
     implementation platform('androidx.compose:compose-bom:2023.03.00')
@@ -133,6 +136,9 @@ dependencies {
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
     //图表库
     //implementation 'com.github.AAChartModel:AAChartCore-Kotlin:-SNAPSHOT'
+    //生物识别
+    implementation "androidx.biometric:biometric:1.1.0"
+
     def hilt_lifecycle_viewmodel = "1.0.0-alpha03"
     implementation "androidx.hilt:hilt-lifecycle-viewmodel:$hilt_lifecycle_viewmodel"
     kapt "androidx.hilt:hilt-compiler:$hilt_lifecycle_viewmodel"
