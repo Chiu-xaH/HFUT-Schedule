@@ -73,6 +73,7 @@ import com.hfut.schedule.ui.Activity.success.cube.Settings.Monet.MonetColorItem
 import com.hfut.schedule.ui.Activity.success.cube.Settings.VersionInfo
 import com.hfut.schedule.ui.Activity.success.cube.Settings.getUpdates
 import com.hfut.schedule.ui.Activity.success.search.Search.LePaoYun.InfoSet
+import com.hfut.schedule.ui.Activity.success.search.Search.Person.getPersonInfo
 import com.hfut.schedule.ui.Activity.success.search.Search.Survey.getSemseter
 import com.hfut.schedule.ui.Activity.success.search.Search.Survey.getSemseterCloud
 import com.hfut.schedule.ui.UIUtils.DividerText
@@ -85,8 +86,8 @@ import java.math.RoundingMode
 
 fun apiCheck() : Boolean {
     return try {
-        val username = prefs.getString("Username","")?.toInt()
-        username in 2023218488 until 2023218533
+        val classes = getPersonInfo().classes
+        return classes!!.contains("计算机") && classes.contains("23")
     } catch (e : Exception) {
         false
     }
@@ -610,7 +611,7 @@ fun NetWorkScreen(navController: NavController,
         )
         ListItem(
             headlineContent = { Text(text = "网络接口") },
-            supportingContent = { Text(text = "本接口为23地科提供了除学校系统之外的聚焦信息") },
+            supportingContent = { Text(text = "本接口为计算机23-X班提供了除学校系统之外的聚焦信息") },
             leadingContent = { Icon(painterResource(R.drawable.api), contentDescription = "Localized description",) },
             trailingContent = { Switch(checked = showapi, onCheckedChange = {showapich -> showapi = showapich }) },
             modifier = Modifier.clickable { showapi = !showapi }

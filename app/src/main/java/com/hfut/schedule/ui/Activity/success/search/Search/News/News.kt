@@ -53,7 +53,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun News(vm : LoginSuccessViewModel) {
 
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
     var input by remember { mutableStateOf( "") }
     var onclick by remember { mutableStateOf(true) }

@@ -78,12 +78,12 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean
         Spacer(modifier = Modifier.height(5.dp))
 
         var showBottomSheet by remember { mutableStateOf(false) }
-        val sheetState = rememberModalBottomSheetState()
+        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
         if (showBottomSheet) {
             ModalBottomSheet(
                 onDismissRequest = { showBottomSheet = false },
                 sheetState = sheetState,
-                shape = Round(sheetState)
+                //shape = Round(sheetState)
             ) {
                 Column {
                     Row(modifier = Modifier

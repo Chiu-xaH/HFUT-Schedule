@@ -25,7 +25,7 @@ import com.hfut.schedule.ui.UIUtils.ScrollText
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun courseSearch(ifSaved :  Boolean,vm : LoginSuccessViewModel) {
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
 
     ListItem(

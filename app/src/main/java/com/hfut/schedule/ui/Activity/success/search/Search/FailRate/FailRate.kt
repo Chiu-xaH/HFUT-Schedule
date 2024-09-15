@@ -61,7 +61,7 @@ fun Click(vm: LoginSuccessViewModel,input : String,page : Int) {
 @Composable
 fun FailRate(vm: LoginSuccessViewModel) {
 
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
     var input by remember { mutableStateOf( "") }
     var onclick by remember { mutableStateOf(false) }

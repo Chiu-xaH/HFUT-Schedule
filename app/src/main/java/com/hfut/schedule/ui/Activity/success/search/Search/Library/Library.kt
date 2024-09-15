@@ -63,7 +63,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LibraryItem(vm : LoginSuccessViewModel) {
-    val sheetState_Library = rememberModalBottomSheetState()
+    val sheetState_Library = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_Library by remember { mutableStateOf(false) }
     val borrow = prefs.getString("borrow","获取")
     val sub = prefs.getString("sub","0")

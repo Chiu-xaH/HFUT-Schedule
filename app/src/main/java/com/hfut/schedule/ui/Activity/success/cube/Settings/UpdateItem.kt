@@ -43,7 +43,7 @@ fun VersionInfoCard() {
             ListItem(headlineContent = { Text(text = "聚在工大 " + APPVersion.getVersionName(), fontSize = 28.sp) })
             Row {
                 ListItem(
-                    overlineContent = { Text(text = "2024-09-13") },
+                    overlineContent = { Text(text = "2024-09-15") },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.sdk), contentDescription = "") },
                     headlineContent = { ScrollText(text = "第${APPVersion.getVersionCode()}次更新") },
                     modifier = Modifier.weight(.5f)
@@ -65,10 +65,8 @@ fun VersionInfoCard() {
 fun VersionInfo() {
     VersionInfoCard()
     DividerText(text = "新特性")
-    UpdateItems("新增 支付密码","默认关闭,位于选项-应用行为-支付设置", UpdateType.ADD)
-    UpdateItems("修复 无法获取更新Bug",null, UpdateType.FIX)
-    UpdateItems("修复 选课体育课时无法查看内容",null, UpdateType.FIX)
-    UpdateItems("优化 部分界面的显示",null, UpdateType.OPTIMIZE)
+    UpdateItems("变更 聚焦接口的默认设置","位于 选项-网络相关-网络接口", UpdateType.RENEW)
+    UpdateItems("优化 多个界面的搜索体验","新闻检索、挂科率、图书检索、开课查询", UpdateType.OPTIMIZE)
 }
 
 enum class UpdateType {
