@@ -62,16 +62,14 @@ import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.ui.Activity.success.search.main.SearchScreen
 import com.hfut.schedule.ui.Activity.success.cube.main.SettingsScreen
 import com.hfut.schedule.ui.Activity.success.focus.main.TodayScreen
-import com.hfut.schedule.logic.Enums.BottomBarItems
 import com.hfut.schedule.logic.Enums.BottomBarItems.*
 import com.hfut.schedule.logic.datamodel.MyAPIResponse
 import com.hfut.schedule.logic.utils.APPVersion
 import com.hfut.schedule.ui.Activity.success.calendar.login.CalendarScreen
 import com.hfut.schedule.ui.Activity.success.main.saved.texts
-import com.hfut.schedule.ui.Activity.success.cube.Settings.getUpdates
+import com.hfut.schedule.ui.Activity.success.cube.Settings.Update.getUpdates
 import com.hfut.schedule.ui.Activity.success.calendar.next.NextCourse
 import com.hfut.schedule.ui.Activity.success.calendar.nonet.SaveCourse
-import com.hfut.schedule.ui.Activity.success.search.Search.More.Login
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.NotificationItems
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.getNotifications
 import com.hfut.schedule.ui.UIUtils.Round

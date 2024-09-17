@@ -4,10 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -27,11 +25,9 @@ import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
@@ -46,15 +42,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
@@ -70,8 +63,9 @@ import com.hfut.schedule.logic.utils.SharePrefs.SaveBoolean
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.StartApp.StartUri
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Monet.MonetColorItem
-import com.hfut.schedule.ui.Activity.success.cube.Settings.VersionInfo
-import com.hfut.schedule.ui.Activity.success.cube.Settings.getUpdates
+import com.hfut.schedule.ui.Activity.success.cube.Settings.Update.VersionInfo
+import com.hfut.schedule.ui.Activity.success.cube.Settings.Update.downloadUI
+import com.hfut.schedule.ui.Activity.success.cube.Settings.Update.getUpdates
 import com.hfut.schedule.ui.Activity.success.search.Search.LePaoYun.InfoSet
 import com.hfut.schedule.ui.Activity.success.search.Search.Person.getPersonInfo
 import com.hfut.schedule.ui.Activity.success.search.Search.Survey.getSemseter
@@ -79,7 +73,6 @@ import com.hfut.schedule.ui.Activity.success.search.Search.Survey.getSemseterClo
 import com.hfut.schedule.ui.UIUtils.DividerText
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.Round
-import com.hfut.schedule.ui.UIUtils.WebViewScreen
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -260,6 +253,7 @@ fun HomeSettingScreen(navController: NavController,
             if(!APPVersion.getVersionName().contains("Preview")) {
                 DividerText(text = "更新版本")
                 UpdateUI()
+                downloadUI()
             }
         }
 
@@ -364,6 +358,12 @@ fun APPScreen(navController: NavController,
         val switch_startUri = prefs.getBoolean("SWITCHSTARTURI",true)
         var showStartUri by remember { mutableStateOf(switch_startUri) }
         SaveBoolean("SWITCHSTARTURI",true,showStartUri)
+
+        val switch_update = prefs.getBoolean("SWITCHUPDATE",true)
+        var showSUpdate by remember { mutableStateOf(switch_update) }
+        SaveBoolean("SWITCHUPDATE",true,showSUpdate)
+
+
         SaveBoolean("SWITCHFOCUS",true,showfocus)
         var showBottomSheet_card by remember { mutableStateOf(false) }
         var sheetState_card = rememberModalBottomSheetState()
@@ -522,16 +522,14 @@ fun APPScreen(navController: NavController,
         )
 
         ListItem(
-            headlineContent = { Text(text = "支付设置(Beta)") },
+            headlineContent = { Text(text = "支付设置") },
             supportingContent = {
                 Text(text = "调用校园卡进行网电缴费时,启用生物识别快速验证")
             },
             leadingContent = { Icon(painterResource(R.drawable.lock), contentDescription = "Localized description",) },
             modifier = Modifier.clickable { showBottomSheet_lock = true }
         )
-
     }
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

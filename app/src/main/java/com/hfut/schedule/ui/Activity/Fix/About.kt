@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.net.Uri
 import android.widget.Toast
-import androidx.annotation.ColorInt
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -24,8 +23,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -43,15 +40,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
-import com.google.zxing.WriterException
 import com.google.zxing.qrcode.QRCodeWriter
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
@@ -61,10 +55,9 @@ import com.hfut.schedule.logic.utils.ClipBoard
 import com.hfut.schedule.logic.utils.ShareAPK
 import com.hfut.schedule.logic.utils.StartApp
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.Screen
-import com.hfut.schedule.ui.Activity.success.cube.Settings.VersionInfo
-import com.hfut.schedule.ui.Activity.success.cube.Settings.VersionInfoCard
-import com.hfut.schedule.ui.Activity.success.cube.Settings.getUpdates
-import com.hfut.schedule.ui.UIUtils.DevelopingUI
+import com.hfut.schedule.ui.Activity.success.cube.Settings.Update.VersionInfo
+import com.hfut.schedule.ui.Activity.success.cube.Settings.Update.VersionInfoCard
+import com.hfut.schedule.ui.Activity.success.cube.Settings.Update.getUpdates
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.Round
 import java.util.Hashtable

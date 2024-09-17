@@ -1,6 +1,5 @@
-package com.hfut.schedule.ui.Activity.success.cube.Settings
+package com.hfut.schedule.ui.Activity.success.cube.Settings.Update
 
-import android.util.Log
 import com.hfut.schedule.logic.datamodel.Update
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import org.jsoup.Jsoup

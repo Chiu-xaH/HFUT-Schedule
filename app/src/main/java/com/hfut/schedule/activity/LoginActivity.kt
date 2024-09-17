@@ -6,7 +6,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.MotionEvent
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -31,6 +30,7 @@ import com.hfut.schedule.activity.ui.theme.肥工课程表Theme
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.login.main.LoginUI
+import com.hfut.schedule.ui.Activity.success.cube.Settings.Update.checkAndRequestStoragePermission
 import com.hfut.schedule.ui.Activity.success.main.saved.NoNetWork
 import com.hfut.schedule.ui.MonetColor.LocalCurrentStickerUuid
 import com.hfut.schedule.ui.MonetColor.MainIntent
@@ -56,7 +56,7 @@ class LoginActivity : ComponentActivity() {
     var value = 0
 
     @RequiresApi(Build.VERSION_CODES.O)
-    @SuppressLint("SuspiciousIndentation", "MissingInflatedId")
+    @SuppressLint("SuspiciousIndentation", "MissingInflatedId", "UnspecifiedRegisterReceiverFlag")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -103,7 +103,8 @@ class LoginActivity : ComponentActivity() {
         if(ContextCompat.checkSelfPermission(this,android.Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED)
             ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.READ_CALENDAR),1)
 
-            lifecycleScope.launch {
+        checkAndRequestStoragePermission(this)
+        lifecycleScope.launch {
                 if(!(startAcitivity && intent.getBooleanExtra("nologin",true))) {
                     launch { vm.getCookie() }
                     launch { SharePrefs.Save("tip","0") }
@@ -144,7 +145,6 @@ class LoginActivity : ComponentActivity() {
                     value++
                 } }
             }
-
     }
 
     @Deprecated("Deprecated in Java")

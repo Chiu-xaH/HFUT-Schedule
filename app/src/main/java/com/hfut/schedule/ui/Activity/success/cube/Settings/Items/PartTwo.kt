@@ -27,7 +27,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -44,12 +43,9 @@ import com.hfut.schedule.R
 import com.hfut.schedule.activity.FixActivity
 import com.hfut.schedule.logic.dao.dataBase
 import com.hfut.schedule.logic.utils.APPVersion
-import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.SaveBoolean
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.StartApp.StartUri
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Monet.MonetColorItem
-import com.hfut.schedule.ui.Activity.success.cube.Settings.getUpdates
+import com.hfut.schedule.ui.Activity.success.cube.Settings.Update.getUpdates
 
 fun Clear() {
     val dbwritableDatabase =  dataBase.writableDatabase
@@ -156,3 +152,4 @@ fun UpdateItem() {
         )
     }
 }
+

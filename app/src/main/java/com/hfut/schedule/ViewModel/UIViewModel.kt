@@ -1,7 +1,12 @@
 package com.hfut.schedule.ViewModel
 
+import android.app.DownloadManager
+import android.content.Context
+import android.net.Uri
+import android.os.Environment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.datamodel.zjgd.ReturnCard
 import com.hfut.schedule.logic.network.ServiceCreator.GiteeServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Login.LoginWebServiceCreator
@@ -35,10 +40,11 @@ class UIViewModel : ViewModel()  {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
 
             }
-
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
+
+
     fun getUpdate() {
 
         val call = Gitee.getUpdate()
