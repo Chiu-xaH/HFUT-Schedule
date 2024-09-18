@@ -56,6 +56,7 @@ import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.KeyBoard
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.getUserInfo
 import com.hfut.schedule.ui.Activity.success.search.Search.LoginWeb.getIdentifyID
 import com.hfut.schedule.ui.UIUtils.LittleDialog
+import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.statusUI
 import kotlinx.coroutines.CoroutineScope
@@ -213,6 +214,7 @@ fun payStatusUI(vm : LoginSuccessViewModel,payNumber : Int,json: String) {
     val auth =   "bearer " + SharePrefs.prefs.getString("auth","")
     var orderid = ""
     var msg  by remember { mutableStateOf("结果") }
+    var count = 0;
     if(refresh) {
         loading = true
         CoroutineScope(Job()).launch{
@@ -241,7 +243,11 @@ fun payStatusUI(vm : LoginSuccessViewModel,payNumber : Int,json: String) {
                                     uuid = key
                                     passwordKey = value
                                 }
-                                vm.payStep3(auth,orderid,getPsk(passwordKey),uuid)
+                                //正式支付
+                                if(count == 0) {
+                                    vm.payStep3(auth,orderid,getPsk(passwordKey),uuid)
+                                    count++
+                                }
                             }
                         }
                     }

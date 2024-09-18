@@ -27,7 +27,6 @@ fun WebItem() {
     Row(modifier = Modifier
         .fillMaxWidth()
         .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
-
         Card(
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
             modifier = Modifier
@@ -50,9 +49,9 @@ fun WebItem() {
             shape = MaterialTheme.shapes.small,
         ){
             ListItem(
-                headlineContent = { Text(text = "学生教务") },
+                headlineContent = { Text(text = "教务系统") },
                 leadingContent = { Icon(painterResource(R.drawable.school), contentDescription = "Localized description",) },
-                modifier = Modifier.clickable { StartApp.StartUri("http://jxglstu.hfut.edu.cn/eams5-student") }
+                modifier = Modifier.clickable { StartApp.StartUri("http://jxglstu.hfut.edu.cn/eams5-student/login?refer=http://jxglstu.hfut.edu.cn/eams5-student/home") }
             )
         }
     }
@@ -69,9 +68,9 @@ fun WebItem() {
             shape = MaterialTheme.shapes.small,
         ){
             ListItem(
-                headlineContent = { Text(text = "邮箱系统") },
-                leadingContent = { Icon(painterResource(R.drawable.mail), contentDescription = "Localized description",) },
-                modifier = Modifier.clickable { StartApp.StartUri("https://email.mail.hfut.edu.cn/") }
+                headlineContent = { Text(text = "大创系统") },
+                leadingContent = { Icon(Icons.Filled.MoreVert, contentDescription = "Localized description",) },
+                modifier = Modifier.clickable { StartApp.StartUri("http://dcxt.hfut.edu.cn/") }
             )
         }
         Spacer(modifier = Modifier.width(10.dp))
@@ -83,9 +82,9 @@ fun WebItem() {
             shape = MaterialTheme.shapes.small,
         ){
             ListItem(
-                headlineContent = { Text(text = "图书馆") },
-                leadingContent = { Icon(painterResource(R.drawable.book), contentDescription = "Localized description",) },
-                modifier = Modifier.clickable { StartApp.StartUri("http://lib.hfut.edu.cn/") }
+                headlineContent = { Text(text = "WEBVPN") },
+                leadingContent = { Icon(painterResource(R.drawable.vpn_key), contentDescription = "Localized description",) },
+                modifier = Modifier.clickable { StartApp.StartUri("https://webvpn.hfut.edu.cn/") }
             )
         }
     }
@@ -116,13 +115,14 @@ fun WebItem() {
             shape = MaterialTheme.shapes.small,
         ){
             ListItem(
-                headlineContent = { Text(text = "校园网服务") },
-                overlineContent = { Text(text = "接入校园网") },
-                leadingContent = { Icon(painterResource(R.drawable.wifi_tethering), contentDescription = "Localized description",) },
-                modifier = Modifier.clickable { StartApp.StartUri("https://172.18.7.2:8443/Self/nav_login") }
+                headlineContent = { Text(text = "图书馆") },
+                overlineContent = { Text(text = "需接入校园网") },
+                leadingContent = { Icon(painterResource(R.drawable.book), contentDescription = "Localized description",) },
+                modifier = Modifier.clickable { StartApp.StartUri("http://lib.hfut.edu.cn/") }
             )
         }
     }
+
     Row(modifier = Modifier
         .fillMaxWidth()
         .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
@@ -135,39 +135,7 @@ fun WebItem() {
             shape = MaterialTheme.shapes.small,
         ){
             ListItem(
-                headlineContent = { Text(text = "智慧社区") },
-                leadingContent = { Icon(painterResource(R.drawable.toll), contentDescription = "Localized description",) },
-                modifier = Modifier.clickable { StartApp.StartUri("https://community.hfut.edu.cn/myCommunity/index") }
-            )
-        }
-        Spacer(modifier = Modifier.width(10.dp))
-        Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(.5f),
-            shape = MaterialTheme.shapes.small,
-        ){
-            ListItem(
-                headlineContent = { Text(text = "缴费平台") },
-                leadingContent = { Icon(painterResource(R.drawable.monetization_on), contentDescription = "Localized description",) },
-                modifier = Modifier.clickable { StartApp.StartUri("http://pay.hfut.edu.cn/payment/pay/payment.jsp") }
-            )
-        }
-    }
-    Row(modifier = Modifier
-        .fillMaxWidth()
-        .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
-
-        Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(.5f),
-            shape = MaterialTheme.shapes.small,
-        ){
-            ListItem(
-                headlineContent = { Text(text = "工大官网") },
+                headlineContent = { Text(text = "校官网") },
                 leadingContent = { Icon(painterResource(R.drawable.net), contentDescription = "Localized description",) },
                 modifier = Modifier.clickable { StartApp.StartUri("https://www.hfut.edu.cn/") }
             )
@@ -181,49 +149,10 @@ fun WebItem() {
             shape = MaterialTheme.shapes.small,
         ){
             ListItem(
-                headlineContent = { Text(text = "WEBVPN") },
-                leadingContent = { Icon(painterResource(R.drawable.vpn_key), contentDescription = "Localized description",) },
-                modifier = Modifier.clickable { StartApp.StartUri("https://webvpn.hfut.edu.cn/") }
+                headlineContent = { Text(text = "教考网") },
+                leadingContent = { Icon(painterResource(R.drawable.draw), contentDescription = "Localized description",) },
+                modifier = Modifier.clickable { StartApp.StartUri("https://www.neea.edu.cn/") }
             )
         }
     }
-    Row(modifier = Modifier
-        .fillMaxWidth()
-        .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
-
-        Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(.5f),
-            shape = MaterialTheme.shapes.small,
-        ){
-            ListItem(
-                headlineContent = { Text(text = "报修") },
-                leadingContent = { Icon(painterResource(R.drawable.build), contentDescription = "Localized description",) },
-                modifier = Modifier.clickable { StartApp.StartUri("http://xcfw.hfut.edu.cn/school/index.html") }
-            )
-        }
-        Spacer(modifier = Modifier.width(10.dp))
-        Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(.5f),
-            shape = MaterialTheme.shapes.small,
-        ){
-            ListItem(
-                headlineContent = { Text(text = "大创系统") },
-                leadingContent = { Icon(Icons.Filled.MoreVert, contentDescription = "Localized description",) },
-                modifier = Modifier.clickable { StartApp.StartUri("http://dcxt.hfut.edu.cn/") }
-            )
-        }
-    }
-
-
-
-
-
-
-
 }

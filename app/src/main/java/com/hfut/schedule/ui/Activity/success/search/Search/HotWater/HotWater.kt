@@ -10,12 +10,13 @@ import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.StartApp
+import com.hfut.schedule.ui.UIUtils.MyToast
 
 @Composable
 fun HotWater() {
     ListItem(
         headlineContent = { Text(text = "热水机") },
         leadingContent = { Icon(painterResource(R.drawable.water_voc), contentDescription = "")},
-        modifier = Modifier.clickable { StartApp.openAlipay(MyApplication.AlipayHotWaterURL) }
+        modifier = Modifier.clickable { MyToast("设备正在换新,后续版本重构") }
     )
 }

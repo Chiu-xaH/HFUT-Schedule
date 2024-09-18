@@ -2,10 +2,10 @@ package com.hfut.schedule.ui.Activity.success.search.Search.Web
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -24,8 +24,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
+import com.hfut.schedule.ui.UIUtils.DividerText
 import com.hfut.schedule.ui.UIUtils.Round
 
 
@@ -67,10 +67,13 @@ fun WebUI() {
                 Column(
                     modifier = Modifier
                         .padding(innerPadding)
+                        .verticalScroll(rememberScrollState())
                         .fillMaxSize()
                 ) {
+                    DividerText(text = "固定项")
                     WebItem()
-                    Spacer(modifier = Modifier.height(20.dp))
+                    DividerText(text = "实验室")
+                    LabUI()
                 }
             }
         }

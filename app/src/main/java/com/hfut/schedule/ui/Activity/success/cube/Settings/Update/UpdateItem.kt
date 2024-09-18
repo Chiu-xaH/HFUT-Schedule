@@ -75,7 +75,7 @@ fun VersionInfoCard() {
             ListItem(headlineContent = { Text(text = "聚在工大 " + APPVersion.getVersionName(), fontSize = 28.sp) })
             Row {
                 ListItem(
-                    overlineContent = { Text(text = "2024-09-17") },
+                    overlineContent = { Text(text = "2024-09-18") },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.sdk), contentDescription = "") },
                     headlineContent = { ScrollText(text = "第${APPVersion.getVersionCode()}次更新") },
                     modifier = Modifier.weight(.5f)
@@ -87,7 +87,6 @@ fun VersionInfoCard() {
                     modifier = Modifier.weight(.5f)
                 )
             }
-
         }
 }
 
@@ -97,7 +96,9 @@ fun VersionInfoCard() {
 fun VersionInfo() {
     VersionInfoCard()
     DividerText(text = "新特性")
-    UpdateItems("新增 无缝更新","位于选项首页,用户即可选择传统方式更新,也可选择点击请求更新按钮,直接在APP内部无缝更新", UpdateType.ADD)
+    UpdateItems("新增 学信网","位于 查询中心", UpdateType.ADD)
+    UpdateItems("重构 网址导航","原'实验室'合并到'网址导航'内", UpdateType.RENEW)
+    UpdateItems("优化 网址导航中的冗余项目",null, UpdateType.OPTIMIZE)
 }
 
 enum class UpdateType {

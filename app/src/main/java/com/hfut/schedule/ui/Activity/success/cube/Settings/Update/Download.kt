@@ -36,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.App.MyApplication.Companion.context
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.ui.UIUtils.MyToast
 import java.io.File
@@ -122,7 +123,6 @@ fun getDownloadProgress(downloadId: Long): Int {
 fun checkAndRequestStoragePermission(activity: Activity) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
         if (!Environment.isExternalStorageManager()) {
-            MyToast("获取存储权限以下载更新包")
             val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
             intent.data = Uri.parse("package:" + activity.packageName)
             activity.startActivityForResult(intent, 1)

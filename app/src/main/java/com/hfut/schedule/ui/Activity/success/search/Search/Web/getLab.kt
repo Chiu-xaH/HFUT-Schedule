@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.Activity.success.search.Search.Lab
+package com.hfut.schedule.ui.Activity.success.search.Search.Web
 
 import com.google.gson.Gson
 import com.hfut.schedule.logic.datamodel.Lab

@@ -25,7 +25,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
@@ -34,14 +33,13 @@ import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.success.calendar.next.NextCourse
 import com.hfut.schedule.ui.Activity.success.search.Search.Bus.SchoolBus
 import com.hfut.schedule.ui.Activity.success.search.Search.CourseSearch.courseSearch
+import com.hfut.schedule.ui.Activity.success.search.Search.DormitoryScore.DormitoryScoreItem
 import com.hfut.schedule.ui.Activity.success.search.Search.Electric.Electric
 import com.hfut.schedule.ui.Activity.success.search.Search.EmptyRoom.EmptyRoom
-import com.hfut.schedule.ui.Activity.success.search.Search.Survey.Survey
 import com.hfut.schedule.ui.Activity.success.search.Search.Exam.Exam
 import com.hfut.schedule.ui.Activity.success.search.Search.FailRate.FailRate
 import com.hfut.schedule.ui.Activity.success.search.Search.Grade.Grade
 import com.hfut.schedule.ui.Activity.success.search.Search.HotWater.HotWater
-import com.hfut.schedule.ui.Activity.success.search.Search.Lab.Lab
 import com.hfut.schedule.ui.Activity.success.search.Search.LePaoYun.LePaoYun
 import com.hfut.schedule.ui.Activity.success.search.Search.Library.LibraryItem
 import com.hfut.schedule.ui.Activity.success.search.Search.LoginWeb.LoginWeb
@@ -56,14 +54,14 @@ import com.hfut.schedule.ui.Activity.success.search.Search.Repair.Repair
 import com.hfut.schedule.ui.Activity.success.search.Search.SchoolCalendar.SchoolCalendar
 import com.hfut.schedule.ui.Activity.success.search.Search.SchoolCard.SchoolCardItem
 import com.hfut.schedule.ui.Activity.success.search.Search.Second.Second
-import com.hfut.schedule.ui.Activity.success.search.Search.TotalCourse.CourseTotal
-import com.hfut.schedule.ui.Activity.success.search.Search.Web.WebUI
-import com.hfut.schedule.ui.Activity.success.search.Search.DormitoryScore.DormitoryScoreItem
 import com.hfut.schedule.ui.Activity.success.search.Search.SelectCourse.selectCourse
+import com.hfut.schedule.ui.Activity.success.search.Search.Survey.Survey
 import com.hfut.schedule.ui.Activity.success.search.Search.TodayCampus.ToadyCampus
+import com.hfut.schedule.ui.Activity.success.search.Search.TotalCourse.CourseTotal
 import com.hfut.schedule.ui.Activity.success.search.Search.Transfer.Transfer
+import com.hfut.schedule.ui.Activity.success.search.Search.Web.WebUI
 import com.hfut.schedule.ui.Activity.success.search.Search.Work.Work
-import com.hfut.schedule.ui.UIUtils.BottomTip
+import com.hfut.schedule.ui.Activity.success.search.Search.XueXin.XueXin
 import com.hfut.schedule.ui.UIUtils.MyToast
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
@@ -279,7 +277,7 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
                         .weight(.5f),
                     shape = MaterialTheme.shapes.small,
                 ){
-                    Lab()
+                    selectCourse(ifSaved, vm)
                 }
                 Spacer(modifier = Modifier.width(10.dp))
                 Card(
@@ -447,7 +445,7 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
                         .weight(.5f),
                     shape = MaterialTheme.shapes.small,
                 ){
-                    selectCourse(ifSaved,vm)
+                    XueXin()
                 }
                 Spacer(modifier = Modifier.width(10.dp))
                 Card(
