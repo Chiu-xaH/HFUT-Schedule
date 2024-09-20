@@ -28,11 +28,14 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -51,9 +54,11 @@ import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.Enums.SelectType
+import com.hfut.schedule.logic.datamodel.Jxglstu.SelectCourseInfo
 import com.hfut.schedule.logic.datamodel.Jxglstu.SelectPostResponse
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.ui.Activity.success.search.Search.FailRate.Click
 import com.hfut.schedule.ui.Activity.success.search.Search.More.Login
 import com.hfut.schedule.ui.UIUtils.LittleDialog
 import com.hfut.schedule.ui.UIUtils.Round
@@ -66,26 +71,8 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun selectCourse(ifSaved : Boolean,vm : LoginSuccessViewModel) {
-    var showDialog by remember { mutableStateOf(false) }
     var showBottomSheet by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState()
-
-
-
-
-    if(showDialog) {
-        LittleDialog(
-            onDismissRequest = { showDialog = false },
-            onConfirmation = {
-                showBottomSheet = true
-                showDialog = false
-                             },
-            dialogTitle = "重要声明",
-            dialogText =  "本应用不承担选课失败造成的后果;\n若无法加载则为校方服务器问题;\n请登录官方系统,确保一定选课成功;\n请不要张扬,我怕教务请我喝茶\n目前只是初版,后续加入检索功能",
-            conformtext = "我接受",
-            dismisstext = "不同意"
-        )
-    }
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
 
     if (showBottomSheet) {
@@ -197,7 +184,7 @@ fun selectCourseList(vm: LoginSuccessViewModel) {
     var courseId by remember { mutableStateOf(0) }
     var name by remember { mutableStateOf("选课") }
     var showBottomSheet by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
 
     var showBottomSheet_selected by remember { mutableStateOf(false) }
@@ -291,6 +278,7 @@ fun selectCourseList(vm: LoginSuccessViewModel) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun selectCourseInfoLoad(courseId : Int, vm: LoginSuccessViewModel) {
     var loading by remember { mutableStateOf(true) }
@@ -332,19 +320,53 @@ fun selectCourseInfoLoad(courseId : Int, vm: LoginSuccessViewModel) {
         }
     }
 
+    var input by remember { mutableStateOf("") }
 
     AnimatedVisibility(
         visible = !loading,
         enter = fadeIn(),
         exit = fadeOut()
     ) {
-        selectCourseInfo(vm,courseId)
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                TextField(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 15.dp),
+                    value = input,
+                    onValueChange = {
+                        input = it
+                    },
+                    label = { Text("搜素 名称 代码 类型" ) },
+                    singleLine = true,
+                    trailingIcon = {
+                        IconButton(
+                            onClick = {
+
+                            }) {
+                            Icon(painter = painterResource(R.drawable.search), contentDescription = "description")
+                        }
+                    },
+                    shape = MaterialTheme.shapes.medium,
+                    colors = TextFieldDefaults.textFieldColors(
+                        focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
+                        unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
+                    ),
+                )
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+            selectCourseInfo(vm,courseId,input)
+        }
+
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun selectCourseInfo(vm: LoginSuccessViewModel,courseId : Int) {
+fun selectCourseInfo(vm: LoginSuccessViewModel,courseId : Int,search : String = "") {
     val list = getSelectCourseInfo(vm)
     val cookie = SharePrefs.prefs.getString("redirect", "")
     var lessonId by remember { mutableStateOf(0) }
@@ -410,10 +432,16 @@ fun selectCourseInfo(vm: LoginSuccessViewModel,courseId : Int) {
             }
         }
     }
+    val searchList = mutableListOf<SelectCourseInfo>()
+    list.forEach { item ->
+        if(item.code.contains(search) || item.course.nameZh.contains(search) || item.nameZh.contains(search)) {
+            searchList.add(item)
+        }
+    }
 
     LazyColumn {
-        items(list.size) {item ->
-            val lists = list[item]
+        items(searchList.size) {item ->
+            val lists = searchList[item]
             var stdCount by remember { mutableStateOf("0") }
             LaunchedEffect(lists.id) {
                 async { cookie?.let { vm.getSCount(it,lists.id) } }.await()
@@ -439,8 +467,8 @@ fun selectCourseInfo(vm: LoginSuccessViewModel,courseId : Int) {
             ) {
                 ListItem(
                     headlineContent = { Text(text = lists.course.nameZh) },
-                    overlineContent = { Text(text =   "已选 " + stdCount + " / " +lists.limitCount)},
-                    supportingContent = { Text(text = lists.nameZh + "\n" + (lists.remark ?: ""))},
+                    overlineContent = { Text(text =   "代码 ${lists.code}\n"+"已选 " + stdCount + " / " +lists.limitCount)},
+                    supportingContent = { Text(text = lists.nameZh  + if(lists.remark != null) "\n${lists.remark}" else "")},
                     trailingContent = {  FilledTonalIconButton(onClick = {
                         lessonId = lists.id
                         showBottomSheet = true
@@ -568,6 +596,14 @@ fun courseInfo(num : Int,vm: LoginSuccessViewModel) {
             overlineContent = { Text(text = "教师(仅展示第一位)")},
             headlineContent = { Text(text = data.teachers[0].nameZh) },
             leadingContent = { Icon(painter = painterResource(id = R.drawable.person), contentDescription = "")},
+            modifier = Modifier.weight(.5f)
+        )
+    }
+    Row {
+        ListItem(
+            overlineContent = { Text(text = "代码")},
+            headlineContent = { Text(text = data.code) },
+            leadingContent = { Icon(painter = painterResource(id = R.drawable.tag), contentDescription = "")},
             modifier = Modifier.weight(.5f)
         )
     }

@@ -128,11 +128,11 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean
         }
 
         ListItem(
-            headlineContent = { Text(text = "开源主页") },
-            supportingContent = { Text(text = "欢迎来开源主页参观一下")},
+            headlineContent = { Text(text = "Github开源") },
+            supportingContent = { Text(text = "欢迎来参观项目,如您想成为下个版本的构建者,来这里Fork项目并提交你的代码吧")},
             leadingContent = {
                 Icon(
-                    painterResource(R.drawable.net),
+                    painterResource(R.drawable.github),
                     contentDescription = "Localized description",
                 )
             },

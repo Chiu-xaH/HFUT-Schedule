@@ -14,6 +14,7 @@ import android.os.Environment
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -75,7 +76,7 @@ fun VersionInfoCard() {
             ListItem(headlineContent = { Text(text = "聚在工大 " + APPVersion.getVersionName(), fontSize = 28.sp) })
             Row {
                 ListItem(
-                    overlineContent = { Text(text = "2024-09-18") },
+                    overlineContent = { Text(text = "2024-09-19") },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.sdk), contentDescription = "") },
                     headlineContent = { ScrollText(text = "第${APPVersion.getVersionCode()}次更新") },
                     modifier = Modifier.weight(.5f)
@@ -84,7 +85,9 @@ fun VersionInfoCard() {
                     headlineContent = { ScrollText(text = "Chiu-xaH") },
                     overlineContent = { Text(text = "构建") },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.support), contentDescription = "") },
-                    modifier = Modifier.weight(.5f)
+                    modifier = Modifier.weight(.5f).clickable {
+                        MyToast("想成为下个版本的构建者吗?跟随 设置-维护关于-开源主页")
+                    }
                 )
             }
         }
@@ -96,9 +99,9 @@ fun VersionInfoCard() {
 fun VersionInfo() {
     VersionInfoCard()
     DividerText(text = "新特性")
-    UpdateItems("新增 学信网","位于 查询中心", UpdateType.ADD)
-    UpdateItems("重构 网址导航","原'实验室'合并到'网址导航'内", UpdateType.RENEW)
-    UpdateItems("优化 网址导航中的冗余项目",null, UpdateType.OPTIMIZE)
+    UpdateItems("新增一些说明","成绩", UpdateType.ADD)
+    UpdateItems("新增 选课检索","可输入课程代码或名称", UpdateType.ADD)
+    UpdateItems("优化 部分界面的显示",null, UpdateType.OPTIMIZE)
 }
 
 enum class UpdateType {

@@ -584,7 +584,6 @@ fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues,vmUI : UIViewModel
             }.await()
             async {
                 refreshing = false
-                MyToast("刷新成功")
             }
         }
     })

@@ -13,23 +13,33 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,6 +51,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -53,6 +64,7 @@ import com.hfut.schedule.logic.datamodel.NavigationBarItemData
 import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.ui.UIUtils.Round
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 import dev.chrisbanes.haze.hazeChild
@@ -68,6 +80,38 @@ fun GradeUI(ifSaved : Boolean,vm : LoginSuccessViewModel) {
     val navController = rememberNavController()
     val context = LocalContext.current
     var animation by remember { mutableStateOf(prefs.getInt("ANIMATION",MyApplication.Animation)) }
+
+    var showBottomSheet by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState()
+
+    if (showBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { showBottomSheet= false },
+            sheetState = sheetState,
+            shape = Round(sheetState)
+        ) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        title = { Text("说明") }
+                    )
+                },) {innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                ){
+                    Infos()
+                }
+            }
+        }
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -80,10 +124,17 @@ fun GradeUI(ifSaved : Boolean,vm : LoginSuccessViewModel) {
                     ),
                     title = { Text("成绩") },
                     actions = {
-                        IconButton(onClick = {
-                            (context as? Activity)?.finish()
-                        }) {
-                            Icon(Icons.Filled.Close, contentDescription = "")
+                        Row {
+                            IconButton(onClick = {
+                                showBottomSheet = true
+                            }) {
+                                Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")
+                            }
+                            IconButton(onClick = {
+                                (context as? Activity)?.finish()
+                            }) {
+                                Icon(Icons.Filled.Close, contentDescription = "")
+                            }
                         }
                     }
                 )
@@ -178,5 +229,33 @@ fun GradeUI(ifSaved : Boolean,vm : LoginSuccessViewModel) {
                 }
             }
         }
+    }
+}
+
+@Composable
+fun Infos() {
+    Card(
+        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 15.dp, vertical = 5.dp),
+        shape = MaterialTheme.shapes.medium,
+    ) {
+        ListItem(
+            headlineContent = { Text(text = "平时因数") },
+            supportingContent = { Text(text = "平时因数=除去期末成绩各项平均分/期末分数,可大致反映最终成绩平时分占比;\n越接近1则平衡,越>1则表明最终成绩可能更靠平时分,越<1表明最终成绩可能因平时分拖后腿")}
+        )
+    }
+    Card(
+        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 15.dp, vertical = 5.dp),
+        shape = MaterialTheme.shapes.medium,
+    ) {
+        ListItem(
+            headlineContent = { Text(text = "绩点与均分") },
+            supportingContent = { Text(text = "满绩 4.3 均分 95-100\n绩点 3.7 均分 85-89\n绩点 3.3 均分 83-84\n绩点 3.0 均分 78-82\n2.7之后不清楚,欢迎联系开发者补充")}
+        )
     }
 }

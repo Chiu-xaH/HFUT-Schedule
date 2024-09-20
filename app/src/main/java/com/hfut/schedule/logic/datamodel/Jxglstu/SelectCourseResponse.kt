@@ -8,6 +8,7 @@ data class SelectCourse(val id : Int,
 
 
 data class SelectCourseInfo(val id : Int,
+                            val code : String,
                             val nameZh : String,
                             val teachers : List<courseType>,
                             val course: course,

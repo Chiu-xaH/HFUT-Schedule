@@ -68,7 +68,7 @@ fun PersonPart() {
 
 
 
-    var expandItems by remember { mutableStateOf(prefs.getBoolean("expandPerson",true)) }
+    var expandItems by remember { mutableStateOf(prefs.getBoolean("expandPerson",false)) }
 
 
 

@@ -89,9 +89,9 @@ fun TotaGrade() {
 
     val json = SharePrefs.prefs.getString("Grade", MyApplication.NullGrades)
     val result = Gson().fromJson(json,com.hfut.schedule.logic.datamodel.Community.GradeResponse::class.java).result
-    val Class = result?.classRanking
-    val Major = result?.majorRanking
-    val TotalGPA = result?.gpa
+    val Class = result.classRanking
+    val Major = result.majorRanking
+    val TotalGPA = result.gpa
 
 
 
@@ -492,7 +492,7 @@ fun GradeInfo(num : Int) {
         Row{
             ListItem(
                 leadingContent = { Icon(painter = painterResource(id = if(GPA.toFloat() >= 3.0)R.drawable.sentiment_very_satisfied else R.drawable.sentiment_dissatisfied), contentDescription = "") },
-                headlineContent = { ScrollText(text = if(GPA == "4")"满绩" else if(GPA == "3.7") "接近满绩" else if(GPA.toFloat() >= 3) "不错" else "有点薄弱"
+                headlineContent = { ScrollText(text = if(GPA == "4.3")"满绩" else if(GPA == "4") "优秀" else if(GPA.toFloat() >= 3) "不错" else if(GPA == "0") "挂科" else "薄弱"
                 ) },
                 modifier = Modifier.weight(.4f)
             )

@@ -48,7 +48,7 @@ fun Second() {
         headlineContent = { Text(text = "第二课堂") },
         leadingContent = {
             Icon(
-                painterResource(R.drawable.school),
+                painterResource(R.drawable.hotel_class),
                 contentDescription = "Localized description",
             )
         },

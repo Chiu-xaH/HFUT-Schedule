@@ -106,7 +106,6 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel,innerPaddings : 
             }.await()
             async {
                 refreshing = false
-                MyToast("刷新成功")
             }
         }
     })
