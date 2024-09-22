@@ -385,7 +385,6 @@ class LoginSuccessViewModel(webVpn : Boolean) : ViewModel() {
 
     fun getLessonIds(cookie : String, bizTypeId : String,studentid : String) {
         //bizTypeId为年级数，例如23  //dataId为学生ID  //semesterId为学期Id，例如23-24第一学期为234
-
         val call = prefs.getString("semesterId","234")
             ?.let { JxglstuJSON.getLessonIds(cookie,bizTypeId, it,studentid) }
 

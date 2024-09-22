@@ -105,7 +105,7 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
     val switch = prefs.getBoolean("SWITCH",true)
     var showlable by remember { mutableStateOf(switch) }
     val hazeState = remember { HazeState() }
-    CoroutineScope(Job()).launch { NetWorkUpdate(vm, vm2,vmUI,true) }
+
     var bottomBarItems by remember { mutableStateOf(FOCUS) }
     var showBadge by remember { mutableStateOf(false) }
     if (getUpdates().version != APPVersion.getVersionName()) showBadge = true
@@ -145,6 +145,7 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
         }
     }
 
+    CoroutineScope(Job()).launch { NetWorkUpdate(vm, vm2,vmUI,true, ifSaved) }
 
     Handler(Looper.getMainLooper()).post { vm.examCode.observeForever(ExamObserver) }
 

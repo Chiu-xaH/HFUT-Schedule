@@ -89,7 +89,7 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel,innerPaddings : 
     val TAB_RIGHT = 1
 
 /////////////////////////////////////////逻辑函数区/////////////////////////////////////////////////
-    CoroutineScope(Job()).launch{ async { NetWorkUpdate(vm,vm2,vmUI,webVpn) } }
+    CoroutineScope(Job()).launch{ async { NetWorkUpdate(vm,vm2,vmUI,webVpn,ifSaved) } }
 //Today操作区///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -102,7 +102,7 @@ fun TodayScreen(vm : LoginSuccessViewModel,vm2 : LoginViewModel,innerPaddings : 
         scope.launch {
             async {
                 refreshing = true
-                NetWorkUpdate(vm,vm2,vmUI,webVpn)
+                NetWorkUpdate(vm,vm2,vmUI,webVpn,ifSaved)
             }.await()
             async {
                 refreshing = false

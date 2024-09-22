@@ -63,6 +63,7 @@ import com.hfut.schedule.logic.utils.SharePrefs.SaveBoolean
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.StartApp.StartUri
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Monet.MonetColorItem
+import com.hfut.schedule.ui.Activity.success.cube.Settings.Update.UpdateUI
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Update.VersionInfo
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Update.downloadUI
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Update.getUpdates

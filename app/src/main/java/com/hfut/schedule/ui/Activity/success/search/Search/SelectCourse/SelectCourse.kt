@@ -4,8 +4,14 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,14 +23,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
@@ -45,8 +56,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
@@ -58,9 +71,11 @@ import com.hfut.schedule.logic.datamodel.Jxglstu.SelectCourseInfo
 import com.hfut.schedule.logic.datamodel.Jxglstu.SelectPostResponse
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.ui.Activity.success.main.saved.UpdateCourses
 import com.hfut.schedule.ui.Activity.success.search.Search.FailRate.Click
 import com.hfut.schedule.ui.Activity.success.search.Search.More.Login
 import com.hfut.schedule.ui.UIUtils.LittleDialog
+import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.ScrollText
 import kotlinx.coroutines.CoroutineScope
@@ -73,6 +88,9 @@ import kotlinx.coroutines.launch
 fun selectCourse(ifSaved : Boolean,vm : LoginSuccessViewModel) {
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    var showBottomSheet_info by remember { mutableStateOf(false) }
+    val sheetState_info = rememberModalBottomSheetState()
 
 
     if (showBottomSheet) {
@@ -90,6 +108,19 @@ fun selectCourse(ifSaved : Boolean,vm : LoginSuccessViewModel) {
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
                         title = { Text("选课") },
+                        actions = {
+                            Row(modifier = Modifier.padding(horizontal = 15.dp)) {
+                                FilledTonalIconButton(onClick = { showBottomSheet_info = true }, ) {
+                                    Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")
+                                }
+                                FilledTonalButton(onClick = {
+                                    UpdateCourses(vm)
+                                    MyToast("已刷新课表与课程汇总")
+                                }) {
+                                    Text(text = "刷新课表")
+                                }
+                            }
+                        }
                     )
                 },
             ) { innerPadding ->
@@ -102,6 +133,38 @@ fun selectCourse(ifSaved : Boolean,vm : LoginSuccessViewModel) {
             }
         }
     }
+    if (showBottomSheet_info) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                showBottomSheet_info = false
+                UpdateCourses(vm)
+                               },
+            sheetState = sheetState_info,
+            shape = Round(sheetState_info)
+        ) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        title = { Text("功能说明") }
+                    )
+                },
+            ) { innerPadding ->
+                Column(modifier = Modifier
+                    .padding(innerPadding)
+                    .verticalScroll(rememberScrollState())
+                    .fillMaxSize()) {
+                    SelectShuoming()
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
+            }
+        }
+    }
+
     ListItem(
         headlineContent = { Text(text = "选课") },
         leadingContent = {
@@ -112,6 +175,33 @@ fun selectCourse(ifSaved : Boolean,vm : LoginSuccessViewModel) {
             else Login()
         }
     )
+}
+@Composable
+fun SelectShuoming() {
+    Card(
+        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 15.dp, vertical = 5.dp),
+        shape = MaterialTheme.shapes.medium,
+    ) {
+        ListItem(
+            headlineContent = { Text(text = "免责声明") },
+            supportingContent = { Text(text = "本应用不承担选课失败造成的后果\n请登录官方系统,确保一定选课成功")}
+        )
+    }
+    Card(
+        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 15.dp, vertical = 5.dp),
+        shape = MaterialTheme.shapes.medium,
+    ) {
+        ListItem(
+            headlineContent = { Text(text = "功能说明") },
+            supportingContent = { Text(text = "点击右侧按钮选退课\n点击卡片查看详细课程信息\n退课后列表并不会更新,请手动刷新\n选退课时请核对课程代码\n若持续加载可能为教务服务器问题\n选退课完成后前往课表与课程汇总,会显示出新课程(也可在右上角手动刷新)")}
+        )
+    }
 }
 
 @Composable
@@ -254,25 +344,54 @@ fun selectCourseList(vm: LoginSuccessViewModel) {
 
     LazyColumn {
         items(list.size) { item ->
+            var expand by remember { mutableStateOf(false) }
             Card(
                 elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp),
+                    .padding(horizontal = 15.dp, vertical = 5.dp).clickable {
+                        courseId = list[item].id
+                        SharePrefs.Save("courseIDS",list[item].id.toString())
+                        name = list[item].name
+                        showBottomSheet = true
+                    },
                 shape = MaterialTheme.shapes.medium,
             ) {
                 ListItem(
                     headlineContent = { Text(text = list[item].name) },
                     overlineContent = { Text(text = list[item].selectDateTimeText)},
-                    supportingContent = { Text(text = "选课公告：${list[item].bulletin}\n选课规则：${list[item].addRulesText}") },
-                    trailingContent = { Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "")},
-                    modifier = Modifier.clickable {
-                        courseId = list[item].id
-                        SharePrefs.Save("courseIDS",list[item].id.toString())
-                        name = list[item].name
-                        showBottomSheet = true
-                    }
+                    trailingContent = { FilledTonalIconButton(onClick = { expand = !expand }) {
+                        Icon(painter = painterResource(id = if(expand) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "")
+                    }},
                 )
+                AnimatedVisibility(
+                    visible = expand,
+                    enter = slideInVertically(
+                        initialOffsetY = { -40 }
+                    ) + expandVertically(
+                        expandFrom = Alignment.Top
+                    ) + scaleIn(
+                        transformOrigin = TransformOrigin(0.5f, 0f)
+                    ) + fadeIn(initialAlpha = 0.3f),
+                    exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
+                ) {
+                    Column {
+                        ListItem(
+                            headlineContent = { Text(text = "选课公告") },
+                            supportingContent = {
+                                Text(text = list[item].bulletin)
+                            }
+                        )
+                        ListItem(
+                            headlineContent = { Text(text = "选课规则") },
+                            supportingContent = {
+                                for (i in list[item].addRulesText) {
+                                    Text(text = "$i ")
+                                }
+                            }
+                        )
+                    }
+                }
             }
         }
     }
@@ -340,7 +459,7 @@ fun selectCourseInfoLoad(courseId : Int, vm: LoginSuccessViewModel) {
                     onValueChange = {
                         input = it
                     },
-                    label = { Text("搜素 名称 代码 类型" ) },
+                    label = { Text("搜索 名称|代码|类型" ) },
                     singleLine = true,
                     trailingIcon = {
                         IconButton(
@@ -360,7 +479,6 @@ fun selectCourseInfoLoad(courseId : Int, vm: LoginSuccessViewModel) {
             Spacer(modifier = Modifier.height(10.dp))
             selectCourseInfo(vm,courseId,input)
         }
-
     }
 }
 
@@ -404,6 +522,13 @@ fun selectCourseInfo(vm: LoginSuccessViewModel,courseId : Int,search : String = 
             }
         }
     }
+    val searchList = mutableListOf<SelectCourseInfo>()
+    list.forEach { item ->
+        if(item.code.contains(search) || item.course.nameZh.contains(search) || item.nameZh.contains(search)) {
+            searchList.add(item)
+        }
+    }
+
 
     if (showBottomSheet_info) {
         ModalBottomSheet(
@@ -419,23 +544,24 @@ fun selectCourseInfo(vm: LoginSuccessViewModel,courseId : Int,search : String = 
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        title = { ScrollText(text = name) }
+                        title = { ScrollText(text = name) },
+                        actions = {
+                            FilledTonalButton(onClick = {
+                                showBottomSheet = true
+                            }, modifier = Modifier.padding(horizontal = 15.dp)) {
+                                Text(text = "选课")
+                            }
+                        }
                     )
                 },
             ) { innerPadding ->
                 Column(modifier = Modifier
                     .padding(innerPadding)
                     .fillMaxSize()) {
-                    courseInfo(num,vm)
+                    courseInfo(num,searchList)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
-        }
-    }
-    val searchList = mutableListOf<SelectCourseInfo>()
-    list.forEach { item ->
-        if(item.code.contains(search) || item.course.nameZh.contains(search) || item.nameZh.contains(search)) {
-            searchList.add(item)
         }
     }
 
@@ -475,7 +601,9 @@ fun selectCourseInfo(vm: LoginSuccessViewModel,courseId : Int,search : String = 
                     }) { Icon(painter = painterResource(id = R.drawable.add_task), contentDescription = "") }},
                     modifier = Modifier.clickable {
                         showBottomSheet_info = true
+                        name = lists.course.nameZh
                         num = item
+                        lessonId = lists.id
                     }
                 )
             }
@@ -569,8 +697,8 @@ fun selectCourseResultLoad(vm : LoginSuccessViewModel,courseId : Int,lessonId : 
 }
 
 @Composable
-fun courseInfo(num : Int,vm: LoginSuccessViewModel) {
-    val data = getSelectCourseInfo(vm)[num]
+fun courseInfo(num : Int,lists : List<SelectCourseInfo>) {
+    val data = lists[num]
     Row {
         ListItem(
             overlineContent = { Text(text = "学分")},
@@ -695,14 +823,19 @@ fun haveSelectedCourse(vm: LoginSuccessViewModel,courseId : Int) {
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        title = { ScrollText(text = name) }
+                        title = { ScrollText(text = name) },
+                        actions = {
+                            FilledTonalButton(onClick = { showDialog = true }, modifier = Modifier.padding(horizontal = 15.dp)) {
+                                Text(text = "退课")
+                            }
+                        }
                     )
                 },
             ) { innerPadding ->
                 Column(modifier = Modifier
                     .padding(innerPadding)
                     .fillMaxSize()) {
-                    courseInfo(num,vm)
+                    courseInfo(num,lists)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }

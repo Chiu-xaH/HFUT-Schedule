@@ -29,6 +29,7 @@ import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemColors
@@ -92,7 +93,14 @@ fun PersonPart() {
                 ListItem(
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.person), contentDescription = "")},
                     headlineContent = { getPersonInfo().name?.let { Text(text = it) } },
-                    trailingContent = { Icon(painterResource(id = if(expandItems) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "")},
+                    trailingContent = {
+                        FilledTonalIconButton(onClick = {
+                            expandItems = !expandItems
+                            SharePrefs.SaveBoolean("expandPerson",true,expandItems)
+                        }) {
+                            Icon(painterResource(id = if(expandItems) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "")
+                        }
+                        },
                     colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                     modifier = Modifier.clickable {
                         expandItems = !expandItems

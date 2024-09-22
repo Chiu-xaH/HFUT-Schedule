@@ -76,7 +76,7 @@ fun VersionInfoCard() {
             ListItem(headlineContent = { Text(text = "聚在工大 " + APPVersion.getVersionName(), fontSize = 28.sp) })
             Row {
                 ListItem(
-                    overlineContent = { Text(text = "2024-09-19") },
+                    overlineContent = { Text(text = "2024-09-22") },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.sdk), contentDescription = "") },
                     headlineContent = { ScrollText(text = "第${APPVersion.getVersionCode()}次更新") },
                     modifier = Modifier.weight(.5f)
@@ -99,9 +99,11 @@ fun VersionInfoCard() {
 fun VersionInfo() {
     VersionInfoCard()
     DividerText(text = "新特性")
-    UpdateItems("新增一些说明","成绩", UpdateType.ADD)
-    UpdateItems("新增 选课检索","可输入课程代码或名称", UpdateType.ADD)
-    UpdateItems("优化 部分界面的显示",null, UpdateType.OPTIMIZE)
+    UpdateItems("新增 选课说明",null, UpdateType.ADD)
+    UpdateItems("优化 选课功能若干页面的显示",null, UpdateType.OPTIMIZE)
+    UpdateItems("优化 退出选课后会自动刷新课表与课程汇总",null, UpdateType.OPTIMIZE)
+    UpdateItems("优化 聚焦下拉刷新会自动刷新教务课表与课程汇总",null, UpdateType.OPTIMIZE)
+    UpdateItems("修复 选课功能的若干Bug","检索后详细信息不一致、不显示标题等", UpdateType.FIX)
 }
 
 enum class UpdateType {

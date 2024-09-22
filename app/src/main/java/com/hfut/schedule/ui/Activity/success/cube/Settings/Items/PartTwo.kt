@@ -22,6 +22,7 @@ import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -96,60 +97,5 @@ fun PartTwo() {
             else Toast.makeText(MyApplication.context,"与云端版本一致",Toast.LENGTH_SHORT).show()
         }
     )
-}
-
-@Composable
-fun UpdateUI() {
-
-    Card(
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 3.dp
-        ),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 15.dp, vertical = 5.dp),
-        shape = MaterialTheme.shapes.medium
-
-    ){
-        UpdateItem()
-    }
-}
-
-@Composable
-fun UpdateItem() {
-    var version by remember { mutableStateOf(getUpdates()) }
-
-    var expandItems by remember { mutableStateOf(false) }
-    ListItem(
-        headlineContent = { Text(text = "发现新版本") },
-        supportingContent = { Text(text = "${APPVersion.getVersionName()} → ${version.version}") },
-        leadingContent = { Icon(painterResource(R.drawable.arrow_upward), contentDescription = "Localized description",) },
-        trailingContent = {
-            IconButton(onClick = { expandItems = !expandItems }) { Icon(painterResource(id = if(!expandItems) R.drawable.expand_content else R.drawable.collapse_content), contentDescription = "")
-            }
-            },
-        modifier = Modifier.clickable{ StartUri(MyApplication.UpdateURL+ "/releases/tag/Android") },
-        colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
-    )
-
-    AnimatedVisibility(
-        visible = expandItems,
-        enter = slideInVertically(
-            initialOffsetY = { -40 }
-        ) + expandVertically(
-            expandFrom = Alignment.Top
-        ) + scaleIn(
-            transformOrigin = TransformOrigin(0.5f, 0f)
-        ) + fadeIn(initialAlpha = 0.3f),
-        exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)) {
-        ListItem(
-            headlineContent = { Text(text ="更新日志") },
-            supportingContent = {
-                getUpdates().text?.let { Text(text = " $it") }
-            },
-            leadingContent = { Icon(painter = painterResource(id = R.drawable.hotel_class), contentDescription = "")},
-            colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
-        )
-    }
 }
 
