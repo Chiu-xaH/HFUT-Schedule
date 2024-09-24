@@ -76,7 +76,7 @@ fun VersionInfoCard() {
             ListItem(headlineContent = { Text(text = "聚在工大 " + APPVersion.getVersionName(), fontSize = 28.sp) })
             Row {
                 ListItem(
-                    overlineContent = { Text(text = "2024-09-22") },
+                    overlineContent = { Text(text = "2024-09-24") },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.sdk), contentDescription = "") },
                     headlineContent = { ScrollText(text = "第${APPVersion.getVersionCode()}次更新") },
                     modifier = Modifier.weight(.5f)
@@ -99,11 +99,10 @@ fun VersionInfoCard() {
 fun VersionInfo() {
     VersionInfoCard()
     DividerText(text = "新特性")
-    UpdateItems("新增 选课说明",null, UpdateType.ADD)
-    UpdateItems("优化 选课功能若干页面的显示",null, UpdateType.OPTIMIZE)
-    UpdateItems("优化 退出选课后会自动刷新课表与课程汇总",null, UpdateType.OPTIMIZE)
-    UpdateItems("优化 聚焦下拉刷新会自动刷新教务课表与课程汇总",null, UpdateType.OPTIMIZE)
-    UpdateItems("修复 选课功能的若干Bug","检索后详细信息不一致、不显示标题等", UpdateType.FIX)
+    UpdateItems("重构 热水机(支付宝 趣智校园)","桌面长按图标菜单新增热水机", UpdateType.RENEW)
+    UpdateItems("恢复 原热水机跳转链接(支付宝 社慧通)","不确定完全可用,位于查询中心-网址导航", UpdateType.RENEW)
+    UpdateItems("修复 聚焦底部遮挡Bug",null, UpdateType.FIX)
+    UpdateItems("优化 聚焦接口的逻辑",null, UpdateType.OPTIMIZE)
 }
 
 enum class UpdateType {

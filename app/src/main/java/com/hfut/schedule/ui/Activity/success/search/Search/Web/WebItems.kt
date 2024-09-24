@@ -19,8 +19,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.StartApp
+import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.MyAPIItem
+import com.hfut.schedule.ui.UIUtils.ScrollText
 
 @Composable
 fun WebItem() {
@@ -149,9 +152,9 @@ fun WebItem() {
             shape = MaterialTheme.shapes.small,
         ){
             ListItem(
-                headlineContent = { Text(text = "教考网") },
-                leadingContent = { Icon(painterResource(R.drawable.draw), contentDescription = "Localized description",) },
-                modifier = Modifier.clickable { StartApp.StartUri("https://www.neea.edu.cn/") }
+                headlineContent = { ScrollText(text = "旧热水(支付宝社慧通)") },
+                leadingContent = { Icon(painterResource(R.drawable.water_voc), contentDescription = "Localized description",) },
+                modifier = Modifier.clickable { StartApp.openAlipay(MyApplication.AlipayHotWaterOldURL) }
             )
         }
     }

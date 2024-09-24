@@ -132,7 +132,7 @@ fun ScheduleItems(MySchedule: MutableList<Schedule>, item : Int,Future : Boolean
     val info = MySchedules.info
     val title = MySchedules.title
     val showPublic = MySchedules.showPublic
-    val switch_api = SharePrefs.prefs.getBoolean("SWITCHMYAPI", apiCheck())
+    val switch_api = SharePrefs.prefs.getBoolean("SWITCHMYAPIS", apiCheck())
 
 
     @Composable
@@ -291,7 +291,7 @@ fun WangkeItem(item : Int, MyWangKe: MutableList<Schedule>,Future: Boolean) {
         }
     }
 
-    val switch_api = SharePrefs.prefs.getBoolean("SWITCHMYAPI", apiCheck())
+    val switch_api = SharePrefs.prefs.getBoolean("SWITCHMYAPIS", apiCheck())
 
 
     if(switch_api) {

@@ -5,9 +5,10 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-permission android:name="android.permission.WRITE_CALENDAR" />
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" tools:ignore="ScopedStorage" />
+    <uses-permission
+        android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
-
 
     <queries>
         <package android:name="com.wisedu.cpdaily" />
@@ -28,15 +29,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.App.Starting"
         tools:targetApi="tiramisu">
+        <activity
+            android:name=".activity.ShortCutActivity"
+            android:exported="false"
+            android:label="@string/title_activity_shortcut"
+            android:theme="@style/Theme.App.Starting" />
+
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="1cdad5eb7c48146529a11e50e9c6ad1b"/>
+            android:value="1cdad5eb7c48146529a11e50e9c6ad1b" />
+
         <activity
             android:name=".activity.FixActivity"
             android:exported="true"
             android:label="@string/title_activity_fix"
-            android:theme="@style/Theme.肥工课程表">
-        </activity>
+            android:theme="@style/Theme.肥工课程表"></activity>
         <activity
             android:name=".activity.GradeActivity"
             android:exported="false"

@@ -546,11 +546,11 @@ fun NetWorkScreen(navController: NavController,
         .padding(innerPaddings)) {
         Spacer(modifier = Modifier.height(5.dp))
 
-        val switch_api = SharePrefs.prefs.getBoolean("SWITCHMYAPI", apiCheck())
+        val switch_api = SharePrefs.prefs.getBoolean("SWITCHMYAPIS", isFocus())
         var showapi by remember { mutableStateOf(switch_api) }
 
 
-        SaveBoolean("SWITCHMYAPI",false,showapi)
+        SaveBoolean("SWITCHMYAPIS",false,showapi)
         val my = prefs.getString("my","")
 
         val switch_upload = SharePrefs.prefs.getBoolean("SWITCHUPLOAD",true )
@@ -608,9 +608,10 @@ fun NetWorkScreen(navController: NavController,
             leadingContent = { Icon(painterResource(R.drawable.settings_ethernet), contentDescription = "Localized description",) },
             modifier = Modifier.clickable {  showBottomSheet_arrange = true }
         )
+        if(isFocus())
         ListItem(
             headlineContent = { Text(text = "网络接口") },
-            supportingContent = { Text(text = "本接口为计算机23-X班提供了除学校系统之外的聚焦信息") },
+            supportingContent = { Text(text = "为您提供除学校系统之外的聚焦信息\n(开发者同班同学仅可见此开关)") },
             leadingContent = { Icon(painterResource(R.drawable.api), contentDescription = "Localized description",) },
             trailingContent = { Switch(checked = showapi, onCheckedChange = {showapich -> showapi = showapich }) },
             modifier = Modifier.clickable { showapi = !showapi }
@@ -800,5 +801,22 @@ fun CirclePoint(modifier: Modifier = Modifier,text : String,password : String) {
                 Icon(painter = painterResource(id = if(i < password.length) R.drawable.circle_filled else R.drawable.circle), contentDescription = "",modifier = Modifier.padding(7.dp).size(17.dp),tint = MaterialTheme.colorScheme.primary)
             }
         }
+    }
+}
+
+fun isFocus() : Boolean {
+    return try {
+        val personInfo = getPersonInfo()
+        val classInfo = personInfo.classes
+        if (personInfo.school!!.contains("宣城")) {
+            if(classInfo!!.contains("计算机") && classInfo.contains("23-3")) {
+                true
+            } else personInfo.username == "2023216601" ||
+                    personInfo.username == "2023218012" ||
+                    personInfo.username == "2023218155" ||
+                    personInfo.username == "2023218529"
+        } else false
+    } catch (_:Exception) {
+        false
     }
 }

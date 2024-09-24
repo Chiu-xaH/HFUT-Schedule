@@ -10,6 +10,8 @@
     <string name="card">一卡通</string>
     <string name="main">主界面</string>
     <string name="fix">修复</string>
+    <string name="hot_water">热水机</string>
     <string name="title_activity_grade">GradeActivity</string>
     <string name="title_activity_fix">FixActivity</string>
+    <string name="title_activity_shortcut">ShortCutActivity</string>
 </resources>
