@@ -8,3 +8,4 @@ import androidx.compose.runtime.Composable
 fun CardForListColor() : CardColors {
     return CardColors(containerColor = ListItemDefaults.containerColor, contentColor = ListItemDefaults.containerColor, disabledContainerColor = ListItemDefaults.containerColor, disabledContentColor = ListItemDefaults.containerColor)
 }
+

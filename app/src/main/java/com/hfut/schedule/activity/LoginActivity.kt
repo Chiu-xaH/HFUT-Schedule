@@ -2,6 +2,7 @@ package com.hfut.schedule.activity
 
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -31,16 +32,21 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.login.main.LoginUI
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Update.checkAndRequestStoragePermission
+import com.hfut.schedule.ui.Activity.success.main.saved.Add
 import com.hfut.schedule.ui.Activity.success.main.saved.NoNetWork
+import com.hfut.schedule.ui.Activity.success.main.saved.getNum
 import com.hfut.schedule.ui.MonetColor.LocalCurrentStickerUuid
 import com.hfut.schedule.ui.MonetColor.MainIntent
 import com.hfut.schedule.ui.MonetColor.MainViewModel
 import com.hfut.schedule.ui.MonetColor.SettingsProvider
+import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.TransparentSystemBars
 import com.hfut.schedule.ui.theme.MonetColor
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import java.io.BufferedReader
+import java.io.InputStreamReader
 
 @AndroidEntryPoint
 class LoginActivity : ComponentActivity() {
@@ -55,6 +61,20 @@ class LoginActivity : ComponentActivity() {
     val switchUpload = prefs.getBoolean("SWITCHUPLOAD",true )
     var value = 0
 
+    //打开方式txt
+    private fun readTextFromUri(uri: Uri): String {
+        val stringBuilder = StringBuilder()
+        contentResolver.openInputStream(uri)?.use { inputStream ->
+            BufferedReader(InputStreamReader(inputStream)).use { reader ->
+                var line = reader.readLine()
+                while (line != null) {
+                    stringBuilder.append(line)
+                    line = reader.readLine()
+                }
+            }
+        }
+        return stringBuilder.toString()
+    }
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SuspiciousIndentation", "MissingInflatedId", "UnspecifiedRegisterReceiverFlag")
 
@@ -63,6 +83,14 @@ class LoginActivity : ComponentActivity() {
 
         installSplashScreen()
         WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        intent?.data?.let { uri ->
+            val content = readTextFromUri(uri)
+            // 处理读取到的文本内容
+            Add("课表"+(getNum() +4).toString())
+            SharePrefs.Save("SCHEDULE" + getNum(), content)
+            MyToast("导入课表${getNum() +3}成功 请于课程表右上角切换")
+        }
 
         setContent {
             if(!switchColor) {

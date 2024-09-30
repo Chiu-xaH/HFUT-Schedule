@@ -76,7 +76,7 @@ fun VersionInfoCard() {
             ListItem(headlineContent = { Text(text = "聚在工大 " + APPVersion.getVersionName(), fontSize = 28.sp) })
             Row {
                 ListItem(
-                    overlineContent = { Text(text = "2024-09-24") },
+                    overlineContent = { Text(text = "2024-09-30") },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.sdk), contentDescription = "") },
                     headlineContent = { ScrollText(text = "第${APPVersion.getVersionCode()}次更新") },
                     modifier = Modifier.weight(.5f)
@@ -99,10 +99,10 @@ fun VersionInfoCard() {
 fun VersionInfo() {
     VersionInfoCard()
     DividerText(text = "新特性")
-    UpdateItems("重构 热水机(支付宝 趣智校园)","桌面长按图标菜单新增热水机", UpdateType.RENEW)
-    UpdateItems("恢复 原热水机跳转链接(支付宝 社慧通)","不确定完全可用,位于查询中心-网址导航", UpdateType.RENEW)
-    UpdateItems("修复 聚焦底部遮挡Bug",null, UpdateType.FIX)
-    UpdateItems("优化 聚焦接口的逻辑",null, UpdateType.OPTIMIZE)
+    UpdateItems("新增 多课表(Beta)","测试阶段,部分功能未完全上线", UpdateType.ADD)
+    UpdateItems("修复 热水机跳转链接的问题",null, UpdateType.FIX)
+    UpdateItems("优化 部分界面的显示",null, UpdateType.OPTIMIZE)
+    UpdateItems("优化 包体大小",null, UpdateType.OPTIMIZE)
 }
 
 enum class UpdateType {

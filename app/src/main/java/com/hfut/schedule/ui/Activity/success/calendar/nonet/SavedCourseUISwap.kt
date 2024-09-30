@@ -23,6 +23,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -680,7 +682,19 @@ fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues,vmUI : UIViewModel
                                     else MyToast("空数据")
                                 }
                         ) {
-                            Text(text = texts,fontSize = if(showAll)12.sp else 14.sp, textAlign = TextAlign.Center)
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .verticalScroll(rememberScrollState())
+                                    //.padding(8.dp)
+                            ) {
+                                Text(
+                                    text = texts,
+                                    fontSize = if (showAll) 12.sp else 14.sp,
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                           // Text(text = texts,fontSize = if(showAll)12.sp else 14.sp, textAlign = TextAlign.Center)
                         }
                     }
                     item {  Spacer(modifier = Modifier.height(innerPaddings.calculateBottomPadding())) }

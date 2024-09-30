@@ -6,16 +6,10 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.widget.Toast
 import com.hfut.schedule.App.MyApplication
 
-class Database (context: Context, name:String, version:Int) : SQLiteOpenHelper(context,name,null,version) {
-    val Book = "create table Book ("+
-            " id integer primary key autoincrement," +
-            "title text," +
-            "info text," +
-            "type integer," +
-            "remark text )"
+class Database (context: Context, name:String, version:Int,code : String) : SQLiteOpenHelper(context,name,null,version) {
+    val Book = code
     override fun onCreate(db: SQLiteDatabase?) {
         db?.execSQL(Book)
-        Toast.makeText(MyApplication.context,"创建数据库成功", Toast.LENGTH_SHORT).show()
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {}

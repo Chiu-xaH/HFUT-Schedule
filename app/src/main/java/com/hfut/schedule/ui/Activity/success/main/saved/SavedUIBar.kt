@@ -17,8 +17,10 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Divider
@@ -50,6 +52,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+
 import androidx.lifecycle.Observer
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -73,12 +76,14 @@ import com.hfut.schedule.logic.utils.GetDate.Date_MM_dd
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.success.calendar.login.CalendarScreen
+import com.hfut.schedule.ui.Activity.success.calendar.next.DatumUI
 import com.hfut.schedule.ui.Activity.success.calendar.nonet.SaveCourse
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Update.getUpdates
 import com.hfut.schedule.ui.Activity.success.cube.main.SettingsScreen
 import com.hfut.schedule.ui.Activity.success.focus.main.TodayScreen
 import com.hfut.schedule.ui.Activity.success.search.Search.More.Login
 import com.hfut.schedule.ui.Activity.success.calendar.next.NextCourse
+import com.hfut.schedule.ui.Activity.success.main.CustomSchedules
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.NotificationItems
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.getNotifications
 import com.hfut.schedule.ui.Activity.success.search.main.SearchScreen
@@ -130,7 +135,10 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
     var showBottomSheet by remember { mutableStateOf(false) }
 
     var ifSaved by remember { mutableStateOf(true) }
-    var swapUI by remember { mutableStateOf(false) }
+    var swapUI by remember { mutableStateOf(if(ifSaved) COMMUNITY else JXGLSTU) }
+
+    val sheetState_multi = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showBottomSheet_multi by remember { mutableStateOf(false) }
 
     val ExamObserver = Observer<Int> { result ->
       //  Log.d("re",result.toString())
@@ -148,6 +156,7 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
     CoroutineScope(Job()).launch { NetWorkUpdate(vm, vm2,vmUI,true, ifSaved) }
 
     Handler(Looper.getMainLooper()).post { vm.examCode.observeForever(ExamObserver) }
+
 
 
     if (showBottomSheet) {
@@ -179,6 +188,23 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
     }
 
 
+    if (showBottomSheet_multi) {
+        ModalBottomSheet(onDismissRequest = { showBottomSheet_multi = false }, sheetState = sheetState_multi, modifier = Modifier,
+          //  shape = Round(sheetState_multi)
+        ) {
+            Column(
+
+            ){
+                MultiScheduleSettings(ifSaved,swapUI,
+                    onSelectedChange = { newSelected ->
+                        swapUI = newSelected
+                    }
+                )
+            }
+        }
+    }
+
+
 
     //监听是否周六周日有课，有则显示红点
     val Observer = Observer<Boolean> { result ->
@@ -201,12 +227,16 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
                     actions = {
                         when(bottomBarItems){
                             COURSES -> {
-                                FilledTonalButton(onClick = { swapUI = !swapUI }) {
-                                    Text(text = if(swapUI)"教务" else "社区" )
-                                }
-                                if(Gson().fromJson(prefs.getString("my",MyApplication.NullMy),
-                                        MyAPIResponse::class.java).Next)
+                          //      FilledTonalButton(onClick = { swapUI = !swapUI }) {
+                           //         Text(text = if(swapUI)"教务" else "社区" )
+                          //      }
+                               if(isNextOpen())
                                     NextCourse(vmUI, true)
+                                TextButton(onClick = {
+                                    showBottomSheet_multi = true
+                                }) {
+                                    Icon(painter = painterResource(id =  R.drawable.tab_inactive), contentDescription = "")
+                                }
                                 TextButton(onClick = { showAll = !showAll }) {
                                     BadgedBox(badge = {
                                         if (findCourse) Badge()
@@ -328,10 +358,18 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
                     }
                 }
             }) {
-                if(!swapUI)
+                if(swapUI == COMMUNITY)
                 SaveCourse(showAll, innerPadding,vmUI)
-                else
+                else if(swapUI == JXGLSTU)
                 prefs.getString("Username","")?.let { it1 -> CalendarScreen(showAll,vm, it1.substring(0,2),innerPadding,vmUI,false,vm2,false) }
+                else if(swapUI == NEXT) {
+                    Column(modifier = Modifier.padding(innerPadding)) {
+                        prefs.getString("gradeNext","23")?.let { DatumUI(showAll, it, innerPadding, vmUI) }
+                    }
+                }
+                else {
+                    CustomSchedules(showAll,innerPadding,vmUI,swapUI-2)
+                }
             }
 
             }

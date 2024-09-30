@@ -1,6 +1,7 @@
 package com.hfut.schedule.activity
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -26,14 +27,19 @@ import com.hfut.schedule.logic.datamodel.MyAPIResponse
 import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.success.main.login.SuccessUI
+import com.hfut.schedule.ui.Activity.success.main.saved.Add
+import com.hfut.schedule.ui.Activity.success.main.saved.getNum
 import com.hfut.schedule.ui.MonetColor.LocalCurrentStickerUuid
 import com.hfut.schedule.ui.MonetColor.MainIntent
 import com.hfut.schedule.ui.MonetColor.MainViewModel
 import com.hfut.schedule.ui.MonetColor.SettingsProvider
+import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.TransparentSystemBars
 import com.hfut.schedule.ui.theme.MonetColor
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.io.BufferedReader
+import java.io.InputStreamReader
 
 @AndroidEntryPoint
 class LoginSuccessActivity : ComponentActivity() {
@@ -44,11 +50,15 @@ class LoginSuccessActivity : ComponentActivity() {
     private val vm2 by lazy { ViewModelProvider(this).get(LoginViewModel::class.java) }
     private val switchColor= prefs.getBoolean("SWITCHCOLOR",true)
     private val vmUI by lazy { ViewModelProvider(this).get(UIViewModel::class.java) }
+
+
+
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
+
         val grade = intent.getStringExtra("Grade")
         webVpn = intent.getBooleanExtra("webVpn",false)
         setContent {
@@ -78,7 +88,7 @@ class LoginSuccessActivity : ComponentActivity() {
                 }
             }
         }
-        lifecycleScope.apply{
+        lifecycleScope.apply {
             launch {
                 val cookie = prefs.getString("redirect", "")
                 vm.Jxglstulogin(cookie!!)

@@ -30,8 +30,8 @@ class MyApplication : Application() {
         const val ZJGDBillURL = "http://121.251.19.62/"
         const val LePaoYunURL = "http://210.45.246.53:8080/"
         const val AlipayCardURL = "alipays://platformapi/startapp?appId=20000067&url=https://ur.alipay.com/_4kQhV32216tp7bzlDc3E1k"
-        const val AlipayHotWaterOldURL = "alipays://platformapi/startapp?appId=20000067&url=https://puwise.com/p?i=x4nNVOVYX6kp"
-        const val AlipayHotWaterURL = "alipays://platformapi/startapp?appId=20000067&url=https://ur.alipay.com/_3zGrET9C4JXfgBjqeoyign"
+        const val AlipayHotWaterOldURL = "alipays://platformapi/startapp?appId=20000067&url=https://puwise.com/s/cnM5jQKY02DD.wise"
+        const val AlipayHotWaterURL = "alipays://platformapi/startapp?appId=20000067&url=https://ur.alipay.com/_3B2YzKjbV75xL9a2oapcNz"
         const val OneURL = "https://one.hfut.edu.cn/"
         const val LoginURL = "https://cas.hfut.edu.cn/"
 

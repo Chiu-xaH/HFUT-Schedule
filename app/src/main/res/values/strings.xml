@@ -14,4 +14,5 @@
     <string name="title_activity_grade">GradeActivity</string>
     <string name="title_activity_fix">FixActivity</string>
     <string name="title_activity_shortcut">ShortCutActivity</string>
+    <string name="title_activity_file">FileActivity</string>
 </resources>
