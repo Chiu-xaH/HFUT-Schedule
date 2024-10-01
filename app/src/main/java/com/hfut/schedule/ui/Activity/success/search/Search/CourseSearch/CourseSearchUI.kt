@@ -98,13 +98,6 @@ fun courseSearchUI(vm : LoginSuccessViewModel) {
                 title = { Text("开课查询") },
                 actions = {
                     Row(modifier = Modifier.padding(horizontal = 15.dp)) {
-                        FilledTonalButton(
-                            onClick = {
-                                MyToast("按钮已迁移到底部,可快速切换学期")
-                            }
-                        ){
-                            Text(text = "学期切换")
-                        }
                         FilledTonalIconButton(
                             // shape = RoundedCornerShape(5.dp),
                             onClick = {

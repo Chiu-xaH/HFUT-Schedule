@@ -179,6 +179,15 @@ fun loginWebUI(vmUI : UIViewModel,vm : LoginSuccessViewModel) {
             Icon(painter = painterResource(id = R.drawable.vpn_key), contentDescription = "")
         }
     )
+    ListItem(
+        headlineContent = { Text(text = "免费时期") },
+        supportingContent = {
+            Text(text = "法定节假日与寒暑假均不限额度")
+        },
+        leadingContent = {
+            Icon(painter = painterResource(id = R.drawable.paid), contentDescription = "")
+        }
+    )
 
 
 

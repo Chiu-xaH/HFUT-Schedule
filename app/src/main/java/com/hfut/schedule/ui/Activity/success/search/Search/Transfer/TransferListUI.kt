@@ -16,32 +16,45 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.ui.Activity.success.search.Search.TotalCourse.courseIcons
+import com.hfut.schedule.ui.UIUtils.MyToast
+import com.hfut.schedule.ui.UIUtils.ScrollText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun TransferUI(vm: LoginSuccessViewModel) {
+fun TransferUI(vm: LoginSuccessViewModel,campus: CampusId) {
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
     val cookie = SharePrefs.prefs.getString("redirect", "")
 
-    val campus = if(getCampus()?.contains("宣城") == true) CampusId.XUANCHENG else CampusId.HEFEI
+   // val campus =
 
+    LaunchedEffect(key1 = campus) {
+        loading = true
+        delay(700)
+        refresh = true
+    }
     if(refresh) {
         loading = true
         CoroutineScope(Job()).launch{
@@ -93,17 +106,17 @@ fun TransferUI(vm: LoginSuccessViewModel) {
                             .padding(horizontal = 15.dp, vertical = 5.dp),
                         shape = MaterialTheme.shapes.medium,
                     ) {
+                        var department = list[item].department.nameZh
+                        if(department.contains("（")) department = department.substringBefore("（")
+                        if(department.contains("(")) department = department.substringBefore("(")
                         ListItem(
                             headlineContent = { Text(text = list[item].major.nameZh) },
                             supportingContent = { list[item].registrationConditions?.let { Text(text = it) } },
-                            overlineContent = { Text(text = list[item].department.nameZh) },
+                            overlineContent = { ScrollText(text = department + " 已申请 " + list[item].applyStdCount.toString() + " / " + list[item].preparedStdCount) },
                             leadingContent = { courseIcons(list[item].department.nameZh) },
-                            // trailingContent = {  FilledTonalIconButton(onClick = {
-                            //        MyToast("正在开发")
-                            //  }) { Icon(painter = painterResource(id = R.drawable.add_task), contentDescription = "") } },
-                            trailingContent = {
-                                Text(text = " 已申请 " + list[item].applyStdCount.toString() + " / " + list[item].preparedStdCount)
-                            }
+                            trailingContent = {  FilledTonalIconButton(onClick = {
+                                    MyToast("正在开发")
+                              }) { Icon(painter = painterResource(id = R.drawable.add_task), contentDescription = "") } },
                         )
                     }
                 }

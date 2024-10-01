@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
@@ -73,11 +74,16 @@ import java.math.RoundingMode
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Transfer(ifSaved : Boolean,vm : LoginSuccessViewModel){
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
 
     val sheetState_apply = rememberModalBottomSheetState()
     var showBottomSheet_apply by remember { mutableStateOf(false) }
+
+    val sheetState_info = rememberModalBottomSheetState()
+    var showBottomSheet_info by remember { mutableStateOf(false) }
+
+    var campusId by remember { mutableStateOf(if(getCampus()?.contains("宣城") == true) CampusId.XUANCHENG else CampusId.HEFEI) }
 
     ListItem(
         headlineContent = { Text(text = "转专业") },
@@ -115,6 +121,37 @@ fun Transfer(ifSaved : Boolean,vm : LoginSuccessViewModel){
             }
         }
     }
+
+    if (showBottomSheet_info) {
+        ModalBottomSheet(
+            onDismissRequest = { showBottomSheet_info = false },
+            sheetState = sheetState_info,
+            shape = Round(sheetState_info)
+        ) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        title = { Text("说明") },
+                    )
+                },
+            ) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                ) {
+                    TransferTips()
+                }
+            }
+        }
+    }
+
+
     if (showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
@@ -129,10 +166,23 @@ fun Transfer(ifSaved : Boolean,vm : LoginSuccessViewModel){
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        title = { Text("转专业") },
+                        title = { ScrollText("转专业") },
                         actions = {
-                            FilledTonalButton(onClick = { showBottomSheet_apply = true }, modifier = Modifier.padding(horizontal = 15.dp)) {
-                                Text(text = "我的申请")
+                            Row(modifier = Modifier.padding(horizontal = 15.dp)) {
+                                FilledTonalIconButton(onClick = { showBottomSheet_info = true }) {
+                                    Icon(painterResource(id = R.drawable.info), contentDescription = "")
+                                }
+                                FilledTonalButton(
+                                    onClick = {
+                                    campusId = if(campusId == CampusId.XUANCHENG) CampusId.HEFEI else CampusId.XUANCHENG
+                                              },
+                                    ) {
+                                    Text(text = if(campusId == CampusId.XUANCHENG) "宣城" else "合肥")
+                                }
+                                Spacer(modifier = Modifier.width(5.dp))
+                                FilledTonalButton(onClick = { showBottomSheet_apply = true }) {
+                                    Text(text = "我的申请")
+                                }
                             }
                         }
                     )
@@ -143,9 +193,29 @@ fun Transfer(ifSaved : Boolean,vm : LoginSuccessViewModel){
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    TransferUI(vm)
+                    TransferUI(vm,campusId)
                 }
             }
         }
+    }
+}
+
+@Composable
+fun TransferTips() {
+    Card(
+        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 15.dp, vertical = 5.dp),
+        shape = MaterialTheme.shapes.medium,
+    ) {
+        ListItem(
+            headlineContent = { Text("具体要求") },
+            supportingContent = { Text("请关注所在系QQ群或在 查询中心-新闻公告 检索已公示的转专业要求") },
+        )
+        ListItem(
+            headlineContent = { Text("录取通知") },
+            supportingContent = { Text("请关注所在转专业QQ群(上条要求会公示)或在 查询中心-新闻公告 检索已公示的面试/拟录取名单") },
+        )
     }
 }

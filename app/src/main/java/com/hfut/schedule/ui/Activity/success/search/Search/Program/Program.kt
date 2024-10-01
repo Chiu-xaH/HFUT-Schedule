@@ -28,6 +28,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
@@ -62,6 +63,7 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.success.search.Search.More.Login
 import com.hfut.schedule.ui.Activity.success.search.Search.TotalCourse.courseIcons
+import com.hfut.schedule.ui.Activity.success.search.Search.Transfer.TransferTips
 import com.hfut.schedule.ui.UIUtils.BottomTip
 import com.hfut.schedule.ui.UIUtils.CardForListColor
 import com.hfut.schedule.ui.UIUtils.DividerText
@@ -93,6 +95,38 @@ fun Program(vm : LoginSuccessViewModel,ifSaved : Boolean) {
             else Login()
         }
     )
+    val sheetState_info = rememberModalBottomSheetState()
+    var showBottomSheet_info by remember { mutableStateOf(false) }
+
+
+    if (showBottomSheet_info) {
+        ModalBottomSheet(
+            onDismissRequest = { showBottomSheet_info = false },
+            sheetState = sheetState_info,
+            shape = Round(sheetState_info)
+        ) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        title = { Text("说明") },
+                    )
+                },
+            ) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                ) {
+                    ProgramTips()
+                }
+            }
+        }
+    }
 
 
     if (showBottomSheet_Program ) {
@@ -113,10 +147,10 @@ fun Program(vm : LoginSuccessViewModel,ifSaved : Boolean) {
                         title = { Text("培养方案") },
                         actions = {
                             Row (modifier = Modifier.padding(horizontal = 15.dp)){
-                                FilledTonalButton(
-                                    onClick = { MyToast("正在开发") },
+                                FilledTonalIconButton(
+                                    onClick = { showBottomSheet_info = true },
                                 ) {
-                                    Text(text = "筛选")
+                                    Icon(painterResource(id = R.drawable.info), contentDescription = "")
                                 }
                             }
                         }
@@ -273,7 +307,9 @@ fun ProgramUI2(vm: LoginSuccessViewModel,ifSaved: Boolean) {
         shape = MaterialTheme.shapes.medium,
         colors = CardForListColor()
     ) {
-        Column (modifier = Modifier.blur(blurSize).scale(scale.value)){
+        Column (modifier = Modifier
+            .blur(blurSize)
+            .scale(scale.value)){
             val res = completion.total.actual/completion.total.full * 100.0
             ListItem(
                 headlineContent = { Text(text = "已修 ${completion.total.actual}/${completion.total.full}",fontSize = 28.sp) },
@@ -475,5 +511,33 @@ fun ProgramUIInfo2(num1 : Int,num2 : Int,vm : LoginSuccessViewModel,ifSaved : Bo
                 )
             }
         }
+    }
+}
+
+@Composable
+fun ProgramTips() {
+    Card(
+        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 15.dp, vertical = 5.dp),
+        shape = MaterialTheme.shapes.medium,
+    ) {
+        ListItem(
+            headlineContent = { Text("选修课不显示") },
+            supportingContent = { Text("选修课多而杂,没必要都显示在培养方案里,按时按通知选课即可") },
+        )
+    }
+    Card(
+        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 15.dp, vertical = 5.dp),
+        shape = MaterialTheme.shapes.medium,
+    ) {
+        ListItem(
+            headlineContent = { Text("查询全校其他专业培养方案") },
+            supportingContent = { Text("请前往 合工大教务 公众号") },
+        )
     }
 }

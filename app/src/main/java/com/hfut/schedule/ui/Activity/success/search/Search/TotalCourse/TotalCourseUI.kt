@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -47,9 +48,11 @@ import com.hfut.schedule.logic.datamodel.Jxglstu.teacher
 import com.hfut.schedule.logic.datamodel.Jxglstu.teacherAssignmentList2
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.UIUtils.EmptyUI
+import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.ScrollText
 
+@SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CourseTotalUI(json : String?,isSearch : Boolean) {
@@ -135,23 +138,23 @@ fun CourseTotalUI(json : String?,isSearch : Boolean) {
 
 @Composable
 fun courseIcons(name : String) {
-    if(name.contains("计算机")) Icon(painterResource(R.drawable.computer), contentDescription = "Localized description",)
+    if(name.contains("计算机")) Icon(painterResource(R.drawable.data_object), contentDescription = "Localized description",)
     else if(name.contains("资源与环境工程")) Icon(painterResource(R.drawable.eco), contentDescription = "Localized description",)
     else if(name.contains("数学")) Icon(painterResource(R.drawable.function), contentDescription = "Localized description",)
     else if(name.contains("外国语")) Icon(painterResource(R.drawable.translate), contentDescription = "Localized description",)
     else if(name.contains("马克思主义")) Icon(painterResource(R.drawable.neurology), contentDescription = "Localized description",)
     else if(name.contains("机械工程")) Icon(painterResource(R.drawable.settings), contentDescription = "Localized description",)
-    else if(name.contains("材料科学与化工")) Icon(painterResource(R.drawable.hive), contentDescription = "Localized description",)
+    else if(name.contains("材料科学")) Icon(painterResource(R.drawable.science), contentDescription = "Localized description",)
     else if(name.contains("电气与自动化工程")) Icon(painterResource(R.drawable.flash_on), contentDescription = "Localized description",)
-    else if(name.contains("土木与水利工程")) Icon(painterResource(R.drawable.domain), contentDescription = "Localized description",)
+    else if(name.contains("土木与水利工程")) Icon(painterResource(R.drawable.precision_manufacturing), contentDescription = "Localized description",)
     else if(name.contains("化学与化工")) Icon(painterResource(R.drawable.science), contentDescription = "Localized description",)
     else if(name.contains("经济")) Icon(painterResource(R.drawable.paid), contentDescription = "Localized description",)
-    else if(name.contains("文法")) Icon(painterResource(R.drawable.gavel), contentDescription = "Localized description",)
-    else if(name.contains("管理")) Icon(Icons.Filled.Menu, contentDescription = "Localized description",)
-    else if(name.contains("仪器科学与光电工程")) Icon(painterResource(R.drawable.biotech), contentDescription = "Localized description",)
-    else if(name.contains("建筑与艺术")) Icon(painterResource(R.drawable.interests), contentDescription = "Localized description",)
+    else if(name.contains("文法")) Icon(painterResource(R.drawable.newsstand), contentDescription = "Localized description",)
+    else if(name.contains("管理")) Icon(painterResource(R.drawable.pie_chart), contentDescription = "Localized description",)
+    else if(name.contains("仪器科学与光电工程")) Icon(painterResource(R.drawable.body_fat), contentDescription = "Localized description",)
+    else if(name.contains("建筑与艺术")) Icon(painterResource(R.drawable.domain), contentDescription = "Localized description",)
     else if(name.contains("食品与生物工程")) Icon(painterResource(R.drawable.genetics), contentDescription = "Localized description",)
-    else if(name.contains("微电子")) Icon(painterResource(R.drawable.mist), contentDescription = "Localized description",)
+    else if(name.contains("微电子")) Icon(painterResource(R.drawable.empty_dashboard), contentDescription = "Localized description",)
     else if(name.contains("物理")) Icon(painterResource(R.drawable.category), contentDescription = "Localized description",)
     else if(name.contains("汽车与交通工程")) Icon(painterResource(R.drawable.directions_car), contentDescription = "Localized description",)
     else if(name.contains("软件")) Icon(painterResource(R.drawable.code), contentDescription = "Localized description",)
@@ -316,6 +319,36 @@ fun DetailItems(item : Int,json: String?) {
                                 .weight(.5f),
                         )
                     }
+                    Row {
+                        ListItem(
+                            overlineContent = { Text("课程代码") },
+                            headlineContent = { ScrollText(lists.code) },
+
+                            leadingContent = {
+                                Icon(
+                                    painterResource(R.drawable.tag),
+                                    contentDescription = "Localized description",
+                                )
+                            },
+                            modifier = Modifier
+                                .clickable {}
+                                .weight(.5f),
+                        )
+                        ListItem(
+                            overlineContent = { Text("同班同学") },
+                            headlineContent = { Text("查看") },
+                            trailingContent = {
+                            },
+                            //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
+                            leadingContent = {
+                                Icon(
+                                    Icons.Filled.ArrowForward,
+                                    contentDescription = "Localized description",
+                                )
+                            },
+                            modifier = Modifier.clickable { MyToast("请前往 合工大教务 微信公众号") }.weight(.5f),
+                        )
+                    }
                     if(lists.nameZh != null)
                         ListItem(
                             overlineContent = { Text("班级") },
@@ -378,7 +411,7 @@ fun getTotalCourse(json : String?): MutableList<lessons>  {
 
                 for (i in result.indices) {
                     val courses = result[i]
-                    list.add(lessons(courses.nameZh,courses.remark,courses.scheduleText,courses.stdCount,courses.course,courses.courseType,courses.openDepartment,courses.examMode,courses.scheduleWeeksInfo,courses.planExamWeek,courses.teacherAssignmentList,courses.semester))
+                    list.add(lessons(courses.nameZh,courses.remark,courses.scheduleText,courses.stdCount,courses.course,courses.courseType,courses.openDepartment,courses.examMode,courses.scheduleWeeksInfo,courses.planExamWeek,courses.teacherAssignmentList,courses.semester,courses.code))
                 }
                 return list
             }
@@ -386,7 +419,7 @@ fun getTotalCourse(json : String?): MutableList<lessons>  {
                 val result = Gson().fromJson(json,CourseSearchResponse::class.java).data
                 for (i in result.indices) {
                     val courses = result[i].lesson
-                    list.add(lessons(courses.nameZh,courses.remark,courses.scheduleText,courses.stdCount,courses.course,courses.courseType,courses.openDepartment,courses.examMode,courses.scheduleWeeksInfo,courses.planExamWeek,courses.teacherAssignmentList,courses.semester))
+                    list.add(lessons(courses.nameZh,courses.remark,courses.scheduleText,courses.stdCount,courses.course,courses.courseType,courses.openDepartment,courses.examMode,courses.scheduleWeeksInfo,courses.planExamWeek,courses.teacherAssignmentList,courses.semester,courses.code))
                 }
                 return list
             }

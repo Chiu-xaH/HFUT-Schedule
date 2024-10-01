@@ -12,7 +12,7 @@ data class lessons(val nameZh : String?,
                    val scheduleWeeksInfo : String?,
                    val planExamWeek : Int?,
                    val teacherAssignmentList : List<teacherAssignmentList2>?
-                   ,val semester : semester)
+                   ,val semester : semester,val code : String,)
 data class scheduleText(val dateTimePlacePersonText : dateTimePlacePersonText )
 data class dateTimePlacePersonText(val textZh : String?)
 

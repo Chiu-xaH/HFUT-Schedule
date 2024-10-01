@@ -99,10 +99,9 @@ fun VersionInfoCard() {
 fun VersionInfo() {
     VersionInfoCard()
     DividerText(text = "新特性")
-    UpdateItems("新增 多课表(Beta)","测试阶段,部分功能未完全上线", UpdateType.ADD)
-    UpdateItems("修复 热水机跳转链接的问题",null, UpdateType.FIX)
+    UpdateItems("新增 转专业可切换校区",null, UpdateType.ADD)
+    UpdateItems("优化 若干界面的提示指引",null, UpdateType.OPTIMIZE)
     UpdateItems("优化 部分界面的显示",null, UpdateType.OPTIMIZE)
-    UpdateItems("优化 包体大小",null, UpdateType.OPTIMIZE)
 }
 
 enum class UpdateType {
