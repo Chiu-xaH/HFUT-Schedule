@@ -45,6 +45,7 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.success.search.Search.Person.getPersonInfo
 import com.hfut.schedule.ui.UIUtils.ScrollText
+import com.hfut.schedule.ui.UIUtils.courseIcons
 
 @Composable
 fun PersonPart() {
@@ -108,46 +109,19 @@ fun PersonPart() {
                                 headlineContent = { getPersonInfo().username?.let { ScrollText(text = it) } },
                                 leadingContent = {
                                     Icon(
-                                        painterResource(R.drawable.badge),
+                                        painterResource(R.drawable.tag),
                                         contentDescription = "Localized description",
                                     )
                                 },
-                                modifier = Modifier.weight(0.5f),
-                                colors = ListItemDefaults.colors(containerColor = Color.Transparent)
-                            )
-                            ListItem(
-                                overlineContent = { Text(text = "班级") },
-                                leadingContent = {
-                                    Icon(
-                                        painterResource(R.drawable.sensor_door),
-                                        contentDescription = "Localized description",
-                                    )
-                                },
-                                headlineContent = { getPersonInfo().classes?.let { ScrollText(text = it)} },
                                 modifier = Modifier.weight(0.5f),
                                 colors = ListItemDefaults.colors(containerColor = Color.Transparent)
                             )
                         }
                         Row {
                             ListItem(
-                                overlineContent = { Text(text = "校区") },
+                                overlineContent = { getPersonInfo().school?.let { Text(text = it) } },
                                 leadingContent = {
-                                    Icon(
-                                        painterResource(R.drawable.location_city),
-                                        contentDescription = "Localized description",
-                                    )
-                                },
-                                headlineContent = { getPersonInfo().school?.let { ScrollText(text = it) } },
-                                modifier = Modifier.weight(0.5f),
-                                colors = ListItemDefaults.colors(containerColor = Color.Transparent)
-                            )
-                            ListItem(
-                                overlineContent = { Text(text = "院系") },
-                                leadingContent = {
-                                    Icon(
-                                        painterResource(R.drawable.local_library),
-                                        contentDescription = "Localized description",
-                                    )
+                                    getPersonInfo().department?.let { courseIcons(name = it) }
                                 },
                                 headlineContent = { getPersonInfo().department?.let { ScrollText(text = it) } },
                                 modifier = Modifier.weight(0.5f),
@@ -156,7 +130,7 @@ fun PersonPart() {
                         }
                         Row {
                             ListItem(
-                                overlineContent = { Text(text = "专业") },
+                                overlineContent = { getPersonInfo().classes?.let { Text(text = it) } },
                                 leadingContent = {
                                     Icon(
                                         painterResource(R.drawable.square_foot),

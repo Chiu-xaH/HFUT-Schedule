@@ -33,9 +33,9 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.ui.Activity.success.search.Search.TotalCourse.courseIcons
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.ScrollText
+import com.hfut.schedule.ui.UIUtils.courseIcons
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async

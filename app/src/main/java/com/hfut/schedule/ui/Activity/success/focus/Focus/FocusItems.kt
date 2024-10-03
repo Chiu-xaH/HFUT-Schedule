@@ -78,6 +78,7 @@ import com.hfut.schedule.ui.Activity.success.search.Search.Survey.getSemseterClo
 import com.hfut.schedule.ui.UIUtils.BottomTip
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.Round
+import com.hfut.schedule.ui.UIUtils.ScheduleIcons
 import com.hfut.schedule.ui.UIUtils.ScrollText
 
 @Composable

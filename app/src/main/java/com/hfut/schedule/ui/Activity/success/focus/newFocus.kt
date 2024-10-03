@@ -26,9 +26,9 @@ import com.hfut.schedule.logic.utils.AddCalendar
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.ui.Activity.success.focus.Focus.ScheduleIcons
 import com.hfut.schedule.ui.Activity.success.focus.Focus.openOperation
 import com.hfut.schedule.ui.UIUtils.MyToast
+import com.hfut.schedule.ui.UIUtils.ScheduleIcons
 import kotlin.Exception
 
 

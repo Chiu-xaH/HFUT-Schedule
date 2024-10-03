@@ -40,9 +40,9 @@ import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.StartApp
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.ui.Activity.card.BillsIcons
 import com.hfut.schedule.ui.Activity.card.bills.main.BillItem
 import com.hfut.schedule.ui.Activity.card.bills.main.processTranamt
+import com.hfut.schedule.ui.UIUtils.BillsIcons
 import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.ScrollText
 import java.math.BigDecimal

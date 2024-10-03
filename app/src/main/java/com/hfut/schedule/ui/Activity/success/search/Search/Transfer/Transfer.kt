@@ -1,28 +1,15 @@
 package com.hfut.schedule.ui.Activity.success.search.Search.Transfer
 
-import android.os.Handler
-import android.os.Looper
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
@@ -43,32 +30,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.google.gson.Gson
-import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
-import com.hfut.schedule.logic.datamodel.Jxglstu.MyApplyResponse
-import com.hfut.schedule.logic.datamodel.Jxglstu.TransferData
-import com.hfut.schedule.logic.datamodel.Jxglstu.TransferResponse
-import com.hfut.schedule.logic.datamodel.Jxglstu.courseType
-import com.hfut.schedule.logic.datamodel.MyAPIResponse
-import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.ui.Activity.success.search.Search.More.Login
-import com.hfut.schedule.ui.Activity.success.search.Search.Survey.teacherList
-import com.hfut.schedule.ui.Activity.success.search.Search.TotalCourse.courseIcons
-import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.ScrollText
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import org.jsoup.Jsoup
-import java.math.BigDecimal
-import java.math.RoundingMode
 
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -24,6 +24,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.datamodel.MyAPIResponse
 import com.hfut.schedule.logic.utils.GetDate
+import com.hfut.schedule.ui.UIUtils.APIIcons
 import com.hfut.schedule.ui.UIUtils.DividerText
 
 @Composable
@@ -77,15 +78,7 @@ fun MyAPIItem() {
 
 }
 
-@Composable
-fun APIIcons(celebration: Boolean) {
-    when {
-        celebration -> Icon(painterResource(R.drawable.celebration), contentDescription = "Localized description",)
-        Birthday().contains("生日") ->  Icon(painterResource(R.drawable.cake), contentDescription = "Localized description",)
-        else -> Icon(painterResource(R.drawable.error), contentDescription = "Localized description",)
-    }
 
-}
 @Composable
 fun Birthday() : String {
     val id = prefs.getString("ChineseId", "")

@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.Activity.success.search.Search.Program
 
+import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
@@ -56,6 +57,7 @@ fun getProgramListOne(vm : LoginSuccessViewModel,ifSaved : Boolean): MutableList
             prefs.getString("program","")
         } else vm.ProgramData.value
         val result = Gson().fromJson(json,ProgramResponse::class.java)
+
         val children = result.children
         for(i in children.indices) {
             val type = children[i].type?.nameZh
@@ -66,6 +68,7 @@ fun getProgramListOne(vm : LoginSuccessViewModel,ifSaved : Boolean): MutableList
         }
         list
     } catch (e : Exception) {
+        Log.d("eeee",e.toString())
         list
     }
 }

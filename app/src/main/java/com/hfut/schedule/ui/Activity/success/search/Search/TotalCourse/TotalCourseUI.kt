@@ -51,6 +51,7 @@ import com.hfut.schedule.ui.UIUtils.EmptyUI
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.ScrollText
+import com.hfut.schedule.ui.UIUtils.courseIcons
 
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -136,32 +137,6 @@ fun CourseTotalUI(json : String?,isSearch : Boolean) {
 }
 
 
-@Composable
-fun courseIcons(name : String) {
-    if(name.contains("计算机")) Icon(painterResource(R.drawable.data_object), contentDescription = "Localized description",)
-    else if(name.contains("资源与环境工程")) Icon(painterResource(R.drawable.eco), contentDescription = "Localized description",)
-    else if(name.contains("数学")) Icon(painterResource(R.drawable.function), contentDescription = "Localized description",)
-    else if(name.contains("外国语")) Icon(painterResource(R.drawable.translate), contentDescription = "Localized description",)
-    else if(name.contains("马克思主义")) Icon(painterResource(R.drawable.neurology), contentDescription = "Localized description",)
-    else if(name.contains("机械工程")) Icon(painterResource(R.drawable.settings), contentDescription = "Localized description",)
-    else if(name.contains("材料科学")) Icon(painterResource(R.drawable.science), contentDescription = "Localized description",)
-    else if(name.contains("电气与自动化工程")) Icon(painterResource(R.drawable.flash_on), contentDescription = "Localized description",)
-    else if(name.contains("土木与水利工程")) Icon(painterResource(R.drawable.precision_manufacturing), contentDescription = "Localized description",)
-    else if(name.contains("化学与化工")) Icon(painterResource(R.drawable.science), contentDescription = "Localized description",)
-    else if(name.contains("经济")) Icon(painterResource(R.drawable.paid), contentDescription = "Localized description",)
-    else if(name.contains("文法")) Icon(painterResource(R.drawable.newsstand), contentDescription = "Localized description",)
-    else if(name.contains("管理")) Icon(painterResource(R.drawable.pie_chart), contentDescription = "Localized description",)
-    else if(name.contains("仪器科学与光电工程")) Icon(painterResource(R.drawable.body_fat), contentDescription = "Localized description",)
-    else if(name.contains("建筑与艺术")) Icon(painterResource(R.drawable.domain), contentDescription = "Localized description",)
-    else if(name.contains("食品与生物工程")) Icon(painterResource(R.drawable.genetics), contentDescription = "Localized description",)
-    else if(name.contains("微电子")) Icon(painterResource(R.drawable.empty_dashboard), contentDescription = "Localized description",)
-    else if(name.contains("物理")) Icon(painterResource(R.drawable.category), contentDescription = "Localized description",)
-    else if(name.contains("汽车与交通工程")) Icon(painterResource(R.drawable.directions_car), contentDescription = "Localized description",)
-    else if(name.contains("软件")) Icon(painterResource(R.drawable.code), contentDescription = "Localized description",)
-    else if(name.contains("体育部")) Icon(painterResource(R.drawable.directions_run), contentDescription = "Localized description",)
-    else if(name.contains("国际教育")) Icon(painterResource(R.drawable.publics), contentDescription = "Localized description",)
-    else Icon(painterResource(R.drawable.calendar_view_month), contentDescription = "Localized description",)
-}
 
 @SuppressLint("SuspiciousIndentation")
 @Composable

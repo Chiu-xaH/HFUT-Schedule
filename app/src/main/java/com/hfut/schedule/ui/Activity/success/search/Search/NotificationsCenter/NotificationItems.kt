@@ -15,11 +15,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
+import com.hfut.schedule.ui.Activity.success.search.Search.Person.getPersonInfo
 import com.hfut.schedule.ui.UIUtils.EmptyUI
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
 fun NotificationItems() {
+    
     if(getNotifications().size == 0) EmptyUI()
     else
     LazyColumn {

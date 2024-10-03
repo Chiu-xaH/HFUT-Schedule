@@ -48,9 +48,9 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.datamodel.zjgd.BillResponse
 import com.hfut.schedule.logic.datamodel.zjgd.records
-import com.hfut.schedule.ui.Activity.card.BillsIcons
 import com.hfut.schedule.ui.Activity.card.bills.main.BillItem
 import com.hfut.schedule.ui.Activity.card.bills.main.processTranamt
+import com.hfut.schedule.ui.UIUtils.BillsIcons
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async

@@ -3,6 +3,7 @@ package com.hfut.schedule.ui.Activity.success.search.Search.Program
 import android.annotation.SuppressLint
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
@@ -27,15 +28,17 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -44,6 +47,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.scale
@@ -57,18 +61,19 @@ import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.logic.datamodel.Jxglstu.ProgramPartThree
 import com.hfut.schedule.logic.datamodel.Jxglstu.ProgramShow
 import com.hfut.schedule.logic.utils.ReservDecimal
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.success.search.Search.More.Login
-import com.hfut.schedule.ui.Activity.success.search.Search.TotalCourse.courseIcons
-import com.hfut.schedule.ui.Activity.success.search.Search.Transfer.TransferTips
 import com.hfut.schedule.ui.UIUtils.BottomTip
 import com.hfut.schedule.ui.UIUtils.CardForListColor
+import com.hfut.schedule.ui.UIUtils.DevelopingUI
 import com.hfut.schedule.ui.UIUtils.DividerText
-import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.Round
+import com.hfut.schedule.ui.UIUtils.courseIcons
+import com.hfut.schedule.ui.UIUtils.statusUI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -424,7 +429,7 @@ fun ProgramUI2(vm: LoginSuccessViewModel,ifSaved: Boolean) {
 fun ProgramUIInfo(num : Int,vm : LoginSuccessViewModel,ifSaved : Boolean) {
     val listTwo = getProgramListTwo(num,vm,ifSaved)
     var show by remember { mutableStateOf(true) }
-    val sheetState_Program = rememberModalBottomSheetState()
+    val sheetState_Program = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_Program by remember { mutableStateOf(false) }
     var title by remember { mutableStateOf("培养方案") }
     var num2 by remember { mutableStateOf(0) }
@@ -477,7 +482,7 @@ fun ProgramUIInfo(num : Int,vm : LoginSuccessViewModel,ifSaved : Boolean) {
                         modifier = Modifier.clickable {
                             showBottomSheet_Program = true
                             num2 = item
-                            title = listTwo[item].type.toString()
+                            title = listTwo[item].type + " | 学分 " + listTwo[item].requiedCredits
                         },
                     )
                 }
@@ -488,27 +493,74 @@ fun ProgramUIInfo(num : Int,vm : LoginSuccessViewModel,ifSaved : Boolean) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProgramUIInfo2(num1 : Int,num2 : Int,vm : LoginSuccessViewModel,ifSaved : Boolean) {
     val listThree = getProgramListThree(num1,num2,vm, ifSaved)
-    listThree.sortBy { it.term }
-    LazyColumn {
-        items(listThree.size) {item ->
-            Card(
-                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+    if(listThree.size != 0) {
+        listThree.sortBy { it.term }
+        var input by remember { mutableStateOf("") }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            TextField(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp),
+                    .weight(1f)
+                    .padding(horizontal = 15.dp),
+                value = input,
+                onValueChange = {
+                    input = it
+                },
+                label = { Text("搜索课程" ) },
+                singleLine = true,
+                trailingIcon = {
+                    IconButton(
+                        onClick = {}) {
+                        Icon(painter = painterResource(R.drawable.search), contentDescription = "description")
+                    }
+                },
                 shape = MaterialTheme.shapes.medium,
-            ){
-                ListItem(
-                    headlineContent = { Text(text = listThree[item].name) },
-                    supportingContent = { Text(text = listThree[item].depart) },
-                    overlineContent = { Text(text = "第" + listThree[item].term + "学期 | 学分 ${listThree[item].credit}")},
-                    leadingContent = { courseIcons(name = listThree[item].depart) },
-                    modifier = Modifier.clickable {
-                    },
-                )
+                colors = TextFieldDefaults.textFieldColors(
+                    focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
+                    unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
+                ),
+            )
+        }
+        val searchList = mutableListOf<ProgramPartThree>()
+        listThree.forEach { item->
+            if(item.name.contains(input) || input.contains(item.name)) {
+                searchList.add(item)
+            }
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+        LazyColumn {
+            items(searchList.size) {item ->
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 15.dp, vertical = 5.dp),
+                    shape = MaterialTheme.shapes.medium,
+                ){
+                    var department = searchList[item].depart
+                    if(department.contains("（")) department = department.substringBefore("（")
+                    ListItem(
+                        headlineContent = { Text(text = searchList[item].name) },
+                        supportingContent = { Text(text = department) },
+                        overlineContent = { Text(text = "第" + searchList[item].term + "学期 | 学分 ${searchList[item].credit}")},
+                        leadingContent = { courseIcons(name = searchList[item].depart) },
+                        modifier = Modifier.clickable {
+                        },
+                    )
+                }
+            }
+        }
+    } else {
+        Box(modifier = Modifier.fillMaxSize()) {
+            Column(modifier = Modifier.align(Alignment.Center)) {
+                statusUI(R.drawable.manga,"选修课不做显示")
             }
         }
     }

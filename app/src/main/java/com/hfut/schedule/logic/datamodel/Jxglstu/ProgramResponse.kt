@@ -21,14 +21,14 @@ data class ProgramResponse(val children : List<ProgramResponse>,
 
 data class Type(val nameZh : String)
 
-data class RequireInfo(val requiredSubModuleNum : Double,
-                       val requiredCourseNum : Int,
-                       val totalTheoryPeriods : Int,
-                       val totalTheoryCredits : Double,
+data class RequireInfo(val requiredSubModuleNum : Double?,
+                       val requiredCourseNum : Int?,
+                       val totalTheoryPeriods : Int?,
+                       val totalTheoryCredits : Double?,
                        val requiredCredits : Double?,
-                       val totalPracticePeriods : Int,
-                       val totalPracticeCredits : Double,
-                       val requiredTotalPeriods : Int,)
+                       val totalPracticePeriods : Double?,
+                       val totalPracticeCredits : Double?,
+                       val requiredTotalPeriods : Int?,)
 
 data class PlanCourses(val readableTerms : List<Int>,
                        val readableSuggestTerms : List<String>,

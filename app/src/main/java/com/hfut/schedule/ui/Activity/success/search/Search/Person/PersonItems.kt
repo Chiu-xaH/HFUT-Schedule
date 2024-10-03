@@ -45,6 +45,7 @@ import com.hfut.schedule.ui.Activity.success.search.Search.LoginWeb.getIdentifyI
 import com.hfut.schedule.ui.UIUtils.DividerText
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.ScrollText
+import com.hfut.schedule.ui.UIUtils.courseIcons
 import org.jsoup.Jsoup
 
 
@@ -73,7 +74,11 @@ fun PersonItems(ifSaved : Boolean) {
     //SharePrefs.Save("ChineseId",chineseid)
 
     val benorsshuo = getPersonInfo().benshuo
-    val yuanxi = getPersonInfo().department
+    var yuanxi = getPersonInfo().department
+    if (yuanxi != null) {
+        if(yuanxi.contains("("))yuanxi = yuanxi.substringBefore("(")
+        if(yuanxi.contains("（"))yuanxi = yuanxi.substringBefore("（")
+    }
     val zhuanye = getPersonInfo().major
     val classes = getPersonInfo().classes
     val school = getPersonInfo().school
@@ -81,8 +86,10 @@ fun PersonItems(ifSaved : Boolean) {
 
     var show by remember { mutableStateOf(false) }
     val blurSize by animateDpAsState(targetValue = if (!show) 10.dp else 0.dp, label = "")
-    var showPicture by remember { mutableStateOf(false) }
-    val sizePicture by animateDpAsState(targetValue = if (!showPicture) 130.dp else 0.dp, label = "")
+    var show2 by remember { mutableStateOf(false) }
+    val blurSize2 by animateDpAsState(targetValue = if (!show2) 10.dp else 0.dp, label = "")
+   // var showPicture by remember { mutableStateOf(false) }
+    //val sizePicture by animateDpAsState(targetValue = if (!showPicture) 130.dp else 0.dp, label = "")
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -110,7 +117,7 @@ fun PersonItems(ifSaved : Boolean) {
                 shape = MaterialTheme.shapes.medium,
             ) {
                 ListItem(
-                    headlineContent = { Text(text = "姓名   ${name}") },
+                    headlineContent = { Text(text = "姓名   $name") },
                     leadingContent = {
                         Icon(
                             painterResource(R.drawable.signature),
@@ -120,11 +127,16 @@ fun PersonItems(ifSaved : Boolean) {
                     modifier = Modifier.clickable {
                         ClipBoard.copy(name)
                         MyToast("已复制到剪切板")
+                    },
+                    trailingContent = {
+                        FilledTonalIconButton(onClick = { show2 = !show2 }) {
+                            Icon(painter = painterResource(id = if(show2)R.drawable.visibility else R.drawable.visibility_off), contentDescription = "")
+                        }
                     }
                 )
 
                 ListItem(
-                    headlineContent = { Text(text = "学号   ${studentnumber}") },
+                    headlineContent = { Text(text = "学号   $studentnumber") },
                     leadingContent = {
                         Icon(
                             painterResource(R.drawable.badge),
@@ -136,20 +148,21 @@ fun PersonItems(ifSaved : Boolean) {
                         MyToast("已复制到剪切板")
                     }
                 )
-
-                ListItem(
-                    headlineContent = { ScrollText(text = "身份证号   ${chineseid}") },
-                    leadingContent = {
-                        Icon(
-                            painterResource(R.drawable.tag),
-                            contentDescription = "Localized description",
-                        )
-                    },
-                    modifier = Modifier.clickable {
-                        ClipBoard.copy(chineseid)
-                        MyToast("已复制到剪切板")
-                    }
-                )
+                Column(modifier = Modifier.blur(radius = blurSize2)) {
+                    ListItem(
+                        headlineContent = { ScrollText(text = "身份证号   $chineseid") },
+                        leadingContent = {
+                            Icon(
+                                painterResource(R.drawable.tag),
+                                contentDescription = "Localized description",
+                            )
+                        },
+                        modifier = Modifier.clickable {
+                            ClipBoard.copy(chineseid)
+                            MyToast("已复制到剪切板")
+                        }
+                    )
+                }
             }
 
 
@@ -163,10 +176,10 @@ fun PersonItems(ifSaved : Boolean) {
                 shape = MaterialTheme.shapes.medium,
             ) {
                 ListItem(
-                    headlineContent = { Text(text = "校区   ${school}") },
+                    headlineContent = { Text(text = "校区   $school") },
                     leadingContent = {
                         Icon(
-                            painterResource(R.drawable.location_city),
+                            painterResource(R.drawable.near_me),
                             contentDescription = "Localized description",
                         )
                     },
@@ -178,12 +191,9 @@ fun PersonItems(ifSaved : Boolean) {
 
 
                 ListItem(
-                    headlineContent = { ScrollText(text = "院系   ${yuanxi}") },
+                    headlineContent = { ScrollText(text = "院系   $yuanxi") },
                     leadingContent = {
-                        Icon(
-                            painterResource(R.drawable.local_library),
-                            contentDescription = "Localized description",
-                        )
+                        yuanxi?.let { courseIcons(name = it) }
                     },
                     modifier = Modifier.clickable {
                         ClipBoard.copy(yuanxi)
@@ -193,7 +203,7 @@ fun PersonItems(ifSaved : Boolean) {
 
 
                 ListItem(
-                    headlineContent = { ScrollText(text = "专业   ${zhuanye}") },
+                    headlineContent = { ScrollText(text = "专业   $zhuanye") },
                     leadingContent = {
                         Icon(
                             painterResource(R.drawable.square_foot),
@@ -207,7 +217,7 @@ fun PersonItems(ifSaved : Boolean) {
                 )
 
                 ListItem(
-                    headlineContent = { Text(text = "班级   ${classes}") },
+                    headlineContent = { Text(text = "班级   $classes") },
                     leadingContent = {
                         Icon(
                             painterResource(R.drawable.sensor_door),
@@ -388,7 +398,11 @@ fun getPersonInfo() : PersonInfo {
         //SharePrefs.Save("ChineseId",chineseid)
 
         val benorsshuo =infoMap[elements?.get(8)?.text()]
-        val yuanxi =infoMap[elements?.get(10)?.text()]
+        var yuanxi =infoMap[elements?.get(10)?.text()]
+        if (yuanxi != null) {
+            if(yuanxi.contains("("))yuanxi = yuanxi.substringBefore("(")
+            if(yuanxi.contains("（"))yuanxi = yuanxi.substringBefore("（")
+        }
         val zhuanye =infoMap[elements?.get(12)?.text()]
         val classes =infoMap[elements?.get(16)?.text()]
         val school =infoMap[elements?.get(18)?.text()]
