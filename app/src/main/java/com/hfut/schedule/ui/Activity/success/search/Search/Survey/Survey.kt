@@ -82,7 +82,7 @@ import java.time.LocalDate
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Survey(ifSaved : Boolean,vm : LoginSuccessViewModel){
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
 
     ListItem(
@@ -107,7 +107,7 @@ fun Survey(ifSaved : Boolean,vm : LoginSuccessViewModel){
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        title = { Text("教评") },
+                        title = { Text("评教") },
                     )
                 },
             ) { innerPadding ->

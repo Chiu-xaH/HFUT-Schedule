@@ -59,7 +59,7 @@ fun News(vm : LoginSuccessViewModel) {
     var onclick by remember { mutableStateOf(true) }
     var loading by remember { mutableStateOf(true) }
     ListItem(
-        headlineContent = { Text(text = "新闻公告") },
+        headlineContent = { Text(text = "通知公告") },
         leadingContent = {
             Icon(
                 painterResource(R.drawable.stream),
@@ -87,7 +87,7 @@ showBottomSheet = true
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        title = { Text("新闻检索") }
+                        title = { Text("通知公告") }
                     )
                 },
             ) { innerPadding ->
@@ -109,7 +109,7 @@ showBottomSheet = true
                             onValueChange = {
                                 input = it
                             },
-                            label = { Text("无文字直接搜索则为默认推荐" ) },
+                            label = { Text("搜索通知或新闻" ) },
                             singleLine = true,
                             trailingIcon = {
                                 IconButton(

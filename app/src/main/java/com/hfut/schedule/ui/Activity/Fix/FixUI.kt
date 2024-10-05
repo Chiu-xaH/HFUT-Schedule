@@ -94,7 +94,7 @@ fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel,vm2 : LoginSuccessVie
     var showapi by remember { mutableStateOf(switch_api) }
     SharePrefs.SaveBoolean("SWITCHMYAPI", false, showapi)
 
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
 
     if (showBottomSheet) {
@@ -127,7 +127,7 @@ fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel,vm2 : LoginSuccessVie
         }
     }
 
-    val sheetState_feedBack = rememberModalBottomSheetState()
+    val sheetState_feedBack = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_feedBack by remember { mutableStateOf(false) }
 
     if (showBottomSheet_feedBack) {
@@ -327,11 +327,11 @@ fun BugShare() {
 fun questionUI() {
     questionItem(
         "登录界面点击登录提示“重定向失败“，无法登录？",
-        "有时候教务系统会崩，可能外网会卡，建议切换到校园网尝试，如果还不行去网址导航选择教务系统，不出意外大概率网站也进不去，等一等吧"
+        "有时候教务系统会维护，外网会进不去，建议切换到校园网尝试，如果急需的话勾选外地访问，或者在 查询中心-网址导航-WEBVPN 登录"
     )
     questionItem(
         "有的功能跳转到登陆界面",
-        "有的功能为了保证数据的新鲜，要求登录一下教务系统"
+        "有的功能为了保证数据的新鲜，要求登录教务系统刷新一下"
     )
     questionItem(
         "到底那些信息时不需要登录就能获取的，哪些数据是实时更新的，课表会不会过时",
@@ -351,7 +351,7 @@ fun questionUI() {
     )
     questionItem(
         "聚焦接口的信息来源与真实度",
-        "这些信息我只给23地科提供，全为我得到的信息"
+        "这些信息我只给所在班级提供,只是我得到的信息,其他外班级用户看不到我发布的内部日程"
     )
     questionItem(
         "本应用的数据与官方渠道有出入",

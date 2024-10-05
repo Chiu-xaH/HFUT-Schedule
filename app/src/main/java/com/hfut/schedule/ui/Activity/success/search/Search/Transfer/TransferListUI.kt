@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,11 +17,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -28,10 +33,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.logic.datamodel.Jxglstu.ProgramPartThree
+import com.hfut.schedule.logic.datamodel.Jxglstu.TransferData
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.ScrollText
@@ -42,6 +50,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransferUI(vm: LoginSuccessViewModel,campus: CampusId) {
     var loading by remember { mutableStateOf(true) }
@@ -96,31 +105,71 @@ fun TransferUI(vm: LoginSuccessViewModel,campus: CampusId) {
             enter = fadeIn(),
             exit = fadeOut()
         ) {
-            val list = getTransfer(vm)
-            LazyColumn {
-                items(list.size) {item ->
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+            var input by remember { mutableStateOf("") }
+            Column {
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    TextField(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 15.dp, vertical = 5.dp),
+                            .weight(1f)
+                            .padding(horizontal = 15.dp),
+                        value = input,
+                        onValueChange = {
+                            input = it
+                        },
+                        label = { Text("搜索学院或专业" ) },
+                        singleLine = true,
+                        trailingIcon = {
+                            IconButton(
+                                onClick = {}) {
+                                Icon(painter = painterResource(R.drawable.search), contentDescription = "description")
+                            }
+                        },
                         shape = MaterialTheme.shapes.medium,
-                    ) {
-                        var department = list[item].department.nameZh
-                        if(department.contains("（")) department = department.substringBefore("（")
-                        if(department.contains("(")) department = department.substringBefore("(")
-                        ListItem(
-                            headlineContent = { Text(text = list[item].major.nameZh) },
-                            supportingContent = { list[item].registrationConditions?.let { Text(text = it) } },
-                            overlineContent = { ScrollText(text = department + " 已申请 " + list[item].applyStdCount.toString() + " / " + list[item].preparedStdCount) },
-                            leadingContent = { courseIcons(list[item].department.nameZh) },
-                            trailingContent = {  FilledTonalIconButton(onClick = {
+                        colors = TextFieldDefaults.textFieldColors(
+                            focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
+                            unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
+                        ),
+                    )
+                }
+                val list = getTransfer(vm)
+                val searchList = mutableListOf<TransferData>()
+                list.forEach { item->
+                    if(item.department.nameZh.contains(input) || item.major.nameZh.contains(input)) {
+                        searchList.add(item)
+                    }
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+
+                LazyColumn {
+                    items(searchList.size) {item ->
+                        Card(
+                            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 15.dp, vertical = 5.dp),
+                            shape = MaterialTheme.shapes.medium,
+                        ) {
+                            var department = searchList[item].department.nameZh
+                            if(department.contains("（")) department = department.substringBefore("（")
+                            if(department.contains("(")) department = department.substringBefore("(")
+                            ListItem(
+                                headlineContent = { Text(text = searchList[item].major.nameZh) },
+                                supportingContent = { searchList[item].registrationConditions?.let { Text(text = it) } },
+                                overlineContent = { ScrollText(text = department + " 已申请 " + searchList[item].applyStdCount.toString() + " / " + searchList[item].preparedStdCount) },
+                                leadingContent = { courseIcons(searchList[item].department.nameZh) },
+                                trailingContent = {  FilledTonalIconButton(onClick = {
                                     MyToast("正在开发")
-                              }) { Icon(painter = painterResource(id = R.drawable.add_task), contentDescription = "") } },
-                        )
+                                }) { Icon(painter = painterResource(id = R.drawable.add_task), contentDescription = "") } },
+                            )
+                        }
                     }
                 }
             }
+
         }
     }
 }

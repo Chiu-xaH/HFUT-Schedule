@@ -367,7 +367,7 @@ fun APPScreen(navController: NavController,
 
         SaveBoolean("SWITCHFOCUS",true,showfocus)
         var showBottomSheet_card by remember { mutableStateOf(false) }
-        var sheetState_card = rememberModalBottomSheetState()
+        var sheetState_card = rememberModalBottomSheetState(skipPartiallyExpanded = true)
         if (showBottomSheet_card) {
             ModalBottomSheet(
                 onDismissRequest = { showBottomSheet_card = false },

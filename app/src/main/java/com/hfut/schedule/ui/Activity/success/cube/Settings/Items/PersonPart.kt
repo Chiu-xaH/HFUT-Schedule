@@ -41,21 +41,19 @@ import com.hfut.schedule.logic.datamodel.UserInfo
 import com.hfut.schedule.logic.utils.APPVersion
 import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.GetDate
+import com.hfut.schedule.logic.utils.ReservDecimal
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.success.search.Search.Person.getPersonInfo
 import com.hfut.schedule.ui.UIUtils.ScrollText
 import com.hfut.schedule.ui.UIUtils.courseIcons
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun PersonPart() {
-
-
-
     var expandItems by remember { mutableStateOf(prefs.getBoolean("expandPerson",false)) }
-
-
-
+    val startDate = getPersonInfo().startDate
+    val endDate = getPersonInfo().endDate
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
         Column() {
             Card(
@@ -77,12 +75,15 @@ fun PersonPart() {
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.person), contentDescription = "")},
                     headlineContent = { getPersonInfo().name?.let { Text(text = it) } },
                     trailingContent = {
-                        FilledTonalIconButton(onClick = {
-                            expandItems = !expandItems
-                            SharePrefs.SaveBoolean("expandPerson",true,expandItems)
-                        }) {
-                            Icon(painterResource(id = if(expandItems) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "")
-                        }
+                        if(startDate != null && endDate != null && startDate != "" && endDate != "") {
+                            Text(text = "已陪伴 ${ReservDecimal.reservDecimal(GetDate.getPercent(startDate,endDate),1)}%")
+                        } else { null }
+                      //  FilledTonalIconButton(onClick = {
+                        //    expandItems = !expandItems
+                          //  SharePrefs.SaveBoolean("expandPerson",true,expandItems)
+                        //}) {
+                          //  Icon(painterResource(id = if(expandItems) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "")
+                       // }
                         },
                     colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                     modifier = Modifier.clickable {
@@ -150,6 +151,12 @@ fun PersonPart() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun TimesUI() {
+   // val startYear = ("20" + getUserInfo().studentID?.substring(0,2)).toIntOrNull()
+
+}
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun getUserInfo() : UserInfo {

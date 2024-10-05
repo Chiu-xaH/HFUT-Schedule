@@ -12,6 +12,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Card
@@ -43,6 +45,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,6 +57,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.gson.Gson
@@ -67,16 +71,20 @@ import com.hfut.schedule.logic.utils.ReservDecimal
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.success.search.Search.More.Login
+import com.hfut.schedule.ui.Activity.success.search.Search.Person.getPersonInfo
 import com.hfut.schedule.ui.UIUtils.BottomTip
 import com.hfut.schedule.ui.UIUtils.CardForListColor
 import com.hfut.schedule.ui.UIUtils.DevelopingUI
 import com.hfut.schedule.ui.UIUtils.DividerText
+import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.Round
+import com.hfut.schedule.ui.UIUtils.ScrollText
 import com.hfut.schedule.ui.UIUtils.courseIcons
 import com.hfut.schedule.ui.UIUtils.statusUI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -157,6 +165,13 @@ fun Program(vm : LoginSuccessViewModel,ifSaved : Boolean) {
                                 ) {
                                     Icon(painterResource(id = R.drawable.info), contentDescription = "")
                                 }
+                               // FilledTonalIconButton(
+                                 //   onClick = {
+                                   //           MyToast("正在开发")
+                                    //},
+                                //) {
+                                  //  Icon(painterResource(id = R.drawable.tab_inactive), contentDescription = "")
+                               // }
                             }
                         }
                     )
@@ -416,9 +431,28 @@ fun ProgramUI2(vm: LoginSuccessViewModel,ifSaved: Boolean) {
                         )
                     }
                 }
+
                 item {
-                    BottomTip(str = "总修 $total 学分")
+                    val scrollState = rememberScrollState()
+                    val text = getPersonInfo().program
+                    LaunchedEffect(key1 = text ) {
+                        delay(500L)
+                        scrollState.animateScrollTo(scrollState.maxValue)
+                        delay(4000L)
+                        scrollState.animateScrollTo(0)
+                    }
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                        text?.let { Text(
+                            text = it,
+                            color = Color.Gray,
+                            fontSize = 14.sp,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.horizontalScroll(scrollState)
+                        ) }
+                    }
                 }
+                item { BottomTip(str = "总修 $total 学分") }
             }
         }
 

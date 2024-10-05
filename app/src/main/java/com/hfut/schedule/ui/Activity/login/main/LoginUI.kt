@@ -16,6 +16,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -28,12 +29,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
@@ -55,22 +53,30 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginViewModel
+import com.hfut.schedule.activity.FixActivity
 import com.hfut.schedule.activity.LoginSuccessActivity
 import com.hfut.schedule.activity.SavedCoursesActivity
-import com.hfut.schedule.logic.utils.Encrypt
 import com.hfut.schedule.logic.utils.APPVersion
+import com.hfut.schedule.logic.utils.Encrypt
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
@@ -81,6 +87,7 @@ import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+
 //登录方法，auto代表前台调用
 fun LoginClick(vm : LoginViewModel,username : String,inputAES : String,webVpn : Boolean) {
     val cookie = prefs.getString(if(!webVpn)"cookie" else "webVpnKey", "")
@@ -371,7 +378,7 @@ fun TwoTextField(vm : LoginViewModel) {
                 ) { Text("免登录") }
         }
        // Spacer(modifier = Modifier.height(10.dp))
-
+        //GetComponentHeightExample()
         Row (modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center){
             TextButton(
                 onClick = {webVpn = !webVpn},
@@ -379,11 +386,39 @@ fun TwoTextField(vm : LoginViewModel) {
                     Checkbox(checked = webVpn, onCheckedChange = {change -> webVpn = change})
                     Text(text = "外地访问")
                 },
-                //colors = ButtonColors(Color.Transparent,Color.Transparent,Color.Transparent,Color.Transparent,Color.Transparent)
             )
-        //    Checkbox(checked = webVpn, onCheckedChange = {change -> webVpn = change})
-           // Spacer(modifier = Modifier.width(15.dp))
-
+            TextButton(
+                onClick = {
+                    val it = Intent(MyApplication.context, FixActivity::class.java).apply { addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) }
+                    MyApplication.context.startActivity(it)
+                },
+                content = {
+                    Box(modifier = Modifier.height(48.dp)) {
+                        Text(text = "遇到问题", modifier = Modifier.align(Alignment.Center),textDecoration = TextDecoration.Underline)
+                    }
+                },
+            )
         }
     }
+}
+
+@Composable
+fun GetComponentHeightExample() {
+    val size = remember { mutableStateOf(IntSize.Zero) }
+    val density = LocalDensity.current
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .onGloballyPositioned { coordinates ->
+                // 获取组件的尺寸
+                size.value = coordinates.size // IntSize
+            }
+    ) {
+        Checkbox(checked = false, onCheckedChange = {})
+    }
+
+    // 将高度以dp形式打印出来
+    val heightInDp = with(density) { size.value.height.toDp() }
+    println("组件的高度是：$heightInDp dp")
 }

@@ -9,6 +9,7 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
@@ -16,12 +17,17 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.TopAppBar
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -51,6 +57,7 @@ import com.hfut.schedule.ui.UIUtils.CardForListColor
 import com.hfut.schedule.ui.UIUtils.DividerText
 import com.hfut.schedule.ui.UIUtils.LittleDialog
 import com.hfut.schedule.ui.UIUtils.MyToast
+import com.hfut.schedule.ui.UIUtils.Round
 import java.io.File
 
 
@@ -69,6 +76,9 @@ fun MultiScheduleSettings(
     var showDialog by remember { mutableStateOf(false) }
     var showDialog_Add by remember { mutableStateOf(false) }
     var showDialog_Del by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showBottomSheet by remember { mutableStateOf(false) }
+
     //已选择
     var selected  by remember { mutableStateOf(select) }
     //长按要删除的
@@ -116,13 +126,41 @@ fun MultiScheduleSettings(
             dismisstext = "取消"
         )
     }
+    if (showBottomSheet) {
+        ModalBottomSheet(onDismissRequest = { showBottomSheet = false }, sheetState = sheetState, modifier = Modifier,
+             shape = Round(sheetState)
+        ) {
+            Scaffold(
+                topBar = {
+                    androidx.compose.material3.TopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        title = { Text("说明") },
+                    )
+                }
+            ) {innerPadding->
+                Column(modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()) {
+                    InfoUI()
+                }
+            }
+        }
+    }
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         androidx.compose.material3.TopAppBar(
             colors = TopAppBarDefaults.mediumTopAppBarColors(
                 containerColor = Color.Transparent,
                 titleContentColor = MaterialTheme.colorScheme.primary,
             ),
-            title = { Text("课表") }
+            title = { Text("课程表") },
+            actions = {
+                FilledTonalIconButton(onClick = { showBottomSheet = true }, modifier = Modifier.padding(horizontal = 15.dp)) {
+                    Icon(painterResource(id = R.drawable.info), contentDescription = "")
+                }
+            }
         )
         LazyRow {
             item {
@@ -162,7 +200,7 @@ fun MultiScheduleSettings(
                         .size(width = 100.dp, height = 70.dp)
                         .padding(horizontal = 4.dp)
                         .clickable {
-                            if(isNextOpen()) {
+                            if (isNextOpen()) {
                                 selected = NEXT
                             } else {
                                 MyToast("入口暂未开放")
@@ -227,18 +265,22 @@ fun MultiScheduleSettings(
             }
         )
         ListItem(
+            headlineContent = { Text(text = "刷新教务课表") },
+            leadingContent = {
+                Icon(painterResource(id = R.drawable.rotate_right), contentDescription = "")
+            },
+            modifier = Modifier.clickable {
+                if(ifSaved)
+                Login()
+                else MyToast("目前已是登陆状态")
+            }
+        )
+        ListItem(
             headlineContent = { Text(text = "写入日历日程") },
             leadingContent = {
                 Icon(painterResource(id = R.drawable.calendar), contentDescription = "")
             },
             modifier = Modifier.clickable { MyToast("正在开发") }
-        )
-        ListItem(
-            headlineContent = { Text(text = "导入课表文件") },
-            leadingContent = {
-                Icon(painterResource(id = R.drawable.attach_file), contentDescription = "")
-            },
-            modifier = Modifier.clickable { MyToast("请于文件管理选择他人分享的文件(json,txt)以本应用打开") }
         )
         ListItem(
             headlineContent = { Text(text = "恢复默认状态") },
@@ -252,11 +294,6 @@ fun MultiScheduleSettings(
     }
 }
 
-@Preview
-@Composable
-fun Text() {
-   // MultiScheduleSettings()
-}
 
 fun Add(title : String) {
     val dbwritableDatabase =  dataBaseSchedule.writableDatabase
@@ -273,9 +310,6 @@ fun Remove(id : Int) {
     // 执行删除操作
     dbwritableDatabase.delete("Schedule", "id = ?", arrayOf(id.toString()))
 }
-
-
-
 
 fun getNum() : Int {
     return try {
@@ -337,9 +371,55 @@ fun shareTextFile(fileName: String) {
     MyApplication.context.startActivity(Intent.createChooser(shareIntent, "分享课表给他人").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
 }
 
-
-fun startFileMangager() {
-
-
+@Composable
+fun InfoUI() {
+    Card(
+        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 15.dp, vertical = 5.dp),
+        shape = MaterialTheme.shapes.medium,
+    ) {
+        ListItem(
+            headlineContent = { Text(text = "数据说明") },
+            supportingContent = { Text(text = "每个课表都是独立的数据源,用户可以自行切换,也可自行导入好友分享或者自行从教务系统提取到的文件")}
+        )
+    }
+    Card(
+        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 15.dp, vertical = 5.dp),
+        shape = MaterialTheme.shapes.medium,
+    ) {
+        ListItem(
+            headlineContent = { Text(text = "教务系统课表") },
+            supportingContent = { Text(text = "此课表随用户每次登录更新,须由用户手动刷新(刷新登陆状态 选项),此课表的数据也是最权威的,选退调课后刷新教务课表会立刻变化")}
+        )
+    }
+    Card(
+        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 15.dp, vertical = 5.dp),
+        shape = MaterialTheme.shapes.medium,
+    ) {
+        ListItem(
+            headlineContent = { Text(text = "智慧社区课表") },
+            supportingContent = { Text(text = "此课表自动刷新,自动跟随学期,只要用户登陆过就会记住登陆状态,但是此课表的数据更新稍微有延迟,退选调课之后大概次日才会更新")}
+        )
+    }
+    Card(
+        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 15.dp, vertical = 5.dp),
+        shape = MaterialTheme.shapes.medium,
+    ) {
+        ListItem(
+            headlineContent = { Text(text = "下学期课表") },
+            supportingContent = { Text(text = "在每学期末尾时教务系统会排出下学期的课表,但此时学期仍未变化,可以从这里预先查看下学期安排")}
+        )
+    }
 }
 

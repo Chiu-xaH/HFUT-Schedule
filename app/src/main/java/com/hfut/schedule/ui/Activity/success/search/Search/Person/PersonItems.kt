@@ -2,7 +2,9 @@ package com.hfut.schedule.ui.Activity.success.search.Search.Person
 
 import android.annotation.SuppressLint
 import android.graphics.BitmapFactory
+import android.os.Build
 import android.util.Base64
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -39,6 +41,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.ClipBoard
+import com.hfut.schedule.logic.utils.GetDate
+import com.hfut.schedule.logic.utils.ReservDecimal
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.success.search.Search.LoginWeb.getIdentifyID
@@ -47,10 +51,11 @@ import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.ScrollText
 import com.hfut.schedule.ui.UIUtils.courseIcons
 import org.jsoup.Jsoup
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 
-
-
+@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -73,16 +78,22 @@ fun PersonItems(ifSaved : Boolean) {
 
     //SharePrefs.Save("ChineseId",chineseid)
 
-    val benorsshuo = getPersonInfo().benshuo
+    val studyType = getPersonInfo().benshuo
     var yuanxi = getPersonInfo().department
     if (yuanxi != null) {
         if(yuanxi.contains("("))yuanxi = yuanxi.substringBefore("(")
         if(yuanxi.contains("（"))yuanxi = yuanxi.substringBefore("（")
     }
-    val zhuanye = getPersonInfo().major
+    val major = getPersonInfo().major
     val classes = getPersonInfo().classes
     val school = getPersonInfo().school
     val home = getPersonInfo().home
+    val xueJiStatus = getPersonInfo().status
+    val program = getPersonInfo().program
+    val startDate = getPersonInfo().startDate
+    val endDate = getPersonInfo().endDate
+    val majorDirection = getPersonInfo().majorDirection
+    val studyTime = getPersonInfo().studyTime
 
     var show by remember { mutableStateOf(false) }
     val blurSize by animateDpAsState(targetValue = if (!show) 10.dp else 0.dp, label = "")
@@ -117,7 +128,8 @@ fun PersonItems(ifSaved : Boolean) {
                 shape = MaterialTheme.shapes.medium,
             ) {
                 ListItem(
-                    headlineContent = { Text(text = "姓名   $name") },
+                    headlineContent = { name?.let { Text(text = it) } },
+                    overlineContent = { Text(text ="姓名" )},
                     leadingContent = {
                         Icon(
                             painterResource(R.drawable.signature),
@@ -136,7 +148,8 @@ fun PersonItems(ifSaved : Boolean) {
                 )
 
                 ListItem(
-                    headlineContent = { Text(text = "学号   $studentnumber") },
+                    headlineContent = { studentnumber?.let { Text(text = it) } },
+                    overlineContent = { Text(text ="学号" )},
                     leadingContent = {
                         Icon(
                             painterResource(R.drawable.badge),
@@ -150,7 +163,8 @@ fun PersonItems(ifSaved : Boolean) {
                 )
                 Column(modifier = Modifier.blur(radius = blurSize2)) {
                     ListItem(
-                        headlineContent = { ScrollText(text = "身份证号   $chineseid") },
+                        headlineContent = { chineseid?.let { ScrollText(text = it) } },
+                        overlineContent = { Text(text = "身份证号")},
                         leadingContent = {
                             Icon(
                                 painterResource(R.drawable.tag),
@@ -176,7 +190,8 @@ fun PersonItems(ifSaved : Boolean) {
                 shape = MaterialTheme.shapes.medium,
             ) {
                 ListItem(
-                    headlineContent = { Text(text = "校区   $school") },
+                    headlineContent = { school?.let { Text(text = it) } },
+                    overlineContent = { Text(text = "校区")},
                     leadingContent = {
                         Icon(
                             painterResource(R.drawable.near_me),
@@ -191,7 +206,8 @@ fun PersonItems(ifSaved : Boolean) {
 
 
                 ListItem(
-                    headlineContent = { ScrollText(text = "院系   $yuanxi") },
+                    headlineContent = { yuanxi?.let { ScrollText(text = it) } },
+                    overlineContent = { Text(text = "学院")},
                     leadingContent = {
                         yuanxi?.let { courseIcons(name = it) }
                     },
@@ -203,7 +219,11 @@ fun PersonItems(ifSaved : Boolean) {
 
 
                 ListItem(
-                    headlineContent = { ScrollText(text = "专业   $zhuanye") },
+                    headlineContent = {
+                        major?.let { ScrollText(text = it) }
+                    },
+                    overlineContent = { Text(text = "专业")},
+                    supportingContent = { majorDirection?.let { if(it != "") ScrollText(text = "方向 $it") else null } },
                     leadingContent = {
                         Icon(
                             painterResource(R.drawable.square_foot),
@@ -211,13 +231,14 @@ fun PersonItems(ifSaved : Boolean) {
                         )
                     },
                     modifier = Modifier.clickable {
-                        ClipBoard.copy(zhuanye)
+                        ClipBoard.copy(major)
                         MyToast("已复制到剪切板")
                     }
                 )
 
                 ListItem(
-                    headlineContent = { Text(text = "班级   $classes") },
+                    headlineContent = { classes?.let { Text(text = it) } },
+                    overlineContent = { Text(text = "班级")},
                     leadingContent = {
                         Icon(
                             painterResource(R.drawable.sensor_door),
@@ -286,9 +307,7 @@ fun PersonItems(ifSaved : Boolean) {
 
             }
 
-
-            DividerText(text = "其他信息")
-
+            DividerText(text = "学籍信息")
             Card(
                 elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
                 modifier = Modifier
@@ -297,36 +316,84 @@ fun PersonItems(ifSaved : Boolean) {
                 shape = MaterialTheme.shapes.medium,
             ) {
                 ListItem(
-                    headlineContent = { Text(text = "类别   ${benorsshuo}") },
+                    headlineContent = { studyType?.let { Text(text = it) } },
+                    overlineContent = { Text(text = "类型")},
                     leadingContent = {
                         Icon(
                             painterResource(R.drawable.school),
                             contentDescription = "Localized description",
                         )
                     },
-      //              trailingContent = {
-        //                FilledTonalIconButton(onClick = { showPicture = !showPicture }) {
-          //  //                Icon(painter = painterResource(id = if(showPicture)R.drawable.visibility else R.drawable.visibility_off), contentDescription = "")
-           //             }
-            //        },
+                    modifier = Modifier.clickable {}
+                )
+                ListItem(
+                    headlineContent = { xueJiStatus?.let { Text(text = it) } },
+                    overlineContent = { Text(text = "学籍状态")},
+                    leadingContent = {
+                        Icon(
+                            painterResource(
+                                if (xueJiStatus != null) {
+                                    if(xueJiStatus.contains("正常")) {
+                                        R.drawable.check_circle
+                                    } else if(xueJiStatus.contains("转专业")) {
+                                        R.drawable.compare_arrows
+                                    } else if(xueJiStatus.contains("毕业")) {
+                                        R.drawable.verified
+                                    } else {
+                                        R.drawable.help
+                                    }
+                                } else {
+                                    R.drawable.info
+                                }
+                            ),
+                            contentDescription = "Localized description",
+                        )
+                    },
+                    modifier = Modifier.clickable {}
+                )
+                ListItem(
+                    headlineContent = { Text(text = "$startDate\n$endDate") },
+                    overlineContent = { Text(text = "学制 $studyTime")},
+                    leadingContent = {
+                        Icon(
+                            painterResource(R.drawable.schedule),
+                            contentDescription = "Localized description",
+                        )
+                    },
+                    trailingContent = {
+                        if(startDate != null && endDate != null && startDate != "" && endDate != "") {
+                            Text(text = "已过 ${ReservDecimal.reservDecimal(GetDate.getPercent(startDate,endDate),1)}%")
+                        } else { null }
+                    },
                     modifier = Modifier.clickable {
-                        ClipBoard.copy(benorsshuo)
+                        ClipBoard.copy(xueJiStatus)
                         MyToast("已复制到剪切板")
+                    }
+                )
+                ListItem(
+                    headlineContent = { program?.let { ScrollText(text = it) } },
+                    overlineContent = { Text(text = "培养方案")},
+                    leadingContent = {
+                        Icon(
+                            painterResource(R.drawable.conversion_path),
+                            contentDescription = "Localized description",
+                        )
+                    },
+                    modifier = Modifier.clickable {
+                        MyToast("前往 查询中心-培养方案查看详情")
                     }
                 )
 
                 ListItem(
-                    headlineContent = { Text(text = "生源地   ${home}") },
+                    headlineContent = { home?.let { Text(text = it) } },
+                    overlineContent = { Text(text = "来源")},
                     leadingContent = {
                         Icon(
                             painterResource(R.drawable.home),
                             contentDescription = "Localized description",
                         )
                     },
-                    modifier = Modifier.clickable {
-                        ClipBoard.copy(home)
-                        MyToast("已复制到剪切板")
-                    }
+                    modifier = Modifier.clickable {}
                 )
                 ListItem(
                     headlineContent = { Text(text = "学籍照") },
@@ -371,7 +438,14 @@ data class PersonInfo(val name : String?,
                       val department : String?,
                       val school : String?,
                       val benshuo : String?,
-                      val home: String?)
+                      val home: String?,
+                      val status : String?,
+                      val program : String?,
+                      val startDate : String?,
+                      val endDate : String?,
+                      val majorDirection : String?,
+                      val studyTime : String?)
+
 
 fun getPersonInfo() : PersonInfo {
  //   val cookie = SharePrefs.prefs.getString("redirect", "")
@@ -407,8 +481,16 @@ fun getPersonInfo() : PersonInfo {
         val classes =infoMap[elements?.get(16)?.text()]
         val school =infoMap[elements?.get(18)?.text()]
         val home =infoMap[elements?.get(80)?.text()]
-        return PersonInfo(name,studentnumber,chineseid,classes,zhuanye,yuanxi, school,benorsshuo,home)
+
+
+        val xueJiStatus =infoMap[elements?.get(20)?.text()]//学籍状态 正常 转专业
+        val program =infoMap[elements?.get(22)?.text()]
+        val startDate = infoMap[elements?.get(38)?.text()]
+        val endDate = infoMap[elements?.get(86)?.text()]
+        val majorDirection = infoMap[elements?.get(14)?.text()] //专业方向
+        val studyTime = infoMap[elements?.get(36)?.text()]//学制 4.0
+        return PersonInfo(name,studentnumber,chineseid,classes,zhuanye,yuanxi, school,benorsshuo,home,xueJiStatus,program, startDate, endDate, majorDirection, studyTime)
     } catch (_:Exception) {
-        return PersonInfo(null,null,null,null,null,null,null,null,null)
+        return PersonInfo(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
     }
 }

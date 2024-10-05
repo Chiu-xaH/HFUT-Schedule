@@ -60,6 +60,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -638,13 +639,21 @@ fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues,vmUI : UIViewModel
 
             LazyVerticalGrid(columns = GridCells.Fixed(if(showAll)7 else 5),modifier = Modifier.padding(horizontal = 10.dp)){
                 items(if(showAll)7 else 5) { item ->
+                    val date = mondayOfCurrentWeek.plusDays(item.toLong()).toString()
                     if (Benweeks > 0)
                         Text(
-                            text = mondayOfCurrentWeek.plusDays(item.toLong()).toString()
-                                .substringAfter("-") ,
+                            text = date.substringAfter("-"),
                             textAlign = TextAlign.Center,
                             fontSize = if(showAll)12.sp else 14.sp,
-                            color = Color.Gray
+                            color = if(date == GetDate.Date_yyyy_MM_dd) MaterialTheme.colorScheme.primary else Color.Gray,
+                            style = if(date == GetDate.Date_yyyy_MM_dd) {
+                                TextStyle(shadow = Shadow(
+                                    color = Color.Gray,
+                                    offset = Offset(2.0f,2.0f),
+                                    blurRadius = 7.0f
+                                ))
+                            } else TextStyle(),
+                            fontWeight = if(date == GetDate.Date_yyyy_MM_dd) FontWeight.Bold else FontWeight.Normal
                         )
                     else Text(
                         text = "未开学",

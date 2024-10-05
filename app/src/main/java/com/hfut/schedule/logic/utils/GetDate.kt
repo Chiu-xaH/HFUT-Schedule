@@ -67,9 +67,27 @@ object GetDate {
     @RequiresApi(Build.VERSION_CODES.O)
     val formattedTime_Minute = currentTime.format(formatter_Minute)
 
-
+    //解析
+    @RequiresApi(Build.VERSION_CODES.O)
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
     @RequiresApi(Build.VERSION_CODES.O)
     val tomorrow = today.plusDays(1).format(DateTimeFormatter.ofPattern("MM-dd"))
     /////////////周数 教务课表
+    //计算目前已经过了多久
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getPercent(startDateStr: String, endDateStr: String): Double {
+        // 将字符串转换为 LocalDate
+        val startDate = LocalDate.parse(startDateStr, formatter)
+        val endDate = LocalDate.parse(endDateStr, formatter)
+        val currentDate = LocalDate.now()
+
+        // 计算总天数和已过天数
+        val totalDays = endDate.toEpochDay() - startDate.toEpochDay()
+        val pastDays = currentDate.toEpochDay() - startDate.toEpochDay()
+
+        // 计算百分比
+        val percentage = (pastDays.toDouble() / totalDays.toDouble()) * 100
+        return percentage
+    }
 }

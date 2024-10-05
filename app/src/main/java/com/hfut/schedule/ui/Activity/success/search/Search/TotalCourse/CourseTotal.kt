@@ -43,7 +43,7 @@ import com.hfut.schedule.ui.UIUtils.ScrollText
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CourseTotal(vm :LoginSuccessViewModel) {
-    val sheetState_Total = rememberModalBottomSheetState()
+    val sheetState_Total = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_Total by remember { mutableStateOf(false) }
     val CommuityTOKEN = prefs.getString("TOKEN","")
     val json = prefs.getString("courses","")

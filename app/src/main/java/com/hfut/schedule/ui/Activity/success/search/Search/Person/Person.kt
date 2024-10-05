@@ -21,7 +21,7 @@ import com.hfut.schedule.ui.UIUtils.Round
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PersonUI(ifSaved : Boolean) {
-    val sheetState_Person = rememberModalBottomSheetState()
+    val sheetState_Person = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_Person by remember { mutableStateOf(false) }
 
     ListItem(

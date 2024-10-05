@@ -32,7 +32,7 @@ import com.hfut.schedule.ui.UIUtils.Round
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WebUI() {
-    val sheetState_Web = rememberModalBottomSheetState()
+    val sheetState_Web = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_Web by remember { mutableStateOf(false) }
 
 
