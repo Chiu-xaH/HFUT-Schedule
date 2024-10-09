@@ -75,6 +75,7 @@ fun courseSearchUI(vm : LoginSuccessViewModel) {
     var loading by remember { mutableStateOf(false) }
 
     val cookie = SharePrefs.prefs.getString("redirect", "")
+    var sortType by remember { mutableStateOf(true) }
    // var showitem by remember { mutableStateOf(false) }
 
    // val saveSem = SharePrefs.prefs.getString("semesterId","")?.toInt()
@@ -126,6 +127,10 @@ fun courseSearchUI(vm : LoginSuccessViewModel) {
                                 painter = painterResource(R.drawable.search),
                                 contentDescription = "description"
                             )
+                        }
+                        FilledTonalButton(
+                            onClick = { sortType = !sortType },) {
+                            Text(text = if(sortType) "开课顺序" else "学分顺序")
                         }
                     }
                 }
@@ -200,7 +205,7 @@ fun courseSearchUI(vm : LoginSuccessViewModel) {
                         enter = fadeIn(),
                         exit = fadeOut()
                     ) {
-                        CourseTotalUI(json = vm.courseRsponseData.value,true)
+                        CourseTotalUI(json = vm.courseRsponseData.value,true,sortType)
                     }
                 }
 

@@ -70,7 +70,7 @@ fun SchoolCalendar() {
                             ),
                             actions = {
                                 Row{
-                                    IconButton(onClick = { StartApp.StartUri(url) }) { Icon(painterResource(id = R.drawable.net), contentDescription = "") }
+                                    IconButton(onClick = { StartApp.startUri(url) }) { Icon(painterResource(id = R.drawable.net), contentDescription = "") }
                                     IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "") }
                                 }
                             },
@@ -88,7 +88,7 @@ fun SchoolCalendar() {
                 }
             }
         } else {
-            StartApp.StartUri(url)
+            StartApp.startUri(url)
         }
     }
 }

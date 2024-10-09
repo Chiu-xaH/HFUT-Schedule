@@ -319,36 +319,22 @@ fun TodayCourseItem(item : Int) {
     if(weekday == 0) weekday = 7
     //课程详情
     val list = getCourseINFO(weekday,week)[item][0]
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
     if (showBottomSheet) {
 
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
             sheetState = sheetState,
-            shape = Round(sheetState)
         ) {
-
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { list.name?.let { Text(it) } },
-                    )
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    DetailInfos(list)
-                }
-            }
+            TopAppBar(
+                colors = TopAppBarDefaults.mediumTopAppBarColors(
+                    containerColor = Color.Transparent,
+                    titleContentColor = MaterialTheme.colorScheme.primary,
+                ),
+                title = { list.name.let { Text(it) } },
+            )
+            DetailInfos(list)
         }
     }
 
@@ -398,36 +384,22 @@ fun TomorrowCourseItem(item : Int) {
 
     //课程详情
     val list = getCourseINFO(weekdaytomorrow,week)[item][0]
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
     if (showBottomSheet) {
 
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
             sheetState = sheetState,
-            shape = Round(sheetState)
         ) {
-
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { list.name?.let { Text(it) } },
-                    )
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    DetailInfos(list)
-                }
-            }
+            TopAppBar(
+                colors = TopAppBarDefaults.mediumTopAppBarColors(
+                    containerColor = Color.Transparent,
+                    titleContentColor = MaterialTheme.colorScheme.primary,
+                ),
+                title = { list.name.let { Text(it) } },
+            )
+            DetailInfos(list)
         }
     }
 

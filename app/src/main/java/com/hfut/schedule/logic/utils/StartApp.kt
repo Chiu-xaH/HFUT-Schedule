@@ -1,12 +1,8 @@
 package com.hfut.schedule.logic.utils
 
 import android.annotation.SuppressLint
-import android.content.ComponentName
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
-import android.text.TextUtils
-import android.util.Log
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.ui.UIUtils.MyToast
 
@@ -33,7 +29,7 @@ object StartApp {
             MyToast("打开支付宝失败")
         }
     }
-    fun StartUri(Uri : String) {
+    fun startUri(Uri : String) {
         try {
             val it = Intent(Intent.ACTION_VIEW, android.net.Uri.parse(Uri))
             it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

@@ -57,7 +57,7 @@ fun NewsItem(vm : LoginSuccessViewModel) {
                         ),
                         actions = {
                             Row{
-                                IconButton(onClick = { StartApp.StartUri(links) }) { Icon(
+                                IconButton(onClick = { StartApp.startUri(links) }) { Icon(
                                     painterResource(id = R.drawable.net), contentDescription = "") }
                                 IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "") }
                             }

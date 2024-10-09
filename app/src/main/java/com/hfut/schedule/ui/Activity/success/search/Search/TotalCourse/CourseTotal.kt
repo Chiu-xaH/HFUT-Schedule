@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
@@ -60,7 +61,7 @@ fun CourseTotal(vm :LoginSuccessViewModel) {
              showBottomSheet_Total = true
         }
     )
-
+    var sortType by remember { mutableStateOf(true) }
     if (showBottomSheet_Total) {
         ModalBottomSheet(
             onDismissRequest = {
@@ -77,16 +78,25 @@ fun CourseTotal(vm :LoginSuccessViewModel) {
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        title = { Text("课程汇总") }
+                        title = { Text("课程汇总") },
+                        actions = {
+                            FilledTonalButton(
+                                onClick = { sortType = !sortType },
+                                modifier = Modifier.padding(horizontal = 15.dp
+                                )) {
+                                Text(text = if(sortType) "开课顺序" else "学分高低")
+                            }
+                        }
                     )
                 },
+
             ) { innerPadding ->
                 Column(
                     modifier = Modifier
                         .padding(innerPadding)
                         .fillMaxSize()
                 ){
-                    CourseTotalUI(json,false)
+                    CourseTotalUI(json,false,sortType)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }

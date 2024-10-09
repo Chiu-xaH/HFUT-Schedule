@@ -243,7 +243,7 @@ fun LoginUI(vm : LoginViewModel) {
                     IconButton(onClick = {
                         (context as? Activity)?.finish()
                     }) {
-                        Icon(painterResource(id = R.drawable.logout), contentDescription = "")
+                        Icon(painterResource(id = R.drawable.logout), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
                     }
                     //    Text(text = "   ")
                    /// }

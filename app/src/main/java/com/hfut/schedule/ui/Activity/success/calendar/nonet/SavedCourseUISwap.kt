@@ -569,7 +569,7 @@ fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues,vmUI : UIViewModel
     val json = prefs.getString("json", "")
     if (json?.contains("result") == true) {
         UpdatesAll()//填充UI与更新
-    } else Toast.makeText(MyApplication.context,"本地数据为空,请登录以更新数据",Toast.LENGTH_SHORT).show()
+    }// else Toast.makeText(MyApplication.context,"本地数据为空,请登录以更新数据",Toast.LENGTH_SHORT).show()
 
   //  var showAlls by remember { mutableStateOf(false) }
     //showAlls = showAll
@@ -594,36 +594,23 @@ fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues,vmUI : UIViewModel
 
     //课程详情
     var num by remember { mutableStateOf(0) }
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
     if (showBottomSheet) {
 
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
             sheetState = sheetState,
-            shape = Round(sheetState)
+            //shape = Round(sheetState)
         ) {
-
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text(if(showAll) sheetall[num].name else sheet[num].name) },
-                    )
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    DetailInfos(if(showAll) sheetall[num] else sheet[num])
-                }
-            }
+            TopAppBar(
+                colors = TopAppBarDefaults.mediumTopAppBarColors(
+                    containerColor = Color.Transparent,
+                    titleContentColor = MaterialTheme.colorScheme.primary,
+                ),
+                title = { Text(if(showAll) sheetall[num].name else sheet[num].name) },
+            )
+            DetailInfos(if(showAll) sheetall[num] else sheet[num])
         }
     }
 

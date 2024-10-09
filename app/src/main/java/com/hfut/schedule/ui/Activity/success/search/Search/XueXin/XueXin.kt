@@ -9,7 +9,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -61,7 +60,7 @@ fun XueXin() {
                             ),
                             actions = {
                                 Row{
-                                    IconButton(onClick = { StartApp.StartUri(url) }) { Icon(
+                                    IconButton(onClick = { StartApp.startUri(url) }) { Icon(
                                         painterResource(id = R.drawable.net), contentDescription = "", tint = Color.White
                                     ) }
                                     IconButton(onClick = { showDialog = false }) { Icon(
@@ -82,7 +81,7 @@ fun XueXin() {
                 }
             }
         } else {
-            StartApp.StartUri(url)
+            StartApp.startUri(url)
         }
     }
 }

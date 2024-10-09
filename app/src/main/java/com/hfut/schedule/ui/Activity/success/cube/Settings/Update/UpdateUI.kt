@@ -69,7 +69,7 @@ fun UpdateItem() {
             ) { Icon(painterResource(id = if(!expandItems) R.drawable.expand_content else R.drawable.collapse_content), contentDescription = "")
             }
         },
-        modifier = Modifier.clickable{ StartApp.StartUri(MyApplication.UpdateURL+ "/releases/tag/Android") },
+        modifier = Modifier.clickable{ StartApp.startUri(MyApplication.UpdateURL+ "/releases/tag/Android") },
         colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
     )
 

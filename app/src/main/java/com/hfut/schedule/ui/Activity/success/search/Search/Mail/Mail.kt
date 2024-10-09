@@ -45,7 +45,7 @@ fun Mail() {
         overlineContent = { ScrollText(text = "${Savedusername}@mail.hfut.edu.cn")},
         leadingContent = { Icon(painter = painterResource(id = R.drawable.mail), contentDescription = "") },
         modifier = Modifier.clickable {
-            StartApp.StartUri("https://email.mail.hfut.edu.cn/")
+            StartApp.startUri("https://email.mail.hfut.edu.cn/")
         }
     )
 
@@ -95,7 +95,7 @@ fun MailUI() {
                         Icon(painterResource(R.drawable.net), contentDescription = "Localized description",)
                     },
                     modifier = Modifier.clickable {
-                        StartApp.StartUri("https://email.mail.hfut.edu.cn/")
+                        StartApp.startUri("https://email.mail.hfut.edu.cn/")
                     }
                 )
             }

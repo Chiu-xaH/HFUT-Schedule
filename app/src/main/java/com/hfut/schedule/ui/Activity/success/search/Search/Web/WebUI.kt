@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
+import com.hfut.schedule.ui.UIUtils.BottomTip
 import com.hfut.schedule.ui.UIUtils.DividerText
 import com.hfut.schedule.ui.UIUtils.Round
 
@@ -74,6 +75,7 @@ fun WebUI() {
                     WebItem()
                     DividerText(text = "实验室")
                     LabUI()
+                    BottomTip(str = "有需求? 欢迎反馈")
                 }
             }
         }

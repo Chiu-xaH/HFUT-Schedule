@@ -16,7 +16,7 @@ fun Repair() {
         headlineContent = { Text(text = "报修") },
         leadingContent = { Icon(painter = painterResource(id = R.drawable.build), contentDescription = "") },
         modifier = Modifier.clickable {
-            StartApp.StartUri("http://xcfw.hfut.edu.cn/school/index.html")
+            StartApp.startUri("http://xcfw.hfut.edu.cn/school/index.html")
            // MyToast("暂未开发")
         }
     )

@@ -415,7 +415,10 @@ class LoginSuccessViewModel(webVpn : Boolean) : ViewModel() {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 val body = response.body()?.string()
                 datumData.value = body
-                Save("json", body)
+                if (body != null) {
+                    if(body.contains("result"))
+                        Save("json", body)
+                }
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }

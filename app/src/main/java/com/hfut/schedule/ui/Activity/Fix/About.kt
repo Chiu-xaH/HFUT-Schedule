@@ -140,7 +140,7 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean
                 //when(select) {
                 //   false -> StartUri("https://gitee.com/chiu-xah/HFUT-Schedule")
                 //true ->
-                StartApp.StartUri("https://github.com/Chiu-xaH/HFUT-Schedule")
+                StartApp.startUri("https://github.com/Chiu-xaH/HFUT-Schedule")
                 //  }
             }
         )
@@ -199,7 +199,7 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean
             },
             modifier = Modifier.clickable{
                 if (version.version != APPVersion.getVersionName())
-                    StartApp.StartUri(MyApplication.UpdateURL + "releases/download/Android/${version.version}.apk")
+                    StartApp.startUri(MyApplication.UpdateURL + "releases/download/Android/${version.version}.apk")
                 else Toast.makeText(MyApplication.context,"与云端版本一致", Toast.LENGTH_SHORT).show()
             }
         )
@@ -218,7 +218,7 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean
                     Icon(painterResource(R.drawable.crossword), contentDescription = "Localized description",)
             },
             modifier = Modifier.clickable{
-                StartApp.StartUri("https://github.com/Chiu-xaH/HFUT-Schedule/blob/main/UPDATE.md")
+                StartApp.startUri("https://github.com/Chiu-xaH/HFUT-Schedule/blob/main/UPDATE.md")
             }
         )
 

@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Divider
 import androidx.compose.material3.Badge
@@ -29,6 +30,7 @@ import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -86,6 +88,7 @@ import com.hfut.schedule.ui.Activity.success.calendar.next.NextCourse
 import com.hfut.schedule.ui.Activity.success.main.CustomSchedules
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.NotificationItems
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.getNotifications
+import com.hfut.schedule.ui.Activity.success.search.Search.TotalCourse.CourseTotalUI
 import com.hfut.schedule.ui.Activity.success.search.main.SearchScreen
 import com.hfut.schedule.ui.Activity.success.search.main.getName
 import com.hfut.schedule.ui.UIUtils.Round
@@ -139,6 +142,9 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
 
     val sheetState_multi = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_multi by remember { mutableStateOf(false) }
+
+    val sheetState_totalCourse = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showBottomSheet_totalCourse by remember { mutableStateOf(false) }
 
     val ExamObserver = Observer<Int> { result ->
       //  Log.d("re",result.toString())
@@ -203,6 +209,43 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
             }
         }
     }
+    var sortType by remember { mutableStateOf(true) }
+    if (showBottomSheet_totalCourse) {
+        ModalBottomSheet(onDismissRequest = { showBottomSheet_totalCourse = false }, sheetState = sheetState_totalCourse, modifier = Modifier,
+            shape = Round(sheetState_totalCourse)
+        ) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        title = { Text("课程汇总") },
+                        actions = {
+                            FilledTonalButton(
+                                onClick = { sortType = !sortType },
+                                modifier = Modifier.padding(horizontal = 15.dp
+                                )) {
+                                Text(text = if(sortType) "开课顺序" else "学分顺序")
+                            }
+                        }
+                    )
+                },
+            ) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                ){
+                    val json = prefs.getString("courses","")
+                    CourseTotalUI(json,false,sortType)
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
+            }
+        }
+    }
 
 
 
@@ -227,15 +270,18 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
                     actions = {
                         when(bottomBarItems){
                             COURSES -> {
-                          //      FilledTonalButton(onClick = { swapUI = !swapUI }) {
-                           //         Text(text = if(swapUI)"教务" else "社区" )
-                          //      }
+
                                if(isNextOpen())
                                     NextCourse(vmUI, true)
-                                TextButton(onClick = {
+                                IconButton(onClick = {
+                                    showBottomSheet_totalCourse= true
+                                }) {
+                                    Icon(painter = painterResource(id =  R.drawable.category), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
+                                }
+                                IconButton(onClick = {
                                     showBottomSheet_multi = true
                                 }) {
-                                    Icon(painter = painterResource(id =  R.drawable.tab_inactive), contentDescription = "")
+                                    Icon(painter = painterResource(id =  R.drawable.tab_inactive), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
                                 }
                                 TextButton(onClick = { showAll = !showAll }) {
                                     BadgedBox(badge = {
@@ -358,17 +404,18 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
                     }
                 }
             }) {
-                if(swapUI == COMMUNITY)
-                SaveCourse(showAll, innerPadding,vmUI)
-                else if(swapUI == JXGLSTU)
-                prefs.getString("Username","")?.let { it1 -> CalendarScreen(showAll,vm, it1.substring(0,2),innerPadding,vmUI,false,vm2,false) }
-                else if(swapUI == NEXT) {
-                    Column(modifier = Modifier.padding(innerPadding)) {
-                        prefs.getString("gradeNext","23")?.let { DatumUI(showAll, it, innerPadding, vmUI) }
+                when (swapUI) {
+                    COMMUNITY -> SaveCourse(showAll, innerPadding,vmUI)
+                    JXGLSTU -> //prefs.getString("Username","")?.let { it1 -> CalendarScreen(showAll,vm, it1.substring(0,2),innerPadding,vmUI,false,vm2,false) }
+                        CustomSchedules(showAll,innerPadding,vmUI,-1)
+                    NEXT -> {
+                        Column(modifier = Modifier.padding(innerPadding)) {
+                            prefs.getString("gradeNext","23")?.let { DatumUI(showAll, it, innerPadding, vmUI) }
+                        }
                     }
-                }
-                else {
-                    CustomSchedules(showAll,innerPadding,vmUI,swapUI-2)
+                    else -> {
+                        CustomSchedules(showAll,innerPadding,vmUI,swapUI-2)
+                    }
                 }
             }
 

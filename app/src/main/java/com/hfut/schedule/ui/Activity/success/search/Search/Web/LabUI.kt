@@ -39,7 +39,7 @@ fun LabUI() {
                 headlineContent = { Text(text = getLab()[item].title) },
                 leadingContent = { Icon(painterResource(R.drawable.net), contentDescription = "Localized description",) },
                 trailingContent = { Icon( Icons.Filled.ArrowForward, contentDescription = "") },
-                modifier = Modifier.clickable { StartApp.StartUri(getLab()[item].info) }
+                modifier = Modifier.clickable { StartApp.startUri(getLab()[item].info) }
             )
         }
     }

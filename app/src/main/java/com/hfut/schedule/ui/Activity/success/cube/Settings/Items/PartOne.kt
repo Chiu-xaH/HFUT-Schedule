@@ -61,7 +61,7 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.logic.utils.SharePrefs.SaveBoolean
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.logic.utils.StartApp.StartUri
+import com.hfut.schedule.logic.utils.StartApp.startUri
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Monet.MonetColorItem
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Update.UpdateUI
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Update.VersionInfo
@@ -330,7 +330,7 @@ fun AlwaysItem() {
             },
             modifier = Modifier.clickable{
                 if (version.version != APPVersion.getVersionName())
-                    StartUri(MyApplication.UpdateURL+ "releases/download/Android/${version.version}.apk")
+                    startUri(MyApplication.UpdateURL+ "releases/download/Android/${version.version}.apk")
                 else {
                     showBottomSheet = true
                 }

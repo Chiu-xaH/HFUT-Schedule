@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
@@ -56,10 +57,15 @@ import com.hfut.schedule.ui.UIUtils.courseIcons
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CourseTotalUI(json : String?,isSearch : Boolean) {
+fun CourseTotalUI(json : String?,isSearch : Boolean,sortType: Boolean) {
 
+    val list = getTotalCourse(json)
+    if(sortType)
+        list.sortBy { it.scheduleWeeksInfo?.substringBefore("~")?.toIntOrNull() }
+    else list.sortBy { it.course.credits }
 
     var numItem by remember { mutableStateOf(0) }
+   // var sortType by remember { mutableStateOf(true) }
 
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -80,7 +86,7 @@ fun CourseTotalUI(json : String?,isSearch : Boolean) {
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        title = { Text(getTotalCourse(json)[numItem].course.nameZh) }
+                        title = { Text(list[numItem].course.nameZh) },
                     )
                 },
             ) { innerPadding ->
@@ -89,17 +95,15 @@ fun CourseTotalUI(json : String?,isSearch : Boolean) {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    DetailItems(numItem,json)
+                    DetailItems(list[numItem],json)
                 }
             }
         }
     }
     if(getTotalCourse(json).size != 0) {
         LazyColumn {
-
             item{ SemsterInfo(json) }
-            items(getTotalCourse(json).size) { item ->
-                val list = getTotalCourse(json)[item]
+            items(list.size) { item ->
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                     Column() {
                         Card(
@@ -116,11 +120,11 @@ fun CourseTotalUI(json : String?,isSearch : Boolean) {
                         ){
 
                             ListItem(
-                                headlineContent = {  Text(list.course.nameZh) },
-                                overlineContent = { ScrollText(text = "学分 ${list.course.credits}" + if(list.scheduleWeeksInfo != null) " | ${list.scheduleWeeksInfo}" else "") },
+                                headlineContent = {  Text(list[item].course.nameZh) },
+                                overlineContent = { ScrollText(text = "学分 ${list[item].course.credits}" + if(list[item].scheduleWeeksInfo != null) " | ${list[item].scheduleWeeksInfo}" else "") },
                                 trailingContent = { Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "")},
                                 //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
-                                leadingContent = { courseIcons(name = list.openDepartment.nameZh) },
+                                leadingContent = { courseIcons(name = list[item].openDepartment.nameZh) },
                                 modifier = Modifier.clickable {
                                     showBottomSheet = true
                                     numItem = item
@@ -140,9 +144,9 @@ fun CourseTotalUI(json : String?,isSearch : Boolean) {
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun DetailItems(item : Int,json: String?) {
+fun DetailItems(lessons: lessons,json: String?) {
 
-    val lists = getTotalCourse(json)[item]
+    val lists = lessons
 
     LazyColumn {
         item{
@@ -266,9 +270,11 @@ fun DetailItems(item : Int,json: String?) {
 
                     }
                     Row {
+                        var department = lists.openDepartment.nameZh.toString()
+                        if(department.contains("（")) department = department.substringBefore("（")
                         ListItem(
                             overlineContent = { Text("开设学院") },
-                            headlineContent = { ScrollText(lists.openDepartment.nameZh.toString()) },
+                            headlineContent = { ScrollText(department) },
 
                             //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
                             leadingContent = {
@@ -321,7 +327,9 @@ fun DetailItems(item : Int,json: String?) {
                                     contentDescription = "Localized description",
                                 )
                             },
-                            modifier = Modifier.clickable { MyToast("请前往 合工大教务 微信公众号") }.weight(.5f),
+                            modifier = Modifier
+                                .clickable { MyToast("请前往 合工大教务 微信公众号") }
+                                .weight(.5f),
                         )
                     }
                     if(lists.nameZh != null)

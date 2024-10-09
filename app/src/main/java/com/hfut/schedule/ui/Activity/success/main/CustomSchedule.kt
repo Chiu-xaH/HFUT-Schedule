@@ -50,6 +50,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -59,6 +60,7 @@ import com.hfut.schedule.logic.datamodel.Jxglstu.datumResponse
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.ui.Activity.success.calendar.login.getNewWeek
+import com.hfut.schedule.ui.Activity.success.main.saved.JXGLSTU
 import com.hfut.schedule.ui.Activity.success.search.Search.Survey.getSemseter
 import com.hfut.schedule.ui.Activity.success.search.Search.Survey.getSemseterCloud
 import com.hfut.schedule.ui.UIUtils.MyToast
@@ -238,7 +240,7 @@ fun CustomSchedules(showAll : Boolean,
         table_5_5 = ""
         //////////////////////////////////////////////////////////////////////////////////
         try {
-            val json = SharePrefs.prefs.getString("SCHEDULE$code", null)
+            val json =  SharePrefs.prefs.getString(if(code >= 0)"SCHEDULE$code" else "json", null)
             val datumResponse = Gson().fromJson(json, datumResponse::class.java)
             val scheduleList = datumResponse.result.scheduleList
             val lessonList = datumResponse.result.lessonList
@@ -693,24 +695,32 @@ fun CustomSchedules(showAll : Boolean,
 
         Column {
 
-                LazyVerticalGrid(columns = GridCells.Fixed(if(showAll)7 else 5),modifier = Modifier.padding(horizontal = 10.dp)){
-                    items(if(showAll)7 else 5) { item ->
-                        if (GetDate.Benweeks in 1..20)
-                            Text(
-                                text = mondayOfCurrentWeek.plusDays(item.toLong()).toString()
-                                    .substringAfter("-") ,
-                                textAlign = TextAlign.Center,
-                                fontSize = if(showAll)12.sp else 14.sp,
-                                color = Color.Gray
-                            )
-                        else Text(
-                            text = "未开学",
+            LazyVerticalGrid(columns = GridCells.Fixed(if(showAll)7 else 5),modifier = Modifier.padding(horizontal = 10.dp)){
+                items(if(showAll)7 else 5) { item ->
+                    val date = mondayOfCurrentWeek.plusDays(item.toLong()).toString()
+                    if (GetDate.Benweeks in 1..20)
+                        Text(
+                            text = date.substringAfter("-"),
                             textAlign = TextAlign.Center,
-                            color = Color.Gray,
-                            fontSize = if(showAll)12.sp else 14.sp
+                            fontSize = if(showAll)12.sp else 14.sp,
+                            color = if(date == GetDate.Date_yyyy_MM_dd) MaterialTheme.colorScheme.primary else Color.Gray,
+                            style = if(date == GetDate.Date_yyyy_MM_dd) {
+                                TextStyle(shadow = Shadow(
+                                    color = Color.Gray,
+                                    offset = Offset(2.0f,2.0f),
+                                    blurRadius = 7.0f
+                                ))
+                            } else TextStyle(),
+                            fontWeight = if(date == GetDate.Date_yyyy_MM_dd) FontWeight.Bold else FontWeight.Normal
                         )
-                    }
+                    else Text(
+                        text = "未开学",
+                        textAlign = TextAlign.Center,
+                        color = Color.Gray,
+                        fontSize = if(showAll)12.sp else 14.sp
+                    )
                 }
+            }
 
                 Box( modifier = Modifier
                     .fillMaxHeight()

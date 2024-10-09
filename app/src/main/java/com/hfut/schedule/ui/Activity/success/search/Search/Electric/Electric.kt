@@ -110,7 +110,7 @@ fun Electric(vm : LoginSuccessViewModel,card : Boolean,vmUI : UIViewModel) {
                             ),
                             actions = {
                                 Row{
-                                    IconButton(onClick = { StartApp.StartUri( url) }) { Icon(painterResource(id = R.drawable.net), contentDescription = "", tint = Color.White) }
+                                    IconButton(onClick = { StartApp.startUri( url) }) { Icon(painterResource(id = R.drawable.net), contentDescription = "", tint = Color.White) }
                                     IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "", tint = Color.White) }
                                 }
 
@@ -129,7 +129,7 @@ fun Electric(vm : LoginSuccessViewModel,card : Boolean,vmUI : UIViewModel) {
                 }
             }
         } else {
-            StartApp.StartUri(url)
+            StartApp.startUri(url)
         }
     }
     ListItem(

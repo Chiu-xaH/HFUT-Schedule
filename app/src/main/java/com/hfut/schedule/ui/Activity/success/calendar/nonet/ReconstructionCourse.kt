@@ -7,19 +7,33 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
@@ -28,6 +42,12 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.datamodel.Community.CourseTotalResponse
 import com.hfut.schedule.logic.datamodel.Community.courseDetailDTOList
 import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.ui.Activity.success.main.saved.getIndex
+import com.hfut.schedule.ui.Activity.success.search.Search.TotalCourse.CourseTotalUI
+import com.hfut.schedule.ui.Activity.success.search.Search.TotalCourse.DetailItems
+import com.hfut.schedule.ui.Activity.success.search.Search.TotalCourse.getTotalCourse
+import com.hfut.schedule.ui.UIUtils.Round
+import com.hfut.schedule.ui.UIUtils.num
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -72,12 +92,50 @@ fun getCourseINFO(weekday : Int,Week : Int) : MutableList<List<courseDetailDTOLi
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailInfos(sheet : courseDetailDTOList) {
+    val sheetState_totalCourse = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showBottomSheet_totalCourse by remember { mutableStateOf(false) }
+    val json = SharePrefs.prefs.getString("courses","")
+    var numItem by remember { mutableStateOf(0) }
+    val list = getTotalCourse(json)
+    if (showBottomSheet_totalCourse) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                showBottomSheet_totalCourse = false
+            },
+            sheetState = sheetState_totalCourse,
+            shape = Round(sheetState_totalCourse)
+        ) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        title = { Text(getTotalCourse(json)[numItem].course.nameZh) }
+                    )
+                },
+            ) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                ){
+                    DetailItems(getTotalCourse(json)[numItem],json)
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
+            }
+        }
+    }
+
     LazyColumn {
         item{
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                Column() {
+                Column {
                     Card(
                         elevation = CardDefaults.cardElevation(
                             defaultElevation = 3.dp
@@ -128,7 +186,7 @@ fun DetailInfos(sheet : courseDetailDTOList) {
                             }
                         )
                     }
-                   /* Card(
+                    Card(
                         elevation = CardDefaults.cardElevation(
                             defaultElevation = 3.dp
                         ),
@@ -140,17 +198,27 @@ fun DetailInfos(sheet : courseDetailDTOList) {
                             )
                             .clickable { },
                         shape = MaterialTheme.shapes.medium,
-                    ){*/
+                    ){
                         ListItem(
-                            headlineContent = { Text( "更多信息请到课程汇总中查看") },
+                            headlineContent = { Text( "更多信息") },
                             leadingContent = {
                                 Icon(
                                     Icons.Filled.ArrowForward,
                                     contentDescription = "Localized description",
                                 )
+                            },
+                            modifier = Modifier.clickable {
+                                showBottomSheet_totalCourse = true
+                                for(i in list.indices) {
+                                    if(list[i].course.nameZh == sheet.name) {
+                                        numItem = i
+                                        break
+                                    }
+                                }
                             }
                         )
-                  //  }
+                    }
+                    Spacer(modifier = Modifier.height(10.dp))
                 }
             }
         }

@@ -3,12 +3,8 @@ package com.hfut.schedule.ui.Activity.Fix
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.core.animateDp
-import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,13 +19,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -47,8 +41,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.BlurredEdgeTreatment
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -56,29 +48,19 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.LoginViewModel
-import com.hfut.schedule.activity.FixActivity
 import com.hfut.schedule.activity.LoginActivity
 import com.hfut.schedule.logic.utils.APPVersion
 import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.CrashHandler
-import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.StartApp
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.Clear
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.apiCheck
 import com.hfut.schedule.ui.Activity.success.focus.Focus.getTimeStamp
-import com.hfut.schedule.ui.Activity.success.search.Search.FailRate.Click
-import com.hfut.schedule.ui.Activity.success.search.Search.LoginWeb.loginWebUI
 import com.hfut.schedule.ui.UIUtils.LittleDialog
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.Round
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import kotlin.math.log
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -187,7 +169,7 @@ fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel,vm2 : LoginSuccessVie
         ListItem(
             headlineContent = { Text(text = "下载最新版本") },
             leadingContent = { Icon(painterResource(R.drawable.cloud_download), contentDescription = "Localized description",) },
-            modifier = Modifier.clickable{ StartApp.StartUri(MyApplication.UpdateURL + "releases/tag/Android") }
+            modifier = Modifier.clickable{ StartApp.startUri(MyApplication.UpdateURL + "releases/tag/Android") }
         )
 
         ListItem(

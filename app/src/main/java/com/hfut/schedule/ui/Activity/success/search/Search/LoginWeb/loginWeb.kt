@@ -30,16 +30,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.hfut.schedule.App.MyApplication
-import com.hfut.schedule.App.MyApplication.Companion.maxFreeFlow
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
-import com.hfut.schedule.logic.utils.ClipBoard
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.StartApp
-import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.getWeb
-import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.ScrollText
 import com.hfut.schedule.ui.UIUtils.WebViewScreen
@@ -113,7 +109,7 @@ fun LoginWeb(vmUI : UIViewModel, card : Boolean,vm :  LoginSuccessViewModel) {
                             ),
                             actions = {
                                 Row{
-                                    IconButton(onClick = { StartApp.StartUri( url) }) { Icon(painterResource(id = R.drawable.net), contentDescription = "", tint = Color.White) }
+                                    IconButton(onClick = { StartApp.startUri( url) }) { Icon(painterResource(id = R.drawable.net), contentDescription = "", tint = Color.White) }
                                     IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "", tint = Color.White) }
                                 }
 
@@ -132,7 +128,7 @@ fun LoginWeb(vmUI : UIViewModel, card : Boolean,vm :  LoginSuccessViewModel) {
                 }
             }
         } else {
-            StartApp.StartUri(url)
+            StartApp.startUri(url)
         }
     }
 

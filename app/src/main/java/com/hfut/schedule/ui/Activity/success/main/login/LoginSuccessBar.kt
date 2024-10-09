@@ -14,7 +14,9 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Divider
 import androidx.compose.material3.Badge
@@ -72,6 +74,7 @@ import com.hfut.schedule.ui.Activity.success.calendar.next.NextCourse
 import com.hfut.schedule.ui.Activity.success.calendar.nonet.SaveCourse
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.NotificationItems
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.getNotifications
+import com.hfut.schedule.ui.Activity.success.search.Search.TotalCourse.CourseTotalUI
 import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.ScrollText
 import dev.chrisbanes.haze.HazeState
@@ -155,6 +158,48 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel,vm
             }
         }
     }
+    val sheetState_totalCourse = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showBottomSheet_totalCourse by remember { mutableStateOf(false) }
+
+    var sortType by remember { mutableStateOf(true) }
+
+    if (showBottomSheet_totalCourse) {
+        ModalBottomSheet(onDismissRequest = { showBottomSheet_totalCourse = false }, sheetState = sheetState_totalCourse, modifier = Modifier,
+            shape = Round(sheetState_totalCourse)
+        ) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        title = { Text("课程汇总") },
+                        actions = {
+                            FilledTonalButton(
+                                onClick = { sortType = !sortType },
+                                modifier = Modifier.padding(horizontal = 15.dp
+                                )) {
+                                Text(text = if(sortType) "开课顺序" else "学分顺序")
+                            }
+                        }
+                    )
+                },
+            ) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                ){
+                    val json = prefs.getString("courses","")
+                    CourseTotalUI(vm.datumData.value,false,sortType)
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
+            }
+        }
+    }
+
 
 
     Scaffold(
@@ -179,6 +224,11 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel,vm
                                 if(Gson().fromJson(prefs.getString("my",MyApplication.NullMy),
                                         MyAPIResponse::class.java).Next) {
                                     NextCourse(vmUI, false)
+                                }
+                                TextButton(onClick = {
+                                    showBottomSheet_totalCourse= true
+                                }) {
+                                    Icon(painter = painterResource(id =  R.drawable.category), contentDescription = "")
                                 }
                                 TextButton(onClick = { showAll = !showAll }) {
                                     BadgedBox(badge = {

@@ -61,7 +61,7 @@ fun TransferUI(vm: LoginSuccessViewModel,campus: CampusId) {
 
     LaunchedEffect(key1 = campus) {
         loading = true
-        delay(700)
+        delay(1000)
         refresh = true
     }
     if(refresh) {

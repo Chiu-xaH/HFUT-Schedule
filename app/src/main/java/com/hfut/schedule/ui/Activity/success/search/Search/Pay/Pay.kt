@@ -46,7 +46,6 @@ import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.datamodel.PayData
 import com.hfut.schedule.logic.datamodel.PayResponse
 import com.hfut.schedule.logic.utils.ClipBoard
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.StartApp
 import com.hfut.schedule.ui.UIUtils.CardForListColor
 import com.hfut.schedule.ui.UIUtils.DividerText
@@ -161,7 +160,7 @@ fun PayUI(url : String,vm: LoginSuccessViewModel) {
                 headlineContent = { Text(text = "￥${if(!loading) data.total else "0.0"}", fontSize = 28.sp) },
                 trailingContent = {
                     FilledTonalButton(
-                        onClick = { StartApp.StartUri(url) },
+                        onClick = { StartApp.startUri(url) },
                         modifier = Modifier.padding(horizontal = 15.dp)
                     ) {
                         Text(text = "缴费")
@@ -205,7 +204,7 @@ fun PayUI(url : String,vm: LoginSuccessViewModel) {
                 painter = painterResource(id = R.drawable.net),
                 contentDescription = ""
             ) },
-            modifier = Modifier.clickable { StartApp.StartUri(url) }
+            modifier = Modifier.clickable { StartApp.startUri(url) }
         )
         ListItem(
             headlineContent = { Text(text = "点击此处复制链接到剪切板，在微信/支付宝等中打开链接即可走对应的软件支付") },

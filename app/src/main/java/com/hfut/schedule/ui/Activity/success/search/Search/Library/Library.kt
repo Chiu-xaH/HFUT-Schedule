@@ -22,6 +22,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -53,6 +55,7 @@ import com.hfut.schedule.logic.datamodel.Community.LibRecord
 import com.hfut.schedule.logic.datamodel.Community.LibraryResponse
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.StartApp
 import com.hfut.schedule.ui.UIUtils.Round
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -130,7 +133,17 @@ fun LibraryItem(vm : LoginSuccessViewModel) {
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        title = { Text("图书") }
+                        title = { Text("图书") },
+                        actions = {
+                            FilledTonalButton(
+                                onClick = {
+                                StartApp.startUri("http://210.45.242.5:8080/")
+                            },
+                                modifier = Modifier.padding(horizontal = 15.dp)
+                            ) {
+                                Text(text = "更多(官网)")
+                            }
+                        }
                     )
                 },
             ) { innerPadding ->
