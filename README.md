@@ -12,6 +12,8 @@
 
 2.读写日历（将事项作为日程写入日历）
 
+3.读写存储（导入导出课程表、培养方案等文件）
+
 ## 功能：
 ![image](https://github.com/Chiu-xaH/HFUT-Schedule/assets/116127902/421e3664-1cc9-485b-81ed-52354c9c79a4)
 
