@@ -12,10 +12,11 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface ZJGDBillService {
+    //一卡通基本信息 其中包括余额
     @GET("berserker-app/ykt/tsm/getCampusCards?synAccessSource=h5")
     fun getYue(@Header("synjones-auth") auth : String, ) : Call<ResponseBody>
 
-
+    //消费流水
     @GET("berserker-search/search/personal/turnover?synAccessSource=h5")
     fun Cardget(@Header("synjones-auth") auth : String,
                 @Query("current") page : Int

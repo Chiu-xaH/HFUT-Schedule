@@ -10,6 +10,7 @@ import retrofit2.http.Headers
 import retrofit2.http.POST
 
 interface FWDTService {
+    //获取电费
     @FormUrlEncoded
     @POST("web/Common/Tsm.html")
     fun searchEle(@Field("jsondata") jsondata : String,@Field("funname") funname : String,@Field("json") json : Boolean) : Call<ResponseBody>

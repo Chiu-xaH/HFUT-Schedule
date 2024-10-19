@@ -9,12 +9,13 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface OneService {
-
+    //借阅书籍
     @GET ("api/operation/library/getBorrowNum")
     fun getBorrowBooks(@Header("Authorization") Authorization : String) : Call<ResponseBody>
-
+    //借阅
     @GET ("api/operation/library/getSubscribeNum")
     fun getSubBooks(@Header("Authorization") Authorization : String) : Call<ResponseBody>
+    //一卡通余额
     @GET ("api/operation/thirdPartyApi/schoolcard/balance")
     fun getCard(@Header("Authorization") Authorization : String) : Call<ResponseBody>
 
@@ -34,11 +35,11 @@ interface OneService {
         @Header("Authorization") Authorization : String) : Call<ResponseBody>
 
     //api/operation/emptyClass/room?building_code=XC001&current=1
-
+    //空教室
     @GET ("api/operation/emptyClass/room?current=1&size=30")
     fun searchEmptyRoom(@Query("building_code") building_code : String,
                         @Header("Authorization") Authorization : String) : Call<ResponseBody>
-
+    //欠交学费
     @GET("api/leaver/third/finance/arrearsForPortal?type=1")
     fun getPay(@Query("xh") username : String) : Call<ResponseBody>
 }

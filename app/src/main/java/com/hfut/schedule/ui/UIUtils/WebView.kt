@@ -1,6 +1,7 @@
 package com.hfut.schedule.ui.UIUtils
 
 import android.annotation.SuppressLint
+import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,20 +12,31 @@ import androidx.compose.ui.viewinterop.AndroidView
 
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
-fun WebViewScreen(url: String) {
+fun WebViewScreen(url: String,header : Map<String, String>? = null) {
     AndroidView(
         factory = { context ->
             WebView(context).apply {
                 settings.javaScriptEnabled = true
                 settings.domStorageEnabled = true
-                loadUrl(url)
+                if (header != null) {
+                    loadUrl(url, header)
+                } else {
+                    loadUrl(url)
+                }
                 webViewClient = object : WebViewClient() {
+                    @Deprecated("Deprecated in Java")
                     override fun shouldOverrideUrlLoading(
                         view: WebView?,
-                        url: String?
+                        request: WebResourceRequest?
                     ): Boolean {
-                        url?.let { view?.loadUrl(it) }
-                        return true // 这里返回true，表示让WebView处理URL，不跳转到外部浏览器
+                        request?.url?.let {
+                            if (header != null) {
+                                view?.loadUrl(it.toString(), header)
+                            } else {
+                                view?.loadUrl(it.toString())
+                            }
+                        }
+                            return true // 这里返回true，表示让WebView处理URL，不跳转到外部浏览器
                     }
                 }
             }

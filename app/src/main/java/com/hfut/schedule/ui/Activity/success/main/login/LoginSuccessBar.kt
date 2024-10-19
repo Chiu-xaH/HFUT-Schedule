@@ -18,6 +18,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
@@ -72,9 +74,12 @@ import com.hfut.schedule.ui.Activity.success.main.saved.texts
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Update.getUpdates
 import com.hfut.schedule.ui.Activity.success.calendar.next.NextCourse
 import com.hfut.schedule.ui.Activity.success.calendar.nonet.SaveCourse
+import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.MyAPIItem
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.NotificationItems
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.getNotifications
 import com.hfut.schedule.ui.Activity.success.search.Search.TotalCourse.CourseTotalUI
+import com.hfut.schedule.ui.Activity.success.search.Search.Web.LabUI
+import com.hfut.schedule.ui.UIUtils.DividerText
 import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.ScrollText
 import dev.chrisbanes.haze.HazeState
@@ -129,7 +134,7 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel,vm
     var showAll by remember { mutableStateOf(false) }
     var swapUI by remember { mutableStateOf(false) }
 
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
     if (showBottomSheet) {
         Save("Notifications", getNotifications().size.toString())
@@ -144,7 +149,7 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel,vm
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        title = { Text("消息中心") }
+                        title = { Text("收纳") }
                     )
                 },
             ) { innerPadding ->
@@ -152,8 +157,13 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel,vm
                     modifier = Modifier
                         .padding(innerPadding)
                         .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
                 ){
+                    MyAPIItem()
+                    DividerText("通知")
                     NotificationItems()
+                    DividerText("实验室")
+                    LabUI()
                 }
             }
         }
@@ -193,7 +203,7 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel,vm
                         .fillMaxSize()
                 ){
                     val json = prefs.getString("courses","")
-                    CourseTotalUI(vm.datumData.value,false,sortType)
+                    CourseTotalUI(json,false,sortType)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }

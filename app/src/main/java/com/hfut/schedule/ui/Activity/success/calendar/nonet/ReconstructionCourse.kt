@@ -51,9 +51,9 @@ import com.hfut.schedule.ui.UIUtils.num
 
 
 @RequiresApi(Build.VERSION_CODES.O)
-fun getCouses(Week : Int) : Array<Array<List<courseDetailDTOList>>> {
+fun getCouses(Week : Int,friendUserName : String? = null) : Array<Array<List<courseDetailDTOList>>> {
     val dayArray = Array(7) { Array<List<courseDetailDTOList>>(12) { emptyList() } }
-    val json = SharePrefs.prefs.getString("Course", MyApplication.NullTotal)
+    val json = SharePrefs.prefs.getString(if(friendUserName == null) "Course" else "Course${friendUserName}", MyApplication.NullTotal)
     val result = Gson().fromJson(json, CourseTotalResponse::class.java).result.courseBasicInfoDTOList
     for (i in 0 until result.size){
         val Name = result[i].courseName
@@ -74,11 +74,11 @@ fun getCouses(Week : Int) : Array<Array<List<courseDetailDTOList>>> {
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-fun getCourseINFO(weekday : Int,Week : Int) : MutableList<List<courseDetailDTOList>> {
+fun getCourseINFO(weekday : Int,Week : Int,friendUserName : String? = null) : MutableList<List<courseDetailDTOList>> {
     val new = mutableListOf<List<courseDetailDTOList>>()
     return try {
         if(weekday <= 7) {
-            val days = getCouses(Week)[weekday - 1]
+            val days = getCouses(Week,friendUserName)[weekday - 1]
             for (i in days.indices){
                 if(days[i].isNotEmpty())
                     days[i].forEach { new.add(days[i]) }
@@ -94,7 +94,7 @@ fun getCourseINFO(weekday : Int,Week : Int) : MutableList<List<courseDetailDTOLi
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailInfos(sheet : courseDetailDTOList) {
+fun DetailInfos(sheet : courseDetailDTOList,isFriend : Boolean = false) {
     val sheetState_totalCourse = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_totalCourse by remember { mutableStateOf(false) }
     val json = SharePrefs.prefs.getString("courses","")
@@ -149,7 +149,7 @@ fun DetailInfos(sheet : courseDetailDTOList) {
                         shape = MaterialTheme.shapes.medium,
                     ) {
                         ListItem(
-                            headlineContent = { Text(sheet.place ) },
+                            headlineContent = { sheet.place?.let { Text(it) } },
                             leadingContent = {
                                 Icon(
                                     painterResource(R.drawable.near_me),
@@ -186,6 +186,7 @@ fun DetailInfos(sheet : courseDetailDTOList) {
                             }
                         )
                     }
+                    if(!isFriend)
                     Card(
                         elevation = CardDefaults.cardElevation(
                             defaultElevation = 3.dp

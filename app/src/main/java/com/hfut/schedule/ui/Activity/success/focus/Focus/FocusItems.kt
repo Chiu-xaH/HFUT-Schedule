@@ -354,7 +354,7 @@ fun TodayCourseItem(item : Int) {
             ListItem(
                 headlineContent = { list.name?.let { Text(text = it) } },
                 overlineContent = { Text(text = list.classTime)},
-                supportingContent = { Text(text = list.place)},
+                supportingContent = { list.place?.let { Text(text = it) } },
                 leadingContent = {
                     Icon(
                         painterResource(R.drawable.schedule),
@@ -418,7 +418,7 @@ fun TomorrowCourseItem(item : Int) {
             ListItem(
                 headlineContent = { list.name?.let { Text(text = it) } },
                 overlineContent = {Text(text = list.classTime)},
-                supportingContent = { Text(text = list.place)},
+                supportingContent = { list.place?.let { Text(text = it) } },
                 leadingContent = { Icon(painterResource(R.drawable.exposure_plus_1), contentDescription = "Localized description",) },
                 modifier = Modifier.clickable {
                     showBottomSheet = true
@@ -485,7 +485,7 @@ fun AddItem(item : Int, AddedItems : MutableList<AddFocus>) {
 fun BoxScope.AddButton(isVisible: Boolean,innerPaddings : PaddingValues) {
 
 
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()

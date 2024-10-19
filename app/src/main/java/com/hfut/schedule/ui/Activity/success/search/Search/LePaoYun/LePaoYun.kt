@@ -81,7 +81,7 @@ fun Update(vm : LoginSuccessViewModel) {
 @Composable
 fun LePaoYun(vm : LoginSuccessViewModel) {
 
-    Update(vm)
+   // Update(vm)
 
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }

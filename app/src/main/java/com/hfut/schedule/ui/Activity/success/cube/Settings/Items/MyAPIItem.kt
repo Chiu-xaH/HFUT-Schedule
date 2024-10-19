@@ -53,7 +53,7 @@ fun MyAPIItem() {
     }
 
     if(show) {
-        DividerText(text = "API接口")
+        DividerText(text = "重要通知")
         Card(
             elevation = CardDefaults.cardElevation(
                 defaultElevation = 3.dp

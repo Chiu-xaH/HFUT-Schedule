@@ -1,5 +1,6 @@
 package com.hfut.schedule.App
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import androidx.compose.ui.unit.dp
@@ -12,7 +13,7 @@ import dagger.hilt.android.HiltAndroidApp
 class MyApplication : Application() {
 
     companion object {
-        //学籍照GET ： eams5-student/students/avatar/170317
+        @SuppressLint("StaticFieldLeak")
         lateinit var context: Context
         val Blur = 20.dp
         val Animation = 400
@@ -22,7 +23,6 @@ class MyApplication : Application() {
         const val WebVpnURL = "https://webvpn.hfut.edu.cn/"
         const val NewsURL = "https://news.hfut.edu.cn/"
         //const val DownloadURL = "https://gitee.com/chiu-xah/HFUT-Schedule/releases/tag/Android"
-        const val ServerURL = ""
         const val JwglappURL = "https://jwglapp.hfut.edu.cn/"
         const val UpdateURL = "https://gitee.com/chiu-xah/HFUT-Schedule/"
         const val EleURL = "http://172.31.248.26:8988/"
@@ -34,12 +34,15 @@ class MyApplication : Application() {
         const val AlipayHotWaterURL = "alipays://platformapi/startapp?appId=20000067&url=https://ur.alipay.com/_3B2YzKjbV75xL9a2oapcNz"
         const val OneURL = "https://one.hfut.edu.cn/"
         const val LoginURL = "https://cas.hfut.edu.cn/"
-
         const val MyURL = "https://chiu-xah.github.io/"
         const val XuanquURL = "http://39.106.82.121/"
         const val loginWebURL = "http://172.18.3.3/"
         const val loginWebURL2 = "http://172.18.2.2/"
         const val RedirectURL = "https://cas.hfut.edu.cn/cas/login?service=http%3A%2F%2Fjxglstu.hfut.edu.cn%2Feams5-student%2Fneusoft-sso%2Flogin&exception.message=A+problem+occurred+restoring+the+flow+execution+with+key+%27e1s1%27"
+
+
+
+
         const val NullExams = "{\"result\": {\"examArrangementList\": []}}"
         const val NullTotal = "{\n" +
                 "  \"result\": {\n" +
@@ -78,7 +81,7 @@ class MyApplication : Application() {
                 "    \"courseBasicInfoDTOList\": []\n" +
                 "  }\n" +
                 "}"
-        const val NullBorrow = "{\"result\": {\"records\": []}}"
+
         const val NullLePao = "{\"msg\" : \"获取失败\",\"data\" : {\"distance\" : \"0.0\"}}"
         const val NullGrades = "{\n" +
                 "    \"result\":{\n" +

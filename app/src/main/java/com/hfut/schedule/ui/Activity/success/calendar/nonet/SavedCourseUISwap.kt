@@ -47,6 +47,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -73,6 +74,8 @@ import com.hfut.schedule.ui.Activity.success.search.Search.Survey.getSemseter
 import com.hfut.schedule.ui.Activity.success.search.Search.Survey.getSemseterCloud
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.Round
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -83,7 +86,7 @@ import java.time.LocalDate
 )
 @SuppressLint("SuspiciousIndentation", "CoroutineCreationDuringComposition")
 @Composable
-fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues,vmUI : UIViewModel) {
+fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues,vmUI : UIViewModel,friendUserName : String? = null) {
 
     val table_1_1 by rememberSaveable { mutableStateOf("") }
     val table_1_2 by rememberSaveable { mutableStateOf("") }
@@ -218,352 +221,364 @@ fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues,vmUI : UIViewModel
 
     //填充UI与更新
     fun UpdatesAll() {
+        try {
+            for(i in tableall.indices)
+                tableall[i] = ""
+            for(i in sheetall.indices)
+                sheetall[i] = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
 
-        for(i in tableall.indices)
-            tableall[i] = ""
-        for(i in sheetall.indices)
-            sheetall[i] = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+            for (j in 0 until 7 ) {
+                var info = ""
+                val lists = getCourseINFO(j +1 ,Bianhuaweeks.toInt(),friendUserName)
 
-        for (j in 0 until 7 ) {
-            var info = ""
-            val lists = getCourseINFO(j +1 ,Bianhuaweeks.toInt())
-
-            for(i in 0 until lists.size) {
-                val text = lists[i][0]
-                val name = text.name
-                var time = text.classTime
-                time = time.substringBefore("-")
-                var room = text.place
-                room = room.replace("学堂","")
-                info = time + "\n" + name + "\n" + room
+                for(i in 0 until lists.size) {
+                    val text = lists[i][0]
+                    val name = text.name
+                    var time = text.classTime
+                    time = time.substringBefore("-")
+                    var room = text.place
+                    if (room != null) {
+                        room = room.replace("学堂","")
+                    }
+                    info = time + "\n" + name + "\n" + room
 
 
-                when (j) {
-                    0 -> {
-                        when(text.section) {
-                            1 -> {
-                                tableall[0] = info
-                                sheetall[0] = text
-                            }
-                            3 -> {
-                                tableall[7] = info
-                                sheetall[7] = text
-                            }
-                            5 -> {
-                                tableall[14] = info
-                                sheetall[14] = text
-                            }
-                            7 -> {
-                                tableall[21] = info
-                                sheetall[21] = text
-                            }
-                            9 -> {
-                                tableall[28] = info
-                                sheetall[28] = text
-                            }
-                        }
-                    }
-                    1 -> {
-                        when(text.section) {
-                            1 -> {
-                                tableall[1] = info
-                                sheetall[1] = text
-                            }
-                            3 -> {
-                                tableall[8] = info
-                                sheetall[8] = text
-                            }
-                            5 -> {
-                                tableall[15] = info
-                                sheetall[15] = text
-                            }
-                            7 -> {
-                                tableall[22] = info
-                                sheetall[22] = text
-                            }
-                            9 -> {
-                                tableall[29] = info
-                                sheetall[29] = text
+                    when (j) {
+                        0 -> {
+                            when(text.section) {
+                                1 -> {
+                                    tableall[0] = info
+                                    sheetall[0] = text
+                                }
+                                3 -> {
+                                    tableall[7] = info
+                                    sheetall[7] = text
+                                }
+                                5 -> {
+                                    tableall[14] = info
+                                    sheetall[14] = text
+                                }
+                                7 -> {
+                                    tableall[21] = info
+                                    sheetall[21] = text
+                                }
+                                9 -> {
+                                    tableall[28] = info
+                                    sheetall[28] = text
+                                }
                             }
                         }
-                    }
-                    2 -> {
-                        when(text.section) {
-                            1 -> {
-                                tableall[2] = info
-                                sheetall[2] = text
-                            }
-                            3 -> {
-                                tableall[9] = info
-                                sheetall[9] = text
-                            }
-                            5 -> {
-                                tableall[16] = info
-                                sheetall[16] = text
-                            }
-                            7 -> {
-                                tableall[23] = info
-                                sheetall[23] = text
-                            }
-                            9 -> {
-                                tableall[30] = info
-                                sheetall[30] = text
-                            }
-                        }
-                    }
-                    3 -> {
-                        when(text.section) {
-                            1 -> {
-                                tableall[3] = info
-                                sheetall[3] = text
-                            }
-                            3 -> {
-                                tableall[10] = info
-                                sheetall[10] = text
-                            }
-                            5 -> {
-                                tableall[17] = info
-                                sheetall[17] = text
-                            }
-                            7 -> {
-                                tableall[24] = info
-                                sheetall[24] = text
-                            }
-                            9 -> {
-                                tableall[31] = info
-                                sheetall[31] = text
+                        1 -> {
+                            when(text.section) {
+                                1 -> {
+                                    tableall[1] = info
+                                    sheetall[1] = text
+                                }
+                                3 -> {
+                                    tableall[8] = info
+                                    sheetall[8] = text
+                                }
+                                5 -> {
+                                    tableall[15] = info
+                                    sheetall[15] = text
+                                }
+                                7 -> {
+                                    tableall[22] = info
+                                    sheetall[22] = text
+                                }
+                                9 -> {
+                                    tableall[29] = info
+                                    sheetall[29] = text
+                                }
                             }
                         }
-                    }
-                    4 -> {
-                        when(text.section) {
-                            1 -> {
-                                tableall[4] = info
-                                sheetall[4] = text
-                            }
-                            3 -> {
-                                tableall[11] = info
-                                sheetall[11] = text
-                            }
-                            5 -> {
-                                tableall[18] = info
-                                sheetall[18] = text
-                            }
-                            7 -> {
-                                tableall[25] = info
-                                sheetall[25] = text
-                            }
-                            9 -> {
-                                tableall[32] = info
-                                sheetall[32] = text
-                            }
-                        }
-                    }
-                    5 -> {
-                        vmUI.findNewCourse.value = info.isNotEmpty()
-                        when(text.section) {
-                            1 -> {
-                                tableall[5] = info
-                                sheetall[5] = text
-                            }
-                            3 -> {
-                                tableall[12] = info
-                                sheetall[12] = text
-                            }
-                            5 -> {
-                                tableall[19] = info
-                                sheetall[19] = text
-                            }
-                            7 -> {
-                                tableall[26] = info
-                                sheetall[26] = text
-                            }
-                            9 -> {
-                                tableall[33] = info
-                                sheetall[33] = text
+                        2 -> {
+                            when(text.section) {
+                                1 -> {
+                                    tableall[2] = info
+                                    sheetall[2] = text
+                                }
+                                3 -> {
+                                    tableall[9] = info
+                                    sheetall[9] = text
+                                }
+                                5 -> {
+                                    tableall[16] = info
+                                    sheetall[16] = text
+                                }
+                                7 -> {
+                                    tableall[23] = info
+                                    sheetall[23] = text
+                                }
+                                9 -> {
+                                    tableall[30] = info
+                                    sheetall[30] = text
+                                }
                             }
                         }
-                    }
-                    6 -> {
-                        vmUI.findNewCourse.value = info.isNotEmpty()
-                        when(text.section) {
-                            1 -> {
-                                tableall[6] = info
-                                sheetall[6] = text
+                        3 -> {
+                            when(text.section) {
+                                1 -> {
+                                    tableall[3] = info
+                                    sheetall[3] = text
+                                }
+                                3 -> {
+                                    tableall[10] = info
+                                    sheetall[10] = text
+                                }
+                                5 -> {
+                                    tableall[17] = info
+                                    sheetall[17] = text
+                                }
+                                7 -> {
+                                    tableall[24] = info
+                                    sheetall[24] = text
+                                }
+                                9 -> {
+                                    tableall[31] = info
+                                    sheetall[31] = text
+                                }
                             }
-                            3 -> {
-                                tableall[13] = info
-                                sheetall[13] = text
+                        }
+                        4 -> {
+                            when(text.section) {
+                                1 -> {
+                                    tableall[4] = info
+                                    sheetall[4] = text
+                                }
+                                3 -> {
+                                    tableall[11] = info
+                                    sheetall[11] = text
+                                }
+                                5 -> {
+                                    tableall[18] = info
+                                    sheetall[18] = text
+                                }
+                                7 -> {
+                                    tableall[25] = info
+                                    sheetall[25] = text
+                                }
+                                9 -> {
+                                    tableall[32] = info
+                                    sheetall[32] = text
+                                }
                             }
-                            5 -> {
-                                tableall[20] = info
-                                sheetall[20] = text
+                        }
+                        5 -> {
+                            vmUI.findNewCourse.value = info.isNotEmpty()
+                            when(text.section) {
+                                1 -> {
+                                    tableall[5] = info
+                                    sheetall[5] = text
+                                }
+                                3 -> {
+                                    tableall[12] = info
+                                    sheetall[12] = text
+                                }
+                                5 -> {
+                                    tableall[19] = info
+                                    sheetall[19] = text
+                                }
+                                7 -> {
+                                    tableall[26] = info
+                                    sheetall[26] = text
+                                }
+                                9 -> {
+                                    tableall[33] = info
+                                    sheetall[33] = text
+                                }
                             }
-                            7 -> {
-                                tableall[27] = info
-                                sheetall[27] = text
-                            }
-                            9 -> {
-                                tableall[34] = info
-                                sheetall[34] = text
+                        }
+                        6 -> {
+                            vmUI.findNewCourse.value = info.isNotEmpty()
+                            when(text.section) {
+                                1 -> {
+                                    tableall[6] = info
+                                    sheetall[6] = text
+                                }
+                                3 -> {
+                                    tableall[13] = info
+                                    sheetall[13] = text
+                                }
+                                5 -> {
+                                    tableall[20] = info
+                                    sheetall[20] = text
+                                }
+                                7 -> {
+                                    tableall[27] = info
+                                    sheetall[27] = text
+                                }
+                                9 -> {
+                                    tableall[34] = info
+                                    sheetall[34] = text
+                                }
                             }
                         }
                     }
                 }
             }
+        } catch (e:Exception) {
+            e.printStackTrace()
         }
+
     }
     fun Updates() {
+        try {
+            for(i in table.indices)
+                table[i] = ""
+            for(i in sheet.indices)
+                sheet[i] = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
 
-        for(i in table.indices)
-            table[i] = ""
-        for(i in sheet.indices)
-            sheet[i] = courseDetailDTOList(0,0,"","","", listOf(0),0,"")
+            for (j in 0 until 5 ) {
+                var info = ""
+                val lists = getCourseINFO(j +1 ,Bianhuaweeks.toInt(),friendUserName)
+
+                for(i in 0 until lists.size) {
+                    val text = lists[i][0]
+                    val name = text.name
+                    var time = text.classTime
+                    time = time.substringBefore("-")
+                    var room = text.place
+                    room = room?.replace("学堂","")
+                    info = time + "\n" + name + "\n" + if(room == null) "" else room
 
 
-        for (j in 0 until 5 ) {
-            var info = ""
-            val lists = getCourseINFO(j +1 ,Bianhuaweeks.toInt())
-
-            for(i in 0 until lists.size) {
-                val text = lists[i][0]
-                val name = text.name
-                var time = text.classTime
-                time = time.substringBefore("-")
-                var room = text.place
-                room = room.replace("学堂","")
-                info = time + "\n" + name + "\n" + room
-
-
-                when (j) {
-                    0 -> {
-                        when(text.section) {
-                            1 -> {
-                                table[0] = info
-                                sheet[0] = text
-                            }
-                            3 -> {
-                                table[5] = info
-                                sheet[5] = text
-                            }
-                            5 -> {
-                                table[10] = info
-                                sheet[10] = text
-                            }
-                            7 -> {
-                                table[15] = info
-                                sheet[15] = text
-                            }
-                            9 -> {
-                                table[20] = info
-                                sheet[20] = text
+                    when (j) {
+                        0 -> {
+                            when(text.section) {
+                                1 -> {
+                                    table[0] = info
+                                    sheet[0] = text
+                                }
+                                3 -> {
+                                    table[5] = info
+                                    sheet[5] = text
+                                }
+                                5 -> {
+                                    table[10] = info
+                                    sheet[10] = text
+                                }
+                                7 -> {
+                                    table[15] = info
+                                    sheet[15] = text
+                                }
+                                9 -> {
+                                    table[20] = info
+                                    sheet[20] = text
+                                }
                             }
                         }
-                    }
-                    1 -> {
-                        when(text.section) {
-                            1 -> {
-                                table[1] = info
-                                sheet[1] = text
-                            }
-                            3 -> {
-                                table[6] = info
-                                sheet[6] = text
-                            }
-                            5 -> {
-                                table[11] = info
-                                sheet[11] = text
-                            }
-                            7 -> {
-                                table[16] = info
-                                sheet[16] = text
-                            }
-                            9 -> {
-                                table[21] = info
-                                sheet[21] = text
-                            }
-                        }
-                    }
-                    2 -> {
-                        when(text.section) {
-                            1 -> {
-                                table[2] = info
-                                sheet[2] = text
-                            }
-                            3 -> {
-                                table[7] = info
-                                sheet[7] = text
-                            }
-                            5 -> {
-                                table[12] = info
-                                sheet[12] = text
-                            }
-                            7 -> {
-                                table[17] = info
-                                sheet[17] = text
-                            }
-                            9 -> {
-                                table[22] = info
-                                sheet[22] = text
+                        1 -> {
+                            when(text.section) {
+                                1 -> {
+                                    table[1] = info
+                                    sheet[1] = text
+                                }
+                                3 -> {
+                                    table[6] = info
+                                    sheet[6] = text
+                                }
+                                5 -> {
+                                    table[11] = info
+                                    sheet[11] = text
+                                }
+                                7 -> {
+                                    table[16] = info
+                                    sheet[16] = text
+                                }
+                                9 -> {
+                                    table[21] = info
+                                    sheet[21] = text
+                                }
                             }
                         }
-                    }
-                    3 -> {
-                        when(text.section) {
-                            1 -> {
-                                table[3] = info
-                                sheet[3] = text
-                            }
-                            3 -> {
-                                table[8] = info
-                                sheet[8] = text
-                            }
-                            5 -> {
-                                table[13] = info
-                                sheet[13] = text
-                            }
-                            7 -> {
-                                table[18] = info
-                                sheet[18] = text
-                            }
-                            9 -> {
-                                table[23] = info
-                                sheet[23] = text
+                        2 -> {
+                            when(text.section) {
+                                1 -> {
+                                    table[2] = info
+                                    sheet[2] = text
+                                }
+                                3 -> {
+                                    table[7] = info
+                                    sheet[7] = text
+                                }
+                                5 -> {
+                                    table[12] = info
+                                    sheet[12] = text
+                                }
+                                7 -> {
+                                    table[17] = info
+                                    sheet[17] = text
+                                }
+                                9 -> {
+                                    table[22] = info
+                                    sheet[22] = text
+                                }
                             }
                         }
-                    }
-                    4 -> {
-                        when(text.section) {
-                            1 -> {
-                                table[4] = info
-                                sheet[4] = text
+                        3 -> {
+                            when(text.section) {
+                                1 -> {
+                                    table[3] = info
+                                    sheet[3] = text
+                                }
+                                3 -> {
+                                    table[8] = info
+                                    sheet[8] = text
+                                }
+                                5 -> {
+                                    table[13] = info
+                                    sheet[13] = text
+                                }
+                                7 -> {
+                                    table[18] = info
+                                    sheet[18] = text
+                                }
+                                9 -> {
+                                    table[23] = info
+                                    sheet[23] = text
+                                }
                             }
-                            3 -> {
-                                table[9] = info
-                                sheet[9] = text
-                            }
-                            5 -> {
-                                table[14] = info
-                                sheet[14] = text
-                            }
-                            7 -> {
-                                table[19] = info
-                                sheet[19] = text
-                            }
-                            9 -> {
-                                table[24] = info
-                                sheet[24] = text
+                        }
+                        4 -> {
+                            when(text.section) {
+                                1 -> {
+                                    table[4] = info
+                                    sheet[4] = text
+                                }
+                                3 -> {
+                                    table[9] = info
+                                    sheet[9] = text
+                                }
+                                5 -> {
+                                    table[14] = info
+                                    sheet[14] = text
+                                }
+                                7 -> {
+                                    table[19] = info
+                                    sheet[19] = text
+                                }
+                                9 -> {
+                                    table[24] = info
+                                    sheet[24] = text
+                                }
                             }
                         }
                     }
                 }
             }
+        } catch (e:Exception) {
+            e.printStackTrace()
         }
     }
 
     //装载数组和信息
+
     UpdatesAll()
     Updates()
+
+
+
 
     val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
     val json = prefs.getString("json", "")
@@ -610,7 +625,7 @@ fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues,vmUI : UIViewModel
                 ),
                 title = { Text(if(showAll) sheetall[num].name else sheet[num].name) },
             )
-            DetailInfos(if(showAll) sheetall[num] else sheet[num])
+            DetailInfos(if(showAll) sheetall[num] else sheet[num],friendUserName != null)
         }
     }
 

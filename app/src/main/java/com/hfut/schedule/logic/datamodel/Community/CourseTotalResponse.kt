@@ -20,7 +20,7 @@ data class courseBasicInfoDTOList(val courseName : String,
 
 data class courseDetailDTOList(val section : Int,
                                val sectionCount : Int,
-                               val place : String,
+                               val place : String?,
                                val teacher : String,
                                val classTime : String,
                                val weekCount : List<Int>,

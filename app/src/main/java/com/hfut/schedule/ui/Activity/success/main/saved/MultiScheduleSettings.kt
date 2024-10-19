@@ -2,12 +2,12 @@ package com.hfut.schedule.ui.Activity.success.main.saved
 
 import android.content.ContentValues
 import android.content.Intent
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.TopAppBar
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -39,21 +38,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.core.content.FileProvider
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.dao.SCHEDULE
-import com.hfut.schedule.logic.dao.dataBase
+import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.dao.dataBaseSchedule
 import com.hfut.schedule.logic.datamodel.MyAPIResponse
 import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.ui.Activity.success.main.AddCourseUI
+import com.hfut.schedule.ui.Activity.success.main.getFriendsList
+import com.hfut.schedule.ui.Activity.success.main.getFriendsCourse
 import com.hfut.schedule.ui.Activity.success.search.Search.More.Login
-import com.hfut.schedule.ui.UIUtils.CardForListColor
 import com.hfut.schedule.ui.UIUtils.DividerText
 import com.hfut.schedule.ui.UIUtils.LittleDialog
 import com.hfut.schedule.ui.UIUtils.MyToast
@@ -69,7 +67,9 @@ val NEXT = 2
 fun MultiScheduleSettings(
     ifSaved : Boolean,
     select : Int,
-    onSelectedChange : (Int) -> Unit
+    onSelectedChange : (Int) -> Unit,
+    vm : LoginSuccessViewModel,
+    onFriendChange : (Boolean) -> Unit,
 ) {
 
     var num  by remember { mutableStateOf(getNum()) }
@@ -79,12 +79,18 @@ fun MultiScheduleSettings(
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
 
+    val sheetState_add = rememberModalBottomSheetState()
+    var showBottomSheet_add by remember { mutableStateOf(false) }
+
+    var isFriendMode by remember { mutableStateOf(false) }
+
     //已选择
     var selected  by remember { mutableStateOf(select) }
     //长按要删除的
     var selectedDel  by remember { mutableStateOf(select) }
-    LaunchedEffect(selected) {
+    LaunchedEffect(selected,isFriendMode) {
         onSelectedChange(selected)
+        onFriendChange(isFriendMode)
     }
     num = getNum()
     if(showDialog) {
@@ -149,6 +155,29 @@ fun MultiScheduleSettings(
             }
         }
     }
+    if (showBottomSheet_add) {
+        ModalBottomSheet(onDismissRequest = { showBottomSheet_add = false }, sheetState = sheetState_add, modifier = Modifier,
+            shape = Round(sheetState_add)
+        ) {
+            Scaffold(
+                topBar = {
+                    androidx.compose.material3.TopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        title = { Text("添加课程表") },
+                    )
+                }
+            ) {innerPadding->
+                Column(modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()) {
+                    AddCourseUI(vm)
+                }
+            }
+        }
+    }
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         androidx.compose.material3.TopAppBar(
             colors = TopAppBarDefaults.mediumTopAppBarColors(
@@ -157,18 +186,26 @@ fun MultiScheduleSettings(
             ),
             title = { Text("课程表") },
             actions = {
-                FilledTonalIconButton(onClick = { showBottomSheet = true }, modifier = Modifier.padding(horizontal = 15.dp)) {
-                    Icon(painterResource(id = R.drawable.info), contentDescription = "")
+                Row(modifier = Modifier.padding(horizontal = 15.dp)) {
+                    FilledTonalIconButton(onClick = { showBottomSheet_add = true }) {
+                        Icon(painterResource(id = R.drawable.add), contentDescription = "")
+                    }
+                    FilledTonalIconButton(onClick = { showBottomSheet = true }) {
+                        Icon(painterResource(id = R.drawable.info), contentDescription = "")
+                    }
                 }
             }
         )
+        val friendList = getFriendsList()
         LazyRow {
+            //教务课表
             item {
                 Card(
                     modifier = Modifier
                         .size(width = 100.dp, height = 70.dp)
                         .padding(horizontal = 4.dp)
                         .clickable {
+                            isFriendMode = false
                             selected = JXGLSTU
                         },
                 ) {
@@ -178,12 +215,14 @@ fun MultiScheduleSettings(
                     }
                 }
             }
+            //社区课表
             item {
                 Card(
                     modifier = Modifier
                         .size(width = 100.dp, height = 70.dp)
                         .padding(horizontal = 4.dp)
                         .clickable {
+                            isFriendMode = false
                             selected = COMMUNITY
                         }
                 ) {
@@ -194,12 +233,14 @@ fun MultiScheduleSettings(
                     }
                 }
             }
+            //下学期课表
             item {
                 Card(
                     modifier = Modifier
                         .size(width = 100.dp, height = 70.dp)
                         .padding(horizontal = 4.dp)
                         .clickable {
+                            isFriendMode = false
                             if (isNextOpen()) {
                                 selected = NEXT
                             } else {
@@ -214,6 +255,40 @@ fun MultiScheduleSettings(
                     }
                 }
             }
+            //好友课表
+            items(friendList.size) { item ->
+                Card(
+                    modifier = Modifier
+                        .size(width = 100.dp, height = 70.dp)
+                        .padding(horizontal = 4.dp)
+                        .combinedClickable(
+                            onClick = {
+                                //点击加载好友课表
+                                val studentId = friendList[item]?.userId
+                                studentId?.let { getFriendsCourse(it, vm) }
+                                isFriendMode = true
+                                if (studentId != null) {
+                                    selected = studentId.toInt()
+                                }
+                            },
+                            onLongClick = {
+                                //s删除
+
+                            }
+                        )
+                ) {
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        friendList[item]?.realname?.let {
+                            Text(
+                                it,
+                                modifier = Modifier.align(Alignment.Center),
+                                fontWeight = if(selected.toString() == (friendList[item]?.userId ?: 999)) FontWeight.Bold else FontWeight.Thin
+                            )
+                        }
+                    }
+                }
+            }
+            //文件导入课表
             items(num) { item ->
                 Card(
                     modifier = Modifier
@@ -221,6 +296,7 @@ fun MultiScheduleSettings(
                         .padding(horizontal = 4.dp)
                         .combinedClickable(
                             onClick = {
+                                isFriendMode = false
                                 selected = item + 1 + 2
                             },
                             //  onDoubleClick = {},
@@ -237,14 +313,16 @@ fun MultiScheduleSettings(
                     }
                 }
             }
+            //添加按钮
             item {
                 Card(
                     modifier = Modifier
                         .size(width = 100.dp, height = 70.dp)
                         .padding(horizontal = 4.dp)
                         .clickable {
+                            showBottomSheet_add = true
                             //showDialog_Add = true
-                            MyToast("请于文件管理选择他人分享的文件(json,txt)以本应用打开")
+                            //MyToast("请于文件管理选择他人分享的文件(json,txt)以本应用打开")
                         }
                 ) {
                     Box(modifier = Modifier.fillMaxSize()) {

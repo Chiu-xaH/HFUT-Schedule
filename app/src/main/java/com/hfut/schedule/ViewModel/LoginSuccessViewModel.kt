@@ -14,7 +14,6 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import com.hfut.schedule.logic.Enums.LibraryItems
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.datamodel.Jxglstu.lessonResponse
 import com.hfut.schedule.logic.datamodel.One.BorrowBooksResponse
 import com.hfut.schedule.logic.datamodel.One.SubBooksResponse
@@ -22,7 +21,6 @@ import com.hfut.schedule.logic.datamodel.One.getTokenResponse
 import com.hfut.schedule.logic.datamodel.zjgd.FeeType
 import com.hfut.schedule.logic.datamodel.zjgd.FeeType.*
 import com.hfut.schedule.logic.network.ServiceCreator.CommunitySreviceCreator
-import com.hfut.schedule.logic.network.ServiceCreator.JwglappServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuHTMLServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuJSONServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuSurveyServiceCreator
@@ -32,22 +30,22 @@ import com.hfut.schedule.logic.network.ServiceCreator.NewsServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.One.OneServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.OneGotoServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.SearchEleServiceCreator
+import com.hfut.schedule.logic.network.ServiceCreator.ServerServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.XuanquServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.ZJGDBillServiceCreator
 import com.hfut.schedule.logic.network.api.CommunityService
 import com.hfut.schedule.logic.network.api.FWDTService
-import com.hfut.schedule.logic.network.api.JwglappService
 import com.hfut.schedule.logic.network.api.JxglstuService
 import com.hfut.schedule.logic.network.api.LePaoYunService
 import com.hfut.schedule.logic.network.api.LoginService
 import com.hfut.schedule.logic.network.api.NewsService
 import com.hfut.schedule.logic.network.api.OneService
+import com.hfut.schedule.logic.network.api.ServerService
 import com.hfut.schedule.logic.network.api.XuanquService
 import com.hfut.schedule.logic.network.api.ZJGDBillService
 import com.hfut.schedule.logic.utils.SharePrefs.Save
-import com.hfut.schedule.logic.network.api.ServerService
-import com.hfut.schedule.logic.network.ServiceCreator.ServerServiceCreator
 import com.hfut.schedule.logic.utils.SharePrefs.SaveInt
+import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.getUserInfo
 import com.hfut.schedule.ui.Activity.success.search.Search.Transfer.CampusId
 import okhttp3.ResponseBody
@@ -75,9 +73,9 @@ class LoginSuccessViewModel(webVpn : Boolean) : ViewModel() {
     private val LePaoYun = LePaoYunServiceCreator.create(LePaoYunService::class.java)
     private val searchEle = SearchEleServiceCreator.create(FWDTService::class.java)
     private val CommunityLogin = LoginServiceCreator.create(CommunityService::class.java)
-    private val JwglappLogin = JwglappServiceCreator.create(JwglappService::class.java)
+   /// private val JwglappLogin = JwglappServiceCreator.create(JwglappService::class.java)
     private val Community = CommunitySreviceCreator.create(CommunityService::class.java)
-    private val Jwglapp = JwglappServiceCreator.create(JwglappService::class.java)
+  //  private val Jwglapp = JwglappServiceCreator.create(JwglappService::class.java)
     private val News = NewsServiceCreator.create(NewsService::class.java)
     private val JxglstuSurvey = JxglstuSurveyServiceCreator.create(JxglstuService::class.java,webVpn)
     private val server = ServerServiceCreator.create(ServerService::class.java)
@@ -1054,14 +1052,17 @@ class LoginSuccessViewModel(webVpn : Boolean) : ViewModel() {
         }
     }
 
-    fun GetCourse(CommuityTOKEN : String) {
+    fun GetCourse(CommuityTOKEN : String,studentId: String? = null) {
 
-        val call = CommuityTOKEN?.let { Community.getCourse(it) }
+        val call = CommuityTOKEN?.let { Community.getCourse(it,studentId) }
 
         if (call != null) {
             call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    Save("Course", response.body()?.string())
+                    if(studentId == null)
+                        Save("Course", response.body()?.string())
+                    else
+                        Save("Course${studentId}", response.body()?.string())
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -1069,6 +1070,49 @@ class LoginSuccessViewModel(webVpn : Boolean) : ViewModel() {
         }
     }
 
+    fun openFriend(CommuityTOKEN : String) {
+
+        val call = CommuityTOKEN?.let { Community.switchShare(it, CommunityService.RequestJson(1)) }
+
+        if (call != null) {
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+            })
+        }
+    }
+    val applyResponseMsg = MutableLiveData<String>()
+    fun addApply(CommuityTOKEN : String,username : String) {
+
+        val call = Community.applyAdd(CommuityTOKEN,CommunityService.RequestJsonApply(username))
+
+        if (call != null) {
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    applyResponseMsg.value = response.body()?.string()
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+            })
+        }
+    }
+    val applyData = MutableLiveData<String>()
+    fun getApplying(CommuityTOKEN : String) {
+        val size = prefs.getString("CardRequest","15")
+        val call = size?.let { Community.getApplyingList(CommuityTOKEN, it) }
+
+        if (call != null) {
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    applyData.value = response.body()?.string()
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+            })
+        }
+    }
     fun GetBorrowed(CommuityTOKEN: String,page : String) {
         val size = prefs.getString("BookRequest","15")
         val call = CommuityTOKEN?.let { size?.let { it1 -> Community.getBorrowedBook(it,page, it1) } }
@@ -1127,6 +1171,37 @@ class LoginSuccessViewModel(webVpn : Boolean) : ViewModel() {
             })
         }
     }
+
+    fun getFriends(CommuityTOKEN : String) {
+
+        val call = CommuityTOKEN?.let { Community.getFriends(it) }
+
+        if (call != null) {
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    Save("feiends", response.body()?.string())
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+            })
+        }
+    }
+    fun checkApplying(CommuityTOKEN : String,id : String,isOk : Boolean) {
+
+        val call = CommuityTOKEN?.let { Community.checkApplying(it,CommunityService.RequestApplyingJson(id,if(isOk) 1 else 0)) }
+
+        if (call != null) {
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+            })
+        }
+    }
+
+
     var lessonIdsNext = MutableLiveData<List<Int>>()
     fun getLessonIdsNext(cookie : String, bizTypeId : String,studentid : String) {
         //bizTypeId为年级数，例如23  //dataId为学生ID  //semesterId为学期Id，例如23-24第一学期为234

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
@@ -24,6 +25,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
@@ -85,12 +88,15 @@ import com.hfut.schedule.ui.Activity.success.cube.main.SettingsScreen
 import com.hfut.schedule.ui.Activity.success.focus.main.TodayScreen
 import com.hfut.schedule.ui.Activity.success.search.Search.More.Login
 import com.hfut.schedule.ui.Activity.success.calendar.next.NextCourse
+import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.MyAPIItem
 import com.hfut.schedule.ui.Activity.success.main.CustomSchedules
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.NotificationItems
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.getNotifications
 import com.hfut.schedule.ui.Activity.success.search.Search.TotalCourse.CourseTotalUI
+import com.hfut.schedule.ui.Activity.success.search.Search.Web.LabUI
 import com.hfut.schedule.ui.Activity.success.search.main.SearchScreen
 import com.hfut.schedule.ui.Activity.success.search.main.getName
+import com.hfut.schedule.ui.UIUtils.DividerText
 import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.ScrollText
 import dev.chrisbanes.haze.HazeState
@@ -134,11 +140,12 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
     var showAll by remember { mutableStateOf(false) }
     var findCourse by remember { mutableStateOf(false) }
 
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
 
     var ifSaved by remember { mutableStateOf(true) }
     var swapUI by remember { mutableStateOf(if(ifSaved) COMMUNITY else JXGLSTU) }
+    var isFriend by remember { mutableStateOf(false) }
 
     val sheetState_multi = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_multi by remember { mutableStateOf(false) }
@@ -178,7 +185,7 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        title = { Text("消息中心") }
+                        title = { Text("收纳") }
                     )
                 },
             ) { innerPadding ->
@@ -186,8 +193,13 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
                     modifier = Modifier
                         .padding(innerPadding)
                         .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
                 ){
+                    MyAPIItem()
+                    DividerText("通知")
                     NotificationItems()
+                    DividerText("实验室")
+                    LabUI()
                 }
             }
         }
@@ -204,6 +216,10 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
                 MultiScheduleSettings(ifSaved,swapUI,
                     onSelectedChange = { newSelected ->
                         swapUI = newSelected
+                    },
+                    vm,
+                    onFriendChange = { newed ->
+                        isFriend = newed
                     }
                 )
             }
@@ -404,19 +420,24 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
                     }
                 }
             }) {
-                when (swapUI) {
-                    COMMUNITY -> SaveCourse(showAll, innerPadding,vmUI)
-                    JXGLSTU -> //prefs.getString("Username","")?.let { it1 -> CalendarScreen(showAll,vm, it1.substring(0,2),innerPadding,vmUI,false,vm2,false) }
-                        CustomSchedules(showAll,innerPadding,vmUI,-1)
-                    NEXT -> {
-                        Column(modifier = Modifier.padding(innerPadding)) {
-                            prefs.getString("gradeNext","23")?.let { DatumUI(showAll, it, innerPadding, vmUI) }
+                if(!isFriend)
+                    when (swapUI) {
+                        COMMUNITY -> SaveCourse(showAll, innerPadding,vmUI)
+                        JXGLSTU -> prefs.getString("Username","")?.let { it1 -> CalendarScreen(showAll,vm, it1.substring(0,2),innerPadding,vmUI,false,vm2,false) }
+                            ///CustomSchedules(showAll,innerPadding,vmUI,-1)
+                        NEXT -> {
+                            Column(modifier = Modifier.padding(innerPadding)) {
+                                prefs.getString("gradeNext","23")?.let { DatumUI(showAll, it, innerPadding, vmUI) }
+                            }
+                        }
+                        else -> {
+                            CustomSchedules(showAll,innerPadding,vmUI,swapUI-2)
                         }
                     }
-                    else -> {
-                        CustomSchedules(showAll,innerPadding,vmUI,swapUI-2)
-                    }
+                else {
+                    SaveCourse(showAll,innerPadding,vmUI,swapUI.toString())
                 }
+
             }
 
             }

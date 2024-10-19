@@ -32,11 +32,11 @@ suspend fun NetWorkUpdate(vm : LoginSuccessViewModel, vm2 : LoginViewModel,vmUI 
 
     val cookie = if(!webVpn) prefs.getString("redirect", "")  else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket","")
     CoroutineScope(Job()).apply {
-        async { MyWangKe() }
+        //async { MyWangKe() }
         async { vm2.My() }
-        async { MySchedule() }
-        async { AddedItems() }
-        async { getNotifications() }
+        //async { MySchedule() }
+        //async { AddedItems() }
+        //async { getNotifications() }
         async { vm.getExamJXGLSTU(cookie!!) }
         if(!ifSaved) {
             async {
@@ -80,6 +80,7 @@ suspend fun NetWorkUpdate(vm : LoginSuccessViewModel, vm2 : LoginViewModel,vmUI 
         }
         async { CommuityTOKEN?.let { vm.GetCourse(it) } }
         async { GetZjgdCard(vm,vmUI) }.await()
+        async { CommuityTOKEN?.let { vm.getFriends(it) } }
     }
 }
 //更新教务课表与课程汇总

@@ -29,7 +29,9 @@ data class Schedule(
 
 data class Notifications(val title : String,
                          val info : String,
-                         val remark : String)
+                         val remark : String,
+                         val url : String?
+)
 
 data class Lab(val title : String,
                val info : String,
