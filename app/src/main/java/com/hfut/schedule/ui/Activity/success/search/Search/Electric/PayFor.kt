@@ -2,7 +2,6 @@ package com.hfut.schedule.ui.Activity.success.search.Search.Electric
 
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
@@ -47,16 +46,15 @@ import androidx.compose.ui.unit.sp
 import com.google.gson.Gson
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.logic.datamodel.zjgd.FeeType
 import com.hfut.schedule.logic.datamodel.zjgd.PayStep1Response
 import com.hfut.schedule.logic.datamodel.zjgd.PayStep2Response
 import com.hfut.schedule.logic.datamodel.zjgd.PayStep3Response
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.CirclePoint
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.KeyBoard
-import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.getUserInfo
 import com.hfut.schedule.ui.Activity.success.search.Search.LoginWeb.getIdentifyID
 import com.hfut.schedule.ui.UIUtils.LittleDialog
-import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.statusUI
 import kotlinx.coroutines.CoroutineScope
@@ -67,7 +65,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PayFor(vm : LoginSuccessViewModel,payNumber : Int,roomInfo : String,json : String) {
+fun PayFor(vm : LoginSuccessViewModel, payNumber : Int, tipInfo : String, json : String,type : FeeType) {
     var showDialog by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -165,7 +163,7 @@ fun PayFor(vm : LoginSuccessViewModel,payNumber : Int,roomInfo : String,json : S
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    payStatusUI(vm,payNumber,json)
+                    payStatusUI(vm,payNumber,json,type)
                 }
             }
         }
@@ -185,7 +183,7 @@ fun PayFor(vm : LoginSuccessViewModel,payNumber : Int,roomInfo : String,json : S
     }
     Spacer(modifier = Modifier.height(10.dp))
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-        Text(text = roomInfo,fontSize = 20.sp, fontWeight = FontWeight.Bold)
+        Text(text = tipInfo,fontSize = 20.sp, fontWeight = FontWeight.Bold)
     }
     Spacer(modifier = Modifier.height(20.dp))
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
@@ -204,10 +202,11 @@ fun PayFor(vm : LoginSuccessViewModel,payNumber : Int,roomInfo : String,json : S
             Text(text = "支付")
         }
     }
+    Spacer(modifier = Modifier.height(10.dp))
 }
 
 @Composable
-fun payStatusUI(vm : LoginSuccessViewModel,payNumber : Int,json: String) {
+fun payStatusUI(vm : LoginSuccessViewModel,payNumber : Int,json: String,type : FeeType) {
 
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
@@ -218,7 +217,7 @@ fun payStatusUI(vm : LoginSuccessViewModel,payNumber : Int,json: String) {
     if(refresh) {
         loading = true
         CoroutineScope(Job()).launch{
-            async{ vm.payStep1(auth,json,payNumber.toInt()) }.await()
+            async{ vm.payStep1(auth,json,payNumber.toInt(),type) }.await()
             async {
                 Handler(Looper.getMainLooper()).post{
                     vm.orderIdData.observeForever { result ->

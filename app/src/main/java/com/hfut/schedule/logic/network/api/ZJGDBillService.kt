@@ -47,14 +47,15 @@ interface ZJGDBillService {
         @Header("synjones-auth") auth : String,
         @Body json: JsonObject ) : Call<ResponseBody>
 
-    //查询  feeitemid为281为网费，261为电费
+    //查询  feeitemid为281为网费，261为电费 223为宣城校区洗浴
     @FormUrlEncoded
     @POST("charge/feeitem/getThirdData")
     fun getFee(@Header("synjones-auth") auth : String,
                @Field("feeitemid") typeId : String,
-               @Field("type") IEC : String,
-               @Field("level") level : String?,
-               @Field("room") room : String?) : Call<ResponseBody>
+               @Field("type") IEC : String = "IEC",
+               @Field("level") level : String? = null,
+               @Field("room") room : String? = null,
+               @Field("telPhone") phoneNumber : String? = null) : Call<ResponseBody>
     //交费支付 3步走
     @FormUrlEncoded
     @POST("blade-pay/pay")

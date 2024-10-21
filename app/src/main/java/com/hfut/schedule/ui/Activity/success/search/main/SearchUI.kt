@@ -55,6 +55,7 @@ import com.hfut.schedule.ui.Activity.success.search.Search.SchoolCalendar.School
 import com.hfut.schedule.ui.Activity.success.search.Search.SchoolCard.SchoolCardItem
 import com.hfut.schedule.ui.Activity.success.search.Search.Second.Second
 import com.hfut.schedule.ui.Activity.success.search.Search.SelectCourse.selectCourse
+import com.hfut.schedule.ui.Activity.success.search.Search.Shower.Shower
 import com.hfut.schedule.ui.Activity.success.search.Search.Survey.Survey
 import com.hfut.schedule.ui.Activity.success.search.Search.TodayCampus.ToadyCampus
 import com.hfut.schedule.ui.Activity.success.search.Search.TotalCourse.CourseTotal
@@ -373,7 +374,7 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
                         .weight(.5f),
                     shape = MaterialTheme.shapes.small,
                 ){
-                    Second()
+                    Shower(vm)
                 }
                 Spacer(modifier = Modifier.width(10.dp))
                 Card(
@@ -504,6 +505,30 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
                     shape = MaterialTheme.shapes.small,
                 ){
                     Pay(ifSaved,vm)
+                }
+            }
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
+
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    shape = MaterialTheme.shapes.small,
+                ){
+                    Second()
+                }
+                Spacer(modifier = Modifier.width(10.dp))
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    shape = MaterialTheme.shapes.small,
+                ){
+
                 }
             }
              Spacer(modifier = Modifier.height(5.dp))

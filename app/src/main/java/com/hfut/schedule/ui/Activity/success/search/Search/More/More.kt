@@ -11,6 +11,7 @@ import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.activity.LoginActivity
+import com.hfut.schedule.activity.ShowerActivity
 import com.hfut.schedule.ui.UIUtils.ScrollText
 
 @Composable
@@ -27,6 +28,13 @@ fun More() {
 
 fun Login() {
     val it = Intent(MyApplication.context, LoginActivity::class.java).apply {
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        putExtra("nologin",false)
+    }
+    MyApplication.context.startActivity(it)
+}
+fun LoginGuaGua() {
+    val it = Intent(MyApplication.context, ShowerActivity::class.java).apply {
         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         putExtra("nologin",false)
     }

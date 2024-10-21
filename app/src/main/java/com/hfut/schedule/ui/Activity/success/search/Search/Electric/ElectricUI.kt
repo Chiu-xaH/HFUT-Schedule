@@ -121,7 +121,7 @@ fun EleUI(vm : LoginSuccessViewModel) {
     var showButton by remember { mutableStateOf(false) }
     var showAdd by remember { mutableStateOf(false) }
     var payNumber by remember { mutableStateOf("") }
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
 
     var show by remember { mutableStateOf(false) }
@@ -132,11 +132,11 @@ fun EleUI(vm : LoginSuccessViewModel) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
             sheetState = sheetState,
-            shape = Round(sheetState)
+            //shape = sheetState
         ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                topBar = {
+                Column(
+
+                ) {
                     TopAppBar(
                         colors = TopAppBarDefaults.mediumTopAppBarColors(
                             containerColor = Color.Transparent,
@@ -144,20 +144,12 @@ fun EleUI(vm : LoginSuccessViewModel) {
                         ),
                         title = { Text("支付订单确认") },
                     )
-                },) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
                     val roomInfo by remember { mutableStateOf("${BuildingsNumber}号楼${RoomNumber}寝室${region}") }
                     var int by remember { mutableStateOf(payNumber.toInt()) }
                     if(int > 0) {
-                        PayFor(vm,int,roomInfo,json)
+                        PayFor(vm,int,roomInfo,json,FeeType.ELECTRIC)
                     } else MyToast("输入数值")
-
                 }
-            }
         }
     }
 

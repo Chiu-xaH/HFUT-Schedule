@@ -69,7 +69,10 @@ import com.hfut.schedule.ui.Activity.card.function.SearchBillsUI
 import com.hfut.schedule.ui.Activity.card.function.SelecctDateRange
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.getUserInfo
 import com.hfut.schedule.ui.Activity.success.focus.Focus.GetZjgdCard
+import com.hfut.schedule.ui.Activity.success.search.Search.Electric.EleUI
+import com.hfut.schedule.ui.Activity.success.search.Search.LoginWeb.loginWebUI
 import com.hfut.schedule.ui.Activity.success.search.Search.More.Login
+import com.hfut.schedule.ui.Activity.success.search.Search.Shower.ShowerUI
 import com.hfut.schedule.ui.UIUtils.CardForListColor
 import com.hfut.schedule.ui.UIUtils.DividerText
 import com.hfut.schedule.ui.UIUtils.MyToast
@@ -120,6 +123,23 @@ fun HomeScreen(innerPadding : PaddingValues,vm : LoginSuccessViewModel,navContro
 
 
 
+    val sheetState_ELectric = rememberModalBottomSheetState()
+    var showBottomSheet_ELectric by remember { mutableStateOf(false) }
+
+    var showBottomSheet_Web by remember { mutableStateOf(false) }
+    val sheetState_Web = rememberModalBottomSheetState()
+
+
+    val sheetState_Shower = rememberModalBottomSheetState()
+    var showBottomSheet_Shower by remember { mutableStateOf(false) }
+
+    val sheetState_Fee = rememberModalBottomSheetState()
+    var showBottomSheet_Fee by remember { mutableStateOf(false) }
+
+
+
+
+
     val sheetState_NFC = rememberModalBottomSheetState()
     var showBottomSheet_NFC by remember { mutableStateOf(false) }
 
@@ -167,7 +187,14 @@ fun HomeScreen(innerPadding : PaddingValues,vm : LoginSuccessViewModel,navContro
     val settles = vmUI.CardValue.value?.settle ?: settle
 
     val auth = SharePrefs.prefs.getString("auth","")
+    //Log.d("auth",auth.toString())
     val url = MyApplication.ZJGDBillURL + "plat/pay" + "?synjones-auth=" + auth
+
+    var showDialog_Huixin by remember { mutableStateOf(false) }
+
+    val urlHuixin = MyApplication.ZJGDBillURL + "plat" + "?synjones-auth=" + auth
+
+    val switch_startUri = SharePrefs.prefs.getBoolean("SWITCHSTARTURI",true)
 
     if (showDialog) {
         androidx.compose.ui.window.Dialog(
@@ -203,6 +230,190 @@ fun HomeScreen(innerPadding : PaddingValues,vm : LoginSuccessViewModel,navContro
         }
     }
 
+    if (showDialog_Huixin) {
+        if(switch_startUri) {
+            androidx.compose.ui.window.Dialog(
+                onDismissRequest = { showDialog_Huixin = false },
+                properties = DialogProperties(usePlatformDefaultWidth = false)
+            ) {
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    topBar = {
+                        TopAppBar(
+                            colors = TopAppBarDefaults.mediumTopAppBarColors(
+                                containerColor = Color(0xFFFDCA31),
+                                titleContentColor = Color.White,
+                            ),
+                            actions = {
+                                Row{
+                                    IconButton(onClick = { StartApp.startUri(urlHuixin) }) { Icon(
+                                        painterResource(id = R.drawable.net), contentDescription = "", tint = Color.White
+                                    ) }
+                                    IconButton(onClick = { showDialog_Huixin = false }) { Icon(
+                                        painterResource(id = R.drawable.close), contentDescription = "", tint = Color.White) }
+                                }
+                            },
+                            title = { Text("慧新易校") }
+                        )
+                    },
+                ) { innerPadding ->
+                    Column(
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .fillMaxSize()
+                    ) {
+                        WebViewScreen(urlHuixin)
+                    }
+                }
+            }
+        } else {
+            StartApp.startUri(urlHuixin)
+        }
+    }
+
+    if(showBottomSheet_Fee) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                showBottomSheet_Fee = false
+            },
+            sheetState = sheetState_Fee,
+            shape = Round(sheetState_Fee)
+        ) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        title = { Text("缴费与查询") }
+                    )
+                },
+            ) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                ) {
+                    Card(
+                        elevation = CardDefaults.cardElevation(
+                            defaultElevation = 3.dp
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 15.dp, vertical = 5.dp),
+                        shape = MaterialTheme.shapes.medium,
+                    ) {
+                        ListItem(
+                            headlineContent = { Text(text = "电费") },
+                            leadingContent = {
+                                Icon(painterResource(id = R.drawable.flash_on), contentDescription = "")
+                            },
+                            modifier = Modifier.clickable { showBottomSheet_ELectric = true }
+                        )
+                    }
+                    Card(
+                        elevation = CardDefaults.cardElevation(
+                            defaultElevation = 3.dp
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 15.dp, vertical = 5.dp),
+                        shape = MaterialTheme.shapes.medium,
+                    ) {
+                        ListItem(
+                            headlineContent = { Text(text = "网费") },
+                            leadingContent = {
+                                Icon(painterResource(id = R.drawable.net), contentDescription = "")
+                            },
+                            modifier = Modifier.clickable { showBottomSheet_Web= true }
+                        )
+                    }
+                    Card(
+                        elevation = CardDefaults.cardElevation(
+                            defaultElevation = 3.dp
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 15.dp, vertical = 5.dp),
+                        shape = MaterialTheme.shapes.medium,
+                    ) {
+                        ListItem(
+                            headlineContent = { Text(text = "洗浴") },
+                            leadingContent = {
+                                Icon(painterResource(id = R.drawable.bathtub), contentDescription = "")
+                            },
+                            modifier = Modifier.clickable { showBottomSheet_Shower = true }
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    if (showBottomSheet_ELectric) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                showBottomSheet_ELectric = false
+            },
+            sheetState = sheetState_ELectric,
+            shape = Round(sheetState_ELectric)
+        ) {
+            EleUI(vm = vm)
+        }
+    }
+
+    if (showBottomSheet_Web) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                showBottomSheet_Web = false
+            },
+            sheetState = sheetState_Web,
+            shape = Round(sheetState_Web)
+        ) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        title = { Text("校园网") },
+                        actions = {
+                            FilledTonalIconButton(onClick = {
+                                showDialog = true
+                            }, modifier = Modifier.padding(horizontal = 15.dp)
+                            ) {
+                                Icon(painter = painterResource(id = R.drawable.add), contentDescription = "")
+                            }
+                        }
+                    )
+                },) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                ) {
+                    loginWebUI(vmUI,vm)
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
+            }
+        }
+    }
+
+    if (showBottomSheet_Shower) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                showBottomSheet_Shower = false
+            },
+            sheetState = sheetState_Shower,
+            shape = Round(sheetState_Shower)
+        ) {
+            ShowerUI(vm)
+        }
+    }
 
     if(showBottomSheet_NFC) {
         ModalBottomSheet(
@@ -305,12 +516,15 @@ fun HomeScreen(innerPadding : PaddingValues,vm : LoginSuccessViewModel,navContro
                 Card(
                     elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
                     modifier = Modifier
-                        .fillMaxWidth().scale(scale2.value)
+                        .fillMaxWidth()
+                        .scale(scale2.value)
                         .padding(horizontal = 15.dp, vertical = 5.dp),
                     shape = MaterialTheme.shapes.medium,
                     colors = CardForListColor()
                 ) {
-                        Column(modifier = Modifier.blur(blurSize).scale(scale.value)) {
+                        Column(modifier = Modifier
+                            .blur(blurSize)
+                            .scale(scale.value)) {
                             ListItem(
                                 headlineContent = { Text(text = "$name 校园一卡通") },
                                 trailingContent = {
@@ -426,9 +640,15 @@ fun HomeScreen(innerPadding : PaddingValues,vm : LoginSuccessViewModel,navContro
                 )
                 ListItem(
                     headlineContent = { Text(text = "网电缴费") },
-                    supportingContent = { Text(text = "查询网电使用情况并缴费")},
+                    supportingContent = { Text(text = "查询网费、宿舍电费、洗浴使用情况并缴费")},
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.corporate_fare), contentDescription = "")},
-                    modifier = Modifier.clickable { MyToast("请转到APP首页查询中心") }
+                    modifier = Modifier.clickable { showBottomSheet_Fee = true }
+                )
+                ListItem(
+                    headlineContent = { Text(text = "慧新易校") },
+                    supportingContent = { Text(text = "跳转到慧新易校平台进行充值、查询等")},
+                    leadingContent = { Icon(painter = painterResource(id = R.drawable.handshake), contentDescription = "")},
+                    modifier = Modifier.clickable { showDialog_Huixin = true }
                 )
                 ListItem(
                     headlineContent = { Text(text = "实体卡复制") },

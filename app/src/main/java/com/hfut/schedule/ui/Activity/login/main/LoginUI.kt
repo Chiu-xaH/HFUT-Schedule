@@ -254,7 +254,9 @@ fun LoginUI(vm : LoginViewModel) {
     ) {innerPadding ->
         Column(modifier = Modifier
             .padding(innerPadding)
-            .fillMaxSize()) { TwoTextField(vm) }
+            .fillMaxSize()) {
+            TwoTextField(vm)
+        }
     }
 }
 

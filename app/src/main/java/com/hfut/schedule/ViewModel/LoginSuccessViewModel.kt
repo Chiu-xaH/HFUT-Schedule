@@ -613,28 +613,38 @@ class LoginSuccessViewModel(webVpn : Boolean) : ViewModel() {
 
     val infoValue = MutableLiveData<String?>()
 
-    fun getFee(auth: String,type : FeeType,level : String? = null,room : String? = null) {
+    val showerData = MutableLiveData<String?>()
+    fun getFee(auth: String,type : FeeType,level : String? = null,room : String? = null,phoneNumber : String? = null) {
 
         val feeitemid = when(type) {
             WEB -> "281"
             ELECTRIC -> "261"
+            SHOWER -> "223"
         }
         val levels = when(type) {
             WEB -> "0"
             ELECTRIC -> null
+            SHOWER -> "1"
         }
         val rooms = when(type) {
             WEB -> null
             ELECTRIC -> room
+            SHOWER -> null
         }
-        val call = ZJGDBill.getFee(auth, IEC = "IEC", typeId = feeitemid, room = rooms, level = levels)
+        val phoneNumbers = when(type) {
+            WEB -> null
+            ELECTRIC -> null
+            SHOWER -> phoneNumber
+        }
+        val call = ZJGDBill.getFee(auth, typeId = feeitemid, room = rooms, level = levels, phoneNumber = phoneNumbers)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val responseBody = response?.body()?.string()
+                val responseBody = response.body()?.string()
                 when(type) {
                     WEB -> infoValue.value = responseBody
                     ELECTRIC ->  ElectricData.value = responseBody
+                    SHOWER -> showerData.value = responseBody
                 }
             }
 
@@ -643,15 +653,19 @@ class LoginSuccessViewModel(webVpn : Boolean) : ViewModel() {
     }
 
     val orderIdData = MutableLiveData<String?>()
-    fun payStep1(auth: String,json: String,pay : Int) {
-
+    fun payStep1(auth: String,json: String,pay : Int,type: FeeType) {
+        val feeitemid = when(type) {
+            WEB -> 281
+            ELECTRIC -> 261
+            SHOWER -> 223
+        }
         val call = ZJGDBill.pay(
             auth = auth,
             pay = pay,
             flag = "choose",
             paystep = 0,
             json = json,
-            typeId = 261,
+            typeId = feeitemid,
             isWX = null,
             orderid = null,
             password = null,

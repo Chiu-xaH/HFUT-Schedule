@@ -60,14 +60,11 @@ fun Electric(vm : LoginSuccessViewModel,card : Boolean,vmUI : UIViewModel) {
     val isPressed by interactionSource.collectIsPressedAsState()
 
 
-   // val BuildingsNumber = prefs.getString("BuildNumber", "0")
-  //  val RoomNumber = prefs.getString("RoomNumber", "0")
+
     val EndNumber = prefs.getString("EndNumber", "0")
     var room by remember { mutableStateOf("寝室电费") }
     if(EndNumber == "12" || EndNumber == "22") room = "空调"
     else if(EndNumber == "11" || EndNumber == "21") room = "照明"
-
-   // var room by remember { mutableStateOf(region) }
 
 
     val scale = animateFloatAsState(
