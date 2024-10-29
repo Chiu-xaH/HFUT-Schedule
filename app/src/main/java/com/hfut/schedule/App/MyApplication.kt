@@ -39,7 +39,7 @@ class MyApplication : Application() {
         const val loginWebURL = "http://172.18.3.3/"
         const val loginWebURL2 = "http://172.18.2.2/"
         const val RedirectURL = "https://cas.hfut.edu.cn/cas/login?service=http%3A%2F%2Fjxglstu.hfut.edu.cn%2Feams5-student%2Fneusoft-sso%2Flogin&exception.message=A+problem+occurred+restoring+the+flow+execution+with+key+%27e1s1%27"
-
+        const val GuaGuaURL = "https://guagua.klcxkj-qzxy.cn/"
 
 
 

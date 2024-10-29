@@ -1,7 +1,9 @@
-package com.hfut.schedule.ui.Activity.shower
+package com.hfut.schedule.ui.Activity.shower.login
 
 import android.app.Activity
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -42,15 +44,26 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginViewModel
+import com.hfut.schedule.ViewModel.GuaGuaViewModel
+import com.hfut.schedule.logic.datamodel.guaGua.GuaGuaLogin
+import com.hfut.schedule.logic.datamodel.guaGua.GuaGuaLoginResponse
+import com.hfut.schedule.logic.datamodel.guaGua.GuaguaLoginMsg
 import com.hfut.schedule.logic.utils.Encrypt
+import com.hfut.schedule.logic.utils.SharePrefs.Save
+import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.ui.Activity.success.search.Search.More.startGuagua
 import com.hfut.schedule.ui.UIUtils.MyToast
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShowerLogin(vm : LoginViewModel) {
+fun ShowerLogin(vm : GuaGuaViewModel) {
 
     val context = LocalContext.current
 
@@ -62,14 +75,16 @@ fun ShowerLogin(vm : LoginViewModel) {
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
-                title = { Text("登录 呱呱物联") },
+                title = { Text("登录-呱呱物联") },
                 actions = {
-
-                    IconButton(onClick = {
-                        (context as? Activity)?.finish()
-                    }) {
-                        Icon(painterResource(id = R.drawable.logout), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
+                    Row {
+                        IconButton(onClick = {
+                            (context as? Activity)?.finish()
+                        }) {
+                            Icon(painterResource(id = R.drawable.logout), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
+                        }
                     }
+
                 }
             )
         }
@@ -84,20 +99,20 @@ fun ShowerLogin(vm : LoginViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GuaGuaLoginUI(vm : LoginViewModel) {
+fun GuaGuaLoginUI(vm : GuaGuaViewModel) {
 
     var hidden by rememberSaveable { mutableStateOf(true) }
 
     val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
-    val Savedusername = prefs.getString("PhoneNumber", "")
+    val Savedusername = prefs.getString("PHONENUM", "")
     val Savedpassword = prefs.getString("GuaGuaPsk","")
 
     var username by remember { mutableStateOf(Savedusername ?: "") }
     var inputAES by remember { mutableStateOf(Savedpassword ?: "") }
-    var webVpn by remember { mutableStateOf(false) }
+
 
     // 创建一个动画值，根据按钮的按下状态来改变阴影的大小
-
+    var showTip by remember { mutableStateOf("请新用户先前往微信小程序-呱呱物联注册") }
     Column(modifier = Modifier.fillMaxWidth()) {
         val interactionSource = remember { MutableInteractionSource() }
         val interactionSource2 = remember { MutableInteractionSource() } // 创建一个
@@ -133,7 +148,7 @@ fun GuaGuaLoginUI(vm : LoginViewModel) {
                     focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
                     unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
                 ),
-                leadingIcon = { Icon( painterResource(R.drawable.person), contentDescription = "Localized description") },
+                leadingIcon = { Icon( painterResource(R.drawable.call), contentDescription = "Localized description") },
 
                 trailingIcon = {
                     IconButton(onClick = {
@@ -158,7 +173,7 @@ fun GuaGuaLoginUI(vm : LoginViewModel) {
                     focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
                     unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
                 ),
-                supportingText = { Text("密码为微信小程序-呱呱物联所注册")},
+                supportingText = { Text(showTip)},
                 visualTransformation = if (hidden) PasswordVisualTransformation()
                 else VisualTransformation.None,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -185,27 +200,64 @@ fun GuaGuaLoginUI(vm : LoginViewModel) {
 
             Button(
                 onClick = {
-                    LoginGuaGuaClick(username,inputAES)
+                    LoginGuaGuaClick(username,inputAES,vm)
                 }, modifier = Modifier.scale(scale.value),
                 interactionSource = interactionSource
 
             ) { Text("登录") }
-
-        //    Spacer(modifier = Modifier.width(15.dp))
-
-          //  FilledTonalButton(
-            //    onClick = { SavedClick() },
-              //  modifier = Modifier.scale(scale2.value),
-                //interactionSource = interactionSource2,
-
-               // ) { Text("免登录") }
         }
-        // Spacer(modifier = Modifier.height(10.dp))
-        //GetComponentHeightExample()
     }
 }
 
-fun LoginGuaGuaClick(phoneNumber : String,psk : String) {
-    val inputPSK = Encrypt.md5Hash(psk)
-    MyToast("正在设计功能与界面 敬请期待")
+fun LoginGuaGuaClick(phoneNumber : String,psk : String,vm: GuaGuaViewModel) {
+    val inputPSK = Encrypt.md5Hash(psk).toUpperCase()
+    Save("PHONENUM",phoneNumber)
+    Save("GuaGuaPsk",psk)
+
+    CoroutineScope(Job()).launch {
+        async { vm.login(phoneNumber,inputPSK) }.await()
+        async {
+            Handler(Looper.getMainLooper()).post {
+                vm.loginResult.observeForever { result ->
+                    if (result != null && result.contains("成功")) {
+                        saveLoginCode(result)
+                        startGuagua()
+                        MyToast("登录成功")
+                    } else if(result != null && result.contains("error")) {
+                        MyToast(getLoginedMsg(result))
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+
+fun saveLoginCode(json : String) : GuaGuaLogin? {
+    return try {
+        val data = Gson().fromJson(json, GuaGuaLoginResponse::class.java).data
+        Save("GuaGuaPersonInfo",json)
+        Save("loginCode",data.loginCode)
+        return data
+    } catch (_:Exception) {
+        null
+    }
+}
+
+fun getGuaGuaPersonInfo() : GuaGuaLogin? {
+    return try {
+        val json = prefs.getString("GuaGuaPersonInfo",null)
+        Gson().fromJson(json, GuaGuaLoginResponse::class.java).data
+    } catch (_:Exception) {
+        null
+    }
+}
+
+fun getLoginedMsg(json : String) : String {
+    return try {
+        Gson().fromJson(json, GuaguaLoginMsg::class.java).message ?: "空"
+    } catch (e:Exception) {
+        e.toString();
+    }
 }

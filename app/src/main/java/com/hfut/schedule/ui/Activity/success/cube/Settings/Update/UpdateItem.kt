@@ -76,7 +76,7 @@ fun VersionInfoCard() {
             ListItem(headlineContent = { Text(text = "聚在工大 " + APPVersion.getVersionName(), fontSize = 28.sp) })
             Row {
                 ListItem(
-                    overlineContent = { Text(text = "2024-10-21") },
+                    overlineContent = { Text(text = "2024-10-29") },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.sdk), contentDescription = "") },
                     headlineContent = { ScrollText(text = "第${APPVersion.getVersionCode()}次更新") },
                     modifier = Modifier.weight(.5f)
@@ -99,8 +99,7 @@ fun VersionInfoCard() {
 fun VersionInfo() {
     VersionInfoCard()
     DividerText(text = "新特性")
-    UpdateItems("新增 洗浴","位于查询中心 用于充值", UpdateType.ADD)
-    UpdateItems("新增 慧新易校","位于查询中心-一卡通-卡包 用于集成慧新易校平台\n请用过慧新易校APP的用户一定重新刷新本APP登陆状态", UpdateType.ADD)
+    UpdateItems("新增 呱呱物联的集成","现在用户可以直接用此APP扫码使用新洗浴设备、查看消费账单", UpdateType.ADD)
 }
 
 enum class UpdateType {

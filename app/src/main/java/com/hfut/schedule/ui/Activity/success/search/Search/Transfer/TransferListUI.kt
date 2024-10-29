@@ -169,7 +169,6 @@ fun TransferUI(vm: LoginSuccessViewModel,campus: CampusId) {
                     }
                 }
             }
-
         }
     }
 }

@@ -21,6 +21,7 @@ import com.hfut.schedule.logic.datamodel.One.getTokenResponse
 import com.hfut.schedule.logic.datamodel.zjgd.FeeType
 import com.hfut.schedule.logic.datamodel.zjgd.FeeType.*
 import com.hfut.schedule.logic.network.ServiceCreator.CommunitySreviceCreator
+import com.hfut.schedule.logic.network.ServiceCreator.GuaGuaServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuHTMLServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuJSONServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuSurveyServiceCreator
@@ -35,6 +36,7 @@ import com.hfut.schedule.logic.network.ServiceCreator.XuanquServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.ZJGDBillServiceCreator
 import com.hfut.schedule.logic.network.api.CommunityService
 import com.hfut.schedule.logic.network.api.FWDTService
+import com.hfut.schedule.logic.network.api.GuaGuaService
 import com.hfut.schedule.logic.network.api.JxglstuService
 import com.hfut.schedule.logic.network.api.LePaoYunService
 import com.hfut.schedule.logic.network.api.LoginService
@@ -79,7 +81,7 @@ class LoginSuccessViewModel(webVpn : Boolean) : ViewModel() {
     private val News = NewsServiceCreator.create(NewsService::class.java)
     private val JxglstuSurvey = JxglstuSurveyServiceCreator.create(JxglstuService::class.java,webVpn)
     private val server = ServerServiceCreator.create(ServerService::class.java)
-
+    private val guagua = GuaGuaServiceCreator.create(GuaGuaService::class.java)
     var studentId = MutableLiveData<Int>(prefs.getInt("STUDENTID",0))
     var lessonIds = MutableLiveData<List<Int>>()
     var token = MutableLiveData<String>()
@@ -646,6 +648,20 @@ class LoginSuccessViewModel(webVpn : Boolean) : ViewModel() {
                     ELECTRIC ->  ElectricData.value = responseBody
                     SHOWER -> showerData.value = responseBody
                 }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
+
+    val guaguaUserInfo = MutableLiveData<String?>()
+    fun getGuaGuaUserInfo() {
+        val loginCode = prefs.getString("loginCode","") ?: ""
+        val phoneNumber = prefs.getString("PHONENUM","") ?: ""
+        val call = phoneNumber.let { loginCode.let { it1 -> guagua.getUserInfo(it, it1) } }
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                guaguaUserInfo.value = response.body()?.string()
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }

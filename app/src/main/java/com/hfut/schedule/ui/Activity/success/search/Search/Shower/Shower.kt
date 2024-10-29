@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.Activity.success.search.Search.Shower
 
+//import androidx.compose.material.Text
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -28,7 +29,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-//import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.AssistChip
@@ -71,10 +71,12 @@ import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.logic.datamodel.zjgd.FeeType
 import com.hfut.schedule.logic.datamodel.zjgd.ShowerFeeResponse
 import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.StartApp
 import com.hfut.schedule.ui.Activity.success.search.Search.Electric.PayFor
 import com.hfut.schedule.ui.Activity.success.search.Search.More.LoginGuaGua
+import com.hfut.schedule.ui.Activity.success.search.Search.More.startGuagua
 import com.hfut.schedule.ui.UIUtils.BottomTip
 import com.hfut.schedule.ui.UIUtils.CardForListColor
 import com.hfut.schedule.ui.UIUtils.DividerText
@@ -235,7 +237,7 @@ fun ShowerUI(vm : LoginSuccessViewModel) {
                         ),
                         title = { androidx.compose.material3.Text("支付订单确认") },
                     )
-                    val info by remember { mutableStateOf("学号 ${studentID}\n绑定手机号 $phoneNumber") }
+                    val info by remember { mutableStateOf("绑定手机号 $phoneNumber") }
                     var int by remember { mutableStateOf(payNumber.toInt()) }
                     if(int > 0) {
                         PayFor(vm,int,info,json,FeeType.SHOWER)
@@ -299,7 +301,21 @@ fun ShowerUI(vm : LoginSuccessViewModel) {
                             }
                         }) { Icon(painter = painterResource(R.drawable.search), contentDescription = "description") }
                         FilledTonalButton(onClick = {
-                            LoginGuaGua()
+                            CoroutineScope(Job()).launch {
+                                async { vm.getGuaGuaUserInfo() }.await()
+                                async {
+                                    Handler(Looper.getMainLooper()).post {
+                                        vm.guaguaUserInfo.observeForever { result ->
+                                            if (result?.contains("成功") == true) {
+                                                Save("GuaGuaPersonInfo",result)
+                                                startGuagua()
+                                            } else if(result?.contains("error") == true) {
+                                                LoginGuaGua()
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }) {
                             Text(text = "呱呱物联")
                         }
@@ -530,8 +546,8 @@ fun ShowerUI(vm : LoginSuccessViewModel) {
                                 } else FilledTonalButton(onClick = { null }) { androidx.compose.material3.Text(text = "快速充值") } }
                         )
                         ListItem(
-                            headlineContent = { androidx.compose.material3.Text( text = if(!show)"学号 " + " 2000000000" else "学号 $studentID") },
-                            overlineContent = { (if(!show)"手机号 1XXXXXXXXXX" else "手机号 $phoneNumber").let { androidx.compose.material3.Text(text = it) } },
+                            //headlineContent = { androidx.compose.material3.Text( text = if(!show)"学号 " + " 2000000000" else "学号 $studentID") },
+                            headlineContent = { (if(!show)"手机号 1XXXXXXXXXX" else "手机号 $phoneNumber").let { androidx.compose.material3.Text(text = it) } },
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")}
                         )
                     }

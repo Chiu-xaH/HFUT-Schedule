@@ -12,6 +12,7 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.activity.LoginActivity
 import com.hfut.schedule.activity.ShowerActivity
+import com.hfut.schedule.activity.ShowerLoginActivity
 import com.hfut.schedule.ui.UIUtils.ScrollText
 
 @Composable
@@ -34,9 +35,15 @@ fun Login() {
     MyApplication.context.startActivity(it)
 }
 fun LoginGuaGua() {
+    val it = Intent(MyApplication.context, ShowerLoginActivity::class.java).apply {
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    }
+    MyApplication.context.startActivity(it)
+}
+
+fun startGuagua() {
     val it = Intent(MyApplication.context, ShowerActivity::class.java).apply {
         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        putExtra("nologin",false)
     }
     MyApplication.context.startActivity(it)
 }
