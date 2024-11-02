@@ -14,7 +14,11 @@
 
 3.读写存储（导入导出课程表、培养方案等文件）
 
+4.相机（洗浴扫码）
+
 ## 功能：
+![肥工教务通](https://github.com/user-attachments/assets/bcc41896-660e-4591-9785-49779ff6463a)
+
 ![image](https://github.com/Chiu-xaH/HFUT-Schedule/assets/116127902/421e3664-1cc9-485b-81ed-52354c9c79a4)
 
 ## 使用：
