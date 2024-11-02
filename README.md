@@ -4,7 +4,7 @@
 作为本校23届新生，初到学校时提前了解到大家常用的可以查看课表、成绩、考试等信息的是一个微信小程序，但小程序存在开屏广告，并且冷启动加载速度较慢，而且功能较少，且多数功能接口已经失效了，本人使用起来感觉不便，恰好我学过安卓开发，于是为解决需求，本应用就诞生了，同样面向校内同学使用，相对于小程序更快的启动速度、更全面的功能、无广告设计；
 ## 截图
 ### (当前截图为4.9.5.2版本 与最新版本可能有所差异)
-![d5f39cb24992787de5bebca916a46d4](https://github.com/user-attachments/assets/b943cf4f-6fe1-47ff-9eaa-6c4aba9bc8fd)
+![355775091-b943cf4f-6fe1-47ff-9eaa-6c4aba9bc8fd](https://github.com/user-attachments/assets/5dd5e310-0cee-46c7-ac5d-7a9974cbcb12)
 ## 功能：
 ![肥工教务通](https://github.com/user-attachments/assets/bcc41896-660e-4591-9785-49779ff6463a)
 ## 权限：
