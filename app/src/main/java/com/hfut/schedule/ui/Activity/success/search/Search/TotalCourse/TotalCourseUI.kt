@@ -1,7 +1,6 @@
 package com.hfut.schedule.ui.Activity.success.search.Search.TotalCourse
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,14 +14,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -47,12 +43,11 @@ import com.hfut.schedule.logic.datamodel.Jxglstu.lessonResponse
 import com.hfut.schedule.logic.datamodel.Jxglstu.lessons
 import com.hfut.schedule.logic.datamodel.Jxglstu.teacher
 import com.hfut.schedule.logic.datamodel.Jxglstu.teacherAssignmentList2
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.UIUtils.EmptyUI
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.ScrollText
-import com.hfut.schedule.ui.UIUtils.courseIcons
+import com.hfut.schedule.ui.UIUtils.schoolIcons
 
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -124,7 +119,7 @@ fun CourseTotalUI(json : String?,isSearch : Boolean,sortType: Boolean) {
                                 overlineContent = { ScrollText(text = "学分 ${list[item].course.credits}" + if(list[item].scheduleWeeksInfo != null) " | ${list[item].scheduleWeeksInfo}" else "") },
                                 trailingContent = { Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "")},
                                 //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
-                                leadingContent = { courseIcons(name = list[item].openDepartment.nameZh) },
+                                leadingContent = { schoolIcons(name = list[item].openDepartment.nameZh) },
                                 modifier = Modifier.clickable {
                                     showBottomSheet = true
                                     numItem = item
@@ -278,7 +273,7 @@ fun DetailItems(lessons: lessons,json: String?) {
 
                             //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
                             leadingContent = {
-                                courseIcons(name = lists.openDepartment.nameZh)
+                                schoolIcons(name = lists.openDepartment.nameZh)
                             },
                             modifier = Modifier
                                 .clickable {}

@@ -57,7 +57,6 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
@@ -67,14 +66,16 @@ import com.hfut.schedule.logic.datamodel.Focus.AddFocus
 import com.hfut.schedule.logic.datamodel.Schedule
 import com.hfut.schedule.logic.utils.AddCalendar.AddCalendar
 import com.hfut.schedule.logic.utils.GetDate
+import com.hfut.schedule.logic.utils.Semseter.getSemseter
+import com.hfut.schedule.logic.utils.Semseter.getSemseterCloud
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.success.calendar.nonet.DetailInfos
 import com.hfut.schedule.ui.Activity.success.calendar.nonet.getCourseINFO
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.apiCheck
+import com.hfut.schedule.ui.Activity.success.focus.Focus.FocusDataBaseManager.addItems
+import com.hfut.schedule.ui.Activity.success.focus.Focus.FocusDataBaseManager.removeItems
 import com.hfut.schedule.ui.Activity.success.search.Search.SchoolCard.TodayInfo
-import com.hfut.schedule.ui.Activity.success.search.Search.Survey.getSemseter
-import com.hfut.schedule.ui.Activity.success.search.Search.Survey.getSemseterCloud
 import com.hfut.schedule.ui.UIUtils.BottomTip
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.Round
@@ -466,7 +467,8 @@ fun AddItem(item : Int, AddedItems : MutableList<AddFocus>) {
                         onLongClick = {
                             //长按操作
                             isClicked = true
-                            RemoveItems(AddedItems[item].id)
+
+                            removeItems(AddedItems[item].id)
 
                             // AddedItems().removeAt(item)
                             MyToast("下次数据刷新时将删除")
@@ -520,7 +522,7 @@ fun BoxScope.AddButton(isVisible: Boolean,innerPaddings : PaddingValues) {
                                     .padding(25.dp),
                                 interactionSource = interactionSource,
                                 onClick = {
-                                    AddItems(title,info,remark)
+                                    addItems(title,info,remark)
                                     showBottomSheet = false
                                     Toast.makeText(MyApplication.context,"添加成功", Toast.LENGTH_SHORT).show()
                                 }

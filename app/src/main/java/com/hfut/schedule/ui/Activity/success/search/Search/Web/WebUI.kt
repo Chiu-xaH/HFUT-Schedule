@@ -2,11 +2,13 @@ package com.hfut.schedule.ui.Activity.success.search.Search.Web
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
@@ -24,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.UIUtils.BottomTip
 import com.hfut.schedule.ui.UIUtils.DividerText
@@ -35,6 +38,7 @@ import com.hfut.schedule.ui.UIUtils.Round
 fun WebUI() {
     val sheetState_Web = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_Web by remember { mutableStateOf(false) }
+
 
 
     ListItem(
@@ -62,9 +66,15 @@ fun WebUI() {
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        title = { Text("网址导航") }
+                        title = { Text("网址导航") },
+                        actions = {
+                            Row(modifier = Modifier.padding(horizontal = 15.dp),) {
+                                Schools()
+                            }
+                        }
                     )
-                },) { innerPadding ->
+                },
+            ) { innerPadding ->
                 Column(
                     modifier = Modifier
                         .padding(innerPadding)
@@ -79,5 +89,47 @@ fun WebUI() {
                 }
             }
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun Schools() {
+    val sheetState_School = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showBottomSheet_School by remember { mutableStateOf(false) }
+
+    if (showBottomSheet_School) {
+        ModalBottomSheet(
+            onDismissRequest = { showBottomSheet_School = false },
+            sheetState = sheetState_School,
+            shape = Round(sheetState_School)
+        ) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        title = { Text("学院") },
+                    )
+                },
+            ) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                ) {
+                    SchoolsUI()
+                }
+            }
+        }
+    }
+
+    FilledTonalButton(
+        onClick = { showBottomSheet_School = true }
+    ) {
+        Text(text = "学院集锦")
     }
 }

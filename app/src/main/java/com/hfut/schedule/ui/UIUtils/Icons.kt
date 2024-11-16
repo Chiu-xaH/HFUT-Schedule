@@ -7,7 +7,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.Birthday
 
 @Composable
-fun courseIcons(name : String) {
+fun schoolIcons(name : String) {
     if(name.contains("计算机")) Icon(painterResource(R.drawable.data_object), contentDescription = "Localized description",)
     else if(name.contains("资源与环境工程")) Icon(painterResource(R.drawable.eco), contentDescription = "Localized description",)
     else if(name.contains("数学")) Icon(painterResource(R.drawable.function), contentDescription = "Localized description",)

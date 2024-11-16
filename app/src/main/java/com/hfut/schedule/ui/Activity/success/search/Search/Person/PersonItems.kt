@@ -49,10 +49,8 @@ import com.hfut.schedule.ui.Activity.success.search.Search.LoginWeb.getIdentifyI
 import com.hfut.schedule.ui.UIUtils.DividerText
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.ScrollText
-import com.hfut.schedule.ui.UIUtils.courseIcons
+import com.hfut.schedule.ui.UIUtils.schoolIcons
 import org.jsoup.Jsoup
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -209,7 +207,7 @@ fun PersonItems(ifSaved : Boolean) {
                     headlineContent = { yuanxi?.let { ScrollText(text = it) } },
                     overlineContent = { Text(text = "学院")},
                     leadingContent = {
-                        yuanxi?.let { courseIcons(name = it) }
+                        yuanxi?.let { schoolIcons(name = it) }
                     },
                     modifier = Modifier.clickable {
                         ClipBoard.copy(yuanxi)

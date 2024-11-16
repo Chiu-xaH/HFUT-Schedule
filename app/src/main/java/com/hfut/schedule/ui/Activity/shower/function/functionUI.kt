@@ -38,10 +38,9 @@ import com.hfut.schedule.ui.UIUtils.MyToast
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GuaGuaSettings(innerPadding: PaddingValues) {
-    var input by remember { mutableStateOf(SharePrefs.prefs.getString("loginCode","") ?: "") }
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .verticalScroll(rememberScrollState())) {
+       Column(modifier = Modifier
+           .fillMaxSize()
+           .verticalScroll(rememberScrollState())) {
         Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
         ListItem(
             headlineContent = { Text(text = "刷新登录状态") },
@@ -51,44 +50,53 @@ fun GuaGuaSettings(innerPadding: PaddingValues) {
             },
             modifier = Modifier.clickable { LoginGuaGua() }
         )
-        ListItem(
-            headlineContent = { Text(text = "修改loginCode") },
-            supportingContent = { Text(text = "保持多端loginCode一致可实现多端登录") },
-            leadingContent = {
-                Icon(painterResource(id = R.drawable.cookie), contentDescription = "")
-            }
-        )
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            TextField(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 15.dp),
-                value = input,
-                onValueChange = {
-                    input = it
-                    SharePrefs.Save("loginCode",input)
-                },
-                label = { Text("loginCode" ) },
-                singleLine = true,
-                trailingIcon = {
-                    IconButton(
-                        onClick = {
-                            ClipBoard.copy(input)
-                            MyToast("已复制")
-                        }) {
-                        Icon(painter = painterResource(R.drawable.copy_all), contentDescription = "description")
-                    }
-                },
-                shape = MaterialTheme.shapes.medium,
-                colors = TextFieldDefaults.textFieldColors(
-                    focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                    unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-                ),
-            )
-        }
+           ListItem(
+               headlineContent = { Text(text = "修改loginCode") },
+               supportingContent = { Text(text = "保持多端loginCode一致可实现多端登录") },
+               leadingContent = {
+                   Icon(painterResource(id = R.drawable.cookie), contentDescription = "")
+               }
+           )
+        EditLoginCode()
         Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding()))
+    }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EditLoginCode() {
+    var input by remember { mutableStateOf(SharePrefs.prefs.getString("loginCode","") ?: "") }
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        TextField(
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = 15.dp),
+            value = input,
+            onValueChange = {
+                input = it
+                SharePrefs.Save("loginCode",input)
+            },
+            label = { Text("loginCode" ) },
+            singleLine = true,
+            trailingIcon = {
+                IconButton(
+                    onClick = {
+                        ClipBoard.copy(input)
+                        MyToast("已复制")
+                    }) {
+                    Icon(painter = painterResource(R.drawable.copy_all), contentDescription = "description")
+                }
+            },
+            shape = MaterialTheme.shapes.medium,
+            colors = TextFieldDefaults.textFieldColors(
+                focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
+                unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
+            ),
+        )
     }
 }

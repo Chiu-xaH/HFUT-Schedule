@@ -58,11 +58,10 @@ import com.google.gson.Gson
 import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.datamodel.Jxglstu.datumResponse
 import com.hfut.schedule.logic.utils.GetDate
+import com.hfut.schedule.logic.utils.Semseter.getSemseter
+import com.hfut.schedule.logic.utils.Semseter.getSemseterCloud
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.ui.Activity.success.calendar.login.getNewWeek
-import com.hfut.schedule.ui.Activity.success.main.saved.JXGLSTU
-import com.hfut.schedule.ui.Activity.success.search.Search.Survey.getSemseter
-import com.hfut.schedule.ui.Activity.success.search.Search.Survey.getSemseterCloud
 import com.hfut.schedule.ui.UIUtils.MyToast
 import java.time.LocalDate
 

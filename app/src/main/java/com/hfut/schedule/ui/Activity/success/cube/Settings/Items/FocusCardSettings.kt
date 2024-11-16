@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -55,6 +56,7 @@ import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.datamodel.SearchEleResponse
 import com.hfut.schedule.logic.datamodel.zjgd.FeeResponse
 import com.hfut.schedule.logic.datamodel.zjgd.FeeType
+import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
@@ -65,7 +67,11 @@ import com.hfut.schedule.ui.Activity.success.search.Search.Electric.Electric
 import com.hfut.schedule.ui.Activity.success.search.Search.LoginWeb.LoginWeb
 import com.hfut.schedule.ui.Activity.success.search.Search.LoginWeb.WebInfo
 import com.hfut.schedule.ui.Activity.success.search.Search.LoginWeb.getWebInfos
+import com.hfut.schedule.ui.Activity.success.search.Search.More.LoginGuaGua
+import com.hfut.schedule.ui.Activity.success.search.Search.More.startGuagua
 import com.hfut.schedule.ui.Activity.success.search.Search.SchoolCard.SchoolCardItem
+import com.hfut.schedule.ui.Activity.success.search.Search.Shower.Shower
+import com.hfut.schedule.ui.Activity.success.search.Search.Shower.ShowerUI
 import com.hfut.schedule.ui.UIUtils.Round
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -307,6 +313,43 @@ fun FocusCard(vmUI : UIViewModel,vm : LoginSuccessViewModel,refreshing : Boolean
                                 shortCut()
                             }
                     }
+                if(GetDate.formattedTime_Hour.toInt() in 22 until 25) {
+                    Row(
+                        modifier = Modifier.clickable {
+                            CoroutineScope(Job()).launch {
+                                async { vm.getGuaGuaUserInfo() }.await()
+                                async {
+                                    Handler(Looper.getMainLooper()).post {
+                                        vm.guaguaUserInfo.observeForever { result ->
+                                            if (result?.contains("成功") == true) {
+                                                Save("GuaGuaPersonInfo",result)
+                                                startGuagua()
+                                            } else if(result?.contains("error") == true) {
+                                                LoginGuaGua()
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    ) {
+                        Box(modifier = Modifier.weight(.5f)) {
+                            ListItem(
+                                headlineContent = { Text(text = "晚上好") },
+                                overlineContent = { Text(text = "洗去一身疲惫吧") },
+                                leadingContent = {
+                                    Icon(painterResource(id = R.drawable.dark_mode), contentDescription = "")
+                                }
+                            )
+                        }
+                        Box(modifier = Modifier.weight(.5f)) {
+                            ListItem(headlineContent = { Text(text = "洗浴") }, leadingContent = {
+                                Icon(painterResource(id = R.drawable.bathtub), contentDescription = "")
+                            }, overlineContent = { Text(text = "推荐") }
+                            )
+                        }
+                    }
+                }
             }
 
         }

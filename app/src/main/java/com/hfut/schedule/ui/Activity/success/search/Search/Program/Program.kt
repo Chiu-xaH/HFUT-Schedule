@@ -3,7 +3,6 @@ package com.hfut.schedule.ui.Activity.success.search.Search.Program
 import android.annotation.SuppressLint
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
@@ -74,12 +73,9 @@ import com.hfut.schedule.ui.Activity.success.search.Search.More.Login
 import com.hfut.schedule.ui.Activity.success.search.Search.Person.getPersonInfo
 import com.hfut.schedule.ui.UIUtils.BottomTip
 import com.hfut.schedule.ui.UIUtils.CardForListColor
-import com.hfut.schedule.ui.UIUtils.DevelopingUI
 import com.hfut.schedule.ui.UIUtils.DividerText
-import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.Round
-import com.hfut.schedule.ui.UIUtils.ScrollText
-import com.hfut.schedule.ui.UIUtils.courseIcons
+import com.hfut.schedule.ui.UIUtils.schoolIcons
 import com.hfut.schedule.ui.UIUtils.statusUI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -90,7 +86,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Program(vm : LoginSuccessViewModel,ifSaved : Boolean) {
-    val sheetState_Program = rememberModalBottomSheetState()
+    val sheetState_Program = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_Program by remember { mutableStateOf(false) }
 
     ListItem(
@@ -584,7 +580,7 @@ fun ProgramUIInfo2(num1 : Int,num2 : Int,vm : LoginSuccessViewModel,ifSaved : Bo
                         headlineContent = { Text(text = searchList[item].name) },
                         supportingContent = { Text(text = department) },
                         overlineContent = { Text(text = "第" + searchList[item].term + "学期 | 学分 ${searchList[item].credit}")},
-                        leadingContent = { courseIcons(name = searchList[item].depart) },
+                        leadingContent = { schoolIcons(name = searchList[item].depart) },
                         modifier = Modifier.clickable {
                         },
                     )

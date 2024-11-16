@@ -8,6 +8,8 @@ import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -17,12 +19,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -42,6 +49,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.google.zxing.BarcodeFormat
@@ -55,8 +63,12 @@ import com.hfut.schedule.ViewModel.GuaGuaViewModel
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.ui.Activity.shower.login.getGuaGuaPersonInfo
 import com.hfut.schedule.ui.Activity.success.search.Search.Shower.tranamt
+import com.hfut.schedule.ui.UIUtils.BottomTip
 import com.hfut.schedule.ui.UIUtils.DividerText
+import com.hfut.schedule.ui.UIUtils.LittleDialog
+import com.hfut.schedule.ui.UIUtils.MyCard
 import com.hfut.schedule.ui.UIUtils.MyToast
+import com.hfut.schedule.ui.UIUtils.RowHorizal
 import com.hfut.schedule.ui.UIUtils.ScrollText
 
 @Composable
@@ -118,7 +130,7 @@ class QRCodeAnalyzer(private val listener: (com.google.zxing.Result?) -> Unit) :
                 val result = reader.decode(binaryBitmap)
                 listener(result)
             } catch (e: Exception) {
-                Log.d("error",e.toString())
+                //Log.d("error",e.toString())
                 listener(null)
             } finally {
                 imageProxy.close()
@@ -130,11 +142,16 @@ class QRCodeAnalyzer(private val listener: (com.google.zxing.Result?) -> Unit) :
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun GuaguaStart(vm: GuaGuaViewModel, innerPadding : PaddingValues) {
     var input by remember { mutableStateOf("") }
+    var id by remember { mutableStateOf(-1) }
+    var editMode by remember { mutableStateOf(false) }
+    var inputName by remember { mutableStateOf("") }
     var show by remember { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(false) }
+    var showDialog_Del by remember { mutableStateOf(false) }
     val personInfo = getGuaGuaPersonInfo()
     val context = LocalContext.current
     val imageAnalysis = ImageAnalysis.Builder() .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888).build().also {
@@ -153,7 +170,71 @@ fun GuaguaStart(vm: GuaGuaViewModel, innerPadding : PaddingValues) {
             }
         })
     }
-
+    if(showDialog) {
+        Dialog(
+            onDismissRequest = { showDialog = false }
+        ) {
+            Column {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    TextField(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(horizontal = 15.dp),
+                        value = inputName,
+                        onValueChange = {
+                            inputName = it
+                        },
+                        label = { Text("备注名称(可参考花洒红色贴纸)" ) },
+                        singleLine = true,
+                        shape = MaterialTheme.shapes.medium,
+                        colors = TextFieldDefaults.textFieldColors(
+                            focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
+                            unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
+                        ),
+                        supportingText = {
+                            Text(text = input)
+                        }
+                    )
+                }
+                Row(modifier = Modifier
+                    .fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
+                    FilledTonalButton(onClick = {
+                        showDialog = false
+                    },modifier = Modifier
+                        .weight(.5f)
+                    ) {
+                        Text(text = "取消")
+                    }
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Button(onClick = {
+                        ShowerDataBaseManager.addItems(inputName,input)
+                        showDialog = false
+                    },modifier = Modifier
+                        .weight(.5f)
+                    ) {
+                        Text(text = "保存")
+                    }
+                }
+            }
+        }
+    }
+    if(showDialog_Del) {
+        LittleDialog(
+            onDismissRequest = { showDialog_Del = false },
+            onConfirmation = {
+                if(id != -1)
+                ShowerDataBaseManager.removeItems(id)
+                showDialog_Del = false
+            },
+            dialogTitle = "删除",
+            dialogText = "要删除这个标签吗",
+            conformtext = "确定",
+            dismisstext = "取消"
+        )
+    }
     if(show)
         CameraPreview(imageAnalysis)
     else {
@@ -193,7 +274,14 @@ fun GuaguaStart(vm: GuaGuaViewModel, innerPadding : PaddingValues) {
                     )
                 }
             }
-            DividerText(text = "洗浴(开始后预扣￥5)")
+            DividerText(text = "开始洗浴")
+            RowHorizal {
+                AssistChip(onClick = { show = true }, label = {Text(text = "扫码")})
+                Spacer(modifier = Modifier.width(10.dp))
+                AssistChip(onClick = { input = "" }, label = {Text(text = "填写MAC地址")})
+                Spacer(modifier = Modifier.width(10.dp))
+                AssistChip(onClick = { MyToast("从下方选择标签,填充MAC地址") }, label = {Text(text = "常用标签")})
+            }
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
@@ -224,14 +312,62 @@ fun GuaguaStart(vm: GuaGuaViewModel, innerPadding : PaddingValues) {
                 )
             }
             Spacer(modifier = Modifier.height(10.dp))
-            Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 15.dp),horizontalArrangement = Arrangement.Center) {
+                FilledTonalButton(onClick = {
+                    if(input == "") MyToast("请扫码或填写二维码贴纸下的MAC地址")
+                    else if(input.length != 12) {
+                        MyToast("MAC地址为12位")
+                    }
+                    else {
+                        showDialog = true
+                    }
+                },modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(.5f)
+                ) {
+                    Text(text = "添加为常用")
+                }
+                Spacer(modifier = Modifier.width(10.dp))
                 Button(onClick = {
-                    if(input == "") MyToast("请扫码或填写二维码下MAC地址")
+                    if(input == "") MyToast("请扫码或填写二维码贴纸下的MAC地址")
+                    else if(input.length != 12) {
+                        MyToast("MAC地址为12位")
+                    }
                     else {
                         startShower(vm,input)
                     }
-                }) {
+                },modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(.5f)
+                ) {
                     Text(text = "开始洗浴")
+                }
+            }
+            BottomTip(str = "开始后预扣￥5,请保证余额>=￥5,否则无法开启洗浴")
+            DividerText(text = "常用标签")
+            val list = ShowerDataBaseManager.queryAll()
+            LazyRow(modifier = Modifier.padding(horizontal = 15.dp)) {
+                items(list.size) { index ->
+                    AssistChip(
+                        onClick = {
+                               if(!editMode) {
+                                   input = list[index].mac
+                               } else {
+                                   id = list[index].id
+                                   showDialog_Del = true
+                               }
+                    }, label = { Text(text = list[index].name)}, trailingIcon = {
+                            if(editMode)
+                        Icon(painterResource(id = R.drawable.close), contentDescription = "")
+                        })
+                    Spacer(modifier = Modifier.width(10.dp))
+                }
+            }
+            RowHorizal {
+                FilledTonalButton(onClick = { editMode = !editMode }) {
+                    Text(text = if(editMode)"完成" else "编辑标签")
                 }
             }
             Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))

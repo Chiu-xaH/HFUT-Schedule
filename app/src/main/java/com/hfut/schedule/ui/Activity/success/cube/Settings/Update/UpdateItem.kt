@@ -76,7 +76,7 @@ fun VersionInfoCard() {
             ListItem(headlineContent = { Text(text = "聚在工大 " + APPVersion.getVersionName(), fontSize = 28.sp) })
             Row {
                 ListItem(
-                    overlineContent = { Text(text = "2024-10-29") },
+                    overlineContent = { Text(text = "2024-11-16") },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.sdk), contentDescription = "") },
                     headlineContent = { ScrollText(text = "第${APPVersion.getVersionCode()}次更新") },
                     modifier = Modifier.weight(.5f)
@@ -99,7 +99,13 @@ fun VersionInfoCard() {
 fun VersionInfo() {
     VersionInfoCard()
     DividerText(text = "新特性")
-    UpdateItems("新增 呱呱物联的集成","现在用户可以直接用此APP扫码使用新洗浴设备、查看消费账单", UpdateType.ADD)
+    //UpdateItems("重构 关于,增加了更多信息","位于选项-维护关于-关于", UpdateType.RENEW)
+    UpdateItems("新增 呱呱洗浴常用设备",null, UpdateType.ADD)
+    UpdateItems("新增 聚焦通知-生活推荐","按需推荐所需服务", UpdateType.ADD)
+    UpdateItems("新增 通知公告常用词条、翻页功能、学院网址集锦",null, UpdateType.ADD)
+    UpdateItems("修复 通知公告默认加载空白显示Bug",null, UpdateType.FIX)
+    UpdateItems("优化 部分界面的显示",null, UpdateType.OPTIMIZE)
+    UpdateItems("优化 部分部分功能的逻辑",null, UpdateType.OPTIMIZE)
 }
 
 enum class UpdateType {

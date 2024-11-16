@@ -303,9 +303,9 @@ class LoginSuccessViewModel(webVpn : Boolean) : ViewModel() {
 
 
     val NewsData = MutableLiveData<String?>()
-    fun searchNews(title : String) {
+    fun searchNews(title : String,page: Int = 1) {
 
-        val call = News.searchNews(1,title)
+        val call = News.searchNews(title,page)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {

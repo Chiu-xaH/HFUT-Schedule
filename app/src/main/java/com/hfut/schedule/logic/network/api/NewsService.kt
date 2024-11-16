@@ -9,6 +9,6 @@ import retrofit2.http.POST
 interface NewsService {
     //获取新闻通知
     @FormUrlEncoded
-    @POST("zq_search.jsp?wbtreeid=1001")
-    fun searchNews(@Field("searchScope") searchScope : Int, @Field("sitenewskeycode") sitenewskeycode : String) : Call<ResponseBody>
+    @POST("zq_search.jsp?wbtreeid=1137")
+    fun searchNews(@Field("sitenewskeycode") sitenewskeycode : String,@Field("currentnum") page : Int = 1) : Call<ResponseBody>
 }

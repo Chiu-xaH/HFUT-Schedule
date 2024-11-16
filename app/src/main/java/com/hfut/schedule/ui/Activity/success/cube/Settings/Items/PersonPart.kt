@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
@@ -46,7 +45,7 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.success.search.Search.Person.getPersonInfo
 import com.hfut.schedule.ui.UIUtils.ScrollText
-import com.hfut.schedule.ui.UIUtils.courseIcons
+import com.hfut.schedule.ui.UIUtils.schoolIcons
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -122,7 +121,7 @@ fun PersonPart() {
                             ListItem(
                                 overlineContent = { getPersonInfo().school?.let { Text(text = it) } },
                                 leadingContent = {
-                                    getPersonInfo().department?.let { courseIcons(name = it) }
+                                    getPersonInfo().department?.let { schoolIcons(name = it) }
                                 },
                                 headlineContent = { getPersonInfo().department?.let { ScrollText(text = it) } },
                                 modifier = Modifier.weight(0.5f),

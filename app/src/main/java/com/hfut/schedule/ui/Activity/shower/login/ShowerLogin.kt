@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -54,7 +55,10 @@ import com.hfut.schedule.logic.datamodel.guaGua.GuaguaLoginMsg
 import com.hfut.schedule.logic.utils.Encrypt
 import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.ui.Activity.shower.function.EditLoginCode
 import com.hfut.schedule.ui.Activity.success.search.Search.More.startGuagua
+import com.hfut.schedule.ui.UIUtils.BottomTip
+import com.hfut.schedule.ui.UIUtils.DividerText
 import com.hfut.schedule.ui.UIUtils.MyToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -84,7 +88,6 @@ fun ShowerLogin(vm : GuaGuaViewModel) {
                             Icon(painterResource(id = R.drawable.logout), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
                         }
                     }
-
                 }
             )
         }
@@ -206,6 +209,11 @@ fun GuaGuaLoginUI(vm : GuaGuaViewModel) {
 
             ) { Text("登录") }
         }
+        Spacer(modifier = Modifier.height(30.dp))
+        DividerText(text = "备用登录方式")
+        EditLoginCode()
+        BottomTip(str = "先填写上面的手机号 无需输入密码 点击登录")
+        BottomTip(str = "输入loginCode后退出 再次从查询中心-洗浴进入即可")
     }
 }
 

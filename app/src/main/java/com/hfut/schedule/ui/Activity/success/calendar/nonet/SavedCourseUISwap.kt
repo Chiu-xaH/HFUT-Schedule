@@ -70,8 +70,8 @@ import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.datamodel.Community.courseDetailDTOList
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.GetDate.Benweeks
-import com.hfut.schedule.ui.Activity.success.search.Search.Survey.getSemseter
-import com.hfut.schedule.ui.Activity.success.search.Search.Survey.getSemseterCloud
+import com.hfut.schedule.logic.utils.Semseter.getSemseter
+import com.hfut.schedule.logic.utils.Semseter.getSemseterCloud
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.Round
 import kotlinx.coroutines.CoroutineScope

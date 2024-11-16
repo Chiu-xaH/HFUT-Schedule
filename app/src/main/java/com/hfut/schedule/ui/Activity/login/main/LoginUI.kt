@@ -57,7 +57,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -66,7 +65,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
@@ -91,7 +89,7 @@ import kotlinx.coroutines.launch
 //登录方法，auto代表前台调用
 fun LoginClick(vm : LoginViewModel,username : String,inputAES : String,webVpn : Boolean) {
     val cookie = prefs.getString(if(!webVpn)"cookie" else "webVpnKey", "")
-    val outputAES = cookie?.let { it1 -> Encrypt.AESencrypt(inputAES, it1) }
+    val outputAES = cookie?.let { it1 -> Encrypt.encryptAES(inputAES, it1) }
     val ONE = "LOGIN_FLAVORING=$cookie"
     //保存账密
     Save("Username",username)

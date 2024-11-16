@@ -576,3 +576,21 @@ fun tranamt(bills : Int) : Float {
         0.0f
     }
 }
+
+fun getInGuaGua(vm: LoginSuccessViewModel) {
+    CoroutineScope(Job()).launch {
+        async { vm.getGuaGuaUserInfo() }.await()
+        async {
+            Handler(Looper.getMainLooper()).post {
+                vm.guaguaUserInfo.observeForever { result ->
+                    if (result?.contains("成功") == true) {
+                        Save("GuaGuaPersonInfo",result)
+                        startGuagua()
+                    } else if(result?.contains("error") == true) {
+                        LoginGuaGua()
+                    }
+                }
+            }
+        }
+    }
+}

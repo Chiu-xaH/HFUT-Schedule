@@ -38,12 +38,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
-import com.hfut.schedule.logic.datamodel.Jxglstu.ProgramPartThree
 import com.hfut.schedule.logic.datamodel.Jxglstu.TransferData
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.ScrollText
-import com.hfut.schedule.ui.UIUtils.courseIcons
+import com.hfut.schedule.ui.UIUtils.schoolIcons
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -160,7 +159,7 @@ fun TransferUI(vm: LoginSuccessViewModel,campus: CampusId) {
                                 headlineContent = { Text(text = searchList[item].major.nameZh) },
                                 supportingContent = { searchList[item].registrationConditions?.let { Text(text = it) } },
                                 overlineContent = { ScrollText(text = department + " 已申请 " + searchList[item].applyStdCount.toString() + " / " + searchList[item].preparedStdCount) },
-                                leadingContent = { courseIcons(searchList[item].department.nameZh) },
+                                leadingContent = { schoolIcons(searchList[item].department.nameZh) },
                                 trailingContent = {  FilledTonalIconButton(onClick = {
                                     MyToast("正在开发")
                                 }) { Icon(painter = painterResource(id = R.drawable.add_task), contentDescription = "") } },
