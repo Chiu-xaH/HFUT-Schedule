@@ -4,7 +4,7 @@ plugins {
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
     id 'kotlin-parcelize'
-
+    id("org.jetbrains.kotlin.plugin.compose") version "2.0.0"
 }
 
 android {
@@ -23,8 +23,8 @@ android {
         applicationId "com.hfut.schedule"
         minSdk 24
         targetSdk 33
-        versionCode 142
-        versionName "4.12.1"
+        versionCode 143
+        versionName "4.12.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
@@ -89,12 +89,14 @@ dependencies {
     implementation 'androidx.camera:camera-view:1.3.4'
     implementation 'com.google.mlkit:vision-common:17.3.0'
     implementation platform('androidx.compose:compose-bom:2023.03.00')
+    implementation platform('androidx.compose:compose-bom:2023.03.00')
     //implementation files('libs\\Lite3DMap_1.3.2_AMapSearch_9.7.2_AMapLocation_6.4.5_20240508.jar')
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     androidTestImplementation platform('androidx.compose:compose-bom:2022.10.00')
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
+    androidTestImplementation platform('androidx.compose:compose-bom:2023.03.00')
     androidTestImplementation platform('androidx.compose:compose-bom:2023.03.00')
     androidTestImplementation platform('androidx.compose:compose-bom:2023.03.00')
     androidTestImplementation platform('androidx.compose:compose-bom:2023.03.00')
@@ -129,7 +131,7 @@ dependencies {
     //开屏显示
     implementation 'androidx.core:core-splashscreen:1.0.1'
     //模糊库
-    implementation 'dev.chrisbanes.haze:haze:0.5.2'
+    implementation 'dev.chrisbanes.haze:haze:1.0.2'
     implementation 'dev.chrisbanes.haze:haze-materials:0.5.1' //也是模糊库一部分，但是用了这个可以让界面列表更协调，虽然没引用过，挺玄学的就留着吧
     //预测性返回手势
     implementation 'androidx.activity:activity:1.6.0-alpha05'
@@ -144,16 +146,14 @@ dependencies {
     //小组件
    //  implementation 'androidx.glance:glance:1.0.0'
      //implementation 'androidx.glance:glance-appwidget:1.0.0'
-    //Hilt
-    var hilt_version = "2.31-alpha"
+    //Hilt注入
+    var hilt_version = "2.52"
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
-    //图表库
-    //implementation 'com.github.AAChartModel:AAChartCore-Kotlin:-SNAPSHOT'
-    //生物识别
+    //生物识别 指纹
   //  implementation "androidx.biometric:biometric:1.1.0"
 
-    def hilt_lifecycle_viewmodel = "1.0.0-alpha03"
-    implementation "androidx.hilt:hilt-lifecycle-viewmodel:$hilt_lifecycle_viewmodel"
-    kapt "androidx.hilt:hilt-compiler:$hilt_lifecycle_viewmodel"
+    ///def hilt_lifecycle_viewmodel = "1.0.0-alpha03"
+   // implementation "androidx.hilt:hilt-lifecycle-viewmodel:$hilt_lifecycle_viewmodel"
+    //kapt "androidx.hilt:hilt-compiler:$hilt_lifecycle_viewmodel"
 }

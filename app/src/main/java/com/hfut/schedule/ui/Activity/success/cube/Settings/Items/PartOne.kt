@@ -275,7 +275,7 @@ fun AlwaysItem() {
     var version by remember { mutableStateOf(getUpdates()) }
     var showBadge by remember { mutableStateOf(false) }
     if (version.version != APPVersion.getVersionName()) showBadge = true
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
     if (showBottomSheet) {
         ModalBottomSheet(

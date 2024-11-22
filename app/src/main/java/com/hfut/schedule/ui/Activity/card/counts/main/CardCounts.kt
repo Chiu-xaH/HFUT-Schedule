@@ -97,279 +97,10 @@ fun getbillmonth(vm : LoginSuccessViewModel,count : Boolean) : MutableList<BillM
         list
     } else lists
 }
-
 @SuppressLint("SuspiciousIndentation")
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun CardCounts(vm : LoginSuccessViewModel,innerPaddings : PaddingValues) {
-
-    var clicked by remember { mutableStateOf(false) }
-    var loading2 by remember { mutableStateOf(true) }
-    val auth = SharePrefs.prefs.getString("auth","")
-    var input by remember { mutableStateOf("") }
-
-    var Months  by remember { mutableStateOf(GetDate.Date_MM) }
-    var Years by remember { mutableStateOf(GetDate.Date_yyyy) }
-    input = "$Years-$Months"
-    fun Click(Num : Int) {
-
-        CoroutineScope(Job()).apply {
-            launch {
-                async {
-                    Months = (Months.toInt() + Num).toString()
-                    if(Months.toInt() < 10) Months = "0$Months"
-                    input = "$Years-$Months"
-                    clicked = true
-                    loading2 = true
-                    Handler(Looper.getMainLooper()).post{
-                        vm.MonthData.value = "{}"
-                    }
-                    vm.getMonthBills("bearer $auth", input)
-                }.await()
-                async {
-                    Handler(Looper.getMainLooper()).post{
-                        vm.MonthData.observeForever { result ->
-                            if (result != null) {
-                                if(result.contains("操作成功")) {
-                                    getbillmonth(vm,false)
-                                    loading2 = false
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-////////////////////////////////////////////////////布局///////////////////////////////////////////
-    Box(modifier = Modifier
-        .fillMaxSize()
-       ) {
-
-        Spacer(modifier = Modifier.height(innerPaddings.calculateTopPadding()))
-
-        var expanded by remember { mutableStateOf(true) }
-        val sheetState = rememberModalBottomSheetState()
-        var showBottomSheet by remember { mutableStateOf(false) }
-        val scrollstate = rememberLazyListState()
-        val shouldShowAddButton by remember { derivedStateOf { scrollstate.firstVisibleItemScrollOffset == 0 } }
-
-        if (showBottomSheet) {
-            ModalBottomSheet(
-                onDismissRequest = { showBottomSheet = false },
-                sheetState = sheetState,
-                shape = Round(sheetState)
-            ) {
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    topBar = {
-                        TopAppBar(
-                            colors = TopAppBarDefaults.mediumTopAppBarColors(
-                                containerColor = Color.Transparent,
-                                titleContentColor = MaterialTheme.colorScheme.primary,
-                            ),
-                            title = { Text("查询 ${Years}年${Months}月") },
-                            actions = {
-                                FilledTonalIconButton(onClick = {
-                                    showBottomSheet = false
-                                    Click(0)
-                                }) {
-                                    Icon(painter = painterResource(id = R.drawable.search), contentDescription = "")
-                                }
-                            }
-                        )
-                    },
-                ) {innerPadding ->
-                    Column(
-                        modifier = Modifier
-                            .padding(innerPadding)
-                            .fillMaxSize()
-                    ){
-                        LazyRow(modifier = Modifier.padding(horizontal = 10.dp)) {
-                            items(7) { item ->
-                                AssistChip(
-                                    modifier = Modifier.padding(horizontal = 5.dp),
-                                    onClick = { Years = (GetDate.Date_yyyy.toInt() + (item - 3)).toString() },
-                                    label = { Text(text = (GetDate.Date_yyyy.toInt() + (item - 3)).toString()) })
-                            }
-                        }
-                        LazyVerticalGrid(columns = GridCells.Fixed(4), modifier = Modifier.padding(horizontal = 10.dp)) {
-                            items(12) { item ->
-                                AssistChip(
-                                    onClick = { Months = if(item <= 10) "0${item + 1}" else "${item + 1}" },
-                                    label = { Text(text = "${item + 1}月") },
-                                    modifier = Modifier.padding(horizontal = 5.dp)
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        if (clicked) {
-
-                AnimatedVisibility(
-                    visible = loading2,
-                    enter = fadeIn(),
-                    exit = fadeOut(),
-                    modifier = Modifier.align(Alignment.Center)
-                ) {
-                    Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)  {
-                        CircularProgressIndicator()
-                    }
-                }
-                AnimatedVisibility(
-                    visible = !loading2,
-                    enter = fadeIn(),
-                    exit = fadeOut()
-                ) {
-                    //填充界面
-                    Column{
-                        //Spacer(modifier = Modifier.height(50.dp))
-                        LazyColumn (state = scrollstate){
-                            item {
-                                Spacer(modifier = Modifier.height(innerPaddings.calculateTopPadding()))
-                                Spacer(modifier = Modifier.height(5.dp))
-                            }
-                            item {
-                                Card(
-                                    elevation = CardDefaults.cardElevation(
-                                        defaultElevation = 3.dp
-                                    ),
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 15.dp, vertical = 5.dp),
-                                    shape = MaterialTheme.shapes.medium
-                                ){
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                    Row(modifier = Modifier.padding(14.dp,6.dp)){
-                                        drawLineChart(getbillmonth(vm,true))
-                                    }
-                                }
-                            }
-                            item {
-                                var total = 0.0
-                                for (i in 0 until getbillmonth(vm,false).size) {
-                                    var balance = getbillmonth(vm,false)[i].balance
-                                    balance = balance / 100
-                                    total += balance
-                                }
-
-                                val num = total.toString()
-                                val bd = BigDecimal(num)
-                                val str = bd.setScale(2, RoundingMode.HALF_UP).toString()
-
-                                Card(
-                                    elevation = CardDefaults.cardElevation(
-                                        defaultElevation = 3.dp
-                                    ),
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 15.dp, vertical = 5.dp),
-                                    shape = MaterialTheme.shapes.medium
-                                ) {
-                                    ListItem(
-                                        headlineContent = { Text(text = "月支出  $str 元") },
-                                        leadingContent = {
-                                            Icon(
-                                                painterResource(R.drawable.credit_card),
-                                                contentDescription = "Localized description",
-                                            )
-                                        },
-                                        colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.primaryContainer)
-                                    )
-                                }
-                            }
-                            items(getbillmonth(vm,false).size) { item ->
-                                var balance = getbillmonth(vm,false)[item].balance
-                                balance /= 100
-                                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center)
-                                {
-                                    Card(
-                                        elevation = CardDefaults.cardElevation(
-                                            defaultElevation = 3.dp
-                                        ),
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(horizontal = 15.dp, vertical = 5.dp),
-                                        shape = MaterialTheme.shapes.medium
-                                    ) {
-                                        ListItem(
-                                            headlineContent = { Text(text = getbillmonth(vm,false)[item].date) },
-                                            supportingContent = { Text(text = "$balance 元") }
-                                        )
-                                    }
-                                }
-                            }
-                            item {
-                                Spacer(modifier = Modifier.height(innerPaddings.calculateBottomPadding()))
-                                Spacer(modifier = Modifier.height(5.dp))
-                            }
-                        }
-                      //  LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.padding(horizontal = 5.dp), state = scrollstate) {
-                      //  }
-                    }
-                }
-                ExtendedFloatingActionButton(
-                    text = { Text(text = "${Years} 年 ${Months} 月") },
-                    icon = { Icon(painter = painterResource(id = R.drawable.search), contentDescription = "") },
-                    onClick = { showBottomSheet = true },
-                    expanded = shouldShowAddButton,
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(innerPaddings)
-                        .padding(15.dp)
-                )
-            AnimatedVisibility(
-                visible = shouldShowAddButton,
-                enter = scaleIn() ,
-                exit = scaleOut(),
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(innerPaddings)
-                    .padding(15.dp)
-            ) {
-                if (shouldShowAddButton) {
-                    Row {
-                        FloatingActionButton(
-                            onClick = {
-                                if(Months.toInt() > 1)
-                                Click(-1)
-                                else MyToast("请切换年份")
-                                      },
-                        ) { Icon(Icons.Filled.ArrowBack, contentDescription = "") }
-                        Spacer(modifier = Modifier.padding(horizontal = 15.dp))
-                        FloatingActionButton(
-                            onClick = {
-                                if(Months.toInt() <= 11)
-                                Click(1)
-                                      },
-                        ) { Icon(Icons.Filled.ArrowForward, contentDescription = "")}
-                    }
-                }
-            }
-
-
-        } else {
-            ExtendedFloatingActionButton(
-                text = { Text(text = "${Years} 年 ${Months} 月") },
-                icon = { Icon(painter = painterResource(id = R.drawable.search), contentDescription = "") },
-                onClick = { Click(0) },
-                expanded = expanded,
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(innerPaddings)
-                    .padding(15.dp)
-            )
-        }
-    }
-}
-
-@SuppressLint("SuspiciousIndentation")
-@Composable
-@OptIn(ExperimentalMaterial3Api::class)
-fun monthCount(vm : LoginSuccessViewModel) {
+fun monthCount(vm : LoginSuccessViewModel,innerPadding : PaddingValues) {
 
     var clicked by remember { mutableStateOf(false) }
     var loading2 by remember { mutableStateOf(true) }
@@ -538,6 +269,7 @@ fun monthCount(vm : LoginSuccessViewModel) {
                     val str = bd.setScale(2, RoundingMode.HALF_UP).toString()
 
                     //Spacer(modifier = Modifier.height(50.dp))
+                    val list = getbillmonth(vm,false)
                     LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.padding(horizontal = 10.dp), state = scrollstate){
 
                         item {
@@ -578,8 +310,8 @@ fun monthCount(vm : LoginSuccessViewModel) {
                                 )
                             }
                         }
-                        items(getbillmonth(vm,false).size) { item ->
-                            var balance = getbillmonth(vm,false)[item].balance
+                        items(list.size) { item ->
+                            var balance = list[item].balance
                             balance /= 100
                             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center)
                             {
@@ -593,13 +325,15 @@ fun monthCount(vm : LoginSuccessViewModel) {
                                     shape = MaterialTheme.shapes.medium
                                 ) {
                                     ListItem(
-                                        overlineContent = { Text(text = getbillmonth(vm,false)[item].date) },
+                                        overlineContent = { Text(text = list[item].date) },
                                         headlineContent = { Text(text = "￥$balance") },
                                         leadingContent = { Icon(painter = painterResource(id = R.drawable.paid), contentDescription = "")}
                                     )
                                 }
                             }
                         }
+                        items(if(list.size % 2 == 0) 1 else 2) { Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding())) }
+
                     }
                     //  LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.padding(horizontal = 5.dp), state = scrollstate) {
                     //  }
@@ -612,7 +346,7 @@ fun monthCount(vm : LoginSuccessViewModel) {
                 expanded = shouldShowAddButton,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    //   .padding(innerPaddings)
+                       .padding(innerPadding)
                     .padding(15.dp)
             )
             AnimatedVisibility(
@@ -621,7 +355,7 @@ fun monthCount(vm : LoginSuccessViewModel) {
                 exit = scaleOut(),
                 modifier = Modifier
                     .align(Alignment.BottomStart)
-                    /// .padding(innerPaddings)
+                     .padding(innerPadding)
                     .padding(15.dp)
             ) {
                 if (shouldShowAddButton) {
@@ -653,7 +387,7 @@ fun monthCount(vm : LoginSuccessViewModel) {
                 expanded = expanded,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    // .padding(innerPaddings)
+                    .padding(innerPadding)
                     .padding(15.dp)
             )
         }

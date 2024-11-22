@@ -3,6 +3,8 @@ package com.hfut.schedule.ui.Activity.success.focus.main
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.TweenSpec
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -12,11 +14,16 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -35,6 +42,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ViewModel.LoginViewModel
@@ -58,6 +68,7 @@ import com.hfut.schedule.ui.Activity.success.focus.newWangkeItem
 import com.hfut.schedule.ui.Activity.success.main.saved.NetWorkUpdate
 import com.hfut.schedule.ui.Activity.success.search.Search.Exam.JxglstuExamUI
 import com.hfut.schedule.ui.Activity.success.search.Search.Exam.getExamJXGLSTU
+import com.hfut.schedule.ui.UIUtils.CustomTabRow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -69,7 +80,7 @@ import kotlinx.coroutines.launch
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
-fun TodayScreen(vm : LoginSuccessViewModel, vm2 : LoginViewModel, innerPadding : PaddingValues, blur : Boolean, vmUI : UIViewModel, ifSaved : Boolean, webVpn : Boolean) {
+fun TodayScreen(vm : LoginSuccessViewModel, vm2 : LoginViewModel, innerPadding : PaddingValues, blur : Boolean, vmUI : UIViewModel, ifSaved : Boolean, webVpn : Boolean,state: PagerState) {
 
     val  TAB_LEFT = 0
     val TAB_RIGHT = 1
@@ -108,33 +119,14 @@ fun TodayScreen(vm : LoginSuccessViewModel, vm2 : LoginViewModel, innerPadding :
         Column(modifier = Modifier
             .fillMaxSize()
             ){
-            Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
            // val paperState = rememberPagerState { TAB_LEFT }
             //var state by remember { mutableStateOf(TAB_LEFT) }
 
 
-            val pagerState = rememberPagerState(pageCount = { 2 })
-            val titles = listOf("重要安排","其他事项")
+        //    val pagerState = rememberPagerState(pageCount = { 2 })
+          //  val titles = listOf("重要安排","其他事项")
 
-            Column {
-                TabRow(selectedTabIndex = pagerState.currentPage) {
-                    titles.forEachIndexed { index, title ->
-                        Tab(
-                            selected = pagerState.currentPage == index,
-                            onClick = {
-                                scope.launch {
-                                    pagerState.animateScrollToPage(index)
-                                }
-                            },
-                            text = { Text(text = title) },
-                             modifier = Modifier.background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = if(blur).5f else 1f))
-                        )
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(10.dp))
-
+          //  CustomTabRow(pagerState, titles, blur)
 
             Box(modifier = Modifier
                 .fillMaxHeight()
@@ -152,10 +144,10 @@ fun TodayScreen(vm : LoginSuccessViewModel, vm2 : LoginViewModel, innerPadding :
                 //当第二天为下一周的周一时，周数+1
                 when(weekdaytomorrow) { 1 -> Nextweek += 1 }
                 when (weekdayToday) { 0 -> weekdayToday = 7 }
-                HorizontalPager(state = pagerState) { page ->
-
+                HorizontalPager(state = state) { page ->
                     Scaffold {
                         LazyColumn(state = scrollstate) {
+                            item { Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding())) }
                             when(page) {
                                 TAB_LEFT -> {
                                     //一卡通
@@ -212,11 +204,13 @@ fun TodayScreen(vm : LoginSuccessViewModel, vm2 : LoginViewModel, innerPadding :
                             item { Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding())) }
                         }
                     }
-
                 }
                 AddButton(isVisible = shouldShowAddButton,innerPadding)
-                PullRefreshIndicator(refreshing, states, Modifier.align(Alignment.TopCenter))
+                PullRefreshIndicator(refreshing, states, Modifier.padding(innerPadding).align(Alignment.TopCenter))
             }
 
         }
 }
+
+
+

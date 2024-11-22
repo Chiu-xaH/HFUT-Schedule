@@ -115,7 +115,8 @@ fun SearchScreen(vm : LoginSuccessViewModel,ifSaved : Boolean,innerPaddings : Pa
 
         Column(
             modifier = Modifier
-                .haze(state = hazeState, backgroundColor = MaterialTheme.colorScheme.surface,)
+                .haze(state = hazeState, //backgroundColor = MaterialTheme.colorScheme.surface,
+                    )
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
                 .padding(innerPaddings)

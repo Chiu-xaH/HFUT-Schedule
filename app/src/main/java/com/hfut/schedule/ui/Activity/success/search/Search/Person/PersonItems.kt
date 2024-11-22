@@ -100,14 +100,13 @@ fun PersonItems(ifSaved : Boolean) {
    // var showPicture by remember { mutableStateOf(false) }
     //val sizePicture by animateDpAsState(targetValue = if (!showPicture) 130.dp else 0.dp, label = "")
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
                 colors = TopAppBarDefaults.mediumTopAppBarColors(
                     containerColor = Color.Transparent,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
-                title = { Text("个人信息") }
+                title = { Text("个人信息") },
             )
         },) {innerPadding ->
         Column(

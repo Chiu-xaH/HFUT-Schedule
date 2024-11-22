@@ -12,6 +12,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,8 +21,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -86,7 +89,13 @@ import java.time.LocalDate
 )
 @SuppressLint("SuspiciousIndentation", "CoroutineCreationDuringComposition")
 @Composable
-fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues,vmUI : UIViewModel,friendUserName : String? = null) {
+fun SaveCourse(
+    showAll: Boolean,
+    innerPaddings: PaddingValues,
+    vmUI : UIViewModel,
+    friendUserName : String? = null,
+    onDateChange : (LocalDate) ->Unit,
+    today: LocalDate) {
 
     val table_1_1 by rememberSaveable { mutableStateOf("") }
     val table_1_2 by rememberSaveable { mutableStateOf("") }
@@ -629,42 +638,17 @@ fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues,vmUI : UIViewModel
         }
     }
 
-    var today by rememberSaveable { mutableStateOf(LocalDate.now()) }
-    val mondayOfCurrentWeek = today.minusDays(today.dayOfWeek.value - 1L)
-
-
+//    var today by rememberSaveable { mutableStateOf(LocalDate.now()) }
+//    val mondayOfCurrentWeek = today.minusDays(today.dayOfWeek.value - 1L)
+//
+//
 
         Column(modifier = Modifier.fillMaxSize()
         ) {
-            Spacer(modifier = Modifier.height(innerPaddings.calculateTopPadding()))
-            Spacer(modifier = Modifier.height(5.dp))
+           // Spacer(modifier = Modifier.height(innerPaddings.calculateTopPadding()))
+           // Spacer(modifier = Modifier.height(5.dp))
 
-            LazyVerticalGrid(columns = GridCells.Fixed(if(showAll)7 else 5),modifier = Modifier.padding(horizontal = 10.dp)){
-                items(if(showAll)7 else 5) { item ->
-                    val date = mondayOfCurrentWeek.plusDays(item.toLong()).toString()
-                    if (Benweeks > 0)
-                        Text(
-                            text = date.substringAfter("-"),
-                            textAlign = TextAlign.Center,
-                            fontSize = if(showAll)12.sp else 14.sp,
-                            color = if(date == GetDate.Date_yyyy_MM_dd) MaterialTheme.colorScheme.primary else Color.Gray,
-                            style = if(date == GetDate.Date_yyyy_MM_dd) {
-                                TextStyle(shadow = Shadow(
-                                    color = Color.Gray,
-                                    offset = Offset(2.0f,2.0f),
-                                    blurRadius = 7.0f
-                                ))
-                            } else TextStyle(),
-                            fontWeight = if(date == GetDate.Date_yyyy_MM_dd) FontWeight.Bold else FontWeight.Normal
-                        )
-                    else Text(
-                        text = "未开学",
-                        textAlign = TextAlign.Center,
-                        color = Color.Gray,
-                        fontSize = if(showAll)12.sp else 14.sp
-                    )
-                }
-            }
+            //ScheduleTopDate(showAll,today)
 
             Box(
                 modifier = Modifier
@@ -678,6 +662,7 @@ fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues,vmUI : UIViewModel
                     modifier = Modifier.padding(7.dp),
                     state = scrollstate
                 ) {
+                    items(if(showAll)7 else 5) { Spacer(modifier = Modifier.height(innerPaddings.calculateTopPadding())) }
                     items(if(showAll)42 else 30) { cell ->
                         val texts = if(showAll)tableall[cell] else table[cell]
                         Card(
@@ -724,7 +709,8 @@ fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues,vmUI : UIViewModel
                             onClick = {
                                 if (Bianhuaweeks > 1) {
                                     Bianhuaweeks-- - 1
-                                    today = today.minusDays(7)
+                                    onDateChange(today.minusDays(7))
+                                    //today = today.minusDays(7)
                                 }
                             },
                         ) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Add Button") }
@@ -745,7 +731,8 @@ fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues,vmUI : UIViewModel
                         ExtendedFloatingActionButton(
                             onClick = {
                                 Bianhuaweeks = Benweeks
-                                today = LocalDate.now()
+                                onDateChange(LocalDate.now())
+                                //today = LocalDate.now()
                             },
                         ) {
                             AnimatedContent(
@@ -796,15 +783,52 @@ fun SaveCourse(showAll: Boolean, innerPaddings: PaddingValues,vmUI : UIViewModel
                             onClick = {
                                 if (Bianhuaweeks < 20) {
                                     Bianhuaweeks++ + 1
-                                    today = today.plusDays(7)
+                                    onDateChange(today.plusDays(7))
                                 }
                             },
                         ) { Icon(Icons.AutoMirrored.Filled.ArrowForward, "Add Button") }
                     }
                 }
-                PullRefreshIndicator(refreshing, states, Modifier.align(Alignment.TopCenter))
+                PullRefreshIndicator(refreshing, states,
+                    Modifier
+                        .align(Alignment.TopCenter)
+                        .padding(innerPaddings))
             }
-
-
         }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun ScheduleTopDate(showAll: Boolean,today : LocalDate,blur : Boolean) {
+    val mondayOfCurrentWeek = today.minusDays(today.dayOfWeek.value - 1L)
+    Column(modifier = Modifier.background(if(blur) Color.Transparent else MaterialTheme.colorScheme.surface)) {
+        Spacer(modifier = Modifier.height(5.dp))
+        LazyVerticalGrid(columns = GridCells.Fixed(if(showAll)7 else 5),modifier = Modifier.padding(horizontal = 10.dp)){
+            items(if(showAll)7 else 5) { item ->
+                val date = mondayOfCurrentWeek.plusDays(item.toLong()).toString()
+                if (Benweeks > 0)
+                    Text(
+                        text = date.substringAfter("-"),
+                        textAlign = TextAlign.Center,
+                        fontSize = if(showAll)12.sp else 14.sp,
+                        color = if(date == GetDate.Date_yyyy_MM_dd) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.primary,
+                        style = if(date == GetDate.Date_yyyy_MM_dd) {
+                            TextStyle(shadow = Shadow(
+                                color = Color.Gray,
+                                offset = Offset(2.0f,2.0f),
+                                blurRadius = 7.0f
+                            ))
+                        } else TextStyle()
+                        , fontWeight = if(date == GetDate.Date_yyyy_MM_dd) FontWeight.Bold else FontWeight.Normal
+                    )
+                else Text(
+                    text = "未开学",
+                    textAlign = TextAlign.Center,
+                    color = Color.Gray,
+                    fontSize = if(showAll)12.sp else 14.sp
+                )
+            }
+        }
+    }
+
 }

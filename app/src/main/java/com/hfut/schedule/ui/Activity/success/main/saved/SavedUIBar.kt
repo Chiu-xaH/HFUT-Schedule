@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
@@ -49,6 +50,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -88,6 +90,7 @@ import com.hfut.schedule.ui.Activity.success.cube.main.SettingsScreen
 import com.hfut.schedule.ui.Activity.success.focus.main.TodayScreen
 import com.hfut.schedule.ui.Activity.success.search.Search.More.Login
 import com.hfut.schedule.ui.Activity.success.calendar.next.NextCourse
+import com.hfut.schedule.ui.Activity.success.calendar.nonet.ScheduleTopDate
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.MyAPIItem
 import com.hfut.schedule.ui.Activity.success.main.CustomSchedules
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.NotificationItems
@@ -96,15 +99,22 @@ import com.hfut.schedule.ui.Activity.success.search.Search.TotalCourse.CourseTot
 import com.hfut.schedule.ui.Activity.success.search.Search.Web.LabUI
 import com.hfut.schedule.ui.Activity.success.search.main.SearchScreen
 import com.hfut.schedule.ui.Activity.success.search.main.getName
+import com.hfut.schedule.ui.UIUtils.CustomTabRow
 import com.hfut.schedule.ui.UIUtils.DividerText
 import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.ScrollText
+import com.hfut.schedule.ui.UIUtils.bottomBarBlur
+import com.hfut.schedule.ui.UIUtils.topBarBlur
+import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeStyle
+import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.haze
 import dev.chrisbanes.haze.hazeChild
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 @SuppressLint("SuspiciousIndentation", "CoroutineCreationDuringComposition",
     "UnusedMaterial3ScaffoldPaddingParameter"
@@ -115,7 +125,7 @@ import kotlinx.coroutines.launch
 fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel) {
    // val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
     val navController = rememberNavController()
-    var isEnabled by remember { mutableStateOf(true) }
+    val isEnabled by remember { mutableStateOf(true) }
     val switch = prefs.getBoolean("SWITCH",true)
     var showlable by remember { mutableStateOf(switch) }
     val hazeState = remember { HazeState() }
@@ -128,11 +138,11 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
    // val savenum = prefs.getInt("GradeNum",0) + prefs.getInt("ExamNum",0) + prefs.getInt("Notifications",0)
     //val getnum = getGrade().size + getExam().size + getNotifications().size
     //if (savenum != getnum) showBadge2 = true
-    var animation by remember { mutableStateOf(prefs.getInt("ANIMATION",MyApplication.Animation)) }
+    val animation by remember { mutableStateOf(prefs.getInt("ANIMATION",MyApplication.Animation)) }
 
     //Log.d("动画",animation.toString())
 //判定是否以聚焦作为第一页
-    var first : String = when (prefs.getBoolean("SWITCHFOCUS",true)) {
+    val first : String = when (prefs.getBoolean("SWITCHFOCUS",true)) {
         true -> FOCUS.name
         false -> COURSES.name
     }
@@ -269,17 +279,21 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
     val Observer = Observer<Boolean> { result ->
         findCourse = result
     }
+    var today by remember { mutableStateOf(LocalDate.now()) }
+
+
+    val pagerState = rememberPagerState(pageCount = { 2 })
+    val titles = listOf("重要安排","其他事项")
     vmUI.findNewCourse.observeForever(Observer)
     if(findCourse) vmUI.findNewCourse.removeObserver(Observer)
     Scaffold(
         modifier = Modifier.fillMaxSize(),
             //.blur(blurRadius, BlurredEdgeTreatment.Unbounded),
         topBar = {
-            Column {
+            Column(modifier = Modifier.topBarBlur(hazeState, blur)) {
                 TopAppBar(
-                    modifier = Modifier.hazeChild(state = hazeState, blurRadius = MyApplication.Blur, tint = Color.Transparent, noiseFactor = 0f),
                     colors = TopAppBarDefaults.mediumTopAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = if(blur).50f else 1f),
+                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = if(blur) 0f else 1f),
                         titleContentColor = MaterialTheme.colorScheme.primary,
                     ),
                     title = { ScrollText(texts(vm,bottomBarItems)) },
@@ -328,15 +342,24 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
                         }
                     },
                 )
-                if(bottomBarItems != FOCUS)
-                Divider()
+                if(!blur) {
+                    if(bottomBarItems != FOCUS)
+                        Divider()
+                }
+                when(bottomBarItems){
+                    COURSES -> ScheduleTopDate(showAll,today,blur)
+                    FOCUS -> CustomTabRow(pagerState, titles, blur)
+                    else -> null
+                }
             }
         },
         bottomBar = {
             Column {
-                Divider()
-                NavigationBar(containerColor = if(blur) MaterialTheme.colorScheme.primaryContainer.copy(.25f) else ListItemDefaults.containerColor ,
-                    modifier = Modifier.hazeChild(state = hazeState, blurRadius = MyApplication.Blur, tint = Color.Transparent, noiseFactor = 0f)) {
+                if(!blur)
+                    Divider()
+                NavigationBar(containerColor = if(blur) Color.Transparent else ListItemDefaults.containerColor ,
+                    modifier = Modifier.bottomBarBlur(hazeState, blur)
+                ) {
                     //悬浮底栏效果
                     //modifier = Modifier.padding(15.dp).shadow(10.dp).clip(RoundedCornerShape(14.dp))
                     val items = listOf(
@@ -408,7 +431,7 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
             modifier = Modifier
             .haze(
                 state = hazeState,
-                backgroundColor = MaterialTheme.colorScheme.surface,
+                //backgroundColor = MaterialTheme.colorScheme.surface,
             )) {
             composable(COURSES.name) {
             Scaffold(modifier = Modifier.pointerInput(Unit) {
@@ -422,20 +445,20 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
             }) {
                 if(!isFriend)
                     when (swapUI) {
-                        COMMUNITY -> SaveCourse(showAll, innerPadding,vmUI)
-                        JXGLSTU -> prefs.getString("Username","")?.let { it1 -> CalendarScreen(showAll,vm, it1.substring(0,2),innerPadding,vmUI,false,vm2,false) }
+                        COMMUNITY -> SaveCourse(showAll, innerPadding,vmUI, onDateChange = { new -> today = new}, today = today)
+                        JXGLSTU -> prefs.getString("Username","")?.let { it1 -> CalendarScreen(showAll,vm, it1.substring(0,2),innerPadding,vmUI,false,vm2,false,{newDate -> today = newDate},today) }
                             ///CustomSchedules(showAll,innerPadding,vmUI,-1)
                         NEXT -> {
                             Column(modifier = Modifier.padding(innerPadding)) {
-                                prefs.getString("gradeNext","23")?.let { DatumUI(showAll, it, innerPadding, vmUI) }
+                                prefs.getString("gradeNext","23")?.let { DatumUI(showAll, it, innerPadding, vmUI,)}
                             }
                         }
                         else -> {
-                            CustomSchedules(showAll,innerPadding,vmUI,swapUI-2)
+                            CustomSchedules(showAll,innerPadding,vmUI,swapUI-2,{newDate-> today = newDate}, today)
                         }
                     }
                 else {
-                    SaveCourse(showAll,innerPadding,vmUI,swapUI.toString())
+                    SaveCourse(showAll,innerPadding,vmUI,swapUI.toString(),onDateChange = { new -> today = new}, today = today)
                 }
 
             }
@@ -443,7 +466,7 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
             }
             composable(FOCUS.name) {
                 Scaffold {
-                    TodayScreen(vm,vm2,innerPadding, blur,vmUI,ifSaved,false)
+                    TodayScreen(vm,vm2,innerPadding, blur,vmUI,ifSaved,false,pagerState)
                 }
 
                 //Test()
@@ -514,3 +537,4 @@ fun texts(vm : LoginSuccessViewModel,num : BottomBarItems) : String {
         else -> return "HFUT Focus"
     }
 }
+

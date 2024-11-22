@@ -1,10 +1,10 @@
 
 buildscript {
     ext {
-        compose_version = '1.4.2'
+        //compose_version = '1.4.2'
     }
     dependencies {
-        var hilt_version = '2.40.1'
+        var hilt_version = '2.52'
         classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_version"
     }
     repositories {
@@ -17,5 +17,5 @@ buildscript {
 plugins {
     id 'com.android.application' version '8.1.4' apply false
     id 'com.android.library' version '8.1.4' apply false
-    id 'org.jetbrains.kotlin.android' version '1.9.0' apply false
+    id 'org.jetbrains.kotlin.android' version '2.0.0' apply false
 }

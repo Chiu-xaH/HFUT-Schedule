@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -28,6 +29,7 @@ import com.hfut.schedule.ViewModel.LoginSuccessViewModel
 import com.hfut.schedule.ui.Activity.card.bills.main.BillItem
 import com.hfut.schedule.ui.Activity.card.counts.main.monthCount
 import com.hfut.schedule.ui.Activity.card.bills.todayCount
+import com.hfut.schedule.ui.UIUtils.CustomTabRow
 import com.hfut.schedule.ui.UIUtils.DevelopingUI
 import com.hfut.schedule.ui.UIUtils.EmptyUI
 import kotlinx.coroutines.launch
@@ -35,51 +37,48 @@ import kotlinx.coroutines.launch
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CardHome(innerPadding : PaddingValues,vm : LoginSuccessViewModel,blur : Boolean) {
+fun CardHome(innerPadding : PaddingValues,vm : LoginSuccessViewModel,blur : Boolean,pagerState : PagerState) {
     val TAB_DAY = 0
-    val TAB_WEEK = 1
-    val TAB_MONTH = 2
-    val TAB_TERM = 3
-    val scope = rememberCoroutineScope()
-    val pagerState = rememberPagerState(pageCount = { 4 })
-    Column(modifier = Modifier.padding(innerPadding)) {
-        //Spacer(modifier = Modifier.height(5.dp))
-        var state by remember { mutableStateOf(TAB_DAY) }
-        val titles = listOf("日","周","月","学期")
-        Column {
-            TabRow(selectedTabIndex = pagerState.currentPage) {
-                titles.forEachIndexed { index, title ->
-                    Tab(
-                        selected = pagerState.currentPage == index,
-                        onClick = { scope.launch {
-                            pagerState.animateScrollToPage(index)
-                        } },
-                        text = { Text(text = title) },
-                        modifier = Modifier.background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = if(blur).5f else 1f))
-                    )
-                }
-            }
-        }
-        Spacer(modifier = Modifier.height(5.dp))
+   // val TAB_WEEK = 1
+    val TAB_MONTH = 1
+    val TAB_TERM = 2
+  //  val scope = rememberCoroutineScope()
+  //  val pagerState = rememberPagerState(pageCount = { 4 })
+    Column {
+        Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
+     //   var state by remember { mutableStateOf(TAB_DAY) }
+
+//        Column {
+//            TabRow(selectedTabIndex = pagerState.currentPage) {
+//                titles.forEachIndexed { index, title ->
+//                    Tab(
+//                        selected = pagerState.currentPage == index,
+//                        onClick = { scope.launch {
+//                            pagerState.animateScrollToPage(index)
+//                        } },
+//                        text = { Text(text = title) },
+//                        modifier = Modifier.background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = if(blur) 0f else 1f))
+//                    )
+//                }
+//            }
+//        }
+//        Spacer(modifier = Modifier.height(5.dp))
         HorizontalPager(state = pagerState) { page ->
             Scaffold { it->
                 if(page == TAB_MONTH) {
-                    monthCount(vm)
+                    monthCount(vm,innerPadding)
                 } else {
                     LazyColumn() {
                         when (page) {
                             TAB_DAY ->  {
-                                if(BillItem(vm).size == 0) item {EmptyUI()}
+                                if(BillItem(vm).size == 0) item { EmptyUI() }
                                 else { items(BillItem(vm).size) { item -> todayCount(vm, item) } }
                             }
-
-                            TAB_WEEK ->  item { DevelopingUI() }
-
                             TAB_TERM -> item { DevelopingUI() }
                         }
+                        item { Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding())) }
                     }
                 }
-                Spacer(modifier = Modifier.padding(it))
             }
         }
     }

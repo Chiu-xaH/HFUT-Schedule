@@ -90,7 +90,7 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean
 
             }
         }
-        val sheetState_version = rememberModalBottomSheetState()
+        val sheetState_version = rememberModalBottomSheetState(skipPartiallyExpanded = true)
         var showBottomSheet_version by remember { mutableStateOf(false) }
         if (showBottomSheet_version) {
             ModalBottomSheet(

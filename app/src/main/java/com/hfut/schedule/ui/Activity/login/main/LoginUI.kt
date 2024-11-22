@@ -10,9 +10,16 @@ import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.with
+import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -37,6 +44,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -48,6 +56,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -61,12 +70,15 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ViewModel.LoginViewModel
@@ -84,6 +96,7 @@ import com.hfut.schedule.ui.UIUtils.Round
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 //登录方法，auto代表前台调用
@@ -187,7 +200,9 @@ fun LoginUI(vm : LoginViewModel) {
     val context = LocalContext.current
     var showBadge by remember { mutableStateOf(false) }
     if (APPVersion.getVersionName() != prefs.getString("version", APPVersion.getVersionName())) showBadge = true
-    val hazeState = remember { HazeState() }
+  //  val hazeState = remember { HazeState() }
+
+
     if (showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = {
@@ -222,12 +237,21 @@ fun LoginUI(vm : LoginViewModel) {
 
     Scaffold(
         topBar = {
-            TopAppBar(
+            LargeTopAppBar(
                 colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    containerColor = Color.Transparent,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
-                title = { Text("登录") },
+                title = {
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            text = "教务登录",
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center,
+                            //style = MaterialTheme.typography.titleLarge
+                        )
+                    }
+                        },
                 actions = {
                   //  Row {
                         TextButton(onClick = {
@@ -246,16 +270,58 @@ fun LoginUI(vm : LoginViewModel) {
                     //    Text(text = "   ")
                    /// }
                    
+                },
+                navigationIcon  = {
+
+                    AnimatedWelcomeScreen()
+
                 }
             )
-        }
+        },
     ) {innerPadding ->
         Column(modifier = Modifier
             .padding(innerPadding)
             .fillMaxSize()) {
             TwoTextField(vm)
+            //Text(text = "欢迎使用")
         }
     }
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+@Composable
+fun AnimatedWelcomeScreen() {
+    val welcomeTexts = listOf(
+        "你好", "欢迎使用", "Hello", "Hola", "Bonjour","＼(≧▽≦)／","(^-^*)", "(｡･ω･)ﾉﾞ", "ヾ(*ﾟ▽ﾟ)ﾉ", "（≧∀≦）", "U｡･x･)ﾉ","<(￣︶￣)>","٩(˘◡˘)۶"
+    )
+    var currentIndex by remember { mutableStateOf(0) }
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(3000) // 每3秒切换
+            currentIndex = (currentIndex + 1) % welcomeTexts.size
+        }
+    }
+
+    // 界面布局
+
+    Column(modifier = Modifier
+        .padding(horizontal = 23.dp)) {
+        Spacer(modifier = Modifier.height(20.dp))
+        AnimatedContent(
+            targetState = welcomeTexts[currentIndex],
+            transitionSpec = {
+                fadeIn(animationSpec = tween(500)) with fadeOut(animationSpec = tween(500))
+            }, label = ""
+        ) { targetText ->
+            Text(
+                text = targetText,
+                fontSize = 38.sp,
+                color = MaterialTheme.colorScheme.secondaryContainer
+            )
+        }
+    }
+
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -292,13 +358,13 @@ fun TwoTextField(vm : LoginViewModel) {
             label = "" // 使用弹簧动画
         )
 
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
             TextField(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(horizontal = 40.dp),
+                    .padding(horizontal = 25.dp),
                 value = username,
                 onValueChange = { username = it },
                 label = { Text("学号" ) },
@@ -325,7 +391,7 @@ fun TwoTextField(vm : LoginViewModel) {
             TextField(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(horizontal = 40.dp),
+                    .padding(horizontal = 25.dp),
                 value = inputAES,
                 onValueChange = { inputAES = it },
                 label = { Text("信息门户密码") },
@@ -366,7 +432,7 @@ fun TwoTextField(vm : LoginViewModel) {
                     }, modifier = Modifier.scale(scale.value),
                 interactionSource = interactionSource
 
-            ) { Text("教务登录") }
+            ) { Text("登录") }
 
             Spacer(modifier = Modifier.width(15.dp))
 
@@ -375,7 +441,7 @@ fun TwoTextField(vm : LoginViewModel) {
                 modifier = Modifier.scale(scale2.value),
                 interactionSource = interactionSource2,
 
-                ) { Text("免登录") }
+                ) { Text("主界面") }
         }
        // Spacer(modifier = Modifier.height(10.dp))
         //GetComponentHeightExample()

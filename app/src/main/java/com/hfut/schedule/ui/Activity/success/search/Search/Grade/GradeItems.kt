@@ -13,6 +13,7 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -166,14 +167,11 @@ fun GradeItemUI(vm :LoginSuccessViewModel,innerPadding : PaddingValues) {
             showitem_year = false})
     }
 
-
-
-
-
     @SuppressLint("SuspiciousIndentation")
     @Composable
     fun UIS(){
         Column {
+            Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
             Row(modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 15.dp, vertical = 0.dp), horizontalArrangement = Arrangement.Start){
@@ -291,37 +289,42 @@ fun GradeItemUI(vm :LoginSuccessViewModel,innerPadding : PaddingValues) {
                             }
                         }
                     }
+                    item { Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding())) }
                 }
         }
     }
 
 
-    if(clicked){
-        Box{
-            AnimatedVisibility(
-                visible = loading,
-                enter = fadeIn(),
-                exit = fadeOut(),
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .align(Alignment.Center)
-            ) {
-                Column {
-                    Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
-                    Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)  {
-                        CircularProgressIndicator()
+
+
+        if(clicked){
+            Box{
+                androidx.compose.animation.AnimatedVisibility(
+                    visible = loading,
+                    enter = fadeIn(),
+                    exit = fadeOut(),
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .align(Alignment.Center)
+                ) {
+                    Column {
+                        Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
+                        Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)  {
+                            CircularProgressIndicator()
+                        }
                     }
                 }
-            }
 
-            AnimatedVisibility(
-                visible = !loading,
-                enter = fadeIn(),
-                exit = fadeOut()
-            ){ UIS() }
+                androidx.compose.animation.AnimatedVisibility(
+                    visible = !loading,
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ){ UIS() }
+            }
         }
-    }
-    else { UIS() }
+        else { UIS() }
+
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -362,7 +365,7 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues) {
     if(getGradeJXGLSTU().size == 0) EmptyUI()
     else
     LazyColumn{
-       // item { TotaGrade() }
+        item { Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding())) }
         item { Spacer(modifier = Modifier.height(5.dp)) }
         items(getGradeJXGLSTU().size) { item ->
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
@@ -389,6 +392,7 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues) {
                 }
             }
         }
+        item { Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding())) }
     }
 }
 

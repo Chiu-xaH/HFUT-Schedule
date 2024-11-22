@@ -72,7 +72,11 @@ fun datumMode(Mode : DatumMode) {
 @OptIn(ExperimentalAnimationApi::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun DatumUI(showAll : Boolean, grade : String, innerPadding : PaddingValues, vmUI : UIViewModel) {
+fun DatumUI(showAll : Boolean,
+            grade : String,
+            innerPadding : PaddingValues,
+            vmUI : UIViewModel,
+           ) {
 
     var table_1_1 by rememberSaveable { mutableStateOf("") }
     var table_1_2 by rememberSaveable { mutableStateOf("") }
@@ -160,9 +164,9 @@ fun DatumUI(showAll : Boolean, grade : String, innerPadding : PaddingValues, vmU
     var sheet_5_7 by rememberSaveable { mutableStateOf("") }
     var sheet_6_6 by rememberSaveable { mutableStateOf("") }
     var sheet_6_7 by rememberSaveable { mutableStateOf("") }
-
-    var today by rememberSaveable { mutableStateOf(LocalDate.now()) }
-    val mondayOfCurrentWeek = today.minusDays(today.dayOfWeek.value - 1L)
+//
+//    var today by rememberSaveable { mutableStateOf(LocalDate.now()) }
+//    val mondayOfCurrentWeek = today.minusDays(today.dayOfWeek.value - 1L)
 
     val tableall = arrayOf(
         table_1_1, table_1_2, table_1_3, table_1_4, table_1_5,table_1_6,table_1_7,
@@ -739,7 +743,7 @@ fun DatumUI(showAll : Boolean, grade : String, innerPadding : PaddingValues, vmU
                             if (Bianhuaweeks > 1) {
                                 Bianhuaweeks-- - 1
                                 if(showAll) UpdateAll() else Update()
-                                today = today.minusDays(7)
+                                //onDateChange(today.minusDays(7))
                             }
                         },
                     ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
@@ -761,7 +765,7 @@ fun DatumUI(showAll : Boolean, grade : String, innerPadding : PaddingValues, vmU
                         onClick = {
                             Bianhuaweeks = 1
                             if(showAll) UpdateAll() else Update()
-                            today = LocalDate.now()
+                            //onDateChange(LocalDate.now())
                         },
                     ) {
                         AnimatedContent(
@@ -791,7 +795,7 @@ fun DatumUI(showAll : Boolean, grade : String, innerPadding : PaddingValues, vmU
                             if (Bianhuaweeks < 20) {
                                 Bianhuaweeks++ + 1
                                 if(showAll) UpdateAll() else Update()
-                                today = today.plusDays(7)
+                                //onDateChange(today.plusDays(7))
                             }
                         },
                     ) { Icon(Icons.Filled.ArrowForward, "Add Button") }

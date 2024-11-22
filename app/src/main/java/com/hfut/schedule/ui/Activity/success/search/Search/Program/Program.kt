@@ -512,7 +512,7 @@ fun ProgramUIInfo(num : Int,vm : LoginSuccessViewModel,ifSaved : Boolean) {
                         modifier = Modifier.clickable {
                             showBottomSheet_Program = true
                             num2 = item
-                            title = listTwo[item].type + " | 学分 " + listTwo[item].requiedCredits
+                            title = listTwo[item].type + " | 学分要求 " + listTwo[item].requiedCredits
                         },
                     )
                 }

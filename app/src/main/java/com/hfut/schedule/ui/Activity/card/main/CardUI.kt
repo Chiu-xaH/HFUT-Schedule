@@ -19,6 +19,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -66,7 +67,10 @@ import com.hfut.schedule.ui.Activity.card.bills.main.CardBills
 import com.hfut.schedule.ui.Activity.card.counts.CardHome
 import com.hfut.schedule.ui.Activity.card.function.main.turnToBottomBar
 import com.hfut.schedule.ui.Activity.success.focus.Focus.GetZjgdCard
+import com.hfut.schedule.ui.UIUtils.CustomTabRow
 import com.hfut.schedule.ui.UIUtils.MyToast
+import com.hfut.schedule.ui.UIUtils.bottomBarBlur
+import com.hfut.schedule.ui.UIUtils.topBarBlur
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 import dev.chrisbanes.haze.hazeChild
@@ -79,7 +83,7 @@ import kotlinx.coroutines.launch
 @SuppressLint("SuspiciousIndentation", "UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CardUI(vm : LoginSuccessViewModel, activity : Activity,vmUI : UIViewModel) {
+fun CardUI(vm : LoginSuccessViewModel,vmUI : UIViewModel) {
 
     val showBottomSheet_Bills by remember { mutableStateOf(false) }
     val animation by remember { mutableStateOf(prefs.getInt("ANIMATION",MyApplication.Animation)) }
@@ -90,6 +94,10 @@ fun CardUI(vm : LoginSuccessViewModel, activity : Activity,vmUI : UIViewModel) {
     var page by remember { mutableStateOf(1) }
     var loading by remember { mutableStateOf(true) }
     var bottomBarItems by remember { mutableStateOf(CardBarItems.BILLS) }
+
+    val pagerState = rememberPagerState(pageCount = { 4 })
+    val titles = listOf("日","月","学期")
+
 
     GetZjgdCard(vm, vmUI)
 
@@ -150,11 +158,10 @@ fun CardUI(vm : LoginSuccessViewModel, activity : Activity,vmUI : UIViewModel) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            Column {
+            Column(modifier = Modifier.topBarBlur(hazeState, blur)) {
                 TopAppBar(
-                    modifier = Modifier.hazeChild(state = hazeState, blurRadius = MyApplication.Blur, tint = Color.Transparent, noiseFactor = 0f),
                     colors = TopAppBarDefaults.mediumTopAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = if(blur).50f else 1f),
+                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = if(blur) 0f else 1f),
                         titleContentColor = MaterialTheme.colorScheme.primary,
                     ),
                     title = { Text("一卡通") },
@@ -166,16 +173,23 @@ fun CardUI(vm : LoginSuccessViewModel, activity : Activity,vmUI : UIViewModel) {
                         }
                     }
                 )
-                if(CardBarItems.COUNT != bottomBarItems)
-                Divider()
+                if(!blur) {
+                    if(CardBarItems.COUNT != bottomBarItems)
+                        Divider()
+                }
+                if(bottomBarItems == CardBarItems.COUNT) {
+                    CustomTabRow(pagerState, titles, blur)
+                }
             }
         },
         bottomBar = {
             Column {
-                Divider()
-                NavigationBar(containerColor = if(blur) MaterialTheme.colorScheme.primaryContainer.copy(.25f) else ListItemDefaults.containerColor ,
+                if(!blur) {
+                    Divider()
+                }
+                NavigationBar(containerColor = if(blur) Color.Transparent else ListItemDefaults.containerColor ,
                     modifier = Modifier
-                        .hazeChild(state = hazeState, blurRadius = MyApplication.Blur, tint = Color.Transparent, noiseFactor = 0f)) {
+                        .bottomBarBlur(hazeState, blur)) {
 
                     val items = listOf(
                         NavigationBarItemData(
@@ -238,7 +252,7 @@ fun CardUI(vm : LoginSuccessViewModel, activity : Activity,vmUI : UIViewModel) {
             modifier = Modifier
             .haze(
                 state = hazeState,
-                backgroundColor = MaterialTheme.colorScheme.surface,
+                //backgroundColor = MaterialTheme.colorScheme.surface,
             )) {
             composable(CardBarItems.HOME.name) {
                 Scaffold {
@@ -253,7 +267,7 @@ fun CardUI(vm : LoginSuccessViewModel, activity : Activity,vmUI : UIViewModel) {
             }
             composable(CardBarItems.COUNT.name) {
                 Scaffold {
-                    CardHome(innerPadding,vm,blur)
+                    CardHome(innerPadding,vm,blur,pagerState)
                 }
             }
         }

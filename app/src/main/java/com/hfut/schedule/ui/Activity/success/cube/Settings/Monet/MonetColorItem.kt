@@ -56,7 +56,7 @@ fun MonetColorItem() {
         true -> "收回"
         false -> "展开"
     }
-    val switch_color = prefs.getBoolean("SWITCHCOLOR",true)
+    val switch_color = prefs.getBoolean("SWITCHCOLOR",AndroidVersion.sdkInt >= 31)
     var DynamicSwitch by remember { mutableStateOf(switch_color) }
 
         ListItem(

@@ -96,7 +96,9 @@ fun CalendarScreen(showAll : Boolean,
                    vmUI : UIViewModel,
                    webVpn : Boolean,
                    vm2 : LoginViewModel,
-                   load : Boolean) {
+                   load : Boolean,
+                   onDateChange : (LocalDate) ->Unit,
+                   today: LocalDate) {
 
 
     var loading by remember { mutableStateOf(load) }
@@ -947,8 +949,8 @@ fun CalendarScreen(showAll : Boolean,
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-    var today by rememberSaveable { mutableStateOf(LocalDate.now()) }
-    val mondayOfCurrentWeek = today.minusDays(today.dayOfWeek.value - 1L)
+    //var today by rememberSaveable { mutableStateOf(LocalDate.now()) }
+    //val mondayOfCurrentWeek = today.minusDays(today.dayOfWeek.value - 1L)
 
 
         Column(
@@ -956,8 +958,8 @@ fun CalendarScreen(showAll : Boolean,
                // .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
-            Spacer(modifier = Modifier.height(5.dp))
+       //     Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
+         //   Spacer(modifier = Modifier.height(5.dp))
 
             AnimatedVisibility(
                 visible = loading,
@@ -976,34 +978,6 @@ fun CalendarScreen(showAll : Boolean,
             ) {
                 //在这里插入课程表布局
                 Column {
-
-                    LazyVerticalGrid(columns = GridCells.Fixed(if(showAll)7 else 5),modifier = Modifier.padding(horizontal = 10.dp)){
-                        items(if(showAll)7 else 5) { item ->
-                            val date = mondayOfCurrentWeek.plusDays(item.toLong()).toString()
-                            if (GetDate.Benweeks in 1..20)
-                                Text(
-                                    text = date.substringAfter("-"),
-                                    textAlign = TextAlign.Center,
-                                    fontSize = if(showAll)12.sp else 14.sp,
-                                    color = if(date == GetDate.Date_yyyy_MM_dd) MaterialTheme.colorScheme.primary else Color.Gray,
-                                    style = if(date == GetDate.Date_yyyy_MM_dd) {
-                                        TextStyle(shadow = Shadow(
-                                            color = Color.Gray,
-                                            offset = Offset(2.0f,2.0f),
-                                            blurRadius = 7.0f
-                                        ))
-                                    } else TextStyle(),
-                                    fontWeight = if(date == GetDate.Date_yyyy_MM_dd) FontWeight.Bold else FontWeight.Normal
-                                )
-                            else Text(
-                                text = "未开学",
-                                textAlign = TextAlign.Center,
-                                color = Color.Gray,
-                                fontSize = if(showAll)12.sp else 14.sp
-                            )
-                        }
-                    }
-
                     Box( modifier = Modifier
                         .fillMaxHeight()
                     ) {
@@ -1015,6 +989,7 @@ fun CalendarScreen(showAll : Boolean,
                             modifier = Modifier.padding(10.dp),
                             state = scrollstate
                         ) {
+                            items(if(showAll)7 else 5) { Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding())) }
                             items(if(showAll)42 else 30) { cell ->
                                 Card(
                                     shape = MaterialTheme.shapes.extraSmall,
@@ -1054,7 +1029,7 @@ fun CalendarScreen(showAll : Boolean,
                                         if (Bianhuaweeks > 1) {
                                             Bianhuaweeks-- - 1
                                             if(showAll) UpdateAll() else Update()
-                                            today = today.minusDays(7)
+                                            onDateChange(today.minusDays(7))
                                         }
                                     },
                                 ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
@@ -1076,7 +1051,7 @@ fun CalendarScreen(showAll : Boolean,
                                     onClick = {
                                         Bianhuaweeks = GetDate.Benweeks
                                         if(showAll) UpdateAll() else Update()
-                                        today = LocalDate.now()
+                                        onDateChange(LocalDate.now())
                                     },
                                 ) {
                                     AnimatedContent(
@@ -1126,7 +1101,7 @@ fun CalendarScreen(showAll : Boolean,
                                         if (Bianhuaweeks < 20) {
                                             Bianhuaweeks++ + 1
                                             if(showAll) UpdateAll() else Update()
-                                            today = today.plusDays(7)
+                                            onDateChange(today.plusDays(7))
                                         }
                                     },
                                 ) { Icon(Icons.Filled.ArrowForward, "Add Button") }

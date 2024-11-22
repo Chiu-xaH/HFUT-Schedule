@@ -54,6 +54,8 @@ import com.hfut.schedule.ui.Activity.card.function.main.turnToBottomBar
 import com.hfut.schedule.ui.Activity.shower.bills.GuaguaBills
 import com.hfut.schedule.ui.Activity.shower.function.GuaGuaSettings
 import com.hfut.schedule.ui.Activity.shower.home.GuaguaStart
+import com.hfut.schedule.ui.UIUtils.bottomBarBlur
+import com.hfut.schedule.ui.UIUtils.topBarBlur
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 import dev.chrisbanes.haze.hazeChild
@@ -73,9 +75,9 @@ fun ShowerGuaGua(vm: GuaGuaViewModel) {
         topBar = {
             Column {
                 TopAppBar(
-                    modifier = Modifier.hazeChild(state = hazeState, blurRadius = MyApplication.Blur, tint = Color.Transparent, noiseFactor = 0f),
+                    modifier = Modifier.topBarBlur(hazeState, blur),
                     colors = TopAppBarDefaults.mediumTopAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = if(blur).50f else 1f),
+                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = if(blur) 0f else 1f),
                         titleContentColor = MaterialTheme.colorScheme.primary,
                     ),
                     title = { Text("洗浴-呱呱物联") },
@@ -87,15 +89,17 @@ fun ShowerGuaGua(vm: GuaGuaViewModel) {
                         }
                     }
                 )
-                Divider()
+                if(!blur)
+                    Divider()
             }
         },
         bottomBar = {
             Column {
-                Divider()
-                NavigationBar(containerColor = if(blur) MaterialTheme.colorScheme.primaryContainer.copy(.25f) else ListItemDefaults.containerColor ,
+                if(!blur)
+                    Divider()
+                NavigationBar(containerColor = if(blur) Color.Transparent else ListItemDefaults.containerColor ,
                     modifier = Modifier
-                        .hazeChild(state = hazeState, blurRadius = MyApplication.Blur, tint = Color.Transparent, noiseFactor = 0f)) {
+                        .bottomBarBlur(hazeState, blur)) {
 
                     val items = listOf(
                         NavigationBarItemData(
@@ -153,7 +157,7 @@ fun ShowerGuaGua(vm: GuaGuaViewModel) {
             modifier = Modifier
                 .haze(
                     state = hazeState,
-                    backgroundColor = MaterialTheme.colorScheme.surface,
+                    //backgroundColor = MaterialTheme.colorScheme.surface,
                 )) {
             composable(ShowerBarItems.HOME.name) {
                 Scaffold {

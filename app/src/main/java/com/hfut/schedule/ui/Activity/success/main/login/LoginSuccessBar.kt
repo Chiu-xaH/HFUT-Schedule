@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
@@ -74,14 +75,18 @@ import com.hfut.schedule.ui.Activity.success.main.saved.texts
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Update.getUpdates
 import com.hfut.schedule.ui.Activity.success.calendar.next.NextCourse
 import com.hfut.schedule.ui.Activity.success.calendar.nonet.SaveCourse
+import com.hfut.schedule.ui.Activity.success.calendar.nonet.ScheduleTopDate
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.MyAPIItem
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.NotificationItems
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.getNotifications
 import com.hfut.schedule.ui.Activity.success.search.Search.TotalCourse.CourseTotalUI
 import com.hfut.schedule.ui.Activity.success.search.Search.Web.LabUI
+import com.hfut.schedule.ui.UIUtils.CustomTabRow
 import com.hfut.schedule.ui.UIUtils.DividerText
 import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.ScrollText
+import com.hfut.schedule.ui.UIUtils.bottomBarBlur
+import com.hfut.schedule.ui.UIUtils.topBarBlur
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 import dev.chrisbanes.haze.hazeChild
@@ -89,6 +94,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("CoroutineCreationDuringComposition", "SuspiciousIndentation",
@@ -131,6 +137,8 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel,vm
         }
     }
 
+    val pagerState = rememberPagerState(pageCount = { 2 })
+    val titles = listOf("重要安排","其他事项")
     var showAll by remember { mutableStateOf(false) }
     var swapUI by remember { mutableStateOf(false) }
 
@@ -170,6 +178,7 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel,vm
     }
     val sheetState_totalCourse = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_totalCourse by remember { mutableStateOf(false) }
+    var today by remember { mutableStateOf(LocalDate.now()) }
 
     var sortType by remember { mutableStateOf(true) }
 
@@ -215,11 +224,11 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel,vm
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            Column {
+            Column(modifier = Modifier.topBarBlur(hazeState, blur)) {
                 TopAppBar(
-                    modifier = Modifier.hazeChild(state = hazeState, blurRadius = MyApplication.Blur, tint = Color.Transparent, noiseFactor = 0f),
+                   // modifier = Modifier.topBarBlur(hazeState, blur),
                     colors = TopAppBarDefaults.mediumTopAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = if(blur).50f else 1f),
+                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = if(blur) 0f else 1f),
                         titleContentColor = MaterialTheme.colorScheme.primary,
                     ),
                     title = { ScrollText(texts(vm,bottomBarItems)) },
@@ -261,17 +270,25 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel,vm
                         }
                     },
                 )
-                if(bottomBarItems != FOCUS)
-                Divider()
+                if(!blur) {
+                    if(bottomBarItems != FOCUS)
+                        Divider()
+                }
+                when(bottomBarItems){
+                    COURSES -> ScheduleTopDate(showAll,today,blur)
+                    FOCUS -> CustomTabRow(pagerState, titles, blur)
+                    else -> null
+                }
             }
         },
 
         bottomBar = {
             Column {
-                Divider()
+                if(!blur)
+                    Divider()
                 NavigationBar(
-                    containerColor = if(blur) MaterialTheme.colorScheme.primaryContainer.copy(.25f) else ListItemDefaults.containerColor ,
-                    modifier = Modifier.hazeChild(state = hazeState, blurRadius = MyApplication.Blur, tint = Color.Transparent, noiseFactor = 0f)
+                    containerColor = if(blur) Color.Transparent else ListItemDefaults.containerColor ,
+                    modifier = Modifier.bottomBarBlur(hazeState, blur)
                 ) {
                     val items = listOf(
                         NavigationBarItemData(COURSES.name, "课程表", painterResource(R.drawable.calendar),painterResource(R.drawable.calendar_month_filled)),
@@ -342,16 +359,17 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel,vm
             modifier = Modifier
             .haze(
                 state = hazeState,
-                backgroundColor = MaterialTheme.colorScheme.surface,)) {
+               // backgroundColor = MaterialTheme.colorScheme.surface,
+                )) {
             composable(COURSES.name) {
                 Scaffold {
-                    if(!swapUI) CalendarScreen(showAll,vm,grade,innerPadding,vmUI,webVpn,vm2,true)
-                    else SaveCourse(showAll, innerPadding,vmUI)
+                    if(!swapUI) CalendarScreen(showAll,vm,grade,innerPadding,vmUI,webVpn,vm2,true,{newDate -> today = newDate},today)
+                    else SaveCourse(showAll, innerPadding,vmUI,onDateChange = { new -> today = new}, today = today)
                 }
             }
             composable(FOCUS.name) {
                 Scaffold {
-                    TodayScreen(vm,vm2,innerPadding,blur,vmUI,false,webVpn)
+                    TodayScreen(vm,vm2,innerPadding,blur,vmUI,false,webVpn,pagerState)
                 }
             }
             composable(SEARCH.name) {

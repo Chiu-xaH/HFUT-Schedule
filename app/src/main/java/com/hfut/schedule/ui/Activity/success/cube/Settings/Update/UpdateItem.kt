@@ -76,7 +76,7 @@ fun VersionInfoCard() {
             ListItem(headlineContent = { Text(text = "聚在工大 " + APPVersion.getVersionName(), fontSize = 28.sp) })
             Row {
                 ListItem(
-                    overlineContent = { Text(text = "2024-11-16") },
+                    overlineContent = { Text(text = "2024-11-22") },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.sdk), contentDescription = "") },
                     headlineContent = { ScrollText(text = "第${APPVersion.getVersionCode()}次更新") },
                     modifier = Modifier.weight(.5f)
@@ -100,12 +100,15 @@ fun VersionInfo() {
     VersionInfoCard()
     DividerText(text = "新特性")
     //UpdateItems("重构 关于,增加了更多信息","位于选项-维护关于-关于", UpdateType.RENEW)
-    UpdateItems("新增 呱呱洗浴常用设备",null, UpdateType.ADD)
-    UpdateItems("新增 聚焦通知-生活推荐","按需推荐所需服务", UpdateType.ADD)
-    UpdateItems("新增 通知公告常用词条、翻页功能、学院网址集锦",null, UpdateType.ADD)
-    UpdateItems("修复 通知公告默认加载空白显示Bug",null, UpdateType.FIX)
-    UpdateItems("优化 部分界面的显示",null, UpdateType.OPTIMIZE)
-    UpdateItems("优化 部分部分功能的逻辑",null, UpdateType.OPTIMIZE)
+    UpdateItems("更新架构 Kotlin 2.0.0 Compose 2.0.0",null, UpdateType.RENEW)
+    UpdateItems("重构Tab选择分页组件，使用圆角矩形，减少界面割裂感",null, UpdateType.RENEW)
+    UpdateItems("重构多处逻辑代码，减少代码复用",null, UpdateType.RENEW)
+    UpdateItems("重构登录界面",null, UpdateType.RENEW)
+    UpdateItems("更新实时模糊SDK，并进行界面重构","1.过渡更加顺畅，优化滑动时的闪烁\n" +
+            "2.重构顶栏与底栏，弱化边界，取消分割线，颜色与内容主体一致，并使用新的渐变实时渲染模糊，使界面整体减少割裂感，容纳更多的瀑布流内容\n" +
+            "3.适配更多场景，课表与聚焦顶栏均已适配，成绩界面适配\n" +
+            "4.注：实时模糊仅安卓13及其以上支持，并且渐变模糊需要更多的渲染压力", UpdateType.RENEW)
+
 }
 
 enum class UpdateType {

@@ -44,25 +44,11 @@ import com.hfut.schedule.ui.UIUtils.ScrollText
 @SuppressLint("SuspiciousIndentation")
 @Composable
 fun GradeCountUI(innerPadding : PaddingValues) {
-    var showTips by remember { mutableStateOf(true) }
+
     Column (modifier =   Modifier.verticalScroll(rememberScrollState())){
-        //Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
+        Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
         Spacer(modifier = Modifier.height(5.dp))
-        if(showTips)
-        Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 15.dp, vertical = 5.dp),
-            shape = MaterialTheme.shapes.medium,
-        ){
-            ListItem(
-                headlineContent = { ScrollText ("本页数据仅在学期结束统计完成后才会更新") },
-                leadingContent = { Icon(painterResource(R.drawable.info), contentDescription = "Localized description",) },
-                trailingContent = { Icon(painter = painterResource(id =  R.drawable.close), contentDescription = "", modifier = Modifier.clickable { showTips = false })},
-                modifier = Modifier.fillMaxWidth(),
-            )
-        }
+
 
         DividerText(text = "总成绩 (整个大学阶段)")
         AvgGrade()
@@ -83,6 +69,7 @@ fun GradeCountUI(innerPadding : PaddingValues) {
                 modifier = Modifier.fillMaxWidth(),
             )
         }
+        Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding()))
     }
 }
 
