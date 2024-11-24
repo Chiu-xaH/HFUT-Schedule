@@ -466,8 +466,6 @@ fun getPersonInfo() : PersonInfo {
             }
         }
 
-        //SharePrefs.Save("ChineseId",chineseid)
-
         val benorsshuo =infoMap[elements?.get(8)?.text()]
         var yuanxi =infoMap[elements?.get(10)?.text()]
         if (yuanxi != null) {

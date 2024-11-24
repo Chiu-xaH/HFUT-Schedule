@@ -46,7 +46,7 @@ import java.math.RoundingMode
 
 fun getIdentifyID() : String? {
     return try {
-        val info = SharePrefs.prefs.getString("info","")
+        val info = prefs.getString("info","")
         val doc = info?.let { Jsoup.parse(it) }
         val chineseid = doc?.select("li.list-group-item.text-right:contains(证件号) span")?.last()?.text()
         val seven = chineseid?.takeLast(7)
@@ -90,7 +90,7 @@ fun LoginWeb(vmUI : UIViewModel, card : Boolean,vm :  LoginSuccessViewModel) {
 
     var showDialog by remember { mutableStateOf(false) }
 
-    val auth = SharePrefs.prefs.getString("auth","")
+    val auth = prefs.getString("auth","")
     val url = MyApplication.ZJGDBillURL + "charge-app/?name=pays&appsourse=ydfwpt&id=281&name=pays&paymentUrl=http://121.251.19.62/plat&token=" + auth
     val switch_startUri = SharePrefs.prefs.getBoolean("SWITCHSTARTURI",true)
     if (showDialog) {

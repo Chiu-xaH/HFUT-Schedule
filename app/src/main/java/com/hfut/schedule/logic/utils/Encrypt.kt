@@ -55,9 +55,3 @@ object Encrypt {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
-fun main() {
-    val n = Encrypt.encryptXiaoWuXing("2023218529")
-    println(n)
-}
-

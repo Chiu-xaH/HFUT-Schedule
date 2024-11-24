@@ -305,7 +305,5 @@ fun postResult(vm: LoginSuccessViewModel,goodMode: Boolean): JsonObject {
     // 组装数据
     val postSurvey = PostSurvey(surveyAssoc, lessonSurveyTaskAssoc, choiceNewList, inputNewList)
 
-    // 转换为JsonObject
-
     return Gson().toJsonTree(postSurvey).asJsonObject
 }
