@@ -30,7 +30,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.App.MyApplication
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.ViewModel.LoginViewModel
 import com.hfut.schedule.logic.Enums.FixBarItems
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
@@ -47,7 +47,7 @@ import com.hfut.schedule.ui.Activity.success.cube.Settings.TEST
 @SuppressLint("SuspiciousIndentation", "UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(vm : LoginSuccessViewModel
+fun SettingsScreen(vm : NetWorkViewModel
                    ,showlable : Boolean,
                    showlablechanged: (Boolean) -> Unit,
                    ifSaved : Boolean,

@@ -5,7 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.dao.dataBase
 import com.hfut.schedule.logic.datamodel.Focus.AddFocus
@@ -25,7 +25,7 @@ import java.math.RoundingMode
 
 
 //使用指尖工大接口获取一卡通余额
-fun GetZjgdCard(vm : LoginSuccessViewModel,vmUI : UIViewModel) {
+fun GetZjgdCard(vm : NetWorkViewModel, vmUI : UIViewModel) {
     CoroutineScope(Job()).apply {
         launch {
             async {
@@ -81,7 +81,7 @@ fun transferNum(num : Int) : Float {
     return settle
 }
 
-fun getTodayNet(vm : LoginSuccessViewModel, vmUI : UIViewModel) {
+fun getTodayNet(vm : NetWorkViewModel, vmUI : UIViewModel) {
 
         val CommuityTOKEN = prefs.getString("TOKEN","")
         CommuityTOKEN?.let { vm.getToday(it) }

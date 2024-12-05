@@ -17,13 +17,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -49,13 +46,14 @@ import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.logic.Enums.LibraryItems
 import com.hfut.schedule.logic.datamodel.Community.LibRecord
 import com.hfut.schedule.logic.datamodel.Community.LibraryResponse
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.StartApp
+import com.hfut.schedule.ui.UIUtils.MyCard
 import com.hfut.schedule.ui.UIUtils.Round
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -65,7 +63,7 @@ import kotlinx.coroutines.launch
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LibraryItem(vm : LoginSuccessViewModel) {
+fun LibraryItem(vm : NetWorkViewModel) {
     val sheetState_Library = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_Library by remember { mutableStateOf(false) }
     val borrow = prefs.getString("borrow","获取")
@@ -239,15 +237,7 @@ fun LibraryItem(vm : LoginSuccessViewModel) {
                                     items (LibItem().size){ item ->
                                         Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)
                                         {
-                                            Card(
-                                                elevation = CardDefaults.cardElevation(
-                                                    defaultElevation = 3.dp
-                                                ),
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .padding(horizontal = 15.dp, vertical = 5.dp),
-                                                shape = MaterialTheme.shapes.medium
-                                            ) {
+                                            MyCard{
                                                 ListItem(
                                                     headlineContent = { LibItem()[item].name?.let { Text(text = it,fontWeight = FontWeight.Bold) } },
                                                     supportingContent = { LibItem()[item].callNumber?.let { Text(text = it) } },

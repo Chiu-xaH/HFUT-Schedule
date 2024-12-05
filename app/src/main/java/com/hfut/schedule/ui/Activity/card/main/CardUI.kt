@@ -20,14 +20,12 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -53,7 +51,7 @@ import androidx.navigation.compose.rememberNavController
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.Enums.CardBarItems
 import com.hfut.schedule.logic.datamodel.NavigationBarItemData
@@ -73,7 +71,6 @@ import com.hfut.schedule.ui.UIUtils.bottomBarBlur
 import com.hfut.schedule.ui.UIUtils.topBarBlur
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
-import dev.chrisbanes.haze.hazeChild
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -83,11 +80,11 @@ import kotlinx.coroutines.launch
 @SuppressLint("SuspiciousIndentation", "UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CardUI(vm : LoginSuccessViewModel,vmUI : UIViewModel) {
+fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
 
     val showBottomSheet_Bills by remember { mutableStateOf(false) }
     val animation by remember { mutableStateOf(prefs.getInt("ANIMATION",MyApplication.Animation)) }
-    val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR", AndroidVersion.sdkInt >= 32)
+    val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR", AndroidVersion.canBlur)
     val blur by remember { mutableStateOf(switchblur) }
     val hazeState = remember { HazeState() }
     val navController = rememberNavController()
@@ -161,7 +158,7 @@ fun CardUI(vm : LoginSuccessViewModel,vmUI : UIViewModel) {
             Column(modifier = Modifier.topBarBlur(hazeState, blur)) {
                 TopAppBar(
                     colors = TopAppBarDefaults.mediumTopAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = if(blur) 0f else 1f),
+                        containerColor = Color.Transparent,
                         titleContentColor = MaterialTheme.colorScheme.primary,
                     ),
                     title = { Text("一卡通") },
@@ -173,10 +170,10 @@ fun CardUI(vm : LoginSuccessViewModel,vmUI : UIViewModel) {
                         }
                     }
                 )
-                if(!blur) {
-                    if(CardBarItems.COUNT != bottomBarItems)
-                        Divider()
-                }
+//                if(!blur) {
+//                    if(CardBarItems.COUNT != bottomBarItems)
+//                        Divider()
+//                }
                 if(bottomBarItems == CardBarItems.COUNT) {
                     CustomTabRow(pagerState, titles, blur)
                 }
@@ -184,10 +181,10 @@ fun CardUI(vm : LoginSuccessViewModel,vmUI : UIViewModel) {
         },
         bottomBar = {
             Column {
-                if(!blur) {
-                    Divider()
-                }
-                NavigationBar(containerColor = if(blur) Color.Transparent else ListItemDefaults.containerColor ,
+//                if(!blur) {
+//                    Divider()
+//                }
+                NavigationBar(containerColor = Color.Transparent ,
                     modifier = Modifier
                         .bottomBarBlur(hazeState, blur)) {
 

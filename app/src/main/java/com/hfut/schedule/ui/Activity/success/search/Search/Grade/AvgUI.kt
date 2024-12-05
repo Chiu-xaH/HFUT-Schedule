@@ -39,6 +39,7 @@ import com.hfut.schedule.logic.datamodel.Community.GradeAvgResponse
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.UIUtils.DividerText
+import com.hfut.schedule.ui.UIUtils.MyCard
 import com.hfut.schedule.ui.UIUtils.ScrollText
 
 @SuppressLint("SuspiciousIndentation")
@@ -56,13 +57,7 @@ fun GradeCountUI(innerPadding : PaddingValues) {
         DividerText(text = "学期统计 (各学期)")
         AllGrade()
         DividerText(text = "统计图")
-        Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 15.dp, vertical = 5.dp),
-            shape = MaterialTheme.shapes.medium,
-        ){
+        MyCard {
             ListItem(
                 headlineContent = { Text("正在开发") },
                 leadingContent = { Icon(painterResource(R.drawable.info), contentDescription = "Localized description",) },
@@ -77,13 +72,7 @@ fun GradeCountUI(innerPadding : PaddingValues) {
 fun AvgGrade() {
     val jsonAvg = SharePrefs.prefs.getString("Avg", MyApplication.NullGrades)
     val resultAvg = Gson().fromJson(jsonAvg, GradeAvgResponse::class.java).result
-    Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 15.dp, vertical = 5.dp),
-        shape = MaterialTheme.shapes.medium,
-    ){
+    MyCard {
         Text(text = "我的水平", modifier = Modifier.padding(horizontal = 15.dp, vertical = 8.dp), color = MaterialTheme.colorScheme.primary)
 
         Row {
@@ -142,10 +131,11 @@ fun AllGrade() {
         items(getAllGrade().size) { item ->
             val list = getAllGrade()[item]
             Card(
-                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 1.75.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 3.dp, vertical = 5.dp).width(382.dp),
+                    .padding(horizontal = 3.dp, vertical = 5.dp)
+                    .width(382.dp),
                 shape = MaterialTheme.shapes.medium,
             ){
                 Text(text = chineseList[item] + "学期", modifier = Modifier.padding(horizontal = 15.dp, vertical = 8.dp), color = MaterialTheme.colorScheme.primary)

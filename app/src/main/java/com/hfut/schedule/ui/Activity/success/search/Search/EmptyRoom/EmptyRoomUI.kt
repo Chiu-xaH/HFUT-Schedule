@@ -24,14 +24,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.ui.Activity.success.search.Search.More.Login
 import com.hfut.schedule.ui.UIUtils.Round
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EmptyRoom(vm : LoginSuccessViewModel,ifSaved : Boolean){
+fun EmptyRoom(vm : NetWorkViewModel, ifSaved : Boolean){
     val sheetState_EmptyRoom = rememberModalBottomSheetState()
     var showBottomSheet_EmptyRoom by remember { mutableStateOf(false) }
 

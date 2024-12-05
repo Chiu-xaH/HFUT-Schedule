@@ -1,6 +1,5 @@
 package com.hfut.schedule.ui.Activity.success.search.Search.FailRate
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,8 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -34,17 +31,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.google.gson.Gson
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
+import com.hfut.schedule.ui.UIUtils.MyCard
+import com.hfut.schedule.ui.UIUtils.Round
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FailRateUI(vm : LoginSuccessViewModel) {
+fun FailRateUI(vm : NetWorkViewModel) {
 
     getFailRate(vm)
 
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
     var num by remember { mutableStateOf(0) }
 
@@ -52,13 +50,7 @@ fun FailRateUI(vm : LoginSuccessViewModel) {
         items(getFailRate(vm).size){ item ->
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 Column() {
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 15.dp, vertical = 5.dp),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
+                    MyCard{
                         ListItem(
                             headlineContent = {  Text(getFailRate(vm)[item].courseName) },
                             leadingContent = { Icon(painterResource(R.drawable.monitoring), contentDescription = "Localized description",) },
@@ -79,7 +71,8 @@ fun FailRateUI(vm : LoginSuccessViewModel) {
 
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState
+            sheetState = sheetState,
+            shape = Round(sheetState)
         ) {
 
             Scaffold(
@@ -105,18 +98,7 @@ fun FailRateUI(vm : LoginSuccessViewModel) {
                             val formattedNumber = String.format("%.2f", rate)
                             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                                 Column() {
-                                    Card(
-                                        elevation = CardDefaults.cardElevation(
-                                            defaultElevation = 3.dp
-                                        ),
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(
-                                                horizontal = 15.dp,
-                                                vertical = 5.dp
-                                            ),
-                                        shape = MaterialTheme.shapes.medium,
-                                    ){
+                                    MyCard{
                                         ListItem(
                                             headlineContent = {  Text("平均分 ${getLists(num,vm)[item].avgScore}") },
                                             supportingContent = { Text("人数: 挂科 ${getLists(num,vm)[item].failCount} | 总 ${getLists(num,vm)[item].totalCount}") },

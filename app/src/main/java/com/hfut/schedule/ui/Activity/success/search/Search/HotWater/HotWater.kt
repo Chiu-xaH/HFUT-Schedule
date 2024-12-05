@@ -15,7 +15,7 @@ import com.hfut.schedule.ui.UIUtils.MyToast
 @Composable
 fun HotWater() {
     ListItem(
-        headlineContent = { Text(text = "热水机") },
+        headlineContent = { Text(text = "热水") },
         leadingContent = { Icon(painterResource(R.drawable.water_voc), contentDescription = "")},
         modifier = Modifier.clickable { StartApp.openAlipay(MyApplication.AlipayHotWaterURL) }
     )

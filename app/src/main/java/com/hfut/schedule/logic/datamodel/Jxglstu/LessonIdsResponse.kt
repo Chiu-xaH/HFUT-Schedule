@@ -20,8 +20,8 @@ data class course(val nameZh : String,val credits : Double?)
 data class courseType(val nameZh: String)
 
 data class teacherAssignmentList2(val teacher : teacher,val age : Int?)
-data class teacher(val person : courseType,
-                   val title : courseType,
+data class teacher(val person : courseType?,
+                   val title : courseType?,
                    val type : courseType?)
 
 

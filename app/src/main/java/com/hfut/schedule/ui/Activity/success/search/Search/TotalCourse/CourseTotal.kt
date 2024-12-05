@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -32,18 +30,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.google.gson.Gson
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
-import com.hfut.schedule.logic.datamodel.Community.CourseTotalResponse
-import com.hfut.schedule.logic.datamodel.Community.courseBasicInfoDTOList
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.ui.UIUtils.MyCard
 import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.ScrollText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CourseTotal(vm :LoginSuccessViewModel) {
+fun CourseTotal(vm :NetWorkViewModel) {
     val sheetState_Total = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_Total by remember { mutableStateOf(false) }
     val CommuityTOKEN = prefs.getString("TOKEN","")
@@ -96,7 +92,7 @@ fun CourseTotal(vm :LoginSuccessViewModel) {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ){
-                    CourseTotalUI(json,false,sortType)
+                    CourseTotalUI(json,false,sortType,vm)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
@@ -124,18 +120,7 @@ fun SemsterInfo(json : String?) {
 
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
         Column() {
-            Card(
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 3.dp
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        horizontal = 15.dp,
-                        vertical = 5.dp
-                    ),
-                shape = MaterialTheme.shapes.medium,
-            ){
+            MyCard{
                 ListItem(
                      overlineContent = { Text(text = semsterInfo.startDate + " ~ " + semsterInfo.endDate)},
                     headlineContent = {  ScrollText(semsterInfo.nameZh) },
@@ -147,6 +132,60 @@ fun SemsterInfo(json : String?) {
                     colors = ListItemDefaults.colors(MaterialTheme.colorScheme.primaryContainer),
                     trailingContent = { if (json != null) { if(json.contains("lessonIds"))Text(text = "学分 ${periodsSum()}") } }
                 )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CourseTotalButton(modifier: Modifier = Modifier,vm: NetWorkViewModel) {
+    val sheetState_Total = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showBottomSheet_Total by remember { mutableStateOf(false) }
+
+    val json = prefs.getString("courses","")
+
+    FilledTonalButton(onClick = { showBottomSheet_Total = true }, modifier = modifier) {
+        Text(text = "课程汇总")
+    }
+    var sortType by remember { mutableStateOf(true) }
+    if (showBottomSheet_Total) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                showBottomSheet_Total = false
+            },
+            sheetState = sheetState_Total,
+            shape = Round(sheetState_Total)
+        ) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        title = { Text("课程汇总") },
+                        actions = {
+                            FilledTonalButton(
+                                onClick = { sortType = !sortType },
+                                modifier = Modifier.padding(horizontal = 15.dp
+                                )) {
+                                Text(text = if(sortType) "开课顺序" else "学分高低")
+                            }
+                        }
+                    )
+                },
+
+                ) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                ){
+                    CourseTotalUI(json,false,sortType,vm)
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
             }
         }
     }

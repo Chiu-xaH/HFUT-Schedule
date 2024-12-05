@@ -76,7 +76,7 @@ fun VersionInfoCard() {
             ListItem(headlineContent = { Text(text = "聚在工大 " + APPVersion.getVersionName(), fontSize = 28.sp) })
             Row {
                 ListItem(
-                    overlineContent = { Text(text = "2024-11-22") },
+                    overlineContent = { Text(text = "2024-12-05") },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.sdk), contentDescription = "") },
                     headlineContent = { ScrollText(text = "第${APPVersion.getVersionCode()}次更新") },
                     modifier = Modifier.weight(.5f)
@@ -99,16 +99,25 @@ fun VersionInfoCard() {
 fun VersionInfo() {
     VersionInfoCard()
     DividerText(text = "新特性")
-    //UpdateItems("重构 关于,增加了更多信息","位于选项-维护关于-关于", UpdateType.RENEW)
-    UpdateItems("更新架构 Kotlin 2.0.0 Compose 2.0.0",null, UpdateType.RENEW)
-    UpdateItems("重构Tab选择分页组件，使用圆角矩形，减少界面割裂感",null, UpdateType.RENEW)
-    UpdateItems("重构多处逻辑代码，减少代码复用",null, UpdateType.RENEW)
-    UpdateItems("重构登录界面",null, UpdateType.RENEW)
-    UpdateItems("更新实时模糊SDK，并进行界面重构","1.过渡更加顺畅，优化滑动时的闪烁\n" +
-            "2.重构顶栏与底栏，弱化边界，取消分割线，颜色与内容主体一致，并使用新的渐变实时渲染模糊，使界面整体减少割裂感，容纳更多的瀑布流内容\n" +
-            "3.适配更多场景，课表与聚焦顶栏均已适配，成绩界面适配\n" +
-            "4.注：实时模糊仅安卓13及其以上支持，并且渐变模糊需要更多的渲染压力", UpdateType.RENEW)
-
+    UpdateItems("新增 培养方案完成情况","增加了已修、未修、转专业废弃课程等的显示", UpdateType.ADD)
+    UpdateItems("新增 教师检索","位于查询中心", UpdateType.ADD)
+    UpdateItems("新增 课程详情底部挂科率检索",null, UpdateType.ADD)
+    UpdateItems("新增 查询中心检索","点击右上角搜索需要的功能", UpdateType.ADD)
+    UpdateItems("重构 全局卡片组件的圆角、阴影、间距，使其更符合设计语言",null, UpdateType.RENEW)
+    UpdateItems("为华为设备及其他Android 12-用户适配了上版本的界面重构",
+        "1.重构顶栏与底栏，弱化边界，取消分割线，颜色与内容主体一致，并使用新的渐变底色，使界面整体减少割裂感，容纳更多的瀑布流内容\n" +
+                "2.注：实时模糊仅安卓13及其以上支持", UpdateType.RENEW)
+    UpdateItems("重构 通知公告","独立为新的Activity", UpdateType.RENEW)
+    UpdateItems("修复 成绩为评教时点击崩溃Bug，点击后直接跳转到评教页面",null, UpdateType.FIX)
+    UpdateItems("修复 转专业列表切换校区Bug",null, UpdateType.FIX)
+    UpdateItems("修复 挂科率二级界面卡片圆角异常Bug",null, UpdateType.FIX)
+    UpdateItems("修复 开课查询部分课程详情点击崩溃Bug",null, UpdateType.FIX)
+    UpdateItems("优化 课程详情中教师仅展示一位，并加入点击搜索教师操作",null, UpdateType.OPTIMIZE)
+    UpdateItems("优化 社区课程表详情周数的展示",null, UpdateType.OPTIMIZE)
+    UpdateItems("优化 部分上弹卡片界面默认位置",null, UpdateType.OPTIMIZE)
+    UpdateItems("优化 部分界面的显示",null, UpdateType.OPTIMIZE)
+    UpdateItems("优化 个人信息界面的展示",null, UpdateType.OPTIMIZE)
+    UpdateItems("优化 部分功能之间的联动","例如课程表、课程汇总、教评、教师检索、成绩、挂科率之间可互相调用", UpdateType.OPTIMIZE)
 }
 
 enum class UpdateType {

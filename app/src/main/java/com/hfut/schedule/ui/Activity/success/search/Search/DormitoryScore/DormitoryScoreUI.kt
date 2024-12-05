@@ -57,7 +57,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
@@ -76,7 +76,7 @@ fun space(space : Boolean) {
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("CoroutineCreationDuringComposition", "SuspiciousIndentation")
 @Composable
-fun DormitoryScoreUI(vm : LoginSuccessViewModel) {
+fun DormitoryScoreUI(vm : NetWorkViewModel) {
     val Savedcode = prefs.getString("Room","")
     var code by remember { mutableStateOf(Savedcode ?: "") }
     var clicked by remember { mutableStateOf(false) }

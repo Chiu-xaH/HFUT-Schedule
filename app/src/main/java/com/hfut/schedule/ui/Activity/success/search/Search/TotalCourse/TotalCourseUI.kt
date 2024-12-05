@@ -14,8 +14,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -37,13 +35,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.hfut.schedule.R
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.logic.datamodel.Jxglstu.CourseSearchResponse
-import com.hfut.schedule.logic.datamodel.Jxglstu.courseType
 import com.hfut.schedule.logic.datamodel.Jxglstu.lessonResponse
 import com.hfut.schedule.logic.datamodel.Jxglstu.lessons
-import com.hfut.schedule.logic.datamodel.Jxglstu.teacher
-import com.hfut.schedule.logic.datamodel.Jxglstu.teacherAssignmentList2
+import com.hfut.schedule.ui.Activity.success.search.Search.FailRate.permit
+import com.hfut.schedule.ui.Activity.success.search.Search.FailRate.ApiToFailRate
+import com.hfut.schedule.ui.Activity.success.search.Search.Teachers.ApiToTeacherSearch
 import com.hfut.schedule.ui.UIUtils.EmptyUI
+import com.hfut.schedule.ui.UIUtils.MyCard
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.ScrollText
@@ -52,7 +52,7 @@ import com.hfut.schedule.ui.UIUtils.schoolIcons
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CourseTotalUI(json : String?,isSearch : Boolean,sortType: Boolean) {
+fun CourseTotalUI(json : String?,isSearch : Boolean,sortType: Boolean,vm : NetWorkViewModel) {
 
     val list = getTotalCourse(json)
     if(sortType)
@@ -62,7 +62,7 @@ fun CourseTotalUI(json : String?,isSearch : Boolean,sortType: Boolean) {
     var numItem by remember { mutableStateOf(0) }
    // var sortType by remember { mutableStateOf(true) }
 
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
     //val json = prefs.getString("courses","")
     if (showBottomSheet) {
@@ -90,7 +90,7 @@ fun CourseTotalUI(json : String?,isSearch : Boolean,sortType: Boolean) {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    DetailItems(list[numItem],json)
+                    DetailItems(list[numItem],json,vm)
                 }
             }
         }
@@ -101,25 +101,14 @@ fun CourseTotalUI(json : String?,isSearch : Boolean,sortType: Boolean) {
             items(list.size) { item ->
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                     Column() {
-                        Card(
-                            elevation = CardDefaults.cardElevation(
-                                defaultElevation = 3.dp
-                            ),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(
-                                    horizontal = 15.dp,
-                                    vertical = 5.dp
-                                ),
-                            shape = MaterialTheme.shapes.medium,
-                        ){
+                        MyCard {
 
                             ListItem(
                                 headlineContent = {  Text(list[item].course.nameZh) },
                                 overlineContent = { ScrollText(text = "学分 ${list[item].course.credits}" + if(list[item].scheduleWeeksInfo != null) " | ${list[item].scheduleWeeksInfo}" else "") },
                                 trailingContent = { Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "")},
                                 //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
-                                leadingContent = { schoolIcons(name = list[item].openDepartment.nameZh) },
+                                leadingContent = { list[item].openDepartment.nameZh?.let { schoolIcons(name = it) } },
                                 modifier = Modifier.clickable {
                                     showBottomSheet = true
                                     numItem = item
@@ -137,11 +126,80 @@ fun CourseTotalUI(json : String?,isSearch : Boolean,sortType: Boolean) {
 
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun DetailItems(lessons: lessons,json: String?) {
+fun DetailItems(lessons: lessons,json: String?,vm : NetWorkViewModel) {
 
     val lists = lessons
+
+    val sheetState_FailRate = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showBottomSheet_FailRate by remember { mutableStateOf(false) }
+
+    if (showBottomSheet_FailRate) {
+        ModalBottomSheet(
+            onDismissRequest = { showBottomSheet_FailRate = false },
+            sheetState = sheetState_FailRate,
+            shape = Round(sheetState_FailRate)
+        ) {
+
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        title = { Text("挂科率 ${lessons.course.nameZh}") }
+                    )
+                },
+            ) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                ) {
+                    ApiToFailRate(lessons.course.nameZh,vm)
+                }
+            }
+        }
+    }
+
+    val sheetState_Teacher = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showBottomSheet_Teacher by remember { mutableStateOf(false) }
+
+    var teacherTitle by remember { mutableStateOf("") }
+
+    if (showBottomSheet_Teacher) {
+        ModalBottomSheet(
+            onDismissRequest = { showBottomSheet_Teacher = false },
+            sheetState = sheetState_Teacher,
+            shape = Round(sheetState_Teacher)
+        ) {
+
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        title = { Text("教师检索 " + teacherTitle) }
+                    )
+                },
+            ) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                ) {
+                    ApiToTeacherSearch(teacherTitle,vm)
+                }
+            }
+        }
+    }
 
     LazyColumn {
         item{
@@ -185,7 +243,7 @@ fun DetailItems(lessons: lessons,json: String?) {
                     Row {
                         ListItem(
                             overlineContent = { Text("类型") },
-                            headlineContent = { ScrollText(lists.courseType.nameZh) },
+                            headlineContent = { lists.courseType.nameZh?.let { ScrollText(it) } },
 
                             //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
                             leadingContent = {
@@ -215,55 +273,57 @@ fun DetailItems(lessons: lessons,json: String?) {
                                 .weight(.5f),
                         )
                     }
-                    Row {
-                        val teacherList =  if(lists.teacherAssignmentList?.isNotEmpty() == true) lists.teacherAssignmentList?.get(0) else teacherAssignmentList2(
-                            teacher(courseType("无信息"),
-                                courseType("无信息"),
-                                null
-                            ),null)
-                        ListItem(
-                            overlineContent = { ScrollText("教师(默认展示第一位)") },
-                            headlineContent = {
-                                if (teacherList != null) {
-                                    ScrollText( teacherList.teacher.person.nameZh.toString() )
-                                }
-                            },
-                            //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
-                            leadingContent = {
-                                Icon(
-                                    painterResource(R.drawable.person),
-                                    contentDescription = "Localized description",
-                                )
-                            },
-                            modifier = Modifier
-                                .clickable {}
-                                .weight(.5f),
-                        )
-                        ListItem(
-                            headlineContent = {
-                                if (teacherList != null) {
-                                    ScrollText( teacherList.teacher.title.nameZh.toString()  +" " + (teacherList?.teacher?.type?.nameZh ?: ""))
-                                }
-                            },
-                            overlineContent = {
-                                if (teacherList != null) {
-                                    Text(text =  if(teacherList.age  != null)  "年龄 " + teacherList.age else "年龄未知")
-                                }
-                            },
+                    val teacherNum = lists.teacherAssignmentList?.size ?: 0
+                    for (i in 0 until teacherNum) {
+                        val teacherList = lists.teacherAssignmentList?.get(i)
+                        Row(modifier = Modifier.clickable {
+                            if (teacherList != null) {
+                                permit = 1
+                                teacherTitle = teacherList.teacher.person?.nameZh.toString()
+                                showBottomSheet_Teacher = true
+                            }
+                        }) {
+                            ListItem(
+                                overlineContent = { Text("教师 " + if(teacherNum == 1) "" else (i+1).toString()) },
+                                headlineContent = {
+                                    if (teacherList != null) {
+                                        ScrollText( teacherList.teacher.person?.nameZh.toString() )
+                                    }
+                                },
+                                leadingContent = {
+                                    Icon(
+                                        painterResource(R.drawable.person),
+                                        contentDescription = "Localized description",
+                                    )
+                                },
+                                modifier = Modifier
+                                    .weight(.5f),
+                            )
+                            ListItem(
+                                headlineContent = {
+                                    if (teacherList != null) {
+                                        ScrollText( teacherList.teacher.title?.nameZh.toString()  +" " + (teacherList.teacher?.type?.nameZh ?: ""))
+                                    }
+                                },
+                                overlineContent = {
+                                    if (teacherList != null) {
+                                        Text(text =  if(teacherList.age  != null)  "年龄 " + teacherList.age else "年龄未知")
+                                    }
+                                },
 
-                            //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
-                            leadingContent = {
-                                Icon(
-                                    painterResource(R.drawable.info),
-                                    contentDescription = "Localized description",
-                                )
-                            },
-                            modifier = Modifier
-                                .clickable {}
-                                .weight(.5f),
-                        )
-
+                                //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
+                                leadingContent = {
+                                    Icon(
+                                        painterResource(R.drawable.info),
+                                        contentDescription = "Localized description",
+                                    )
+                                },
+                                modifier = Modifier
+                                    .weight(.5f),
+                            )
+                        }
                     }
+
                     Row {
                         var department = lists.openDepartment.nameZh.toString()
                         if(department.contains("（")) department = department.substringBefore("（")
@@ -273,7 +333,7 @@ fun DetailItems(lessons: lessons,json: String?) {
 
                             //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
                             leadingContent = {
-                                schoolIcons(name = lists.openDepartment.nameZh)
+                                lists.openDepartment.nameZh?.let { schoolIcons(name = it) }
                             },
                             modifier = Modifier
                                 .clickable {}
@@ -324,6 +384,39 @@ fun DetailItems(lessons: lessons,json: String?) {
                             },
                             modifier = Modifier
                                 .clickable { MyToast("请前往 合工大教务 微信公众号") }
+                                .weight(.5f),
+                        )
+                    }
+                    Row {
+                        ListItem(
+                            headlineContent = { Text(text = "挂科率查询") },
+
+                            leadingContent = {
+                                Icon(
+                                    painterResource(R.drawable.monitoring),
+                                    contentDescription = "Localized description",
+                                )
+                            },
+                            modifier = Modifier
+                                .clickable {
+                                    permit = 1
+                                    showBottomSheet_FailRate = true
+                                }
+                                .weight(.5f),
+                        )
+                        ListItem(
+                            headlineContent = { Text("添加到收藏") },
+                            trailingContent = {
+                            },
+                            //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
+                            leadingContent = {
+                                Icon(
+                                    painterResource(id = R.drawable.star),
+                                    contentDescription = "Localized description",
+                                )
+                            },
+                            modifier = Modifier
+                                .clickable { MyToast("正在开发") }
                                 .weight(.5f),
                         )
                     }

@@ -292,12 +292,12 @@ fun LoginUI(vm : LoginViewModel) {
 @Composable
 fun AnimatedWelcomeScreen() {
     val welcomeTexts = listOf(
-        "你好", "欢迎使用", "Hello", "Hola", "Bonjour","＼(≧▽≦)／","(^-^*)", "(｡･ω･)ﾉﾞ", "ヾ(*ﾟ▽ﾟ)ﾉ", "（≧∀≦）", "U｡･x･)ﾉ","<(￣︶￣)>","٩(˘◡˘)۶"
+        "你好", "(｡･ω･)ﾉﾞ", "欢迎使用", "ヾ(*ﾟ▽ﾟ)ﾉ", "Hello","(^-^*)", "Hola", "U｡･x･)ﾉ", "Bonjour","＼(≧▽≦)／"
     )
     var currentIndex by remember { mutableStateOf(0) }
     LaunchedEffect(Unit) {
         while (true) {
-            delay(3000) // 每3秒切换
+            delay(2000) // 每3秒切换
             currentIndex = (currentIndex + 1) % welcomeTexts.size
         }
     }

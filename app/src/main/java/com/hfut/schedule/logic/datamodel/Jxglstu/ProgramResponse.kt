@@ -39,7 +39,7 @@ data class PlanCourses(val readableTerms : List<Int>,
 
 //data class PeriodInfoRatio()
 
-data class InProgramResponse(val ProgramShow : List<ProgramShow>)
+//data class InProgramResponse(val ProgramShow : List<ProgramShow>)
 
 data class ProgramPartOne(val type : String?,
                           val requiedCredits : Double?,
@@ -62,6 +62,46 @@ data class ProgramShow(val name : String,
 
 data class ProgramCompletionResponse(val total : item,val other : List<item>)
 data class item(val name : String,val actual : Double,val full : Double)
+
+
+data class ProgramBean(
+    val completionSummary : Summary ,//已完成
+    val outerCompletionSummary : Summary, //培养方案外
+    val moduleList : List<ProgramModule>,
+    val outerCourseList : List<CourseItem> //term为[]
+)
+
+data class Summary(
+    val passedCourseNum : Int,
+    val failedCourseNum : Int,
+    val takingCourseNum : Int,
+    val passedCredits : Double,
+    val failedCredits : Double,
+    val takingCredits : Double
+)
+
+data class ProgramModule(
+    val nameZh : String,
+    val requireInfo : RequireInfo2,
+    val completionSummary : Summary,
+    val allCourseList : List<CourseItem>,
+)
+data class RequireInfo2(
+    val credits : Double,
+    val courseNum : Int
+)
+
+data class CourseItem(
+    val code : String,
+    val nameZh : String,
+    val credits : Double,
+    val terms : List<String>,
+    val resultType : String, //PASSED/TAKING/UNREPAIRED
+    val score : Double?, //均分
+    val rank : String?, //合格/及格
+    val gp : Double? //GPA
+)
+
 
 
 

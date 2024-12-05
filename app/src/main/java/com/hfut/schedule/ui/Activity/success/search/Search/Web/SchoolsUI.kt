@@ -2,6 +2,10 @@ package com.hfut.schedule.ui.Activity.success.search.Search.Web
 
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
@@ -16,7 +20,7 @@ import com.hfut.schedule.ui.UIUtils.ScrollText
 import com.hfut.schedule.ui.UIUtils.schoolIcons
 
 @Composable
-fun SchoolsUI() {
+fun SchoolsUI(innerPdding : PaddingValues? = null) {
     val maps = mapOf(
         "http://jxxy.hfut.edu.cn/" to "机械工程学院",
         "http://mse.hfut.edu.cn/" to "材料科学与工程学院",
@@ -44,6 +48,7 @@ fun SchoolsUI() {
         "http://jxjy.hfut.edu.cn/" to "继续教育学院"
     )
     LazyColumn {
+        item { if(innerPdding != null) Spacer(modifier = Modifier.height(innerPdding.calculateTopPadding())) }
         items(maps.entries.toList().size) { index ->
             val m = maps.entries.toList()[index]
             val title = m.value
@@ -62,5 +67,6 @@ fun SchoolsUI() {
                 )
             }
         }
+        item { if(innerPdding != null) Spacer(modifier = Modifier.height(innerPdding.calculateBottomPadding())) }
     }
 }

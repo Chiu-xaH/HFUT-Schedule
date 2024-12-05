@@ -1,9 +1,11 @@
 package com.hfut.schedule.logic.utils
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.activity.ShowerLoginActivity
 import com.hfut.schedule.ui.UIUtils.MyToast
 
 object StartApp {
@@ -37,5 +39,12 @@ object StartApp {
         } catch (e : Exception) {
             MyToast("启动浏览器失败")
         }
+    }
+
+    fun <T> startActivity(activity : Class<T>) {
+        val it = Intent(MyApplication.context, activity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        MyApplication.context.startActivity(it)
     }
 }

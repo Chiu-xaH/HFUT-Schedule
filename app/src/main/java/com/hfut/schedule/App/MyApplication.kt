@@ -4,9 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.hfut.schedule.logic.utils.APPVersion
-import com.hfut.schedule.logic.utils.CrashHandler
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
@@ -35,11 +32,13 @@ class MyApplication : Application() {
         const val OneURL = "https://one.hfut.edu.cn/"
         const val LoginURL = "https://cas.hfut.edu.cn/"
         const val MyURL = "https://chiu-xah.github.io/"
-        const val XuanquURL = "http://39.106.82.121/"
+        const val DormitoryScoreURL = "http://39.106.82.121/"
         const val loginWebURL = "http://172.18.3.3/"
         const val loginWebURL2 = "http://172.18.2.2/"
         const val RedirectURL = "https://cas.hfut.edu.cn/cas/login?service=http%3A%2F%2Fjxglstu.hfut.edu.cn%2Feams5-student%2Fneusoft-sso%2Flogin&exception.message=A+problem+occurred+restoring+the+flow+execution+with+key+%27e1s1%27"
         const val GuaGuaURL = "https://guagua.klcxkj-qzxy.cn/"
+        const val XuanChengURL = "https://xc.hfut.edu.cn/"
+        const val TeacherURL = "https://faculty.hfut.edu.cn/"
 
 
 

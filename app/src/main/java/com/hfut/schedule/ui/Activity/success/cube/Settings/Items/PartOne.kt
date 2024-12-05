@@ -51,12 +51,12 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.activity.LoginActivity
 import com.hfut.schedule.logic.Enums.CardBarItems
 import com.hfut.schedule.logic.Enums.FixBarItems
 import com.hfut.schedule.logic.utils.APPVersion
-import com.hfut.schedule.logic.utils.AndroidVersion
+import com.hfut.schedule.logic.utils.AndroidVersion.canBlur
 import com.hfut.schedule.logic.utils.Semseter.getSemseter
 import com.hfut.schedule.logic.utils.Semseter.getSemseterCloud
 import com.hfut.schedule.logic.utils.SharePrefs
@@ -90,7 +90,7 @@ fun apiCheck() : Boolean {
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PartOne(vm : LoginSuccessViewModel,
+fun PartOne(vm : NetWorkViewModel,
             showlable : Boolean,
             showlablechanged :(Boolean) -> Unit,
             ifSaved : Boolean,
@@ -183,14 +183,14 @@ fun UIScreen(navController: NavController,innerPaddings : PaddingValues,
         ListItem(
             headlineContent = { Text(text = "实时模糊") },
             supportingContent = {
-                    if(AndroidVersion.sdkInt >= 32) {
+                    if(canBlur) {
                         Text(text = "开启后将会转换部分渲染为实时模糊")
                     } else {
                         Text(text = "需为 Android 13+")
                     }
                                 },
             leadingContent = { Icon(painterResource(R.drawable.deblur), contentDescription = "Localized description",) },
-            trailingContent = {  Switch(checked = blur, onCheckedChange = blurchanged, enabled = AndroidVersion.sdkInt >= 32 ) },
+            trailingContent = {  Switch(checked = blur, onCheckedChange = blurchanged, enabled = canBlur ) },
             modifier = Modifier.clickable { blurchanged }
         )
         ListItem(
@@ -228,7 +228,7 @@ fun UIScreen(navController: NavController,innerPaddings : PaddingValues,
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomeSettingScreen(navController: NavController,
-                      vm : LoginSuccessViewModel,
+                      vm : NetWorkViewModel,
                       showlable : Boolean,
                       showlablechanged: (Boolean) -> Unit,
                       ifSaved : Boolean,

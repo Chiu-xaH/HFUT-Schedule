@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.logic.datamodel.Community.CourseTotalResponse
 import com.hfut.schedule.logic.datamodel.Community.courseDetailDTOList
 import com.hfut.schedule.logic.utils.SharePrefs
@@ -46,6 +47,7 @@ import com.hfut.schedule.ui.Activity.success.main.saved.getIndex
 import com.hfut.schedule.ui.Activity.success.search.Search.TotalCourse.CourseTotalUI
 import com.hfut.schedule.ui.Activity.success.search.Search.TotalCourse.DetailItems
 import com.hfut.schedule.ui.Activity.success.search.Search.TotalCourse.getTotalCourse
+import com.hfut.schedule.ui.UIUtils.MyCard
 import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.num
 
@@ -94,7 +96,7 @@ fun getCourseINFO(weekday : Int,Week : Int,friendUserName : String? = null) : Mu
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailInfos(sheet : courseDetailDTOList,isFriend : Boolean = false) {
+fun DetailInfos(sheet : courseDetailDTOList,isFriend : Boolean = false,vm: NetWorkViewModel) {
     val sheetState_totalCourse = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_totalCourse by remember { mutableStateOf(false) }
     val json = SharePrefs.prefs.getString("courses","")
@@ -125,7 +127,7 @@ fun DetailInfos(sheet : courseDetailDTOList,isFriend : Boolean = false) {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ){
-                    DetailItems(getTotalCourse(json)[numItem],json)
+                    DetailItems(getTotalCourse(json)[numItem],json, vm)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
@@ -136,18 +138,7 @@ fun DetailInfos(sheet : courseDetailDTOList,isFriend : Boolean = false) {
         item{
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 Column {
-                    Card(
-                        elevation = CardDefaults.cardElevation(
-                            defaultElevation = 3.dp
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(
-                                horizontal = 15.dp,
-                                vertical = 5.dp
-                            ),
-                        shape = MaterialTheme.shapes.medium,
-                    ) {
+                    MyCard {
                         ListItem(
                             headlineContent = { sheet.place?.let { Text(it) } },
                             leadingContent = {
@@ -176,8 +167,8 @@ fun DetailInfos(sheet : courseDetailDTOList,isFriend : Boolean = false) {
                         }
                         )
                         ListItem(
-                            headlineContent = { Text("周${sheet.week} 第${sheet.section.toString()}节" ) },
-                            supportingContent = { Text(text = "周数 ${sheet.weekCount.toString()} ")},
+                            headlineContent = { Text("周 ${sheet.week} 第 ${sheet.section.toString()} 节" ) },
+                            supportingContent = { Text(text = "周数 ${sheet.weekCount.toString().replace("[","").replace("]","")} ")},
                             leadingContent = {
                                 Icon(
                                     painterResource(R.drawable.calendar),
@@ -187,19 +178,7 @@ fun DetailInfos(sheet : courseDetailDTOList,isFriend : Boolean = false) {
                         )
                     }
                     if(!isFriend)
-                    Card(
-                        elevation = CardDefaults.cardElevation(
-                            defaultElevation = 3.dp
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(
-                                horizontal = 15.dp,
-                                vertical = 5.dp
-                            )
-                            .clickable { },
-                        shape = MaterialTheme.shapes.medium,
-                    ){
+                    MyCard{
                         ListItem(
                             headlineContent = { Text( "更多信息") },
                             leadingContent = {

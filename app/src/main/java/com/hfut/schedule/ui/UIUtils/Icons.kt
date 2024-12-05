@@ -38,7 +38,7 @@ fun ScheduleIcons(title : String) {
     if (title.contains("实验"))
         Icon(painterResource(R.drawable.science), contentDescription = "Localized description",)
     else if (title.contains("上机"))
-        Icon(painter = painterResource(id = R.drawable.devices), contentDescription = "")
+        Icon(painter = painterResource(id = R.drawable.data_object), contentDescription = "")
     else if (title.contains("实习"))
         Icon(painter = painterResource(id = R.drawable.nature_people), contentDescription = "")
     else

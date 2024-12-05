@@ -26,6 +26,7 @@ import com.hfut.schedule.logic.datamodel.MyAPIResponse
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.ui.UIUtils.APIIcons
 import com.hfut.schedule.ui.UIUtils.DividerText
+import com.hfut.schedule.ui.UIUtils.MyCard
 
 @Composable
 fun MyAPIItem() {
@@ -54,16 +55,7 @@ fun MyAPIItem() {
 
     if(show) {
         DividerText(text = "重要通知")
-        Card(
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 3.dp
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 15.dp, vertical = 5.dp),
-            shape = MaterialTheme.shapes.medium
-
-        ){
+        MyCard {
             ListItem(
                 headlineContent = {
                     Text(text = title, fontWeight = FontWeight.Bold)

@@ -1,7 +1,7 @@
 package com.hfut.schedule.ui.Activity.success.search.Search.Survey
 
 import com.google.gson.Gson
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.logic.datamodel.Jxglstu.SurveyResponse
 import com.hfut.schedule.logic.datamodel.Jxglstu.SurveyTeacherResponse
 import com.hfut.schedule.logic.datamodel.Jxglstu.blankQuestions
@@ -9,7 +9,7 @@ import com.hfut.schedule.logic.datamodel.Jxglstu.lessonSurveyTasks
 import com.hfut.schedule.logic.datamodel.Jxglstu.options
 import com.hfut.schedule.logic.datamodel.Jxglstu.radioQuestions
 
-fun getSurveyList(vm : LoginSuccessViewModel) : MutableList<lessonSurveyTasks> {
+fun getSurveyList(vm : NetWorkViewModel) : MutableList<lessonSurveyTasks> {
     var list = mutableListOf<lessonSurveyTasks>()
     return try {
         val result = Gson().fromJson(vm.surveyListData.value, SurveyTeacherResponse::class.java).forStdLessonSurveySearchVms
@@ -25,7 +25,7 @@ fun getSurveyList(vm : LoginSuccessViewModel) : MutableList<lessonSurveyTasks> {
         list
     }
 }
-fun getSurveyChoice(vm : LoginSuccessViewModel) : MutableList<radioQuestions> {
+fun getSurveyChoice(vm : NetWorkViewModel) : MutableList<radioQuestions> {
     val list = mutableListOf<radioQuestions>()
     return try {
         val json = Gson().fromJson(vm.surveyData.value, SurveyResponse::class.java)
@@ -39,7 +39,7 @@ fun getSurveyChoice(vm : LoginSuccessViewModel) : MutableList<radioQuestions> {
         list
     }
 }
-fun getSurveyInput(vm : LoginSuccessViewModel) : MutableList<blankQuestions> {
+fun getSurveyInput(vm : NetWorkViewModel) : MutableList<blankQuestions> {
     val list = mutableListOf<blankQuestions>()
     return try {
         val json = Gson().fromJson(vm.surveyData.value, SurveyResponse::class.java)
@@ -54,7 +54,7 @@ fun getSurveyInput(vm : LoginSuccessViewModel) : MutableList<blankQuestions> {
     }
 }
 
-fun getSurveyAssoc(vm : LoginSuccessViewModel) : Int {
+fun getSurveyAssoc(vm : NetWorkViewModel) : Int {
     return try {
         val json = Gson().fromJson(vm.surveyData.value, SurveyResponse::class.java)
         json.lessonSurveyLesson.surveyAssoc

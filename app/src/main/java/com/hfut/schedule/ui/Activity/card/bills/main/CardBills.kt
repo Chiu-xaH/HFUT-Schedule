@@ -20,8 +20,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -48,7 +46,7 @@ import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.datamodel.zjgd.BillResponse
 import com.hfut.schedule.logic.datamodel.zjgd.records
@@ -57,6 +55,7 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.card.bills.CardRow
 import com.hfut.schedule.ui.UIUtils.BillsIcons
+import com.hfut.schedule.ui.UIUtils.MyCard
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.Round
 import kotlinx.coroutines.CoroutineScope
@@ -66,7 +65,7 @@ import kotlinx.coroutines.launch
 import java.math.BigDecimal
 
 
-fun BillItem(vm : LoginSuccessViewModel) :MutableList<records> {
+fun BillItem(vm : NetWorkViewModel) :MutableList<records> {
     val billjson = vm.BillsData.value
     var BillItems = mutableListOf<records>()
     if(billjson?.contains("操作成功") == true){
@@ -94,7 +93,7 @@ fun BillItem(vm : LoginSuccessViewModel) :MutableList<records> {
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun CardBills(vm : LoginSuccessViewModel,innerPaddings : PaddingValues,vmUI : UIViewModel) {
+fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIViewModel) {
     var loading by remember { mutableStateOf(true) }
     var page by remember { mutableStateOf(1) }
     var counter by remember { mutableStateOf(1) }
@@ -201,18 +200,7 @@ fun CardBills(vm : LoginSuccessViewModel,innerPaddings : PaddingValues,vmUI : UI
                     val getTime = time.substringBefore(" ")
 
 
-                    Card(
-                        elevation = CardDefaults.cardElevation(
-                            defaultElevation = 3.dp
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(
-                                horizontal = 15.dp,
-                                vertical = 5.dp
-                            ),
-                        shape = MaterialTheme.shapes.medium
-                    ) {
+                    MyCard{
                         ListItem(
                             headlineContent = { Text(text = name) },
                             supportingContent = { Text(text = processTranamt(bills)) },
@@ -300,7 +288,7 @@ fun CardBills(vm : LoginSuccessViewModel,innerPaddings : PaddingValues,vmUI : UI
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BillsInfo(vm : LoginSuccessViewModel, Infonum : Int) {
+fun BillsInfo(vm : NetWorkViewModel, Infonum : Int) {
     val bills = BillItem(vm)[Infonum]
 
     Scaffold(
@@ -318,18 +306,7 @@ fun BillsInfo(vm : LoginSuccessViewModel, Infonum : Int) {
         },
     ) {innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
-            Card(
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 3.dp
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        horizontal = 15.dp,
-                        vertical = 5.dp
-                    ),
-                shape = MaterialTheme.shapes.medium,
-            ) {
+            MyCard{
                 ListItem(
                     headlineContent = { Text( bills.resume.substringBefore("-") ) },
                     leadingContent = {

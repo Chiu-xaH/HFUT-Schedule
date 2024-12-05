@@ -18,16 +18,16 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Divider
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.NavigationBar
@@ -57,7 +57,7 @@ import androidx.navigation.compose.rememberNavController
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.ViewModel.LoginViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
@@ -77,10 +77,12 @@ import com.hfut.schedule.ui.Activity.success.calendar.next.NextCourse
 import com.hfut.schedule.ui.Activity.success.calendar.nonet.SaveCourse
 import com.hfut.schedule.ui.Activity.success.calendar.nonet.ScheduleTopDate
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.MyAPIItem
+import com.hfut.schedule.ui.Activity.success.search.Search.More.Login
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.NotificationItems
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.getNotifications
 import com.hfut.schedule.ui.Activity.success.search.Search.TotalCourse.CourseTotalUI
 import com.hfut.schedule.ui.Activity.success.search.Search.Web.LabUI
+import com.hfut.schedule.ui.Activity.success.search.main.SearchFuncs
 import com.hfut.schedule.ui.UIUtils.CustomTabRow
 import com.hfut.schedule.ui.UIUtils.DividerText
 import com.hfut.schedule.ui.UIUtils.Round
@@ -89,7 +91,6 @@ import com.hfut.schedule.ui.UIUtils.bottomBarBlur
 import com.hfut.schedule.ui.UIUtils.topBarBlur
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
-import dev.chrisbanes.haze.hazeChild
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -102,7 +103,7 @@ import java.time.LocalDate
 )
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel,vmUI : UIViewModel,webVpn : Boolean) {
+fun SuccessUI(vm : NetWorkViewModel, grade : String, vm2 : LoginViewModel, vmUI : UIViewModel, webVpn : Boolean) {
 
     var animation by remember { mutableStateOf(prefs.getInt("ANIMATION",MyApplication.Animation)) }
     val switch = prefs.getBoolean("SWITCH",true)
@@ -113,7 +114,7 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel,vm
     val hazeState = remember { HazeState() }
     var showBadge by remember { mutableStateOf(false) }
     if (getUpdates().version != APPVersion.getVersionName()) showBadge = true
-    val switchblur = prefs.getBoolean("SWITCHBLUR", AndroidVersion.sdkInt >= 32)
+    val switchblur = prefs.getBoolean("SWITCHBLUR",  AndroidVersion.canBlur)
     var blur by remember { mutableStateOf(switchblur) }
     //监听是否周六周日有课，有则显示红点
     var findCourse by remember { mutableStateOf(false) }
@@ -141,7 +142,7 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel,vm
     val titles = listOf("重要安排","其他事项")
     var showAll by remember { mutableStateOf(false) }
     var swapUI by remember { mutableStateOf(false) }
-
+    var showSearch by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
     if (showBottomSheet) {
@@ -212,13 +213,13 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel,vm
                         .fillMaxSize()
                 ){
                     val json = prefs.getString("courses","")
-                    CourseTotalUI(json,false,sortType)
+                    CourseTotalUI(json,false,sortType,vm)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
         }
     }
-
+    var searchText by remember { mutableStateOf("") }
 
 
     Scaffold(
@@ -228,10 +229,22 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel,vm
                 TopAppBar(
                    // modifier = Modifier.topBarBlur(hazeState, blur),
                     colors = TopAppBarDefaults.mediumTopAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = if(blur) 0f else 1f),
+                        containerColor = Color.Transparent,
                         titleContentColor = MaterialTheme.colorScheme.primary,
                     ),
-                    title = { ScrollText(texts(vm,bottomBarItems)) },
+                    title = {
+                        if(bottomBarItems != SEARCH) {
+                            ScrollText(texts(vm,bottomBarItems))
+                        } else {
+                            if(!showSearch) {
+                                ScrollText(texts(vm,SEARCH))
+                            } else {
+                                SearchFuncs(false,blur,searchText) {
+                                    searchText = it
+                                }
+                            }
+                        }
+                    },
                     actions = {
                         when(bottomBarItems) {
                             COURSES -> {
@@ -264,16 +277,30 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel,vm
                                 }
                             }
                             SEARCH -> {
-                                Text(text = if(webVpn)"外地访问" else "已登录",Modifier.padding(horizontal = 15.dp), color = MaterialTheme.colorScheme.primary)
+                                if(!showSearch) {
+                                    IconButton(onClick = { showSearch = !showSearch }) {
+                                        Icon(painter = painterResource(id =  R.drawable.search), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
+                                    }
+
+//                                    if(ifSaved) {
+//                                        TextButton(onClick = { Login() }) {
+//                                            Icon(painter = painterResource(id =  R.drawable.login), contentDescription = "")
+//                                        }
+//                                    } else {
+                                        Text(text = "已登录",Modifier.padding(horizontal = 15.dp), color = MaterialTheme.colorScheme.primary)
+//                                    }
+                                }
+                                Spacer(modifier = Modifier.width(15.dp))
+                                //null
                             }
                             SETTINGS -> null
                         }
                     },
                 )
-                if(!blur) {
-                    if(bottomBarItems != FOCUS)
-                        Divider()
-                }
+//                if(!blur) {
+//                    if(bottomBarItems != FOCUS)
+//                        Divider()
+//                }
                 when(bottomBarItems){
                     COURSES -> ScheduleTopDate(showAll,today,blur)
                     FOCUS -> CustomTabRow(pagerState, titles, blur)
@@ -284,10 +311,10 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel,vm
 
         bottomBar = {
             Column {
-                if(!blur)
-                    Divider()
+//                if(!blur)
+//                    Divider()
                 NavigationBar(
-                    containerColor = if(blur) Color.Transparent else ListItemDefaults.containerColor ,
+                    containerColor = Color.Transparent ,
                     modifier = Modifier.bottomBarBlur(hazeState, blur)
                 ) {
                     val items = listOf(
@@ -364,7 +391,7 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel,vm
             composable(COURSES.name) {
                 Scaffold {
                     if(!swapUI) CalendarScreen(showAll,vm,grade,innerPadding,vmUI,webVpn,vm2,true,{newDate -> today = newDate},today)
-                    else SaveCourse(showAll, innerPadding,vmUI,onDateChange = { new -> today = new}, today = today)
+                    else SaveCourse(showAll, innerPadding,vmUI,onDateChange = { new -> today = new}, today = today, vm = vm)
                 }
             }
             composable(FOCUS.name) {
@@ -374,7 +401,7 @@ fun SuccessUI(vm : LoginSuccessViewModel, grade : String,vm2 : LoginViewModel,vm
             }
             composable(SEARCH.name) {
                 Scaffold {
-                    SearchScreen(vm,false,innerPadding,vmUI,webVpn)
+                    SearchScreen(vm,false,innerPadding,vmUI,webVpn,searchText)
                 }
             }
             composable(SETTINGS.name) {

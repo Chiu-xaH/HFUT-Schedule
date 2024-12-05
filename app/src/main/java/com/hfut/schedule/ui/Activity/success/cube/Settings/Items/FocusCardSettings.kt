@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
@@ -21,9 +20,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -36,7 +32,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,12 +41,11 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.datamodel.SearchEleResponse
 import com.hfut.schedule.logic.datamodel.zjgd.FeeResponse
@@ -70,8 +64,7 @@ import com.hfut.schedule.ui.Activity.success.search.Search.LoginWeb.getWebInfos
 import com.hfut.schedule.ui.Activity.success.search.Search.More.LoginGuaGua
 import com.hfut.schedule.ui.Activity.success.search.Search.More.startGuagua
 import com.hfut.schedule.ui.Activity.success.search.Search.SchoolCard.SchoolCardItem
-import com.hfut.schedule.ui.Activity.success.search.Search.Shower.Shower
-import com.hfut.schedule.ui.Activity.success.search.Search.Shower.ShowerUI
+import com.hfut.schedule.ui.UIUtils.MyCard
 import com.hfut.schedule.ui.UIUtils.Round
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -122,15 +115,7 @@ fun FocusCardSettings() {
     SharePrefs.SaveBoolean("SWITCHSHORTCUT", false, showShortCut)
 
 
-    Card(
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 3.dp
-        ),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 15.dp, vertical = 5.dp),
-        shape = MaterialTheme.shapes.medium,
-    ){
+    MyCard{
         ListItem(headlineContent = { Text(text = "打开开关则会在APP启动时自动获取信息,并显示在聚焦即时卡片内，如需减少性能开销可按需开启或关闭") }, leadingContent = { Icon(
             painter = painterResource(id = R.drawable.info),
             contentDescription = ""
@@ -227,7 +212,7 @@ fun FocusCardSettings() {
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun FocusCard(vmUI : UIViewModel,vm : LoginSuccessViewModel,refreshing : Boolean) {
+fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel, refreshing : Boolean) {
     val showEle = prefs.getBoolean("SWITCHELE",true)
     val showToday = prefs.getBoolean("SWITCHTODAY",true)
     val showWeb = prefs.getBoolean("SWITCHWEB",true)
@@ -267,15 +252,19 @@ fun FocusCard(vmUI : UIViewModel,vm : LoginSuccessViewModel,refreshing : Boolean
     if(showCard || showEle || showToday || showWeb)
     Row(modifier = Modifier
         .fillMaxWidth()
-        .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
+        .padding(horizontal = 15.dp, vertical = 4.dp), horizontalArrangement = Arrangement.Center) {
 
-        Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .scale(scale.value),
-            shape = MaterialTheme.shapes.medium,
-        ){
+//        Card(
+//            elevation = CardDefaults.cardElevation(defaultElevation = 1.75.dp),
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .scale(scale.value),
+//            shape = MaterialTheme.shapes.medium,
+//        )
+        MyCard(modifier = Modifier
+            .fillMaxWidth()
+            .scale(scale.value))
+        {
             Column(modifier = Modifier.blur(blurSize)) {
                 if(showCard || showToday)
                     Row {
@@ -370,7 +359,7 @@ fun getWeb(vmUI : UIViewModel)  {
     }
 }
 
-fun getWebNew(vm: LoginSuccessViewModel, vmUI : UIViewModel)  {
+fun getWebNew(vm: NetWorkViewModel, vmUI : UIViewModel)  {
     val auth = prefs.getString("auth","")
     CoroutineScope(Job()).launch {
         async { vm.getFee("bearer $auth",FeeType.WEB) }
@@ -394,7 +383,7 @@ fun getWebNew(vm: LoginSuccessViewModel, vmUI : UIViewModel)  {
     }
 }
 //废弃旧的方法
-fun getEle(vm : LoginSuccessViewModel,vmUI : UIViewModel) {
+fun getEle(vm : NetWorkViewModel, vmUI : UIViewModel) {
     val BuildingsNumber = prefs.getString("BuildNumber", "0")
     val RoomNumber = prefs.getString("RoomNumber", "")
     val EndNumber = prefs.getString("EndNumber", "")
@@ -420,7 +409,7 @@ fun getEle(vm : LoginSuccessViewModel,vmUI : UIViewModel) {
         }
     }
 }
-fun getEleNew(vm : LoginSuccessViewModel, vmUI : UIViewModel) {
+fun getEleNew(vm : NetWorkViewModel, vmUI : UIViewModel) {
     val BuildingsNumber = prefs.getString("BuildNumber", "0")
     val RoomNumber = prefs.getString("RoomNumber", "")
     val EndNumber = prefs.getString("EndNumber", "")

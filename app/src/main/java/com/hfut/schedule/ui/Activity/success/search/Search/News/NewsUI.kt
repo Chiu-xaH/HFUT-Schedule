@@ -3,6 +3,7 @@ package com.hfut.schedule.ui.Activity.success.search.Search.News
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,8 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,13 +34,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.StartApp
+import com.hfut.schedule.ui.UIUtils.MyCard
 import com.hfut.schedule.ui.UIUtils.WebViewScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NewsItem(vm : LoginSuccessViewModel) {
+fun NewsItem(vm : NetWorkViewModel, innerPadding : PaddingValues? = null) {
     var showDialog by remember { mutableStateOf(false) }
     var links by remember { mutableStateOf("") }
     if (showDialog) {
@@ -80,16 +80,11 @@ fun NewsItem(vm : LoginSuccessViewModel) {
     }
 
     LazyColumn {
+        //item { if (innerPadding != null) Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding())) }
         items(getNews(vm).size){ item ->
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 Column() {
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 15.dp, vertical = 5.dp),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
+                    MyCard {
                         ListItem(
                             overlineContent = { getNews(vm)[item].date?.let { Text(text = it) } },
                             headlineContent = { getNews(vm)[item].title?.let { Text(it) } },
@@ -108,6 +103,7 @@ fun NewsItem(vm : LoginSuccessViewModel) {
                 }
             }
         }
+        item { if (innerPadding != null) Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding())) }
         item {
             Spacer(modifier = Modifier.height(85.dp))
         }

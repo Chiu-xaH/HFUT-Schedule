@@ -25,6 +25,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -63,7 +64,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.logic.datamodel.Jxglstu.ProgramPartThree
 import com.hfut.schedule.logic.datamodel.Jxglstu.ProgramShow
 import com.hfut.schedule.logic.utils.ReservDecimal
@@ -74,6 +75,7 @@ import com.hfut.schedule.ui.Activity.success.search.Search.Person.getPersonInfo
 import com.hfut.schedule.ui.UIUtils.BottomTip
 import com.hfut.schedule.ui.UIUtils.CardForListColor
 import com.hfut.schedule.ui.UIUtils.DividerText
+import com.hfut.schedule.ui.UIUtils.MyCard
 import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.schoolIcons
 import com.hfut.schedule.ui.UIUtils.statusUI
@@ -85,7 +87,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Program(vm : LoginSuccessViewModel,ifSaved : Boolean) {
+fun Program(vm : NetWorkViewModel, ifSaved : Boolean) {
     val sheetState_Program = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_Program by remember { mutableStateOf(false) }
 
@@ -161,13 +163,6 @@ fun Program(vm : LoginSuccessViewModel,ifSaved : Boolean) {
                                 ) {
                                     Icon(painterResource(id = R.drawable.info), contentDescription = "")
                                 }
-                               // FilledTonalIconButton(
-                                 //   onClick = {
-                                   //           MyToast("正在开发")
-                                    //},
-                                //) {
-                                  //  Icon(painterResource(id = R.drawable.tab_inactive), contentDescription = "")
-                               // }
                             }
                         }
                     )
@@ -179,6 +174,7 @@ fun Program(vm : LoginSuccessViewModel,ifSaved : Boolean) {
                         .fillMaxSize()
                 ){
                     ProgramUI2(vm,ifSaved)
+                    //ProgramPerformance(vm)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
@@ -203,13 +199,7 @@ fun ProgramUI() {
 
     LazyColumn {
         item {
-            Card(
-                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp),
-                shape = MaterialTheme.shapes.medium,
-            ){
+            MyCard{
                 ListItem(
                     headlineContent = { Text(text = "合计 ${list.size} 门 ${sum} 学分") },
                     supportingContent = { Text(text = "不含选修课!")},
@@ -222,13 +212,7 @@ fun ProgramUI() {
             }
         }
         items(list.size) {item ->
-            Card(
-                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp),
-                shape = MaterialTheme.shapes.medium,
-            ){
+            MyCard{
                 ListItem(
                     headlineContent = { Text(text = list[item].name) },
                     supportingContent = { Text(text = list[item].school + "  第" + list[item].term[0] + "学期")},
@@ -244,7 +228,12 @@ fun ProgramUI() {
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProgramUI2(vm: LoginSuccessViewModel,ifSaved: Boolean) {
+fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean) {
+
+    val sheetState_Performance = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showBottomSheet_Performance by remember { mutableStateOf(false) }
+
+
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
     val cookie = SharePrefs.prefs.getString("redirect", "")
@@ -273,6 +262,39 @@ fun ProgramUI2(vm: LoginSuccessViewModel,ifSaved: Boolean) {
         ,animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
     )
     val completion = getProgramCompletion(vm)
+
+
+    if (showBottomSheet_Performance ) {
+        ModalBottomSheet(
+            onDismissRequest = { showBottomSheet_Performance = false },
+            sheetState = sheetState_Performance,
+            shape = Round(sheetState_Performance)
+        ) {
+
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        title = { Text("培养方案 完成情况") },
+                    )
+                },
+            ) {innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                ){
+                    ProgramPerformance(vm)
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
+            }
+        }
+    }
+
     if(ifSaved) {
         loading = false
         refresh = false
@@ -350,6 +372,18 @@ fun ProgramUI2(vm: LoginSuccessViewModel,ifSaved: Boolean) {
         }
     }
 
+    Button(
+        onClick = {
+            if(ifSaved) Login()
+            else showBottomSheet_Performance = true
+        },
+        modifier = Modifier
+        .fillMaxWidth()
+        .padding(horizontal = 15.dp),
+    ) {
+        Text(text = "培养方案进度")
+    }
+
     DividerText(text = "课程安排")
     Box {
         AnimatedVisibility(
@@ -408,13 +442,7 @@ fun ProgramUI2(vm: LoginSuccessViewModel,ifSaved: Boolean) {
             LazyColumn {
                 items(listOne.size) {item ->
                     total += listOne[item].requiedCredits ?: 0.0
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 15.dp, vertical = 5.dp),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
+                    MyCard {
                         ListItem(
                             headlineContent = { Text(text = listOne[item].type + " | 学分要求 " + listOne[item].requiedCredits) },
                             trailingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "")},
@@ -456,7 +484,7 @@ fun ProgramUI2(vm: LoginSuccessViewModel,ifSaved: Boolean) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProgramUIInfo(num : Int,vm : LoginSuccessViewModel,ifSaved : Boolean) {
+fun ProgramUIInfo(num : Int, vm : NetWorkViewModel, ifSaved : Boolean) {
     val listTwo = getProgramListTwo(num,vm,ifSaved)
     var show by remember { mutableStateOf(true) }
     val sheetState_Program = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -498,13 +526,7 @@ fun ProgramUIInfo(num : Int,vm : LoginSuccessViewModel,ifSaved : Boolean) {
     if(show) {
         LazyColumn {
             items(listTwo.size) {item ->
-                Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 15.dp, vertical = 5.dp),
-                    shape = MaterialTheme.shapes.medium,
-                ){
+                MyCard{
                     ListItem(
                         headlineContent = { Text(text = listTwo[item].type + " | 学分要求 " + listTwo[item].requiedCredits) },
                         trailingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "")},
@@ -525,7 +547,7 @@ fun ProgramUIInfo(num : Int,vm : LoginSuccessViewModel,ifSaved : Boolean) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProgramUIInfo2(num1 : Int,num2 : Int,vm : LoginSuccessViewModel,ifSaved : Boolean) {
+fun ProgramUIInfo2(num1 : Int, num2 : Int, vm : NetWorkViewModel, ifSaved : Boolean) {
     val listThree = getProgramListThree(num1,num2,vm, ifSaved)
     if(listThree.size != 0) {
         listThree.sortBy { it.term }
@@ -567,13 +589,7 @@ fun ProgramUIInfo2(num1 : Int,num2 : Int,vm : LoginSuccessViewModel,ifSaved : Bo
         Spacer(modifier = Modifier.height(10.dp))
         LazyColumn {
             items(searchList.size) {item ->
-                Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 15.dp, vertical = 5.dp),
-                    shape = MaterialTheme.shapes.medium,
-                ){
+                MyCard{
                     var department = searchList[item].depart
                     if(department.contains("（")) department = department.substringBefore("（")
                     ListItem(
@@ -598,25 +614,13 @@ fun ProgramUIInfo2(num1 : Int,num2 : Int,vm : LoginSuccessViewModel,ifSaved : Bo
 
 @Composable
 fun ProgramTips() {
-    Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 15.dp, vertical = 5.dp),
-        shape = MaterialTheme.shapes.medium,
-    ) {
+    MyCard {
         ListItem(
             headlineContent = { Text("选修课不显示") },
             supportingContent = { Text("选修课多而杂,没必要都显示在培养方案里,按时按通知选课即可") },
         )
     }
-    Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 15.dp, vertical = 5.dp),
-        shape = MaterialTheme.shapes.medium,
-    ) {
+    MyCard {
         ListItem(
             headlineContent = { Text("查询全校其他专业培养方案") },
             supportingContent = { Text("请前往 合工大教务 公众号") },

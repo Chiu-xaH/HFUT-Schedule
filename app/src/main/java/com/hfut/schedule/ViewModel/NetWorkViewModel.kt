@@ -4,6 +4,7 @@ package com.hfut.schedule.ViewModel
 import android.annotation.SuppressLint
 import android.os.Build
 import android.util.Base64
+import android.util.LayoutDirection
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.MutableLiveData
@@ -28,11 +29,13 @@ import com.hfut.schedule.logic.network.ServiceCreator.Jxglstu.JxglstuSurveyServi
 import com.hfut.schedule.logic.network.ServiceCreator.LePaoYunServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Login.LoginServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.NewsServiceCreator
-import com.hfut.schedule.logic.network.ServiceCreator.One.OneServiceCreator
+import com.hfut.schedule.logic.network.ServiceCreator.OneServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.OneGotoServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.SearchEleServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.ServerServiceCreator
-import com.hfut.schedule.logic.network.ServiceCreator.XuanquServiceCreator
+import com.hfut.schedule.logic.network.ServiceCreator.DormitoryScoreServiceCreator
+import com.hfut.schedule.logic.network.ServiceCreator.TeacherServiceCreator
+import com.hfut.schedule.logic.network.ServiceCreator.XuanChengServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.ZJGDBillServiceCreator
 import com.hfut.schedule.logic.network.api.CommunityService
 import com.hfut.schedule.logic.network.api.FWDTService
@@ -43,12 +46,15 @@ import com.hfut.schedule.logic.network.api.LoginService
 import com.hfut.schedule.logic.network.api.NewsService
 import com.hfut.schedule.logic.network.api.OneService
 import com.hfut.schedule.logic.network.api.ServerService
-import com.hfut.schedule.logic.network.api.XuanquService
+import com.hfut.schedule.logic.network.api.DormitoryScore
+import com.hfut.schedule.logic.network.api.TeachersService
+import com.hfut.schedule.logic.network.api.XuanChengService
 import com.hfut.schedule.logic.network.api.ZJGDBillService
 import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.logic.utils.SharePrefs.SaveInt
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.getUserInfo
+import com.hfut.schedule.ui.Activity.success.search.Search.News.transferToPostData
 import com.hfut.schedule.ui.Activity.success.search.Search.Transfer.CampusId
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -57,21 +63,21 @@ import retrofit2.Response
 
 class LoginSuccessViewModelFactory(private val webVpn: Boolean) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(LoginSuccessViewModel::class.java)) {
-            return LoginSuccessViewModel(webVpn) as T
+        if (modelClass.isAssignableFrom(NetWorkViewModel::class.java)) {
+            return NetWorkViewModel(webVpn) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
 
 
-class LoginSuccessViewModel(webVpn : Boolean) : ViewModel() {
+class NetWorkViewModel(webVpn : Boolean) : ViewModel() {
     private val JxglstuJSON = JxglstuJSONServiceCreator.create(JxglstuService::class.java,webVpn)
     private val JxglstuHTML = JxglstuHTMLServiceCreator.create(JxglstuService::class.java,webVpn)
     private val OneGoto = OneGotoServiceCreator.create(LoginService::class.java)
     private val One = OneServiceCreator.create(OneService::class.java)
     private val ZJGDBill = ZJGDBillServiceCreator.create(ZJGDBillService::class.java)
-    private val Xuanqu = XuanquServiceCreator.create(XuanquService::class.java)
+    private val Xuanqu = DormitoryScoreServiceCreator.create(DormitoryScore::class.java)
     private val LePaoYun = LePaoYunServiceCreator.create(LePaoYunService::class.java)
     private val searchEle = SearchEleServiceCreator.create(FWDTService::class.java)
     private val CommunityLogin = LoginServiceCreator.create(CommunityService::class.java)
@@ -79,9 +85,12 @@ class LoginSuccessViewModel(webVpn : Boolean) : ViewModel() {
     private val Community = CommunitySreviceCreator.create(CommunityService::class.java)
   //  private val Jwglapp = JwglappServiceCreator.create(JwglappService::class.java)
     private val News = NewsServiceCreator.create(NewsService::class.java)
+    private val xuanCheng = XuanChengServiceCreator.create(XuanChengService::class.java)
     private val JxglstuSurvey = JxglstuSurveyServiceCreator.create(JxglstuService::class.java,webVpn)
     private val server = ServerServiceCreator.create(ServerService::class.java)
     private val guagua = GuaGuaServiceCreator.create(GuaGuaService::class.java)
+    private val teacher = TeacherServiceCreator.create(TeachersService::class.java)
+
     var studentId = MutableLiveData<Int>(prefs.getInt("STUDENTID",0))
     var lessonIds = MutableLiveData<List<Int>>()
     var token = MutableLiveData<String>()
@@ -317,6 +326,36 @@ class LoginSuccessViewModel(webVpn : Boolean) : ViewModel() {
     }
 
 
+    val NewsXuanChengData = MutableLiveData<String?>()
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun searchXuanChengNews(title : String, page: Int = 1) {
+
+        val postData = transferToPostData(title, page)
+        val call = xuanCheng.searchNotications(postData)
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                NewsXuanChengData.value = response.body()?.string()
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
+
+    fun getXuanChengNews() {
+
+        val call = xuanCheng.getNotications()
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                NewsXuanChengData.value = response.body()?.string()
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
+
+
     fun GotoCommunity(cookie : String) {
 
         val call = CommunityLogin.LoginCommunity(cookie)
@@ -462,6 +501,39 @@ class LoginSuccessViewModel(webVpn : Boolean) : ViewModel() {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 val body = response.body()?.string()
                 ProgramCompletionData.value = body
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
+
+    val programPerformanceData = MutableLiveData<String?>()
+
+    fun getProgramPerformance(cookie: String) {
+        val call = studentId.value?.let { JxglstuJSON.getProgramPerformance(cookie, it) }
+
+        if (call != null) {
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    val body = response.body()?.string()
+                    programPerformanceData.value = body
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+            })
+        }
+    }
+
+
+    val teacherSearchData = MutableLiveData<String?>()
+
+    fun getProgramPerformance(name: String = "",direction: String = "") {
+        val call = teacher.searchTeacher(name=name, direction = direction)
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                val body = response.body()?.string()
+                teacherSearchData.value = body
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }

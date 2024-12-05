@@ -226,7 +226,7 @@ fun GuaguaStart(vm: GuaGuaViewModel, innerPadding : PaddingValues) {
             onDismissRequest = { showDialog_Del = false },
             onConfirmation = {
                 if(id != -1)
-                ShowerDataBaseManager.removeItems(id)
+                    ShowerDataBaseManager.removeItems(id)
                 showDialog_Del = false
             },
             dialogTitle = "删除",
@@ -243,15 +243,7 @@ fun GuaguaStart(vm: GuaGuaViewModel, innerPadding : PaddingValues) {
             .verticalScroll(rememberScrollState())) {
             Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
             DividerText(text = "个人信息")
-            Card(
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 3.dp
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp),
-                shape = MaterialTheme.shapes.medium,
-            ) {
+            MyCard{
                 ListItem(
                     headlineContent = { personInfo?.let { Text(text = "￥${tranamt(it.accountMoney)}",fontSize = 28.sp) } },
                 )
@@ -275,13 +267,13 @@ fun GuaguaStart(vm: GuaGuaViewModel, innerPadding : PaddingValues) {
                 }
             }
             DividerText(text = "开始洗浴")
-            RowHorizal {
-                AssistChip(onClick = { show = true }, label = {Text(text = "扫码")})
-                Spacer(modifier = Modifier.width(10.dp))
-                AssistChip(onClick = { input = "" }, label = {Text(text = "填写MAC地址")})
-                Spacer(modifier = Modifier.width(10.dp))
-                AssistChip(onClick = { MyToast("从下方选择标签,填充MAC地址") }, label = {Text(text = "常用标签")})
-            }
+//            RowHorizal {
+//                AssistChip(onClick = { show = true }, label = {Text(text = "扫码")})
+//                Spacer(modifier = Modifier.width(10.dp))
+//                AssistChip(onClick = { input = "" }, label = {Text(text = "填写MAC地址")})
+//                Spacer(modifier = Modifier.width(10.dp))
+//                AssistChip(onClick = { MyToast("从下方选择标签,填充MAC地址") }, label = {Text(text = "常用标签")})
+//            }
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center

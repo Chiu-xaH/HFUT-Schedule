@@ -67,7 +67,7 @@ fun ShowerGuaGua(vm: GuaGuaViewModel) {
     val animation by remember { mutableStateOf(SharePrefs.prefs.getInt("ANIMATION",MyApplication.Animation)) }
     val navController = rememberNavController()
     val context = LocalContext.current
-    val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR", AndroidVersion.sdkInt >= 32)
+    val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR",  AndroidVersion.canBlur)
     val blur by remember { mutableStateOf(switchblur) }
     val hazeState = remember { HazeState() }
     Scaffold(
@@ -77,7 +77,7 @@ fun ShowerGuaGua(vm: GuaGuaViewModel) {
                 TopAppBar(
                     modifier = Modifier.topBarBlur(hazeState, blur),
                     colors = TopAppBarDefaults.mediumTopAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = if(blur) 0f else 1f),
+                        containerColor = Color.Transparent,
                         titleContentColor = MaterialTheme.colorScheme.primary,
                     ),
                     title = { Text("洗浴-呱呱物联") },
@@ -89,15 +89,15 @@ fun ShowerGuaGua(vm: GuaGuaViewModel) {
                         }
                     }
                 )
-                if(!blur)
-                    Divider()
+//                if(!blur)
+//                    Divider()
             }
         },
         bottomBar = {
             Column {
-                if(!blur)
-                    Divider()
-                NavigationBar(containerColor = if(blur) Color.Transparent else ListItemDefaults.containerColor ,
+//                if(!blur)
+//                    Divider()
+                NavigationBar(containerColor = Color.Transparent,
                     modifier = Modifier
                         .bottomBarBlur(hazeState, blur)) {
 

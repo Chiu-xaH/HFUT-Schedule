@@ -7,8 +7,6 @@ import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,18 +17,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.selection.selectable
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
@@ -38,7 +31,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,19 +43,15 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.logic.Enums.PostMode
 import com.hfut.schedule.logic.datamodel.Jxglstu.PostSurvey
 import com.hfut.schedule.logic.datamodel.Jxglstu.blankQuestionAnswer
 import com.hfut.schedule.logic.datamodel.Jxglstu.radioQuestionAnswer
-import com.hfut.schedule.logic.datamodel.Jxglstu.saveListChoice
-import com.hfut.schedule.logic.datamodel.Jxglstu.saveListInput
 import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.ui.Activity.success.focus.Focus.AddButton
+import com.hfut.schedule.ui.UIUtils.MyCard
 import com.hfut.schedule.ui.UIUtils.MyToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -71,7 +59,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 @Composable
-fun surveyInfo(id : Int,vm: LoginSuccessViewModel) {
+fun surveyInfo(id : Int,vm: NetWorkViewModel) {
     var loading by remember { mutableStateOf(true) }
 
     val cookie = SharePrefs.prefs.getString("redirect", "")
@@ -119,7 +107,7 @@ fun surveyInfo(id : Int,vm: LoginSuccessViewModel) {
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun surveyList(vm : LoginSuccessViewModel) {
+fun surveyList(vm : NetWorkViewModel) {
     val choiceList = getSurveyChoice(vm)
     val inputList = getSurveyInput(vm)
     //saveList(vm,choiceList,inputList)
@@ -130,7 +118,7 @@ fun surveyList(vm : LoginSuccessViewModel) {
    // val scrollstate = rememberLazyListState()
    // val shouldShowAddButton by remember { derivedStateOf { scrollstate.firstVisibleItemScrollOffset == 0 } }
     
-    fun postResultNormal(vm : LoginSuccessViewModel) : JsonObject {
+    fun postResultNormal(vm : NetWorkViewModel) : JsonObject {
         val surveyAssoc = getSurveyAssoc(vm)
         val lessonSurveyTaskAssoc = prefs.getInt("teacherID", 0)
         val postSurvey = PostSurvey(surveyAssoc, lessonSurveyTaskAssoc, choiceNewList, inputNewList)
@@ -140,12 +128,12 @@ fun surveyList(vm : LoginSuccessViewModel) {
         LazyColumn() {
             items(inputList.size) {item ->
                 Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 1.75.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 15.dp, vertical = 5.dp),
                     shape = MaterialTheme.shapes.medium,
-                ){
+                ) {
                     inputNewList.add(blankQuestionAnswer(inputList[item].id,input))
                     ListItem(
                         headlineContent = { Text(text = inputList[item].title) },
@@ -178,13 +166,7 @@ fun surveyList(vm : LoginSuccessViewModel) {
                 }
             }
             items(choiceList.size) {item ->
-                Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 15.dp, vertical = 5.dp),
-                    shape = MaterialTheme.shapes.medium,
-                ){
+                MyCard {
                     ListItem(
                         headlineContent = { Text(text = choiceList[item].title) },
                         leadingContent = { Icon(painterResource(R.drawable.article), contentDescription = "Localized description",) },
@@ -255,7 +237,7 @@ fun surveyList(vm : LoginSuccessViewModel) {
 }
 
 @SuppressLint("SuspiciousIndentation")
-fun selectMode(vm : LoginSuccessViewModel, mode : PostMode) : Boolean {
+fun selectMode(vm : NetWorkViewModel, mode : PostMode) : Boolean {
 
     val cookie = SharePrefs.prefs.getString("redirect", "")
     val token = prefs.getString("SurveyCookie","")
@@ -282,7 +264,7 @@ fun selectMode(vm : LoginSuccessViewModel, mode : PostMode) : Boolean {
 }
 
 //true为好评，false为差评
-fun postResult(vm: LoginSuccessViewModel,goodMode: Boolean): JsonObject {
+fun postResult(vm: NetWorkViewModel, goodMode: Boolean): JsonObject {
     val surveyAssoc = getSurveyAssoc(vm)
     val lessonSurveyTaskAssoc = prefs.getInt("teacherID", 0)
     val choiceList = getSurveyChoice(vm)

@@ -67,7 +67,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.logic.datamodel.zjgd.FeeType
 import com.hfut.schedule.logic.datamodel.zjgd.ShowerFeeResponse
 import com.hfut.schedule.logic.utils.SharePrefs
@@ -94,7 +94,7 @@ import java.math.BigDecimal
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Shower(vm: LoginSuccessViewModel) {
+fun Shower(vm: NetWorkViewModel) {
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
 
@@ -198,7 +198,7 @@ fun Shower(vm: LoginSuccessViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShowerUI(vm : LoginSuccessViewModel) {
+fun ShowerUI(vm : NetWorkViewModel) {
     var savedPhoneNumber = prefs.getString("PhoneNumber","")
     var phoneNumber by remember { mutableStateOf(savedPhoneNumber ?: "") }
     var balance by remember { mutableStateOf(0) }
@@ -577,7 +577,7 @@ fun tranamt(bills : Int) : Float {
     }
 }
 
-fun getInGuaGua(vm: LoginSuccessViewModel) {
+fun getInGuaGua(vm: NetWorkViewModel) {
     CoroutineScope(Job()).launch {
         async { vm.getGuaGuaUserInfo() }.await()
         async {

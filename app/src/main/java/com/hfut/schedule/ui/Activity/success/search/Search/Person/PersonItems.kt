@@ -47,6 +47,7 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.success.search.Search.LoginWeb.getIdentifyID
 import com.hfut.schedule.ui.UIUtils.DividerText
+import com.hfut.schedule.ui.UIUtils.MyCard
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.ScrollText
 import com.hfut.schedule.ui.UIUtils.schoolIcons
@@ -117,13 +118,7 @@ fun PersonItems(ifSaved : Boolean) {
         ) {
 
             DividerText(text = "账号信息")
-            Card(
-                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp),
-                shape = MaterialTheme.shapes.medium,
-            ) {
+           // MyCard {
                 ListItem(
                     headlineContent = { name?.let { Text(text = it) } },
                     overlineContent = { Text(text ="姓名" )},
@@ -174,18 +169,12 @@ fun PersonItems(ifSaved : Boolean) {
                         }
                     )
                 }
-            }
+          //  }
 
 
             DividerText(text = "就读信息")
 
-            Card(
-                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp),
-                shape = MaterialTheme.shapes.medium,
-            ) {
+        //    MyCard {
                 ListItem(
                     headlineContent = { school?.let { Text(text = it) } },
                     overlineContent = { Text(text = "校区")},
@@ -247,16 +236,10 @@ fun PersonItems(ifSaved : Boolean) {
                         MyToast("已复制到剪切板")
                     }
                 )
-            }
+         //   }
 
             DividerText(text = "密码信息")
-            Card(
-                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp),
-                shape = MaterialTheme.shapes.medium,
-            ) {
+        //    MyCard {
                 ListItem(
                     headlineContent = { Text(text = "密码") },
                     leadingContent = {
@@ -302,16 +285,10 @@ fun PersonItems(ifSaved : Boolean) {
                     )
                 }
 
-            }
+       //     }
 
             DividerText(text = "学籍信息")
-            Card(
-                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp),
-                shape = MaterialTheme.shapes.medium,
-            ) {
+         //   MyCard {
                 ListItem(
                     headlineContent = { studyType?.let { Text(text = it) } },
                     overlineContent = { Text(text = "类型")},
@@ -422,7 +399,7 @@ fun PersonItems(ifSaved : Boolean) {
                     )
                 )
 
-            }
+        //    }
         }
     }
 }

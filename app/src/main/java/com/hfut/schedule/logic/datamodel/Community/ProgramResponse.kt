@@ -1,5 +1,7 @@
 package com.hfut.schedule.logic.datamodel.Community
 
+import com.hfut.schedule.logic.datamodel.Jxglstu.RequireInfo
+
 data class ProgramResponse(val result : ProgramResult)
 
 data class ProgramResult(
@@ -10,3 +12,4 @@ data class ProgramResult(
 )
 
 //data class trainingProgramCategoryDTOList()
+

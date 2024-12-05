@@ -1,14 +1,11 @@
 package com.hfut.schedule.ui.Activity.success.search.Search.LePaoYun
 
 import android.annotation.SuppressLint
-import android.content.Intent
-import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,8 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.AssistChip
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -42,12 +37,13 @@ import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.SharePrefs.Save
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.datamodel.LePaoYun.LePaoYunHomeResponse
 import com.hfut.schedule.logic.utils.StartApp
 import com.hfut.schedule.ui.UIUtils.LittleDialog
+import com.hfut.schedule.ui.UIUtils.MyCard
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -57,7 +53,7 @@ import kotlinx.coroutines.launch
 fun OpenLePao() {
     StartApp.startLaunchAPK("com.yunzhi.tiyu","云运动")
 }
-fun Update(vm : LoginSuccessViewModel) {
+fun Update(vm : NetWorkViewModel) {
     val token =  prefs.getString("Yuntoken","")?.trim()
    
     CoroutineScope(Job()).launch {
@@ -79,7 +75,7 @@ fun Update(vm : LoginSuccessViewModel) {
 @SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LePaoYun(vm : LoginSuccessViewModel) {
+fun LePaoYun(vm : NetWorkViewModel) {
 
    // Update(vm)
 
@@ -181,13 +177,7 @@ fun LePaoYunUI() {
                         )
                     }
 
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 15.dp, vertical = 5.dp),
-                        shape = MaterialTheme.shapes.medium
-                    ){
+                    MyCard{
                         ListItem(
                             headlineContent = { Text(text = "已跑 ${distance} 公里")},
                             leadingContent = { Icon(painterResource(id = R.drawable.directions_run), contentDescription = "")},
@@ -195,13 +185,7 @@ fun LePaoYunUI() {
                         )
                     }
 
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 15.dp, vertical = 5.dp),
-                        shape = MaterialTheme.shapes.medium
-                    ){
+                    MyCard{
 
                         ListItem(
                             headlineContent = { Text(text = "单次要求")},
@@ -228,13 +212,7 @@ fun LePaoYunUI() {
                         }
                     }
 
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 15.dp, vertical = 5.dp),
-                        shape = MaterialTheme.shapes.medium
-                    ){
+                    MyCard{
                         ListItem(
                             headlineContent = { Text(text = "日期")},
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.calendar), contentDescription = "")},
@@ -246,14 +224,7 @@ fun LePaoYunUI() {
                             supportingContent = { Text(text = "${cralist.dayStartTime} - ${cralist.dayEndTime}")},
                         )
                     }
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .fillMaxHeight()
-                            .padding(horizontal = 15.dp, vertical = 5.dp),
-                        shape = MaterialTheme.shapes.medium
-                    ){
+                    MyCard{
                         LazyColumn{
                             item {
                                 ListItem(

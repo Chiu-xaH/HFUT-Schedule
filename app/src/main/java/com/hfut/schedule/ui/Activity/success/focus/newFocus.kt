@@ -27,6 +27,7 @@ import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.success.focus.Focus.openOperation
+import com.hfut.schedule.ui.UIUtils.MyCard
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.ScheduleIcons
 import kotlin.Exception
@@ -122,15 +123,7 @@ fun newScheduleItems(MySchedule: MutableList<newSchedule>, item : Int, Future : 
     val info = MySchedules.info
     val title = MySchedules.title
 
-    Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 15.dp, vertical = 5.dp)
-        //.size(width = 350.dp, height = 90.dp)
-        ,shape = MaterialTheme.shapes.medium
-
-    ) {
+    MyCard{
         ListItem(
             headlineContent = {  Text(text = title) },
             overlineContent = { Text(text = time) },
@@ -199,13 +192,7 @@ fun newWangkeItem(item : Int, MyWangKe: MutableList<newSchedule>, Future: Boolea
 
         if(Future) {
             if(nowTime < getEndTime) {
-                Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 15.dp, vertical = 5.dp),
-                    shape = MaterialTheme.shapes.medium,
-                ) {
+                MyCard{
 
                     ListItem(
                         headlineContent = {  Text(text = title) },

@@ -17,8 +17,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
@@ -47,9 +45,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.logic.datamodel.Community.ApplyFriendResponse
-import com.hfut.schedule.logic.datamodel.Community.ApplyingList
 import com.hfut.schedule.logic.datamodel.Community.ApplyingLists
 import com.hfut.schedule.logic.datamodel.Community.ApplyingResponse
 import com.hfut.schedule.logic.datamodel.Community.FriendsList
@@ -58,13 +55,13 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.UIUtils.BottomTip
 import com.hfut.schedule.ui.UIUtils.DividerText
+import com.hfut.schedule.ui.UIUtils.MyCard
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.ScrollText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 fun getFriendsList() : List<FriendsList?> {
@@ -83,14 +80,14 @@ fun getFriendsList() : List<FriendsList?> {
     }
 }
 
-fun getFriendsCourse(studentId : String,vm : LoginSuccessViewModel) {
+fun getFriendsCourse(studentId : String,vm : NetWorkViewModel) {
     val CommuityTOKEN = SharePrefs.prefs.getString("TOKEN","")
     CommuityTOKEN?.let { vm.GetCourse(it,studentId) }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddCourseUI(vm: LoginSuccessViewModel) {
+fun AddCourseUI(vm: NetWorkViewModel) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
     if (showBottomSheet) {
@@ -116,13 +113,7 @@ fun AddCourseUI(vm: LoginSuccessViewModel) {
             }
         }
     }
-    Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 15.dp, vertical = 5.dp),
-        shape = MaterialTheme.shapes.medium,
-    ) {
+    MyCard {
         ListItem(
             headlineContent = { Text(text = "从文件导入") },
             supportingContent = {
@@ -137,13 +128,7 @@ fun AddCourseUI(vm: LoginSuccessViewModel) {
         )
     }
 
-    Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 15.dp, vertical = 5.dp),
-        shape = MaterialTheme.shapes.medium,
-    ) {
+    MyCard {
         ListItem(
             headlineContent = { Text(text = "向他人申请好友课表") },
             supportingContent = {
@@ -162,7 +147,7 @@ fun AddCourseUI(vm: LoginSuccessViewModel) {
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FriendsSetting(vm : LoginSuccessViewModel) {
+fun FriendsSetting(vm : NetWorkViewModel) {
     var count = 0
     val CommuityTOKEN = SharePrefs.prefs.getString("TOKEN","")
     var loading by remember { mutableStateOf(true) }
@@ -241,13 +226,7 @@ fun FriendsSetting(vm : LoginSuccessViewModel) {
     if(msg != "")
     BottomTip(str = msg)
     DividerText(text = "好友列表(您目前可以查看的课表)")
-    Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 15.dp, vertical = 5.dp),
-        shape = MaterialTheme.shapes.medium,
-    ) {
+    MyCard {
         for(i in friendList.indices) {
             ListItem(
                 headlineContent = { friendList[i]?.let { Text(text = it.realname) } },
@@ -285,13 +264,7 @@ fun FriendsSetting(vm : LoginSuccessViewModel) {
             enter = fadeIn(),
             exit = fadeOut()
         ) {
-            Card(
-                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp),
-                shape = MaterialTheme.shapes.medium,
-            ) {
+            MyCard {
                 val applyList = getApplyingList(vm)
                 for(i in applyList.indices) {
                     ListItem(
@@ -336,7 +309,7 @@ fun getMsg(json : String) : String {
     }
 }
 
-fun getApplyingList(vm: LoginSuccessViewModel) : List<ApplyingLists?> {
+fun getApplyingList(vm: NetWorkViewModel) : List<ApplyingLists?> {
     val list  = mutableListOf<ApplyingLists>()
     return try {
         val json = vm.applyData.value

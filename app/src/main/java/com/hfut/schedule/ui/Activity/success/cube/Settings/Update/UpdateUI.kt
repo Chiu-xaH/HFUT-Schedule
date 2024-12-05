@@ -35,20 +35,12 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.APPVersion
 import com.hfut.schedule.logic.utils.StartApp
+import com.hfut.schedule.ui.UIUtils.MyCard
 
 @Composable
 fun UpdateUI() {
 
-    Card(
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 3.dp
-        ),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 15.dp, vertical = 5.dp),
-        shape = MaterialTheme.shapes.medium
-
-    ){
+    MyCard {
         UpdateItem()
     }
 }

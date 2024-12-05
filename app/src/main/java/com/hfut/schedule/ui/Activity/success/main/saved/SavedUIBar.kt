@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
@@ -18,24 +17,22 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Divider
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.NavigationBar
@@ -50,7 +47,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -65,18 +61,16 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.ViewModel.LoginViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.Enums.BottomBarItems
 import com.hfut.schedule.logic.Enums.BottomBarItems.*
-import com.hfut.schedule.logic.datamodel.MyAPIResponse
 import com.hfut.schedule.logic.datamodel.NavigationBarItemData
 import com.hfut.schedule.logic.utils.APPVersion
-import com.hfut.schedule.logic.utils.AndroidVersion
+import com.hfut.schedule.logic.utils.AndroidVersion.canBlur
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.GetDate.Benweeks
 import com.hfut.schedule.logic.utils.GetDate.Date_MM_dd
@@ -97,20 +91,16 @@ import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.N
 import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.getNotifications
 import com.hfut.schedule.ui.Activity.success.search.Search.TotalCourse.CourseTotalUI
 import com.hfut.schedule.ui.Activity.success.search.Search.Web.LabUI
+import com.hfut.schedule.ui.Activity.success.search.main.SearchFuncs
 import com.hfut.schedule.ui.Activity.success.search.main.SearchScreen
-import com.hfut.schedule.ui.Activity.success.search.main.getName
 import com.hfut.schedule.ui.UIUtils.CustomTabRow
 import com.hfut.schedule.ui.UIUtils.DividerText
 import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.ScrollText
 import com.hfut.schedule.ui.UIUtils.bottomBarBlur
 import com.hfut.schedule.ui.UIUtils.topBarBlur
-import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeStyle
-import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.haze
-import dev.chrisbanes.haze.hazeChild
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -122,7 +112,7 @@ import java.time.LocalDate
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationGraphicsApi::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel) {
+fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
    // val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
     val navController = rememberNavController()
     val isEnabled by remember { mutableStateOf(true) }
@@ -133,7 +123,7 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
     var bottomBarItems by remember { mutableStateOf(FOCUS) }
     var showBadge by remember { mutableStateOf(false) }
     if (getUpdates().version != APPVersion.getVersionName()) showBadge = true
-    val switchblur = prefs.getBoolean("SWITCHBLUR", AndroidVersion.sdkInt >= 32)
+    val switchblur = prefs.getBoolean("SWITCHBLUR", canBlur)
     var blur by remember { mutableStateOf(switchblur) }
    // val savenum = prefs.getInt("GradeNum",0) + prefs.getInt("ExamNum",0) + prefs.getInt("Notifications",0)
     //val getnum = getGrade().size + getExam().size + getNotifications().size
@@ -266,7 +256,7 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
                         .fillMaxSize()
                 ){
                     val json = prefs.getString("courses","")
-                    CourseTotalUI(json,false,sortType)
+                    CourseTotalUI(json,false,sortType,vm)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
@@ -283,7 +273,13 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
 
 
     val pagerState = rememberPagerState(pageCount = { 2 })
+
     val titles = listOf("重要安排","其他事项")
+
+
+    var searchText by remember { mutableStateOf("") }
+
+    var showSearch by remember { mutableStateOf(false) }
     vmUI.findNewCourse.observeForever(Observer)
     if(findCourse) vmUI.findNewCourse.removeObserver(Observer)
     Scaffold(
@@ -293,10 +289,25 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
             Column(modifier = Modifier.topBarBlur(hazeState, blur)) {
                 TopAppBar(
                     colors = TopAppBarDefaults.mediumTopAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = if(blur) 0f else 1f),
+                        containerColor = Color.Transparent
+                        ///MaterialTheme.colorScheme.primaryContainer.copy(alpha = if(blur) 0f else 1f)
+                        ,
                         titleContentColor = MaterialTheme.colorScheme.primary,
                     ),
-                    title = { ScrollText(texts(vm,bottomBarItems)) },
+                    title = {
+
+                        if(bottomBarItems != SEARCH) {
+                            ScrollText(texts(vm,bottomBarItems))
+                        } else {
+                            if(!showSearch) {
+                                ScrollText(texts(vm,SEARCH))
+                            } else {
+                                SearchFuncs(ifSaved,blur,searchText) {
+                                    searchText = it
+                                }
+                            }
+                        }
+                            },
                     actions = {
                         when(bottomBarItems){
                             COURSES -> {
@@ -330,34 +341,43 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
                                 }
                             }
                             SEARCH -> {
-                                if(ifSaved) {
-                                    TextButton(onClick = { Login() }) {
-                                        Icon(painter = painterResource(id =  R.drawable.login), contentDescription = "")
+                                if(!showSearch) {
+                                    IconButton(onClick = { showSearch = !showSearch }) {
+                                        Icon(painter = painterResource(id =  R.drawable.search), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
                                     }
-                                } else {
-                                    Text(text = "已登录",Modifier.padding(horizontal = 15.dp), color = MaterialTheme.colorScheme.primary)
+
+                                    if(ifSaved) {
+                                        TextButton(onClick = { Login() }) {
+                                            Icon(painter = painterResource(id =  R.drawable.login), contentDescription = "")
+                                        }
+                                    } else {
+                                        Text(text = "已登录",Modifier.padding(horizontal = 15.dp), color = MaterialTheme.colorScheme.primary)
+                                    }
                                 }
+                                Spacer(modifier = Modifier.width(15.dp))
+                                //null
                             }
                             SETTINGS -> null
                         }
                     },
                 )
-                if(!blur) {
-                    if(bottomBarItems != FOCUS)
-                        Divider()
-                }
+//                if(!blur) {
+//                    if(bottomBarItems != FOCUS)
+//                        Divider()
+//                }
                 when(bottomBarItems){
                     COURSES -> ScheduleTopDate(showAll,today,blur)
                     FOCUS -> CustomTabRow(pagerState, titles, blur)
+                   // SEARCH -> SearchFuncs()
                     else -> null
                 }
             }
         },
         bottomBar = {
             Column {
-                if(!blur)
-                    Divider()
-                NavigationBar(containerColor = if(blur) Color.Transparent else ListItemDefaults.containerColor ,
+//                if(!blur)
+//                    Divider()
+                NavigationBar(containerColor = Color.Transparent ,
                     modifier = Modifier.bottomBarBlur(hazeState, blur)
                 ) {
                     //悬浮底栏效果
@@ -445,7 +465,7 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
             }) {
                 if(!isFriend)
                     when (swapUI) {
-                        COMMUNITY -> SaveCourse(showAll, innerPadding,vmUI, onDateChange = { new -> today = new}, today = today)
+                        COMMUNITY -> SaveCourse(showAll, innerPadding,vmUI, onDateChange = { new -> today = new}, today = today, vm = vm)
                         JXGLSTU -> prefs.getString("Username","")?.let { it1 -> CalendarScreen(showAll,vm, it1.substring(0,2),innerPadding,vmUI,false,vm2,false,{newDate -> today = newDate},today) }
                             ///CustomSchedules(showAll,innerPadding,vmUI,-1)
                         NEXT -> {
@@ -458,7 +478,7 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
                         }
                     }
                 else {
-                    SaveCourse(showAll,innerPadding,vmUI,swapUI.toString(),onDateChange = { new -> today = new}, today = today)
+                    SaveCourse(showAll,innerPadding,vmUI,swapUI.toString(),onDateChange = { new -> today = new}, today = today,vm)
                 }
 
             }
@@ -473,7 +493,7 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
             }
             composable(SEARCH.name) {
                 Scaffold {
-                    SearchScreen(vm,ifSaved,innerPadding,vmUI,false)
+                    SearchScreen(vm,ifSaved,innerPadding,vmUI,false,searchText)
                 }
 
             }
@@ -488,7 +508,7 @@ fun NoNetWork(vm : LoginSuccessViewModel,vm2 : LoginViewModel,vmUI : UIViewModel
 
 
 @RequiresApi(Build.VERSION_CODES.O)
-fun texts(vm : LoginSuccessViewModel,num : BottomBarItems) : String {
+fun texts(vm : NetWorkViewModel, num : BottomBarItems) : String {
     when(num){
         COURSES -> {
             val dayweek = GetDate.dayweek
@@ -521,15 +541,16 @@ fun texts(vm : LoginSuccessViewModel,num : BottomBarItems) : String {
             return "今天  $Date_MM_dd  第${Benweeks}周  周$chinesenumber"
         }
         SEARCH -> {
-            var text  = "你好"
-            if(GetDate.formattedTime_Hour.toInt() == 12) text = "午饭时间到~"
-            if(GetDate.formattedTime_Hour.toInt() in 13..17) text = "下午要忙什么呢"
-            if(GetDate.formattedTime_Hour.toInt() in 7..11) text = "上午好呀"
-            if(GetDate.formattedTime_Hour.toInt() in 5..6) text = "起的好早呀"
-            if(GetDate.formattedTime_Hour.toInt() in 18..23) text = "晚上好"
-            if(GetDate.formattedTime_Hour.toInt() in 0..4) text = "熬夜也要早睡哦"
-
-            return "$text ${getName(vm)} 同学"
+//            var text  = "你好"
+//            if(GetDate.formattedTime_Hour.toInt() == 12) text = "午饭时间到~"
+//            if(GetDate.formattedTime_Hour.toInt() in 13..17) text = "下午要忙什么呢"
+//            if(GetDate.formattedTime_Hour.toInt() in 7..11) text = "上午好呀"
+//            if(GetDate.formattedTime_Hour.toInt() in 5..6) text = "起的好早呀"
+//            if(GetDate.formattedTime_Hour.toInt() in 18..23) text = "晚上好"
+//            if(GetDate.formattedTime_Hour.toInt() in 0..4) text = "熬夜也要早睡哦"
+//
+//            return "$text ${getName(vm)} 同学"
+            return "查询中心"
         }
         SETTINGS -> {
             return "选项"

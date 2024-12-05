@@ -121,7 +121,7 @@ fun Schools() {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    SchoolsUI()
+                    SchoolsUI(null)
                 }
             }
         }

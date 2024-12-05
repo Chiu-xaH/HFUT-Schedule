@@ -37,7 +37,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.logic.datamodel.One.EmptyRoomResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -46,7 +46,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun emptyRoomUI(vm : LoginSuccessViewModel) {
+fun emptyRoomUI(vm : NetWorkViewModel) {
     var selected1 by remember { mutableStateOf(true) }
     var selected2 by remember { mutableStateOf(false) }
     var selected3 by remember { mutableStateOf(false) }

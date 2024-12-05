@@ -36,6 +36,12 @@
         android:theme="@style/Theme.App.Starting"
         tools:targetApi="tiramisu">
         <activity
+            android:name=".activity.NewsActivity"
+            android:exported="true"
+            android:label="@string/title_activity_news"
+            android:theme="@style/Theme.App.Starting">
+        </activity>
+        <activity
             android:name=".activity.BaseActivity"
             android:exported="false"
             android:label="@string/title_activity_base"

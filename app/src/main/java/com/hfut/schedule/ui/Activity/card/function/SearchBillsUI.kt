@@ -16,8 +16,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -43,7 +41,7 @@ import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.datamodel.zjgd.BillResponse
@@ -51,15 +49,15 @@ import com.hfut.schedule.logic.datamodel.zjgd.records
 import com.hfut.schedule.ui.Activity.card.bills.main.BillItem
 import com.hfut.schedule.ui.Activity.card.bills.main.processTranamt
 import com.hfut.schedule.ui.UIUtils.BillsIcons
+import com.hfut.schedule.ui.UIUtils.MyCard
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import java.math.BigDecimal
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchBillsUI(vm : LoginSuccessViewModel) {
+fun SearchBillsUI(vm : NetWorkViewModel) {
 
     var clicked by remember { mutableStateOf(false) }
     var loading by remember { mutableStateOf(true) }
@@ -222,15 +220,7 @@ fun SearchBillsUI(vm : LoginSuccessViewModel) {
 
                                     Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)
                                     {
-                                        Card(
-                                            elevation = CardDefaults.cardElevation(
-                                                defaultElevation = 3.dp
-                                            ),
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(horizontal = 15.dp, vertical = 5.dp),
-                                            shape = MaterialTheme.shapes.medium
-                                        ) {
+                                        MyCard {
                                             ListItem(
                                                 headlineContent = { Text(text = name) },
                                                 supportingContent = {Text(text = processTranamt(BillItem(vm)[item]))},

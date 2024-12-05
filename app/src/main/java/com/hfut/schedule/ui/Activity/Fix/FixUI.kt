@@ -19,8 +19,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
@@ -46,7 +44,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.ViewModel.LoginViewModel
 import com.hfut.schedule.activity.LoginActivity
 import com.hfut.schedule.logic.utils.APPVersion
@@ -59,13 +57,14 @@ import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.Clear
 import com.hfut.schedule.ui.Activity.success.cube.Settings.Items.apiCheck
 import com.hfut.schedule.ui.Activity.success.focus.Focus.getTimeStamp
 import com.hfut.schedule.ui.UIUtils.LittleDialog
+import com.hfut.schedule.ui.UIUtils.MyCard
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.Round
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel,vm2 : LoginSuccessViewModel) {
+fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel,vm2 : NetWorkViewModel) {
     var showDialog by remember { mutableStateOf(false) }
     val switch_faststart = SharePrefs.prefs.getBoolean("SWITCHFASTSTART",
         SharePrefs.prefs.getString("TOKEN","")?.isNotEmpty() ?: false)
@@ -127,16 +126,7 @@ fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel,vm2 : LoginSuccessVie
         .padding(innerPadding)) {
         Spacer(modifier = Modifier.height(5.dp))
 
-        Card(
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 3.dp
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 15.dp, vertical = 5.dp),
-            shape = androidx.compose.material3.MaterialTheme.shapes.medium
-
-        ){
+        MyCard{
             ListItem(
                 headlineContent = { Text(text = "版本信息") },
                 supportingContent = {Text("安卓版本 ${AndroidVersion.sdkInt} | 应用版本 ${APPVersion.getVersionName()} (${APPVersion.getVersionCode()})")},
@@ -348,16 +338,7 @@ fun questionUI() {
 @Composable
 fun questionItem(title : String,
                  info : String) {
-    Card(
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 3.dp
-        ),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 15.dp, vertical = 5.dp),
-        shape = androidx.compose.material3.MaterialTheme.shapes.medium
-
-    ) {
+    MyCard {
         ListItem(
             headlineContent = { Text(text = title) },
             supportingContent = { Text(text = info) }
@@ -373,7 +354,7 @@ fun sendToMe() {
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun feedBackUI(vm : LoginSuccessViewModel) {
+fun feedBackUI(vm : NetWorkViewModel) {
     var input by remember { mutableStateOf("") }
     var inputContact by remember { mutableStateOf("") }
 
@@ -445,22 +426,14 @@ fun feedBackUI(vm : LoginSuccessViewModel) {
                 )
             }
             Spacer(modifier = Modifier.height(5.dp))
-            Card(
-                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp, vertical = 5.dp),
-                shape = MaterialTheme.shapes.medium
-            ) {
+            MyCard {
                 ListItem(
                     headlineContent = { Text(text = "或者通过电子邮件联系") },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.mail), contentDescription ="" )},
                     modifier = Modifier.clickable { sendToMe() }
                 )
             }
-            Card(
-                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp, vertical = 5.dp),
-                shape = MaterialTheme.shapes.medium
-            ) {
+            MyCard {
                 ListItem(
                     headlineContent = { Text(text = "提交时会自动提交当前APP版本、日期时间等信息，以协助开发者分析反馈内容") },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.info), contentDescription ="" )},

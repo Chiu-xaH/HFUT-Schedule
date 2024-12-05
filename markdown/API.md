@@ -552,13 +552,88 @@ Query["studentId"] 学生ID
 ### 申请/撤销转专业
 这里我忘记做了，因为我就是要转专业的，不敢随便来回选退，很遗憾，现在也没机会再做了，只有大一学弟学妹才能做了
 
-### 培养方案完成情况
+### 培养方案完成情况 1.0(只有数据信息)
 @GET ws/student/home-page/programCompletionPreview
 
 此接口响应较慢，正常现象
 
 #### 请求
 Header["Cookie"] 上面得到的Cookie，类似SESSION=XXX...
+
+### 培养方案完成情况 2.0(课程完成情况+培养方案)
+@GET for-std/program-completion-preview/json/ + 学生ID
+
+#### 请求
+Header["Cookie"] 上面得到的Cookie，类似SESSION=XXX...
+
+#### 响应
+Body(JSON) JSON特别大，几乎7~9MB，数据量比较庞大，但是都是嵌套结构，解析起来有迹可循，可以与[培养方案]共用解析方法
+
+注意：此接口获取的JSON每个课程与[培养方案]相比，增加了一些信息，其中"resultType"需要注意：PASSED 通过/TAKING 本学期开课(在修)/UNREPAIRED 本学期不开课(未安排)
+```json
+{
+    "completionSummary": {
+        "passedCourseNum": 17,
+        "failedCourseNum": 0,
+        "takingCourseNum": 17,
+        "passedCredits": 30,
+        "failedCredits": 0,
+        "takingCredits": 30.75
+    },
+    "outerCompletionSummary": {
+        "passedCourseNum": 10,
+        "failedCourseNum": 0,
+        "takingCourseNum": 0,
+        "passedCredits": 26,
+        "failedCredits": 0,
+        "takingCredits": 0
+    },
+    "moduleList": [
+        {
+            "nameZh": "公共基础课程",
+            "requireInfo": {
+                "credits": 41,
+                "courseNum": 13
+            },
+            "completionSummary": {
+                "passedCourseNum": 2,
+                "failedCourseNum": 0,
+                "takingCourseNum": 4,
+                "skipCourseNum": 0,
+                "passedCredits": 7.5,
+                "failedCredits": 0,
+                "takingCredits": 9
+            },
+            "allCourseList": [
+                {
+                    "code": "1400071B",
+                    "nameZh": "线性代数",
+                    "credits": 2.5,
+                    "terms": [
+                        "TERM_1"
+                    ],
+                    "resultType": "PASSED/TAKING/UNREPAIRED",
+                    "score": 79,
+                    "rank": null,
+                    "gp": 3
+                }
+            ]
+        }
+    ],
+    "outerCourseList": [
+        {
+            "code": "0500011B",
+            "nameZh": "大学计算机基础",
+            "credits": 1,
+            "resultType": "PASSED",
+            "score": 91,
+            "rank": null,
+            "gp": 4
+        }
+    ]
+}
+```
+
 
 ## 智慧社区 https://community.hfut.edu.cn/
 
@@ -1175,6 +1250,102 @@ Header["Cookie"]上面[获取ticket]拿到的字符串 "wengine_vpn_ticketwebvpn
 FORM "student_code"="XDYYY" 寝室号
 
 X号楼 ,D只能为 N/S ，代表 北楼/南楼,YYY房间号
+
+## 通知公告-宣城校区 https://xc.hfut.edu.cn/
+
+### 获取通知公告 
+@GET 1955/list.htm
+
+#### 请求
+无
+#### 响应
+HTML，需自行解析，参考Kotlin代码
+
+### 检索通知公告
+
+@POST _web/_search/api/searchCon/create.rst?_p=YXM9MiZ0PTE0NTcmZD0zODcxJnA9MiZmPTEmbT1TTiZ8Ym5uQ29sdW1uVmlydHVhbE5hbWU9MS0m
+
+看一下JS代码，都是用Base64处理的
+
+#### 请求
+Form seachInfo=Base64编码后的JSON
+```json
+[
+    {
+        "field": "pageIndex",
+        "value": 1 //页数，默认第一页
+    },
+    {
+        "field": "group",
+        "value": 0
+    },
+    {
+        "field": "searchType",
+        "value": ""
+    },
+    {
+        "field": "keyword",
+        "value": "物理" //关键词检索
+    },
+    {
+        "field": "recommend",
+        "value": "1"
+    },
+    {
+        "field": 4,
+        "value": ""
+    },
+    {
+        "field": 5,
+        "value": ""
+    },
+    {
+        "field": 6,
+        "value": ""
+    },
+    {
+        "field": 7,
+        "value": ""
+    }
+]
+```
+
+#### 响应
+Body(JSON) 很迷惑的响应，居然给一堆HTML，自己用Jsoup解析一下吧
+```json
+{ "data": "一堆HTML" }
+```
+
+
+## 教师主页 https://faculty.hfut.edu.cn/
+### 检索教师 
+@GET system/resource/tsites/advancesearch.jsp
+
+#### 请求
+Query["teacherName"] 直接提交检索文本，可选参数
+
+Query["pagesize"] 一次请求数量，可选参数
+
+Query["pageindex"] 页码，可选参数
+
+Query["showlang"] 语言，可选参数 推荐加"zh_CN"否则会给英文主页
+
+Query["searchDirection"] 研究方向，可选参数
+
+...参数有好多，自己去[教师高级检索](https://faculty.hfut.edu.cn/search.jsp?urltype=tree.TreeTempUrl&wbtreeid=1011)抓包分析吧
+#### 响应
+```json
+{
+    "teacherData": [
+        {
+            "name": "名字",
+            "url": "http://faculty.hfut.edu.cn/{英文姓名}/zh_CN/index.htm",//这个URL是教师主页
+            "picUrl": "/_resources/group1/M00/00/03/rB_XXX.png"//这个URL前面加API是教师图片
+        }
+    ]
+}
+```
+
 
 ## 校务行 https://xwx.gzzmedu.com:9080/
 

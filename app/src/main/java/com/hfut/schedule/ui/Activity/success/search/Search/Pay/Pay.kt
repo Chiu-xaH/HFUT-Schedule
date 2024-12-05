@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.sp
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.logic.datamodel.PayData
 import com.hfut.schedule.logic.datamodel.PayResponse
 import com.hfut.schedule.logic.utils.ClipBoard
@@ -59,7 +59,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Pay(ifSaved : Boolean,vm : LoginSuccessViewModel) {
+fun Pay(ifSaved : Boolean,vm : NetWorkViewModel) {
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
  //   var showDialog by remember { mutableStateOf(false) }
@@ -104,7 +104,7 @@ fun Pay(ifSaved : Boolean,vm : LoginSuccessViewModel) {
 }
 
 @Composable
-fun PayUI(url : String,vm: LoginSuccessViewModel) {
+fun PayUI(url : String,vm: NetWorkViewModel) {
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
 
@@ -230,7 +230,7 @@ fun PayUI(url : String,vm: LoginSuccessViewModel) {
 }
 
 
-fun getPay(vm: LoginSuccessViewModel) : PayData {
+fun getPay(vm: NetWorkViewModel) : PayData {
     return try {
         val json = vm.PayData.value
         val data = Gson().fromJson(json,PayResponse::class.java).data

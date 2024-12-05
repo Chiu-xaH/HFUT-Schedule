@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -35,7 +33,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.StartApp
@@ -43,13 +41,14 @@ import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.card.bills.main.BillItem
 import com.hfut.schedule.ui.Activity.card.bills.main.processTranamt
 import com.hfut.schedule.ui.UIUtils.BillsIcons
+import com.hfut.schedule.ui.UIUtils.MyCard
 import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.ScrollText
 import java.math.BigDecimal
 import java.math.RoundingMode
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CardRow(vm : LoginSuccessViewModel,vmUI : UIViewModel) {
+fun CardRow(vm : NetWorkViewModel, vmUI : UIViewModel) {
     var todaypay = 0.0
     var date = GetDate.Date_yyyy_MM_dd
 
@@ -97,18 +96,7 @@ fun CardRow(vm : LoginSuccessViewModel,vmUI : UIViewModel) {
     Spacer(modifier = Modifier.height(5.dp))
 
 
-    Card(
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 3.dp
-        ),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(
-                horizontal = 15.dp,
-                vertical = 5.dp
-            ),
-        shape = MaterialTheme.shapes.medium
-    ) {
+    MyCard {
         Row {
             ListItem(
                 headlineContent = { ScrollText(text = "余额 ￥${vmUI.CardValue.value?.now ?: now}") },
@@ -135,7 +123,7 @@ fun CardRow(vm : LoginSuccessViewModel,vmUI : UIViewModel) {
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TodayBills(vm: LoginSuccessViewModel) {
+fun TodayBills(vm: NetWorkViewModel) {
     val bills = BillItem(vm)
 
     Scaffold(
@@ -160,7 +148,7 @@ fun TodayBills(vm: LoginSuccessViewModel) {
     }
 }
 @Composable
-fun todayCount(vm  : LoginSuccessViewModel,item : Int) {
+fun todayCount(vm  : NetWorkViewModel, item : Int) {
     val bills = BillItem(vm)[item]
     var name = bills.resume
     if (name.contains("有限公司")) name = name.replace("有限公司","")
@@ -169,18 +157,7 @@ fun todayCount(vm  : LoginSuccessViewModel,item : Int) {
     val getTime = time.substringBefore(" ")
 
     if(GetDate.Date_yyyy_MM_dd == getTime)
-        Card(
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 3.dp
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    horizontal = 15.dp,
-                    vertical = 5.dp
-                ),
-            shape = MaterialTheme.shapes.medium
-        ) {
+        MyCard {
             ListItem(
                 headlineContent = { Text(text = name) },
                 supportingContent = { Text(text = processTranamt(bills)) },

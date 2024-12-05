@@ -35,6 +35,7 @@ import com.hfut.schedule.logic.utils.StartApp
 import com.hfut.schedule.ui.Activity.success.search.Search.Person.getPersonInfo
 import com.hfut.schedule.ui.Activity.success.search.Search.Web.getLab
 import com.hfut.schedule.ui.UIUtils.EmptyUI
+import com.hfut.schedule.ui.UIUtils.MyCard
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.ScrollText
 import com.hfut.schedule.ui.UIUtils.WebViewScreen
@@ -88,13 +89,7 @@ fun NotificationItems() {
     }
     if(list.size == 0) EmptyUI() else {
         for(item in list.indices) {
-            Card(
-                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp),
-                shape = MaterialTheme.shapes.medium
-            ){
+            MyCard {
                 ListItem(
                     headlineContent = { Text(text = list[item].title) },
                     supportingContent = { Text(text = list[item].info) },

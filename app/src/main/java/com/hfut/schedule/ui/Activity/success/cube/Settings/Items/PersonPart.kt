@@ -44,6 +44,7 @@ import com.hfut.schedule.logic.utils.ReservDecimal
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.success.search.Search.Person.getPersonInfo
+import com.hfut.schedule.ui.UIUtils.MyCard
 import com.hfut.schedule.ui.UIUtils.ScrollText
 import com.hfut.schedule.ui.UIUtils.schoolIcons
 
@@ -55,19 +56,24 @@ fun PersonPart() {
     val endDate = getPersonInfo().endDate
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
         Column() {
-            Card(
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 3.dp
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        horizontal = 15.dp,
-                        vertical = 5.dp
-                    ),
-                shape = MaterialTheme.shapes.medium,
-                colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primaryContainer)
-            ){
+//             {
+//
+//            }
+//            Card(
+//                elevation = CardDefaults.cardElevation(
+//                    defaultElevation = 1.75.dp
+//                ),
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(
+//                        horizontal = 15.dp,
+//                        vertical = 4.dp
+//                    ),
+//                shape = MaterialTheme.shapes.medium,
+//                colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primaryContainer)
+//            )
+            MyCard(containerColor = MaterialTheme.colorScheme.primaryContainer)
+            {
 
                 
                 ListItem(

@@ -60,6 +60,7 @@ import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.logic.datamodel.Community.TodayResponse
 import com.hfut.schedule.logic.datamodel.Community.TodayResult
 import com.hfut.schedule.logic.datamodel.Focus.AddFocus
@@ -77,6 +78,7 @@ import com.hfut.schedule.ui.Activity.success.focus.Focus.FocusDataBaseManager.ad
 import com.hfut.schedule.ui.Activity.success.focus.Focus.FocusDataBaseManager.removeItems
 import com.hfut.schedule.ui.Activity.success.search.Search.SchoolCard.TodayInfo
 import com.hfut.schedule.ui.UIUtils.BottomTip
+import com.hfut.schedule.ui.UIUtils.MyCard
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.ScheduleIcons
@@ -139,15 +141,7 @@ fun ScheduleItems(MySchedule: MutableList<Schedule>, item : Int,Future : Boolean
 
     @Composable
     fun Item() {
-        Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 15.dp, vertical = 5.dp)
-            //.size(width = 350.dp, height = 90.dp)
-            ,shape = MaterialTheme.shapes.medium
-
-        ) {
+        MyCard {
             ListItem(
                 headlineContent = {  Text(text = title) },
                 overlineContent = {Text(text = time)},
@@ -229,13 +223,7 @@ fun WangkeItem(item : Int, MyWangKe: MutableList<Schedule>,Future: Boolean) {
 
             if(Future) {
                 if(nowTime < getEndTime) {
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 15.dp, vertical = 5.dp),
-                        shape = MaterialTheme.shapes.medium,
-                    ) {
+                    MyCard {
 
                         ListItem(
                             headlineContent = {  Text(text = title) },
@@ -312,7 +300,7 @@ fun WangkeItem(item : Int, MyWangKe: MutableList<Schedule>,Future: Boolean) {
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun TodayCourseItem(item : Int) {
+fun TodayCourseItem(item : Int,vm : NetWorkViewModel) {
 
     var week = GetDate.Benweeks.toInt()
 
@@ -335,23 +323,14 @@ fun TodayCourseItem(item : Int) {
                 ),
                 title = { list.name.let { Text(it) } },
             )
-            DetailInfos(list)
+            DetailInfos(list,vm = vm)
         }
     }
 
     Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)
     {
-        Spacer(modifier = Modifier.height(100.dp))
-        Card(
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 3.dp
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 15.dp, vertical = 5.dp),
-            shape = MaterialTheme.shapes.medium
-
-        ) {
+        //Spacer(modifier = Modifier.height(100.dp))
+        MyCard {
             ListItem(
                 headlineContent = { list.name?.let { Text(text = it) } },
                 overlineContent = { Text(text = list.classTime)},
@@ -374,7 +353,7 @@ fun TodayCourseItem(item : Int) {
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun TomorrowCourseItem(item : Int) {
+fun TomorrowCourseItem(item : Int,vm: NetWorkViewModel) {
 
     var weekdaytomorrow = GetDate.dayweek + 1
     var week = GetDate.Benweeks.toInt()
@@ -400,22 +379,14 @@ fun TomorrowCourseItem(item : Int) {
                 ),
                 title = { list.name.let { Text(it) } },
             )
-            DetailInfos(list)
+            DetailInfos(list,vm = vm)
         }
     }
 
 
     Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
-        Spacer(modifier = Modifier.height(100.dp))
-        Card(
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 3.dp
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 15.dp, vertical = 5.dp),
-            shape = MaterialTheme.shapes.medium,
-            ) {
+        //Spacer(modifier = Modifier.height(100.dp))
+        MyCard {
             ListItem(
                 headlineContent = { list.name?.let { Text(text = it) } },
                 overlineContent = {Text(text = list.classTime)},
@@ -438,16 +409,8 @@ fun AddItem(item : Int, AddedItems : MutableList<AddFocus>) {
     var isClicked by remember { mutableStateOf(false) }
         var Lists by remember { mutableStateOf( AddedItems() ) }
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-            Spacer(modifier = Modifier.height(100.dp))
-            Card(
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 3.dp
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp),
-                shape = MaterialTheme.shapes.medium,
-            ) {
+            //Spacer(modifier = Modifier.height(100.dp))
+            MyCard {
                 ListItem(
                     headlineContent = { Text(text = AddedItems[item].title) },
                     overlineContent = { Text(text = AddedItems[item].remark) },
@@ -539,15 +502,7 @@ fun BoxScope.AddButton(isVisible: Boolean,innerPaddings : PaddingValues) {
                 ) {
 
                     Spacer(modifier = Modifier.height(10.dp))
-                    Card(
-                        elevation = CardDefaults.cardElevation(
-                            defaultElevation = 3.dp
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 15.dp, vertical = 5.dp),
-                        shape = MaterialTheme.shapes.medium,
-                    ) {
+                    MyCard {
                         ListItem(
                             headlineContent = {  Text(text = title) },
                             overlineContent = {Text(text = remark)},

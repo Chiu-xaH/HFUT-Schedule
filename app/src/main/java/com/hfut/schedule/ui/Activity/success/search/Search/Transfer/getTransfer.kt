@@ -1,7 +1,7 @@
 package com.hfut.schedule.ui.Activity.success.search.Search.Transfer
 
 import com.google.gson.Gson
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.logic.datamodel.Jxglstu.MyApplyResponse
 import com.hfut.schedule.logic.datamodel.Jxglstu.TransferData
 import com.hfut.schedule.logic.datamodel.Jxglstu.TransferResponse
@@ -13,26 +13,29 @@ enum class CampusId {
     HEFEI,XUANCHENG
 }
 fun getCampus() : String? {
-    val info = SharePrefs.prefs.getString("info","")
+    try {
+        val info = SharePrefs.prefs.getString("info","")
 
 
-    val doc = info?.let { Jsoup.parse(it) }
-    val elements = doc?.select("dl dt, dl dd")
+        val doc = info?.let { Jsoup.parse(it) }
+        val elements = doc?.select("dl dt, dl dd")
 
-    val infoMap = mutableMapOf<String, String>()
-    if (elements != null) {
-        for (i in 0 until elements.size step 2) {
-            val key = elements[i].text()
-            val value = elements[i+1].text()
-            infoMap[key] = value
+        val infoMap = mutableMapOf<String, String>()
+        if (elements != null) {
+            for (i in 0 until elements.size step 2) {
+                val key = elements[i].text()
+                val value = elements[i+1].text()
+                infoMap[key] = value
+            }
         }
+
+        return infoMap[elements?.get(18)?.text()]
+    } catch (_:Exception) {
+        return null
     }
-
-    return infoMap[elements?.get(18)?.text()]
-
 }
 
-fun getTransfer(vm : LoginSuccessViewModel) : MutableList<TransferData> {
+fun getTransfer(vm : NetWorkViewModel) : MutableList<TransferData> {
     val list = mutableListOf<TransferData>()
     return try {
         val json = vm.transferData.value
@@ -51,7 +54,7 @@ fun getTransfer(vm : LoginSuccessViewModel) : MutableList<TransferData> {
     }
 }
 
-fun getMyTransfer(vm : LoginSuccessViewModel) : TransferData {
+fun getMyTransfer(vm : NetWorkViewModel) : TransferData {
     //  val list = mutableListOf<TransferData>()
     return try {
         val json = vm.myApplyData.value
@@ -64,7 +67,7 @@ fun getMyTransfer(vm : LoginSuccessViewModel) : TransferData {
     }
 }
 
-fun getApplyStatus(vm : LoginSuccessViewModel) : Boolean? {
+fun getApplyStatus(vm : NetWorkViewModel) : Boolean? {
     return try {
         val json = vm.myApplyData.value
         val data = Gson().fromJson(json, MyApplyResponse::class.java).models[0].applyStatus

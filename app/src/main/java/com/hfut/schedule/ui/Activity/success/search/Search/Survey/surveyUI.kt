@@ -3,7 +3,6 @@ package com.hfut.schedule.ui.Activity.success.search.Search.Survey
 import android.annotation.SuppressLint
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -24,8 +23,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -52,17 +49,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.google.gson.Gson
-import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.logic.Enums.PostMode
-import com.hfut.schedule.logic.datamodel.MyAPIResponse
 import com.hfut.schedule.logic.utils.Semseter.getSemseter
 import com.hfut.schedule.logic.utils.Semseter.getSemseterCloud
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.ui.UIUtils.EmptyUI
 import com.hfut.schedule.ui.UIUtils.LittleDialog
+import com.hfut.schedule.ui.UIUtils.MyCard
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.Round
 import kotlinx.coroutines.CoroutineScope
@@ -72,7 +67,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SurveyUI(vm : LoginSuccessViewModel) {
+fun SurveyUI(vm : NetWorkViewModel) {
     var expanded by remember { mutableStateOf(true) }
     val sheetState = rememberModalBottomSheetState()
     var showitem by remember { mutableStateOf(false) }
@@ -183,7 +178,7 @@ fun SurveyUI(vm : LoginSuccessViewModel) {
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun teacherList(vm : LoginSuccessViewModel, refresh : (Boolean) -> Unit) {
+fun teacherList(vm : NetWorkViewModel, refresh : (Boolean) -> Unit) {
     val list =  getSurveyList(vm)
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -269,15 +264,9 @@ fun teacherList(vm : LoginSuccessViewModel, refresh : (Boolean) -> Unit) {
     if(list.size != 0)
         LazyColumn {
             items(list.size) { item ->
-                Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 15.dp, vertical = 5.dp),
-                    shape = MaterialTheme.shapes.medium,
-                ){
+                MyCard{
                     ListItem(
-                        headlineContent = { Text(text = list[item].teacher.person.nameZh) },
+                        headlineContent = { list[item].teacher.person?.let { Text(text = it.nameZh) } },
                         leadingContent = { Icon(painterResource(R.drawable.person), contentDescription = "Localized description",) },
                         trailingContent = { if(!list[item].submitted) Icon(Icons.Filled.ArrowForward, contentDescription = "") else Text(text = "已评") },
                         modifier = Modifier.clickable {

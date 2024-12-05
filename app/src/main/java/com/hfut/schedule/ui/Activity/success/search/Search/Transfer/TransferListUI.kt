@@ -14,8 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
@@ -37,9 +35,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.logic.datamodel.Jxglstu.TransferData
 import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.reEmptyLiveDta
+import com.hfut.schedule.ui.UIUtils.MyCard
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.ScrollText
 import com.hfut.schedule.ui.UIUtils.schoolIcons
@@ -51,7 +51,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TransferUI(vm: LoginSuccessViewModel,campus: CampusId) {
+fun TransferUI(vm: NetWorkViewModel, campus: CampusId) {
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
     val cookie = SharePrefs.prefs.getString("redirect", "")
@@ -60,7 +60,7 @@ fun TransferUI(vm: LoginSuccessViewModel,campus: CampusId) {
 
     LaunchedEffect(key1 = campus) {
         loading = true
-        delay(1000)
+        reEmptyLiveDta(vm.transferData)
         refresh = true
     }
     if(refresh) {
@@ -145,13 +145,7 @@ fun TransferUI(vm: LoginSuccessViewModel,campus: CampusId) {
 
                 LazyColumn {
                     items(searchList.size) {item ->
-                        Card(
-                            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 15.dp, vertical = 5.dp),
-                            shape = MaterialTheme.shapes.medium,
-                        ) {
+                        MyCard {
                             var department = searchList[item].department.nameZh
                             if(department.contains("（")) department = department.substringBefore("（")
                             if(department.contains("(")) department = department.substringBefore("(")

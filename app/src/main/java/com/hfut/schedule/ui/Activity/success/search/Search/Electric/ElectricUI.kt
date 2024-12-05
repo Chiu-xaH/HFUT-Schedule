@@ -69,7 +69,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.logic.datamodel.zjgd.FeeResponse
 import com.hfut.schedule.logic.datamodel.zjgd.FeeType
 import com.hfut.schedule.logic.utils.SharePrefs
@@ -79,7 +79,6 @@ import com.hfut.schedule.ui.UIUtils.BottomTip
 import com.hfut.schedule.ui.UIUtils.CardForListColor
 import com.hfut.schedule.ui.UIUtils.DividerText
 import com.hfut.schedule.ui.UIUtils.MyToast
-import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.WebViewScreen
 import com.hfut.schedule.ui.theme.FWDTColr
 import kotlinx.coroutines.CoroutineScope
@@ -96,7 +95,7 @@ fun EleUIs() {
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EleUI(vm : LoginSuccessViewModel) {
+fun EleUI(vm : NetWorkViewModel) {
     val SavedBuildNumber = SharePrefs.prefs.getString("BuildNumber", "0")
     var BuildingsNumber by remember { mutableStateOf(SavedBuildNumber ?: "0") }
     val SavedRoomNumber = SharePrefs.prefs.getString("RoomNumber", "")

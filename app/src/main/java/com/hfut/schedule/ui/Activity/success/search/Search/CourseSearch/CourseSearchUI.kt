@@ -44,7 +44,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.Semseter.getSemseter
 import com.hfut.schedule.logic.utils.Semseter.getSemseterCloud
 import com.hfut.schedule.logic.utils.SharePrefs
@@ -56,7 +56,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun courseSearchUI(vm : LoginSuccessViewModel) {
+fun courseSearchUI(vm : NetWorkViewModel) {
     var className by remember { mutableStateOf( "") }
     var courseName by remember { mutableStateOf( "") }
 
@@ -194,7 +194,7 @@ fun courseSearchUI(vm : LoginSuccessViewModel) {
                         enter = fadeIn(),
                         exit = fadeOut()
                     ) {
-                        CourseTotalUI(json = vm.courseRsponseData.value,true,sortType)
+                        CourseTotalUI(json = vm.courseRsponseData.value,true,sortType,vm)
                     }
                 }
 

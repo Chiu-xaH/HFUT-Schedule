@@ -33,8 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
-import com.hfut.schedule.logic.utils.ReservDecimal
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.ui.Activity.success.search.Search.Person.getPersonInfo
 import com.hfut.schedule.ui.UIUtils.CardForListColor
@@ -46,7 +45,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 @Composable
-fun MyApply(vm: LoginSuccessViewModel) {
+fun MyApply(vm: NetWorkViewModel) {
 
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }

@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.Enums.LibraryItems
+import com.hfut.schedule.ui.UIUtils.MyCard
 import com.hfut.schedule.ui.UIUtils.Round
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -119,13 +120,7 @@ fun BorrowItems(PerfsJson : String) {
             val Returntime = getBorrow(PerfsJson)[item].returnTime
             Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)
             {
-                Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 15.dp, vertical = 5.dp),
-                    shape = MaterialTheme.shapes.medium
-                ) {
+                MyCard {
                     ListItem(
                         headlineContent = { Text(text = getBorrow(PerfsJson)[item].bookName,fontWeight = FontWeight.Bold) },
                         supportingContent = {  Text(text = getBorrow(PerfsJson)[item].author) },

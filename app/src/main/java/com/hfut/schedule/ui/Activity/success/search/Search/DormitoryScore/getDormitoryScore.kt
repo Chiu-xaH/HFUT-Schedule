@@ -1,9 +1,9 @@
 package com.hfut.schedule.ui.Activity.success.search.Search.DormitoryScore
 
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.logic.datamodel.XuanquResponse
 
-fun getDormitoryScore(vm: LoginSuccessViewModel) : List<XuanquResponse>? {
+fun getDormitoryScore(vm: NetWorkViewModel) : List<XuanquResponse>? {
     val html = vm.XuanquData.value
 
     // 定义一个正则表达式来匹配HTML标签

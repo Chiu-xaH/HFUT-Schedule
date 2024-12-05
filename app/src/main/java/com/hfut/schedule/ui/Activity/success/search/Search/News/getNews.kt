@@ -1,11 +1,11 @@
 package com.hfut.schedule.ui.Activity.success.search.Search.News
 
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.logic.datamodel.NewsResponse
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 
-fun getNews(vm : LoginSuccessViewModel): MutableList<NewsResponse> {
+fun getNews(vm : NetWorkViewModel): MutableList<NewsResponse> {
     var newsList = mutableListOf<NewsResponse>()
     try {
         val html= vm.NewsData.value

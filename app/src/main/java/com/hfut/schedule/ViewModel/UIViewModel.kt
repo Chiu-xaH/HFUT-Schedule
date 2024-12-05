@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.datamodel.zjgd.ReturnCard
 import com.hfut.schedule.logic.network.ServiceCreator.GiteeServiceCreator
+import com.hfut.schedule.logic.network.ServiceCreator.Login.LoginWeb2ServiceCreator
 import com.hfut.schedule.logic.network.ServiceCreator.Login.LoginWebServiceCreator
 import com.hfut.schedule.logic.network.api.GiteeService
 import com.hfut.schedule.logic.network.api.LoginWebsService
@@ -24,7 +25,7 @@ import retrofit2.Response
 class UIViewModel : ViewModel()  {
     private val Gitee = GiteeServiceCreator.create(GiteeService::class.java)
     private val LoginWeb = LoginWebServiceCreator.create(LoginWebsService::class.java)
-    private val LoginWeb2 = LoginWebServiceCreator.create(LoginWebsService::class.java)
+    private val LoginWeb2 = LoginWeb2ServiceCreator.create(LoginWebsService::class.java)
 
     val findNewCourse = MutableLiveData<Boolean>()
     var CardValue = MutableLiveData<ReturnCard>()

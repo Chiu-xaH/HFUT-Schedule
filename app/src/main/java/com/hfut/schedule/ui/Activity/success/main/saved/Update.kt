@@ -2,30 +2,22 @@ package com.hfut.schedule.ui.Activity.success.main.saved
 
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.lifecycle.Observer
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.ViewModel.LoginViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
-import com.hfut.schedule.logic.datamodel.zjgd.FeeType
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.ui.Activity.success.focus.Focus.AddedItems
-import com.hfut.schedule.ui.Activity.success.focus.Focus.MySchedule
-import com.hfut.schedule.ui.Activity.success.focus.Focus.MyWangKe
 import com.hfut.schedule.ui.Activity.success.focus.Focus.GetZjgdCard
-import com.hfut.schedule.ui.Activity.success.search.Search.NotificationsCenter.getNotifications
-import com.hfut.schedule.ui.UIUtils.MyToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-suspend fun NetWorkUpdate(vm : LoginSuccessViewModel, vm2 : LoginViewModel,vmUI : UIViewModel,webVpn : Boolean,ifSaved : Boolean){
+suspend fun NetWorkUpdate(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel, webVpn : Boolean, ifSaved : Boolean){
     val CommuityTOKEN = SharePrefs.prefs.getString("TOKEN","")
     val auth = prefs.getString("auth","")
     val grade = prefs.getString("Username","")?.substring(2,4)
@@ -84,7 +76,7 @@ suspend fun NetWorkUpdate(vm : LoginSuccessViewModel, vm2 : LoginViewModel,vmUI 
     }
 }
 //更新教务课表与课程汇总
-fun UpdateCourses(vm: LoginSuccessViewModel) {
+fun UpdateCourses(vm: NetWorkViewModel) {
     val grade = prefs.getString("Username","")?.substring(2,4)
     val cookie = prefs.getString("redirect", "")
     CoroutineScope(Job()).async {

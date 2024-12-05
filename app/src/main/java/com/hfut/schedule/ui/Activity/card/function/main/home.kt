@@ -55,7 +55,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavHostController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.Enums.CardBarItems
 import com.hfut.schedule.logic.utils.GetDate
@@ -75,6 +75,7 @@ import com.hfut.schedule.ui.Activity.success.search.Search.More.Login
 import com.hfut.schedule.ui.Activity.success.search.Search.Shower.ShowerUI
 import com.hfut.schedule.ui.UIUtils.CardForListColor
 import com.hfut.schedule.ui.UIUtils.DividerText
+import com.hfut.schedule.ui.UIUtils.MyCard
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.WebViewScreen
@@ -87,7 +88,7 @@ import java.math.RoundingMode
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
-fun HomeScreen(innerPadding : PaddingValues,vm : LoginSuccessViewModel,navController :  NavHostController,vmUI : UIViewModel) {
+fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navController :  NavHostController, vmUI : UIViewModel) {
     //刷新
     var refreshing by remember { mutableStateOf(false) }
     var loading by remember { mutableStateOf(false) }
@@ -296,15 +297,7 @@ fun HomeScreen(innerPadding : PaddingValues,vm : LoginSuccessViewModel,navContro
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    Card(
-                        elevation = CardDefaults.cardElevation(
-                            defaultElevation = 3.dp
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 15.dp, vertical = 5.dp),
-                        shape = MaterialTheme.shapes.medium,
-                    ) {
+                    MyCard {
                         ListItem(
                             headlineContent = { Text(text = "电费") },
                             leadingContent = {
@@ -313,15 +306,7 @@ fun HomeScreen(innerPadding : PaddingValues,vm : LoginSuccessViewModel,navContro
                             modifier = Modifier.clickable { showBottomSheet_ELectric = true }
                         )
                     }
-                    Card(
-                        elevation = CardDefaults.cardElevation(
-                            defaultElevation = 3.dp
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 15.dp, vertical = 5.dp),
-                        shape = MaterialTheme.shapes.medium,
-                    ) {
+                    MyCard{
                         ListItem(
                             headlineContent = { Text(text = "网费") },
                             leadingContent = {
@@ -330,15 +315,7 @@ fun HomeScreen(innerPadding : PaddingValues,vm : LoginSuccessViewModel,navContro
                             modifier = Modifier.clickable { showBottomSheet_Web= true }
                         )
                     }
-                    Card(
-                        elevation = CardDefaults.cardElevation(
-                            defaultElevation = 3.dp
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 15.dp, vertical = 5.dp),
-                        shape = MaterialTheme.shapes.medium,
-                    ) {
+                    MyCard {
                         ListItem(
                             headlineContent = { Text(text = "洗浴") },
                             leadingContent = {

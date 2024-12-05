@@ -45,7 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.gson.Gson
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.logic.datamodel.zjgd.FeeType
 import com.hfut.schedule.logic.datamodel.zjgd.PayStep1Response
 import com.hfut.schedule.logic.datamodel.zjgd.PayStep2Response
@@ -65,7 +65,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PayFor(vm : LoginSuccessViewModel, payNumber : Int, tipInfo : String, json : String,type : FeeType) {
+fun PayFor(vm : NetWorkViewModel, payNumber : Int, tipInfo : String, json : String, type : FeeType) {
     var showDialog by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -206,7 +206,7 @@ fun PayFor(vm : LoginSuccessViewModel, payNumber : Int, tipInfo : String, json :
 }
 
 @Composable
-fun payStatusUI(vm : LoginSuccessViewModel,payNumber : Int,json: String,type : FeeType) {
+fun payStatusUI(vm : NetWorkViewModel, payNumber : Int, json: String, type : FeeType) {
 
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }

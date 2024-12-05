@@ -69,6 +69,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.datamodel.Community.courseDetailDTOList
 import com.hfut.schedule.logic.utils.GetDate
@@ -95,7 +96,8 @@ fun SaveCourse(
     vmUI : UIViewModel,
     friendUserName : String? = null,
     onDateChange : (LocalDate) ->Unit,
-    today: LocalDate) {
+    today: LocalDate,
+    vm : NetWorkViewModel) {
 
     val table_1_1 by rememberSaveable { mutableStateOf("") }
     val table_1_2 by rememberSaveable { mutableStateOf("") }
@@ -634,7 +636,7 @@ fun SaveCourse(
                 ),
                 title = { Text(if(showAll) sheetall[num].name else sheet[num].name) },
             )
-            DetailInfos(if(showAll) sheetall[num] else sheet[num],friendUserName != null)
+            DetailInfos(if(showAll) sheetall[num] else sheet[num],friendUserName != null, vm = vm)
         }
     }
 
@@ -801,7 +803,7 @@ fun SaveCourse(
 @Composable
 fun ScheduleTopDate(showAll: Boolean,today : LocalDate,blur : Boolean) {
     val mondayOfCurrentWeek = today.minusDays(today.dayOfWeek.value - 1L)
-    Column(modifier = Modifier.background(if(blur) Color.Transparent else MaterialTheme.colorScheme.surface)) {
+    Column(modifier = Modifier.background(Color.Transparent)) {
         Spacer(modifier = Modifier.height(5.dp))
         LazyVerticalGrid(columns = GridCells.Fixed(if(showAll)7 else 5),modifier = Modifier.padding(horizontal = 10.dp)){
             items(if(showAll)7 else 5) { item ->

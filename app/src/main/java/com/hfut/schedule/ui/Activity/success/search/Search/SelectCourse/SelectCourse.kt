@@ -26,16 +26,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
@@ -65,16 +59,16 @@ import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.logic.Enums.SelectType
 import com.hfut.schedule.logic.datamodel.Jxglstu.SelectCourseInfo
 import com.hfut.schedule.logic.datamodel.Jxglstu.SelectPostResponse
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.success.main.saved.UpdateCourses
-import com.hfut.schedule.ui.Activity.success.search.Search.FailRate.Click
 import com.hfut.schedule.ui.Activity.success.search.Search.More.Login
 import com.hfut.schedule.ui.UIUtils.LittleDialog
+import com.hfut.schedule.ui.UIUtils.MyCard
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.ScrollText
@@ -85,7 +79,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun selectCourse(ifSaved : Boolean,vm : LoginSuccessViewModel) {
+fun SelectCourse(ifSaved : Boolean, vm : NetWorkViewModel) {
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
@@ -178,25 +172,13 @@ fun selectCourse(ifSaved : Boolean,vm : LoginSuccessViewModel) {
 }
 @Composable
 fun SelectShuoming() {
-    Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 15.dp, vertical = 5.dp),
-        shape = MaterialTheme.shapes.medium,
-    ) {
+    MyCard {
         ListItem(
             headlineContent = { Text(text = "免责声明") },
             supportingContent = { Text(text = "本应用不承担选课失败造成的后果\n请登录官方系统,确保一定选课成功")}
         )
     }
-    Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 15.dp, vertical = 5.dp),
-        shape = MaterialTheme.shapes.medium,
-    ) {
+    MyCard {
         ListItem(
             headlineContent = { Text(text = "功能说明") },
             supportingContent = { Text(text = "点击右侧按钮选退课\n点击卡片查看详细课程信息\n退课后列表并不会更新,请手动刷新\n选退课时请核对课程代码\n若持续加载可能为教务服务器问题\n选退课完成后前往课表与课程汇总,会显示出新课程(也可在右上角手动刷新)")}
@@ -205,7 +187,7 @@ fun SelectShuoming() {
 }
 
 @Composable
-fun selectCourseListLoading(vm : LoginSuccessViewModel) {
+fun selectCourseListLoading(vm : NetWorkViewModel) {
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
     val cookie = SharePrefs.prefs.getString("redirect", "")
@@ -269,7 +251,7 @@ fun selectCourseListLoading(vm : LoginSuccessViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun selectCourseList(vm: LoginSuccessViewModel) {
+fun selectCourseList(vm: NetWorkViewModel) {
     val list = getSelectCourseList(vm)
     var courseId by remember { mutableStateOf(0) }
     var name by remember { mutableStateOf("选课") }
@@ -345,18 +327,28 @@ fun selectCourseList(vm: LoginSuccessViewModel) {
     LazyColumn {
         items(list.size) { item ->
             var expand by remember { mutableStateOf(false) }
-            Card(
-                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp).clickable {
-                        courseId = list[item].id
-                        SharePrefs.Save("courseIDS",list[item].id.toString())
-                        name = list[item].name
-                        showBottomSheet = true
-                    },
-                shape = MaterialTheme.shapes.medium,
-            ) {
+
+//            Card(
+//                elevation = CardDefaults.cardElevation(defaultElevation = 1.75.dp),
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(horizontal = 15.dp, vertical = 5.dp)
+//                    .clickable {
+//                        courseId = list[item].id
+//                        SharePrefs.Save("courseIDS", list[item].id.toString())
+//                        name = list[item].name
+//                        showBottomSheet = true
+//                    },
+//                shape = MaterialTheme.shapes.medium,
+//            )
+            MyCard(Modifier.fillMaxWidth()
+                .padding(horizontal = 15.dp, vertical = 5.dp)
+                .clickable {
+                    courseId = list[item].id
+                    SharePrefs.Save("courseIDS", list[item].id.toString())
+                    name = list[item].name
+                    showBottomSheet = true
+                }) {
                 ListItem(
                     headlineContent = { Text(text = list[item].name) },
                     overlineContent = { Text(text = list[item].selectDateTimeText)},
@@ -399,7 +391,7 @@ fun selectCourseList(vm: LoginSuccessViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun selectCourseInfoLoad(courseId : Int, vm: LoginSuccessViewModel) {
+fun selectCourseInfoLoad(courseId : Int, vm: NetWorkViewModel) {
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
     val cookie = SharePrefs.prefs.getString("redirect", "")
@@ -484,7 +476,7 @@ fun selectCourseInfoLoad(courseId : Int, vm: LoginSuccessViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun selectCourseInfo(vm: LoginSuccessViewModel,courseId : Int,search : String = "") {
+fun selectCourseInfo(vm: NetWorkViewModel, courseId : Int, search : String = "") {
     val list = getSelectCourseInfo(vm)
     val cookie = SharePrefs.prefs.getString("redirect", "")
     var lessonId by remember { mutableStateOf(0) }
@@ -584,13 +576,7 @@ fun selectCourseInfo(vm: LoginSuccessViewModel,courseId : Int,search : String = 
                     }
                 }
             }
-            Card(
-                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp),
-                shape = MaterialTheme.shapes.medium,
-            ) {
+            MyCard {
                 ListItem(
                     headlineContent = { Text(text = lists.course.nameZh) },
                     overlineContent = { Text(text =   "代码 ${lists.code}\n"+"已选 " + stdCount + " / " +lists.limitCount)},
@@ -617,7 +603,7 @@ fun parseDynamicJson(jsonString: String): Map<String, Int> {
     return gson.fromJson(jsonString, mapType)
 }
 @Composable
-fun selectCourseResultLoad(vm : LoginSuccessViewModel,courseId : Int,lessonId : Int,type : String) {
+fun selectCourseResultLoad(vm : NetWorkViewModel, courseId : Int, lessonId : Int, type : String) {
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
     var statusText by remember { mutableStateOf("提交中") }
@@ -745,7 +731,7 @@ fun courseInfo(num : Int,lists : List<SelectCourseInfo>) {
 }
 
 @Composable
-fun haveSelectedCourseLoad(vm: LoginSuccessViewModel,courseId: Int) {
+fun haveSelectedCourseLoad(vm: NetWorkViewModel, courseId: Int) {
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
     val cookie = SharePrefs.prefs.getString("redirect", "")
@@ -797,7 +783,7 @@ fun haveSelectedCourseLoad(vm: LoginSuccessViewModel,courseId: Int) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun haveSelectedCourse(vm: LoginSuccessViewModel,courseId : Int) {
+fun haveSelectedCourse(vm: NetWorkViewModel, courseId : Int) {
     val lists = getSelectedCourse(vm)
     var name by remember { mutableStateOf("课程详情") }
     var num by remember { mutableStateOf(0) }
@@ -886,13 +872,7 @@ fun haveSelectedCourse(vm: LoginSuccessViewModel,courseId : Int) {
 
     LazyColumn {
         items(lists.size) {item ->
-            Card(
-                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp),
-                shape = MaterialTheme.shapes.medium,
-            ) {
+            MyCard {
                 ListItem(
                     headlineContent = { Text(text = lists[item].course.nameZh)  },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.category), contentDescription = "")},

@@ -4,8 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
@@ -13,7 +11,6 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -52,10 +49,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -63,7 +58,7 @@ import androidx.compose.ui.unit.sp
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.activity.LoginActivity
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.logic.utils.ReservDecimal
@@ -71,10 +66,12 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.Activity.card.counts.RadarChart
 import com.hfut.schedule.ui.Activity.card.counts.RadarData
-import com.hfut.schedule.ui.UIUtils.CardForListColor
+import com.hfut.schedule.ui.Activity.success.search.Search.Survey.SurveyUI
+import com.hfut.schedule.ui.Activity.success.search.Search.TotalCourse.CourseTotalButton
 import com.hfut.schedule.ui.UIUtils.DividerText
 import com.hfut.schedule.ui.UIUtils.EmptyUI
 import com.hfut.schedule.ui.UIUtils.LittleDialog
+import com.hfut.schedule.ui.UIUtils.MyCard
 import com.hfut.schedule.ui.UIUtils.MyToast
 import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.ScrollText
@@ -98,13 +95,7 @@ fun TotaGrade() {
 
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
         Column() {
-            Card(
-                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp),
-                shape = MaterialTheme.shapes.medium,
-            ){
+            MyCard{
                 ListItem(
                     headlineContent = {  Text("绩点(GPA)  $TotalGPA") },
                     supportingContent = { Text("班级排名: $Class   专业排名: $Major") },
@@ -122,7 +113,7 @@ fun TotaGrade() {
 
 
 @Composable
-fun GradeItemUI(vm :LoginSuccessViewModel,innerPadding : PaddingValues) {
+fun GradeItemUI(vm :NetWorkViewModel, innerPadding : PaddingValues) {
 
     var loading by remember { mutableStateOf(true) }
     var clicked by remember { mutableStateOf(false) }
@@ -237,13 +228,7 @@ fun GradeItemUI(vm :LoginSuccessViewModel,innerPadding : PaddingValues) {
                             horizontalArrangement = Arrangement.Center
                         ) {
                             Column() {
-                                Card(
-                                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 15.dp, vertical = 5.dp),
-                                    shape = MaterialTheme.shapes.medium,
-                                ) {
+                                MyCard {
                                     ListItem(
                                         headlineContent = { Text(getGrade()[item].courseName) },
                                         supportingContent = { Text("学分: " + getGrade()[item].credit + "   绩点: " + getGrade()[item].gpa + "   分数: ${getGrade()[item].score}") },
@@ -266,13 +251,7 @@ fun GradeItemUI(vm :LoginSuccessViewModel,innerPadding : PaddingValues) {
                             horizontalArrangement = Arrangement.Center
                         ) {
                             Column() {
-                                Card(
-                                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 15.dp, vertical = 5.dp),
-                                    shape = MaterialTheme.shapes.medium,
-                                ) {
+                                MyCard {
                                     ListItem(
                                         headlineContent = { Text("查看分数详细请点击此处进入教务数据") },
                                         supportingContent = { Text(text = "您现在使用的是智慧社区接口,使用教务系统数据可查看详细成绩") },
@@ -330,11 +309,47 @@ fun GradeItemUI(vm :LoginSuccessViewModel,innerPadding : PaddingValues) {
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun GradeItemUIJXGLSTU(innerPadding: PaddingValues) {
+fun GradeItemUIJXGLSTU(innerPadding: PaddingValues,vm: NetWorkViewModel) {
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
     var title by remember { mutableStateOf("成绩详情") }
     var num by remember { mutableStateOf(0) }
+
+    val sheetState_Survey = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showBottomSheet_Survey by remember { mutableStateOf(false) }
+
+    if (showBottomSheet_Survey) {
+        ModalBottomSheet(
+            onDismissRequest = { showBottomSheet_Survey = false },
+            sheetState = sheetState_Survey,
+            shape = Round(sheetState_Survey)
+        ) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        title = { Text("评教") },
+                        actions = {
+                            CourseTotalButton(modifier = Modifier.padding(horizontal = 15.dp),vm)
+                        }
+                    )
+                },
+            ) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                ) {
+                    SurveyUI(vm)
+                }
+            }
+        }
+    }
+
     if (showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet= false },
@@ -370,22 +385,21 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues) {
         items(getGradeJXGLSTU().size) { item ->
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 Column() {
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 15.dp, vertical = 5.dp),
-                        shape = MaterialTheme.shapes.medium,
-                    ){
+                    MyCard{
                         ListItem(
                             headlineContent = {  Text(getGradeJXGLSTU()[item].title) },
                             overlineContent = { Text( "成绩  "+ getGradeJXGLSTU()[item].totalGrade + "  |  绩点  " + getGradeJXGLSTU()[item].GPA +  "  |  学分  " + getGradeJXGLSTU()[item].score) },
                             leadingContent = { Icon(painterResource(R.drawable.article), contentDescription = "Localized description",) },
                             supportingContent = { Text(getGradeJXGLSTU()[item].grade) },
                             modifier = Modifier.clickable {
-                                title = getGradeJXGLSTU()[item].title
-                                num = item
-                                showBottomSheet = true
+                                if(getGradeJXGLSTU()[item].grade.contains("评教")) {
+                                    MyToast("请为任课老师评教(存在多位老师需全评教，老师列表可在课程汇总查看)")
+                                    showBottomSheet_Survey = true
+                                } else {
+                                    title = getGradeJXGLSTU()[item].title
+                                    num = item
+                                    showBottomSheet = true
+                                }
                             },
                         )
                     }

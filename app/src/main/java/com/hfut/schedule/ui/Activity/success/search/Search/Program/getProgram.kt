@@ -3,7 +3,8 @@ package com.hfut.schedule.ui.Activity.success.search.Search.Program
 import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
+import com.hfut.schedule.logic.datamodel.Jxglstu.ProgramBean
 import com.hfut.schedule.logic.datamodel.Jxglstu.ProgramCompletionResponse
 import com.hfut.schedule.logic.datamodel.Jxglstu.ProgramPartOne
 import com.hfut.schedule.logic.datamodel.Jxglstu.ProgramPartThree
@@ -50,7 +51,7 @@ fun getProgram()  {
     }
 }
 
-fun getProgramListOne(vm : LoginSuccessViewModel,ifSaved : Boolean): MutableList<ProgramPartOne> {
+fun getProgramListOne(vm : NetWorkViewModel, ifSaved : Boolean): MutableList<ProgramPartOne> {
     val list = mutableListOf<ProgramPartOne>()
     return try {
         val json = if(ifSaved) {
@@ -73,7 +74,7 @@ fun getProgramListOne(vm : LoginSuccessViewModel,ifSaved : Boolean): MutableList
     }
 }
 
-fun getProgramListTwo(item : Int,vm : LoginSuccessViewModel,ifSaved : Boolean): MutableList<ProgramPartTwo> {
+fun getProgramListTwo(item : Int, vm : NetWorkViewModel, ifSaved : Boolean): MutableList<ProgramPartTwo> {
     val list = mutableListOf<ProgramPartTwo>()
     try {
         val partl = getProgramListOne(vm,ifSaved)[item]
@@ -100,7 +101,7 @@ fun getProgramListTwo(item : Int,vm : LoginSuccessViewModel,ifSaved : Boolean): 
 
 
 
-fun getProgramListThree(item1 : Int,item2 : Int,vm : LoginSuccessViewModel,ifSaved : Boolean): MutableList<ProgramPartThree> {
+fun getProgramListThree(item1 : Int, item2 : Int, vm : NetWorkViewModel, ifSaved : Boolean): MutableList<ProgramPartThree> {
     val list = mutableListOf<ProgramPartThree>()
     try {
         val partl = getProgramListTwo(item1,vm,ifSaved)[item2]
@@ -113,7 +114,7 @@ fun getProgramListThree(item1 : Int,item2 : Int,vm : LoginSuccessViewModel,ifSav
             val courseName = course.nameZh
             val credit = course.credits
             val depart = part[i].openDepartment.nameZh
-            list.add(ProgramPartThree(term,courseName,credit,depart))
+            list.add(ProgramPartThree(term,courseName,credit,depart?:""))
         }
         return list
     } catch (e : Exception) {
@@ -122,7 +123,7 @@ fun getProgramListThree(item1 : Int,item2 : Int,vm : LoginSuccessViewModel,ifSav
 }
 
 
-fun getProgramCompletion(vm: LoginSuccessViewModel) : ProgramCompletionResponse {
+fun getProgramCompletion(vm: NetWorkViewModel) : ProgramCompletionResponse {
     return try {
         val json = vm.ProgramCompletionData.value
         val listType = object : TypeToken<List<ProgramCompletionResponse>>() {}.type
@@ -135,4 +136,15 @@ fun getProgramCompletion(vm: LoginSuccessViewModel) : ProgramCompletionResponse 
     }
 }
 
+
+fun getProgramPerformance(vm: NetWorkViewModel) : ProgramBean? {
+    val json = vm.programPerformanceData.value
+    return try {
+        val data = Gson().fromJson(json,ProgramBean::class.java)
+        data
+    } catch (e:Exception) {
+        null
+//        e.printStackTrace()
+    }
+}
 

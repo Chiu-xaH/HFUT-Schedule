@@ -200,11 +200,8 @@ interface JxglstuService {
         @Query("studentId") studentId : Int
     ): Call<ResponseBody>
 
-    //获取转专业的分数
+    //提交/撤销转专业申请
 
-    //提交转专业申请
-    
-    //撤销转专业申请
 
     //获取培养方案完成情况
     @GET("ws/student/home-page/programCompletionPreview")
@@ -212,6 +209,12 @@ interface JxglstuService {
     fun getProgramCompletion(
         @Header("Cookie") cookie: String
     ): Call<ResponseBody>
+
+    //获取培养方案完成情况 2.0
+    @GET("for-std/program-completion-preview/json/{studentId}")
+    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.17")
+    fun getProgramPerformance(@Header("Cookie") Cookie : String,
+                   @Path("studentId") studentId : Int) : Call<ResponseBody>
 }
 
 

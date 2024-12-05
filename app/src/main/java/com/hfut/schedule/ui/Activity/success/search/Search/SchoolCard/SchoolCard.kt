@@ -39,6 +39,7 @@ import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.StartApp
 import com.hfut.schedule.ui.Activity.success.focus.Focus.getToday
 import com.hfut.schedule.ui.UIUtils.EmptyUI
+import com.hfut.schedule.ui.UIUtils.MyCard
 import com.hfut.schedule.ui.UIUtils.ScrollText
 
 
@@ -110,16 +111,7 @@ fun TodayInfo() {
         EmptyUI()
     }
         if(getToday()?.todayExam?.courseName != null) {
-            Card(
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 3.dp
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp),
-                shape = MaterialTheme.shapes.medium
-
-            ){
+            MyCard {
                 ListItem(
                     headlineContent = { Text(text = getToday()?.todayExam?.courseName.toString()) },
                     overlineContent = { Text(text = getToday()?.todayExam?.startTime + "~" + getToday()?.todayExam?.endTime) },
@@ -129,16 +121,7 @@ fun TodayInfo() {
             }
         }
         if(getToday()?.todayCourse?.courseName != null) {
-            Card(
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 3.dp
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp),
-                shape = MaterialTheme.shapes.medium
-
-            ){
+            MyCard {
                 ListItem(
                     headlineContent = { Text(text = getToday()?.todayCourse?.courseName.toString()) },
                     overlineContent = { Text(text = getToday()?.todayCourse?.startTime + "~" + getToday()?.todayCourse?.endTime +  "  " +  getToday()?.todayCourse?.place)},
@@ -148,16 +131,7 @@ fun TodayInfo() {
             }
         }
         if(getToday()?.bookLending?.bookName != null) {
-            Card(
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 3.dp
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp),
-                shape = MaterialTheme.shapes.medium
-
-            ){
+            MyCard {
                 ListItem(
                     headlineContent = { Text(text = getToday()?.bookLending?.bookName.toString()) },
                     supportingContent = { Text(text = "归还时间 " + getToday()?.bookLending?.returnTime) },
@@ -167,16 +141,7 @@ fun TodayInfo() {
             }
         }
         if(getToday()?.todayActivity?.activityName != null) {
-            Card(
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 3.dp
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 5.dp),
-                shape = MaterialTheme.shapes.medium
-
-            ){
+            MyCard {
                 ListItem(
                     headlineContent = { Text(text = getToday()?.todayActivity?.activityName.toString()) },
                     overlineContent = { Text(text = getToday()?.todayActivity?.startTime.toString()) },

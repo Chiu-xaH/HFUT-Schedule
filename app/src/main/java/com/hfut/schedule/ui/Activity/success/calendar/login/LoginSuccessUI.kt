@@ -54,7 +54,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -63,7 +62,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.ViewModel.LoginViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.datamodel.Community.LoginCommunityResponse
@@ -90,7 +89,7 @@ import java.time.temporal.ChronoUnit
 @SuppressLint("SuspiciousIndentation", "CoroutineCreationDuringComposition")
 @Composable
 fun CalendarScreen(showAll : Boolean,
-                   vm : LoginSuccessViewModel,
+                   vm : NetWorkViewModel,
                    grade : String,
                    innerPadding : PaddingValues,
                    vmUI : UIViewModel,

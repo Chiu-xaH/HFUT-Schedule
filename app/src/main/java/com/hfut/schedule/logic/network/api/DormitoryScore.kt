@@ -6,7 +6,7 @@ import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
 
-interface XuanquService {
+interface DormitoryScore {
     //宣区宿舍卫生分数查询
     @FormUrlEncoded
     @POST ("query/getStudentScore")

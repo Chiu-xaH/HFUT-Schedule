@@ -21,13 +21,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.ui.UIUtils.Round
 import com.hfut.schedule.ui.UIUtils.ScrollText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DormitoryScoreItem(vm : LoginSuccessViewModel) {
+fun DormitoryScoreXuanCheng(vm : NetWorkViewModel) {
     vm.XuanquData.value = "{}"
     val sheetState_Xuanqu = rememberModalBottomSheetState()
     var showBottomSheet_Xuanqu by remember { mutableStateOf(false) }

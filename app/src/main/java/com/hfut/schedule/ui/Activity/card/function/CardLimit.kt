@@ -29,7 +29,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.ViewModel.UIViewModel
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.datamodel.zjgd.ChangeLimitResponse
@@ -42,7 +42,7 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 
 
-fun Click(vm : LoginSuccessViewModel,limit : String,amt : String) {
+fun Click(vm : NetWorkViewModel, limit : String, amt : String) {
     val auth = SharePrefs.prefs.getString("auth","")
     val cardAccount = SharePrefs.prefs.getString("card_account","")
     val result = SharePrefs.prefs.getString("changeResult","{\"msg\":\"\"}")
@@ -73,7 +73,7 @@ fun Click(vm : LoginSuccessViewModel,limit : String,amt : String) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CardLimit(vm : LoginSuccessViewModel,vmUI : UIViewModel) {
+fun CardLimit(vm : NetWorkViewModel, vmUI : UIViewModel) {
     var limit by remember { mutableStateOf((vmUI.CardValue.value?.autotrans_limite ?: SharePrefs.prefs.getString("card_limit","0"))) }
     var amt by remember { mutableStateOf(vmUI.CardValue.value?.autotrans_amt?: SharePrefs.prefs.getString("card_amt","0")) }
 

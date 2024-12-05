@@ -22,8 +22,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun CustomTabRow(pagerState: PagerState, titles: List<String>, blur: Boolean) {
     val scope = rememberCoroutineScope()
-    Column(modifier = Modifier.background(if(blur) Color.Transparent else MaterialTheme.colorScheme.primaryContainer).padding(horizontal = 10.dp)) {
-        TabRow(selectedTabIndex = pagerState.currentPage,indicator = {}, containerColor = if(blur) Color.Transparent else MaterialTheme.colorScheme.primaryContainer, divider = { if(!blur) HorizontalDivider() }) {
+    Column(modifier = Modifier.background(Color.Transparent).padding(horizontal = 10.dp)) {
+        TabRow(selectedTabIndex = pagerState.currentPage,indicator = {}, containerColor = Color.Transparent, divider = {  }) {
             titles.forEachIndexed { index, title ->
                 val selected = pagerState.currentPage == index
                 Tab(

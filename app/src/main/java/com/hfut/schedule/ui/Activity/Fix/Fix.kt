@@ -16,14 +16,12 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -48,7 +46,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.ViewModel.LoginSuccessViewModel
+import com.hfut.schedule.ViewModel.NetWorkViewModel
 import com.hfut.schedule.ViewModel.LoginViewModel
 import com.hfut.schedule.logic.Enums.FixBarItems
 import com.hfut.schedule.logic.datamodel.NavigationBarItemData
@@ -59,14 +57,13 @@ import com.hfut.schedule.ui.UIUtils.bottomBarBlur
 import com.hfut.schedule.ui.UIUtils.topBarBlur
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
-import dev.chrisbanes.haze.hazeChild
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Fix(vm : LoginViewModel,vm2 : LoginSuccessViewModel) {
-    val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR", AndroidVersion.sdkInt >= 32)
+fun Fix(vm : LoginViewModel,vm2 : NetWorkViewModel) {
+    val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR",  AndroidVersion.canBlur)
     var blur by remember { mutableStateOf(switchblur) }
     var animation by remember { mutableStateOf(prefs.getInt("ANIMATION",MyApplication.Animation)) }
     val hazeState = remember { HazeState() }
@@ -79,7 +76,7 @@ fun Fix(vm : LoginViewModel,vm2 : LoginSuccessViewModel) {
                 TopAppBar(
                     modifier = Modifier.topBarBlur(hazeState, blur),
                     colors = TopAppBarDefaults.mediumTopAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = if(blur) 0f else 1f),
+                        containerColor = Color.Transparent,
                         titleContentColor = MaterialTheme.colorScheme.primary,
                     ),
                     title = { Text("修复与检测") },
@@ -91,15 +88,15 @@ fun Fix(vm : LoginViewModel,vm2 : LoginSuccessViewModel) {
                         }
                     }
                 )
-                if(!blur)
-                Divider()
+//                if(!blur)
+//                Divider()
             }
         },
         bottomBar = {
             Column {
-                if(!blur)
-                Divider()
-                NavigationBar(containerColor = if(blur) Color.Transparent else ListItemDefaults.containerColor ,
+//                if(!blur)
+//                Divider()
+                NavigationBar(containerColor =  Color.Transparent,
                     modifier = Modifier.bottomBarBlur(hazeState, blur)) {
 
                     val items = listOf(
