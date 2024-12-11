@@ -5,9 +5,8 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
-import com.hfut.schedule.logic.datamodel.Community.CourseTotalResponse
+import com.hfut.schedule.logic.beans.Community.CourseTotalResponse
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.ui.Activity.success.search.Search.TotalCourse.getTotalCourse
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -18,7 +17,7 @@ import java.util.Date
 
 object GetDate {
     /////////////周数 社区课表
-    val json = prefs.getString("Course",MyApplication.NullTotal)
+    val json = prefs.getString("Course", MyApplication.NullTotal)
 
 
     val result = Gson().fromJson(json,CourseTotalResponse::class.java).result

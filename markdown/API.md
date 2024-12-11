@@ -569,7 +569,9 @@ Header["Cookie"] 上面得到的Cookie，类似SESSION=XXX...
 #### 响应
 Body(JSON) JSON特别大，几乎7~9MB，数据量比较庞大，但是都是嵌套结构，解析起来有迹可循，可以与[培养方案]共用解析方法
 
-注意：此接口获取的JSON每个课程与[培养方案]相比，增加了一些信息，其中"resultType"需要注意：PASSED 通过/TAKING 本学期开课(在修)/UNREPAIRED 本学期不开课(未安排)
+注意：此接口获取的JSON每个课程与[培养方案]相比，体现了完成情况，其中"resultType"需要注意：PASSED 通过/TAKING 本学期开课(在修)/UNREPAIRED 本学期不开课(未安排)
+
+outer 代表培养方案以外，即多修课程，转专业废弃的课程也在这里
 ```json
 {
     "completionSummary": {
@@ -1031,6 +1033,24 @@ Query["xh"] 学号
 Query["redirect"]
 
 Query["code"] 
+
+### 获取校园邮箱的跳转URL
+@GET api/msg/mailBusiness/getLoginUrl
+#### 请求
+Header["Authorization"] 登陆后获取，有效期大约24h
+
+Query["mail"] AES ECB模式，密钥为Cookie中的secert值，明文为邮箱20XXXXXXXX@mail.hfut.edu.cn
+
+#### 逆向过程
+F12 检索API关键字"getLoginUrl"，打断点向前分析堆栈，就能找出调用Encrycpt的地方，这里用调试台打印一下密钥、原文，学校的平台确实容易逆向
+#### 响应
+```json
+{
+  "msg": "success",
+  "data": "访问链接即可直接免登录打开邮箱"
+}
+```
+
 
 ## 洗浴-呱呱物联 https://guagua.klcxkj-qzxy.cn/
 

@@ -36,29 +36,38 @@
         android:theme="@style/Theme.App.Starting"
         tools:targetApi="tiramisu">
         <activity
-            android:name=".activity.NewsActivity"
+            android:name=".activity.funiction.AnonymityActivity"
+            android:exported="true"
+            android:label="@string/title_activity_anonymity"
+            android:theme="@style/Theme.App.Starting" />
+        <activity
+            android:name=".activity.search.LifeActivity"
+            android:exported="true"
+            android:label="@string/title_activity_life"
+            android:theme="@style/Theme.App.Starting" />
+        <activity
+            android:name=".activity.search.NewsActivity"
             android:exported="true"
             android:label="@string/title_activity_news"
-            android:theme="@style/Theme.App.Starting">
-        </activity>
+            android:theme="@style/Theme.App.Starting" />
         <activity
-            android:name=".activity.BaseActivity"
+            android:name=".activity.main.BaseActivity"
             android:exported="false"
             android:label="@string/title_activity_base"
             android:theme="@style/Theme.App.Starting" />
         <activity
-            android:name=".activity.ShowerLoginActivity"
+            android:name=".activity.shower.ShowerLoginActivity"
             android:exported="false"
             android:label="@string/title_activity_shower_login"
             android:theme="@style/Theme.肥工课程表" />
         <activity
-            android:name=".activity.ShowerActivity"
-            android:exported="false"
+            android:name=".activity.shower.ShowerActivity"
+            android:exported="true"
             android:label="@string/title_activity_shower"
             android:theme="@style/Theme.肥工课程表" />
         <activity
-            android:name=".activity.ShortCutActivity"
-            android:exported="false"
+            android:name=".activity.funiction.ShortCutActivity"
+            android:exported="true"
             android:label="@string/title_activity_shortcut"
             android:theme="@style/Theme.App.Starting" />
 
@@ -67,13 +76,13 @@
             android:value="1cdad5eb7c48146529a11e50e9c6ad1b" />
 
         <activity
-            android:name=".activity.FixActivity"
+            android:name=".activity.funiction.FixActivity"
             android:exported="true"
             android:label="@string/title_activity_fix"
             android:theme="@style/Theme.肥工课程表" />
         <activity
-            android:name=".activity.GradeActivity"
-            android:exported="false"
+            android:name=".activity.search.GradeActivity"
+            android:exported="true"
             android:label="@string/title_activity_grade"
             android:theme="@style/Theme.肥工课程表" />
 
@@ -88,22 +97,22 @@
         </provider>
 
         <activity
-            android:name=".activity.CardActivity"
+            android:name=".activity.search.CardActivity"
             android:exported="true"
             android:label="@string/title_activity_card"
             android:theme="@style/Theme.肥工课程表" />
         <activity
-            android:name=".activity.SavedCoursesActivity"
+            android:name=".activity.main.SavedActivity"
             android:exported="false"
             android:label="@string/title_activity_schedule"
             android:theme="@style/Theme.肥工课程表" />
         <activity
-            android:name=".activity.LoginSuccessActivity"
+            android:name=".activity.main.LoginSuccessActivity"
             android:exported="false"
             android:label="@string/title_activity_uiacitivity"
             android:theme="@style/Theme.肥工课程表" />
         <activity
-            android:name=".activity.LoginActivity"
+            android:name=".activity.main.LoginActivity"
             android:exported="true"
             android:theme="@style/Theme.App.Starting">
             <intent-filter>

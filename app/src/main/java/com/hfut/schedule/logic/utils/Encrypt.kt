@@ -1,21 +1,23 @@
 package com.hfut.schedule.logic.utils
 
-import android.os.Build
 import android.util.Base64
-import androidx.annotation.RequiresApi
 import java.security.MessageDigest
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
+
 object Encrypt {
-    fun encryptAES(input:String, password:String): String{
-        val cipher = Cipher.getInstance("AES")
-        val keySpec:SecretKeySpec? = SecretKeySpec(password.toByteArray(),"AES")
-        cipher.init(Cipher.ENCRYPT_MODE,keySpec)
-        val encrypt = cipher.doFinal(input.toByteArray())
-        return Base64.encodeToString(encrypt,Base64.NO_WRAP)
+    fun encryptAES(input:String, password:String): String {
+        return try {
+            val cipher = Cipher.getInstance("AES")
+            val keySpec: SecretKeySpec = SecretKeySpec(password.toByteArray(),"AES")
+            cipher.init(Cipher.ENCRYPT_MODE,keySpec)
+            val encrypt = cipher.doFinal(input.toByteArray())
+            Base64.encodeToString(encrypt,Base64.NO_WRAP)
+        } catch (e:Exception) {
+            "NULL"
+        }
     }
-    @RequiresApi(Build.VERSION_CODES.O)
     fun encodeToBase64(input: String): String {
         return java.util.Base64.getEncoder().encodeToString(input.toByteArray(Charsets.UTF_8))
     }
@@ -35,7 +37,6 @@ object Encrypt {
     }
 
     //校务行用的，就是微信小程序逆向JS
-    @RequiresApi(Build.VERSION_CODES.O)
     fun encryptXiaoWuXing(plainText: String): String {
         val key = "JL$<&*l9~67?:#5p"
         val iv = "{g;,9~l4'/sw`885"
@@ -53,5 +54,23 @@ object Encrypt {
 
         return java.util.Base64.getEncoder().encodeToString(encryptedBytes)
     }
+
+    fun encryptAesECB(plainText: String, key: String): String {
+        val cipher = Cipher.getInstance("AES/ECB/PKCS5Padding")
+        val secretKey = SecretKeySpec(key.toByteArray(), "AES")
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey)
+        val encryptedBytes = cipher.doFinal(plainText.toByteArray())
+        return Base64.encodeToString(encryptedBytes, Base64.DEFAULT)
+    }
+
+    //用于生成和风天气密钥
+    fun getQWeatherAuth() : String {
+        return GenerateQWeather().generate(
+            "MC4CAQAwBQYDK2VwBCIEILpLcCmyt8JbbBaEMiBvA9ys3RLb2v63rWhuFC83KDGZ",
+            "4HTJ5N7F37",
+            "THB3UBK56Q"
+        )
+    }
 }
+
 

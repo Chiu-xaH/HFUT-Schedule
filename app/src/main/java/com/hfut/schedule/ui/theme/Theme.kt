@@ -17,10 +17,10 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import com.hfut.schedule.ui.MonetColor.LocalCustomPrimaryColor
-import com.hfut.schedule.ui.MonetColor.LocalThemeName
-import com.hfut.schedule.ui.MonetColor.ThemeNamePreference
-import com.hfut.schedule.ui.MonetColor.toColorOrNull
+import com.hfut.schedule.ui.utils.monet.LocalCustomPrimaryColor
+import com.hfut.schedule.ui.utils.monet.LocalThemeName
+import com.hfut.schedule.ui.utils.monet.ThemeNamePreference
+import com.hfut.schedule.ui.utils.monet.toColorOrNull
 import com.kyant.monet.LocalTonalPalettes
 import com.kyant.monet.PaletteStyle
 import com.kyant.monet.TonalPalettes

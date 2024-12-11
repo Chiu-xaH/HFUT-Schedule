@@ -19,4 +19,6 @@
     <string name="title_activity_shower">ShowerActivity</string>
     <string name="title_activity_base">BaseActivity</string>
     <string name="title_activity_news">NewsActivity</string>
+    <string name="title_activity_life">LifeActivity</string>
+    <string name="title_activity_anonymity">AnonymityActivity</string>
 </resources>

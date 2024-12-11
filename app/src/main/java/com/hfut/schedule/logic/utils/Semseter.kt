@@ -2,7 +2,7 @@ package com.hfut.schedule.logic.utils
 
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
-import com.hfut.schedule.logic.datamodel.MyAPIResponse
+import com.hfut.schedule.logic.beans.MyAPIResponse
 
 object Semseter {
     fun getSemseter(semster : Int) : String {

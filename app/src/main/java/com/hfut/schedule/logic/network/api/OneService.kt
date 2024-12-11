@@ -4,8 +4,6 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Header
-import retrofit2.http.Headers
-import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface OneService {
@@ -36,10 +34,18 @@ interface OneService {
 
     //api/operation/emptyClass/room?building_code=XC001&current=1
     //空教室
-    @GET ("api/operation/emptyClass/room?current=1&size=30")
-    fun searchEmptyRoom(@Query("building_code") building_code : String,
-                        @Header("Authorization") Authorization : String) : Call<ResponseBody>
+    @GET ("api/operation/emptyClass/room")
+    fun searchEmptyRoom(
+        @Query("building_code") building_code : String,
+        @Header("Authorization") Authorization : String,
+        @Query("current") page : Int = 1,
+        @Query("size") size : Int = 30) : Call<ResponseBody>
     //欠交学费
     @GET("api/leaver/third/finance/arrearsForPortal?type=1")
     fun getPay(@Query("xh") username : String) : Call<ResponseBody>
+
+    //获取邮箱URL
+    @GET ("api/msg/mailBusiness/getLoginUrl")
+    fun getMailURL(@Query("mail") chipperText : String,
+                   @Header("Authorization") authorization : String) : Call<ResponseBody>
 }

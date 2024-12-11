@@ -2,7 +2,6 @@ package com.hfut.schedule.logic.network.interceptor
 
 import android.util.Log
 import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.ui.UIUtils.MyToast
 import okhttp3.Interceptor
 import okhttp3.Response
 
@@ -25,7 +24,7 @@ class SurveyTokenInterceptor : Interceptor {
         }
    //     // 如果cookieValue不为空，就将其保存到SharedPreferences中
         Log.d("cookies",cookies.toString())
-        SharePrefs.Save("SurveyCookie", cookies.toString())
+        SharePrefs.saveString("SurveyCookie", cookies.toString())
         return response
     }
 }

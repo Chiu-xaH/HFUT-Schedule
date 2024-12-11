@@ -1,6 +1,5 @@
 package com.hfut.schedule.logic.network.interceptor
 
-import android.util.Log
 import com.hfut.schedule.logic.utils.SharePrefs
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -24,7 +23,7 @@ class AESKeyInterceptor : Interceptor {
     // Log.d("测试2",cookiekey)
         // 如果cookieValue不为空，就将其保存到SharedPreferences中
 
-        SharePrefs.Save("cookie", cookiekey)
+        SharePrefs.saveString("cookie", cookiekey)
 
 
         return response

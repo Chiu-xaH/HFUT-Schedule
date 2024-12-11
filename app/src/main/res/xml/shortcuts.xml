@@ -9,7 +9,7 @@
         tools:ignore="UnusedAttribute">
         <intent
             android:action="com.hfut.schedule.shortcut"
-            android:targetClass="com.hfut.schedule.activity.CardActivity"
+            android:targetClass="com.hfut.schedule.activity.search.CardActivity"
             android:targetPackage="com.hfut.schedule" />
     </shortcut>
     <shortcut
@@ -20,7 +20,7 @@
         tools:ignore="UnusedAttribute">
         <intent
             android:action="com.hfut.schedule.shortcuts"
-            android:targetClass="com.hfut.schedule.activity.ShortCutActivity"
+            android:targetClass="com.hfut.schedule.activity.funiction.ShortCutActivity"
             android:targetPackage="com.hfut.schedule" />
     </shortcut>
     <shortcut
@@ -31,7 +31,7 @@
         tools:ignore="UnusedAttribute">
         <intent
             android:action="com.hfut.schedule.shortcuts"
-            android:targetClass="com.hfut.schedule.activity.FixActivity"
+            android:targetClass="com.hfut.schedule.activity.funiction.FixActivity"
             android:targetPackage="com.hfut.schedule" />
     </shortcut>
 </shortcuts>
