@@ -48,6 +48,7 @@ import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.Semseter.getSemseter
 import com.hfut.schedule.logic.utils.Semseter.getSemseterCloud
 import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotalUI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -57,7 +58,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun courseSearchUI(vm : NetWorkViewModel) {
-    var className by remember { mutableStateOf( "") }
+    var className by remember { mutableStateOf( getPersonInfo().classes ?: "") }
     var courseName by remember { mutableStateOf( "") }
 
     var onclick by remember { mutableStateOf(false) }

@@ -3,6 +3,7 @@ package com.hfut.schedule.viewmodel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.hfut.schedule.logic.beans.zjgd.ReturnCard
+import com.hfut.schedule.logic.network.NetWork
 import com.hfut.schedule.logic.network.servicecreator.GiteeServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.Login.LoginWeb2ServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.Login.LoginWebServiceCreator
@@ -28,17 +29,13 @@ class UIViewModel : ViewModel()  {
     var webValue = MutableLiveData<WebInfo>()
    // var CardAuth = MutableLiveData<String?>(prefs.getString("auth",""))
 
-    fun download(version : String) {
+//    fun download(version : String) {
+//
+//        val call = Gitee.download(version)
+//        NetWork.makeRequest(call)
+//    }
 
-        val call = Gitee.download(version)
 
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-
-            }
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
-    }
 
 
     fun getUpdate() {
@@ -72,6 +69,7 @@ class UIViewModel : ViewModel()  {
             })
         }
     }
+    val result2Value = MutableLiveData<String?>()
     fun loginWeb2() {
 
         val call = username?.let { getIdentifyID()?.let { it1 -> LoginWeb2.loginWeb(it, it1,"宣州Login") } }
@@ -79,11 +77,11 @@ class UIViewModel : ViewModel()  {
         if (call != null) {
             call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    resultValue.value = response?.body()?.string()
+                    result2Value.value = response?.body()?.string()
                 }
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     t.printStackTrace()
-                    resultValue.value = "Error"
+                    result2Value.value = "Error"
                 }
             })
         }

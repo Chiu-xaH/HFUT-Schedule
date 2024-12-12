@@ -74,7 +74,7 @@ UI设计 Material You (Material Design 3) + Material Design
 
 [Gson](https://github.com/google/gson) JSON处理
 
-[Haze](https://github.com/chrisbanes/haze) 实时模糊UI
+[Haze](https://github.com/chrisbanes/haze) 实时模糊
 
 [Accompanist](https://github.com/google/accompanist) 透明状态栏
 
@@ -82,7 +82,11 @@ UI设计 Material You (Material Design 3) + Material Design
 
 [Dagger](https://github.com/google/dagger) Hilt注入
 
-[AMap](https://developer.amap.com/api/android-sdk) 高德地图SDK
+[Glide](https://github.com/bumptech/glide) 图片
+
+[EdDSA Java](https://github.com/str4d/ed25519-java) 加密(供和风天气API使用)
+
+[//]: # ([AMap]&#40;https://developer.amap.com/api/android-sdk&#41; 高德地图SDK)
 
 ## [更新日志](markdown/UPDATE.md)
 

@@ -46,9 +46,9 @@ import retrofit2.Response
 
 
 
-class NetWork(webVpn: Boolean) {
+object NetWork {
     //引入接口
-    companion object {
+
         const val JxglstuURL = "http://jxglstu.hfut.edu.cn/eams5-student/"
         const val JxglstuWebVpnURL = "https://webvpn.hfut.edu.cn/http/77726476706e69737468656265737421faef469034247d1e760e9cb8d6502720ede479/eams5-student/"
         const val WebVpnURL = "https://webvpn.hfut.edu.cn/"
@@ -73,8 +73,6 @@ class NetWork(webVpn: Boolean) {
         const val GuaGuaURL = "https://guagua.klcxkj-qzxy.cn/"
         const val XuanChengURL = "https://xc.hfut.edu.cn/"
         const val TeacherURL = "https://faculty.hfut.edu.cn/"
-    }
-
 
     private val guaGua = GuaGuaServiceCreator.create(GuaGuaService::class.java)
     private val LoginWebVpn = LoginWebVpnServiceCreator.create(WebVpnService::class.java)
@@ -83,8 +81,8 @@ class NetWork(webVpn: Boolean) {
     private val GetAESKey = GetAESKeyServiceCreator.create(LoginService::class.java)
     private val MyAPI = MyServiceCreator.create(MyService::class.java)
 
-    private val JxglstuJSON = JxglstuJSONServiceCreator.create(JxglstuService::class.java, webVpn)
-    private val JxglstuHTML = JxglstuHTMLServiceCreator.create(JxglstuService::class.java, webVpn)
+//    private val JxglstuJSON = JxglstuJSONServiceCreator.create(JxglstuService::class.java, webVpn)
+//    private val JxglstuHTML = JxglstuHTMLServiceCreator.create(JxglstuService::class.java, webVpn)
     private val OneGoto = OneGotoServiceCreator.create(LoginService::class.java)
     private val One = OneServiceCreator.create(OneService::class.java)
     private val ZJGDBill = ZJGDBillServiceCreator.create(ZJGDBillService::class.java)
@@ -99,8 +97,8 @@ class NetWork(webVpn: Boolean) {
     //  private val Jwglapp = JwglappServiceCreator.create(JwglappService::class.java)
     private val News = NewsServiceCreator.create(NewsService::class.java)
     private val xuanCheng = XuanChengServiceCreator.create(XuanChengService::class.java)
-    private val JxglstuSurvey =
-        JxglstuSurveyServiceCreator.create(JxglstuService::class.java, webVpn)
+//    private val JxglstuSurvey =
+//        JxglstuSurveyServiceCreator.create(JxglstuService::class.java, webVpn)
     private val server = ServerServiceCreator.create(ServerService::class.java)
     private val guagua = GuaGuaServiceCreator.create(GuaGuaService::class.java)
 
@@ -111,7 +109,7 @@ class NetWork(webVpn: Boolean) {
     // 通用的网络请求方法，支持自定义的操作
     fun <T> makeRequest(
         call: Call<ResponseBody>,
-        liveData: MutableLiveData<T>?,
+        liveData: MutableLiveData<T>? = null,
         onSuccess: ((Response<ResponseBody>) -> Unit)? = null
     ) {
         call.enqueue(object : Callback<ResponseBody> {

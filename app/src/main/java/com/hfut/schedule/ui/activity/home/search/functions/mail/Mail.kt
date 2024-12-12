@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.Starter.refreshLogin
 import com.hfut.schedule.ui.utils.RowHorizal
 import com.hfut.schedule.ui.utils.ScrollText
 
@@ -45,8 +46,8 @@ fun Mail(ifSaved : Boolean,vm : NetWorkViewModel) {
         overlineContent = { ScrollText(text = mail)},
         leadingContent = { Icon(painter = painterResource(id = R.drawable.mail), contentDescription = "") },
         modifier = Modifier.clickable {
-//            if(ifSaved) Login()
-//            else
+            if(ifSaved) refreshLogin()
+            else
                 showBottomSheet = true
         }
     )

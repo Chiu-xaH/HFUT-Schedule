@@ -20,6 +20,7 @@ import com.hfut.schedule.logic.beans.One.SubBooksResponse
 import com.hfut.schedule.logic.beans.One.getTokenResponse
 import com.hfut.schedule.logic.beans.zjgd.FeeType
 import com.hfut.schedule.logic.beans.zjgd.FeeType.*
+import com.hfut.schedule.logic.network.NetWork
 import com.hfut.schedule.logic.network.servicecreator.CommunitySreviceCreator
 import com.hfut.schedule.logic.network.servicecreator.GuaGuaServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.Jxglstu.JxglstuHTMLServiceCreator
@@ -46,14 +47,17 @@ import com.hfut.schedule.logic.network.api.NewsService
 import com.hfut.schedule.logic.network.api.OneService
 import com.hfut.schedule.logic.network.api.ServerService
 import com.hfut.schedule.logic.network.api.DormitoryScore
+import com.hfut.schedule.logic.network.api.QWeatherService
 import com.hfut.schedule.logic.network.api.TeachersService
 import com.hfut.schedule.logic.network.api.XuanChengService
 import com.hfut.schedule.logic.network.api.ZJGDBillService
+import com.hfut.schedule.logic.network.servicecreator.QWeatherServiceCreator
 import com.hfut.schedule.logic.utils.Encrypt
 import com.hfut.schedule.logic.utils.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.SharePrefs.saveInt
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.cube.funictions.items.getUserInfo
+import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
 import com.hfut.schedule.ui.activity.news.main.transferToPostData
 import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.CampusId
 import okhttp3.ResponseBody
@@ -90,6 +94,8 @@ class NetWorkViewModel(webVpn : Boolean) : ViewModel() {
     private val server = ServerServiceCreator.create(ServerService::class.java)
     private val guagua = GuaGuaServiceCreator.create(GuaGuaService::class.java)
     private val teacher = TeacherServiceCreator.create(TeachersService::class.java)
+
+    private val qWeather = QWeatherServiceCreator.create(QWeatherService::class.java)
 
     var studentId = MutableLiveData<Int>(prefs.getInt("STUDENTID",0))
     var lessonIds = MutableLiveData<List<Int>>()
@@ -1207,30 +1213,32 @@ class NetWorkViewModel(webVpn : Boolean) : ViewModel() {
 
         val call = Community.applyAdd(CommuityTOKEN,CommunityService.RequestJsonApply(username))
 
-        if (call != null) {
-            call.enqueue(object : Callback<ResponseBody> {
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    applyResponseMsg.value = response.body()?.string()
-                }
-
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-            })
-        }
+        NetWork.makeRequest(call,applyResponseMsg)
+//        if (call != null) {
+//            call.enqueue(object : Callback<ResponseBody> {
+//                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+//                    applyResponseMsg.value = response.body()?.string()
+//                }
+//
+//                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+//            })
+//        }
     }
     val applyData = MutableLiveData<String>()
     fun getApplying(CommuityTOKEN : String) {
         val size = prefs.getString("CardRequest","15")
         val call = size?.let { Community.getApplyingList(CommuityTOKEN, it) }
 
-        if (call != null) {
-            call.enqueue(object : Callback<ResponseBody> {
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    applyData.value = response.body()?.string()
-                }
-
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-            })
-        }
+        call?.let { NetWork.makeRequest(it,applyData) }
+//        if (call != null) {
+//            call.enqueue(object : Callback<ResponseBody> {
+//                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+//                    applyData.value = response.body()?.string()
+//                }
+//
+//                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+//            })
+//        }
     }
     fun GetBorrowed(CommuityTOKEN: String,page : String) {
         val size = prefs.getString("BookRequest","15")
@@ -1361,4 +1369,16 @@ class NetWorkViewModel(webVpn : Boolean) : ViewModel() {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
+
+    val weatherWarningData = MutableLiveData<String?>()
+    fun getWeatherWarn() {
+        val call = qWeather.getWeatherWarn()
+        NetWork.makeRequest(call,weatherWarningData)
+    }
+    val weatherData = MutableLiveData<String?>()
+    fun getWeather() {
+        val call = qWeather.getWeather()
+        NetWork.makeRequest(call,weatherData)
+    }
 }
+

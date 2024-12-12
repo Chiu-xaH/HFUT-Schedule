@@ -116,7 +116,7 @@ fun loginWebUI(vmUI : UIViewModel,vm : NetWorkViewModel) {
                 FilledTonalButton(
                     onClick = {
                         vmUI.loginWeb()
-                        // vmUI.loginWeb2()
+                        vmUI.loginWeb2()
                     },modifier = Modifier
                         .scale(scale.value),
                     interactionSource = interactionSource,) {
