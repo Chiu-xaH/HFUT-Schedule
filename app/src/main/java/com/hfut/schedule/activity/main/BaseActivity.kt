@@ -14,12 +14,14 @@ import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.viewmodel.GuaGuaViewModel
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.LoginSuccessViewModelFactory
 import com.hfut.schedule.viewmodel.LoginViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.activity.ui.theme.肥工课程表Theme
+import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.ui.utils.monet.LocalCurrentStickerUuid
 import com.hfut.schedule.ui.utils.monet.MainIntent
@@ -38,9 +40,15 @@ open class BaseActivity : ComponentActivity() {
     val showerVm by lazy { ViewModelProvider(this).get(GuaGuaViewModel::class.java) }
     val uiVm by lazy { ViewModelProvider(this).get(UIViewModel::class.java) }
 
+    val animation = SharePrefs.prefs.getInt("ANIMATION", MyApplication.Animation)
+    val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR",  AndroidVersion.canBlur)
+
+
     @Composable
     open fun UI() {
-
+//        open val blur by remember { mutableStateOf(switchblur) }
+//        val hazeState = remember { HazeState() }
+//        val navController = rememberNavController()
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

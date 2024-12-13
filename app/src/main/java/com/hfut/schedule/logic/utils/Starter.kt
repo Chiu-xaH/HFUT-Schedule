@@ -4,8 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import com.hfut.schedule.App.MyApplication
-import com.hfut.schedule.activity.funiction.AnonymityActivity
-import com.hfut.schedule.activity.search.LifeActivity
+import com.hfut.schedule.activity.main.AnonymityActivity
 import com.hfut.schedule.activity.main.LoginActivity
 import com.hfut.schedule.activity.shower.ShowerActivity
 import com.hfut.schedule.activity.shower.ShowerLoginActivity
@@ -81,12 +80,6 @@ object Starter {
         MyApplication.context.startActivity(it)
     }
 
-    fun startLife() {
-        val it = Intent(MyApplication.context, LifeActivity::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
-        MyApplication.context.startActivity(it)
-    }
 
     fun noLogin() {
         val it = Intent(MyApplication.context, AnonymityActivity::class.java).apply {

@@ -18,6 +18,9 @@ fun WebViewScreen(url: String,header : Map<String, String>? = null) {
             WebView(context).apply {
                 settings.javaScriptEnabled = true
                 settings.domStorageEnabled = true
+                settings.builtInZoomControls = true
+                settings.displayZoomControls = false
+//                setInitialScale(100) // 100表示不缩放
                 if (header != null) {
                     loadUrl(url, header)
                 } else {

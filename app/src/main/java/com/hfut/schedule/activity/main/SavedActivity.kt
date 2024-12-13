@@ -5,7 +5,6 @@ import android.os.Build
 import android.os.Bundle
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
-import com.hfut.schedule.activity.main.BaseActivity
 import com.hfut.schedule.ui.activity.home.main.saved.NoNetWork
 import dagger.hilt.android.AndroidEntryPoint
 

@@ -378,7 +378,7 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean) {
             else showBottomSheet_Performance = true
         },
         modifier = Modifier
-        .fillMaxWidth()
+        .fillMaxWidth().scale(scale2.value)
         .padding(horizontal = 15.dp),
     ) {
         Text(text = "培养方案进度")

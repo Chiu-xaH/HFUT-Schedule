@@ -111,7 +111,7 @@ fun SearchScreenNoLogin(vm : NetWorkViewModel, ifSaved : Boolean, innerPaddings 
         "乐跑云运动 校园跑" to { LePaoYun(vm) },
         "热水机 趣智校园" to { HotWater() },
         "学信网" to { XueXin() },
-        "校园地图" to { Life() },
+        "生活服务 校园 校园 天气 教学楼 建筑 学堂" to { Life(vm) },
 //        "转专业" to { Transfer(ifSaved, vm) },
 //        "开课查询 全校开课" to { CoursesSearch(ifSaved, vm) },
         "教师 老师" to { TeacherSearch(vm) },

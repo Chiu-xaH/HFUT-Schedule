@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import kotlin.math.roundToInt
 
+//滚轮 组件
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun <T> WheelPicker(

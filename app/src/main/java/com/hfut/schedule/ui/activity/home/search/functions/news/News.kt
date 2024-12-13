@@ -11,7 +11,7 @@ import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
-import com.hfut.schedule.activity.search.NewsActivity
+import com.hfut.schedule.activity.funiction.NewsActivity
 
 @Composable
 fun News(vm : NetWorkViewModel) {

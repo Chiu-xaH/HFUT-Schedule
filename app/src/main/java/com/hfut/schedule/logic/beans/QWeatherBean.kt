@@ -10,5 +10,6 @@ data class QWeatherNowBean(
     val text : String,//多云
     val windDir : String, //西北风
     val windScale : String, //风级数
-    val humidity : String //湿度
+    val humidity : String, //湿度
+    val icon : String//图标代码
 )

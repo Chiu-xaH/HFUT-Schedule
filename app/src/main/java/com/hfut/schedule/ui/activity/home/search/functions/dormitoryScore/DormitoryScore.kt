@@ -29,7 +29,7 @@ import com.hfut.schedule.ui.utils.ScrollText
 @Composable
 fun DormitoryScoreXuanCheng(vm : NetWorkViewModel) {
     vm.XuanquData.value = "{}"
-    val sheetState_Xuanqu = rememberModalBottomSheetState()
+    val sheetState_Xuanqu = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_Xuanqu by remember { mutableStateOf(false) }
 
 

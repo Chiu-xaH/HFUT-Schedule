@@ -88,6 +88,7 @@ import com.hfut.schedule.ui.activity.home.calendar.next.NextCourse
 import com.hfut.schedule.ui.activity.home.calendar.communtiy.ScheduleTopDate
 import com.hfut.schedule.ui.activity.home.cube.funictions.items.MyAPIItem
 import com.hfut.schedule.ui.activity.home.calendar.multi.CustomSchedules
+import com.hfut.schedule.ui.activity.home.search.functions.life.ApiFromLife
 import com.hfut.schedule.ui.activity.home.search.functions.notifications.NotificationItems
 import com.hfut.schedule.ui.activity.home.search.functions.notifications.getNotifications
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotalUI
@@ -266,6 +267,7 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
 
 
 
+
     //监听是否周六周日有课，有则显示红点
     val Observer = Observer<Boolean> { result ->
         findCourse = result
@@ -333,6 +335,7 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
                             }
                             FOCUS -> {
                                 Row {
+                                    ApiFromLife(vm)
                                     TextButton(onClick = { showBottomSheet = true }) {
                                         BadgedBox(badge = {
                                             if (getNotifications().size.toString() != prefs.getString("Notifications",""))
@@ -524,7 +527,7 @@ fun texts(num : BottomBarItems) : String {
                 6 -> chinesenumber = "六"
                 0 -> chinesenumber = "日"
             }
-            return "$Date_MM_dd  第${Benweeks}周  周$chinesenumber"
+            return "$Date_MM_dd 第${Benweeks}周 周$chinesenumber"
         }
         FOCUS -> {
             val dayweek = GetDate.dayweek
@@ -539,7 +542,7 @@ fun texts(num : BottomBarItems) : String {
                 6 -> chinesenumber = "六"
                 0 -> chinesenumber = "日"
             }
-            return "今天  $Date_MM_dd  第${Benweeks}周  周$chinesenumber"
+            return "$Date_MM_dd 第${Benweeks}周 周$chinesenumber"
         }
         SEARCH -> {
 //            var text  = "你好"

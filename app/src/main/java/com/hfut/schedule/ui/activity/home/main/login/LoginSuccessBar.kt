@@ -14,6 +14,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -77,6 +78,7 @@ import com.hfut.schedule.ui.activity.home.calendar.next.NextCourse
 import com.hfut.schedule.ui.activity.home.calendar.communtiy.SaveCourse
 import com.hfut.schedule.ui.activity.home.calendar.communtiy.ScheduleTopDate
 import com.hfut.schedule.ui.activity.home.cube.funictions.items.MyAPIItem
+import com.hfut.schedule.ui.activity.home.search.functions.life.ApiFromLife
 import com.hfut.schedule.ui.activity.home.search.functions.notifications.NotificationItems
 import com.hfut.schedule.ui.activity.home.search.functions.notifications.getNotifications
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotalUI
@@ -268,11 +270,14 @@ fun SuccessUI(vm : NetWorkViewModel, grade : String, vm2 : LoginViewModel, vmUI 
                                 }
                             }
                             FOCUS -> {
-                                TextButton(onClick = { showBottomSheet = true }) {
-                                    BadgedBox(badge = {
-                                        if (getNotifications().size.toString() != prefs.getString("Notifications",""))
-                                            Badge()
-                                    }) { Icon(painterResource(id = R.drawable.notifications), contentDescription = "") }
+                                Row {
+                                    ApiFromLife(vm)
+                                    TextButton(onClick = { showBottomSheet = true }) {
+                                        BadgedBox(badge = {
+                                            if (getNotifications().size.toString() != prefs.getString("Notifications",""))
+                                                Badge()
+                                        }) { Icon(painterResource(id = R.drawable.notifications), contentDescription = "") }
+                                    }
                                 }
                             }
                             SEARCH -> {
