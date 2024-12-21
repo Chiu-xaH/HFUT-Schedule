@@ -1,10 +1,12 @@
-package com.hfut.schedule.ui.activity.home.cube.funictions.items
+package com.hfut.schedule.ui.activity.home.cube.funictions.items.main
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
@@ -26,8 +28,20 @@ import com.hfut.schedule.activity.funiction.FixActivity
 import com.hfut.schedule.logic.dao.dataBase
 import com.hfut.schedule.logic.utils.APPVersion
 import com.hfut.schedule.logic.utils.Starter.startWebUrl
-import com.hfut.schedule.ui.activity.home.cube.funictions.monet.MonetColorItem
-import com.hfut.schedule.ui.activity.home.cube.funictions.update.getUpdates
+import com.hfut.schedule.ui.activity.home.cube.funictions.items.subitems.MyAPIItem
+import com.hfut.schedule.ui.activity.home.cube.funictions.items.subitems.monet.MonetColorItem
+import com.hfut.schedule.ui.activity.home.cube.funictions.items.subitems.update.getUpdates
+
+@SuppressLint("SuspiciousIndentation")
+@Composable
+fun FirstCube() {
+    MyAPIItem()
+    Spacer(modifier = Modifier.height(5.dp))
+    PartTwo()
+    //debug()
+
+}
+
 
 fun Clear() {
     val dbwritableDatabase =  dataBase.writableDatabase

@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.activity.home.cube.funictions.update
+package com.hfut.schedule.ui.activity.home.cube.funictions.items.subitems.update
 
 import com.hfut.schedule.logic.beans.Update
 import com.hfut.schedule.logic.utils.SharePrefs.prefs

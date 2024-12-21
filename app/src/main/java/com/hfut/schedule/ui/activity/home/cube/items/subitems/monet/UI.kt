@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.activity.home.cube.funictions.monet
+package com.hfut.schedule.ui.activity.home.cube.funictions.items.subitems.monet
 
 import android.os.Build
 import androidx.compose.animation.AnimatedVisibility

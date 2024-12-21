@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.activity.home.cube.funictions.update
+package com.hfut.schedule.ui.activity.home.cube.funictions.items.subitems.update
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable

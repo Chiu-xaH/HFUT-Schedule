@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.activity.home.cube.funictions.items
+package com.hfut.schedule.ui.activity.home.cube.funictions.items.subitems
 
 import androidx.compose.foundation.clickable
 import androidx.compose.material3.ListItem
