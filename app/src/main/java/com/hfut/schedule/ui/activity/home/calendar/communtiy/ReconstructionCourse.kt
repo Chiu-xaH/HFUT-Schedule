@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.activity.home.calendar.communtiy
 
+import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
@@ -88,14 +89,15 @@ fun getCourseINFO(weekday : Int,Week : Int,friendUserName : String? = null) : Mu
 }
 
 
+@SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailInfos(sheet : courseDetailDTOList,isFriend : Boolean = false,vm: NetWorkViewModel) {
     val sheetState_totalCourse = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_totalCourse by remember { mutableStateOf(false) }
-    val json = SharePrefs.prefs.getString("courses","")
-    var numItem by remember { mutableStateOf(0) }
-    val list = getTotalCourse(json)
+//    val json = SharePrefs.prefs.getString("courses","")
+    var courseName by remember { mutableStateOf("") }
+//    val list = getTotalCourse(json)
     if (showBottomSheet_totalCourse) {
         ModalBottomSheet(
             onDismissRequest = {
@@ -104,27 +106,7 @@ fun DetailInfos(sheet : courseDetailDTOList,isFriend : Boolean = false,vm: NetWo
             sheetState = sheetState_totalCourse,
             shape = Round(sheetState_totalCourse)
         ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text(getTotalCourse(json)[numItem].course.nameZh) }
-                    )
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ){
-                    DetailItems(getTotalCourse(json)[numItem],json, vm)
-                    Spacer(modifier = Modifier.height(20.dp))
-                }
-            }
+            CourseDetailApi(courseName = courseName, vm = vm)
         }
     }
 
@@ -182,19 +164,66 @@ fun DetailInfos(sheet : courseDetailDTOList,isFriend : Boolean = false,vm: NetWo
                                 )
                             },
                             modifier = Modifier.clickable {
+                                courseName = sheet.name
                                 showBottomSheet_totalCourse = true
-                                for(i in list.indices) {
-                                    if(list[i].course.nameZh == sheet.name) {
-                                        numItem = i
-                                        break
-                                    }
-                                }
                             }
                         )
                     }
                     Spacer(modifier = Modifier.height(10.dp))
                 }
             }
+        }
+    }
+}
+//根据课程名跨接口查找唯一课程信息
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CourseDetailApi(isNext : Boolean = false,courseName : String,vm : NetWorkViewModel) {
+    //用法
+//    val sheetState_totalCourse = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+//    var showBottomSheet_totalCourse by remember { mutableStateOf(false) }
+//    var courseName by remember { mutableStateOf("") }
+//    if (showBottomSheet_totalCourse) {
+//        ModalBottomSheet(
+//            onDismissRequest = {
+//                showBottomSheet_totalCourse = false
+//            },
+//            sheetState = sheetState_totalCourse,
+//            shape = Round(sheetState_totalCourse)
+//        ) {
+//            CourseDetailApi(courseName = courseName, vm = vm)
+//        }
+//    }
+    val json = SharePrefs.prefs.getString(if(!isNext)"courses" else "coursesNext","")
+    val list = getTotalCourse(json)
+    var numItem by remember { mutableStateOf(0) }
+    for(i in list.indices) {
+        if(list[i].course.nameZh == courseName) {
+            numItem = i
+            break
+        }
+    }
+
+
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                colors = TopAppBarDefaults.mediumTopAppBarColors(
+                    containerColor = Color.Transparent,
+                    titleContentColor = MaterialTheme.colorScheme.primary,
+                ),
+                title = { Text(getTotalCourse(json)[numItem].course.nameZh) }
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+        ){
+            DetailItems(getTotalCourse(json)[numItem],json, vm)
+            Spacer(modifier = Modifier.height(20.dp))
         }
     }
 }

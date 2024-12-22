@@ -72,6 +72,9 @@ fun APPScreen(navController: NavController,
         var showSUpdate by remember { mutableStateOf(switch_update) }
         saveBoolean("SWITCHUPDATE",true,showSUpdate)
 
+        val switch_show_ended = prefs.getBoolean("SWITCHSHOWENDED",true)
+        var showEnded by remember { mutableStateOf(switch_show_ended) }
+        saveBoolean("SWITCHSHOWENDED",true,showEnded)
 
         saveBoolean("SWITCHFOCUS",true,showfocus)
         var showBottomSheet_card by remember { mutableStateOf(false) }
@@ -199,6 +202,14 @@ fun APPScreen(navController: NavController,
             supportingContent = { Text(text = "启动APP时会自动加载或更新一些即时数据,您可按需调整") },
             leadingContent = { Icon(painterResource(R.drawable.reset_iso), contentDescription = "Localized description",) },
             modifier = Modifier.clickable { showBottomSheet_card = true }
+        )
+
+        ListItem(
+            headlineContent = { Text(text = "聚焦展示今天已上完的课程") },
+            supportingContent = { Text(text = "屏幕底部的Tab栏底栏标签") },
+            leadingContent = { Icon(painterResource(R.drawable.search_activity), contentDescription = "Localized description",) },
+            trailingContent = { Switch(checked = showEnded, onCheckedChange = { ch -> showEnded = ch}) },
+            modifier = Modifier.clickable { showEnded = !showEnded }
         )
 
         ListItem(

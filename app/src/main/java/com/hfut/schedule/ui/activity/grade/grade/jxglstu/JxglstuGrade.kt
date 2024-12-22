@@ -45,7 +45,7 @@ import com.hfut.schedule.ui.activity.card.counts.RadarChart
 import com.hfut.schedule.ui.activity.card.counts.RadarData
 import com.hfut.schedule.ui.activity.grade.getGradeJXGLSTU
 import com.hfut.schedule.ui.activity.home.search.functions.survey.SurveyUI
-import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotalButton
+import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotalForApi
 import com.hfut.schedule.ui.utils.DividerText
 import com.hfut.schedule.ui.utils.EmptyUI
 import com.hfut.schedule.ui.utils.LittleDialog
@@ -84,7 +84,7 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel) {
                         ),
                         title = { Text("评教") },
                         actions = {
-                            CourseTotalButton(modifier = Modifier.padding(horizontal = 15.dp),vm)
+                            CourseTotalForApi(modifier = Modifier.padding(horizontal = 15.dp),vm)
                         }
                     )
                 },

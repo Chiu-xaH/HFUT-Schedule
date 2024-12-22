@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.rememberPagerState
@@ -30,7 +29,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -76,22 +74,21 @@ import com.hfut.schedule.logic.utils.GetDate.Benweeks
 import com.hfut.schedule.logic.utils.GetDate.Date_MM_dd
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.SharePrefs.saveInt
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
 import com.hfut.schedule.ui.activity.home.calendar.jxglstu.CalendarScreen
-import com.hfut.schedule.ui.activity.home.calendar.next.DatumUI
 import com.hfut.schedule.ui.activity.home.calendar.communtiy.SaveCourse
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.getUpdates
 import com.hfut.schedule.ui.activity.home.cube.main.SettingsScreen
 import com.hfut.schedule.ui.activity.home.focus.main.TodayScreen
 
-import com.hfut.schedule.ui.activity.home.calendar.next.NextCourse
 import com.hfut.schedule.ui.activity.home.calendar.communtiy.ScheduleTopDate
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.MyAPIItem
 import com.hfut.schedule.ui.activity.home.calendar.multi.CustomSchedules
 import com.hfut.schedule.ui.activity.home.search.functions.life.ApiFromLife
 import com.hfut.schedule.ui.activity.home.search.functions.notifications.NotificationItems
 import com.hfut.schedule.ui.activity.home.search.functions.notifications.getNotifications
-import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotalUI
+import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotalForApi
 import com.hfut.schedule.ui.activity.home.search.functions.webLab.LabUI
 import com.hfut.schedule.ui.activity.home.search.main.SearchFuncs
 import com.hfut.schedule.ui.activity.home.search.main.SearchScreen
@@ -115,6 +112,10 @@ import java.time.LocalDate
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
+    if(!isNextOpen()) {
+        //重置
+        saveInt("FIRST",0)
+    }
    // val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
     val navController = rememberNavController()
     val isEnabled by remember { mutableStateOf(true) }
@@ -222,51 +223,12 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
                     vm,
                     onFriendChange = { newed ->
                         isFriend = newed
-                    }
+                    },
+                    vmUI
                 )
             }
         }
     }
-    var sortType by remember { mutableStateOf(true) }
-    if (showBottomSheet_totalCourse) {
-        ModalBottomSheet(onDismissRequest = { showBottomSheet_totalCourse = false }, sheetState = sheetState_totalCourse, modifier = Modifier,
-            shape = Round(sheetState_totalCourse)
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("课程汇总") },
-                        actions = {
-                            FilledTonalButton(
-                                onClick = { sortType = !sortType },
-                                modifier = Modifier.padding(horizontal = 15.dp
-                                )) {
-                                Text(text = if(sortType) "开课顺序" else "学分顺序")
-                            }
-                        }
-                    )
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ){
-                    val json = prefs.getString("courses","")
-                    CourseTotalUI(json,false,sortType,vm)
-                    Spacer(modifier = Modifier.height(20.dp))
-                }
-            }
-        }
-    }
-
-
-
 
     //监听是否周六周日有课，有则显示红点
     val Observer = Observer<Boolean> { result ->
@@ -314,14 +276,7 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
                     actions = {
                         when(bottomBarItems){
                             COURSES -> {
-
-                               if(isNextOpen())
-                                    NextCourse(vmUI, true)
-                                IconButton(onClick = {
-                                    showBottomSheet_totalCourse= true
-                                }) {
-                                    Icon(painter = painterResource(id =  R.drawable.category), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
-                                }
+                                CourseTotalForApi(vm=vm, isIconOrText = true)
                                 IconButton(onClick = {
                                     showBottomSheet_multi = true
                                 }) {
@@ -472,11 +427,11 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
                         COMMUNITY -> SaveCourse(showAll, innerPadding,vmUI, onDateChange = { new -> today = new}, today = today, vm = vm)
                         JXGLSTU -> prefs.getString("Username","")?.let { it1 -> CalendarScreen(showAll,vm, it1.substring(0,2),innerPadding,vmUI,false,vm2,false,{newDate -> today = newDate},today) }
                             ///CustomSchedules(showAll,innerPadding,vmUI,-1)
-                        NEXT -> {
-                            Column(modifier = Modifier.padding(innerPadding)) {
-                                prefs.getString("gradeNext","23")?.let { DatumUI(showAll, it, innerPadding, vmUI,)}
-                            }
-                        }
+//                        NEXT -> {
+//                            Column(modifier = Modifier.padding(innerPadding)) {
+//                                prefs.getString("gradeNext","23")?.let { DatumUI(showAll, it, innerPadding, vmUI,)}
+//                            }
+//                        }
                         else -> {
                             CustomSchedules(showAll,innerPadding,vmUI,swapUI-2,{newDate-> today = newDate}, today)
                         }

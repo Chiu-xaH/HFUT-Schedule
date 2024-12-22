@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.rememberPagerState
@@ -26,7 +25,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -55,7 +53,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
@@ -69,23 +66,27 @@ import com.hfut.schedule.ui.activity.home.search.main.SearchScreen
 import com.hfut.schedule.ui.activity.home.cube.main.SettingsScreen
 import com.hfut.schedule.ui.activity.home.focus.main.TodayScreen
 import com.hfut.schedule.logic.enums.BottomBarItems.*
-import com.hfut.schedule.logic.beans.MyAPIResponse
 import com.hfut.schedule.logic.utils.APPVersion
+import com.hfut.schedule.ui.activity.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.activity.home.calendar.jxglstu.CalendarScreen
 import com.hfut.schedule.ui.activity.home.main.saved.texts
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.getUpdates
-import com.hfut.schedule.ui.activity.home.calendar.next.NextCourse
 import com.hfut.schedule.ui.activity.home.calendar.communtiy.SaveCourse
 import com.hfut.schedule.ui.activity.home.calendar.communtiy.ScheduleTopDate
+import com.hfut.schedule.ui.activity.home.calendar.multi.CustomSchedules
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.MyAPIItem
+import com.hfut.schedule.ui.activity.home.main.saved.COMMUNITY
+import com.hfut.schedule.ui.activity.home.main.saved.JXGLSTU
+import com.hfut.schedule.ui.activity.home.main.saved.MultiScheduleSettings
 import com.hfut.schedule.ui.activity.home.search.functions.life.ApiFromLife
 import com.hfut.schedule.ui.activity.home.search.functions.notifications.NotificationItems
 import com.hfut.schedule.ui.activity.home.search.functions.notifications.getNotifications
-import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotalUI
+import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotalForApi
 import com.hfut.schedule.ui.activity.home.search.functions.webLab.LabUI
 import com.hfut.schedule.ui.activity.home.search.main.SearchFuncs
 import com.hfut.schedule.ui.utils.CustomTabRow
 import com.hfut.schedule.ui.utils.DividerText
+import com.hfut.schedule.ui.utils.MyToast
 import com.hfut.schedule.ui.utils.Round
 import com.hfut.schedule.ui.utils.ScrollText
 import com.hfut.schedule.ui.utils.bottomBarBlur
@@ -130,10 +131,11 @@ fun SuccessUI(vm : NetWorkViewModel, grade : String, vm2 : LoginViewModel, vmUI 
         val json = prefs.getString("json","")
         if (json != null) {
             if (card == "请登录刷新" || !json.contains("课")) {
-                delay(6000)
+                MyToast("正在后台登录其他接口，请稍作等待再切换界面")
+                delay(8000)
                 isEnabled = true
             } else {
-                delay(1000)
+                delay(3000)
                 isEnabled = true
             }
         }
@@ -142,7 +144,7 @@ fun SuccessUI(vm : NetWorkViewModel, grade : String, vm2 : LoginViewModel, vmUI 
     val pagerState = rememberPagerState(pageCount = { 2 })
     val titles = listOf("重要安排","其他事项")
     var showAll by remember { mutableStateOf(false) }
-    var swapUI by remember { mutableStateOf(false) }
+    //var swapUI by remember { mutableStateOf(false) }
     var showSearch by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -178,48 +180,35 @@ fun SuccessUI(vm : NetWorkViewModel, grade : String, vm2 : LoginViewModel, vmUI 
             }
         }
     }
-    val sheetState_totalCourse = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var showBottomSheet_totalCourse by remember { mutableStateOf(false) }
-    var today by remember { mutableStateOf(LocalDate.now()) }
 
-    var sortType by remember { mutableStateOf(true) }
+    var swapUI by remember { mutableStateOf(JXGLSTU) }
+    var isFriend by remember { mutableStateOf(false) }
 
-    if (showBottomSheet_totalCourse) {
-        ModalBottomSheet(onDismissRequest = { showBottomSheet_totalCourse = false }, sheetState = sheetState_totalCourse, modifier = Modifier,
-            shape = Round(sheetState_totalCourse)
+    val sheetState_multi = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showBottomSheet_multi by remember { mutableStateOf(false) }
+    if (showBottomSheet_multi) {
+        ModalBottomSheet(onDismissRequest = { showBottomSheet_multi = false }, sheetState = sheetState_multi, modifier = Modifier,
+            //  shape = Round(sheetState_multi)
         ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("课程汇总") },
-                        actions = {
-                            FilledTonalButton(
-                                onClick = { sortType = !sortType },
-                                modifier = Modifier.padding(horizontal = 15.dp
-                                )) {
-                                Text(text = if(sortType) "开课顺序" else "学分顺序")
-                            }
-                        }
-                    )
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ){
-                    val json = prefs.getString("courses","")
-                    CourseTotalUI(json,false,sortType,vm)
-                    Spacer(modifier = Modifier.height(20.dp))
-                }
+            Column(
+
+            ){
+                MultiScheduleSettings(false,swapUI,
+                    onSelectedChange = { newSelected ->
+                        swapUI = newSelected
+                    },
+                    vm,
+                    onFriendChange = { newed ->
+                        isFriend = newed
+                    },
+                    vmUI
+                )
             }
         }
     }
+    var today by remember { mutableStateOf(LocalDate.now()) }
+
+
     var searchText by remember { mutableStateOf("") }
 
 
@@ -249,19 +238,20 @@ fun SuccessUI(vm : NetWorkViewModel, grade : String, vm2 : LoginViewModel, vmUI 
                     actions = {
                         when(bottomBarItems) {
                             COURSES -> {
-                                FilledTonalButton(onClick = {
-                                    swapUI = !swapUI
+//                                FilledTonalButton(onClick = {
+//                                    swapUI = !swapUI
+//                                }) {
+//                                    Text(text = if(!swapUI)"教务" else "社区" )
+//                                }
+//                                if(Gson().fromJson(prefs.getString("my", MyApplication.NullMy),
+//                                        MyAPIResponse::class.java).Next) {
+//                                    NextCourse(vmUI, false)
+//                                }
+                                CourseTotalForApi(vm=vm, isIconOrText = true)
+                                IconButton(onClick = {
+                                    showBottomSheet_multi = true
                                 }) {
-                                    Text(text = if(!swapUI)"教务" else "社区" )
-                                }
-                                if(Gson().fromJson(prefs.getString("my", MyApplication.NullMy),
-                                        MyAPIResponse::class.java).Next) {
-                                    NextCourse(vmUI, false)
-                                }
-                                TextButton(onClick = {
-                                    showBottomSheet_totalCourse= true
-                                }) {
-                                    Icon(painter = painterResource(id =  R.drawable.category), contentDescription = "")
+                                    Icon(painter = painterResource(id =  R.drawable.tab_inactive), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
                                 }
                                 TextButton(onClick = { showAll = !showAll }) {
                                     BadgedBox(badge = {
@@ -394,8 +384,27 @@ fun SuccessUI(vm : NetWorkViewModel, grade : String, vm2 : LoginViewModel, vmUI 
                 )) {
             composable(COURSES.name) {
                 Scaffold {
-                    if(!swapUI) CalendarScreen(showAll,vm,grade,innerPadding,vmUI,webVpn,vm2,true,{newDate -> today = newDate},today)
-                    else SaveCourse(showAll, innerPadding,vmUI,onDateChange = { new -> today = new}, today = today, vm = vm)
+
+                    if(!isFriend)
+                        when (swapUI) {
+                            COMMUNITY -> SaveCourse(showAll, innerPadding,vmUI, onDateChange = { new -> today = new}, today = today, vm = vm)
+                            JXGLSTU -> CalendarScreen(showAll,vm,grade,innerPadding,vmUI,webVpn,vm2,true,{newDate -> today = newDate},today)
+                            ///CustomSchedules(showAll,innerPadding,vmUI,-1)
+//                        NEXT -> {
+//                            Column(modifier = Modifier.padding(innerPadding)) {
+//                                prefs.getString("gradeNext","23")?.let { DatumUI(showAll, it, innerPadding, vmUI,)}
+//                            }
+//                        }
+                            else -> {
+                                CustomSchedules(showAll,innerPadding,vmUI,swapUI-2,{newDate-> today = newDate}, today)
+                            }
+                        }
+                    else {
+                        SaveCourse(showAll,innerPadding,vmUI,swapUI.toString(),onDateChange = { new -> today = new}, today = today,vm)
+                    }
+
+//                    if(!swapUI) CalendarScreen(showAll,vm,grade,innerPadding,vmUI,webVpn,vm2,true,{newDate -> today = newDate},today)
+//                    else SaveCourse(showAll, innerPadding,vmUI,onDateChange = { new -> today = new}, today = today, vm = vm)
                 }
             }
             composable(FOCUS.name) {

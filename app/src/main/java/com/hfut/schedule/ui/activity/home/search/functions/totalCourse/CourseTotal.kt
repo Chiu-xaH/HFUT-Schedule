@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -33,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.ui.activity.home.main.saved.isNextOpen
 import com.hfut.schedule.ui.utils.MyCard
 import com.hfut.schedule.ui.utils.Round
 import com.hfut.schedule.ui.utils.ScrollText
@@ -44,6 +47,7 @@ fun CourseTotal(vm :NetWorkViewModel) {
     var showBottomSheet_Total by remember { mutableStateOf(false) }
     val CommuityTOKEN = prefs.getString("TOKEN","")
     val json = prefs.getString("courses","")
+    val jsonNext = prefs.getString("coursesNext","")
 
     ListItem(
         headlineContent = { Text(text = "课程汇总") },
@@ -57,6 +61,7 @@ fun CourseTotal(vm :NetWorkViewModel) {
              showBottomSheet_Total = true
         }
     )
+    var next by remember { mutableStateOf(false) }
     var sortType by remember { mutableStateOf(true) }
     if (showBottomSheet_Total) {
         ModalBottomSheet(
@@ -76,11 +81,22 @@ fun CourseTotal(vm :NetWorkViewModel) {
                         ),
                         title = { Text("课程汇总") },
                         actions = {
-                            FilledTonalButton(
-                                onClick = { sortType = !sortType },
-                                modifier = Modifier.padding(horizontal = 15.dp
-                                )) {
-                                Text(text = if(sortType) "开课顺序" else "学分高低")
+                            Row {
+                                if (isNextOpen()) {
+                                    FilledTonalButton(
+                                        onClick = {
+                                            next = !next
+                                        }
+                                        ,) {
+                                        Text(text = if(next) "下学期" else "本学期")
+                                    }
+                                }
+                                FilledTonalButton(
+                                    onClick = { sortType = !sortType },
+                                    modifier = Modifier.padding(horizontal = 15.dp
+                                    )) {
+                                    Text(text = if(sortType) "开课时间" else "学分高低")
+                                }
                             }
                         }
                     )
@@ -92,7 +108,15 @@ fun CourseTotal(vm :NetWorkViewModel) {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ){
-                    CourseTotalUI(json,false,sortType,vm)
+                    CourseTotalUI(
+                        if(next)
+                            jsonNext
+                        else
+                            json
+                        ,
+                        false,
+                        sortType,
+                        vm)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
@@ -100,9 +124,9 @@ fun CourseTotal(vm :NetWorkViewModel) {
     }
 }
 
-fun periodsSum() : Double {
+fun periodsSum(json: String) : Double {
     var num = 0.0
-    val json = prefs.getString("courses","")
+    //val json = prefs.getString("courses","")
     for(i in 0 until getTotalCourse(json).size) {
         val credit = getTotalCourse(json)[i].course.credits
         if (credit != null) {
@@ -130,7 +154,7 @@ fun SemsterInfo(json : String?) {
                     ) },
                     modifier = Modifier.clickable {},
                     colors = ListItemDefaults.colors(MaterialTheme.colorScheme.primaryContainer),
-                    trailingContent = { if (json != null) { if(json.contains("lessonIds"))Text(text = "学分 ${periodsSum()}") } }
+                    trailingContent = { if (json != null) { if(json.contains("lessonIds"))Text(text = "学分 ${periodsSum(json)}") } }
                 )
             }
         }
@@ -139,15 +163,27 @@ fun SemsterInfo(json : String?) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CourseTotalButton(modifier: Modifier = Modifier,vm: NetWorkViewModel) {
+fun CourseTotalForApi(modifier: Modifier = Modifier, vm: NetWorkViewModel, isIconOrText : Boolean = false,next : Boolean = false,onNextChange : (() -> Unit)? = null) {
     val sheetState_Total = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_Total by remember { mutableStateOf(false) }
 
+    //
+    var next2 by remember { mutableStateOf(false) }
     val json = prefs.getString("courses","")
+    val jsonNext = prefs.getString("coursesNext","")
 
-    FilledTonalButton(onClick = { showBottomSheet_Total = true }, modifier = modifier) {
-        Text(text = "课程汇总")
+    if(isIconOrText) {
+        IconButton(onClick = {
+            showBottomSheet_Total= true
+        }) {
+            Icon(painter = painterResource(id =  R.drawable.category), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
+        }
+    } else {
+        FilledTonalButton(onClick = { showBottomSheet_Total = true }, modifier = modifier) {
+            Text(text = "课程汇总")
+        }
     }
+
     var sortType by remember { mutableStateOf(true) }
     if (showBottomSheet_Total) {
         ModalBottomSheet(
@@ -167,11 +203,31 @@ fun CourseTotalButton(modifier: Modifier = Modifier,vm: NetWorkViewModel) {
                         ),
                         title = { Text("课程汇总") },
                         actions = {
+                            if(onNextChange == null) {
+                                if(isNextOpen()) {
+                                    FilledTonalButton(
+                                        onClick = {
+                                            next2 = !next2
+                                        }
+                                        ,) {
+                                        Text(text = if(next) "下学期" else "本学期")
+                                    }
+                                }
+                            } else {
+                                if (isNextOpen()) {
+                                    FilledTonalButton(
+                                        onClick = onNextChange
+                                        ,) {
+                                        Text(text = if(next) "下学期" else "本学期")
+                                    }
+                                }
+                            }
+
                             FilledTonalButton(
                                 onClick = { sortType = !sortType },
                                 modifier = Modifier.padding(horizontal = 15.dp
                                 )) {
-                                Text(text = if(sortType) "开课顺序" else "学分高低")
+                                Text(text = if(sortType) "开课时间" else "学分高低")
                             }
                         }
                     )
@@ -183,7 +239,20 @@ fun CourseTotalButton(modifier: Modifier = Modifier,vm: NetWorkViewModel) {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ){
-                    CourseTotalUI(json,false,sortType,vm)
+
+
+                    CourseTotalUI(
+                        if(isNextOpen() && onNextChange == null) {
+                            if(next2) jsonNext
+                            else json
+                        } else {
+                            if(next) jsonNext
+                            else json
+                        }
+                        ,
+                        false,
+                        sortType,
+                        vm)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }

@@ -76,6 +76,7 @@ fun UIScreen(navController: NavController, innerPaddings : PaddingValues,
             trailingContent = {  Switch(checked = blur, onCheckedChange = blurchanged, enabled = canBlur ) },
             modifier = Modifier.clickable { blurchanged }
         )
+
         ListItem(
             headlineContent = { Text(text = "转场动画") },
             supportingContent = {

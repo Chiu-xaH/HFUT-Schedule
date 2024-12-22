@@ -2,6 +2,7 @@ package com.hfut.schedule.ui.activity.home.focus.main
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
@@ -128,6 +129,16 @@ fun TodayScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding : Padd
                 //当第二天为下一周的周一时，周数+1
                 when(weekdaytomorrow) { 1 -> Nextweek += 1 }
                 when (weekdayToday) { 0 -> weekdayToday = 7 }
+                //判断是否上完今天的课
+                val todayCourseList = getCourseINFO(weekdayToday,week)
+                val lastCourse = todayCourseList.lastOrNull()
+                val lastTime = if(lastCourse != null) {
+                    lastCourse[0].classTime.substringAfter("-")
+                } else {
+                    "00:00"
+                }
+                //lastTime字符串一定得到HH:MM格式，封装一个函数获取本地时间，再写代码比较两者
+
                 HorizontalPager(state = state) { page ->
                     Scaffold {
                         LazyColumn(state = scrollstate) {
@@ -142,10 +153,10 @@ fun TodayScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding : Padd
 
                                     item { FocusCard(vmUI,vm,refreshing) }
                                     //课表
-                                    if (GetDate.formattedTime_Hour.toInt() >= 19)
+                                    if (GetDate.compareTimes(lastTime) <= 0)
                                         items(getCourseINFO(weekdaytomorrow,Nextweek).size) { item -> TomorrowCourseItem(item = item,vm) }
                                     else
-                                        items(getCourseINFO(weekdayToday,week).size) { item -> TodayCourseItem(item = item,vm) }
+                                        items(todayCourseList.size) { item -> TodayCourseItem(item = item,vm) }
                                     //日程
                                //     if (switch_api){
                                         if(!switch_server)
@@ -177,7 +188,7 @@ fun TodayScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding : Padd
                                   //  }
 
                                     //第二天课表
-                                    if (GetDate.formattedTime_Hour.toInt() < 19)
+                                    if (GetDate.compareTimes(lastTime) > 0)
                                         items(getCourseINFO(weekdaytomorrow,Nextweek).size) { item -> TomorrowCourseItem(item = item,vm) }
 
                                     items(AddedItems().size){ item -> AddItem(item = item, AddedItems = AddedItems()) }
@@ -198,3 +209,32 @@ fun TodayScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding : Padd
 
 
 
+fun isTodayCoursesOvered() : Boolean {
+    var date = GetDate.Date_MM_dd
+    val todaydate = (date?.substring(0, 2) ) + date?.substring(3, 5)
+    var week = GetDate.Benweeks.toInt()
+    //  val switch_api = SharePrefs.prefs.getBoolean("SWITCHMYAPI", apiCheck())
+    var weekdaytomorrow = GetDate.dayweek + 1
+    var weekdayToday = GetDate.dayweek
+    var Nextweek = GetDate.Benweeks.toInt()
+    //当今天为周日时，变0为7
+    //当第二天为下一周的周一时，周数+1
+    when(weekdaytomorrow) { 1 -> Nextweek += 1 }
+    when (weekdayToday) { 0 -> weekdayToday = 7 }
+
+    val todayCourseList = getCourseINFO(weekdayToday,week)
+    val tomorrowCourseList = getCourseINFO(weekdaytomorrow,Nextweek)
+
+    val lastCourse = todayCourseList.lastOrNull()
+    val lastTime = if(lastCourse != null) {
+        lastCourse[0].classTime.substringAfter("-")
+    } else {
+        "00:00"
+    }
+
+    val isTodayCoursesOvered = GetDate.compareTimes(lastTime) <= 0
+    val todayCoursesNum = todayCourseList.size
+    val tomorrowCoursesNum = tomorrowCourseList.size
+    //val isNeedGetUp =
+    return isTodayCoursesOvered
+}

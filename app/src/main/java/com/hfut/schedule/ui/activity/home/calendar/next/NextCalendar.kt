@@ -26,11 +26,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -47,8 +50,11 @@ import com.google.gson.Gson
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.beans.Jxglstu.datumResponse
 import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.ui.activity.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.activity.home.calendar.next.DatumMode.*
 import com.hfut.schedule.ui.utils.MyToast
+import com.hfut.schedule.ui.utils.Round
+import com.hfut.schedule.viewmodel.NetWorkViewModel
 
 enum class DatumMode {
     JXGLSTU,COMMUNITY,NEXT
@@ -68,14 +74,30 @@ fun datumMode(Mode : DatumMode) {
         }
     }
 }
-@OptIn(ExperimentalAnimationApi::class)
+@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DatumUI(showAll : Boolean,
             grade : String,
             innerPadding : PaddingValues,
             vmUI : UIViewModel,
+            vm : NetWorkViewModel
            ) {
+
+    val sheetState_totalCourse = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showBottomSheet_totalCourse by remember { mutableStateOf(false) }
+    var courseName by remember { mutableStateOf("") }
+    if (showBottomSheet_totalCourse) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                showBottomSheet_totalCourse = false
+            },
+            sheetState = sheetState_totalCourse,
+            shape = Round(sheetState_totalCourse)
+        ) {
+            CourseDetailApi(isNext = true,courseName = courseName, vm = vm)
+        }
+    }
 
     var table_1_1 by rememberSaveable { mutableStateOf("") }
     var table_1_2 by rememberSaveable { mutableStateOf("") }
@@ -121,48 +143,48 @@ fun DatumUI(showAll : Boolean,
     var table_6_7 by rememberSaveable { mutableStateOf("") }
 
 
-    var sheet_1_1 by rememberSaveable { mutableStateOf("") }
-    var sheet_1_2 by rememberSaveable { mutableStateOf("") }
-    var sheet_1_3 by rememberSaveable { mutableStateOf("") }
-    var sheet_1_4 by rememberSaveable { mutableStateOf("") }
-    var sheet_1_5 by rememberSaveable { mutableStateOf("") }
-    var sheet_2_1 by rememberSaveable { mutableStateOf("") }
-    var sheet_2_2 by rememberSaveable { mutableStateOf("") }
-    var sheet_2_3 by rememberSaveable { mutableStateOf("") }
-    var sheet_2_4 by rememberSaveable { mutableStateOf("") }
-    var sheet_2_5 by rememberSaveable { mutableStateOf("") }
-    var sheet_3_1 by rememberSaveable { mutableStateOf("") }
-    var sheet_3_2 by rememberSaveable { mutableStateOf("") }
-    var sheet_3_3 by rememberSaveable { mutableStateOf("") }
-    var sheet_3_4 by rememberSaveable { mutableStateOf("") }
-    var sheet_3_5 by rememberSaveable { mutableStateOf("") }
-    var sheet_4_1 by rememberSaveable { mutableStateOf("") }
-    var sheet_4_2 by rememberSaveable { mutableStateOf("") }
-    var sheet_4_3 by rememberSaveable { mutableStateOf("") }
-    var sheet_4_4 by rememberSaveable { mutableStateOf("") }
-    var sheet_4_5 by rememberSaveable { mutableStateOf("") }
-    var sheet_5_1 by rememberSaveable { mutableStateOf("") }
-    var sheet_5_2 by rememberSaveable { mutableStateOf("") }
-    var sheet_5_3 by rememberSaveable { mutableStateOf("") }
-    var sheet_5_4 by rememberSaveable { mutableStateOf("") }
-    var sheet_5_5 by rememberSaveable { mutableStateOf("") }
-    var sheet_6_1 by rememberSaveable { mutableStateOf("") }
-    var sheet_6_2 by rememberSaveable { mutableStateOf("") }
-    var sheet_6_3 by rememberSaveable { mutableStateOf("") }
-    var sheet_6_4 by rememberSaveable { mutableStateOf("") }
-    var sheet_6_5 by rememberSaveable { mutableStateOf("") }
-    var sheet_1_6 by rememberSaveable { mutableStateOf("") }
-    var sheet_1_7 by rememberSaveable { mutableStateOf("") }
-    var sheet_2_6 by rememberSaveable { mutableStateOf("") }
-    var sheet_2_7 by rememberSaveable { mutableStateOf("") }
-    var sheet_3_6 by rememberSaveable { mutableStateOf("") }
-    var sheet_3_7 by rememberSaveable { mutableStateOf("") }
-    var sheet_4_6 by rememberSaveable { mutableStateOf("") }
-    var sheet_4_7 by rememberSaveable { mutableStateOf("") }
-    var sheet_5_6 by rememberSaveable { mutableStateOf("") }
-    var sheet_5_7 by rememberSaveable { mutableStateOf("") }
-    var sheet_6_6 by rememberSaveable { mutableStateOf("") }
-    var sheet_6_7 by rememberSaveable { mutableStateOf("") }
+//    var sheet_1_1 by rememberSaveable { mutableStateOf("") }
+//    var sheet_1_2 by rememberSaveable { mutableStateOf("") }
+//    var sheet_1_3 by rememberSaveable { mutableStateOf("") }
+//    var sheet_1_4 by rememberSaveable { mutableStateOf("") }
+//    var sheet_1_5 by rememberSaveable { mutableStateOf("") }
+//    var sheet_2_1 by rememberSaveable { mutableStateOf("") }
+//    var sheet_2_2 by rememberSaveable { mutableStateOf("") }
+//    var sheet_2_3 by rememberSaveable { mutableStateOf("") }
+//    var sheet_2_4 by rememberSaveable { mutableStateOf("") }
+//    var sheet_2_5 by rememberSaveable { mutableStateOf("") }
+//    var sheet_3_1 by rememberSaveable { mutableStateOf("") }
+//    var sheet_3_2 by rememberSaveable { mutableStateOf("") }
+//    var sheet_3_3 by rememberSaveable { mutableStateOf("") }
+//    var sheet_3_4 by rememberSaveable { mutableStateOf("") }
+//    var sheet_3_5 by rememberSaveable { mutableStateOf("") }
+//    var sheet_4_1 by rememberSaveable { mutableStateOf("") }
+//    var sheet_4_2 by rememberSaveable { mutableStateOf("") }
+//    var sheet_4_3 by rememberSaveable { mutableStateOf("") }
+//    var sheet_4_4 by rememberSaveable { mutableStateOf("") }
+//    var sheet_4_5 by rememberSaveable { mutableStateOf("") }
+//    var sheet_5_1 by rememberSaveable { mutableStateOf("") }
+//    var sheet_5_2 by rememberSaveable { mutableStateOf("") }
+//    var sheet_5_3 by rememberSaveable { mutableStateOf("") }
+//    var sheet_5_4 by rememberSaveable { mutableStateOf("") }
+//    var sheet_5_5 by rememberSaveable { mutableStateOf("") }
+//    var sheet_6_1 by rememberSaveable { mutableStateOf("") }
+//    var sheet_6_2 by rememberSaveable { mutableStateOf("") }
+//    var sheet_6_3 by rememberSaveable { mutableStateOf("") }
+//    var sheet_6_4 by rememberSaveable { mutableStateOf("") }
+//    var sheet_6_5 by rememberSaveable { mutableStateOf("") }
+//    var sheet_1_6 by rememberSaveable { mutableStateOf("") }
+//    var sheet_1_7 by rememberSaveable { mutableStateOf("") }
+//    var sheet_2_6 by rememberSaveable { mutableStateOf("") }
+//    var sheet_2_7 by rememberSaveable { mutableStateOf("") }
+//    var sheet_3_6 by rememberSaveable { mutableStateOf("") }
+//    var sheet_3_7 by rememberSaveable { mutableStateOf("") }
+//    var sheet_4_6 by rememberSaveable { mutableStateOf("") }
+//    var sheet_4_7 by rememberSaveable { mutableStateOf("") }
+//    var sheet_5_6 by rememberSaveable { mutableStateOf("") }
+//    var sheet_5_7 by rememberSaveable { mutableStateOf("") }
+//    var sheet_6_6 by rememberSaveable { mutableStateOf("") }
+//    var sheet_6_7 by rememberSaveable { mutableStateOf("") }
 //
 //    var today by rememberSaveable { mutableStateOf(LocalDate.now()) }
 //    val mondayOfCurrentWeek = today.minusDays(today.dayOfWeek.value - 1L)
@@ -176,14 +198,14 @@ fun DatumUI(showAll : Boolean,
         table_6_1, table_6_2, table_6_3, table_6_4, table_6_5,table_6_6,table_6_7,
     )
 
-    val sheetall = arrayOf(
-        sheet_1_1, sheet_1_2, sheet_1_3, sheet_1_4, sheet_1_5,sheet_1_6,sheet_1_7,
-        sheet_2_1, sheet_2_2, sheet_2_3, sheet_2_4, sheet_2_5,sheet_2_6,sheet_2_7,
-        sheet_3_1, sheet_3_2, sheet_3_3, sheet_3_4, sheet_3_5,sheet_3_6,sheet_3_7,
-        sheet_4_1, sheet_4_2, sheet_4_3, sheet_4_4, sheet_4_5,sheet_4_6,sheet_4_7,
-        sheet_5_1, sheet_5_2, sheet_5_3, sheet_5_4, sheet_5_5,sheet_5_6,sheet_5_7,
-        sheet_6_1, sheet_6_2, sheet_6_3, sheet_6_4, sheet_6_5,sheet_6_6,sheet_6_7,
-    )
+//    val sheetall = arrayOf(
+//        sheet_1_1, sheet_1_2, sheet_1_3, sheet_1_4, sheet_1_5,sheet_1_6,sheet_1_7,
+//        sheet_2_1, sheet_2_2, sheet_2_3, sheet_2_4, sheet_2_5,sheet_2_6,sheet_2_7,
+//        sheet_3_1, sheet_3_2, sheet_3_3, sheet_3_4, sheet_3_5,sheet_3_6,sheet_3_7,
+//        sheet_4_1, sheet_4_2, sheet_4_3, sheet_4_4, sheet_4_5,sheet_4_6,sheet_4_7,
+//        sheet_5_1, sheet_5_2, sheet_5_3, sheet_5_4, sheet_5_5,sheet_5_6,sheet_5_7,
+//        sheet_6_1, sheet_6_2, sheet_6_3, sheet_6_4, sheet_6_5,sheet_6_6,sheet_6_7,
+//    )
 
     val table = arrayOf(
         table_1_1, table_1_2, table_1_3, table_1_4, table_1_5,
@@ -194,14 +216,14 @@ fun DatumUI(showAll : Boolean,
         table_6_1, table_6_2, table_6_3, table_6_4, table_6_5,
     )
 
-    val sheet = arrayOf(
-        sheet_1_1, sheet_1_2, sheet_1_3, sheet_1_4, sheet_1_5,
-        sheet_2_1, sheet_2_2, sheet_2_3, sheet_2_4, sheet_2_5,
-        sheet_3_1, sheet_3_2, sheet_3_3, sheet_3_4, sheet_3_5,
-        sheet_4_1, sheet_4_2, sheet_4_3, sheet_4_4, sheet_4_5,
-        sheet_5_1, sheet_5_2, sheet_5_3, sheet_5_4, sheet_5_5,
-        sheet_6_1, sheet_6_2, sheet_6_3, sheet_6_4, sheet_6_5
-    )
+//    val sheet = arrayOf(
+//        sheet_1_1, sheet_1_2, sheet_1_3, sheet_1_4, sheet_1_5,
+//        sheet_2_1, sheet_2_2, sheet_2_3, sheet_2_4, sheet_2_5,
+//        sheet_3_1, sheet_3_2, sheet_3_3, sheet_3_4, sheet_3_5,
+//        sheet_4_1, sheet_4_2, sheet_4_3, sheet_4_4, sheet_4_5,
+//        sheet_5_1, sheet_5_2, sheet_5_3, sheet_5_4, sheet_5_5,
+//        sheet_6_1, sheet_6_2, sheet_6_3, sheet_6_4, sheet_6_5
+//    )
 
     var Bianhuaweeks by rememberSaveable { mutableStateOf(1) }
 
@@ -297,111 +319,111 @@ fun DatumUI(showAll : Boolean,
                     if (scheduleList[i].weekday == 1) {
                         if (scheduleList[i].startTime == 800) {
                             table_1_1 = text
-                            sheet_1_1 = info
+//                            sheet_1_1 = info
                         }
                         if (scheduleList[i].startTime == 1010) {
                             table_2_1 = text
-                            sheet_2_1 = info
+//                            sheet_2_1 = info
                         }
                         if (scheduleList[i].startTime == 1400) {
                             table_3_1 = text
-                            sheet_3_1 = info
+//                            sheet_3_1 = info
                         }
                         if (scheduleList[i].startTime == 1600) {
                             table_4_1 = text
-                            sheet_4_1 = info
+//                            sheet_4_1 = info
                         }
                         if (scheduleList[i].startTime == 1900) {
                             table_5_1 = text
-                            sheet_5_1 = info
+//                            sheet_5_1 = info
                         }
                     }
                     if (scheduleList[i].weekday == 2) {
                         if (scheduleList[i].startTime == 800) {
                             table_1_2 = text
-                            sheet_1_2 = info
+//                            sheet_1_2 = info
                         }
                         if (scheduleList[i].startTime == 1010) {
                             table_2_2 = text
-                            sheet_2_2 = info
+//                            sheet_2_2 = info
                         }
                         if (scheduleList[i].startTime == 1400) {
                             table_3_2 = text
-                            sheet_3_2 = info
+//                            sheet_3_2 = info
                         }
                         if (scheduleList[i].startTime == 1600) {
                             table_4_2 = text
-                            sheet_4_2 = info
+//                            sheet_4_2 = info
                         }
                         if (scheduleList[i].startTime == 1900) {
                             table_5_2 = text
-                            sheet_5_2 = info
+//                            sheet_5_2 = info
                         }
                     }
                     if (scheduleList[i].weekday == 3) {
                         if (scheduleList[i].startTime == 800) {
                             table_1_3 = text
-                            sheet_1_3 = info
+//                            sheet_1_3 = info
                         }
                         if (scheduleList[i].startTime == 1010) {
                             table_2_3 = text
-                            sheet_2_3 = info
+//                            sheet_2_3 = info
                         }
                         if (scheduleList[i].startTime == 1400) {
                             table_3_3 = text
-                            sheet_3_3 = info
+//                            sheet_3_3 = info
                         }
                         if (scheduleList[i].startTime == 1600) {
                             table_4_3 = text
-                            sheet_4_3 = info
+//                            sheet_4_3 = info
                         }
                         if (scheduleList[i].startTime == 1900) {
                             table_5_3 = text
-                            sheet_5_3 = info
+//                            sheet_5_3 = info
                         }
                     }
                     if (scheduleList[i].weekday == 4) {
                         if (scheduleList[i].startTime == 800) {
                             table_1_4 = text
-                            sheet_1_4 = info
+//                            sheet_1_4 = info
                         }
                         if (scheduleList[i].startTime == 1010) {
                             table_2_4 = text
-                            sheet_2_4 = info
+//                            sheet_2_4 = info
                         }
                         if (scheduleList[i].startTime == 1400) {
                             table_3_4 = text
-                            sheet_3_4 = info
+//                            sheet_3_4 = info
                         }
                         if (scheduleList[i].startTime == 1600) {
                             table_4_4 = text
-                            sheet_4_4 = info
+//                            sheet_4_4 = info
                         }
                         if (scheduleList[i].startTime == 1900) {
                             table_5_4 = text
-                            sheet_5_4 = info
+//                            sheet_5_4 = info
                         }
                     }
                     if (scheduleList[i].weekday == 5) {
                         if (scheduleList[i].startTime == 800) {
                             table_1_5 = text
-                            sheet_1_5 = info
+//                            sheet_1_5 = info
                         }
                         if (scheduleList[i].startTime == 1010) {
                             table_2_5 = text
-                            sheet_2_5 = info
+//                            sheet_2_5 = info
                         }
                         if (scheduleList[i].startTime == 1400) {
                             table_3_5 = text
-                            sheet_3_5 = info
+//                            sheet_3_5 = info
                         }
                         if (scheduleList[i].startTime == 1600) {
                             table_4_5 = text
-                            sheet_4_5 = info
+//                            sheet_4_5 = info
                         }
                         if (scheduleList[i].startTime == 1900) {
                             table_5_5 = text
-                            sheet_5_5 = info
+//                            sheet_5_5 = info
                         }
                     }
                 }
@@ -518,155 +540,155 @@ fun DatumUI(showAll : Boolean,
                     if (scheduleList[i].weekday == 1) {
                         if (scheduleList[i].startTime == 800) {
                             table_1_1 = text
-                            sheet_1_1 = info
+//                            sheet_1_1 = info
                         }
                         if (scheduleList[i].startTime == 1010) {
                             table_2_1 = text
-                            sheet_2_1 = info
+//                            sheet_2_1 = info
                         }
                         if (scheduleList[i].startTime == 1400) {
                             table_3_1 = text
-                            sheet_3_1 = info
+//                            sheet_3_1 = info
                         }
                         if (scheduleList[i].startTime == 1600) {
                             table_4_1 = text
-                            sheet_4_1 = info
+//                            sheet_4_1 = info
                         }
                         if (scheduleList[i].startTime == 1900) {
                             table_5_1 = text
-                            sheet_5_1 = info
+//                            sheet_5_1 = info
                         }
                     }
                     if (scheduleList[i].weekday == 2) {
                         if (scheduleList[i].startTime == 800) {
                             table_1_2 = text
-                            sheet_1_2 = info
+//                            sheet_1_2 = info
                         }
                         if (scheduleList[i].startTime == 1010) {
                             table_2_2 = text
-                            sheet_2_2 = info
+//                            sheet_2_2 = info
                         }
                         if (scheduleList[i].startTime == 1400) {
                             table_3_2 = text
-                            sheet_3_2 = info
+//                            sheet_3_2 = info
                         }
                         if (scheduleList[i].startTime == 1600) {
                             table_4_2 = text
-                            sheet_4_2 = info
+//                            sheet_4_2 = info
                         }
                         if (scheduleList[i].startTime == 1900) {
                             table_5_2 = text
-                            sheet_5_2 = info
+//                            sheet_5_2 = info
                         }
                     }
                     if (scheduleList[i].weekday == 3) {
                         if (scheduleList[i].startTime == 800) {
                             table_1_3 = text
-                            sheet_1_3 = info
+//                            sheet_1_3 = info
                         }
                         if (scheduleList[i].startTime == 1010) {
                             table_2_3 = text
-                            sheet_2_3 = info
+//                            sheet_2_3 = info
                         }
                         if (scheduleList[i].startTime == 1400) {
                             table_3_3 = text
-                            sheet_3_3 = info
+//                            sheet_3_3 = info
                         }
                         if (scheduleList[i].startTime == 1600) {
                             table_4_3 = text
-                            sheet_4_3 = info
+//                            sheet_4_3 = info
                         }
                         if (scheduleList[i].startTime == 1900) {
                             table_5_3 = text
-                            sheet_5_3 = info
+//                            sheet_5_3 = info
                         }
                     }
                     if (scheduleList[i].weekday == 4) {
                         if (scheduleList[i].startTime == 800) {
                             table_1_4 = text
-                            sheet_1_4 = info
+//                            sheet_1_4 = info
                         }
                         if (scheduleList[i].startTime == 1010) {
                             table_2_4 = text
-                            sheet_2_4 = info
+//                            sheet_2_4 = info
                         }
                         if (scheduleList[i].startTime == 1400) {
                             table_3_4 = text
-                            sheet_3_4 = info
+//                            sheet_3_4 = info
                         }
                         if (scheduleList[i].startTime == 1600) {
                             table_4_4 = text
-                            sheet_4_4 = info
+//                            sheet_4_4 = info
                         }
                         if (scheduleList[i].startTime == 1900) {
                             table_5_4 = text
-                            sheet_5_4 = info
+//                            sheet_5_4 = info
                         }
                     }
                     if (scheduleList[i].weekday == 5) {
                         if (scheduleList[i].startTime == 800) {
                             table_1_5 = text
-                            sheet_1_5 = info
+//                            sheet_1_5 = info
                         }
                         if (scheduleList[i].startTime == 1010) {
                             table_2_5 = text
-                            sheet_2_5 = info
+//                            sheet_2_5 = info
                         }
                         if (scheduleList[i].startTime == 1400) {
                             table_3_5 = text
-                            sheet_3_5 = info
+//                            sheet_3_5 = info
                         }
                         if (scheduleList[i].startTime == 1600) {
                             table_4_5 = text
-                            sheet_4_5 = info
+//                            sheet_4_5 = info
                         }
                         if (scheduleList[i].startTime == 1900) {
                             table_5_5 = text
-                            sheet_5_5 = info
+//                            sheet_5_5 = info
                         }
                     }
                     if (scheduleList[i].weekday == 6) {
                         if (scheduleList[i].startTime == 800) {
                             table_1_6 = text
-                            sheet_1_6 = info
+//                            sheet_1_6 = info
                         }
                         if (scheduleList[i].startTime == 1010) {
                             table_2_6 = text
-                            sheet_2_6 = info
+//                            sheet_2_6 = info
                         }
                         if (scheduleList[i].startTime == 1400) {
                             table_3_6 = text
-                            sheet_3_6 = info
+//                            sheet_3_6 = info
                         }
                         if (scheduleList[i].startTime == 1600) {
                             table_4_6 = text
-                            sheet_4_6 = info
+//                            sheet_4_6 = info
                         }
                         if (scheduleList[i].startTime == 1900) {
                             table_5_6 = text
-                            sheet_5_6 = info
+//                            sheet_5_6 = info
                         }
                     }
                     if (scheduleList[i].weekday == 7) {
                         if (scheduleList[i].startTime == 800) {
                             table_1_7 = text
-                            sheet_1_7 = info
+//                            sheet_1_7 = info
                         }
                         if (scheduleList[i].startTime == 1010) {
                             table_2_7 = text
-                            sheet_2_7 = info
+//                            sheet_2_7 = info
                         }
                         if (scheduleList[i].startTime == 1400) {
                             table_3_7 = text
-                            sheet_3_7 = info
+//                            sheet_3_7 = info
                         }
                         if (scheduleList[i].startTime == 1600) {
                             table_4_7 = text
-                            sheet_4_7 = info
+//                            sheet_4_7 = info
                         }
                         if (scheduleList[i].startTime == 1900) {
                             table_5_7 = text
-                            sheet_5_7 = info
+//                            sheet_5_7 = info
                         }
                     }
                 }
@@ -717,9 +739,14 @@ fun DatumUI(showAll : Boolean,
                             .height(125.dp)
                             .padding(if (showAll) 1.dp else 2.dp)
                             .clickable {
-                                if ((if (showAll) sheetall[cell] else sheet[cell]) != "")
-                                    MyToast(if (showAll) sheetall[cell] else sheet[cell])
-                                else MyToast("空数据")
+//                                if ((if (showAll) sheetall[cell] else sheet[cell]) != "")
+//                                    MyToast(if (showAll) sheetall[cell] else sheet[cell])
+//                                else MyToast("空数据")
+                                val name = parseCourseName(if(showAll)tableall[cell] else table[cell])
+                                if(name != null) {
+                                    courseName = name
+                                    showBottomSheet_totalCourse = true
+                                }
                             }
                     ) {
                         Text(text = if(showAll)tableall[cell] else table[cell],fontSize = if(showAll)12.sp else 14.sp, textAlign = TextAlign.Center)
@@ -802,5 +829,19 @@ fun DatumUI(showAll : Boolean,
             }
         }
         Spacer(modifier = Modifier.height(100.dp))
+    }
+}
+
+fun parseCourseName(text : String) : String? {
+    try {
+        if(text.contains("\n")) {
+            val list = text.split("\n")
+            val course = list[1]
+            return course
+        } else {
+            return null
+        }
+    } catch (_:Exception) {
+        return null
     }
 }

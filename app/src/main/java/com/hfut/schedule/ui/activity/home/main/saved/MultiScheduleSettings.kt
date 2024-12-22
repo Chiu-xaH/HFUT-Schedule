@@ -8,7 +8,9 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
@@ -23,6 +25,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -50,12 +54,15 @@ import com.hfut.schedule.logic.utils.Starter.refreshLogin
 import com.hfut.schedule.ui.activity.home.calendar.multi.AddCourseUI
 import com.hfut.schedule.ui.activity.home.calendar.multi.getFriendsList
 import com.hfut.schedule.ui.activity.home.calendar.multi.getFriendsCourse
+import com.hfut.schedule.ui.activity.home.calendar.next.DatumUI
+import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotalForApi
 
 import com.hfut.schedule.ui.utils.DividerText
 import com.hfut.schedule.ui.utils.LittleDialog
 import com.hfut.schedule.ui.utils.MyCard
 import com.hfut.schedule.ui.utils.MyToast
 import com.hfut.schedule.ui.utils.Round
+import com.hfut.schedule.viewmodel.UIViewModel
 import java.io.File
 
 
@@ -70,6 +77,7 @@ fun MultiScheduleSettings(
     onSelectedChange : (Int) -> Unit,
     vm : NetWorkViewModel,
     onFriendChange : (Boolean) -> Unit,
+    vmUI : UIViewModel
 ) {
 
     var num  by remember { mutableStateOf(getNum()) }
@@ -178,6 +186,51 @@ fun MultiScheduleSettings(
             }
         }
     }
+
+    val sheetState_next = rememberModalBottomSheetState(true)
+    var showBottomSheet_next by remember { mutableStateOf(false) }
+
+    var next by remember { mutableStateOf(isNextOpen()) }
+
+    var showAll by remember { mutableStateOf(false) }
+
+
+    if (showBottomSheet_next) {
+        ModalBottomSheet(
+            onDismissRequest = { showBottomSheet_next = false },
+            sheetState = sheetState_next,
+            shape = Round(sheetState_next)
+        ) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        title = { Text("下学期课程表") },
+                        actions = {
+                            Row {
+                                CourseTotalForApi(vm=vm, next=next, onNextChange = { next = !next})
+                                TextButton(onClick = { showAll = !showAll }) {
+                                    Icon(painter = painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "")
+                                }
+                            }
+                        }
+                    )
+                },) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                ) {
+                    prefs.getString("gradeNext","23")?.let { DatumUI(showAll, it, innerPadding, vmUI,vm) }
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
+            }
+        }
+    }
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         androidx.compose.material3.TopAppBar(
             colors = TopAppBarDefaults.mediumTopAppBarColors(
@@ -240,9 +293,13 @@ fun MultiScheduleSettings(
                         .size(width = 100.dp, height = 70.dp)
                         .padding(horizontal = 4.dp)
                         .clickable {
-                            isFriendMode = false
                             if (isNextOpen()) {
-                                selected = NEXT
+                                isFriendMode = false
+                                if(ifSaved) {
+                                    if(prefs.getInt("FIRST",0) != 0)
+                                        showBottomSheet_next = true
+                                    else refreshLogin()
+                                } else showBottomSheet_next = true
                             } else {
                                 MyToast("入口暂未开放")
                             }

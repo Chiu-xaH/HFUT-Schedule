@@ -40,7 +40,7 @@ ARM架构，支持64 Bit软件、搭载Android 7.0 （SDK 26）及以上版本�
 
 构建 Gradle 8.3 + JDK 1.8
 
-SDK 目标 33 \ 最低 24 (Android 5.0)
+SDK 目标 33 \ 最低 26 (Android 7.0)
 
 UI构建 Jetpack Compose 2.0.0
 

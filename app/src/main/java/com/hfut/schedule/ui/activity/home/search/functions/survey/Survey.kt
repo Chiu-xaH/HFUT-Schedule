@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
-import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotalButton
+import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotalForApi
 import com.hfut.schedule.ui.utils.Round
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,7 +59,7 @@ fun Survey(ifSaved : Boolean,vm : NetWorkViewModel){
                         ),
                         title = { Text("评教") },
                         actions = {
-                            CourseTotalButton(modifier = Modifier.padding(horizontal = 15.dp),vm)
+                            CourseTotalForApi(modifier = Modifier.padding(horizontal = 15.dp),vm)
                         }
                     )
                 },

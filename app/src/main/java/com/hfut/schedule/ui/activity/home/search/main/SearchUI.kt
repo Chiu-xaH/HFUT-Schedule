@@ -1,8 +1,6 @@
 package com.hfut.schedule.ui.activity.home.search.main
 
 import android.annotation.SuppressLint
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -34,7 +32,7 @@ import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
-import com.hfut.schedule.ui.activity.home.calendar.next.NextCourse
+import com.hfut.schedule.ui.activity.home.search.functions.nextCourse.NextCourse
 import com.hfut.schedule.ui.activity.home.search.functions.bus.SchoolBus
 import com.hfut.schedule.ui.activity.home.search.functions.courseSearch.CoursesSearch
 import com.hfut.schedule.ui.activity.home.search.functions.dormitoryScore.DormitoryScoreXuanCheng
@@ -134,7 +132,7 @@ fun SearchScreen(vm : NetWorkViewModel, ifSaved : Boolean, innerPaddings : Paddi
         "校历" to { SchoolCalendar() },
         "校车" to { SchoolBus() },
         "洗浴 洗澡 呱呱物联 慧新易校 缴费" to { Shower(vm) },
-        "下学期课程表 下学期课表" to { NextCourse(ifSaved, vmUI) },
+        "下学期课程表 下学期课表" to { NextCourse(ifSaved, vmUI,vm) },
         "热水机 趣智校园" to { HotWater() },
         "空教室" to { EmptyRoom(vm, ifSaved) },
         "乐跑云运动 校园跑" to { LePaoYun(vm) },

@@ -45,7 +45,7 @@ fun VersionInfoCard() {
             ListItem(headlineContent = { Text(text = "聚在工大 " + APPVersion.getVersionName(), fontSize = 28.sp) })
             Row {
                 ListItem(
-                    overlineContent = { Text(text = "2024-12-21") },
+                    overlineContent = { Text(text = "2024-12-22") },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.sdk), contentDescription = "") },
                     headlineContent = { ScrollText(text = "第${APPVersion.getVersionCode()}次更新") },
                     modifier = Modifier.weight(.5f)
@@ -68,10 +68,14 @@ fun VersionInfoCard() {
 fun VersionInfo() {
     VersionInfoCard()
     DividerText(text = "新特性")
-    UpdateItems("修复 生活服务天气无法展示Bug",null, UpdateType.FIX)
-    UpdateItems("修复 呱呱物联返回时偶见多层返回Bug",null, UpdateType.FIX)
-    UpdateItems("修复 聚焦重要事项下网课卡片样式不统一Bug",null, UpdateType.FIX)
-    UpdateItems("优化 开始洗浴时显示结果",null, UpdateType.OPTIMIZE)
+    UpdateItems("新增 聚焦今日课程是否展示已经上完的课，关闭开关后上完的课不再显示首页，让用户聚焦于下一堂课","位于选项-应用设置", UpdateType.ADD)
+    UpdateItems("修复 多课表下下学期课程表UI展示错位Bug",null, UpdateType.FIX)
+    UpdateItems("修复 下学期课程表功能的逻辑Bug",null, UpdateType.FIX)
+    UpdateItems("优化 下学期课表的逻辑，自本版本起，当下学期课表功能开放时，用户也可以查看其课程汇总了",null, UpdateType.OPTIMIZE)
+    UpdateItems("优化 登录后课程表无多课表功能的差异",null, UpdateType.OPTIMIZE)
+    UpdateItems("优化 教务课表的点击操作，现在点击信息更加详细",null, UpdateType.OPTIMIZE)
+    UpdateItems("优化 教务课表和下学期课表的性能",null, UpdateType.OPTIMIZE)
+    UpdateItems("优化 聚焦显示今日课程与明日课程的逻辑，当今天课程结束时即立刻展示明日课程",null, UpdateType.OPTIMIZE)
     UpdateItems("优化 部分界面的显示",null, UpdateType.OPTIMIZE)
 }
 
