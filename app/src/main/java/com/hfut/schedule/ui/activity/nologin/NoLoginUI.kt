@@ -1,8 +1,6 @@
 package com.hfut.schedule.ui.activity.nologin
 
 import android.annotation.SuppressLint
-import android.os.Handler
-import android.os.Looper
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -52,9 +50,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
-import com.google.gson.JsonPrimitive
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.beans.NavigationBarItemData
@@ -63,20 +58,14 @@ import com.hfut.schedule.logic.utils.APPVersion
 import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.Starter
-import com.hfut.schedule.ui.activity.home.cube.funictions.items.MyAPIItem
-import com.hfut.schedule.ui.activity.home.cube.funictions.update.getUpdates
+import com.hfut.schedule.ui.activity.home.cube.items.subitems.MyAPIItem
+import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.getUpdates
 import com.hfut.schedule.ui.activity.home.cube.main.SettingsScreen
-import com.hfut.schedule.ui.activity.home.focus.funictions.GetZjgdCard
-import com.hfut.schedule.ui.activity.home.focus.main.TodayScreen
-import com.hfut.schedule.ui.activity.home.main.saved.COMMUNITY
-import com.hfut.schedule.ui.activity.home.main.saved.JXGLSTU
-import com.hfut.schedule.ui.activity.home.main.saved.NetWorkUpdate
 import com.hfut.schedule.ui.activity.home.main.saved.texts
 import com.hfut.schedule.ui.activity.home.search.functions.notifications.NotificationItems
 import com.hfut.schedule.ui.activity.home.search.functions.notifications.getNotifications
 import com.hfut.schedule.ui.activity.home.search.functions.webLab.LabUI
 import com.hfut.schedule.ui.activity.home.search.main.SearchFuncs
-import com.hfut.schedule.ui.activity.home.search.main.SearchScreen
 import com.hfut.schedule.ui.utils.CustomTabRow
 import com.hfut.schedule.ui.utils.DividerText
 import com.hfut.schedule.ui.utils.Round

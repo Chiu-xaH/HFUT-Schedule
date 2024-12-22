@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
@@ -35,8 +34,6 @@ import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.LoginViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.utils.GetDate
-import com.hfut.schedule.ui.activity.home.calendar.communtiy.getCourseINFO
-import com.hfut.schedule.ui.activity.home.cube.funictions.items.FocusCard
 import com.hfut.schedule.ui.activity.home.focus.funictions.AddButton
 import com.hfut.schedule.ui.activity.home.focus.funictions.AddItem
 import com.hfut.schedule.ui.activity.home.focus.funictions.AddedItems
@@ -44,15 +41,10 @@ import com.hfut.schedule.ui.activity.home.focus.funictions.MySchedule
 import com.hfut.schedule.ui.activity.home.focus.funictions.MyScheuleItem
 import com.hfut.schedule.ui.activity.home.focus.funictions.MyWangKe
 import com.hfut.schedule.ui.activity.home.focus.funictions.TimeStampItem
-import com.hfut.schedule.ui.activity.home.focus.funictions.TodayCourseItem
-import com.hfut.schedule.ui.activity.home.focus.funictions.TomorrowCourseItem
 import com.hfut.schedule.ui.activity.home.focus.funictions.WangkeItem
 import com.hfut.schedule.ui.activity.home.focus.getResult
 import com.hfut.schedule.ui.activity.home.focus.newScheduleItems
 import com.hfut.schedule.ui.activity.home.focus.newWangkeItem
-import com.hfut.schedule.ui.activity.home.main.saved.NetWorkUpdate
-import com.hfut.schedule.ui.activity.home.search.functions.exam.JxglstuExamUI
-import com.hfut.schedule.ui.activity.home.search.functions.exam.getExamJXGLSTU
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async

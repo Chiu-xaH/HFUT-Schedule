@@ -65,7 +65,7 @@ object Encrypt {
 
     //用于生成和风天气密钥
     fun getQWeatherAuth() : String {
-        return GenerateQWeather().generate(
+        return "Bearer " + GenerateQWeather().generate(
             "MC4CAQAwBQYDK2VwBCIEILpLcCmyt8JbbBaEMiBvA9ys3RLb2v63rWhuFC83KDGZ",
             "4HTJ5N7F37",
             "THB3UBK56Q"

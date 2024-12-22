@@ -1,5 +1,8 @@
 package com.hfut.schedule.ui.activity.shower.home
 
+import android.annotation.SuppressLint
+import android.os.Handler
+import android.os.Looper
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
@@ -7,8 +10,12 @@ import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -21,23 +28,35 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -47,6 +66,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.google.gson.Gson
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.BinaryBitmap
 import com.google.zxing.DecodeHintType
@@ -54,17 +74,31 @@ import com.google.zxing.MultiFormatReader
 import com.google.zxing.PlanarYUVLuminanceSource
 import com.google.zxing.common.HybridBinarizer
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.beans.zjgd.FeeType
+import com.hfut.schedule.logic.beans.zjgd.PayStep1Response
+import com.hfut.schedule.logic.beans.zjgd.PayStep2Response
+import com.hfut.schedule.logic.beans.zjgd.PayStep3Response
 import com.hfut.schedule.viewmodel.GuaGuaViewModel
 import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.ui.activity.home.search.functions.electric.getPsk
 import com.hfut.schedule.ui.activity.shower.login.getGuaGuaPersonInfo
 import com.hfut.schedule.ui.activity.home.search.functions.shower.tranamt
 import com.hfut.schedule.ui.utils.BottomTip
+import com.hfut.schedule.ui.utils.CardForListColor
 import com.hfut.schedule.ui.utils.DividerText
 import com.hfut.schedule.ui.utils.LittleDialog
 import com.hfut.schedule.ui.utils.MyCard
 import com.hfut.schedule.ui.utils.MyToast
+import com.hfut.schedule.ui.utils.Round
 import com.hfut.schedule.ui.utils.RowHorizal
 import com.hfut.schedule.ui.utils.ScrollText
+import com.hfut.schedule.ui.utils.statusUI
+import com.hfut.schedule.ui.utils.statusUI2
+import com.hfut.schedule.viewmodel.NetWorkViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 @Composable
 fun CameraPreview(imageAnalysis: ImageAnalysis) {
@@ -148,6 +182,9 @@ fun GuaguaStart(vm: GuaGuaViewModel, innerPadding : PaddingValues) {
     var showDialog by remember { mutableStateOf(false) }
     var showDialog_Del by remember { mutableStateOf(false) }
     val personInfo = getGuaGuaPersonInfo()
+    val sheetState = rememberModalBottomSheetState()
+    var showBottomSheet by remember { mutableStateOf(false) }
+
     val context = LocalContext.current
     val imageAnalysis = ImageAnalysis.Builder() .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888).build().also {
         it.setAnalyzer(ContextCompat.getMainExecutor(context), QRCodeAnalyzer { result ->
@@ -230,6 +267,38 @@ fun GuaguaStart(vm: GuaGuaViewModel, innerPadding : PaddingValues) {
             dismisstext = "取消"
         )
     }
+
+    if (showBottomSheet) {
+
+        ModalBottomSheet(
+            onDismissRequest = {
+                showBottomSheet = false
+            },
+            sheetState = sheetState,
+            shape = Round(sheetState)
+        ) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        title = { Text("结果") },
+                    )
+                },
+            ) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                ) {
+                    ShowerStatusUI(vm)
+                }
+            }
+        }
+    }
     if(show)
         CameraPreview(imageAnalysis)
     else {
@@ -238,7 +307,14 @@ fun GuaguaStart(vm: GuaGuaViewModel, innerPadding : PaddingValues) {
             .verticalScroll(rememberScrollState())) {
             Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
             DividerText(text = "个人信息")
-            MyCard{
+            Card(
+                elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 15.dp, vertical = 5.dp),
+                shape = MaterialTheme.shapes.medium,
+                colors = CardForListColor()
+            ) {
                 ListItem(
                     headlineContent = { personInfo?.let { Text(text = "￥${tranamt(it.accountMoney)}",fontSize = 28.sp) } },
                 )
@@ -324,6 +400,7 @@ fun GuaguaStart(vm: GuaGuaViewModel, innerPadding : PaddingValues) {
                     }
                     else {
                         startShower(vm,input)
+                        showBottomSheet = true
                     }
                 },modifier = Modifier
                     .fillMaxWidth()
@@ -368,7 +445,67 @@ fun startShower(vm : GuaGuaViewModel, macLocation : String) {
     phoneNumber?.let {
         loginCode?.let {
                 it1 -> vm.startShower(phoneNumber = it, loginCode = it1, macLocation = macLocation)
-            MyToast("已发送请求,查看花洒是否显示￥5")
         }
     }
 }
+
+@SuppressLint("CoroutineCreationDuringComposition")
+@Composable
+fun ShowerStatusUI(vm : GuaGuaViewModel) {
+
+    var loading by remember { mutableStateOf(true) }
+    var refresh by remember { mutableStateOf(true) }
+
+    var msg  by remember { mutableStateOf("结果") }
+
+    if(refresh) {
+        loading = true
+        CoroutineScope(Job()).launch{
+            async {
+                Handler(Looper.getMainLooper()).post{
+                    vm.startShowerData.observeForever { result ->
+                        if (result != null) {
+                            if(result.contains("message")) {
+                                msg = Gson().fromJson(result, StatusMsgResponse::class.java).message
+                                refresh = false
+                                loading = false
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    Box {
+        AnimatedVisibility(
+            visible = loading,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Spacer(modifier = Modifier.height(5.dp))
+                CircularProgressIndicator()
+            }
+        }
+
+
+        AnimatedVisibility(
+            visible = !loading,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            statusUI2(painter =
+                if(msg.contains("成功")) Icons.Filled.Check
+                else Icons.Filled.Close
+                , text = msg)
+        }
+    }
+
+}
+
+data class StatusMsgResponse(val message : String)

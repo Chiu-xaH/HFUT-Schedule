@@ -73,7 +73,7 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.calendar.communtiy.DetailInfos
 import com.hfut.schedule.ui.activity.home.calendar.communtiy.getCourseINFO
-import com.hfut.schedule.ui.activity.home.cube.funictions.items.apiCheck
+import com.hfut.schedule.ui.activity.home.cube.items.main.apiCheck
 import com.hfut.schedule.ui.activity.home.focus.funictions.FocusDataBaseManager.addItems
 import com.hfut.schedule.ui.activity.home.focus.funictions.FocusDataBaseManager.removeItems
 import com.hfut.schedule.ui.activity.home.search.functions.card.TodayInfo
@@ -252,13 +252,7 @@ fun WangkeItem(item : Int, MyWangKe: MutableList<Schedule>,Future: Boolean) {
                 }
             } else {
                 if(nowTime == getEndTime) {
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 15.dp, vertical = 5.dp),
-                        shape = MaterialTheme.shapes.medium,
-                    ) {
+                    MyCard {
 
                         ListItem(
                             headlineContent = {  Text(text = title) },

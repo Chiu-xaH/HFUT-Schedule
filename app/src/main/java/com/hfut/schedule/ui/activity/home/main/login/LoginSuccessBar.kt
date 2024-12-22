@@ -73,11 +73,11 @@ import com.hfut.schedule.logic.beans.MyAPIResponse
 import com.hfut.schedule.logic.utils.APPVersion
 import com.hfut.schedule.ui.activity.home.calendar.jxglstu.CalendarScreen
 import com.hfut.schedule.ui.activity.home.main.saved.texts
-import com.hfut.schedule.ui.activity.home.cube.funictions.update.getUpdates
+import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.getUpdates
 import com.hfut.schedule.ui.activity.home.calendar.next.NextCourse
 import com.hfut.schedule.ui.activity.home.calendar.communtiy.SaveCourse
 import com.hfut.schedule.ui.activity.home.calendar.communtiy.ScheduleTopDate
-import com.hfut.schedule.ui.activity.home.cube.funictions.items.MyAPIItem
+import com.hfut.schedule.ui.activity.home.cube.items.subitems.MyAPIItem
 import com.hfut.schedule.ui.activity.home.search.functions.life.ApiFromLife
 import com.hfut.schedule.ui.activity.home.search.functions.notifications.NotificationItems
 import com.hfut.schedule.ui.activity.home.search.functions.notifications.getNotifications

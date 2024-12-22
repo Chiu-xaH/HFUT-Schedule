@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.activity.home.cube.funictions.items.subitems
+package com.hfut.schedule.ui.activity.home.cube.items.subitems
 
 
 import androidx.compose.animation.AnimatedContent

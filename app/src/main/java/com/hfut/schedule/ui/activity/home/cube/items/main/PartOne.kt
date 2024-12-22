@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.activity.home.cube.funictions.items.main
+package com.hfut.schedule.ui.activity.home.cube.items.main
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -42,12 +42,12 @@ import com.hfut.schedule.logic.enums.CardBarItems
 import com.hfut.schedule.logic.enums.FixBarItems
 import com.hfut.schedule.logic.utils.APPVersion
 import com.hfut.schedule.logic.utils.Starter.startWebUrl
-import com.hfut.schedule.ui.activity.home.cube.funictions.items.subitems.MyAPIItem
-import com.hfut.schedule.ui.activity.home.cube.funictions.items.subitems.PersonPart
-import com.hfut.schedule.ui.activity.home.cube.funictions.items.subitems.update.UpdateUI
-import com.hfut.schedule.ui.activity.home.cube.funictions.items.subitems.update.VersionInfo
-import com.hfut.schedule.ui.activity.home.cube.funictions.items.subitems.update.downloadUI
-import com.hfut.schedule.ui.activity.home.cube.funictions.items.subitems.update.getUpdates
+import com.hfut.schedule.ui.activity.home.cube.items.subitems.MyAPIItem
+import com.hfut.schedule.ui.activity.home.cube.items.subitems.PersonPart
+import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.UpdateUI
+import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.VersionInfo
+import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.downloadUI
+import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.getUpdates
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
 import com.hfut.schedule.ui.utils.DividerText
 import com.hfut.schedule.ui.utils.Round

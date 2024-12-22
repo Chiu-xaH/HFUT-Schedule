@@ -8,6 +8,7 @@ import com.hfut.schedule.activity.main.AnonymityActivity
 import com.hfut.schedule.activity.main.LoginActivity
 import com.hfut.schedule.activity.shower.ShowerActivity
 import com.hfut.schedule.activity.shower.ShowerLoginActivity
+import com.hfut.schedule.ui.activity.home.search.functions.life.countFunc
 import com.hfut.schedule.ui.utils.MyToast
 
 object Starter {
@@ -67,6 +68,7 @@ object Starter {
         MyApplication.context.startActivity(it)
     }
     fun loginGuaGua() {
+//        countFunc = 0
         val it = Intent(MyApplication.context, ShowerLoginActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
@@ -74,6 +76,7 @@ object Starter {
     }
 
     fun startGuagua() {
+//        countFunc = 0
         val it = Intent(MyApplication.context, ShowerActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }

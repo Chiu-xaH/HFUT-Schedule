@@ -6,7 +6,6 @@ import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,6 +18,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
@@ -29,7 +29,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -61,7 +60,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-var countWeather = 0
+var countFunc = 0
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LifeUIS(vm : NetWorkViewModel) {
@@ -125,7 +124,7 @@ fun LifeUIS(vm : NetWorkViewModel) {
             }.await()
             async{
                 vm.getWeather()
-                countWeather++
+                countFunc++
             }.await()
             async {
                 Handler(Looper.getMainLooper()).post{
@@ -140,7 +139,7 @@ fun LifeUIS(vm : NetWorkViewModel) {
             }
         }
     }
-    if(countWeather == 0) {
+    if(countFunc == 0) {
         refreshWeather()
     }
     val cityName = if((getPersonInfo().school ?: "合肥").contains("宣城")) "宣城" else "合肥"

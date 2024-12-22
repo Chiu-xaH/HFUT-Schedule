@@ -184,7 +184,7 @@ var permit = 1
 fun ApiToFailRate(input : String,vm: NetWorkViewModel) {
     var loading by remember { mutableStateOf(true) }
     if(permit == 1)
-    CoroutineScope(Job()).launch{
+    CoroutineScope(Job()).launch {
         async{
             Click(vm, input, 1)
             Handler(Looper.getMainLooper()).post{

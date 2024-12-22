@@ -68,7 +68,7 @@ import com.hfut.schedule.ui.activity.card.bills.main.BillItem
 import com.hfut.schedule.ui.activity.card.function.CardLimit
 import com.hfut.schedule.ui.activity.card.function.SearchBillsUI
 import com.hfut.schedule.ui.activity.card.function.SelecctDateRange
-import com.hfut.schedule.ui.activity.home.cube.funictions.items.getUserInfo
+import com.hfut.schedule.ui.activity.home.cube.items.subitems.getUserInfo
 import com.hfut.schedule.ui.activity.home.focus.funictions.GetZjgdCard
 import com.hfut.schedule.ui.activity.home.search.functions.electric.EleUI
 import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.loginWebUI

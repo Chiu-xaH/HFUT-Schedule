@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.activity.home.search.functions.electric
 
+import android.annotation.SuppressLint
 import android.os.Handler
 import android.os.Looper
 import androidx.compose.animation.AnimatedVisibility
@@ -51,8 +52,9 @@ import com.hfut.schedule.logic.beans.zjgd.PayStep1Response
 import com.hfut.schedule.logic.beans.zjgd.PayStep2Response
 import com.hfut.schedule.logic.beans.zjgd.PayStep3Response
 import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.ui.activity.home.cube.funictions.items.CirclePoint
-import com.hfut.schedule.ui.activity.home.cube.funictions.items.KeyBoard
+import com.hfut.schedule.ui.activity.home.cube.items.subitems.CirclePoint
+import com.hfut.schedule.ui.activity.home.cube.items.subitems.KeyBoard
+
 import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.getIdentifyID
 import com.hfut.schedule.ui.utils.LittleDialog
 import com.hfut.schedule.ui.utils.Round
@@ -205,6 +207,7 @@ fun PayFor(vm : NetWorkViewModel, payNumber : Int, tipInfo : String, json : Stri
     Spacer(modifier = Modifier.height(10.dp))
 }
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun payStatusUI(vm : NetWorkViewModel, payNumber : Int, json: String, type : FeeType) {
 

@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.activity.home.cube.funictions.items.NavUIs
+package com.hfut.schedule.ui.activity.home.cube.items.NavUIs
 
 import android.content.Intent
 import androidx.compose.foundation.clickable
@@ -32,7 +32,7 @@ import com.hfut.schedule.activity.main.LoginActivity
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.SharePrefs.saveBoolean
-import com.hfut.schedule.ui.activity.home.cube.funictions.items.subitems.RequestArrange
+import com.hfut.schedule.ui.activity.home.cube.items.subitems.RequestArrange
 import com.hfut.schedule.ui.activity.home.search.functions.lepaoYun.InfoSet
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
 import com.hfut.schedule.ui.utils.Round

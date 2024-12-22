@@ -34,6 +34,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,6 +42,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -54,12 +56,13 @@ import com.hfut.schedule.logic.utils.APPVersion
 import com.hfut.schedule.logic.utils.ClipBoard
 import com.hfut.schedule.logic.utils.ShareAPK
 import com.hfut.schedule.logic.utils.Starter
-import com.hfut.schedule.ui.activity.home.cube.funictions.items.Screen
-import com.hfut.schedule.ui.activity.home.cube.funictions.update.VersionInfo
-import com.hfut.schedule.ui.activity.home.cube.funictions.update.VersionInfoCard
-import com.hfut.schedule.ui.activity.home.cube.funictions.update.getUpdates
+import com.hfut.schedule.ui.activity.home.cube.items.main.Screen
+import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.VersionInfo
+import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.VersionInfoCard
+import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.getUpdates
 import com.hfut.schedule.ui.utils.MyToast
 import com.hfut.schedule.ui.utils.Round
+
 import java.util.Hashtable
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
@@ -121,6 +124,47 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean
                 }
             }
         }
+//        val sheetState_github = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+//        var showBottomSheet_github by remember { mutableStateOf(false) }
+//        if (showBottomSheet_github) {
+//            ModalBottomSheet(
+//                onDismissRequest = { showBottomSheet_github = false },
+//                sheetState = sheetState_github,
+//                shape = Round(sheetState_github)
+//            ) {
+//                Scaffold(
+//                    modifier = Modifier.fillMaxSize(),
+//                    topBar = {
+//                        TopAppBar(
+//                            colors = TopAppBarDefaults.mediumTopAppBarColors(
+//                                containerColor = androidx.compose.ui.graphics.Color.Transparent,
+//                                titleContentColor = MaterialTheme.colorScheme.primary,
+//                            ),
+//                            title = { Text("Github") },
+//                        )
+//                    },
+//                ) { innerPadding ->
+//                    Column(
+//                        modifier = Modifier
+//                            .padding(innerPadding)
+//                            .verticalScroll(rememberScrollState())
+//                            .fillMaxSize()
+//                    ) {
+//                        val context = LocalContext.current
+//                        var markdownContent by remember { mutableStateOf("") }
+//
+//                        val markdownFileName = "README-zh_rCN.md"
+//                        val inputStream = context.assets.open(markdownFileName)
+//                        val bufferedReader = BufferedReader(InputStreamReader(inputStream))
+//                        markdownContent = bufferedReader.use { it.readText() }
+//                        MarkdownText(
+//                            markdown = markdownContent,
+//                            modifier = Modifier.padding(15.dp)
+//                        )
+//                    }
+//                }
+//            }
+//        }
         if(!cubeShow) {
             Spacer(modifier = Modifier.height(5.dp))
             VersionInfoCard()
@@ -221,6 +265,7 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean
                 Starter.startWebUrl("https://github.com/Chiu-xaH/HFUT-Schedule/blob/main/UPDATE.md")
             }
         )
+
 
         if(cubeShow) {
 

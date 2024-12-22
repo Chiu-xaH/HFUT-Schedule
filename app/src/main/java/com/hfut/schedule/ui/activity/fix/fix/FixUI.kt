@@ -53,8 +53,8 @@ import com.hfut.schedule.logic.utils.CrashHandler
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter
-import com.hfut.schedule.ui.activity.home.cube.funictions.items.Clear
-import com.hfut.schedule.ui.activity.home.cube.funictions.items.apiCheck
+import com.hfut.schedule.ui.activity.home.cube.items.main.Clear
+import com.hfut.schedule.ui.activity.home.cube.items.main.apiCheck
 import com.hfut.schedule.ui.activity.home.focus.funictions.getTimeStamp
 import com.hfut.schedule.ui.utils.LittleDialog
 import com.hfut.schedule.ui.utils.MyCard

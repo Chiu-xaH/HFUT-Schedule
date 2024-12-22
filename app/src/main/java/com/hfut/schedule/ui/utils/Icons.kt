@@ -4,7 +4,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
-import com.hfut.schedule.ui.activity.home.cube.funictions.items.Birthday
+import com.hfut.schedule.ui.activity.home.cube.items.subitems.Birthday
 
 @Composable
 fun schoolIcons(name : String) {
@@ -66,6 +66,7 @@ fun BillsIcons(name : String) {
         name.contains("充值") -> Icon(painterResource(R.drawable.add_card), contentDescription = "",)
         name.contains("补助") -> Icon(painterResource(R.drawable.payments), contentDescription = "",)
         name.contains("医院") -> Icon(painterResource(R.drawable.emergency), contentDescription = "",)
+        name.contains("呱呱") -> Icon(painterResource(R.drawable.bathtub), contentDescription = "")
         else ->  Icon(painterResource(R.drawable.paid), contentDescription = "")
     }
 }

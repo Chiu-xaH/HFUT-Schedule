@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.icons.Icons
@@ -64,7 +65,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.lifecycle.Observer
 import com.google.gson.Gson
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
+import com.google.gson.JsonPrimitive
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
@@ -77,6 +82,7 @@ import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.logic.utils.Starter.loginGuaGua
 import com.hfut.schedule.logic.utils.Starter.startGuagua
 import com.hfut.schedule.ui.activity.home.search.functions.electric.PayFor
+import com.hfut.schedule.ui.activity.home.search.functions.life.countFunc
 import com.hfut.schedule.ui.utils.BottomTip
 import com.hfut.schedule.ui.utils.CardForListColor
 import com.hfut.schedule.ui.utils.DividerText
@@ -115,7 +121,10 @@ fun Shower(vm: NetWorkViewModel) {
         ) {
             ShowerUI(vm)
         }
-    }/*
+    }
+
+
+    /*
     val showAdd = SharePrefs.prefs.getBoolean("SWITCHELEADD",true)
     val memoryEle = SharePrefs.prefs.getString("memoryEle","0")
     var showDialog by remember { mutableStateOf(false) }
@@ -189,6 +198,15 @@ fun Shower(vm: NetWorkViewModel) {
         headlineContent = { Text(text = "洗浴") },
         leadingContent = {
             Icon(painterResource(id = R.drawable.bathtub), contentDescription = "")
+        },
+        trailingContent = {
+            FilledTonalIconButton(
+                modifier = Modifier
+                    .size(30.dp),
+                onClick = {
+                    getInGuaGua(vm)
+                },
+            ) { Icon( painterResource(R.drawable.shower), contentDescription = "Localized description",) }
         },
         modifier = Modifier.clickable {
             showBottomSheet = true
@@ -301,21 +319,7 @@ fun ShowerUI(vm : NetWorkViewModel) {
                             }
                         }) { Icon(painter = painterResource(R.drawable.search), contentDescription = "description") }
                         FilledTonalButton(onClick = {
-                            CoroutineScope(Job()).launch {
-                                async { vm.getGuaGuaUserInfo() }.await()
-                                async {
-                                    Handler(Looper.getMainLooper()).post {
-                                        vm.guaguaUserInfo.observeForever { result ->
-                                            if (result?.contains("成功") == true) {
-                                                saveString("GuaGuaPersonInfo",result)
-                                                startGuagua()
-                                            } else if(result?.contains("error") == true) {
-                                                loginGuaGua()
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                            getInGuaGua(vm)
                         }) {
                             Text(text = "呱呱物联")
                         }
@@ -577,19 +581,27 @@ fun tranamt(bills : Int) : Float {
     }
 }
 
+
 fun getInGuaGua(vm: NetWorkViewModel) {
+
+    lateinit var guaguaUserInfoObserver: Observer<String?> // 延迟初始化观察者
+
+    guaguaUserInfoObserver = Observer { result ->
+        if (result?.contains("成功") == true) {
+            saveString("GuaGuaPersonInfo", result)
+            vm.guaguaUserInfo.removeObserver(guaguaUserInfoObserver) // 正常移除观察者
+            startGuagua()
+        } else if (result?.contains("error") == true) {
+            vm.guaguaUserInfo.removeObserver(guaguaUserInfoObserver) // 正常移除观察者
+            loginGuaGua()
+        }
+    }
+
     CoroutineScope(Job()).launch {
         async { vm.getGuaGuaUserInfo() }.await()
         async {
             Handler(Looper.getMainLooper()).post {
-                vm.guaguaUserInfo.observeForever { result ->
-                    if (result?.contains("成功") == true) {
-                        saveString("GuaGuaPersonInfo",result)
-                        startGuagua()
-                    } else if(result?.contains("error") == true) {
-                        loginGuaGua()
-                    }
-                }
+                vm.guaguaUserInfo.observeForever(guaguaUserInfoObserver)
             }
         }
     }

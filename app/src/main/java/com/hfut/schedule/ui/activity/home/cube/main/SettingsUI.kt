@@ -1,8 +1,6 @@
 package com.hfut.schedule.ui.activity.home.cube.main
 
 import android.annotation.SuppressLint
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.scaleIn
@@ -24,7 +22,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -36,14 +33,13 @@ import com.hfut.schedule.logic.enums.FixBarItems
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.fix.about.AboutUI
 import com.hfut.schedule.ui.activity.fix.fix.FixUI
-import com.hfut.schedule.ui.activity.home.cube.funictions.items.APPScreen
-import com.hfut.schedule.ui.activity.home.cube.funictions.items.HomeSettingScreen
-import com.hfut.schedule.ui.activity.home.cube.funictions.items.NetWorkScreen
-import com.hfut.schedule.ui.activity.home.cube.funictions.items.Screen
-import com.hfut.schedule.ui.activity.home.cube.funictions.items.UIScreen
-import com.hfut.schedule.ui.activity.home.cube.funictions.TEST
+import com.hfut.schedule.ui.activity.home.cube.items.NavUIs.APPScreen
+import com.hfut.schedule.ui.activity.home.cube.items.main.HomeSettingScreen
+import com.hfut.schedule.ui.activity.home.cube.items.NavUIs.NetWorkScreen
+import com.hfut.schedule.ui.activity.home.cube.items.main.Screen
+import com.hfut.schedule.ui.activity.home.cube.items.NavUIs.UIScreen
+import com.hfut.schedule.ui.activity.home.cube.items.subitems.TEST
 
-@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("SuspiciousIndentation", "UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

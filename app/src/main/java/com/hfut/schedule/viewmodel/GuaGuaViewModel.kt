@@ -26,6 +26,7 @@ class GuaGuaViewModel : ViewModel() {
         })
     }
 
+    var startShowerData = MutableLiveData<String?>()
     fun startShower(phoneNumber: String,macLocation : String,loginCode : String) {
         //val loginCode = SharePrefs.prefs.getString("loginCode","") ?: ""
         //val phoneNumber = SharePrefs.prefs.getString("PHONENUM","") ?: ""
@@ -33,7 +34,7 @@ class GuaGuaViewModel : ViewModel() {
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-
+                startShowerData.value = response.body()?.string()
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }

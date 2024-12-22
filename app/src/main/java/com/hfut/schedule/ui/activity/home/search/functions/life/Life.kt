@@ -44,7 +44,7 @@ fun Life(vm : NetWorkViewModel) {
      //       overlineContent = { ScrollText(text = "高德地图SDK测试") },
         modifier = Modifier.clickable {
 //            MyToast("暂未开发")
-            countWeather = 0
+            countFunc = 0
                 showBottomSheet = true
 //            startLife()
         }
@@ -88,7 +88,7 @@ fun ApiFromLife(vm: NetWorkViewModel) {
     var showBottomSheet by remember { mutableStateOf(false) }
 
     IconButton(onClick = {
-        countWeather = 0
+        countFunc = 0
         showBottomSheet = true
     }) {
         Icon(painterResource(id = R.drawable.near_me), contentDescription = null, tint = MaterialTheme.colorScheme.primary)

@@ -38,9 +38,9 @@ import com.hfut.schedule.ui.utils.Round
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LibraryChips() {
-    val sheetState_History = rememberModalBottomSheetState()
+    val sheetState_History = rememberModalBottomSheetState(true)
     var showBottomSheet_History by remember { mutableStateOf(false) }
-    val sheetState_Borrow = rememberModalBottomSheetState()
+    val sheetState_Borrow = rememberModalBottomSheetState(true)
     var showBottomSheet_Borrow by remember { mutableStateOf(false) }
 
     Row(modifier = Modifier

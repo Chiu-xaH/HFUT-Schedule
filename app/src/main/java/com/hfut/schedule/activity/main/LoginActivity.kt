@@ -16,7 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.login.LoginUI
-import com.hfut.schedule.ui.activity.home.cube.funictions.update.checkAndRequestStoragePermission
+import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.checkAndRequestStoragePermission
 import com.hfut.schedule.ui.activity.home.main.saved.Add
 import com.hfut.schedule.ui.activity.home.main.saved.NoNetWork
 import com.hfut.schedule.ui.activity.home.main.saved.getNum
@@ -35,7 +35,6 @@ class LoginActivity : BaseActivity() {
     val switchUpload = prefs.getBoolean("SWITCHUPLOAD",true )
     var value = 0
 
-    @RequiresApi(Build.VERSION_CODES.O)
     @Composable
     override fun UI() {
         if(startAcitivity && intent.getBooleanExtra("nologin",true)) {
@@ -57,7 +56,6 @@ class LoginActivity : BaseActivity() {
         }
         return stringBuilder.toString()
     }
-    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SuspiciousIndentation", "MissingInflatedId", "UnspecifiedRegisterReceiverFlag")
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -126,7 +124,7 @@ class LoginActivity : BaseActivity() {
     @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(
         requestCode: Int,
-        permissions: Array<out String>,
+        permissions: Array<String>,
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)

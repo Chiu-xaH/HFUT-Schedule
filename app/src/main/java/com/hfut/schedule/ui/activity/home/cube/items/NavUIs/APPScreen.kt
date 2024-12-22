@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.activity.home.cube.funictions.items.NavUIs
+package com.hfut.schedule.ui.activity.home.cube.items.NavUIs
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -40,7 +40,8 @@ import com.hfut.schedule.logic.utils.Semseter.getSemseterCloud
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.SharePrefs.saveBoolean
-import com.hfut.schedule.ui.activity.home.cube.funictions.items.subitems.FocusCardSettings
+import com.hfut.schedule.ui.activity.home.cube.items.subitems.FocusCardSettings
+import com.hfut.schedule.ui.activity.home.cube.items.subitems.LockUI
 import com.hfut.schedule.ui.utils.MyToast
 import com.hfut.schedule.ui.utils.Round
 

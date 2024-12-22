@@ -23,8 +23,8 @@ android {
         applicationId "com.hfut.schedule"
         minSdk 26
         targetSdk 33
-        versionCode 145
-        versionName "4.13.1"
+        versionCode 146
+        versionName "4.13.1.1+ Preview"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
@@ -137,9 +137,9 @@ dependencies {
     implementation 'androidx.core:core-splashscreen:1.0.1'
     //模糊库
     implementation 'dev.chrisbanes.haze:haze:1.0.2'
-    implementation 'dev.chrisbanes.haze:haze-materials:0.5.2' //也是模糊库一部分，但是用了这个可以让界面列表更协调，虽然没引用过，挺玄学的就留着吧
+    implementation 'dev.chrisbanes.haze:haze-materials:0.5.2' //也是模糊库一部分，虽然没引用过，但是删了或者修改版本居然会导致某些material3组件方法出问题，太诡异了tmd
     //预测性返回手势
-    implementation 'androidx.activity:activity:1.6.0-alpha05'
+    implementation 'androidx.activity:activity:1.9.3'
     //调色盘
     implementation 'androidx.palette:palette-ktx:1.0.0'
     //图片库
@@ -161,4 +161,6 @@ dependencies {
     //implementation "androidx.biometric:biometric:1.1.0"
     //用于和风天气密钥生成的JWT
     implementation 'net.i2p.crypto:eddsa:0.3.0'
+    //展示MarkDown
+//    implementation 'com.github.jeziellago:compose-markdown:0.5.5'
 }

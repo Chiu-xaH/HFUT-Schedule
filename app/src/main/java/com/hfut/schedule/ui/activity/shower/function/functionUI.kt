@@ -12,7 +12,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -66,7 +68,7 @@ fun GuaGuaSettings(innerPadding: PaddingValues) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditLoginCode() {
+fun EditLoginCode(isOnLogin: Boolean = false, onClickLogin: (() -> Unit)? = null) {
     var input by remember { mutableStateOf(SharePrefs.prefs.getString("loginCode","") ?: "") }
 
     Row(
@@ -85,12 +87,22 @@ fun EditLoginCode() {
             label = { Text("loginCode" ) },
             singleLine = true,
             trailingIcon = {
-                IconButton(
-                    onClick = {
-                        ClipBoard.copy(input)
-                        MyToast("已复制")
-                    }) {
-                    Icon(painter = painterResource(R.drawable.copy_all), contentDescription = "description")
+                if(isOnLogin) {
+                    onClickLogin?.let {
+                        IconButton(
+                            onClick = onClickLogin
+                        ) {
+                            Icon(painterResource(R.drawable.login),null)
+                        }
+                    }
+                } else {
+                    IconButton(
+                        onClick = {
+                            ClipBoard.copy(input)
+                            MyToast("已复制")
+                        }) {
+                        Icon(painter = painterResource(R.drawable.copy_all), contentDescription = "description")
+                    }
                 }
             },
             shape = MaterialTheme.shapes.medium,
@@ -98,6 +110,10 @@ fun EditLoginCode() {
                 focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
                 unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
             ),
+            supportingText = {
+                if(isOnLogin)
+                    Text("填写上方手机号,填写loginCode,点击右侧登录")
+            }
         )
     }
 }

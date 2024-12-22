@@ -41,7 +41,7 @@ import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.utils.ReservDecimal
 import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.ui.activity.home.cube.funictions.items.getWebNew
+import com.hfut.schedule.ui.activity.home.cube.items.subitems.getWebNew
 import com.hfut.schedule.ui.utils.DividerText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job

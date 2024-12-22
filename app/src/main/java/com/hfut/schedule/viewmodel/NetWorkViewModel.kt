@@ -56,8 +56,7 @@ import com.hfut.schedule.logic.utils.Encrypt
 import com.hfut.schedule.logic.utils.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.SharePrefs.saveInt
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.ui.activity.home.cube.funictions.items.getUserInfo
-import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
+import com.hfut.schedule.ui.activity.home.cube.items.subitems.getUserInfo
 import com.hfut.schedule.ui.activity.news.main.transferToPostData
 import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.CampusId
 import okhttp3.ResponseBody

@@ -89,7 +89,7 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter.noLogin
-import com.hfut.schedule.ui.activity.home.cube.funictions.FirstCube
+import com.hfut.schedule.ui.activity.home.cube.items.main.FirstCube
 import com.hfut.schedule.ui.utils.MyToast
 import com.hfut.schedule.ui.utils.Round
 import kotlinx.coroutines.CoroutineScope
@@ -270,9 +270,7 @@ fun LoginUI(vm : LoginViewModel) {
                    
                 },
                 navigationIcon  = {
-
                     AnimatedWelcomeScreen()
-
                 }
             )
         },

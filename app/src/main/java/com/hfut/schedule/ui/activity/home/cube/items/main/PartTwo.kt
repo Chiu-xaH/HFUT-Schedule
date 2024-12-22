@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.activity.home.cube.funictions.items.main
+package com.hfut.schedule.ui.activity.home.cube.items.main
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -28,9 +28,9 @@ import com.hfut.schedule.activity.funiction.FixActivity
 import com.hfut.schedule.logic.dao.dataBase
 import com.hfut.schedule.logic.utils.APPVersion
 import com.hfut.schedule.logic.utils.Starter.startWebUrl
-import com.hfut.schedule.ui.activity.home.cube.funictions.items.subitems.MyAPIItem
-import com.hfut.schedule.ui.activity.home.cube.funictions.items.subitems.monet.MonetColorItem
-import com.hfut.schedule.ui.activity.home.cube.funictions.items.subitems.update.getUpdates
+import com.hfut.schedule.ui.activity.home.cube.items.subitems.MyAPIItem
+import com.hfut.schedule.ui.activity.home.cube.items.subitems.monet.MonetColorItem
+import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.getUpdates
 
 @SuppressLint("SuspiciousIndentation")
 @Composable

@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.activity.home.cube.funictions.items.subitems.update
+package com.hfut.schedule.ui.activity.home.cube.items.subitems.update
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
@@ -45,7 +45,7 @@ fun VersionInfoCard() {
             ListItem(headlineContent = { Text(text = "聚在工大 " + APPVersion.getVersionName(), fontSize = 28.sp) })
             Row {
                 ListItem(
-                    overlineContent = { Text(text = "2024-12-12") },
+                    overlineContent = { Text(text = "2024-12-21") },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.sdk), contentDescription = "") },
                     headlineContent = { ScrollText(text = "第${APPVersion.getVersionCode()}次更新") },
                     modifier = Modifier.weight(.5f)
@@ -68,10 +68,10 @@ fun VersionInfoCard() {
 fun VersionInfo() {
     VersionInfoCard()
     DividerText(text = "新特性")
-    UpdateItems("新增 免登录体验模式","不登陆人群仍可使用某些功能，在使用的用户暂时无法启用此模式，只有新的用户在登陆界面点击免登录方可触发", UpdateType.ADD)
-    UpdateItems("新增 生活服务","提供天气预警、(教学楼结构指引、校园地图)(后续开发)等生活信息", UpdateType.ADD)
-    UpdateItems("新增 和风天气API","提供天气信息", UpdateType.ADD)
-    UpdateItems("修复 部分图片展示时无法缩放Bug",null, UpdateType.FIX)
+    UpdateItems("修复 生活服务天气无法展示Bug",null, UpdateType.FIX)
+    UpdateItems("修复 呱呱物联返回时偶见多层返回Bug",null, UpdateType.FIX)
+    UpdateItems("修复 聚焦重要事项下网课卡片样式不统一Bug",null, UpdateType.FIX)
+    UpdateItems("优化 开始洗浴时显示结果",null, UpdateType.OPTIMIZE)
     UpdateItems("优化 部分界面的显示",null, UpdateType.OPTIMIZE)
 }
 

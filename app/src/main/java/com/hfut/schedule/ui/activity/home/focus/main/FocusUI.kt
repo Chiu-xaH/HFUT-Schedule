@@ -36,7 +36,7 @@ import com.hfut.schedule.viewmodel.LoginViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.utils.GetDate
 import com.hfut.schedule.ui.activity.home.calendar.communtiy.getCourseINFO
-import com.hfut.schedule.ui.activity.home.cube.funictions.items.FocusCard
+import com.hfut.schedule.ui.activity.home.cube.items.subitems.FocusCard
 import com.hfut.schedule.ui.activity.home.focus.funictions.AddButton
 import com.hfut.schedule.ui.activity.home.focus.funictions.AddItem
 import com.hfut.schedule.ui.activity.home.focus.funictions.AddedItems

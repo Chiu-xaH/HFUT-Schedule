@@ -10,6 +10,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,12 +23,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -43,7 +44,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
@@ -54,12 +57,14 @@ import com.hfut.schedule.logic.beans.guaGua.GuaguaLoginMsg
 import com.hfut.schedule.logic.utils.Encrypt
 import com.hfut.schedule.logic.utils.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.Starter.loginGuaGua
 import com.hfut.schedule.logic.utils.Starter.startGuagua
 import com.hfut.schedule.ui.activity.shower.function.EditLoginCode
 
 import com.hfut.schedule.ui.utils.BottomTip
 import com.hfut.schedule.ui.utils.DividerText
 import com.hfut.schedule.ui.utils.MyToast
+import com.hfut.schedule.viewmodel.NetWorkViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -67,19 +72,28 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShowerLogin(vm : GuaGuaViewModel) {
+fun ShowerLogin(vm : GuaGuaViewModel,netVm : NetWorkViewModel) {
 
     val context = LocalContext.current
 
 
     Scaffold(
         topBar = {
-            TopAppBar(
+            LargeTopAppBar(
                 colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    containerColor = Color.Transparent,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
-                title = { Text("登录-呱呱物联") },
+                title = {
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            text = "登录",
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center,
+                            //style = MaterialTheme.typography.titleLarge
+                        )
+                    }
+                },
                 actions = {
                     Row {
                         IconButton(onClick = {
@@ -88,6 +102,17 @@ fun ShowerLogin(vm : GuaGuaViewModel) {
                             Icon(painterResource(id = R.drawable.logout), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
                         }
                     }
+                },
+                navigationIcon  = {
+                    Column(modifier = Modifier
+                        .padding(horizontal = 23.dp)) {
+                        Spacer(modifier = Modifier.height(20.dp))
+                        Text(
+                            text = "呱呱物联",
+                            fontSize = 38.sp,
+                            color = MaterialTheme.colorScheme.secondaryContainer
+                        )
+                    }
                 }
             )
         }
@@ -95,14 +120,14 @@ fun ShowerLogin(vm : GuaGuaViewModel) {
         Column(modifier = Modifier
             .padding(innerPadding)
             .fillMaxSize()) {
-            GuaGuaLoginUI(vm)
+            GuaGuaLoginUI(vm,netVm)
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GuaGuaLoginUI(vm : GuaGuaViewModel) {
+fun GuaGuaLoginUI(vm : GuaGuaViewModel,netVm : NetWorkViewModel) {
 
     var hidden by rememberSaveable { mutableStateOf(true) }
 
@@ -140,7 +165,7 @@ fun GuaGuaLoginUI(vm : GuaGuaViewModel) {
             TextField(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(horizontal = 40.dp),
+                    .padding(horizontal = 25.dp),
                 value = username,
                 onValueChange = { username = it },
                 label = { Text("手机号" ) },
@@ -162,12 +187,12 @@ fun GuaGuaLoginUI(vm : GuaGuaViewModel) {
             )
         }
 
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(20.dp))
         Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
             TextField(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(horizontal = 40.dp),
+                    .padding(horizontal = 25.dp),
                 value = inputAES,
                 onValueChange = { inputAES = it },
                 label = { Text("密码") },
@@ -211,9 +236,28 @@ fun GuaGuaLoginUI(vm : GuaGuaViewModel) {
         }
         Spacer(modifier = Modifier.height(30.dp))
         DividerText(text = "备用登录方式")
-        EditLoginCode()
-        BottomTip(str = "先填写上面的手机号 无需输入密码 点击登录")
-        BottomTip(str = "输入loginCode后退出 再次从查询中心-洗浴进入即可")
+        Row(
+            modifier = Modifier.padding(horizontal = 5.dp)
+        ) {
+            EditLoginCode(true,{
+                saveString("PHONENUM",username)
+                CoroutineScope(Job()).launch {
+                    async { netVm.getGuaGuaUserInfo() }.await()
+                    async {
+                        Handler(Looper.getMainLooper()).post {
+                            netVm.guaguaUserInfo.observeForever { result ->
+                                if (result?.contains("成功") == true) {
+                                    saveString("GuaGuaPersonInfo",result)
+                                    startGuagua()
+                                } else if(result?.contains("error") == true) {
+                                    MyToast("登陆失败")
+                                }
+                            }
+                        }
+                    }
+                }
+            })
+        }
     }
 }
 

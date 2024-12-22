@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.activity.home.cube.funictions.items.subitems
+package com.hfut.schedule.ui.activity.home.cube.items.subitems
 
 import android.annotation.SuppressLint
 import android.os.Build
@@ -64,6 +64,7 @@ import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.LoginWeb
 import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.WebInfo
 import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.getWebInfos
 import com.hfut.schedule.ui.activity.home.search.functions.card.SchoolCardItem
+import com.hfut.schedule.ui.activity.home.search.functions.shower.getInGuaGua
 import com.hfut.schedule.ui.utils.MyCard
 import com.hfut.schedule.ui.utils.Round
 import kotlinx.coroutines.CoroutineScope
@@ -305,21 +306,7 @@ fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel, refreshing : Boolean) {
                 if(GetDate.formattedTime_Hour.toInt() in 22 until 25) {
                     Row(
                         modifier = Modifier.clickable {
-                            CoroutineScope(Job()).launch {
-                                async { vm.getGuaGuaUserInfo() }.await()
-                                async {
-                                    Handler(Looper.getMainLooper()).post {
-                                        vm.guaguaUserInfo.observeForever { result ->
-                                            if (result?.contains("成功") == true) {
-                                                saveString("GuaGuaPersonInfo",result)
-                                                startGuagua()
-                                            } else if(result?.contains("error") == true) {
-                                                loginGuaGua()
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                            getInGuaGua(vm)
                         }
                     ) {
                         Box(modifier = Modifier.weight(.5f)) {

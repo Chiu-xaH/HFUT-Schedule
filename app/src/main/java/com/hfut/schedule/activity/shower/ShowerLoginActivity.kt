@@ -14,7 +14,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class ShowerLoginActivity : BaseActivity() {
     @Composable
     override fun UI() {
-        ShowerLogin(super.showerVm)
+        ShowerLogin(super.showerVm,super.networkVm)
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,7 +25,7 @@ class ShowerLoginActivity : BaseActivity() {
     @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(
         requestCode: Int,
-        permissions: Array<out String>,
+        permissions: Array< String>,
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -33,7 +33,7 @@ class ShowerLoginActivity : BaseActivity() {
             1 -> {
                 if(grantResults.isNotEmpty() && grantResults[0]  == PackageManager.PERMISSION_GRANTED) {
 
-                }else Toast.makeText(this,"拒绝权限后不可扫码", Toast.LENGTH_SHORT).show()
+                } else Toast.makeText(this,"拒绝权限后不可扫码", Toast.LENGTH_SHORT).show()
             }
         }
     }
