@@ -56,7 +56,7 @@ import androidx.compose.ui.unit.sp
 import com.google.gson.Gson
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.beans.Jxglstu.datumResponse
-import com.hfut.schedule.logic.utils.GetDate
+import com.hfut.schedule.logic.utils.DateTimeManager
 import com.hfut.schedule.logic.utils.Semseter.getSemseter
 import com.hfut.schedule.logic.utils.Semseter.getSemseterCloud
 import com.hfut.schedule.logic.utils.SharePrefs
@@ -204,9 +204,9 @@ fun CustomSchedules(showAll : Boolean,
 
 
     var Bianhuaweeks by rememberSaveable { mutableStateOf(
-        if(GetDate.weeksBetween > 20) {
+        if(DateTimeManager.weeksBetween > 20) {
             getNewWeek()
-        } else GetDate.weeksBetween
+        } else DateTimeManager.weeksBetween
     ) }
 
 
@@ -793,7 +793,7 @@ fun CustomSchedules(showAll : Boolean,
                         if (shouldShowAddButton) {
                             ExtendedFloatingActionButton(
                                 onClick = {
-                                    Bianhuaweeks = GetDate.Benweeks
+                                    Bianhuaweeks = DateTimeManager.Benweeks
                                     if(showAll) UpdateAll() else Update()
                                     onDateChange(LocalDate.now())
                                 },

@@ -50,12 +50,10 @@ import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.beans.SearchEleResponse
 import com.hfut.schedule.logic.beans.zjgd.FeeResponse
 import com.hfut.schedule.logic.beans.zjgd.FeeType
-import com.hfut.schedule.logic.utils.GetDate
+import com.hfut.schedule.logic.utils.DateTimeManager
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.logic.utils.Starter.loginGuaGua
-import com.hfut.schedule.logic.utils.Starter.startGuagua
 import com.hfut.schedule.ui.activity.home.focus.funictions.GetZjgdCard
 import com.hfut.schedule.ui.activity.home.focus.funictions.TodayUI
 import com.hfut.schedule.ui.activity.home.focus.funictions.getTodayNet
@@ -303,7 +301,7 @@ fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel, refreshing : Boolean) {
                                 shortCut()
                             }
                     }
-                if(GetDate.formattedTime_Hour.toInt() in 22 until 25) {
+                if(DateTimeManager.formattedTime_Hour.toInt() in 22 until 25) {
                     Row(
                         modifier = Modifier.clickable {
                             getInGuaGua(vm)

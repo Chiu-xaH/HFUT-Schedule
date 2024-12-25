@@ -35,7 +35,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.beans.UserInfo
 import com.hfut.schedule.logic.utils.APPVersion
 import com.hfut.schedule.logic.utils.AndroidVersion
-import com.hfut.schedule.logic.utils.GetDate
+import com.hfut.schedule.logic.utils.DateTimeManager
 import com.hfut.schedule.logic.utils.ReservDecimal
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
@@ -77,7 +77,7 @@ fun PersonPart() {
                     headlineContent = { getPersonInfo().name?.let { Text(text = it) } },
                     trailingContent = {
                         if(startDate != null && endDate != null && startDate != "" && endDate != "") {
-                            Text(text = "已陪伴 ${ReservDecimal.reservDecimal(GetDate.getPercent(startDate,endDate),1)}%")
+                            Text(text = "已陪伴 ${ReservDecimal.reservDecimal(DateTimeManager.getPercent(startDate,endDate),1)}%")
                         } else { null }
                       //  FilledTonalIconButton(onClick = {
                         //    expandItems = !expandItems
@@ -162,8 +162,8 @@ fun TimesUI() {
 @RequiresApi(Build.VERSION_CODES.O)
 fun getUserInfo() : UserInfo {
 
-    val date = GetDate.Date_yyyy_MM_dd
-    val time = "${GetDate.formattedTime_Hour}:${GetDate.formattedTime_Minute}:00"
+    val date = DateTimeManager.Date_yyyy_MM_dd
+    val time = "${DateTimeManager.formattedTime_Hour}:${DateTimeManager.formattedTime_Minute}:00"
     val dateTime = "$date $time"
 
 

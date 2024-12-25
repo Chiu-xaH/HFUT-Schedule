@@ -30,6 +30,6 @@ class CrashHandler : Thread.UncaughtExceptionHandler {
     }
 
     private fun saveCrashLogToPrefs(throwable: Throwable) {
-        SharePrefs.saveString("logs",GetDate.Date_yyyy_MM_dd + "*\n" + throwable.stackTraceToString())
+        SharePrefs.saveString("logs",DateTimeManager.Date_yyyy_MM_dd + "*\n" + throwable.stackTraceToString())
     }
 }

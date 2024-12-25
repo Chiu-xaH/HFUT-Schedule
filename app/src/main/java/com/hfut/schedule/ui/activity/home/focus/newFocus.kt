@@ -23,7 +23,7 @@ import com.hfut.schedule.logic.beans.MyAPIResponse
 import com.hfut.schedule.logic.beans.ServerResponse
 import com.hfut.schedule.logic.beans.newSchedule
 import com.hfut.schedule.logic.utils.AddCalendar
-import com.hfut.schedule.logic.utils.GetDate
+import com.hfut.schedule.logic.utils.DateTimeManager
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.focus.funictions.openOperation
@@ -100,7 +100,7 @@ fun newScheuleItem(item : Int, MySchedule : MutableList<newSchedule>, Future: Bo
         val getEndTime = "${endYear}${endMonthStr}${endDateStr}".toInt()
 
 
-        val nowTime = GetDate.Date_yyyy_MM_dd.replace("-","").toInt()
+        val nowTime = DateTimeManager.Date_yyyy_MM_dd.replace("-","").toInt()
 
 
         if(!Future) {
@@ -187,7 +187,7 @@ fun newWangkeItem(item : Int, MyWangKe: MutableList<newSchedule>, Future: Boolea
         val getEndTime = "${endYear}${endMonthStr}${endDateStr}".toInt()
 
 
-        val nowTime = GetDate.Date_yyyy_MM_dd.replace("-","").toInt()
+        val nowTime = DateTimeManager.Date_yyyy_MM_dd.replace("-","").toInt()
 
 
         if(Future) {

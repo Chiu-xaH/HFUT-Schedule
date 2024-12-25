@@ -50,7 +50,7 @@ import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.beans.zjgd.BillResponse
 import com.hfut.schedule.logic.beans.zjgd.records
-import com.hfut.schedule.logic.utils.GetDate
+import com.hfut.schedule.logic.utils.DateTimeManager
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.card.bills.CardRow
@@ -207,7 +207,7 @@ fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVie
                             overlineContent = { Text(text = time) },
                             leadingContent = { BillsIcons(name) },
                             colors =
-                            if(GetDate.Date_yyyy_MM_dd == getTime)
+                            if(DateTimeManager.Date_yyyy_MM_dd == getTime)
                                 ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.primaryContainer)
                             else ListItemDefaults.colors(),
                             modifier = Modifier.clickable {

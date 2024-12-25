@@ -71,6 +71,11 @@ UI设计 Material You (Material Design 3) + Material Design
 
 ## [更新日志](markdown/UPDATE.md)
 
+## 访问量统计
+使用为期3个月的服务器进行统计
+
+![visitsChart](/img/visitsChart.png)
+
 ## 助力开发
 如果有功能层面改进或创新、Bug，可在issue提交
 

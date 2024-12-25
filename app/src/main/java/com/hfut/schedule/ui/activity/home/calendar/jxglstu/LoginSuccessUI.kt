@@ -69,8 +69,7 @@ import com.hfut.schedule.viewmodel.LoginViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.beans.Community.LoginCommunityResponse
 import com.hfut.schedule.logic.beans.Jxglstu.datumResponse
-import com.hfut.schedule.logic.beans.MyAPIResponse
-import com.hfut.schedule.logic.utils.GetDate
+import com.hfut.schedule.logic.utils.DateTimeManager
 import com.hfut.schedule.logic.utils.Semseter.getSemseter
 import com.hfut.schedule.logic.utils.Semseter.getSemseterCloud
 import com.hfut.schedule.logic.utils.SharePrefs
@@ -251,9 +250,9 @@ fun CalendarScreen(showAll : Boolean,
 
 
     var Bianhuaweeks by rememberSaveable { mutableStateOf(
-        if(GetDate.weeksBetween > 20) {
+        if(DateTimeManager.weeksBetween > 20) {
             getNewWeek()
-        } else GetDate.weeksBetween
+        } else DateTimeManager.weeksBetween
     ) }
 
 
@@ -1071,7 +1070,7 @@ fun CalendarScreen(showAll : Boolean,
                             if (shouldShowAddButton) {
                                 ExtendedFloatingActionButton(
                                     onClick = {
-                                        Bianhuaweeks = GetDate.Benweeks
+                                        Bianhuaweeks = DateTimeManager.Benweeks
                                         if(showAll) UpdateAll() else Update()
                                         onDateChange(LocalDate.now())
                                     },
@@ -1143,10 +1142,10 @@ fun getNewWeek() : Long {
         val jxglstuJson = prefs.getString("courses","")
         val resultJxglstu = getTotalCourse(jxglstuJson)[0].semester.startDate
         val firstWeekStartJxglstu: LocalDate = LocalDate.parse(resultJxglstu)
-        val weeksBetweenJxglstu = ChronoUnit.WEEKS.between(firstWeekStartJxglstu, GetDate.today) + 1
+        val weeksBetweenJxglstu = ChronoUnit.WEEKS.between(firstWeekStartJxglstu, DateTimeManager.today) + 1
         weeksBetweenJxglstu  //固定本周
     } catch (e : Exception) {
-        GetDate.Benweeks
+        DateTimeManager.Benweeks
     }
 }
 

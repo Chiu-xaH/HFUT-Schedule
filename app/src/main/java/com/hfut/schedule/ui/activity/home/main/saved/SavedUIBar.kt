@@ -69,9 +69,9 @@ import com.hfut.schedule.logic.enums.BottomBarItems.*
 import com.hfut.schedule.logic.beans.NavigationBarItemData
 import com.hfut.schedule.logic.utils.APPVersion
 import com.hfut.schedule.logic.utils.AndroidVersion.canBlur
-import com.hfut.schedule.logic.utils.GetDate
-import com.hfut.schedule.logic.utils.GetDate.Benweeks
-import com.hfut.schedule.logic.utils.GetDate.Date_MM_dd
+import com.hfut.schedule.logic.utils.DateTimeManager
+import com.hfut.schedule.logic.utils.DateTimeManager.Benweeks
+import com.hfut.schedule.logic.utils.DateTimeManager.Date_MM_dd
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.SharePrefs.saveInt
@@ -470,8 +470,8 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
 fun texts(num : BottomBarItems) : String {
     when(num){
         COURSES -> {
-            val dayweek = GetDate.dayweek
-            var chinesenumber  = GetDate.chinesenumber
+            val dayweek = DateTimeManager.dayweek
+            var chinesenumber  = DateTimeManager.chinesenumber
 
             when (dayweek) {
                 1 -> chinesenumber = "一"
@@ -485,8 +485,8 @@ fun texts(num : BottomBarItems) : String {
             return "$Date_MM_dd 第${Benweeks}周 周$chinesenumber"
         }
         FOCUS -> {
-            val dayweek = GetDate.dayweek
-            var chinesenumber  = GetDate.chinesenumber
+            val dayweek = DateTimeManager.dayweek
+            var chinesenumber  = DateTimeManager.chinesenumber
 
             when (dayweek) {
                 1 -> chinesenumber = "一"

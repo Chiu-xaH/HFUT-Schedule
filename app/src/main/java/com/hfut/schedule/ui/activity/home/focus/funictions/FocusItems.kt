@@ -7,7 +7,6 @@ import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
@@ -30,8 +29,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FloatingActionButton
@@ -54,7 +51,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -68,8 +64,8 @@ import com.hfut.schedule.logic.beans.Community.TodayResult
 import com.hfut.schedule.logic.beans.Focus.AddFocus
 import com.hfut.schedule.logic.beans.Schedule
 import com.hfut.schedule.logic.utils.AddCalendar.AddCalendar
-import com.hfut.schedule.logic.utils.GetDate
-import com.hfut.schedule.logic.utils.GetDate.TimeState.*
+import com.hfut.schedule.logic.utils.DateTimeManager
+import com.hfut.schedule.logic.utils.DateTimeManager.TimeState.*
 import com.hfut.schedule.logic.utils.Semseter.getSemseter
 import com.hfut.schedule.logic.utils.Semseter.getSemseterCloud
 import com.hfut.schedule.logic.utils.SharePrefs
@@ -117,7 +113,7 @@ fun MyScheuleItem(item : Int, MySchedule : MutableList<Schedule>,Future: Boolean
         val getEndTime = "${endYear}${endMonthStr}${endDateStr}".toInt()
 
 
-        val nowTime = GetDate.Date_yyyy_MM_dd.replace("-","").toInt()
+        val nowTime = DateTimeManager.Date_yyyy_MM_dd.replace("-","").toInt()
 
 
         if(!Future) {
@@ -222,7 +218,7 @@ fun WangkeItem(item : Int, MyWangKe: MutableList<Schedule>,Future: Boolean) {
             val getEndTime = "${endYear}${endMonthStr}${endDateStr}".toInt()
 
 
-            val nowTime = GetDate.Date_yyyy_MM_dd.replace("-","").toInt()
+            val nowTime = DateTimeManager.Date_yyyy_MM_dd.replace("-","").toInt()
 
 
             if(Future) {
@@ -304,9 +300,9 @@ fun TodayCourseItem(item : Int,vm : NetWorkViewModel) {
     val switch_show_ended = prefs.getBoolean("SWITCHSHOWENDED",true)
 
 
-    var week = GetDate.Benweeks.toInt()
+    var week = DateTimeManager.Benweeks.toInt()
 
-    var weekday = GetDate.dayweek
+    var weekday = DateTimeManager.dayweek
     if(weekday == 0) weekday = 7
     //课程详情
     val list = getCourseINFO(weekday,week)[item][0]
@@ -316,7 +312,7 @@ fun TodayCourseItem(item : Int,vm : NetWorkViewModel) {
 
     val startTime = time.substringBefore("-")
     val endTime = time.substringAfter("-")
-    val state = GetDate.getTimeState(startTime, endTime)
+    val state = DateTimeManager.getTimeState(startTime, endTime)
 
     if (showBottomSheet) {
 
@@ -392,7 +388,7 @@ fun TodayCourseItem(item : Int,vm : NetWorkViewModel) {
     if(switch_show_ended) {
         Item()
     } else {
-        if(state != GetDate.TimeState.ENDED) {
+        if(state != DateTimeManager.TimeState.ENDED) {
             Item()
         }
     }
@@ -403,8 +399,8 @@ fun TodayCourseItem(item : Int,vm : NetWorkViewModel) {
 @Composable
 fun TomorrowCourseItem(item : Int,vm: NetWorkViewModel) {
 
-    var weekdaytomorrow = GetDate.dayweek + 1
-    var week = GetDate.Benweeks.toInt()
+    var weekdaytomorrow = DateTimeManager.dayweek + 1
+    var week = DateTimeManager.Benweeks.toInt()
     //当第二天为下一周的周一时，周数+1
     when(weekdaytomorrow) {
         1 -> week += 1
@@ -690,8 +686,8 @@ fun TodayUI() {
 
     //////////////////////////////////////////////////////////////////////////
     //判断明天是否有早八
-    var weekdaytomorrow = GetDate.dayweek + 1
-    var week = GetDate.Benweeks.toInt()
+    var weekdaytomorrow = DateTimeManager.dayweek + 1
+    var week = DateTimeManager.Benweeks.toInt()
     //当第二天为下一周的周一时，周数+1
     when(weekdaytomorrow) {
         1 -> week += 1
@@ -709,7 +705,7 @@ fun TodayUI() {
     for(i in 0 until schedule.size) {
         val schedules = schedule[i]
         if(schedules.title.contains("调休")) {
-            if(schedules.time.substringBefore(" ") == GetDate.tomorrow) {
+            if(schedules.time.substringBefore(" ") == DateTimeManager.tomorrow) {
                 tiaoXiu = true
             //    tiaoXiuInfo = schedules.info
             }

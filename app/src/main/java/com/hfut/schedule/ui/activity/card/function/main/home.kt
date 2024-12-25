@@ -58,7 +58,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.enums.CardBarItems
-import com.hfut.schedule.logic.utils.GetDate
+import com.hfut.schedule.logic.utils.DateTimeManager
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter
@@ -155,7 +155,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
     val settle = SharePrefs.prefs.getString("card_settle","00")
 
     var todaypay = 0.0
-    var date = GetDate.Date_yyyy_MM_dd
+    var date = DateTimeManager.Date_yyyy_MM_dd
 
     for (item in 0 until BillItem(vm).size) {
         val get = BillItem(vm)[item].effectdateStr

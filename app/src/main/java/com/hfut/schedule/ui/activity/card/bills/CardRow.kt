@@ -35,7 +35,7 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
-import com.hfut.schedule.logic.utils.GetDate
+import com.hfut.schedule.logic.utils.DateTimeManager
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.card.bills.main.BillItem
@@ -50,7 +50,7 @@ import java.math.RoundingMode
 @Composable
 fun CardRow(vm : NetWorkViewModel, vmUI : UIViewModel) {
     var todaypay = 0.0
-    var date = GetDate.Date_yyyy_MM_dd
+    var date = DateTimeManager.Date_yyyy_MM_dd
 
     for (item in 0 until BillItem(vm).size) {
         val get = BillItem(vm)[item].effectdateStr
@@ -156,7 +156,7 @@ fun todayCount(vm  : NetWorkViewModel, item : Int) {
     val time =bills.effectdateStr
     val getTime = time.substringBefore(" ")
 
-    if(GetDate.Date_yyyy_MM_dd == getTime)
+    if(DateTimeManager.Date_yyyy_MM_dd == getTime)
         MyCard {
             ListItem(
                 headlineContent = { Text(text = name) },

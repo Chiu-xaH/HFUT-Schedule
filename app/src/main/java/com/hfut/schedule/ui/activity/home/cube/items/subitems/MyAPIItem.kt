@@ -14,7 +14,7 @@ import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.beans.MyAPIResponse
-import com.hfut.schedule.logic.utils.GetDate
+import com.hfut.schedule.logic.utils.DateTimeManager
 import com.hfut.schedule.ui.utils.APIIcons
 import com.hfut.schedule.ui.utils.DividerText
 import com.hfut.schedule.ui.utils.MyCard
@@ -36,7 +36,7 @@ fun MyAPIItem() {
     if (id != null) {
         if (id.length == 18) {
             val birthday = id.substring(10, 14)
-            val today = GetDate.Date_MM_dd.replace("-", "")
+            val today = DateTimeManager.Date_MM_dd.replace("-", "")
             if (today == birthday) {
                content = Birthday()
                 title = "Happy Birthday !"
@@ -71,8 +71,8 @@ fun Birthday() : String {
         if (id.length == 18) {
             val year = id.substring(6, 10)
             val birthday = id.substring(10, 14)
-            val todayYear = GetDate.Date_yyyy.toInt()
-            val today = GetDate.Date_MM_dd.replace("-", "")
+            val todayYear = DateTimeManager.Date_yyyy.toInt()
+            val today = DateTimeManager.Date_MM_dd.replace("-", "")
             if (today == birthday) {
                 age = " " + (todayYear - year.toInt()).toString() + " 岁"
                 info = "祝你${age}生日快乐"

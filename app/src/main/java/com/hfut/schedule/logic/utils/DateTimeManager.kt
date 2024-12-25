@@ -16,25 +16,16 @@ import java.time.temporal.ChronoUnit
 import java.util.Calendar
 import java.util.Date
 
-object GetDate {
+object DateTimeManager {
     /////////////周数 社区课表
     private val json = prefs.getString("Course", MyApplication.NullTotal)
-
-
     private val result = Gson().fromJson(json,CourseTotalResponse::class.java).result
-
-
     private val start = result.start.substringBefore(" ")
-    @RequiresApi(Build.VERSION_CODES.O)
     private val firstWeekStart: LocalDate = LocalDate.parse(start)
-    @RequiresApi(Build.VERSION_CODES.O)
+    /////////////////////////////////////////////////////////
     val today: LocalDate = LocalDate.now()
-    @RequiresApi(Build.VERSION_CODES.O)
     val weeksBetween = ChronoUnit.WEEKS.between(firstWeekStart, today) + 1
-
-    @RequiresApi(Build.VERSION_CODES.O)
     val Benweeks = weeksBetween  //固定本周
-
     ///////////////////////////////////
     @SuppressLint("SimpleDateFormat")
     val Date_yyyy_MM = SimpleDateFormat("yyyy-MM").format(Date())
@@ -48,15 +39,14 @@ object GetDate {
     val Date_yyyy = SimpleDateFormat("yyyy").format(Date())
     @SuppressLint("SimpleDateFormat")
     val Date_yyyy_MM_dd = SimpleDateFormat("yyyy-MM-dd").format(Date())
-
+    //////////////////////////////////////////////////////////
     private val calendar = Calendar.getInstance()
     private val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
-    val dayweek = dayOfWeek - 1
-
+    val dayweek = dayOfWeek - 1 //周几
     var chinesenumber  = ""
-
-    //获取时间
-    val currentTime = LocalDateTime.now()
+    /////////////////////////////////////////////////////////
+    //时间
+    private val currentTime = LocalDateTime.now()
 
     private val formatterTime = DateTimeFormatter.ofPattern("HH:mm")
     val formatterTime_HH_MM = currentTime.format(formatterTime)
@@ -65,7 +55,6 @@ object GetDate {
 
     //解析
     private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-
     val tomorrow = today.plusDays(1).format(DateTimeFormatter.ofPattern("MM-dd"))
     /////////////周数 教务课表
     //计算目前已经过了多久
@@ -73,25 +62,33 @@ object GetDate {
         // 将字符串转换为 LocalDate
         val startDate = LocalDate.parse(startDateStr, formatter)
         val endDate = LocalDate.parse(endDateStr, formatter)
-        val currentDate = LocalDate.now()
-
+//        val currentDate = LocalDate.now()
         // 计算总天数和已过天数
         val totalDays = endDate.toEpochDay() - startDate.toEpochDay()
-        val pastDays = currentDate.toEpochDay() - startDate.toEpochDay()
-
+        val pastDays = today.toEpochDay() - startDate.toEpochDay()
         // 计算百分比
         val percentage = (pastDays.toDouble() / totalDays.toDouble()) * 100
         return percentage
     }
 
-    fun compareTimes(lastTime: String): Int {
+    //<0是已完成 >0未完成
+    fun compareTimes(lastTime: String): TimeState {
         // 将字符串转换为 LocalTime 格式
+        try {
+            val last = LocalTime.parse(lastTime, formatterTime)
+            val now = LocalTime.parse(formatterTime_HH_MM, formatterTime)
 
-        val last = LocalTime.parse(lastTime, formatterTime)
-        val now = LocalTime.parse(formatterTime_HH_MM, formatterTime)
-
-        // 比较时间：返回值 <0 表示 last 早于 now，>0 表示 last 晚于 now，0 表示相等
-        return last.compareTo(now)
+            // 比较时间：返回值 <0 表示 last 早于 now，>0 表示 last 晚于 now，0 表示相等
+            return if(last > now) {
+                TimeState.NOT_STARTED
+            } else if(last < now) {
+                TimeState.ENDED
+            } else {
+                TimeState.ONGOING
+            }
+        } catch (e: Exception) {
+            return TimeState.NOT_STARTED
+        }
     }
 
     /*

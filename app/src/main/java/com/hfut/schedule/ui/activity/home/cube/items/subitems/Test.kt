@@ -1,9 +1,12 @@
 package com.hfut.schedule.ui.activity.home.cube.items.subitems
 
 
+import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.SharedTransitionScope.ResizeMode.Companion.RemeasureToBounds
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -30,6 +33,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -38,6 +42,8 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -68,11 +74,19 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.activity.card.counts.RadarChart
 import com.hfut.schedule.ui.activity.card.counts.RadarData
 import com.hfut.schedule.ui.utils.CardForListColor
+import com.hfut.schedule.ui.utils.RowHorizal
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -80,135 +94,173 @@ import kotlin.math.roundToInt
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun TEST(innerPaddings : PaddingValues) {
-    Column (modifier = Modifier.padding(innerPaddings)){
-        Spacer(modifier = Modifier.height(innerPaddings.calculateTopPadding()))
-        Spacer(modifier = Modifier.height(innerPaddings.calculateTopPadding()))
-        Spacer(modifier = Modifier.height(innerPaddings.calculateTopPadding()))
-        Spacer(modifier = Modifier.height(innerPaddings.calculateTopPadding()))
-        Spacer(modifier = Modifier.height(innerPaddings.calculateTopPadding()))
+//    Column (modifier = Modifier.padding(innerPaddings)){
+//        Spacer(modifier = Modifier.height(innerPaddings.calculateTopPadding()))
+//        Spacer(modifier = Modifier.height(innerPaddings.calculateTopPadding()))
+//        Spacer(modifier = Modifier.height(innerPaddings.calculateTopPadding()))
+//        Spacer(modifier = Modifier.height(innerPaddings.calculateTopPadding()))
+//        Spacer(modifier = Modifier.height(innerPaddings.calculateTopPadding()))
+//
+//
+//        var showBottomSheet by remember { mutableStateOf(false) }
+//        val sheetState = rememberModalBottomSheetState(
+//            skipPartiallyExpanded = false,
+//        )
+//
+//        LaunchedEffect(sheetState.currentValue) {
+//            when (sheetState.currentValue) {
+//                SheetValue.Expanded -> {
+//                    // ModalBottomSheet 全屏展开时的处理逻辑
+//                    println("Expanded")
+//                }
+//                SheetValue.PartiallyExpanded -> {
+//                    // ModalBottomSheet 半屏展开时的处理逻辑
+//                    println("Partially Expanded")
+//                }
+//                SheetValue.Hidden -> {
+//                    // ModalBottomSheet 隐藏时的处理逻辑
+//                    println("Hidden")
+//                }
+//            }
+//        }
+//        val dpAnimation by animateDpAsState(
+//            targetValue = if (sheetState.currentValue != SheetValue.Expanded) 28.dp else 0.dp, label = ""
+//            ,animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
+//        )
+//        //Log.d("ss",BottomSheetDefaults.ExpandedShape.toString())
+//        Column(
+//            modifier = Modifier.fillMaxWidth(),
+//            horizontalAlignment = Alignment.CenterHorizontally,
+//        ) {
+//            Button(
+//                onClick = { showBottomSheet = true }
+//            ) {
+//                Text("打开底栏")
+//            }
+//
+//            if (showBottomSheet) {
+//                ModalBottomSheet(
+//                    modifier = Modifier.fillMaxHeight(),
+//                    sheetState = sheetState,
+//                    onDismissRequest = { showBottomSheet = false },
+//                    shape =  RoundedCornerShape(dpAnimation)
+//                ) {
+//                    Text(
+//                        "Swipe up to open sheet. Swipe down to dismiss.",
+//                        modifier = Modifier.padding(16.dp)
+//                    )
+//                }
+//            }
+//        }
+//
+//
+//
+//        Spacer(modifier = Modifier.height(innerPaddings.calculateTopPadding()))
+//
+//        var showDetails by remember { mutableStateOf(false) }
+//        SharedTransitionLayout {
+//            AnimatedContent(targetState = showDetails, label = "") { inDetails->
+//              //  if(showDetails) {
+//                    if(!inDetails) {
+//                        Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
+//                            Card(
+//                                elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
+//                                modifier = Modifier
+//                                    .width(200.dp)
+//                                    .padding(horizontal = 15.dp, vertical = 5.dp)
+//                                    .sharedBounds(
+//                                        sharedContentState = rememberSharedContentState(key = "bounds"),
+//                                        animatedVisibilityScope = this@AnimatedContent,
+//                                        resizeMode = RemeasureToBounds
+//                                    )
+//                                ,
+//                                shape = MaterialTheme.shapes.small,
+//                                colors = CardForListColor()
+//                            ) {
+//                                ListItem(
+//                                    headlineContent = { Text(text = "展开卡片") },
+//                                    modifier = Modifier.clickable { showDetails = true }
+//                                )
+//                            }
+//                        }
+//                    } else  {
+//                        //  Dialog(onDismissRequest = { showDetails = false }) {
+//                        Card(
+//                            elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
+//                            modifier = Modifier
+//                                .fillMaxWidth()
+//                                .padding(horizontal = 15.dp, vertical = 5.dp)
+//                                .sharedBounds(
+//                                    sharedContentState = rememberSharedContentState(key = "bounds"),
+//                                    animatedVisibilityScope = this@AnimatedContent,
+//                                    resizeMode = RemeasureToBounds
+//                                )
+//                            ,
+//                            shape = MaterialTheme.shapes.medium,
+//                            colors = CardForListColor()
+//                        ) {
+//                            ListItem(
+//                                headlineContent = { Text(text = "标题1") },
+//                                modifier = Modifier.clickable {showDetails = false}
+//                            )
+//                            ListItem(
+//                                headlineContent = { Text(text = "标题2") },
+//                                modifier = Modifier.clickable {}
+//                            )
+//                            ListItem(
+//                                headlineContent = { Text(text = "标题3") },
+//                                modifier = Modifier.clickable {}
+//                            )
+//                        }
+//                        //   }
+//                    }
+//               // }
+//            }
+//        }
+//
+//     // //  AnimatedVectorDrawable()
+//      //  AnimatedVectorDrawable()
+//       // AnimatedVectorDrawable()
+//
+//      //  Gesture()
+//    }
+    val listSnacks = listOf<Snack>(
+        Snack("桌面","des",R.drawable.home),
+        Snack("搜索","des",R.drawable.search),
+        Snack("动画","des",R.drawable.animation),
+        Snack("堆栈","des",R.drawable.stacks)
+    )
 
-
-        var showBottomSheet by remember { mutableStateOf(false) }
-        val sheetState = rememberModalBottomSheetState(
-            skipPartiallyExpanded = false,
-        )
-
-        LaunchedEffect(sheetState.currentValue) {
-            when (sheetState.currentValue) {
-                SheetValue.Expanded -> {
-                    // ModalBottomSheet 全屏展开时的处理逻辑
-                    println("Expanded")
-                }
-                SheetValue.PartiallyExpanded -> {
-                    // ModalBottomSheet 半屏展开时的处理逻辑
-                    println("Partially Expanded")
-                }
-                SheetValue.Hidden -> {
-                    // ModalBottomSheet 隐藏时的处理逻辑
-                    println("Hidden")
-                }
-            }
-        }
-        val dpAnimation by animateDpAsState(
-            targetValue = if (sheetState.currentValue != SheetValue.Expanded) 28.dp else 0.dp, label = ""
-            ,animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
-        )
-        //Log.d("ss",BottomSheetDefaults.ExpandedShape.toString())
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
+    SharedTransitionLayout {
+        val navController = rememberNavController()
+        NavHost(
+            navController = navController,
+            startDestination = "home"
         ) {
-            Button(
-                onClick = { showBottomSheet = true }
-            ) {
-                Text("打开底栏")
+            composable("home") {
+                HomeScreen(
+                    navController,
+                    this@SharedTransitionLayout,
+                    this@composable,
+                    listSnacks,
+                    innerPaddings
+                )
             }
-
-            if (showBottomSheet) {
-                ModalBottomSheet(
-                    modifier = Modifier.fillMaxHeight(),
-                    sheetState = sheetState,
-                    onDismissRequest = { showBottomSheet = false },
-                    shape =  RoundedCornerShape(dpAnimation)
-                ) {
-                    Text(
-                        "Swipe up to open sheet. Swipe down to dismiss.",
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
-            }
-        }
-
-
-
-        Spacer(modifier = Modifier.height(innerPaddings.calculateTopPadding()))
-
-        var showDetails by remember { mutableStateOf(false) }
-        SharedTransitionLayout {
-            AnimatedContent(targetState = showDetails, label = "") { inDetails->
-              //  if(showDetails) {
-                    if(!inDetails) {
-                        Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
-                            Card(
-                                elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
-                                modifier = Modifier
-                                    .width(200.dp)
-                                    .padding(horizontal = 15.dp, vertical = 5.dp)
-                                    .sharedBounds(
-                                        sharedContentState = rememberSharedContentState(key = "bounds"),
-                                        animatedVisibilityScope = this@AnimatedContent,
-                                        resizeMode = RemeasureToBounds
-                                    )
-                                ,
-                                shape = MaterialTheme.shapes.small,
-                                colors = CardForListColor()
-                            ) {
-                                ListItem(
-                                    headlineContent = { Text(text = "展开卡片") },
-                                    modifier = Modifier.clickable { showDetails = true }
-                                )
-                            }
-                        }
-                    } else  {
-                        //  Dialog(onDismissRequest = { showDetails = false }) {
-                        Card(
-                            elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 15.dp, vertical = 5.dp)
-                                .sharedBounds(
-                                    sharedContentState = rememberSharedContentState(key = "bounds"),
-                                    animatedVisibilityScope = this@AnimatedContent,
-                                    resizeMode = RemeasureToBounds
-                                )
-                            ,
-                            shape = MaterialTheme.shapes.medium,
-                            colors = CardForListColor()
-                        ) {
-                            ListItem(
-                                headlineContent = { Text(text = "标题1") },
-                                modifier = Modifier.clickable {showDetails = false}
-                            )
-                            ListItem(
-                                headlineContent = { Text(text = "标题2") },
-                                modifier = Modifier.clickable {}
-                            )
-                            ListItem(
-                                headlineContent = { Text(text = "标题3") },
-                                modifier = Modifier.clickable {}
-                            )
-                        }
-                        //   }
-                    }
-               // }
+            composable(
+                "details/{item}",
+                arguments = listOf(navArgument("item") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val id = backStackEntry.arguments?.getInt("item")
+                val snack = listSnacks[id!!]
+                DetailsScreen(
+                    navController,
+                    id,
+                    snack,
+                    this@SharedTransitionLayout,
+                    this@composable
+                )
             }
         }
-
-     // //  AnimatedVectorDrawable()
-      //  AnimatedVectorDrawable()
-       // AnimatedVectorDrawable()
-
-      //  Gesture()
     }
 }
 
@@ -365,3 +417,155 @@ fun PartialBottomSheet() {
         }
     }
 }
+
+
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Preview
+@Composable
+fun SharedElement_PredictiveBack() {
+
+    val listSnacks = listOf<Snack>(
+        Snack("桌面","des",R.drawable.home),
+        Snack("搜索","des",R.drawable.search),
+        Snack("动画","des",R.drawable.animation),
+        Snack("堆栈","des",R.drawable.stacks)
+    )
+
+    SharedTransitionLayout {
+        val navController = rememberNavController()
+        NavHost(
+            navController = navController,
+            startDestination = "home"
+        ) {
+            composable("home") {
+                HomeScreen(
+                    navController,
+                    this@SharedTransitionLayout,
+                    this@composable,
+                    listSnacks,
+                    null
+                )
+            }
+            composable(
+                "details/{item}",
+                arguments = listOf(navArgument("item") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val id = backStackEntry.arguments?.getInt("item")
+                val snack = listSnacks[id!!]
+                DetailsScreen(
+                    navController,
+                    id,
+                    snack,
+                    this@SharedTransitionLayout,
+                    this@composable
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+private fun DetailsScreen(
+    navController: NavHostController,
+    id: Int,
+    snack: Snack,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+    innerPaddings: PaddingValues? = null
+) {
+    with(sharedTransitionScope) {
+        Column(
+            Modifier
+                .fillMaxSize()
+                .clickable {
+                    navController.navigate("home")
+                }
+        ) {
+            innerPaddings?.let { Spacer(modifier = Modifier.height(it.calculateTopPadding())) }
+            Image(
+                painterResource(id = snack.image),
+                contentDescription = snack.description,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .sharedElement(
+                        sharedTransitionScope.rememberSharedContentState(key = "image-$id"),
+                        animatedVisibilityScope = animatedContentScope
+                    )
+                    .aspectRatio(1f)
+                    .fillMaxWidth()
+            )
+            RowHorizal {
+                Text(
+                    snack.name, fontSize = 18.sp,
+                    modifier =
+                    Modifier
+                        .sharedElement(
+                            sharedTransitionScope.rememberSharedContentState(key = "text-$id"),
+                            animatedVisibilityScope = animatedContentScope
+                        )
+                        .fillMaxWidth()
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+private fun HomeScreen(
+    navController: NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+    listSnacks : List<Snack>,
+    innerPaddings: PaddingValues?
+) {
+
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        item { innerPaddings?.let { Spacer(modifier = Modifier.height(it.calculateTopPadding())) } }
+        itemsIndexed(listSnacks) { index, item ->
+            Row(
+                Modifier.clickable {
+                    navController.navigate("details/$index")
+                }
+            ) {
+                Spacer(modifier = Modifier.width(8.dp))
+                with(sharedTransitionScope) {
+                    Image(
+                        painterResource(id = item.image),
+                        contentDescription = item.description,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .sharedElement(
+                                sharedTransitionScope.rememberSharedContentState(key = "image-$index"),
+                                animatedVisibilityScope = animatedContentScope
+                            )
+                            .size(100.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        item.name, fontSize = 18.sp,
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .sharedElement(
+                                sharedTransitionScope.rememberSharedContentState(key = "text-$index"),
+                                animatedVisibilityScope = animatedContentScope,
+                            )
+                    )
+                }
+            }
+        }
+    }
+}
+
+data class Snack(
+    val name: String,
+    val description: String,
+    @DrawableRes val image: Int
+)

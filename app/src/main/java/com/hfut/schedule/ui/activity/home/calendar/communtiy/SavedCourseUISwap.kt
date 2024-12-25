@@ -66,8 +66,8 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.beans.Community.courseDetailDTOList
-import com.hfut.schedule.logic.utils.GetDate
-import com.hfut.schedule.logic.utils.GetDate.Benweeks
+import com.hfut.schedule.logic.utils.DateTimeManager
+import com.hfut.schedule.logic.utils.DateTimeManager.Benweeks
 import com.hfut.schedule.logic.utils.Semseter.getSemseter
 import com.hfut.schedule.logic.utils.Semseter.getSemseterCloud
 import com.hfut.schedule.ui.utils.MyToast
@@ -180,7 +180,7 @@ fun SaveCourse(
 
 
     //切换周数
-    var Bianhuaweeks by rememberSaveable { mutableStateOf(GetDate.weeksBetween) }
+    var Bianhuaweeks by rememberSaveable { mutableStateOf(DateTimeManager.weeksBetween) }
     //var date by rememberSaveable { mutableStateOf(LocalDate.now()) }
   //  Log.d("本周", GetDate.a.toString())
 
@@ -804,15 +804,15 @@ fun ScheduleTopDate(showAll: Boolean,today : LocalDate,blur : Boolean) {
                         text = date.substringAfter("-"),
                         textAlign = TextAlign.Center,
                         fontSize = if(showAll)12.sp else 14.sp,
-                        color = if(date == GetDate.Date_yyyy_MM_dd) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.primary,
-                        style = if(date == GetDate.Date_yyyy_MM_dd) {
+                        color = if(date == DateTimeManager.Date_yyyy_MM_dd) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.primary,
+                        style = if(date == DateTimeManager.Date_yyyy_MM_dd) {
                             TextStyle(shadow = Shadow(
                                 color = Color.Gray,
                                 offset = Offset(2.0f,2.0f),
                                 blurRadius = 7.0f
                             ))
                         } else TextStyle()
-                        , fontWeight = if(date == GetDate.Date_yyyy_MM_dd) FontWeight.Bold else FontWeight.Normal
+                        , fontWeight = if(date == DateTimeManager.Date_yyyy_MM_dd) FontWeight.Bold else FontWeight.Normal
                     )
                 else Text(
                     text = "未开学",

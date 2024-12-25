@@ -30,7 +30,7 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.activity.funiction.GradeActivity
-import com.hfut.schedule.logic.utils.GetDate
+import com.hfut.schedule.logic.utils.DateTimeManager
 import com.hfut.schedule.logic.utils.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.grade.getGrade
@@ -56,10 +56,10 @@ fun Grade(vm : NetWorkViewModel, ifSaved : Boolean, webVpn : Boolean)  {
     var showBottomSheet_Grade by remember { mutableStateOf(false) }
     val CommuityTOKEN = prefs.getString("TOKEN","")
     var term = ""
-    val month = GetDate.Date_MM.toInt()
+    val month = DateTimeManager.Date_MM.toInt()
     if( month >= 9 || month <= 2) term = "1"
     else term = "2"
-    var years = GetDate.Date_yyyy
+    var years = DateTimeManager.Date_yyyy
     if (month <= 8) years = (years.toInt() - 1).toString()
 
     CoroutineScope(Job()).launch {

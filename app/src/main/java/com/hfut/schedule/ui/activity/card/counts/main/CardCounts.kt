@@ -58,7 +58,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.beans.zjgd.BillMonth
 import com.hfut.schedule.logic.beans.zjgd.BillMonthResponse
-import com.hfut.schedule.logic.utils.GetDate
+import com.hfut.schedule.logic.utils.DateTimeManager
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.ui.activity.card.counts.drawLineChart
 import com.hfut.schedule.ui.utils.MyToast
@@ -82,8 +82,8 @@ fun getbillmonth(vm : NetWorkViewModel, count : Boolean) : MutableList<BillMonth
         if(!count) {
             while (iterator.hasNext()) {
                 val billMonth = iterator.next()
-                if(GetDate.Date_yyyy_MM == billMonth.date.substring(0,7)) {
-                    if(GetDate.Date_MM_dd.replace("-","").toInt() < billMonth.date.substringAfter("-").replace("-","").toInt()) {
+                if(DateTimeManager.Date_yyyy_MM == billMonth.date.substring(0,7)) {
+                    if(DateTimeManager.Date_MM_dd.replace("-","").toInt() < billMonth.date.substringAfter("-").replace("-","").toInt()) {
                         iterator.remove() // 使用迭代器删除元素
                     }
                 }
@@ -104,8 +104,8 @@ fun monthCount(vm : NetWorkViewModel, innerPadding : PaddingValues) {
   //  var sum by remember { mutableStateOf(0.0) }
   //  val big = BigDecimal(sum)
   //  var sum_float = big.toFloat()
-    var Months  by remember { mutableStateOf(GetDate.Date_MM) }
-    var Years by remember { mutableStateOf(GetDate.Date_yyyy) }
+    var Months  by remember { mutableStateOf(DateTimeManager.Date_MM) }
+    var Years by remember { mutableStateOf(DateTimeManager.Date_yyyy) }
     input = "$Years-$Months"
     fun Click(Num : Int) {
 
@@ -194,8 +194,8 @@ fun monthCount(vm : NetWorkViewModel, innerPadding : PaddingValues) {
                             items(7) { item ->
                                 AssistChip(
                                     modifier = Modifier.padding(horizontal = 5.dp),
-                                    onClick = { Years = (GetDate.Date_yyyy.toInt() + (item - 3)).toString() },
-                                    label = { Text(text = (GetDate.Date_yyyy.toInt() + (item - 3)).toString()) })
+                                    onClick = { Years = (DateTimeManager.Date_yyyy.toInt() + (item - 3)).toString() },
+                                    label = { Text(text = (DateTimeManager.Date_yyyy.toInt() + (item - 3)).toString()) })
                             }
                         }
                         LazyVerticalGrid(columns = GridCells.Fixed(4), modifier = Modifier.padding(horizontal = 10.dp)) {

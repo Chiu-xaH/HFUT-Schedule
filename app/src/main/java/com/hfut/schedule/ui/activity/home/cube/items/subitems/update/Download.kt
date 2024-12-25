@@ -181,7 +181,7 @@ fun downloadUI() {
                         )
                         Spacer(modifier = Modifier.width(20.dp))
                     }
-                    Text(text = if(able)"请求更新" else "已请求")
+                    Text(text = if(able)"下载更新" else "准备下载")
 
                 }
 

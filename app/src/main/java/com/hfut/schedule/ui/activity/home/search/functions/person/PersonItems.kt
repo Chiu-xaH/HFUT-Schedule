@@ -38,7 +38,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.ClipBoard
-import com.hfut.schedule.logic.utils.GetDate
+import com.hfut.schedule.logic.utils.DateTimeManager
 import com.hfut.schedule.logic.utils.ReservDecimal
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
@@ -332,7 +332,7 @@ fun PersonItems(ifSaved : Boolean) {
                     },
                     trailingContent = {
                         if(startDate != null && endDate != null && startDate != "" && endDate != "") {
-                            Text(text = "已过 ${ReservDecimal.reservDecimal(GetDate.getPercent(startDate,endDate),1)}%")
+                            Text(text = "已过 ${ReservDecimal.reservDecimal(DateTimeManager.getPercent(startDate,endDate),1)}%")
                         } else { null }
                     },
                     modifier = Modifier.clickable {
