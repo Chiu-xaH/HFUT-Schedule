@@ -1,6 +1,7 @@
 package com.hfut.schedule.ui.activity.home.focus.main
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -31,6 +32,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.LoginViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
@@ -47,9 +49,9 @@ import com.hfut.schedule.ui.activity.home.focus.funictions.TimeStampItem
 import com.hfut.schedule.ui.activity.home.focus.funictions.TodayCourseItem
 import com.hfut.schedule.ui.activity.home.focus.funictions.TomorrowCourseItem
 import com.hfut.schedule.ui.activity.home.focus.funictions.WangkeItem
-import com.hfut.schedule.ui.activity.home.focus.getResult
-import com.hfut.schedule.ui.activity.home.focus.newScheduleItems
-import com.hfut.schedule.ui.activity.home.focus.newWangkeItem
+//import com.hfut.schedule.ui.activity.home.focus.getResult
+//import com.hfut.schedule.ui.activity.home.focus.newScheduleItems
+//import com.hfut.schedule.ui.activity.home.focus.newWangkeItem
 import com.hfut.schedule.ui.activity.home.main.saved.NetWorkUpdate
 import com.hfut.schedule.ui.activity.home.search.functions.exam.JxglstuExamUI
 import com.hfut.schedule.ui.activity.home.search.functions.exam.getExamJXGLSTU
@@ -74,7 +76,6 @@ fun TodayScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding : Padd
 //Today操作区///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-
     //刷新
     var refreshing by remember { mutableStateOf(false) }
     // 用协程模拟一个耗时加载
@@ -91,9 +92,9 @@ fun TodayScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding : Padd
         }
     })
 
-    val shouldRefresh by remember { derivedStateOf { refreshing }}
-    val switch_server = false
 
+    val context = LocalContext.current
+    val activity = context as Activity
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -103,14 +104,6 @@ fun TodayScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding : Padd
         Column(modifier = Modifier
             .fillMaxSize()
             ){
-           // val paperState = rememberPagerState { TAB_LEFT }
-            //var state by remember { mutableStateOf(TAB_LEFT) }
-
-
-        //    val pagerState = rememberPagerState(pageCount = { 2 })
-          //  val titles = listOf("重要安排","其他事项")
-
-          //  CustomTabRow(pagerState, titles, blur)
 
             Box(modifier = Modifier
                 .fillMaxHeight()
@@ -144,12 +137,6 @@ fun TodayScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding : Padd
                             item { Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding())) }
                             when(page) {
                                 TAB_LEFT -> {
-                                    //一卡通
-                                    //  CoroutineScope(Job()).launch {
-                                    //        async { GetZjgdCard(vm,vmUI) }
-                                    //         async { getTodayNet(vm,vmUI) }
-                                    ///     }
-
                                     item { FocusCard(vmUI,vm,refreshing) }
                                     //课表
                                     if (DateTimeManager.compareTimes(lastTime) != DateTimeManager.TimeState.NOT_STARTED)
@@ -157,35 +144,17 @@ fun TodayScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding : Padd
                                     else
                                         items(todayCourseList.size) { item -> TodayCourseItem(item = item,vm) }
                                     //日程
-                               //     if (switch_api){
-                                        if(!switch_server)
-                                            items(MySchedule().size) { item -> MyScheuleItem(item = item, MySchedule = MySchedule(),false) }
-                                        else items(getResult(true).size) {item -> newScheduleItems(MySchedule = getResult(true), item, false)}
-                               //     }
+                                    items(MySchedule().size) { item -> MyScheuleItem(item = item, MySchedule = MySchedule(),false,activity) }
                                     //考试
-                                    //  if(ifSaved) items(getExam().size) { item -> ExamItems(item,true,) }
-                                    //  else
                                     items(getExamJXGLSTU()) { item -> JxglstuExamUI(item,false) }
                                     //网课
-                                    if(!switch_server)
-                                        items(MyWangKe().size) { item -> WangkeItem(item = item, MyWangKe = MyWangKe(),false) }
-                                    else items(getResult(false).size) {item -> newWangkeItem(item, MyWangKe = getResult(false), Future = false)  }
+                                    items(MyWangKe().size) { item -> WangkeItem(item = item, MyWangKe = MyWangKe(),false,activity) }
                                 }
                                 TAB_RIGHT -> {
-                                   // if (switch_api) {
-                                        if(!switch_server) {
-                                            //日程
-                                            items(MySchedule().size) { item -> MyScheuleItem(item = item, MySchedule = MySchedule(),true)  }
-                                            //网课
-                                            items(MyWangKe().size) { item -> WangkeItem(item = item, MyWangKe = MyWangKe(),true) }
-                                        } else {
-                                            //日程
-                                            items(getResult(true).size) { item -> newScheduleItems(getResult(true), item,false)  }
-                                            //网课
-                                            items(getResult(false).size) { item -> newWangkeItem(item = item, MyWangKe = getResult(false),true) }
-                                        }
-                                  //  }
-
+                                    //日程
+                                    items(MySchedule().size) { item -> MyScheuleItem(item = item, MySchedule = MySchedule(),true,activity)  }
+                                    //网课
+                                    items(MyWangKe().size) { item -> WangkeItem(item = item, MyWangKe = MyWangKe(),true,activity) }
                                     //第二天课表
                                     if (DateTimeManager.compareTimes(lastTime) == DateTimeManager.TimeState.NOT_STARTED)
                                         items(getCourseINFO(weekdaytomorrow,Nextweek).size) { item -> TomorrowCourseItem(item = item,vm) }

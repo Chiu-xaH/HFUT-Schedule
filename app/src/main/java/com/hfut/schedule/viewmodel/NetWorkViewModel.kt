@@ -386,12 +386,16 @@ class NetWorkViewModel(webVpn : Boolean) : ViewModel() {
         })
     }
 
+    val jxglstuGradeData = MutableLiveData<String?>()
+
     fun getGrade(cookie: String,semester: Int?) {
         val call = JxglstuJSON.getGrade(cookie,studentId.value.toString(), semester)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                saveString("grade", response.body()?.string())
+                val body = response.body()?.string()
+                saveString("grade",body )
+                jxglstuGradeData.value = body
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -1090,11 +1094,11 @@ class NetWorkViewModel(webVpn : Boolean) : ViewModel() {
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val code = response?.code()
+                val code = response.code()
+                examCode.value = code
                 if(code == 200) {
                     saveString("examJXGLSTU", response.body()?.string())
                 }
-                examCode.value = response?.code()
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }

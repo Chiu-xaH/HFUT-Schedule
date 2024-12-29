@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
+import com.hfut.schedule.ui.utils.LoadingUI
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -55,6 +56,7 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.card.bills.CardRow
 import com.hfut.schedule.ui.utils.BillsIcons
+import com.hfut.schedule.ui.utils.LoadingUI
 import com.hfut.schedule.ui.utils.MyCard
 import com.hfut.schedule.ui.utils.MyToast
 import com.hfut.schedule.ui.utils.Round
@@ -178,7 +180,7 @@ fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVie
             Column {
                 Spacer(modifier = Modifier.height(innerPaddings.calculateTopPadding()))
                 Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)  {
-                    CircularProgressIndicator()
+                    LoadingUI()
                 }
             }
         }

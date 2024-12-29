@@ -3,9 +3,13 @@ package com.hfut.schedule.ui.activity.home.calendar.communtiy
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
@@ -54,6 +58,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
@@ -70,6 +75,10 @@ import com.hfut.schedule.logic.utils.DateTimeManager
 import com.hfut.schedule.logic.utils.DateTimeManager.Benweeks
 import com.hfut.schedule.logic.utils.Semseter.getSemseter
 import com.hfut.schedule.logic.utils.Semseter.getSemseterCloud
+import com.hfut.schedule.ui.activity.home.calendar.examToCalendar
+import com.hfut.schedule.ui.activity.home.calendar.getScheduleDate
+import com.hfut.schedule.ui.activity.home.search.functions.exam.getExam
+import com.hfut.schedule.ui.activity.home.search.functions.exam.getExamJXGLSTU
 import com.hfut.schedule.ui.utils.MyToast
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -635,6 +644,8 @@ fun SaveCourse(
 //    val mondayOfCurrentWeek = today.minusDays(today.dayOfWeek.value - 1L)
 //
 //
+    val dateList  = getScheduleDate(showAll,today)
+    val examList  = examToCalendar()
 
         Column(modifier = Modifier.fillMaxSize()
         ) {
@@ -650,6 +661,8 @@ fun SaveCourse(
             ) {
                 val scrollstate = rememberLazyGridState()
                 val shouldShowAddButton by remember { derivedStateOf { scrollstate.firstVisibleItemScrollOffset == 0 } }
+
+
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(if(showAll)7 else 5),
                     modifier = Modifier.padding(7.dp),
@@ -657,20 +670,49 @@ fun SaveCourse(
                 ) {
                     items(if(showAll)7 else 5) { Spacer(modifier = Modifier.height(innerPaddings.calculateTopPadding())) }
                     items(if(showAll)42 else 30) { cell ->
-                        val texts = if(showAll)tableall[cell] else table[cell]
+                        var texts = if(showAll)tableall[cell] else table[cell]
+                        var click by remember { mutableStateOf(false) }
+
                         Card(
                             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
                             shape = MaterialTheme.shapes.extraSmall,
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
                             modifier = Modifier
                                 .height(125.dp)
                                 .padding(if (showAll) 1.dp else 2.dp)
                                 .clickable {
+                                    click = true
                                     num = cell
                                     if ((if (showAll) sheetall[cell].name else sheet[cell].name) != "")
                                         showBottomSheet = true
-                                    else MyToast("空数据")
                                 }
                         ) {
+
+                            //存在待考时
+                            if(examList.isNotEmpty()){
+                                val numa = if(showAll) 7 else 5
+                                val i = cell % numa
+                                val j = cell / numa
+                                val date = dateList[i]
+                                examList.forEach {
+                                    if(date == it.day) {
+                                        val hour = it.startTime?.substringBefore(":")?.toIntOrNull() ?: 99
+
+                                        if(hour in 7..9 && j == 0) {
+                                            texts = it.startTime + "\n" + it.course + "\n" + it.place
+                                        } else if(hour in 10..12 && j == 1) {
+                                            texts = it.startTime + "\n" + it.course + "\n" + it.place
+                                        } else if(hour in 14..15  && j == 2) {
+                                            texts = it.startTime + "\n" + it.course + "\n" + it.place
+                                        } else if(hour in 16..17  && j == 3) {
+                                            texts = it.startTime + "\n" + it.course + "\n" + it.place
+                                        } else if(hour >= 18  && j == 4) {
+                                            texts = it.startTime + "\n" + it.course + "\n" + it.place
+                                        }
+                                    }
+                                }
+                            }
+
                             Column(
                                 modifier = Modifier
                                     .fillMaxSize()
@@ -683,6 +725,7 @@ fun SaveCourse(
                                     textAlign = TextAlign.Center
                                 )
                             }
+
                            // Text(text = texts,fontSize = if(showAll)12.sp else 14.sp, textAlign = TextAlign.Center)
                         }
                     }
@@ -790,7 +833,6 @@ fun SaveCourse(
         }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ScheduleTopDate(showAll: Boolean,today : LocalDate,blur : Boolean) {
     val mondayOfCurrentWeek = today.minusDays(today.dayOfWeek.value - 1L)
@@ -798,7 +840,7 @@ fun ScheduleTopDate(showAll: Boolean,today : LocalDate,blur : Boolean) {
         Spacer(modifier = Modifier.height(5.dp))
         LazyVerticalGrid(columns = GridCells.Fixed(if(showAll)7 else 5),modifier = Modifier.padding(horizontal = 10.dp)){
             items(if(showAll)7 else 5) { item ->
-                val date = mondayOfCurrentWeek.plusDays(item.toLong()).toString()
+                val date = mondayOfCurrentWeek.plusDays(item.toLong()).toString() //YYYY-MM-DD 与考试对比
                 if (Benweeks > 0)
                     Text(
                         text = date.substringAfter("-"),
@@ -823,5 +865,4 @@ fun ScheduleTopDate(showAll: Boolean,today : LocalDate,blur : Boolean) {
             }
         }
     }
-
 }

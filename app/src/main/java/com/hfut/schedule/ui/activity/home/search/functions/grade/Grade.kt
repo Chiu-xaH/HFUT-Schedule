@@ -47,13 +47,13 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Grade(vm : NetWorkViewModel, ifSaved : Boolean, webVpn : Boolean)  {
-    val cookie = if(!webVpn) prefs.getString("redirect", "")  else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket","")
+//    val cookie = if(!webVpn) prefs.getString("redirect", "")  else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket","")
 
-    if(!ifSaved)
-    vm.getGrade(cookie!!,null)
-
-    val sheetState_Grade = rememberModalBottomSheetState()
-    var showBottomSheet_Grade by remember { mutableStateOf(false) }
+//    if(!ifSaved)
+//    vm.getGrade(cookie!!,null)
+//
+//    val sheetState_Grade = rememberModalBottomSheetState()
+//    var showBottomSheet_Grade by remember { mutableStateOf(false) }
     val CommuityTOKEN = prefs.getString("TOKEN","")
     var term = ""
     val month = DateTimeManager.Date_MM.toInt()
@@ -67,8 +67,6 @@ fun Grade(vm : NetWorkViewModel, ifSaved : Boolean, webVpn : Boolean)  {
         async { CommuityTOKEN?.let { vm.getAvgGrade(it) } }
         async {  CommuityTOKEN?.let { vm.getAllAvgGrade(it) } }
     }
-
-
 
 
     ListItem(
@@ -94,35 +92,6 @@ fun Grade(vm : NetWorkViewModel, ifSaved : Boolean, webVpn : Boolean)  {
         }
     )
 
-
-    if (showBottomSheet_Grade) {
-        ModalBottomSheet(
-            onDismissRequest = { showBottomSheet_Grade = false },
-            sheetState = sheetState_Grade,
-            shape = Round(sheetState_Grade)
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("成绩") }
-                    )
-                },) {innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ){
-                    if (ifSaved) GradeItemUI(vm,innerPadding)
-                    else GradeItemUIJXGLSTU(innerPadding,vm)
-                }
-            }
-        }
-    }
 }
 
 

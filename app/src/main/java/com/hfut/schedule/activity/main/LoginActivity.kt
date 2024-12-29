@@ -3,23 +3,19 @@ package com.hfut.schedule.activity.main
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import com.hfut.schedule.logic.utils.PermissionManager.checkAndRequestStoragePermission
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.ui.activity.login.LoginUI
-import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.checkAndRequestStoragePermission
 import com.hfut.schedule.ui.activity.home.main.saved.Add
 import com.hfut.schedule.ui.activity.home.main.saved.NoNetWork
 import com.hfut.schedule.ui.activity.home.main.saved.getNum
+import com.hfut.schedule.ui.activity.login.LoginUI
 import com.hfut.schedule.ui.utils.MyToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
@@ -31,7 +27,7 @@ import java.io.InputStreamReader
 class LoginActivity : BaseActivity() {
     private val startAcitivity = prefs.getBoolean("SWITCHFASTSTART",prefs.getString("TOKEN","")?.isNotEmpty() ?: false)
 
-    val switchServer = SharePrefs.prefs.getBoolean("SWITCHSERVER", true)
+//    val switchServer = SharePrefs.prefs.getBoolean("SWITCHSERVER", true)
     val switchUpload = prefs.getBoolean("SWITCHUPLOAD",true )
     var value = 0
 
@@ -61,7 +57,9 @@ class LoginActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        //当用户以本应用打开TXT文件时进行读取操作
         intent?.data?.let { uri ->
+            checkAndRequestStoragePermission(this)
             val content = readTextFromUri(uri)
             // 处理读取到的文本内容
             Add("课表"+(getNum() +4).toString())
@@ -69,16 +67,8 @@ class LoginActivity : BaseActivity() {
             MyToast("导入课表${getNum() +3}成功 请于课程表右上角切换")
         }
 
-
-        if(ContextCompat.checkSelfPermission(this,android.Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED)
-            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.WRITE_CALENDAR),1)
-
-        if(ContextCompat.checkSelfPermission(this,android.Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED)
-            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.READ_CALENDAR),1)
-
-
-        checkAndRequestStoragePermission(this)
         lifecycleScope.launch {
+                //为登录做准备
                 if(!(startAcitivity && intent.getBooleanExtra("nologin",true))) {
                     launch { super.loginVm.getCookie() }
                     launch { SharePrefs.saveString("tip","0") }
@@ -88,7 +78,6 @@ class LoginActivity : BaseActivity() {
                         async {
                             Handler(Looper.getMainLooper()).post{
                                 super.loginVm.webVpnTicket.observeForever { result ->
-                                    // Log.d("sss",result.toString())
                                     if (result != null) {
                                         if (result.contains("wengine_vpn_ticketwebvpn_hfut_edu_cn")) {
                                             val ticket = result.substringAfter("wengine_vpn_ticketwebvpn_hfut_edu_cn=").substringBefore(";")
@@ -110,15 +99,18 @@ class LoginActivity : BaseActivity() {
                         }
                     }
                 }
+                //检查更新
                 launch { super.uiVm.getUpdate() }
+                //从服务器获取信息
                 launch { super.loginVm.My() }
-                if(switchServer) { launch { super.networkVm.getData() } }
+                //上传用户统计数据
                 if(switchUpload && value == 0) {
                     launch {
-                    super.networkVm.postUser()
-                    value++
-                } }
-            }
+                        super.networkVm.postUser()
+                        value++
+                    }
+                }
+        }
     }
 
     @Deprecated("Deprecated in Java")
@@ -132,7 +124,7 @@ class LoginActivity : BaseActivity() {
             1 -> {
                 if(grantResults.isNotEmpty() && grantResults[0]  == PackageManager.PERMISSION_GRANTED) {
 
-                }else Toast.makeText(this,"拒绝权限后添加日程将不可用",Toast.LENGTH_SHORT).show()
+                } else Toast.makeText(this,"拒绝权限后某些功能将不可用",Toast.LENGTH_SHORT).show()
             }
         }
     }

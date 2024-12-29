@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
+import com.hfut.schedule.ui.utils.LoadingUI
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -84,6 +85,6 @@ fun Mail(ifSaved : Boolean,vm : NetWorkViewModel) {
 @Composable
 fun MailUI(vm: NetWorkViewModel) {
     RowHorizal {
-        CircularProgressIndicator()
+        LoadingUI()
     }
 }

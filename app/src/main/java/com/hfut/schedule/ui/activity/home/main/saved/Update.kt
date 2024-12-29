@@ -29,7 +29,7 @@ suspend fun NetWorkUpdate(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UI
         //async { MySchedule() }
         //async { AddedItems() }
         //async { getNotifications() }
-        async { vm.getExamJXGLSTU(cookie!!) }
+        async { vm.getExamJXGLSTU(cookie!!) } //用于更新ifSaved
         if(!ifSaved) {
             async {
                 val studentIdObserver = Observer<Int> { result ->

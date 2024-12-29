@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
+import com.hfut.schedule.ui.utils.LoadingUI
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
@@ -222,7 +223,7 @@ fun LibraryItem(vm : NetWorkViewModel) {
                                 Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)  {
                                     //  Column() {
                                     Spacer(modifier = Modifier.height(5.dp))
-                                    CircularProgressIndicator()
+                                    LoadingUI()
                                     //  }
 
                                 }

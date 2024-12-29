@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
+import com.hfut.schedule.ui.utils.LoadingUI
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
@@ -174,7 +175,7 @@ fun SearchTeachersUI(vm : NetWorkViewModel) {
                             horizontalArrangement = Arrangement.Center
                         ) {
                             Spacer(modifier = Modifier.height(5.dp))
-                            CircularProgressIndicator()
+                            LoadingUI()
                         }
                     }
                     androidx.compose.animation.AnimatedVisibility(
@@ -224,7 +225,7 @@ fun ApiToTeacherSearch(input : String,vm: NetWorkViewModel) {
                 horizontalArrangement = Arrangement.Center
             ) {
                 Spacer(modifier = Modifier.height(5.dp))
-                CircularProgressIndicator()
+                LoadingUI()
             }
         }
         androidx.compose.animation.AnimatedVisibility(

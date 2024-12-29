@@ -22,6 +22,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import com.hfut.schedule.ui.utils.LoadingUI
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -130,7 +131,7 @@ fun ProgramPerformance(vm : NetWorkViewModel) {
             Column {
                 Spacer(modifier = Modifier.height(5.dp))
                 RowHorizal{
-                    CircularProgressIndicator()
+                    LoadingUI()
                 }
                 Spacer(modifier = Modifier.height(5.dp))
                 RowHorizal {
@@ -140,105 +141,104 @@ fun ProgramPerformance(vm : NetWorkViewModel) {
                 }
             }
         }
-    }
-
-    AnimatedVisibility(
-        visible = !loading,
-        enter = fadeIn(),
-        exit = fadeOut()
-    ) {
-        val dataList = getProgramPerformance(vm)?.moduleList
-        val outCourse = getProgramPerformance(vm)?.outerCourseList
-        LazyColumn {
-            dataList?.let {  it ->
-                items(it.size) { index->
-                    val item = it[index]
-                    val requireInfo = item.requireInfo
-                    val summary = item.completionSummary
-                    DividerText(text = item.nameZh + " 要求 ${requireInfo.courseNum} 门 ${requireInfo.credits} 学分")
-                    MyCard {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            ListItem(
-                                headlineContent = { Text(text = "${summary.passedCourseNum} 门 ${summary.passedCredits} 学分") },
-                                overlineContent = { Text(text = "已通过") },
-                                modifier = Modifier.weight(.5f)
-                            )
-                            ListItem(
-                                headlineContent = { Text(text = "${summary.failedCourseNum} 门 ${summary.failedCredits} 学分") },
-                                overlineContent = { Text(text = "未通过") },
-                                modifier = Modifier.weight(.5f)
-                            )
-                        }
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            ListItem(
-                                headlineContent = { Text(text = "${summary.takingCourseNum} 门 ${summary.takingCredits} 学分") },
-                                overlineContent = { Text(text = "本学期在修") },
-                                modifier = Modifier.weight(1f),
-                                trailingContent = {
-                                    Button(
-                                        onClick = {
-                                            moduleIndex = index
-                                            title = item.nameZh
-                                            showBottomSheet = true
-                                                  },
-                                    ) {
-                                        Text(text = "查看详情")
+        AnimatedVisibility(
+            visible = !loading,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            val dataList = getProgramPerformance(vm)?.moduleList
+            val outCourse = getProgramPerformance(vm)?.outerCourseList
+            LazyColumn {
+                dataList?.let {  it ->
+                    items(it.size) { index->
+                        val item = it[index]
+                        val requireInfo = item.requireInfo
+                        val summary = item.completionSummary
+                        DividerText(text = item.nameZh + " 要求 ${requireInfo.courseNum} 门 ${requireInfo.credits} 学分")
+                        MyCard {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                ListItem(
+                                    headlineContent = { Text(text = "${summary.passedCourseNum} 门 ${summary.passedCredits} 学分") },
+                                    overlineContent = { Text(text = "已通过") },
+                                    modifier = Modifier.weight(.5f)
+                                )
+                                ListItem(
+                                    headlineContent = { Text(text = "${summary.failedCourseNum} 门 ${summary.failedCredits} 学分") },
+                                    overlineContent = { Text(text = "未通过") },
+                                    modifier = Modifier.weight(.5f)
+                                )
+                            }
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                ListItem(
+                                    headlineContent = { Text(text = "${summary.takingCourseNum} 门 ${summary.takingCredits} 学分") },
+                                    overlineContent = { Text(text = "本学期在修") },
+                                    modifier = Modifier.weight(1f),
+                                    trailingContent = {
+                                        Button(
+                                            onClick = {
+                                                moduleIndex = index
+                                                title = item.nameZh
+                                                showBottomSheet = true
+                                            },
+                                        ) {
+                                            Text(text = "查看详情")
+                                        }
                                     }
-                                }
-                            )
+                                )
+                            }
                         }
                     }
                 }
-            }
 
-            if (outCourse != null) {
-                if(outCourse.isNotEmpty()) {
-                    val summary = getProgramPerformance(vm)?.outerCompletionSummary
-                    item { DividerText(text = "培养方案外课程 (包含转专业废弃课程)") }
-                    item {
-                        if(summary != null) {
-                            MyCard {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.Center
-                                ) {
-                                    ListItem(
-                                        headlineContent = { Text(text = "${summary.passedCourseNum} 门 ${summary.passedCredits} 学分") },
-                                        overlineContent = { Text(text = "已通过") },
-                                        modifier = Modifier.weight(.5f)
-                                    )
-                                    ListItem(
-                                        headlineContent = { Text(text = "${summary.failedCourseNum} 门 ${summary.failedCredits} 学分") },
-                                        overlineContent = { Text(text = "未通过") },
-                                        modifier = Modifier.weight(.5f)
-                                    )
-                                }
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.Center
-                                ) {
-                                    ListItem(
-                                        headlineContent = { Text(text = "${summary.takingCourseNum} 门 ${summary.takingCredits} 学分") },
-                                        overlineContent = { Text(text = "本学期在修") },
-                                        modifier = Modifier.weight(1f),
-                                        trailingContent = {
-                                            Button(
-                                                onClick = {
-                                                    moduleIndex = 999
-                                                    title = "培养方案外课程"
-                                                    showBottomSheet = true
-                                                },
-                                            ) {
-                                                Text(text = "查看详情")
+                if (outCourse != null) {
+                    if(outCourse.isNotEmpty()) {
+                        val summary = getProgramPerformance(vm)?.outerCompletionSummary
+                        item { DividerText(text = "培养方案外课程 (包含转专业废弃课程)") }
+                        item {
+                            if(summary != null) {
+                                MyCard {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.Center
+                                    ) {
+                                        ListItem(
+                                            headlineContent = { Text(text = "${summary.passedCourseNum} 门 ${summary.passedCredits} 学分") },
+                                            overlineContent = { Text(text = "已通过") },
+                                            modifier = Modifier.weight(.5f)
+                                        )
+                                        ListItem(
+                                            headlineContent = { Text(text = "${summary.failedCourseNum} 门 ${summary.failedCredits} 学分") },
+                                            overlineContent = { Text(text = "未通过") },
+                                            modifier = Modifier.weight(.5f)
+                                        )
+                                    }
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.Center
+                                    ) {
+                                        ListItem(
+                                            headlineContent = { Text(text = "${summary.takingCourseNum} 门 ${summary.takingCredits} 学分") },
+                                            overlineContent = { Text(text = "本学期在修") },
+                                            modifier = Modifier.weight(1f),
+                                            trailingContent = {
+                                                Button(
+                                                    onClick = {
+                                                        moduleIndex = 999
+                                                        title = "培养方案外课程"
+                                                        showBottomSheet = true
+                                                    },
+                                                ) {
+                                                    Text(text = "查看详情")
+                                                }
                                             }
-                                        }
-                                    )
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -247,6 +247,8 @@ fun ProgramPerformance(vm : NetWorkViewModel) {
             }
         }
     }
+
+
 }
 
 

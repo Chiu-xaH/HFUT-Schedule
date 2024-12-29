@@ -14,6 +14,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -30,6 +31,7 @@ import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import com.hfut.schedule.ui.utils.LoadingUI
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -270,43 +272,46 @@ fun DormitoryScoreUI(vm : NetWorkViewModel) {
 
                 if (clicked) {
                     space  = false
-                    AnimatedVisibility(
-                        visible = loading,
-                        enter = fadeIn(),
-                        exit = fadeOut()
-                    ) {
-                        Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)  {
-                            Spacer(modifier = Modifier.height(5.dp))
-                            CircularProgressIndicator()
-                            Spacer(modifier = Modifier.height(50.dp))
+                    Box {
+                        androidx.compose.animation.AnimatedVisibility(
+                            visible = loading,
+                            enter = fadeIn(),
+                            exit = fadeOut()
+                        ) {
+                            Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)  {
+                                Spacer(modifier = Modifier.height(5.dp))
+                                LoadingUI()
+                                Spacer(modifier = Modifier.height(50.dp))
+                            }
                         }
-                    }
 
 
-                    AnimatedVisibility(
-                        visible = !loading,
-                        enter = fadeIn(),
-                        exit = fadeOut()
-                    ){
-                        LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.padding(horizontal = 5.dp)) {
-                            getDormitoryScore(vm)?.let {
-                                items(it.size) { item ->
-                                    Card(
-                                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(horizontal = 5.dp, vertical = 5.dp),
-                                        shape = MaterialTheme.shapes.small
-                                    ) {
-                                        ListItem(
-                                            headlineContent = { getDormitoryScore(vm)?.get(item)?.let { it1 -> Text(text = it1.date) } },
-                                            supportingContent = { Text(text =  "${getDormitoryScore(vm)?.get(item)?.score} 分")}
-                                        )
+                        androidx.compose.animation.AnimatedVisibility(
+                            visible = !loading,
+                            enter = fadeIn(),
+                            exit = fadeOut()
+                        ){
+                            LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.padding(horizontal = 5.dp)) {
+                                getDormitoryScore(vm)?.let {
+                                    items(it.size) { item ->
+                                        Card(
+                                            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(horizontal = 5.dp, vertical = 5.dp),
+                                            shape = MaterialTheme.shapes.small
+                                        ) {
+                                            ListItem(
+                                                headlineContent = { getDormitoryScore(vm)?.get(item)?.let { it1 -> Text(text = it1.date) } },
+                                                supportingContent = { Text(text =  "${getDormitoryScore(vm)?.get(item)?.score} 分")}
+                                            )
+                                        }
                                     }
                                 }
                             }
                         }
                     }
+
                 }
             }
         }

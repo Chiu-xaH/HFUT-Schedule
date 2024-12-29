@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CircularProgressIndicator
+import com.hfut.schedule.ui.utils.LoadingUI
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
@@ -254,7 +255,7 @@ fun FriendsSetting(vm : NetWorkViewModel) {
                 horizontalArrangement = Arrangement.Center
             ) {
                 Spacer(modifier = Modifier.height(5.dp))
-                CircularProgressIndicator()
+                LoadingUI()
             }
         }
 

@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
+import com.hfut.schedule.ui.utils.LoadingUI
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -157,25 +158,28 @@ fun FailRateSearch(vm: NetWorkViewModel) {
 
 
     if(onclick){
-        AnimatedVisibility(
-            visible = loading,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
+        Box() {
+            AnimatedVisibility(
+                visible = loading,
+                enter = fadeIn(),
+                exit = fadeOut()
             ) {
-                Spacer(modifier = Modifier.height(5.dp))
-                CircularProgressIndicator()
-            }
-        }////加载动画居中，3s后消失
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Spacer(modifier = Modifier.height(5.dp))
+                    LoadingUI()
+                }
+            }////加载动画居中，3s后消失
 
-        AnimatedVisibility(
-            visible = !loading,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) { FailRateUI(vm) }
+            AnimatedVisibility(
+                visible = !loading,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) { FailRateUI(vm) }
+        }
+
     }
     Spacer(modifier = Modifier.height(30.dp))
 }
@@ -213,7 +217,7 @@ fun ApiToFailRate(input : String,vm: NetWorkViewModel) {
                 horizontalArrangement = Arrangement.Center
             ) {
                 Spacer(modifier = Modifier.height(5.dp))
-                CircularProgressIndicator()
+                LoadingUI()
             }
         }
         AnimatedVisibility(

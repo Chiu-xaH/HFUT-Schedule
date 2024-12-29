@@ -1,6 +1,7 @@
 package com.hfut.schedule.ui.activity.home.focus.funictions
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -63,7 +64,7 @@ import com.hfut.schedule.logic.beans.Community.TodayResponse
 import com.hfut.schedule.logic.beans.Community.TodayResult
 import com.hfut.schedule.logic.beans.Focus.AddFocus
 import com.hfut.schedule.logic.beans.Schedule
-import com.hfut.schedule.logic.utils.AddCalendar.AddCalendar
+import com.hfut.schedule.logic.utils.AddCalendar.addToCalendar
 import com.hfut.schedule.logic.utils.DateTimeManager
 import com.hfut.schedule.logic.utils.DateTimeManager.TimeState.*
 import com.hfut.schedule.logic.utils.Semseter.getSemseter
@@ -85,7 +86,7 @@ import com.hfut.schedule.ui.utils.ScheduleIcons
 import com.hfut.schedule.ui.utils.ScrollText
 
 @Composable
-fun MyScheuleItem(item : Int, MySchedule : MutableList<Schedule>,Future: Boolean ) {
+fun MyScheuleItem(item : Int, MySchedule : MutableList<Schedule>,Future: Boolean,activity : Activity ) {
 
     val MySchedules = MySchedule[item]
     if(prefs.getString("my","")?.contains("Schedule") == true) {
@@ -118,11 +119,11 @@ fun MyScheuleItem(item : Int, MySchedule : MutableList<Schedule>,Future: Boolean
 
         if(!Future) {
             if(nowTime in getStartTime .. getEndTime)
-                ScheduleItems(MySchedule = MySchedule, item = item, false)
+                ScheduleItems(MySchedule = MySchedule, item = item, false,activity)
         }
         else {
             if(nowTime < getStartTime)
-                ScheduleItems(MySchedule = MySchedule, item = item,true)
+                ScheduleItems(MySchedule = MySchedule, item = item,true,activity)
         }
     }
 }
@@ -130,7 +131,7 @@ fun MyScheuleItem(item : Int, MySchedule : MutableList<Schedule>,Future: Boolean
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun ScheduleItems(MySchedule: MutableList<Schedule>, item : Int,Future : Boolean) {
+fun ScheduleItems(MySchedule: MutableList<Schedule>, item : Int,Future : Boolean,activity : Activity) {
     val MySchedules = MySchedule[item]
     val time = MySchedules.time
     val info = MySchedules.info
@@ -155,7 +156,7 @@ fun ScheduleItems(MySchedule: MutableList<Schedule>, item : Int,Future : Boolean
                                 try {
                                     var startTime = MySchedules.startTime
                                     var endTime = MySchedules.endTime
-                                    AddCalendar(startTime,endTime, info, title,time)
+                                    addToCalendar(startTime,endTime, info, title,time,activity)
                                     MyToast("添加到系统日历成功")
                                 } catch (e : SecurityException) {
                                     MyToast("未授予权限")
@@ -185,7 +186,7 @@ fun ScheduleItems(MySchedule: MutableList<Schedule>, item : Int,Future : Boolean
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun WangkeItem(item : Int, MyWangKe: MutableList<Schedule>,Future: Boolean) {
+fun WangkeItem(item : Int, MyWangKe: MutableList<Schedule>,Future: Boolean,activity: Activity) {
     val MyWangKes = MyWangKe[item]
     val time = MyWangKes.time
     val info = MyWangKes.info
@@ -224,7 +225,6 @@ fun WangkeItem(item : Int, MyWangKe: MutableList<Schedule>,Future: Boolean) {
             if(Future) {
                 if(nowTime < getEndTime) {
                     MyCard {
-
                         ListItem(
                             headlineContent = {  Text(text = title) },
                             overlineContent = { Text(text = time) },
@@ -238,8 +238,8 @@ fun WangkeItem(item : Int, MyWangKe: MutableList<Schedule>,Future: Boolean) {
                             trailingContent = {
                                 FilledTonalIconButton(
                                     onClick = {
-                                        AddCalendar(startTime,endTime, info, title,time)
-                                        MyToast("添加到系统日历成功")
+                                        addToCalendar(startTime,endTime, info, title,time,activity)
+
                                     }
                                 ) {
                                     Icon( painterResource(R.drawable.add_task),
@@ -253,7 +253,6 @@ fun WangkeItem(item : Int, MyWangKe: MutableList<Schedule>,Future: Boolean) {
             } else {
                 if(nowTime == getEndTime) {
                     MyCard {
-
                         ListItem(
                             headlineContent = {  Text(text = title) },
                             overlineContent = { Text(text = time) },

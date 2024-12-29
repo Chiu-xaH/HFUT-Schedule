@@ -36,6 +36,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import com.hfut.schedule.ui.utils.LoadingUI
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -489,7 +490,7 @@ fun ShowerStatusUI(vm : GuaGuaViewModel) {
                 horizontalArrangement = Arrangement.Center
             ) {
                 Spacer(modifier = Modifier.height(5.dp))
-                CircularProgressIndicator()
+                LoadingUI()
             }
         }
 

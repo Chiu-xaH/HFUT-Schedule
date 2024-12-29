@@ -1,6 +1,13 @@
 package com.hfut.schedule.ui.activity.home.search.functions.totalCourse
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,6 +21,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -25,11 +33,13 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -39,12 +49,16 @@ import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.beans.Jxglstu.CourseSearchResponse
 import com.hfut.schedule.logic.beans.Jxglstu.lessonResponse
 import com.hfut.schedule.logic.beans.Jxglstu.lessons
+import com.hfut.schedule.logic.utils.DateTimeManager
+import com.hfut.schedule.logic.utils.DateTimeManager.TimeState.*
 import com.hfut.schedule.ui.activity.home.search.functions.failRate.permit
 import com.hfut.schedule.ui.activity.home.search.functions.failRate.ApiToFailRate
 import com.hfut.schedule.ui.activity.home.search.functions.teacherSearch.ApiToTeacherSearch
 import com.hfut.schedule.ui.utils.EmptyUI
+import com.hfut.schedule.ui.utils.LoadingUI
 import com.hfut.schedule.ui.utils.MyCard
 import com.hfut.schedule.ui.utils.MyToast
+import com.hfut.schedule.ui.utils.RotatingIcon
 import com.hfut.schedule.ui.utils.Round
 import com.hfut.schedule.ui.utils.ScrollText
 import com.hfut.schedule.ui.utils.schoolIcons
@@ -99,16 +113,49 @@ fun CourseTotalUI(json : String?,isSearch : Boolean,sortType: Boolean,vm : NetWo
         LazyColumn {
             item{ SemsterInfo(json) }
             items(list.size) { item ->
+                val weeksInfo = list[item].scheduleWeeksInfo
+                val startWeek = weeksInfo?.substringBefore("~")
+                val endWeek = weeksInfo?.substringAfter("~")?.substringBefore("周")
+
+                var state : DateTimeManager.TimeState? = null
+                if(startWeek != null && endWeek != null && !isSearch) {
+                    val week = DateTimeManager.weeksBetween
+                    if(week in startWeek.toInt()..endWeek.toInt()) {
+                        state = DateTimeManager.TimeState.ONGOING
+                    } else if(week < startWeek.toInt()) {
+                        state = DateTimeManager.TimeState.NOT_STARTED
+                    } else if(week > endWeek.toInt()) {
+                        state = DateTimeManager.TimeState.ENDED
+                    }
+                }
+                val infiniteTransition = rememberInfiniteTransition(label = "")
+                val alpha by infiniteTransition.animateFloat(
+                    initialValue = 1f,
+                    targetValue = .5f,
+                    animationSpec = infiniteRepeatable(
+                        animation = tween(500, easing = LinearEasing),
+                        repeatMode = RepeatMode.Reverse
+                    ), label = ""
+                )
+
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                     Column() {
                         MyCard {
-
                             ListItem(
                                 headlineContent = {  Text(list[item].course.nameZh) },
-                                overlineContent = { ScrollText(text = "学分 ${list[item].course.credits}" + if(list[item].scheduleWeeksInfo != null) " | ${list[item].scheduleWeeksInfo}" else "") },
-                                trailingContent = { Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "")},
+                                overlineContent = { ScrollText(text = "学分 ${list[item].course.credits}" + if(list[item].scheduleWeeksInfo != null) " | $weeksInfo" else "") },
+                                trailingContent = {
+                                    when(state) {
+                                        ONGOING -> Text("开课中", modifier = Modifier.alpha(alpha))
+                                        NOT_STARTED -> "未开课"
+                                        ENDED -> Icon(Icons.Filled.Check,null)
+                                        null -> Icon(Icons.Filled.ArrowForward,null)
+                                    }
+                                },
                                 //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
-                                leadingContent = { list[item].openDepartment.nameZh?.let { schoolIcons(name = it) } },
+                                leadingContent = {
+                                    list[item].openDepartment.nameZh.let { schoolIcons(name = it) }
+                                                 },
                                 modifier = Modifier.clickable {
                                     showBottomSheet = true
                                     numItem = item
@@ -123,7 +170,6 @@ fun CourseTotalUI(json : String?,isSearch : Boolean,sortType: Boolean,vm : NetWo
         }
     } else { EmptyUI() }
 }
-
 
 
 @OptIn(ExperimentalMaterial3Api::class)

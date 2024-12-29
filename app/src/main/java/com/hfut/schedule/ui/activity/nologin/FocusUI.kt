@@ -1,6 +1,7 @@
 package com.hfut.schedule.ui.activity.nologin
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -30,6 +31,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.LoginViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
@@ -42,9 +44,9 @@ import com.hfut.schedule.ui.activity.home.focus.funictions.MyScheuleItem
 import com.hfut.schedule.ui.activity.home.focus.funictions.MyWangKe
 import com.hfut.schedule.ui.activity.home.focus.funictions.TimeStampItem
 import com.hfut.schedule.ui.activity.home.focus.funictions.WangkeItem
-import com.hfut.schedule.ui.activity.home.focus.getResult
-import com.hfut.schedule.ui.activity.home.focus.newScheduleItems
-import com.hfut.schedule.ui.activity.home.focus.newWangkeItem
+//import com.hfut.schedule.ui.activity.home.focus.getResult
+//import com.hfut.schedule.ui.activity.home.focus.newScheduleItems
+//import com.hfut.schedule.ui.activity.home.focus.newWangkeItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -65,8 +67,6 @@ fun TodayScreenNoLogin(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding
     CoroutineScope(Job()).launch{ async { NetWorkUpdateNoLogin(vm2) } }
 //Today操作区///////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
     //刷新
     var refreshing by remember { mutableStateOf(false) }
     // 用协程模拟一个耗时加载
@@ -84,8 +84,10 @@ fun TodayScreenNoLogin(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding
     })
 
 
-    val switch_server = false
+//    val switch_server = false
 
+    val context = LocalContext.current
+    val activity = context as Activity
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -95,14 +97,6 @@ fun TodayScreenNoLogin(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding
     Column(modifier = Modifier
         .fillMaxSize()
     ){
-        // val paperState = rememberPagerState { TAB_LEFT }
-        //var state by remember { mutableStateOf(TAB_LEFT) }
-
-
-        //    val pagerState = rememberPagerState(pageCount = { 2 })
-        //  val titles = listOf("重要安排","其他事项")
-
-        //  CustomTabRow(pagerState, titles, blur)
 
         Box(modifier = Modifier
             .fillMaxHeight()
@@ -126,38 +120,19 @@ fun TodayScreenNoLogin(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding
                         item { Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding())) }
                         when(page) {
                             TAB_LEFT -> {
+                                    items(MySchedule().size) { item -> MyScheuleItem(item = item, MySchedule = MySchedule(),false,activity) }
 
-
-                                //日程
-                                //     if (switch_api){
-                                if(!switch_server)
-                                    items(MySchedule().size) { item -> MyScheuleItem(item = item, MySchedule = MySchedule(),false) }
-                                else items(getResult(true).size) {item -> newScheduleItems(MySchedule = getResult(true), item, false)}
-                                //     }
-                                //网课
-                                if(!switch_server)
-                                    items(MyWangKe().size) { item -> WangkeItem(item = item, MyWangKe = MyWangKe(),false) }
-                                else items(getResult(false).size) {item -> newWangkeItem(item, MyWangKe = getResult(false), Future = false)  }
+                                    items(MyWangKe().size) { item -> WangkeItem(item = item, MyWangKe = MyWangKe(),false,activity) }
                             }
                             TAB_RIGHT -> {
-                                // if (switch_api) {
-                                if(!switch_server) {
                                     //日程
-                                    items(MySchedule().size) { item -> MyScheuleItem(item = item, MySchedule = MySchedule(),true)  }
+                                    items(MySchedule().size) { item -> MyScheuleItem(item = item, MySchedule = MySchedule(),true,activity)  }
                                     //网课
-                                    items(MyWangKe().size) { item -> WangkeItem(item = item, MyWangKe = MyWangKe(),true) }
-                                } else {
-                                    //日程
-                                    items(getResult(true).size) { item -> newScheduleItems(getResult(true), item,false)  }
-                                    //网课
-                                    items(getResult(false).size) { item -> newWangkeItem(item = item, MyWangKe = getResult(false),true) }
-                                }
-                                //  }
+                                    items(MyWangKe().size) { item -> WangkeItem(item = item, MyWangKe = MyWangKe(),true,activity) }
 
+                                    items(AddedItems().size){ item -> AddItem(item = item, AddedItems = AddedItems()) }
 
-                                items(AddedItems().size){ item -> AddItem(item = item, AddedItems = AddedItems()) }
-
-                                item { TimeStampItem() }
+                                    item { TimeStampItem() }
                             }
                         }
                         item { Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding())) }

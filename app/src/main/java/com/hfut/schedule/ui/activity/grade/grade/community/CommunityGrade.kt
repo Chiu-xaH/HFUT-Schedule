@@ -22,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.CircularProgressIndicator
+import com.hfut.schedule.ui.utils.LoadingUI
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -259,7 +260,7 @@ fun GradeItemUI(vm :NetWorkViewModel, innerPadding : PaddingValues) {
                     Column {
                         Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
                         Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)  {
-                            CircularProgressIndicator()
+                            LoadingUI()
                         }
                     }
                 }

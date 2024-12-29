@@ -1,7 +1,7 @@
 package com.hfut.schedule.ui.activity.home.search.functions.exam
 
 import android.annotation.SuppressLint
-import android.util.Log
+import android.app.Activity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,7 +14,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.BadgedBox
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Badge
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
@@ -34,8 +33,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
@@ -48,6 +49,7 @@ import com.hfut.schedule.ui.utils.EmptyUI
 import com.hfut.schedule.ui.utils.MyCard
 import com.hfut.schedule.ui.utils.MyToast
 import com.hfut.schedule.ui.utils.Round
+import com.hfut.schedule.ui.utils.RowHorizal
 
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -185,6 +187,8 @@ fun JxglstuExamUI(item : Map<String,String>,status : Boolean) {
     val examDateNum = examDate?.substringBefore(" ")?.replace("-","")?.toLongOrNull() ?: 0
 
 
+    val context = LocalContext.current
+    val activity = context as Activity
 //    var date = DateTimeManager.Date_MM_dd
 //    val todaydate = (date?.substring(0, 2) ) + date?.substring(3, 5)
 //    val get = item["日期时间"]
@@ -259,41 +263,48 @@ fun JxglstuExamUI(item : Map<String,String>,status : Boolean) {
                                     if("$month-$day" == DateTimeManager.Date_MM_dd) {
                                         Text("今日")
                                     } else {
-                                        FilledTonalIconButton(
-                                            colors = IconButtonDefaults.filledTonalIconButtonColors(MaterialTheme.colorScheme.error.copy(alpha = 0.1f)),
-                                            onClick = {
-                                                try {
-                                                    val startDateList = year?.let { month?.let { it1 ->
-                                                        day?.let { it2 ->
-                                                            startTimeHour?.let { it3 ->
-                                                                startTimeMinute?.let { it4 ->
-                                                                    listOf(it.toInt(),
-                                                                        it1.toInt(), it2.toInt(), it3.toInt(), it4.toInt())
+                                        Column(horizontalAlignment = Alignment.CenterHorizontally
+                                        ) {
+                                            FilledTonalIconButton(
+                                                colors = IconButtonDefaults.filledTonalIconButtonColors(MaterialTheme.colorScheme.error.copy(alpha = 0.1f)),
+                                                onClick = {
+                                                    try {
+                                                        val startDateList = year?.let { month?.let { it1 ->
+                                                            day?.let { it2 ->
+                                                                startTimeHour?.let { it3 ->
+                                                                    startTimeMinute?.let { it4 ->
+                                                                        listOf(it.toInt(),
+                                                                            it1.toInt(), it2.toInt(), it3.toInt(), it4.toInt())
+                                                                    }
                                                                 }
                                                             }
-                                                        }
-                                                    } }
-                                                    val endDateList = year?.let { month?.let { it1 ->
-                                                        day?.let { it2 ->
-                                                            endTimeHour?.let { it3 ->
-                                                                endTimeMinute?.let { it4 ->
-                                                                    listOf(it.toInt(),
-                                                                        it1.toInt(), it2.toInt(), it3.toInt(), it4.toInt())
+                                                        } }
+                                                        val endDateList = year?.let { month?.let { it1 ->
+                                                            day?.let { it2 ->
+                                                                endTimeHour?.let { it3 ->
+                                                                    endTimeMinute?.let { it4 ->
+                                                                        listOf(it.toInt(),
+                                                                            it1.toInt(), it2.toInt(), it3.toInt(), it4.toInt())
+                                                                    }
                                                                 }
                                                             }
-                                                        }
-                                                    } }
-                                                    course?.let { place?.let { it1 -> startDateList?.let { it2 -> endDateList?.let { it3 -> AddCalendar.AddCalendar(it2, it3, it1, it,"考试") } } } }
-                                                    MyToast("添加到系统日历成功")
-                                                } catch (e : Exception) {
-                                                    MyToast("未授予权限")
-                                                    e.printStackTrace()
-                                                }
-                                            }) {
-                                            Icon(painter = painterResource(id = R.drawable.add_task), contentDescription = "")
+                                                        } }
+                                                        course?.let { place?.let { it1 -> startDateList?.let { it2 -> endDateList?.let { it3 -> AddCalendar.addToCalendar(it2, it3, it1, it,"考试", activity) } } } }
+//                                                    MyToast("添加到系统日历成功")
+                                                    } catch (e : Exception) {
+//                                                    MyToast("未授予权限")
+                                                        e.printStackTrace()
+                                                    }
+                                                }) {
+                                                Icon(painter = painterResource(id = R.drawable.add_task), contentDescription = "")
+                                            }
+                                            time?.substringBefore(" ")?.let {
+//                                                Row(horizontalArrangement = Arrangement.Center) {
+                                                    Text("${DateTimeManager.daysBetween(it)}天")
+//                                                }
+                                            }
                                         }
                                     }
-
                                 },
                                 colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
                             )

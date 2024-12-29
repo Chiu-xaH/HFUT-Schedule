@@ -6,6 +6,7 @@ import com.hfut.schedule.logic.beans.Community.GradeResponse
 import com.hfut.schedule.logic.beans.Community.GradeResponseJXGLSTU
 import com.hfut.schedule.logic.beans.Community.scoreInfoDTOList
 import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.viewmodel.NetWorkViewModel
 import org.jsoup.Jsoup
 
 fun getGrade() :  MutableList<scoreInfoDTOList> {
@@ -26,24 +27,28 @@ fun getGrade() :  MutableList<scoreInfoDTOList> {
     return Addlist
 }
 
-fun getGradeJXGLSTU() :  MutableList<GradeResponseJXGLSTU> {
-    val html = SharePrefs.prefs.getString("grade", "")
-    val doc = Jsoup.parse(html)
-    val rows = doc.select("tr")
-    val list = mutableListOf<GradeResponseJXGLSTU>()
-    // Log.d("html",rows.toString())
-    for(row in rows) {
+fun getGradeJXGLSTU(vm : NetWorkViewModel) :  MutableList<GradeResponseJXGLSTU> {
+    try {
+        val html = vm.jxglstuGradeData.value
+        val doc = Jsoup.parse(html)
+        val rows = doc.select("tr")
+        val list = mutableListOf<GradeResponseJXGLSTU>()
+        // Log.d("html",rows.toString())
+        for(row in rows) {
 
-        val tds = row.select("td") // 选择tr标签下的所有td标签
-        if(!tds.isEmpty()) {
-            val titles = tds[0].text()
-            val scores =tds[3].text()
-            val gpas = tds[4].text()
-            val totalgrade = tds[5].text()
-            val grades = tds[6].text()
-            val Grade = GradeResponseJXGLSTU(titles,scores,gpas,grades,totalgrade)
-            list.add(Grade)
+            val tds = row.select("td") // 选择tr标签下的所有td标签
+            if(!tds.isEmpty()) {
+                val titles = tds[0].text()
+                val scores =tds[3].text()
+                val gpas = tds[4].text()
+                val totalgrade = tds[5].text()
+                val grades = tds[6].text()
+                val Grade = GradeResponseJXGLSTU(titles,scores,gpas,grades,totalgrade)
+                list.add(Grade)
+            }
         }
+        return list
+    } catch (e:Exception) {
+       return mutableListOf()
     }
-    return list
 }

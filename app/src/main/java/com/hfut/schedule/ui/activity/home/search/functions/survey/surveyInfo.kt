@@ -16,11 +16,15 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import com.hfut.schedule.ui.utils.LoadingUI
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -51,8 +55,12 @@ import com.hfut.schedule.logic.beans.Jxglstu.blankQuestionAnswer
 import com.hfut.schedule.logic.beans.Jxglstu.radioQuestionAnswer
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.ui.utils.DevelopingUI
 import com.hfut.schedule.ui.utils.MyCard
 import com.hfut.schedule.ui.utils.MyToast
+import com.hfut.schedule.ui.utils.RowHorizal
+import com.hfut.schedule.ui.utils.statusUI
+import com.hfut.schedule.ui.utils.statusUI2
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -62,7 +70,7 @@ import kotlinx.coroutines.launch
 fun surveyInfo(id : Int,vm: NetWorkViewModel) {
     var loading by remember { mutableStateOf(true) }
 
-    val cookie = SharePrefs.prefs.getString("redirect", "")
+    val cookie = prefs.getString("redirect", "")
 
 
     CoroutineScope(Job()).launch{
@@ -81,29 +89,31 @@ fun surveyInfo(id : Int,vm: NetWorkViewModel) {
         }
     }
 
-
-    AnimatedVisibility(
-        visible = loading,
-        enter = fadeIn(),
-        exit = fadeOut()
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
+    Box() {
+        AnimatedVisibility(
+            visible = loading,
+            enter = fadeIn(),
+            exit = fadeOut()
         ) {
-            Spacer(modifier = Modifier.height(5.dp))
-            CircularProgressIndicator()
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Spacer(modifier = Modifier.height(5.dp))
+                LoadingUI()
+            }
+        }////加载动画居中，3s后消失
+
+
+        AnimatedVisibility(
+            visible = !loading,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            surveyList(vm)
         }
-    }////加载动画居中，3s后消失
-
-
-    AnimatedVisibility(
-        visible = !loading,
-        enter = fadeIn(),
-        exit = fadeOut()
-    ) {
-        surveyList(vm)
     }
+
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -117,129 +127,147 @@ fun surveyList(vm : NetWorkViewModel) {
 
    // val scrollstate = rememberLazyListState()
    // val shouldShowAddButton by remember { derivedStateOf { scrollstate.firstVisibleItemScrollOffset == 0 } }
-    
-    fun postResultNormal(vm : NetWorkViewModel) : JsonObject {
-        val surveyAssoc = getSurveyAssoc(vm)
-        val lessonSurveyTaskAssoc = prefs.getInt("teacherID", 0)
-        val postSurvey = PostSurvey(surveyAssoc, lessonSurveyTaskAssoc, choiceNewList, inputNewList)
-        return Gson().toJsonTree(postSurvey).asJsonObject
-    }
-    Box() {
-        LazyColumn() {
-            items(inputList.size) {item ->
-                Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 1.75.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 15.dp, vertical = 5.dp),
-                    shape = MaterialTheme.shapes.medium,
-                ) {
-                    inputNewList.add(blankQuestionAnswer(inputList[item].id,input))
-                    ListItem(
-                        headlineContent = { Text(text = inputList[item].title) },
-                        leadingContent = { Icon(painterResource(R.drawable.article), contentDescription = "Localized description",) },
-                        supportingContent = {
-                            //输入框
-                            TextField(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .padding(horizontal = 15.dp),
-                                value = input,
-                                onValueChange = {
-                                    input = it
-                                    inputNewList.add(blankQuestionAnswer(inputList[item].id,input))
-                                },
-                                label = { Text("输入内容" ) },
-                                singleLine = true,
-                                shape = MaterialTheme.shapes.medium,
-                                colors = TextFieldDefaults.textFieldColors(
-                                    focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                                    unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-                                ),
-                                // leadingIcon = { Icon( painterResource(R.drawable.search), contentDescription = "Localized description") },
-                            )
-                        },
-                        modifier = Modifier.clickable {
 
-                        },
-                    )
-                }
-            }
-            items(choiceList.size) {item ->
-                MyCard {
-                    ListItem(
-                        headlineContent = { Text(text = choiceList[item].title) },
-                        leadingContent = { Icon(painterResource(R.drawable.article), contentDescription = "Localized description",) },
-                        supportingContent = {
-                            val list = getOption(choiceList[item])
-                            val radioOptions = list
-                            val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
-
-                            Column {
-                                for(i in list.indices) {
-                                   // choiceNewList.add(radioQuestionAnswer(choiceList[item].id,selectedOption.name))
-                                    Row(
-                                        Modifier
-                                            .fillMaxWidth()
-                                            .height(56.dp)
-                                            // .weight(.1f)
-                                            .selectable(
-                                                selected = (list[i] == selectedOption),
-                                                onClick = {
-                                                    onOptionSelected(list[i])
-                                                    choiceNewList.add(radioQuestionAnswer(choiceList[item].id,selectedOption.name))
-                                                          },
-                                                role = Role.RadioButton
-                                            )
-                                            .padding(horizontal = 15.dp),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        RadioButton(
-                                            selected = (list[i] == selectedOption),
-                                            onClick = null
-                                        )
-                                        Text(
-                                            text = list[i].score.toString() + "分-" + list[i].name,
-                                            style = MaterialTheme.typography.bodyLarge,
-                                            modifier = Modifier.padding(start = 10.dp)
-                                        )
-                                    }
-                                }
-                            }
-                        },
-                        modifier = Modifier.clickable {
-
-                        },
-                    )
-                }
-            }
+    Column {
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+            Icon(
+                painterResource(R.drawable.arrow_upward),
+                contentDescription = "",
+                Modifier.size(100.dp),
+                tint = MaterialTheme.colorScheme.primary
+            )
         }
-    /*    AnimatedVisibility(
-            visible = shouldShowAddButton,
-            enter = scaleIn() ,
-            exit = scaleOut(),
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                // .padding(innerPaddings)
-                .padding(horizontal = 15.dp, vertical = 15.dp)
-        ) {
-            if (shouldShowAddButton) {  */
-                FloatingActionButton(
-                    onClick = { Log.d("c",postResultNormal(vm).toString()) },
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        // .padding(innerPaddings)
-                        .padding(horizontal = 15.dp, vertical = 15.dp)
-                ) { Icon(painterResource(id = R.drawable.arrow_upward), "Add Button") }
-         //   }
-     //   }
+        RowHorizal {
+            Text("请选择右上角发送", color = MaterialTheme.colorScheme.primary)
+        }
+        RowHorizal {
+            Text( "好评(100分 \"好\") / 差评(0分 \"好\")", color = MaterialTheme.colorScheme.primary)
+        }
     }
+
+    //下面是评教题目，不给用户开放了，直接显示两个大按钮，好评或差评
+//    fun postResultNormal(vm : NetWorkViewModel) : JsonObject {
+//        val surveyAssoc = getSurveyAssoc(vm)
+//        val lessonSurveyTaskAssoc = prefs.getInt("teacherID", 0)
+//        val postSurvey = PostSurvey(surveyAssoc, lessonSurveyTaskAssoc, choiceNewList, inputNewList)
+//        return Gson().toJsonTree(postSurvey).asJsonObject
+//    }
+//    Box() {
+//        LazyColumn() {
+//            items(inputList.size) {item ->
+//                Card(
+//                    elevation = CardDefaults.cardElevation(defaultElevation = 1.75.dp),
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(horizontal = 15.dp, vertical = 5.dp),
+//                    shape = MaterialTheme.shapes.medium,
+//                ) {
+//                    inputNewList.add(blankQuestionAnswer(inputList[item].id,input))
+//                    ListItem(
+//                        headlineContent = { Text(text = inputList[item].title) },
+//                        leadingContent = { Icon(painterResource(R.drawable.article), contentDescription = "Localized description",) },
+//                        supportingContent = {
+//                            //输入框
+//                            TextField(
+//                                modifier = Modifier
+//                                    .weight(1f)
+//                                    .padding(horizontal = 15.dp),
+//                                value = input,
+//                                onValueChange = {
+//                                    input = it
+//                                    inputNewList.add(blankQuestionAnswer(inputList[item].id,input))
+//                                },
+//                                label = { Text("输入内容" ) },
+//                                singleLine = true,
+//                                shape = MaterialTheme.shapes.medium,
+//                                colors = TextFieldDefaults.textFieldColors(
+//                                    focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
+//                                    unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
+//                                ),
+//                                // leadingIcon = { Icon( painterResource(R.drawable.search), contentDescription = "Localized description") },
+//                            )
+//                        },
+//                        modifier = Modifier.clickable {
+//
+//                        },
+//                    )
+//                }
+//            }
+//            items(choiceList.size) {item ->
+//                MyCard {
+//                    ListItem(
+//                        headlineContent = { Text(text = choiceList[item].title) },
+//                        leadingContent = { Icon(painterResource(R.drawable.article), contentDescription = "Localized description",) },
+//                        supportingContent = {
+//                            val list = getOption(choiceList[item])
+//                            val radioOptions = list
+//                            val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
+//
+//                            Column {
+//                                for(i in list.indices) {
+//                                   // choiceNewList.add(radioQuestionAnswer(choiceList[item].id,selectedOption.name))
+//                                    Row(
+//                                        Modifier
+//                                            .fillMaxWidth()
+//                                            .height(56.dp)
+//                                            // .weight(.1f)
+//                                            .selectable(
+//                                                selected = (list[i] == selectedOption),
+//                                                onClick = {
+//                                                    onOptionSelected(list[i])
+//                                                    choiceNewList.add(radioQuestionAnswer(choiceList[item].id,selectedOption.name))
+//                                                          },
+//                                                role = Role.RadioButton
+//                                            )
+//                                            .padding(horizontal = 15.dp),
+//                                        verticalAlignment = Alignment.CenterVertically
+//                                    ) {
+//                                        RadioButton(
+//                                            selected = (list[i] == selectedOption),
+//                                            onClick = null
+//                                        )
+//                                        Text(
+//                                            text = list[i].score.toString() + "分-" + list[i].name,
+//                                            style = MaterialTheme.typography.bodyLarge,
+//                                            modifier = Modifier.padding(start = 10.dp)
+//                                        )
+//                                    }
+//                                }
+//                            }
+//                        },
+//                        modifier = Modifier.clickable {
+//
+//                        },
+//                    )
+//                }
+//            }
+//        }
+//    /*    AnimatedVisibility(
+//            visible = shouldShowAddButton,
+//            enter = scaleIn() ,
+//            exit = scaleOut(),
+//            modifier = Modifier
+//                .align(Alignment.BottomEnd)
+//                // .padding(innerPaddings)
+//                .padding(horizontal = 15.dp, vertical = 15.dp)
+//        ) {
+//            if (shouldShowAddButton) {  */
+//                FloatingActionButton(
+//                    onClick = { Log.d("c",postResultNormal(vm).toString()) },
+//                    modifier = Modifier
+//                        .align(Alignment.BottomEnd)
+//                        // .padding(innerPaddings)
+//                        .padding(horizontal = 15.dp, vertical = 15.dp)
+//                ) { Icon(painterResource(id = R.drawable.arrow_upward), "Add Button") }
+//         //   }
+//     //   }
+//    }
 }
 
 @SuppressLint("SuspiciousIndentation")
 fun selectMode(vm : NetWorkViewModel, mode : PostMode) : Boolean {
 
-    val cookie = SharePrefs.prefs.getString("redirect", "")
+    val cookie = prefs.getString("redirect", "")
     val token = prefs.getString("SurveyCookie","")
     return when(mode) {
         PostMode.NORMAL -> {

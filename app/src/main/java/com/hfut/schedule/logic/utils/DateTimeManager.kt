@@ -113,4 +113,10 @@ object DateTimeManager {
         }
     }
 
+    fun daysBetween(dateString: String): Long {
+        val inputDate = LocalDate.parse(dateString, formatter)
+        // 计算两个日期之间的天数
+        return ChronoUnit.DAYS.between(today, inputDate)
+    }
+
 }

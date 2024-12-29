@@ -24,6 +24,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.CircularProgressIndicator
+import com.hfut.schedule.ui.utils.LoadingUI
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FilledTonalIconButton
@@ -114,7 +115,7 @@ fun SurveyUI(vm : NetWorkViewModel) {
                 horizontalArrangement = Arrangement.Center
             ) {
                 Spacer(modifier = Modifier.height(5.dp))
-                CircularProgressIndicator()
+                LoadingUI()
             }
         }
 
@@ -221,7 +222,7 @@ fun teacherList(vm : NetWorkViewModel, refresh : (Boolean) -> Unit) {
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        title = { Text("开始教评") },
+                        title = { Text("发送教评") },
                         actions = {
                             Row(modifier = Modifier.padding(horizontal = 15.dp)) {
                                 FilledTonalIconButton(

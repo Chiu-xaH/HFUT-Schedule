@@ -33,7 +33,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import com.hfut.schedule.ui.utils.LoadingUI
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
@@ -76,6 +78,8 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.saveInt
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.calendar.communtiy.CourseDetailApi
+import com.hfut.schedule.ui.activity.home.calendar.examToCalendar
+import com.hfut.schedule.ui.activity.home.calendar.getScheduleDate
 import com.hfut.schedule.ui.activity.home.calendar.next.parseCourseName
 import com.hfut.schedule.ui.activity.home.main.saved.isNextOpen
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.getTotalCourse
@@ -967,6 +971,8 @@ fun CalendarScreen(showAll : Boolean,
     //var today by rememberSaveable { mutableStateOf(LocalDate.now()) }
     //val mondayOfCurrentWeek = today.minusDays(today.dayOfWeek.value - 1L)
 
+    val dateList  = getScheduleDate(showAll,today)
+    val examList  = examToCalendar()
 
         Column(
             modifier = Modifier
@@ -982,7 +988,7 @@ fun CalendarScreen(showAll : Boolean,
                 exit = fadeOut()
             ) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Column() { CircularProgressIndicator() }
+                    Column() { LoadingUI() }
                 }
             }//加载动画居中，3s后消失
 
@@ -1006,8 +1012,10 @@ fun CalendarScreen(showAll : Boolean,
                         ) {
                             items(if(showAll)7 else 5) { Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding())) }
                             items(if(showAll)42 else 30) { cell ->
+                                var texts = if(showAll)tableall[cell] else table[cell]
                                 Card(
                                     shape = MaterialTheme.shapes.extraSmall,
+                                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
                                     modifier = Modifier
                                         .height(125.dp)
                                         .padding(if (showAll) 1.dp else 2.dp)
@@ -1023,13 +1031,37 @@ fun CalendarScreen(showAll : Boolean,
                                             }
                                         }
                                 ) {
+                                    //存在待考时
+                                    if(examList.isNotEmpty()){
+                                        val numa = if(showAll) 7 else 5
+                                        val i = cell % numa
+                                        val j = cell / numa
+                                        val date = dateList[i]
+                                        examList.forEach {
+                                            if(date == it.day) {
+                                                val hour = it.startTime?.substringBefore(":")?.toIntOrNull() ?: 99
+
+                                                if(hour in 7..9 && j == 0) {
+                                                    texts = it.startTime + "\n" + it.course + "\n" + it.place
+                                                } else if(hour in 10..12 && j == 1) {
+                                                    texts = it.startTime + "\n" + it.course + "\n" + it.place
+                                                } else if(hour in 14..15  && j == 2) {
+                                                    texts = it.startTime + "\n" + it.course + "\n" + it.place
+                                                } else if(hour in 16..17  && j == 3) {
+                                                    texts = it.startTime + "\n" + it.course + "\n" + it.place
+                                                } else if(hour >= 18  && j == 4) {
+                                                    texts = it.startTime + "\n" + it.course + "\n" + it.place
+                                                }
+                                            }
+                                        }
+                                    }
                                     Column(
                                         modifier = Modifier
                                             .fillMaxSize()
                                             .verticalScroll(rememberScrollState())
                                         //.padding(8.dp)
                                     ) {
-                                        Text(text = if(showAll)tableall[cell] else table[cell],fontSize = if(showAll)12.sp else 14.sp, textAlign = TextAlign.Center)
+                                        Text(text = texts,fontSize = if(showAll)12.sp else 14.sp, textAlign = TextAlign.Center)
                                     }
                                 }
                             }

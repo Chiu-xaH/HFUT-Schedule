@@ -9,7 +9,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class GradeActivity : BaseActivity() {
     @Composable
     override fun UI() {
-        GradeUI(intent.getBooleanExtra("saved",true),super.networkVm)
+        GradeUI(intent.getBooleanExtra("saved",true),super.networkVm,intent.getBooleanExtra("webVpn",false))
     }
 }
 

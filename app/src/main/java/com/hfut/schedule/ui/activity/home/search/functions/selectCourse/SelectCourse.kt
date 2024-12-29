@@ -29,6 +29,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.CircularProgressIndicator
+import com.hfut.schedule.ui.utils.LoadingUI
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
@@ -235,7 +236,7 @@ fun selectCourseListLoading(vm : NetWorkViewModel) {
             horizontalArrangement = Arrangement.Center
         ) {
             Spacer(modifier = Modifier.height(5.dp))
-            CircularProgressIndicator()
+            LoadingUI()
         }
     }
 
@@ -427,7 +428,7 @@ fun selectCourseInfoLoad(courseId : Int, vm: NetWorkViewModel) {
             horizontalArrangement = Arrangement.Center
         ) {
             Spacer(modifier = Modifier.height(5.dp))
-            CircularProgressIndicator()
+            LoadingUI()
         }
     }
 
@@ -661,7 +662,7 @@ fun selectCourseResultLoad(vm : NetWorkViewModel, courseId : Int, lessonId : Int
             horizontalArrangement = Arrangement.Center
         ) {
             Spacer(modifier = Modifier.height(5.dp))
-            CircularProgressIndicator()
+            LoadingUI()
         }
     }
 
@@ -767,7 +768,7 @@ fun haveSelectedCourseLoad(vm: NetWorkViewModel, courseId: Int) {
             horizontalArrangement = Arrangement.Center
         ) {
             Spacer(modifier = Modifier.height(5.dp))
-            CircularProgressIndicator()
+            LoadingUI()
         }
     }
 

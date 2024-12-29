@@ -3,6 +3,9 @@
 
     <style name="Theme.肥工课程表" parent="android:Theme.Material.Light.NoActionBar" />
 
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!-- 添加其他样式配置 -->
+    </style>
     <!-- 启动主题(低版本使用)，高版本用的是 -v31 -->
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">
         <item name="windowSplashScreenAnimatedIcon">@drawable/open_screen</item>

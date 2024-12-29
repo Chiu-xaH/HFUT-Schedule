@@ -45,7 +45,7 @@ fun VersionInfoCard() {
             ListItem(headlineContent = { Text(text = "聚在工大 " + APPVersion.getVersionName(), fontSize = 28.sp) })
             Row {
                 ListItem(
-                    overlineContent = { Text(text = "2024-12-25") },
+                    overlineContent = { Text(text = "2024-12-29") },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.sdk), contentDescription = "") },
                     headlineContent = { ScrollText(text = "第${APPVersion.getVersionCode()}次更新") },
                     modifier = Modifier.weight(.5f)
@@ -68,9 +68,17 @@ fun VersionInfoCard() {
 fun VersionInfo() {
     VersionInfoCard()
     DividerText(text = "新特性")
-    UpdateItems("修复 跨年后的考试被误判断为过去事件的Bug",null, UpdateType.FIX)
-    UpdateItems("优化 考试结束后当天不再显示卡片",null, UpdateType.FIX)
-    UpdateItems("优化 潜在崩溃",null, UpdateType.FIX)
+    UpdateItems("新增 课程表方格布局可显示待考考试","期末周的课表也不再空空的了", UpdateType.ADD)
+    UpdateItems("新增 聚焦首页考试天数倒计时",null, UpdateType.ADD)
+    UpdateItems("新增 成绩检索",null, UpdateType.ADD)
+    UpdateItems("重构 原圆圈加载动画修改为新的几何图动画",null, UpdateType.RENEW)
+    UpdateItems("优化 成绩雷达图的显示及动画",null, UpdateType.OPTIMIZE)
+    UpdateItems("优化 成绩的刷新机制",null, UpdateType.OPTIMIZE)
+    UpdateItems("优化 冷启动时的权限请求",null, UpdateType.OPTIMIZE)
+    UpdateItems("优化 教评功能的界面引导",null, UpdateType.OPTIMIZE)
+    UpdateItems("优化 课程汇总对课程进度的分类显示",null, UpdateType.OPTIMIZE)
+    UpdateItems("优化 部分界面加载完成后的过渡衔接动画",null, UpdateType.OPTIMIZE)
+    UpdateItems("优化 课程表的方格颜色",null, UpdateType.OPTIMIZE)
 }
 
 enum class UpdateType {

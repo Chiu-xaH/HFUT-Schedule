@@ -38,6 +38,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.CircularProgressIndicator
+import com.hfut.schedule.ui.utils.LoadingUI
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
@@ -307,7 +308,7 @@ fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                     ) {
                         Spacer(modifier = Modifier.height(5.dp))
                         Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
-                        CircularProgressIndicator()
+                        LoadingUI()
                     }
                 }////加载动画居中，3s后消失
 
@@ -484,7 +485,7 @@ fun NewsXuanChengUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                     ) {
                         Spacer(modifier = Modifier.height(5.dp))
                         Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
-                        CircularProgressIndicator()
+                        LoadingUI()
                     }
                 }////加载动画居中，3s后消失
 

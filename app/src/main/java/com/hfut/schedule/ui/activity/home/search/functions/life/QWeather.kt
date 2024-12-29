@@ -49,6 +49,7 @@ import com.hfut.schedule.logic.beans.QWeatherResponse
 import com.hfut.schedule.logic.utils.reEmptyLiveDta
 import com.hfut.schedule.ui.activity.home.search.functions.life.QWeatherLevel.*
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
+import com.hfut.schedule.ui.utils.BottomTip
 import com.hfut.schedule.ui.utils.CardForListColor
 import com.hfut.schedule.ui.utils.DevelopingUI
 import com.hfut.schedule.ui.utils.DividerText
@@ -210,6 +211,7 @@ fun LifeUIS(vm : NetWorkViewModel) {
             }
         }
     }
+    BottomTip("数据来源 和风天气")
     DividerText(text = "楼层导向")
     DevelopingUI()
     DividerText(text = "校园地图")

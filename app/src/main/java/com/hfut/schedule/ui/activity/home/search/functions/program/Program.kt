@@ -29,6 +29,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import com.hfut.schedule.ui.utils.LoadingUI
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
@@ -396,9 +397,56 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean) {
                 horizontalArrangement = Arrangement.Center
             ) {
                 Spacer(modifier = Modifier.height(5.dp))
-                CircularProgressIndicator()
+                LoadingUI()
             }
         }
+        AnimatedVisibility(
+                visible = !loading,
+        enter = fadeIn(),
+        exit = fadeOut()
+        ) {
+        var total = 0.0
+        LazyColumn {
+            items(listOne.size) {item ->
+                total += listOne[item].requiedCredits ?: 0.0
+                MyCard {
+                    ListItem(
+                        headlineContent = { Text(text = listOne[item].type + " | 学分要求 " + listOne[item].requiedCredits) },
+                        trailingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "")},
+                        //   leadingContent = { Icon(painterResource(id = R.drawable.calendar), contentDescription = "Localized description") },
+                        modifier = Modifier.clickable {
+                            showBottomSheet_Program = true
+                            num = item
+                            title = listOne[item].type.toString()
+                        },
+                    )
+                }
+            }
+
+            item {
+                val scrollState = rememberScrollState()
+                val text = getPersonInfo().program
+                LaunchedEffect(key1 = text ) {
+                    delay(500L)
+                    scrollState.animateScrollTo(scrollState.maxValue)
+                    delay(4000L)
+                    scrollState.animateScrollTo(0)
+                }
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                    text?.let { Text(
+                        text = it,
+                        color = Color.Gray,
+                        fontSize = 14.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.horizontalScroll(scrollState)
+                    ) }
+                }
+            }
+            item { BottomTip(str = "总修 $total 学分") }
+        }
+    }
+
     }
 
     if (showBottomSheet_Program ) {
@@ -433,52 +481,6 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean) {
         }
     }
 
-        AnimatedVisibility(
-            visible = !loading,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            var total = 0.0
-            LazyColumn {
-                items(listOne.size) {item ->
-                    total += listOne[item].requiedCredits ?: 0.0
-                    MyCard {
-                        ListItem(
-                            headlineContent = { Text(text = listOne[item].type + " | 学分要求 " + listOne[item].requiedCredits) },
-                            trailingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "")},
-                            //   leadingContent = { Icon(painterResource(id = R.drawable.calendar), contentDescription = "Localized description") },
-                            modifier = Modifier.clickable {
-                                showBottomSheet_Program = true
-                                num = item
-                                title = listOne[item].type.toString()
-                            },
-                        )
-                    }
-                }
-
-                item {
-                    val scrollState = rememberScrollState()
-                    val text = getPersonInfo().program
-                    LaunchedEffect(key1 = text ) {
-                        delay(500L)
-                        scrollState.animateScrollTo(scrollState.maxValue)
-                        delay(4000L)
-                        scrollState.animateScrollTo(0)
-                    }
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                        text?.let { Text(
-                            text = it,
-                            color = Color.Gray,
-                            fontSize = 14.sp,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.horizontalScroll(scrollState)
-                        ) }
-                    }
-                }
-                item { BottomTip(str = "总修 $total 学分") }
-            }
-        }
 
 }
 

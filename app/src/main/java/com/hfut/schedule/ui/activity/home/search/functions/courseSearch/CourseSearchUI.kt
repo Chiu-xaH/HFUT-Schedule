@@ -2,7 +2,8 @@ package com.hfut.schedule.ui.activity.home.search.functions.courseSearch
 
 import android.os.Handler
 import android.os.Looper
-import androidx.compose.animation.AnimatedVisibility
+//import androidx.compose.animation.AnimatedVisibility
+//import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -20,6 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.CircularProgressIndicator
+import com.hfut.schedule.ui.utils.LoadingUI
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FilledTonalButton
@@ -176,32 +178,30 @@ fun courseSearchUI(vm : NetWorkViewModel) {
                 Spacer(modifier = Modifier.height(7.dp))
 
                 if(onclick){
-                    AnimatedVisibility(
-                        visible = loading,
-                        enter = fadeIn(),
-                        exit = fadeOut()
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center
+                    Box() {
+                        androidx.compose.animation.AnimatedVisibility(
+                            visible = loading,
+                            enter = fadeIn(),
+                            exit = fadeOut()
                         ) {
-                            Spacer(modifier = Modifier.height(5.dp))
-                            CircularProgressIndicator()
-                        }
-                    }////加载动画居中，3s后消失
+                            Box(modifier = Modifier.align(Alignment.Center)) {
+                                LoadingUI()
+                            }
+                        }////加载动画居中，3s后消失
 
-                    AnimatedVisibility(
-                        visible = !loading,
-                        enter = fadeIn(),
-                        exit = fadeOut()
-                    ) {
-                        CourseTotalUI(json = vm.courseRsponseData.value,true,sortType,vm)
+                        androidx.compose.animation.AnimatedVisibility(
+                            visible = !loading,
+                            enter = fadeIn(),
+                            exit = fadeOut()
+                        ) {
+                            CourseTotalUI(json = vm.courseRsponseData.value,true,sortType,vm)
+                        }
                     }
                 }
 
                 Spacer(modifier = Modifier.height(20.dp))
             }
-            AnimatedVisibility(
+            androidx.compose.animation.AnimatedVisibility(
                 visible = !loading,
                 enter = scaleIn(),
                 exit = scaleOut(),
@@ -237,7 +237,7 @@ fun courseSearchUI(vm : NetWorkViewModel) {
             }
 
 
-            AnimatedVisibility(
+            androidx.compose.animation.AnimatedVisibility(
                 visible = !loading,
                 enter = scaleIn(),
                 exit = scaleOut(),
@@ -271,7 +271,7 @@ fun courseSearchUI(vm : NetWorkViewModel) {
                 ) { Text(text = getSemseter(semester),) }
             }
 
-            AnimatedVisibility(
+            androidx.compose.animation.AnimatedVisibility(
                 visible = !loading,
                 enter = scaleIn(),
                 exit = scaleOut(),

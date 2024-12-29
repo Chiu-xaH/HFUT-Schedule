@@ -30,6 +30,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
@@ -737,6 +738,7 @@ fun CustomSchedules(showAll : Boolean,
                         items(if(showAll)42 else 30) { cell ->
                             Card(
                                 shape = MaterialTheme.shapes.extraSmall,
+                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
                                 modifier = Modifier
                                     .height(125.dp)
                                     .padding(if (showAll) 1.dp else 2.dp)

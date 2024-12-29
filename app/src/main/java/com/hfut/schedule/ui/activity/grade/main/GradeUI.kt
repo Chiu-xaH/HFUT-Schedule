@@ -68,7 +68,7 @@ import dev.chrisbanes.haze.haze
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GradeUI(ifSaved : Boolean,vm : NetWorkViewModel) {
+fun GradeUI(ifSaved : Boolean,vm : NetWorkViewModel,webVpn : Boolean) {
 
     val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR",  AndroidVersion.canBlur)
     var blur by remember { mutableStateOf(switchblur) }
@@ -216,7 +216,7 @@ fun GradeUI(ifSaved : Boolean,vm : NetWorkViewModel) {
                 composable(GradeBarItems.GRADE.name) {
                     Scaffold {
                         if (ifSaved) GradeItemUI(vm,innerPadding)
-                        else GradeItemUIJXGLSTU(innerPadding,vm)
+                        else GradeItemUIJXGLSTU(innerPadding,vm, webVpn)
                     }
 
                 }
