@@ -89,8 +89,9 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel,webVpn 
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var title by remember { mutableStateOf("成绩详情") }
-    var num by remember { mutableStateOf(0) }
+//    var num by remember { mutableStateOf(0) }
 
+    var num by remember { mutableStateOf(GradeResponseJXGLSTU("","","","","")) }
     val sheetState_Survey = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_Survey by remember { mutableStateOf(false) }
 
@@ -259,7 +260,7 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel,webVpn 
                                                     showBottomSheet_Survey = true
                                                 } else {
                                                     title = grade.title
-                                                    num = item
+                                                    num = grade
                                                     showBottomSheet = true
                                                 }
                                             },
@@ -281,62 +282,69 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel,webVpn 
 
 
 @Composable
-fun GradeInfo(num : Int,vm: NetWorkViewModel) {
-    val grade = getGradeJXGLSTU(vm)[num]
-    val list = grade.grade.split(" ")
+fun GradeInfo(num : GradeResponseJXGLSTU,vm: NetWorkViewModel) {
+    val list = num.grade.split(" ")
     val radarList = mutableListOf<RadarData>()
-    list.forEach { item->
+    list.forEach { item ->
         val label = item.substringBefore(":")
         val score = try {
-            if(item.substringAfter(":").contains("中") || item.substringAfter(":").contains("及格")) .6f
-            else if(item.substringAfter(":").contains("高") || item.substringAfter(":").contains("优秀")) .9f
-            else if(item.substringAfter(":").contains("低")) .3f
+            if (item.substringAfter(":").contains("中") || item.substringAfter(":")
+                    .contains("及格")
+            ) .6f
+            else if (item.substringAfter(":").contains("高") || item.substringAfter(":")
+                    .contains("优秀")
+            ) .9f
+            else if (item.substringAfter(":").contains("低")) .3f
             else item.substringAfter(":").toFloat() / 100
         } catch (_: Exception) {
-            if(item.substringAfter(":").contains("中") || item.substringAfter(":").contains("及格")) .6f
-            else if(item.substringAfter(":").contains("高") || item.substringAfter(":").contains("优秀")) .9f
-            else if(item.substringAfter(":").contains("低")) .3f
+            if (item.substringAfter(":").contains("中") || item.substringAfter(":")
+                    .contains("及格")
+            ) .6f
+            else if (item.substringAfter(":").contains("高") || item.substringAfter(":")
+                    .contains("优秀")
+            ) .9f
+            else if (item.substringAfter(":").contains("低")) .3f
             else 0f
         }
-        radarList.add(RadarData(label,score))
+        radarList.add(RadarData(label, score))
     }
     val scrollState = rememberScrollState()
-    val GPA = grade.GPA
-    val title = "成绩 ${grade.totalGrade} 绩点 $GPA 学分 ${grade.score}"
+    val GPA = num.GPA
+    val title = "成绩 ${num.totalGrade} 绩点 $GPA 学分 ${num.score}"
 
     var avgPingshi = 0f
     var examScore = 0f
     var count = 0
-    radarList.forEach{item->
-        if(!item.label.contains("期末")) {
+    radarList.forEach { item ->
+        if (!item.label.contains("期末")) {
             avgPingshi += item.value
             count++
         } else {
             examScore = item.value
         }
     }
-    if(count != 0)
+    if (count != 0)
         avgPingshi /= count
     else avgPingshi = 0f
-    if(examScore != 0f)
+    if (examScore != 0f)
         avgPingshi /= examScore
     else avgPingshi = 0f
 
     var showDialog by remember {
         mutableStateOf(false)
     }
-    if(showDialog) {
+    if (showDialog) {
         LittleDialog(
             onDismissRequest = { showDialog = false },
-            onConfirmation = { showDialog = false},
+            onConfirmation = { showDialog = false },
             dialogTitle = "提示",
             dialogText = "平时因数=除去期末成绩各项平均分/期末分数,可大致反映最终成绩平时分占比\n越接近1则平衡,越>1则表明最终成绩可能更靠平时分,越<1表明最终成绩可能因平时分拖后腿",
-            conformtext ="好",
-            dismisstext ="关闭"
+            conformtext = "好",
+            dismisstext = "关闭"
         )
     }
 
-    LaunchedEffect(key1 = title ) {
+    LaunchedEffect(key1 = title) {
         delay(500L)
         scrollState.animateScrollTo(scrollState.maxValue)
         delay(4000L)
@@ -344,7 +352,7 @@ fun GradeInfo(num : Int,vm: NetWorkViewModel) {
     }
     DividerText(text = "雷达图")
     Spacer(modifier = Modifier.height(10.dp))
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center){
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
         RadarChart(data = radarList, modifier = Modifier.size(200.dp))
     }
     Spacer(modifier = Modifier.height(10.dp))
@@ -363,25 +371,35 @@ fun GradeInfo(num : Int,vm: NetWorkViewModel) {
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.horizontalScroll(scrollState),
-                    fontSize = 28.sp)},
+                    fontSize = 28.sp
+                )
+            },
         )
-        for(i in list.indices step 2)
+        for (i in list.indices step 2)
             Row {
                 ListItem(
                     headlineContent = { ScrollText(text = list[i]) },
                     modifier = Modifier.weight(.5f)
                 )
-                if(i+1 < list.size)
+                if (i + 1 < list.size)
                     ListItem(
-                        headlineContent = { ScrollText(text = list[i+1]) },
+                        headlineContent = { ScrollText(text = list[i + 1]) },
                         modifier = Modifier.weight(.5f)
                     )
             }
-        Row{
+        Row {
             ListItem(
-                leadingContent = { Icon(painter = painterResource(id = if(GPA.toFloat() >= 3.0)R.drawable.sentiment_very_satisfied else R.drawable.sentiment_dissatisfied), contentDescription = "") },
-                headlineContent = { ScrollText(text = if(GPA == "4.3")"满绩" else if(GPA == "4") "优秀" else if(GPA.toFloat() >= 3) "不错" else if(GPA == "0") "挂科" else "薄弱"
-                ) },
+                leadingContent = {
+                    Icon(
+                        painter = painterResource(id = if (GPA.toFloat() >= 3.0) R.drawable.sentiment_very_satisfied else R.drawable.sentiment_dissatisfied),
+                        contentDescription = ""
+                    )
+                },
+                headlineContent = {
+                    ScrollText(
+                        text = if (GPA == "4.3") "满绩" else if (GPA == "4") "优秀" else if (GPA.toFloat() >= 3) "不错" else if (GPA == "0") "挂科" else "薄弱"
+                    )
+                },
                 modifier = Modifier.weight(.4f)
             )
             ListItem(
@@ -389,7 +407,14 @@ fun GradeInfo(num : Int,vm: NetWorkViewModel) {
                     Icon(painter = painterResource(R.drawable.percent), contentDescription = "")
                 },
                 headlineContent = {
-                    ScrollText(text = "平时因数 ${if(avgPingshi != 0f) ReservDecimal.reservDecimal(avgPingshi.toDouble(),2) else "未知"}")
+                    ScrollText(
+                        text = "平时因数 ${
+                            if (avgPingshi != 0f) ReservDecimal.reservDecimal(
+                                avgPingshi.toDouble(),
+                                2
+                            ) else "未知"
+                        }"
+                    )
                 },
                 modifier = Modifier
                     .weight(.6f)
