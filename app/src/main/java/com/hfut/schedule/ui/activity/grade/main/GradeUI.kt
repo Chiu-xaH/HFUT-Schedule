@@ -34,6 +34,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -68,14 +69,16 @@ import dev.chrisbanes.haze.haze
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GradeUI(ifSaved : Boolean,vm : NetWorkViewModel,webVpn : Boolean) {
+fun GradeUI(ifSaved : Boolean,vm : NetWorkViewModel) {
 
     val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR",  AndroidVersion.canBlur)
     var blur by remember { mutableStateOf(switchblur) }
     val hazeState = remember { HazeState() }
     val navController = rememberNavController()
     val context = LocalContext.current
-    var animation by remember { mutableStateOf(prefs.getInt("ANIMATION", MyApplication.Animation)) }
+    var animation by remember { mutableIntStateOf(prefs.getInt("ANIMATION", MyApplication.Animation)) }
+
+    var showSearch by remember { mutableStateOf(false) }
 
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -121,6 +124,13 @@ fun GradeUI(ifSaved : Boolean,vm : NetWorkViewModel,webVpn : Boolean) {
                     title = { Text("成绩") },
                     actions = {
                         Row {
+                            if(!ifSaved) {
+                                IconButton(onClick = {
+                                    showSearch = !showSearch
+                                }) {
+                                    Icon(painter = painterResource(id = R.drawable.search), contentDescription = "")
+                                }
+                            }
                             IconButton(onClick = {
                                 showBottomSheet = true
                             }) {
@@ -216,7 +226,7 @@ fun GradeUI(ifSaved : Boolean,vm : NetWorkViewModel,webVpn : Boolean) {
                 composable(GradeBarItems.GRADE.name) {
                     Scaffold {
                         if (ifSaved) GradeItemUI(vm,innerPadding)
-                        else GradeItemUIJXGLSTU(innerPadding,vm, webVpn)
+                        else GradeItemUIJXGLSTU(innerPadding,vm,showSearch)
                     }
 
                 }

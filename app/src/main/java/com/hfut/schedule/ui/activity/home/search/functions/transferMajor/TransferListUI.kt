@@ -39,6 +39,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.beans.Jxglstu.TransferData
 import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.reEmptyLiveDta
 import com.hfut.schedule.ui.utils.MyCard
 import com.hfut.schedule.ui.utils.MyToast
@@ -54,7 +55,10 @@ import kotlinx.coroutines.launch
 fun TransferUI(vm: NetWorkViewModel, campus: CampusId) {
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
-    val cookie = SharePrefs.prefs.getString("redirect", "")
+    val cookie = if (!vm.webVpn) prefs.getString(
+        "redirect",
+        ""
+    ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
 
    // val campus =
 

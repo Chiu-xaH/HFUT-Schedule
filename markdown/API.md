@@ -549,6 +549,14 @@ Query["batchId"] 1 合肥校区 ，3 宣城校区
 
 Query["studentId"] 学生ID
 
+
+### 我的转专业状态
+@GET for-std/change-major-apply/info/2162
+#### 请求
+Query["studentId"] 学生ID
+#### 响应
+响应为HTML网页，需要自行按XML解析
+
 ### 申请/撤销转专业
 这里我忘记做了，因为我就是要转专业的，不敢随便来回选退，很遗憾，现在也没机会再做了，只有大一学弟学妹才能做了
 

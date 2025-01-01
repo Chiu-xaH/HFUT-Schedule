@@ -56,6 +56,7 @@ import com.hfut.schedule.logic.enums.PostMode
 import com.hfut.schedule.logic.utils.Semseter.getSemseter
 import com.hfut.schedule.logic.utils.Semseter.getSemseterCloud
 import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.utils.EmptyUI
 import com.hfut.schedule.ui.utils.LittleDialog
 import com.hfut.schedule.ui.utils.MyCard
@@ -69,16 +70,19 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SurveyUI(vm : NetWorkViewModel) {
-    var expanded by remember { mutableStateOf(true) }
-    val sheetState = rememberModalBottomSheetState()
-    var showitem by remember { mutableStateOf(false) }
+//    var expanded by remember { mutableStateOf(true) }
+//    val sheetState = rememberModalBottomSheetState()
+//    var showitem by remember { mutableStateOf(false) }
     val scrollstate = rememberLazyListState()
-    val shouldShowAddButton by remember { derivedStateOf { scrollstate.firstVisibleItemScrollOffset == 0 } }
+//    val shouldShowAddButton by remember { derivedStateOf { scrollstate.firstVisibleItemScrollOffset == 0 } }
 
 
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(false) }
-    val cookie = SharePrefs.prefs.getString("redirect", "")
+    val cookie = if (!vm.webVpn) prefs.getString(
+        "redirect",
+        ""
+    ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
     var semsters = getSemseterCloud()
     var semester by remember { mutableStateOf(semsters) }
 

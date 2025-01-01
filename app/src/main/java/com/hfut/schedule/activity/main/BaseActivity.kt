@@ -36,7 +36,7 @@ open class BaseActivity : ComponentActivity() {
     private val switchColor= SharePrefs.prefs.getBoolean("SWITCHCOLOR",true)
     private val monetVm: MainViewModel by viewModels()
     val loginVm by lazy { ViewModelProvider(this).get(LoginViewModel::class.java) }
-    val networkVm by lazy { ViewModelProvider(this, LoginSuccessViewModelFactory(false)).get(NetWorkViewModel::class.java) }
+    open val networkVm by lazy { ViewModelProvider(this, LoginSuccessViewModelFactory(false)).get(NetWorkViewModel::class.java) }
     val showerVm by lazy { ViewModelProvider(this).get(GuaGuaViewModel::class.java) }
     val uiVm by lazy { ViewModelProvider(this).get(UIViewModel::class.java) }
 

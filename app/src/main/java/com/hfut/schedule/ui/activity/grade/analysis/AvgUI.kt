@@ -121,23 +121,16 @@ fun AvgGrade() {
 @Composable
 fun AllGrade() {
     val chineseList = listOf("大一上","大一下","大二上","大二下","大三上","大三下","大四上","大四下")
-    LazyRow (modifier = Modifier.padding(horizontal = 12.dp)){
-        items(getAllGrade().size) { item ->
-            val list = getAllGrade()[item]
-            Card(
-                elevation = CardDefaults.cardElevation(defaultElevation = 1.75.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 3.dp, vertical = 5.dp)
-                    .width(382.dp),
-                shape = MaterialTheme.shapes.medium,
-            ){
-                Text(text = chineseList[item] + "学期", modifier = Modifier.padding(horizontal = 15.dp, vertical = 8.dp), color = MaterialTheme.colorScheme.primary)
+    val list = getAllGrade()
+    for (index in list.indices) {
+        val item = getAllGrade()[index]
+        if(item.myAvgGpa != null || item.myAvgScore != null || item.majorAvgGpa != null || item.majorAvgScore != null)
+            MyCard {
+            Text(text = chineseList[index] + "学期", modifier = Modifier.padding(horizontal = 15.dp, vertical = 8.dp), color = MaterialTheme.colorScheme.primary)
                 Text(text = "我的水平", modifier = Modifier.padding(horizontal = 15.dp, vertical = 8.dp), color = MaterialTheme.colorScheme.primary)
-
                 Row {
                     ListItem(
-                        headlineContent = { Text("绩点 ${list.myAvgGpa}") },
+                        headlineContent = { Text("绩点 ${item.myAvgGpa}") },
                         leadingContent = { Icon(painterResource(R.drawable.award_star), contentDescription = "Localized description",) },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -146,7 +139,7 @@ fun AllGrade() {
                     )
 
                     ListItem(
-                        headlineContent = { Text("分数 ${list.myAvgScore}") },
+                        headlineContent = { Text("分数 ${item.myAvgScore}") },
                         leadingContent = { Icon(painterResource(R.drawable.hive), contentDescription = "Localized description",) },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -159,7 +152,7 @@ fun AllGrade() {
                 Row {
                     ListItem(
                         headlineContent = { Text("绩点(GPA)") },
-                        supportingContent = { Text("平均 ${list.majorAvgGpa}\n最高 ${list.maxAvgGpa}") },
+                        supportingContent = { Text("平均 ${item.majorAvgGpa}\n最高 ${item.maxAvgGpa}") },
                         leadingContent = { Icon(painterResource(R.drawable.award_star), contentDescription = "Localized description",) },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -169,7 +162,7 @@ fun AllGrade() {
 
                     ListItem(
                         headlineContent = { Text("分数") },
-                        supportingContent = { Text("平均 ${list.majorAvgScore}\n最高 ${list.maxAvgScore}") },
+                        supportingContent = { Text("平均 ${item.majorAvgScore}\n最高 ${item.maxAvgScore}") },
                         leadingContent = { Icon(painterResource(R.drawable.hive), contentDescription = "Localized description",) },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -177,26 +170,17 @@ fun AllGrade() {
                         colors = ListItemDefaults.colors(containerColor = Color.Transparent)
                     )
                 }
-
             }
-        }
     }
 }
 
 
-fun getAllGrade() : MutableList<GradeAllResult> {
+fun getAllGrade() : List<GradeAllResult> {
     val json = prefs.getString("AvgAll","")
-    var addList = mutableListOf<GradeAllResult>()
+//    var addList = mutableListOf<GradeAllResult>()
     return try {
-        val list = Gson().fromJson(json,GradeAllResponse::class.java).result
-
-        for(i in list.indices) {
-            if(list[i].myAvgGpa != null)
-                addList.add(GradeAllResult(list[i].myAvgScore,list[i].myAvgGpa,list[i].majorAvgScore,list[i].majorAvgGpa,list[i].maxAvgScore,list[i].maxAvgGpa))
-        }
-        addList
+        Gson().fromJson(json,GradeAllResponse::class.java).result
     } catch (e : Exception) {
-        addList
+        emptyList()
     }
-
 }

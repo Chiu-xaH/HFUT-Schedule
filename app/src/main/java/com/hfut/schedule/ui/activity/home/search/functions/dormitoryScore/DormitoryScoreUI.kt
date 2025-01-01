@@ -269,7 +269,6 @@ fun DormitoryScoreUI(vm : NetWorkViewModel) {
 
                 Row{ space(space) }
 
-
                 if (clicked) {
                     space  = false
                     Box {
@@ -311,7 +310,6 @@ fun DormitoryScoreUI(vm : NetWorkViewModel) {
                             }
                         }
                     }
-
                 }
             }
         }

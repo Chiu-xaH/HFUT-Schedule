@@ -39,7 +39,7 @@ class LoginViewModel : ViewModel() {
     fun login(username : String,password : String,keys : String,webVpn : Boolean)  {
 
         val cookies : String = sessionLiveData.value  + cookie2.value +";" + keys
-        SharePrefs.saveString("ONE", cookies)
+        saveString("ONE", cookies)
 
       //  val ticketWebVpn = prefs.getString("WebVpn","")
         val ticket = webVpnTicket.value?.substringAfter("wengine_vpn_ticketwebvpn_hfut_edu_cn=")
@@ -55,10 +55,10 @@ class LoginViewModel : ViewModel() {
                     location.value = response.headers()["Location"].toString()
                     val TGC = response.headers()["Set-Cookie"].toString().substringBefore(";")
                     code.value = response.code().toString()
-                    val ticket = response.headers()["Location"].toString().substringAfter("=")
-                    SharePrefs.saveString("ticket", ticket)
-                    SharePrefs.saveString("TGC", TGC)
-                    TICKET.value = ticket
+                    val tickets = response.headers()["Location"].toString().substringAfter("=")
+                    saveString("ticket", tickets)
+                    saveString("TGC", TGC)
+                    TICKET.value = tickets
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
@@ -195,7 +195,7 @@ class LoginViewModel : ViewModel() {
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                SharePrefs.saveString("my", response.body()?.string())
+                saveString("my", response.body()?.string())
                // val semesterId = Gson().fromJson(response.body()?.string(), data4::class.java).semesterId
                // if(semesterId != null)
                // PreferenceManager.getDefaultSharedPreferences(MyApplication.context).edit().putString("semesterId",semesterId)

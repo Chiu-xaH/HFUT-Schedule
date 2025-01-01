@@ -749,98 +749,90 @@ fun CalendarScreen(showAll : Boolean,
         val job2 = Job()
         val scope = CoroutineScope(job)
 
-        CoroutineScope(job2).launch {
-            val token = prefs.getString("bearer", "")
+       if(!webVpn) {
+           CoroutineScope(job2).launch {
+               val token = prefs.getString("bearer", "")
 
-            //检测若登陆成功（200）则解析出CommunityTOKEN
-            val LoginCommunityObserver = Observer<String?> { result ->
-                if (result != null) {
-                    if (result.contains("200") && result.contains("token")) {
-                        val result = Gson().fromJson(result, LoginCommunityResponse::class.java)
-                        val token = result.result.token
-                        SharePrefs.saveString("TOKEN", token)
-                        if (num2 == 1) {
-                            MyToast("Community登陆成功")
-                            num2++
-                        }
-                    }
-                }
-            }
+               //检测若登陆成功（200）则解析出CommunityTOKEN
+               val LoginCommunityObserver = Observer<String?> { result ->
+                   if (result != null) {
+                       if (result.contains("200") && result.contains("token")) {
+                           val result = Gson().fromJson(result, LoginCommunityResponse::class.java)
+                           val token = result.result.token
+                           SharePrefs.saveString("TOKEN", token)
+                           if (num2 == 1) {
+                               MyToast("Community登陆成功")
+                               num2++
+                           }
+                       }
+                   }
+               }
 
-            //检测CommunityTOKEN的可用性
-            val ExamObserver = Observer<Int> { result ->
-                Log.d("result",(result == 500).toString())
-                if (result == 500) {
-                    CoroutineScope(Job()).async {
-                        async { vm.GotoCommunity(cookies) }.await()
-                        async {
-                            delay(1000)
-                            ticket?.let { vm.LoginCommunity(it) }
-                        }.await()
-                        async {
-                            Handler(Looper.getMainLooper()).post {
-                                vm.LoginCommunityData.observeForever(
-                                    LoginCommunityObserver
-                                )
-                            }
-                        }
-                    }
-                }
-            }
+               //检测CommunityTOKEN的可用性
+               val ExamObserver = Observer<Int> { result ->
+                   Log.d("result",(result == 500).toString())
+                   if (result == 500) {
+                       CoroutineScope(Job()).async {
+                           async { vm.GotoCommunity(cookies) }.await()
+                           async {
+                               delay(1000)
+                               ticket?.let { vm.LoginCommunity(it) }
+                           }.await()
+                           async {
+                               Handler(Looper.getMainLooper()).post {
+                                   vm.LoginCommunityData.observeForever(
+                                       LoginCommunityObserver
+                                   )
+                               }
+                           }
+                       }
+                   }
+               }
 
-            ///  CoroutineScope(Job()).launch {
-            //   async {  }.await()
-            // async {
-            //   delay(2000)
-            // vm.goToJwglapp(cookies)
-            //       val tickets = vm.loginURL.value?.substringAfter("ticket=")
-            //Log.d("ticket",tickets.toString())
-            //       tickets?.let { vm.loginJwglapp(it) }
-            // }.await()
-            // }
-
-            //获取慧新易校
-            // val AuthObserver = Observer<String?> { result ->
-            //    if (result != null) {
-            //        if(result.contains("成功")) MyToast("一卡通登陆成功")
-            //          else
-            //       }
-            //     }
+               //获取慧新易校
+               // val AuthObserver = Observer<String?> { result ->
+               //    if (result != null) {
+               //        if(result.contains("成功")) MyToast("一卡通登陆成功")
+               //          else
+               //       }
+               //     }
 
 
-            //检测慧新易校可用性
-            val auth = prefs.getString("auth", "")
-            if (prefs.getString("auth", "") == "") vm.OneGotoCard("$ONE;$TGC")
+               //检测慧新易校可用性
+               val auth = prefs.getString("auth", "")
+               if (prefs.getString("auth", "") == "") vm.OneGotoCard("$ONE;$TGC")
 
-            async { vm.OneGotoCard("$ONE;$TGC") }
-            async { CommuityTOKEN?.let { vm.Exam(it) } }
+               async { vm.OneGotoCard("$ONE;$TGC") }
+               async { CommuityTOKEN?.let { vm.Exam(it) } }
 
-            Handler(Looper.getMainLooper()).post { vm.ExamCodeData.observeForever(ExamObserver) }
+               Handler(Looper.getMainLooper()).post { vm.ExamCodeData.observeForever(ExamObserver) }
 
-            //慧新易校获取TOKEN
-            //val liushui = prefs.getString("cardliushui", MyApplication.NullBill)
-            //if (liushui != null) {
+               //慧新易校获取TOKEN
+               //val liushui = prefs.getString("cardliushui", MyApplication.NullBill)
+               //if (liushui != null) {
 
 
-            //
-            ///}
+               //
+               ///}
 
-            //登录信息门户的接口,还没做重构（懒）
-            if (token != null) {
-                if (token.contains("AT") && cardvalue != "未获取") {
-                    async { vm.getSubBooks("Bearer $token") }
-                    async { vm.getBorrowBooks("Bearer $token") }
-                } else {
-                    async {
-                        async { vm.OneGoto(cookies) }.await()
-                        async {
-                            delay(500)
-                            vm.getToken()
-                        }.await()
-                    }
-                }
-            }
-        }
+               //登录信息门户的接口,还没做重构（懒）
+               if (token != null) {
+                   if (token.contains("AT") && cardvalue != "未获取") {
+                       async { vm.getSubBooks("Bearer $token") }
+                       async { vm.getBorrowBooks("Bearer $token") }
+                   } else {
+                       async {
+                           async { vm.OneGoto(cookies) }.await()
+                           async {
+                               delay(500)
+                               vm.getToken()
+                           }.await()
+                       }
+                   }
+               }
+           }
+       }
+
         val nextBoolean = isNextOpen()
         if (nextBoolean) saveInt("FIRST", 1)
 

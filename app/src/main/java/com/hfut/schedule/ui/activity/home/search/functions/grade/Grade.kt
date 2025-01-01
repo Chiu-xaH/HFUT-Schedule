@@ -2,6 +2,7 @@ package com.hfut.schedule.ui.activity.home.search.functions.grade
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,6 +34,7 @@ import com.hfut.schedule.activity.funiction.GradeActivity
 import com.hfut.schedule.logic.utils.DateTimeManager
 import com.hfut.schedule.logic.utils.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.WebVpn
 import com.hfut.schedule.ui.activity.grade.getGrade
 import com.hfut.schedule.ui.activity.grade.grade.community.GradeItemUI
 import com.hfut.schedule.ui.activity.grade.grade.jxglstu.GradeItemUIJXGLSTU
@@ -46,7 +48,7 @@ import kotlinx.coroutines.launch
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Grade(vm : NetWorkViewModel, ifSaved : Boolean, webVpn : Boolean)  {
+fun Grade(vm : NetWorkViewModel, ifSaved : Boolean)  {
 //    val cookie = if(!webVpn) prefs.getString("redirect", "")  else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket","")
 
 //    if(!ifSaved)
@@ -68,6 +70,7 @@ fun Grade(vm : NetWorkViewModel, ifSaved : Boolean, webVpn : Boolean)  {
         async {  CommuityTOKEN?.let { vm.getAllAvgGrade(it) } }
     }
 
+//    val webVpn = vm.webVpn
 
     ListItem(
         headlineContent = { Text(text = "成绩") },
@@ -80,13 +83,14 @@ fun Grade(vm : NetWorkViewModel, ifSaved : Boolean, webVpn : Boolean)  {
             }) { Icon(painterResource(R.drawable.article), contentDescription = "Localized description",) }
                          },
         modifier = Modifier.clickable {
-            getGrade()
+//            getGrade()
             saveString("GradeNum", getGrade().size.toString())
             //showBottomSheet_Grade = true
             val it = Intent(MyApplication.context, GradeActivity::class.java).apply {
-                putExtra("saved",ifSaved)
-                putExtra("webVpn",webVpn)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                WebVpn.webVpn = vm.webVpn
+                putExtra("saved",ifSaved)
+//                putExtra("webVpn",webVpn)
             }
             MyApplication.context.startActivity(it)
         }

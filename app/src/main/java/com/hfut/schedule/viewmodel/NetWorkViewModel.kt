@@ -74,7 +74,8 @@ class LoginSuccessViewModelFactory(private val webVpn: Boolean) : ViewModelProvi
 }
 
 
-class NetWorkViewModel(webVpn : Boolean) : ViewModel() {
+class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
+
     private val JxglstuJSON = JxglstuJSONServiceCreator.create(JxglstuService::class.java,webVpn)
     private val JxglstuHTML = JxglstuHTMLServiceCreator.create(JxglstuService::class.java,webVpn)
     private val OneGoto = OneGotoServiceCreator.create(LoginService::class.java)
@@ -99,18 +100,7 @@ class NetWorkViewModel(webVpn : Boolean) : ViewModel() {
     var studentId = MutableLiveData<Int>(prefs.getInt("STUDENTID",0))
     var lessonIds = MutableLiveData<List<Int>>()
     var token = MutableLiveData<String>()
-    var webVpn = webVpn
-    //val newFocus = MutableLiveData<String>()
-    fun getData() {
-        val call = server.getData()
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                saveString("newFocus",response?.body()?.string())
-            }
 
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
-    }
     @RequiresApi(Build.VERSION_CODES.O)
     fun postUser() {
         val data = getUserInfo()
@@ -308,6 +298,22 @@ class NetWorkViewModel(webVpn : Boolean) : ViewModel() {
             call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                     myApplyData.value = response.body()?.string()
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+            })
+        }
+    }
+
+    val myApplyInfoData = MutableLiveData<String?>()
+    fun getMyApplyInfo(cookie: String) {
+
+        val call = studentId.value?.let { JxglstuHTML.getMyTransferInfo(cookie, it) }
+
+        if (call != null) {
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    myApplyInfoData.value = response.body()?.string()
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }

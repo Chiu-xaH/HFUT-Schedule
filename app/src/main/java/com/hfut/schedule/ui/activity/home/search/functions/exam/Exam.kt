@@ -59,7 +59,11 @@ fun Exam(vm : NetWorkViewModel, ifSaved : Boolean) {
     var showBottomSheet_Exam by remember { mutableStateOf(false) }
     val CommuityTOKEN = prefs.getString("TOKEN","")
 
-    val cookie = prefs.getString("redirect", "")
+    val cookie = if (!vm.webVpn) prefs.getString(
+        "redirect",
+        ""
+    ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
+
     if(ifSaved) CommuityTOKEN?.let { vm.Exam(it) }
     else vm.getExamJXGLSTU(cookie.toString())
 

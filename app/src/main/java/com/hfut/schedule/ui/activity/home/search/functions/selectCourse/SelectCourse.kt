@@ -191,7 +191,11 @@ fun SelectShuoming() {
 fun selectCourseListLoading(vm : NetWorkViewModel) {
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
-    val cookie = SharePrefs.prefs.getString("redirect", "")
+    val cookie = if (!vm.webVpn) prefs.getString(
+        "redirect",
+        ""
+    ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
+
 
 
     if(refresh) {
@@ -395,7 +399,11 @@ fun selectCourseList(vm: NetWorkViewModel) {
 fun selectCourseInfoLoad(courseId : Int, vm: NetWorkViewModel) {
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
-    val cookie = SharePrefs.prefs.getString("redirect", "")
+    val cookie = if (!vm.webVpn) prefs.getString(
+        "redirect",
+        ""
+    ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
+
 
 
     if(refresh) {
@@ -479,7 +487,11 @@ fun selectCourseInfoLoad(courseId : Int, vm: NetWorkViewModel) {
 @Composable
 fun selectCourseInfo(vm: NetWorkViewModel, courseId : Int, search : String = "") {
     val list = getSelectCourseInfo(vm)
-    val cookie = SharePrefs.prefs.getString("redirect", "")
+    val cookie = if (!vm.webVpn) prefs.getString(
+        "redirect",
+        ""
+    ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
+
     var lessonId by remember { mutableStateOf(0) }
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -609,7 +621,11 @@ fun selectCourseResultLoad(vm : NetWorkViewModel, courseId : Int, lessonId : Int
     var refresh by remember { mutableStateOf(true) }
     var statusText by remember { mutableStateOf("提交中") }
     var statusBoolean by remember { mutableStateOf(false) }
-    val cookie = SharePrefs.prefs.getString("redirect", "")
+    val cookie = if (!vm.webVpn) prefs.getString(
+        "redirect",
+        ""
+    ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
+
 
     if(refresh) {
         loading = true
@@ -735,7 +751,10 @@ fun courseInfo(num : Int,lists : List<SelectCourseInfo>) {
 fun haveSelectedCourseLoad(vm: NetWorkViewModel, courseId: Int) {
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
-    val cookie = SharePrefs.prefs.getString("redirect", "")
+    val cookie = if (!vm.webVpn) prefs.getString(
+        "redirect",
+        ""
+    ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
 
 
     if(refresh) {

@@ -31,6 +31,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import com.hfut.schedule.ui.utils.LoadingUI
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -50,12 +51,17 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -72,6 +78,8 @@ import com.hfut.schedule.logic.utils.ReservDecimal
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
+import com.hfut.schedule.ui.activity.home.search.functions.dormitoryScore.DormitoryScoreUI
+import com.hfut.schedule.ui.activity.home.search.functions.life.countFunc
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
 import com.hfut.schedule.ui.utils.BottomTip
 import com.hfut.schedule.ui.utils.CardForListColor
@@ -237,7 +245,11 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean) {
 
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
-    val cookie = SharePrefs.prefs.getString("redirect", "")
+    val cookie = if (!vm.webVpn) prefs.getString(
+        "redirect",
+        ""
+    ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
+
 
     val sheetState_Program = rememberModalBottomSheetState()
     var showBottomSheet_Program by remember { mutableStateOf(false) }
@@ -289,6 +301,7 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean) {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ){
+                    countFunc = 0
                     ProgramPerformance(vm)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
@@ -447,13 +460,25 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean) {
         }
     }
 
+
     }
+
+//    val nestedScrollConnection = remember {
+//        object : NestedScrollConnection {
+//            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+//                // 合并滚动行为
+//                return Offset.Zero
+//            }
+//        }
+//    }
+//
 
     if (showBottomSheet_Program ) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet_Program = false },
             sheetState = sheetState_Program,
-            shape = Round(sheetState_Program)
+            shape = Round(sheetState_Program),
+//            modifier = Modifier.nestedScroll(nestedScrollConnection)
         ) {
 
             Scaffold(
@@ -464,7 +489,7 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean) {
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        title = { Text(title) }
+                        title = { Text(title) },
                     )
                 },) {innerPadding ->
                 Column(

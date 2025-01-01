@@ -31,32 +31,46 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
+import com.hfut.schedule.ui.utils.BottomTip
 import com.hfut.schedule.ui.utils.CardForListColor
 import com.hfut.schedule.ui.utils.DividerText
+import com.hfut.schedule.ui.utils.LoadingUI
 import com.hfut.schedule.ui.utils.ScrollText
+import com.hfut.schedule.ui.utils.schoolIcons
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import org.jsoup.Jsoup
 
 @Composable
 fun MyApply(vm: NetWorkViewModel) {
 
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
-    val cookie = SharePrefs.prefs.getString("redirect", "")
+
+    var loading2 by remember { mutableStateOf(true) }
+    var refresh2 by remember { mutableStateOf(true) }
+    val cookie = if (!vm.webVpn) prefs.getString(
+        "redirect",
+        ""
+    ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
 
     val campus = if(getCampus()?.contains("宣城") == true) CampusId.XUANCHENG else CampusId.HEFEI
 
     if(refresh) {
         loading = true
         CoroutineScope(Job()).launch{
-            async{ cookie?.let { vm.getMyApply(it,campus)} }.await()
+            async{ cookie?.let {
+                vm.getMyApply(it,campus)
+            } }.await()
             async {
                 Handler(Looper.getMainLooper()).post{
                     vm.myApplyData.observeForever { result ->
@@ -71,6 +85,28 @@ fun MyApply(vm: NetWorkViewModel) {
             }
         }
     }
+
+    if(refresh2) {
+        loading2 = true
+        CoroutineScope(Job()).launch{
+            async{ cookie?.let {
+                vm.getMyApplyInfo(it)
+            } }.await()
+            async {
+                Handler(Looper.getMainLooper()).post{
+                    vm.myApplyInfoData.observeForever { result ->
+                        if (result != null) {
+                            if(result.contains("面试安排")) {
+                                loading2 = false
+                                refresh2 = false
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
     val scale = animateFloatAsState(
         targetValue = if (loading) 0.9f else 1f, // 按下时为0.9，松开时为1
@@ -89,13 +125,12 @@ fun MyApply(vm: NetWorkViewModel) {
         targetValue = if (loading) 10.dp else 0.dp, label = ""
         ,animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
     )
+    val status = getPersonInfo().status
 
-    DividerText(text = "我的申请")
+    DividerText(text = "状态")
+    val data = getMyTransfer(vm)
+    val isSuccessTransfer = isSuccessTransfer()
     Box {
-
-        val data = getMyTransfer(vm)
-
-
 
         Card(
                 elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
@@ -106,12 +141,25 @@ fun MyApply(vm: NetWorkViewModel) {
                 shape = MaterialTheme.shapes.medium,
             colors = CardForListColor()
             ) {
+
                 Column (modifier = Modifier
                     .blur(blurSize)
                     .scale(scale.value)){
 
-                        ListItem(headlineContent = { Text(text = if(getApplyStatus(vm) == true) "转入申请已通过" else " 状态未知或未通过", fontSize = 28.sp) })
+                        ListItem(headlineContent = { Text(text =
+                        if(isSuccessTransfer)"恭喜 已转入"
+                            else if(getApplyStatus(vm) == true) "学籍尚未变更"
+                            else if(getApplyStatus(vm) == false) "未申请或申请不通过"
+                            else "状态未知"
+                            , fontSize = 28.sp) })
 
+                    if(isSuccessTransfer) {
+                        ListItem(
+                            headlineContent = { getPersonInfo().major?.let { ScrollText(text = it) } },
+                            overlineContent = { getPersonInfo().department?.let { ScrollText(text = it) } },
+                            leadingContent = { getPersonInfo().department?.let { schoolIcons(it) } }
+                        )
+                    } else {
                         Row {
                             ListItem(
                                 headlineContent = { getPersonInfo().major?.let { ScrollText(text = it) } },
@@ -125,39 +173,93 @@ fun MyApply(vm: NetWorkViewModel) {
                                 modifier = Modifier.weight(.6f)
                             )
                         }
-
-                        Row {
-                            ListItem(
-                                leadingContent = { Icon(painter = painterResource(id = R.drawable.group), contentDescription = "") },
-                                overlineContent = { ScrollText(text = "已申请/计划录取") },
-                                headlineContent = { Text(text = "${data.applyStdCount} / ${data.preparedStdCount}", fontWeight = FontWeight.Bold ) },
-                                modifier = Modifier.weight(.5f)
-                            )
-                            ListItem(
-                                leadingContent = { Icon(painter = painterResource(id = R.drawable.group), contentDescription = "") },
-                                overlineContent = { ScrollText(text = "考核成绩") },
-                                headlineContent = { Text(text = "XX 第X名", fontWeight = FontWeight.Bold ) },
-                                modifier = Modifier.weight(.5f)
-                            )
-                        }
-                    Row {
                         ListItem(
-                            leadingContent = { Icon(painter = painterResource(id = R.drawable.award_star), contentDescription = "") },
-                            overlineContent = { ScrollText(text = "绩点") },
-                            headlineContent = { Text(text = "X.X 第X名", fontWeight = FontWeight.Bold ) },
-                            modifier = Modifier.weight(.5f)
-                        )
-                        ListItem(
-                            leadingContent = { Icon(painter = painterResource(id = R.drawable.hive), contentDescription = "") },
-                            overlineContent = { ScrollText(text = "均分") },
-                            headlineContent = { Text(text = "XX 第X名", fontWeight = FontWeight.Bold ) },
-                            modifier = Modifier.weight(.5f)
+                            leadingContent = { Icon(painter = painterResource(id = R.drawable.group), contentDescription = "") },
+                            overlineContent = { ScrollText(text = "已申请/计划录取") },
+                            headlineContent = { Text(text = "${data.applyStdCount} / ${data.preparedStdCount}", fontWeight = FontWeight.Bold ) },
                         )
                     }
                 }
             }
     }
+    DividerText("成绩")
+    if(loading2) {
+        LoadingUI()
+    } else {
+        val bean = getMyTransferInfo(vm)
+        val grade = bean?.grade
 
+        if(!isSuccessTransfer) {
+            val examSchedule = bean?.examSchedule
+            val meetSchedule = bean?.meetSchedule
+
+            if(examSchedule != null) {
+                ListItem(
+                    headlineContent = { Text(examSchedule.place.replace("；","\n").replace("："," ").replace("。","")) },
+                    supportingContent = { Text(examSchedule.time) },
+                    overlineContent = { Text("笔试安排") }
+                )
+            }
+            if(meetSchedule != null) {
+                ListItem(
+                    headlineContent = { Text(meetSchedule.place.replace("；","\n").replace("："," ")) },
+                    supportingContent = { Text(meetSchedule.time) },
+                    overlineContent = { Text("面试安排") }
+                )
+            }
+        }
+
+        if(grade != null) {
+            Row {
+                ListItem(
+                    leadingContent = { Icon(painter = painterResource(id = R.drawable.award_star), contentDescription = "") },
+                    overlineContent = { ScrollText(text = "绩点") },
+                    headlineContent = { Text(text = "${grade.gpa.score}" ) },
+                    supportingContent = {
+                        Text("${grade.gpa.rank}/${data.applyStdCount} 名")
+                    },
+                    modifier = Modifier.weight(.5f)
+                )
+                ListItem(
+                    leadingContent = { Icon(painter = painterResource(id = R.drawable.hive), contentDescription = "") },
+                    overlineContent = { ScrollText(text = "加权均分") },
+                    headlineContent = { Text(text = "${grade.weightAvg.score}" ) },
+                    supportingContent = {
+                        Text("${grade.weightAvg.rank}/${data.applyStdCount} 名")
+                    },
+                    modifier = Modifier.weight(.5f)
+                )
+            }
+            Row {
+                ListItem(
+                    leadingContent = { Icon(painter = painterResource(id = R.drawable.award_star), contentDescription = "") },
+                    overlineContent = { ScrollText(text = "转专业考核") },
+                    headlineContent = { Text(text = "${grade.transferAvg.score}", fontWeight = FontWeight.Bold ) },
+                    supportingContent = {
+                        val rank = grade.transferAvg.rank
+                        if(rank != null) {
+                            Text("$rank/${data.applyStdCount} 名")
+                        } else {
+                            Text("教务无数据")
+                        }
+                    },
+                    modifier = Modifier.weight(.5f)
+                )
+                ListItem(
+                    leadingContent = { Icon(painter = painterResource(id = R.drawable.hive), contentDescription = "") },
+                    overlineContent = { ScrollText(text = "算术均分") },
+                    headlineContent = { Text(text = "${grade.operateAvg.score}") },
+                    supportingContent = {
+                        Text("${grade.operateAvg.rank}/${data.applyStdCount} 名")
+                    },
+                    modifier = Modifier.weight(.5f)
+                )
+            }
+        }
+
+
+    }
+
+//    BottomTip("具体详情请一定关注QQ群、查询中心-通知公告、教务系统")
 }
-
 

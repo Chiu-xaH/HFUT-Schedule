@@ -169,7 +169,7 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
         }
     }
 
-    CoroutineScope(Job()).launch { NetWorkUpdate(vm, vm2,vmUI,true, ifSaved) }
+    CoroutineScope(Job()).launch { NetWorkUpdate(vm, vm2,vmUI, ifSaved) }
 
     Handler(Looper.getMainLooper()).post { vm.examCode.observeForever(ExamObserver) }
 
@@ -452,7 +452,7 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
             }
             composable(SEARCH.name) {
                 Scaffold {
-                    SearchScreen(vm,ifSaved,innerPadding,vmUI,false,searchText)
+                    SearchScreen(vm,ifSaved,innerPadding,vmUI,searchText)
                 }
 
             }

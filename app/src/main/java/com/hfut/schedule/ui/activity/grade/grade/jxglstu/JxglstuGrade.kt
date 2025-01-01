@@ -76,15 +76,16 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel,webVpn : Boolean) {
+fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel,showSearch : Boolean) {
 
 
-    val cookie = if(!webVpn) prefs.getString("redirect", "")  else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket","")
+    val cookie = if(!vm.webVpn) prefs.getString("redirect", "")  else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket","")
 
 //        vm.getGrade(cookie!!,null)
 
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
+
 
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -195,55 +196,60 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel,webVpn 
         ) {
             var input by remember { mutableStateOf("") }
             val gradeList = getGradeJXGLSTU(vm)
-            val searchList = mutableListOf<GradeResponseJXGLSTU>()
+            var searchList = mutableListOf<GradeResponseJXGLSTU>()
             Column {
-                Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
+                if(showSearch) {
+                    Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
 
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            TextField(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .padding(horizontal = 15.dp),
-                                value = input,
-                                onValueChange = {
-                                    input = it
-                                },
-                                label = { Text("搜索课程") },
-                                singleLine = true,
-                                trailingIcon = {
-                                    IconButton(
-                                        onClick = {}) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.search),
-                                            contentDescription = "description"
-                                        )
-                                    }
-                                },
-                                shape = MaterialTheme.shapes.medium,
-                                colors = TextFieldDefaults.textFieldColors(
-                                    focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                                    unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-                                ),
-                            )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        TextField(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(horizontal = 15.dp),
+                            value = input,
+                            onValueChange = {
+                                input = it
+                            },
+                            label = { Text("搜索课程") },
+                            singleLine = true,
+                            trailingIcon = {
+                                IconButton(
+                                    onClick = {}) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.search),
+                                        contentDescription = "description"
+                                    )
+                                }
+                            },
+                            shape = MaterialTheme.shapes.medium,
+                            colors = TextFieldDefaults.textFieldColors(
+                                focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
+                                unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
+                            ),
+                        )
+                    }
+                    gradeList.forEach { item ->
+                        if (item.title.contains(input) || item.title.contains(input)) {
+                            searchList.add(item)
                         }
-                        gradeList.forEach { item ->
-                            if (item.title.contains(input) || item.title.contains(input)) {
-                                searchList.add(item)
-                            }
-                        }
+                    }
 
-                Spacer(modifier = Modifier.height(5.dp))
+                    Spacer(modifier = Modifier.height(5.dp))
+                } else {
+                    searchList = gradeList
+                }
+
                 if(gradeList.size == 0) EmptyUI()
                 else {
                     LazyColumn{
-//                    item { Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding())) }
-//                        item { Spacer(modifier = Modifier.height(5.dp)) }
-//                    item {
+                        if(!showSearch) {
+                            item { Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding())) }
+                            item { Spacer(modifier = Modifier.height(5.dp)) }
+                        }
 
-//                    }
                         items(searchList.size) { item ->
                             val grade = searchList[item]
                             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {

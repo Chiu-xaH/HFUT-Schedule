@@ -229,7 +229,7 @@ fun SuccessUI(vm : NetWorkViewModel, grade : String, vm2 : LoginViewModel, vmUI 
                             if(!showSearch) {
                                 ScrollText(texts(SEARCH))
                             } else {
-                                SearchFuncs(false,blur,searchText) {
+                                SearchFuncs(false,blur,searchText,webVpn) {
                                     searchText = it
                                 }
                             }
@@ -281,7 +281,7 @@ fun SuccessUI(vm : NetWorkViewModel, grade : String, vm2 : LoginViewModel, vmUI 
 //                                            Icon(painter = painterResource(id =  R.drawable.login), contentDescription = "")
 //                                        }
 //                                    } else {
-                                        Text(text = "已登录",Modifier.padding(horizontal = 15.dp), color = MaterialTheme.colorScheme.primary)
+                                        Text(text =if(webVpn) "WEBVPN" else "已登录",Modifier.padding(horizontal = 15.dp), color = MaterialTheme.colorScheme.primary)
 //                                    }
                                 }
                                 Spacer(modifier = Modifier.width(15.dp))
@@ -414,7 +414,7 @@ fun SuccessUI(vm : NetWorkViewModel, grade : String, vm2 : LoginViewModel, vmUI 
             }
             composable(SEARCH.name) {
                 Scaffold {
-                    SearchScreen(vm,false,innerPadding,vmUI,webVpn,searchText)
+                    SearchScreen(vm,false,innerPadding,vmUI,searchText)
                 }
             }
             composable(SETTINGS.name) {

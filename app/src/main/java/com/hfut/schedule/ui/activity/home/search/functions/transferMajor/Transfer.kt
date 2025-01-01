@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
@@ -42,7 +44,7 @@ fun Transfer(ifSaved : Boolean,vm : NetWorkViewModel){
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
 
-    val sheetState_apply = rememberModalBottomSheetState()
+    val sheetState_apply = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_apply by remember { mutableStateOf(false) }
 
     val sheetState_info = rememberModalBottomSheetState()
@@ -72,13 +74,14 @@ fun Transfer(ifSaved : Boolean,vm : NetWorkViewModel){
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        title = { Text("转专业申请") },
+                        title = { Text("我的申请") },
                     )
                 },
             ) { innerPadding ->
                 Column(
                     modifier = Modifier
                         .padding(innerPadding)
+                        .verticalScroll(rememberScrollState())
                         .fillMaxSize()
                 ) {
                     MyApply(vm)

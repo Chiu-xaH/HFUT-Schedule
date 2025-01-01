@@ -51,6 +51,8 @@ import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.beans.Jxglstu.CourseItem
 import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.ui.activity.home.search.functions.life.countFunc
 import com.hfut.schedule.ui.utils.CardForListColor
 import com.hfut.schedule.ui.utils.DividerText
 import com.hfut.schedule.ui.utils.MyCard
@@ -68,27 +70,35 @@ import kotlinx.coroutines.launch
 @Composable
 fun ProgramPerformance(vm : NetWorkViewModel) {
     var loading by remember { mutableStateOf(true) }
-    val cookie = SharePrefs.prefs.getString("redirect", "")
+    val cookie = if (!vm.webVpn) prefs.getString(
+        "redirect",
+        ""
+    ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
+
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
 
     var moduleIndex by remember { mutableStateOf(-1) }
     var title by remember { mutableStateOf("完成情况") }
 
-    CoroutineScope(Job()).launch{
-        async{ cookie?.let { vm.getProgramPerformance(it)} }.await()
-        async {
-            Handler(Looper.getMainLooper()).post{
-                vm.programPerformanceData.observeForever { result ->
-                    if (result != null) {
-                        if(result.contains("{")) {
-                            loading = false
+    if(countFunc == 0) {
+        CoroutineScope(Job()).launch{
+            async{ cookie?.let { vm.getProgramPerformance(it)} }.await()
+            async {
+                Handler(Looper.getMainLooper()).post{
+                    vm.programPerformanceData.observeForever { result ->
+                        if (result != null) {
+                            if(result.contains("{")) {
+                                loading = false
+                                countFunc++
+                            }
                         }
                     }
                 }
             }
         }
     }
+
 
     if (showBottomSheet) {
         ModalBottomSheet(

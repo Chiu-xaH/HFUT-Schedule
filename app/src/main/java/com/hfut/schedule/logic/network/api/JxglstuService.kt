@@ -202,6 +202,14 @@ interface JxglstuService {
 
     //提交/撤销转专业申请
 
+    //我的转专业详情
+    @GET("for-std/change-major-apply/info/2162")
+    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0","Content-Type: application/x-www-form-urlencoded")
+    fun getMyTransferInfo(
+        @Header("Cookie") cookie: String,
+        @Query("studentId") studentId : Int
+    ): Call<ResponseBody>
+
 
     //获取培养方案完成情况
     @GET("ws/student/home-page/programCompletionPreview")

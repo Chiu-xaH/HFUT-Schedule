@@ -94,7 +94,7 @@ fun getName(vm : NetWorkViewModel) : String? {
 
 @SuppressLint("CoroutineCreationDuringComposition", "SuspiciousIndentation")
 @Composable
-fun SearchScreen(vm : NetWorkViewModel, ifSaved : Boolean, innerPaddings : PaddingValues, vmUI : UIViewModel, webVpn : Boolean,input : String) {
+fun SearchScreen(vm : NetWorkViewModel, ifSaved : Boolean, innerPaddings : PaddingValues, vmUI : UIViewModel,input : String) {
 
 
     @Composable
@@ -117,7 +117,7 @@ fun SearchScreen(vm : NetWorkViewModel, ifSaved : Boolean, innerPaddings : Paddi
         "校园网" to { LoginWeb(vmUI, false, vm) },
         "教育邮箱" to { Mail(ifSaved, vm) },
         "图书" to { LibraryItem(vm) },
-        "成绩" to { Grade(vm, ifSaved, webVpn) },
+        "成绩" to { Grade(vm, ifSaved) },
         "挂科率" to { FailRate(vm) },
         "课程汇总" to { CourseTotal(vm) },
         "个人信息" to { PersonUI(ifSaved) },
@@ -178,7 +178,7 @@ fun SearchScreen(vm : NetWorkViewModel, ifSaved : Boolean, innerPaddings : Paddi
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchFuncs(ifSaved: Boolean,blur : Boolean,input: String, onInputChanged: (String) -> Unit) {
+fun SearchFuncs(ifSaved: Boolean,blur : Boolean,input: String,webVpn: Boolean = false, onInputChanged: (String) -> Unit) {
    // var input by remember { mutableStateOf("") }
     //val surfaceColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.55f)
 
@@ -210,7 +210,7 @@ fun SearchFuncs(ifSaved: Boolean,blur : Boolean,input: String, onInputChanged: (
                     }
                 } else {
                     TextButton(onClick = { /*TODO*/ }) {
-                        Text(text = "已登录", color = MaterialTheme.colorScheme.primary)
+                        Text(text = if(webVpn) "WEBVPN" else "已登录", color = MaterialTheme.colorScheme.primary)
                     }
                 }
             },

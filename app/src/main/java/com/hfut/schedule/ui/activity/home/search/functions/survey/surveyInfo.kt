@@ -70,8 +70,10 @@ import kotlinx.coroutines.launch
 fun surveyInfo(id : Int,vm: NetWorkViewModel) {
     var loading by remember { mutableStateOf(true) }
 
-    val cookie = prefs.getString("redirect", "")
-
+    val cookie = if (!vm.webVpn) prefs.getString(
+        "redirect",
+        ""
+    ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
 
     CoroutineScope(Job()).launch{
         async { cookie?.let { vm.getSurveyToken(it,id.toString()) } }
@@ -267,7 +269,10 @@ fun surveyList(vm : NetWorkViewModel) {
 @SuppressLint("SuspiciousIndentation")
 fun selectMode(vm : NetWorkViewModel, mode : PostMode) : Boolean {
 
-    val cookie = prefs.getString("redirect", "")
+    val cookie = if (!vm.webVpn) prefs.getString(
+        "redirect",
+        ""
+    ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
     val token = prefs.getString("SurveyCookie","")
     return when(mode) {
         PostMode.NORMAL -> {

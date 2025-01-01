@@ -17,12 +17,12 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-suspend fun NetWorkUpdate(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel, webVpn : Boolean, ifSaved : Boolean){
+suspend fun NetWorkUpdate(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel, ifSaved : Boolean){
     val CommuityTOKEN = SharePrefs.prefs.getString("TOKEN","")
     val auth = prefs.getString("auth","")
     val grade = prefs.getString("Username","")?.substring(2,4)
 
-    val cookie = if(!webVpn) prefs.getString("redirect", "")  else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket","")
+    val cookie = if(!vm.webVpn) prefs.getString("redirect", "")  else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket","")
     CoroutineScope(Job()).apply {
         //async { MyWangKe() }
         async { vm2.My() }
@@ -78,7 +78,11 @@ suspend fun NetWorkUpdate(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UI
 //更新教务课表与课程汇总
 fun UpdateCourses(vm: NetWorkViewModel) {
     val grade = prefs.getString("Username","")?.substring(2,4)
-    val cookie = prefs.getString("redirect", "")
+    val cookie = if (!vm.webVpn) prefs.getString(
+        "redirect",
+        ""
+    ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
+
     CoroutineScope(Job()).async {
         val studentIdObserver = Observer<Int> { result ->
             if (result != 0) {

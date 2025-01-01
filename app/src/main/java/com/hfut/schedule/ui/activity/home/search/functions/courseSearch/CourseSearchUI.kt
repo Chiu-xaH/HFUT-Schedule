@@ -50,6 +50,7 @@ import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.Semseter.getSemseter
 import com.hfut.schedule.logic.utils.Semseter.getSemseterCloud
 import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotalUI
 import kotlinx.coroutines.CoroutineScope
@@ -66,7 +67,11 @@ fun courseSearchUI(vm : NetWorkViewModel) {
     var onclick by remember { mutableStateOf(false) }
     var loading by remember { mutableStateOf(false) }
 
-    val cookie = SharePrefs.prefs.getString("redirect", "")
+    val cookie = if (!vm.webVpn) prefs.getString(
+        "redirect",
+        ""
+    ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
+
     var sortType by remember { mutableStateOf(true) }
    // var showitem by remember { mutableStateOf(false) }
 

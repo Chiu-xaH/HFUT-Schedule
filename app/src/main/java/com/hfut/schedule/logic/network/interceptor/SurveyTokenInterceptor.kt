@@ -23,7 +23,7 @@ class SurveyTokenInterceptor : Interceptor {
             }
         }
    //     // 如果cookieValue不为空，就将其保存到SharedPreferences中
-        Log.d("cookies",cookies.toString())
+//        Log.d("cookies",cookies.toString())
         SharePrefs.saveString("SurveyCookie", cookies.toString())
         return response
     }
