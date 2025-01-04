@@ -43,10 +43,11 @@ import com.hfut.schedule.logic.utils.ReservDecimal
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.getIdentifyID
-import com.hfut.schedule.ui.utils.DividerText
-import com.hfut.schedule.ui.utils.MyToast
-import com.hfut.schedule.ui.utils.ScrollText
-import com.hfut.schedule.ui.utils.schoolIcons
+import com.hfut.schedule.ui.utils.components.DividerText
+import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
+import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.ScrollText
+import com.hfut.schedule.ui.utils.components.schoolIcons
 import org.jsoup.Jsoup
 
 
@@ -113,8 +114,7 @@ fun PersonItems(ifSaved : Boolean) {
                 .fillMaxSize()
         ) {
 
-            DividerText(text = "账号信息")
-           // MyCard {
+            DividerTextExpandedWith(text = "账号信息") {
                 ListItem(
                     headlineContent = { name?.let { Text(text = it) } },
                     overlineContent = { Text(text ="姓名" )},
@@ -165,12 +165,13 @@ fun PersonItems(ifSaved : Boolean) {
                         }
                     )
                 }
+            }
+           // MyCard {
+
           //  }
 
 
-            DividerText(text = "就读信息")
-
-        //    MyCard {
+            DividerTextExpandedWith(text = "就读信息") {
                 ListItem(
                     headlineContent = { school?.let { Text(text = it) } },
                     overlineContent = { Text(text = "校区")},
@@ -232,10 +233,13 @@ fun PersonItems(ifSaved : Boolean) {
                         MyToast("已复制到剪切板")
                     }
                 )
+            }
+
+        //    MyCard {
+
          //   }
 
-            DividerText(text = "密码信息")
-        //    MyCard {
+            DividerTextExpandedWith(text = "密码信息") {
                 ListItem(
                     headlineContent = { Text(text = "密码") },
                     leadingContent = {
@@ -280,11 +284,13 @@ fun PersonItems(ifSaved : Boolean) {
                         }
                     )
                 }
+            }
+        //    MyCard {
+
 
        //     }
 
-            DividerText(text = "学籍信息")
-         //   MyCard {
+            DividerTextExpandedWith(text = "学籍信息") {
                 ListItem(
                     headlineContent = { studyType?.let { Text(text = it) } },
                     overlineContent = { Text(text = "类型")},
@@ -394,6 +400,9 @@ fun PersonItems(ifSaved : Boolean) {
                         }
                     )
                 )
+            }
+         //   MyCard {
+
 
         //    }
         }

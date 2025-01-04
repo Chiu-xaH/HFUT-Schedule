@@ -38,7 +38,7 @@ import com.hfut.schedule.logic.utils.WebVpn
 import com.hfut.schedule.ui.activity.grade.getGrade
 import com.hfut.schedule.ui.activity.grade.grade.community.GradeItemUI
 import com.hfut.schedule.ui.activity.grade.grade.jxglstu.GradeItemUIJXGLSTU
-import com.hfut.schedule.ui.utils.Round
+import com.hfut.schedule.ui.utils.style.Round
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async

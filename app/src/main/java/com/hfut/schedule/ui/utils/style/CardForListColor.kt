@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.utils
+package com.hfut.schedule.ui.utils.style
 
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.ListItemDefaults

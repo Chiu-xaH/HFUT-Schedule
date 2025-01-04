@@ -90,8 +90,8 @@ import com.hfut.schedule.logic.utils.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter.noLogin
 import com.hfut.schedule.ui.activity.home.cube.items.main.FirstCube
-import com.hfut.schedule.ui.utils.MyToast
-import com.hfut.schedule.ui.utils.Round
+import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.style.Round
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay

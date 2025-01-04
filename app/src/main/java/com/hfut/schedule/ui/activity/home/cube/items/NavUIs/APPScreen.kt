@@ -42,8 +42,8 @@ import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.SharePrefs.saveBoolean
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.FocusCardSettings
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.LockUI
-import com.hfut.schedule.ui.utils.MyToast
-import com.hfut.schedule.ui.utils.Round
+import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.style.Round
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

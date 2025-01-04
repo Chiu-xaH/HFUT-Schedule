@@ -18,7 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CircularProgressIndicator
-import com.hfut.schedule.ui.utils.LoadingUI
+import com.hfut.schedule.ui.utils.components.LoadingUI
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
@@ -54,12 +54,13 @@ import com.hfut.schedule.logic.beans.Community.FriendsList
 import com.hfut.schedule.logic.beans.Community.FriendsResopnse
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.ui.utils.BottomTip
-import com.hfut.schedule.ui.utils.DividerText
-import com.hfut.schedule.ui.utils.MyCard
-import com.hfut.schedule.ui.utils.MyToast
-import com.hfut.schedule.ui.utils.Round
-import com.hfut.schedule.ui.utils.ScrollText
+import com.hfut.schedule.ui.utils.components.BottomTip
+import com.hfut.schedule.ui.utils.components.DividerText
+import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
+import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.components.ScrollText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -183,118 +184,122 @@ fun FriendsSetting(vm : NetWorkViewModel) {
     val friendList = getFriendsList()
     var input by remember { mutableStateOf("") }
     var msg by remember { mutableStateOf("") }
-    DividerText(text = "申请新的好友")
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
-    ) {
-        TextField(
-            modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 15.dp),
-            value = input,
-            onValueChange = {
-                input = it
-            },
-            label = { Text("输入学号" ) },
-            singleLine = true,
-            trailingIcon = {
-                IconButton(
-                    onClick = {
-                        CoroutineScope(Job()).launch {
-                            async { CommuityTOKEN?.let { vm.addApply(it,input) } }.await()
-                            async {
-                                Handler(Looper.getMainLooper()).post {
-                                    vm.applyResponseMsg.observeForever { result ->
-                                        if (result != null && result.contains("success")) {
-                                            msg = getMsg(result)
+    DividerTextExpandedWith(text = "申请新的好友") {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            TextField(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 15.dp),
+                value = input,
+                onValueChange = {
+                    input = it
+                },
+                label = { Text("输入学号" ) },
+                singleLine = true,
+                trailingIcon = {
+                    IconButton(
+                        onClick = {
+                            CoroutineScope(Job()).launch {
+                                async { CommuityTOKEN?.let { vm.addApply(it,input) } }.await()
+                                async {
+                                    Handler(Looper.getMainLooper()).post {
+                                        vm.applyResponseMsg.observeForever { result ->
+                                            if (result != null && result.contains("success")) {
+                                                msg = getMsg(result)
+                                            }
                                         }
                                     }
                                 }
                             }
-                        }
-                    }) {
-                    Icon(painter = painterResource(R.drawable.person_add), contentDescription = "description")
-                }
-            },
-            shape = MaterialTheme.shapes.medium,
-            colors = TextFieldDefaults.textFieldColors(
-                focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-            ),
-        )
-    }
-    if(msg != "")
-    BottomTip(str = msg)
-    DividerText(text = "好友列表(您目前可以查看的课表)")
-    MyCard {
-        for(i in friendList.indices) {
-            ListItem(
-                headlineContent = { friendList[i]?.let { Text(text = it.realname) } },
-                leadingContent = { Icon(painterResource(id = R.drawable.person), contentDescription = "")},
-                overlineContent = { friendList[i]?.let { Text(text = it.userId) }},
-                trailingContent = {
-                    FilledTonalIconButton(onClick = {
-                        MyToast("正在开发")
-                    }) {
-                        Icon(painterResource(id = R.drawable.delete), contentDescription = "")
+                        }) {
+                        Icon(painter = painterResource(R.drawable.person_add), contentDescription = "description")
                     }
-                }
+                },
+                shape = MaterialTheme.shapes.medium,
+                colors = TextFieldDefaults.textFieldColors(
+                    focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
+                    unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
+                ),
             )
         }
+        if(msg != "")
+            BottomTip(str = msg)
     }
-    DividerText(text = "申请列表(同意后对方可查看你的课表)")
-    Box {
-        AnimatedVisibility(
-            visible = loading,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Spacer(modifier = Modifier.height(5.dp))
-                LoadingUI()
+    DividerTextExpandedWith(text = "好友列表(您目前可以查看的课表)") {
+        MyCard {
+            for(i in friendList.indices) {
+                ListItem(
+                    headlineContent = { friendList[i]?.let { Text(text = it.realname) } },
+                    leadingContent = { Icon(painterResource(id = R.drawable.person), contentDescription = "")},
+                    overlineContent = { friendList[i]?.let { Text(text = it.userId) }},
+                    trailingContent = {
+                        FilledTonalIconButton(onClick = {
+                            MyToast("正在开发")
+                        }) {
+                            Icon(painterResource(id = R.drawable.delete), contentDescription = "")
+                        }
+                    }
+                )
             }
         }
+    }
+
+    DividerTextExpandedWith(text = "申请列表(同意后对方可查看你的课表)") {
+        Box {
+            AnimatedVisibility(
+                visible = loading,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Spacer(modifier = Modifier.height(5.dp))
+                    LoadingUI()
+                }
+            }
 
 
-        AnimatedVisibility(
-            visible = !loading,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            MyCard {
-                val applyList = getApplyingList(vm)
-                for(i in applyList.indices) {
-                    ListItem(
-                        headlineContent = { applyList[i]?.let { ScrollText(text = it.applyUsername) } },
-                        leadingContent = { Icon(painterResource(id = R.drawable.person_add), contentDescription = "")},
-                        overlineContent = { applyList[i]?.let { Text(text = it.applyUserId) } },
-                        trailingContent = {
-                            Row(modifier = Modifier.padding(horizontal = 15.dp)) {
-                                FilledTonalButton(onClick = {
-                                    val id = applyList[i]?.id
-                                    id?.let { CommuityTOKEN?.let { it1 -> vm.checkApplying(it1, it,true) } }
-                                    loading = true
-                                    loadData()
-                                }) {
-                                    Text(text = "同意")
+            AnimatedVisibility(
+                visible = !loading,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                MyCard {
+                    val applyList = getApplyingList(vm)
+                    for(i in applyList.indices) {
+                        ListItem(
+                            headlineContent = { applyList[i]?.let { ScrollText(text = it.applyUsername) } },
+                            leadingContent = { Icon(painterResource(id = R.drawable.person_add), contentDescription = "")},
+                            overlineContent = { applyList[i]?.let { Text(text = it.applyUserId) } },
+                            trailingContent = {
+                                Row(modifier = Modifier.padding(horizontal = 15.dp)) {
+                                    FilledTonalButton(onClick = {
+                                        val id = applyList[i]?.id
+                                        id?.let { CommuityTOKEN?.let { it1 -> vm.checkApplying(it1, it,true) } }
+                                        loading = true
+                                        loadData()
+                                    }) {
+                                        Text(text = "同意")
+                                    }
+                                    Spacer(modifier = Modifier.width(15.dp))
+                                    FilledTonalButton(onClick = {
+                                        val id = applyList[i]?.id
+                                        CommuityTOKEN?.let { id?.let { it1 -> vm.checkApplying(it, it1,false) } }
+                                        loading = true
+                                        loadData()
+                                    }) {
+                                        Text(text = "拒绝")
+                                    }
                                 }
-                                Spacer(modifier = Modifier.width(15.dp))
-                                FilledTonalButton(onClick = {
-                                    val id = applyList[i]?.id
-                                    CommuityTOKEN?.let { id?.let { it1 -> vm.checkApplying(it, it1,false) } }
-                                    loading = true
-                                    loadData()
-                                }) {
-                                    Text(text = "拒绝")
-                                }
+
                             }
-
-                        }
-                    )
+                        )
+                    }
                 }
             }
         }

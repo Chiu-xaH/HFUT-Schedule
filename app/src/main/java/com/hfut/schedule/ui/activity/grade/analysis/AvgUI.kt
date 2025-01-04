@@ -33,8 +33,9 @@ import com.hfut.schedule.logic.beans.Community.GradeAllResult
 import com.hfut.schedule.logic.beans.Community.GradeAvgResponse
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.ui.utils.DividerText
-import com.hfut.schedule.ui.utils.MyCard
+import com.hfut.schedule.ui.utils.components.DividerText
+import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
+import com.hfut.schedule.ui.utils.components.MyCard
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
@@ -45,19 +46,25 @@ fun GradeCountUI(innerPadding : PaddingValues) {
         Spacer(modifier = Modifier.height(5.dp))
 
 
-        DividerText(text = "总成绩 (整个大学阶段)")
-        AvgGrade()
-       // Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding()))
-        DividerText(text = "学期统计 (各学期)")
-        AllGrade()
-        DividerText(text = "统计图")
-        MyCard {
-            ListItem(
-                headlineContent = { Text("正在开发") },
-                leadingContent = { Icon(painterResource(R.drawable.info), contentDescription = "Localized description",) },
-                modifier = Modifier.fillMaxWidth(),
-            )
+        DividerTextExpandedWith(text = "总成绩 (整个大学阶段)") {
+            AvgGrade()
         }
+
+       // Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding()))
+        DividerTextExpandedWith(text = "学期统计 (各学期)") {
+            AllGrade()
+        }
+
+        DividerTextExpandedWith(text = "统计图") {
+            MyCard {
+                ListItem(
+                    headlineContent = { Text("正在开发") },
+                    leadingContent = { Icon(painterResource(R.drawable.info), contentDescription = "Localized description",) },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+        }
+
         Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding()))
     }
 }
@@ -83,7 +90,7 @@ fun AvgGrade() {
             ListItem(
                 headlineContent = { Text("分数 ${resultAvg.myAvgScore}") },
                 supportingContent = { Text("排名 ${resultAvg.majorAvgScoreRanking}") },
-                leadingContent = { Icon(painterResource(R.drawable.hive), contentDescription = "Localized description",) },
+                leadingContent = { Icon(painterResource(R.drawable.filter_vintage), contentDescription = "Localized description",) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(.5f),
@@ -108,7 +115,7 @@ fun AvgGrade() {
             ListItem(
                 headlineContent = { Text("分数") },
                 supportingContent = { Text("平均 ${resultAvg.majorAvgScore}\n最高 (待开发)") },
-                leadingContent = { Icon(painterResource(R.drawable.hive), contentDescription = "Localized description",) },
+                leadingContent = { Icon(painterResource(R.drawable.filter_vintage), contentDescription = "Localized description",) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(.5f),
@@ -140,7 +147,7 @@ fun AllGrade() {
 
                     ListItem(
                         headlineContent = { Text("分数 ${item.myAvgScore}") },
-                        leadingContent = { Icon(painterResource(R.drawable.hive), contentDescription = "Localized description",) },
+                        leadingContent = { Icon(painterResource(R.drawable.filter_vintage), contentDescription = "Localized description",) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(.5f),
@@ -163,7 +170,7 @@ fun AllGrade() {
                     ListItem(
                         headlineContent = { Text("分数") },
                         supportingContent = { Text("平均 ${item.majorAvgScore}\n最高 ${item.maxAvgScore}") },
-                        leadingContent = { Icon(painterResource(R.drawable.hive), contentDescription = "Localized description",) },
+                        leadingContent = { Icon(painterResource(R.drawable.filter_vintage), contentDescription = "Localized description",) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(.5f),

@@ -15,7 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
-import com.hfut.schedule.ui.utils.Round
+import com.hfut.schedule.ui.utils.style.Round
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

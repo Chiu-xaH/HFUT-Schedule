@@ -77,13 +77,13 @@ import com.hfut.schedule.ui.activity.home.cube.items.main.apiCheck
 import com.hfut.schedule.ui.activity.home.focus.funictions.FocusDataBaseManager.addItems
 import com.hfut.schedule.ui.activity.home.focus.funictions.FocusDataBaseManager.removeItems
 import com.hfut.schedule.ui.activity.home.search.functions.card.TodayInfo
-import com.hfut.schedule.ui.utils.BottomTip
-import com.hfut.schedule.ui.utils.MyCard
-import com.hfut.schedule.ui.utils.MyToast
-import com.hfut.schedule.ui.utils.RotatingIcon
-import com.hfut.schedule.ui.utils.Round
-import com.hfut.schedule.ui.utils.ScheduleIcons
-import com.hfut.schedule.ui.utils.ScrollText
+import com.hfut.schedule.ui.utils.components.BottomTip
+import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.RotatingIcon
+import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.components.ScheduleIcons
+import com.hfut.schedule.ui.utils.components.ScrollText
 
 @Composable
 fun MyScheuleItem(item : Int, MySchedule : MutableList<Schedule>,Future: Boolean,activity : Activity ) {
@@ -511,7 +511,8 @@ fun BoxScope.AddButton(isVisible: Boolean,innerPaddings : PaddingValues) {
 
     if (showBottomSheet) {
         ModalBottomSheet(onDismissRequest = { showBottomSheet = false },sheetState = sheetState,
-            shape = Round(sheetState)) {
+            shape = Round(sheetState)
+        ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 topBar = {

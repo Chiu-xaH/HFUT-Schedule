@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.Starter
-import com.hfut.schedule.ui.utils.ScrollText
+import com.hfut.schedule.ui.utils.components.ScrollText
 
 @Composable
 fun WebItem() {

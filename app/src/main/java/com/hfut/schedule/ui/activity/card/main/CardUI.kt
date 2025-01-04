@@ -65,10 +65,10 @@ import com.hfut.schedule.ui.activity.card.bills.main.CardBills
 import com.hfut.schedule.ui.activity.card.counts.CardHome
 import com.hfut.schedule.ui.activity.card.function.main.turnToBottomBar
 import com.hfut.schedule.ui.activity.home.focus.funictions.GetZjgdCard
-import com.hfut.schedule.ui.utils.CustomTabRow
-import com.hfut.schedule.ui.utils.MyToast
-import com.hfut.schedule.ui.utils.bottomBarBlur
-import com.hfut.schedule.ui.utils.topBarBlur
+import com.hfut.schedule.ui.utils.components.CustomTabRow
+import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.style.bottomBarBlur
+import com.hfut.schedule.ui.utils.style.topBarBlur
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 import kotlinx.coroutines.CoroutineScope

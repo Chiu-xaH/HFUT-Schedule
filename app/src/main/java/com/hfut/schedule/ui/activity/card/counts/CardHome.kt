@@ -16,8 +16,8 @@ import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.ui.activity.card.bills.main.BillItem
 import com.hfut.schedule.ui.activity.card.counts.main.monthCount
 import com.hfut.schedule.ui.activity.card.bills.todayCount
-import com.hfut.schedule.ui.utils.DevelopingUI
-import com.hfut.schedule.ui.utils.EmptyUI
+import com.hfut.schedule.ui.utils.components.DevelopingUI
+import com.hfut.schedule.ui.utils.components.EmptyUI
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalFoundationApi::class)

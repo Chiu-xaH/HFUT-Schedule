@@ -23,7 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
-import com.hfut.schedule.ui.utils.MyToast
+import com.hfut.schedule.ui.utils.components.MyToast
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

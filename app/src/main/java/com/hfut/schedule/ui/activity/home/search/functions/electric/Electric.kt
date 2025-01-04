@@ -41,9 +41,9 @@ import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter
-import com.hfut.schedule.ui.utils.Round
-import com.hfut.schedule.ui.utils.ScrollText
-import com.hfut.schedule.ui.utils.WebViewScreen
+import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.components.ScrollText
+import com.hfut.schedule.ui.utils.components.WebViewScreen
 import com.hfut.schedule.ui.theme.FWDTColr
 
 @SuppressLint("SuspiciousIndentation")
@@ -131,7 +131,7 @@ fun Electric(vm : NetWorkViewModel, card : Boolean, vmUI : UIViewModel) {
     }
     ListItem(
         headlineContent = { if(!card)Text(text = "寝室电费") else ScrollText(text = "￥${vmUI.electricValue.value ?: memoryEle}") },
-        overlineContent = { if(!card) ScrollText(text = "￥${vmUI.electricValue.value ?: memoryEle}") else ScrollText(text = room)},
+        overlineContent = { if(!card) ScrollText(text = "￥${vmUI.electricValue.value ?: memoryEle}") else ScrollText(text = room) },
         leadingContent = { Icon(painterResource(R.drawable.flash_on), contentDescription = "Localized description",) },
         trailingContent = {
             if(card && showAdd)

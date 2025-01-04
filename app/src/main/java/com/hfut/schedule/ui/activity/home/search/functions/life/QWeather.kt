@@ -49,12 +49,13 @@ import com.hfut.schedule.logic.beans.QWeatherResponse
 import com.hfut.schedule.logic.utils.reEmptyLiveDta
 import com.hfut.schedule.ui.activity.home.search.functions.life.QWeatherLevel.*
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
-import com.hfut.schedule.ui.utils.BottomTip
-import com.hfut.schedule.ui.utils.CardForListColor
-import com.hfut.schedule.ui.utils.DevelopingUI
-import com.hfut.schedule.ui.utils.DividerText
-import com.hfut.schedule.ui.utils.MyToast
-import com.hfut.schedule.ui.utils.Round
+import com.hfut.schedule.ui.utils.components.BottomTip
+import com.hfut.schedule.ui.utils.style.CardForListColor
+import com.hfut.schedule.ui.utils.components.DevelopingUI
+import com.hfut.schedule.ui.utils.components.DividerText
+import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
+import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -144,78 +145,83 @@ fun LifeUIS(vm : NetWorkViewModel) {
         refreshWeather()
     }
     val cityName = if((getPersonInfo().school ?: "合肥").contains("宣城")) "宣城" else "合肥"
-    DividerText(text = "天气预警")
     val data = getWeather(vm)
+    DividerTextExpandedWith(text = "天气预警") {
+        Card(
+            elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .scale(scale2.value)
+                .padding(horizontal = 15.dp, vertical = 5.dp),
+            shape = MaterialTheme.shapes.medium,
+            colors = CardForListColor()
+        ) {
+            Column (modifier = Modifier
+                .blur(blurSize)
+                .scale(scale.value)){
 
-    Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .scale(scale2.value)
-            .padding(horizontal = 15.dp, vertical = 5.dp),
-        shape = MaterialTheme.shapes.medium,
-        colors = CardForListColor()
-    ) {
-        Column (modifier = Modifier
-            .blur(blurSize)
-            .scale(scale.value)){
-
-            ListItem(
-                headlineContent = { Text(text = data.text + " " + data.temp + "℃", fontSize = 28.sp) },
-                leadingContent = {
-                    QWeatherIcon(data.icon.toIntOrNull())
-                },
-                trailingContent = {
-                    Text(text = cityName)
-                }
-            )
-            Row {
                 ListItem(
-                    headlineContent = { Text(text = data.feelsLike + "℃") },
-                    overlineContent = { Text(text = "体感")},
+                    headlineContent = { Text(text = data.text + " " + data.temp + "℃", fontSize = 28.sp) },
                     leadingContent = {
-                                     Icon(painterResource(id = R.drawable.temp_preferences_eco), contentDescription = null)
-                    },
-                    modifier = Modifier
-                        .weight(.5f)
-                )
-                ListItem(
-                    headlineContent = { Text(text = data.humidity + "%") },
-                    overlineContent = { Text(text = "湿度")},
-                    leadingContent = {
-                        HumidityIcons(level = humidityLevel(data.humidity.toIntOrNull()))
-                    },
-                    modifier = Modifier
-                        .weight(.5f)
-                )
-            }
-            Row {
-                ListItem(
-                    headlineContent = { Text(text = data.windScale + "级" ) },
-                    overlineContent = { Text(text = data.windDir)},
-                    leadingContent = {
-                        Icon(painterResource(id = R.drawable.air), contentDescription = null)
+                        QWeatherIcon(data.icon.toIntOrNull())
                     },
                     trailingContent = {
-                        Button(onClick = {
-                            MyToast("正在开发")
+                        Text(text = cityName)
+                    }
+                )
+                Row {
+                    ListItem(
+                        headlineContent = { Text(text = data.feelsLike + "℃") },
+                        overlineContent = { Text(text = "体感")},
+                        leadingContent = {
+                            Icon(painterResource(id = R.drawable.temp_preferences_eco), contentDescription = null)
+                        },
+                        modifier = Modifier
+                            .weight(.5f)
+                    )
+                    ListItem(
+                        headlineContent = { Text(text = data.humidity + "%") },
+                        overlineContent = { Text(text = "湿度")},
+                        leadingContent = {
+                            HumidityIcons(level = humidityLevel(data.humidity.toIntOrNull()))
+                        },
+                        modifier = Modifier
+                            .weight(.5f)
+                    )
+                }
+                Row {
+                    ListItem(
+                        headlineContent = { Text(text = data.windScale + "级" ) },
+                        overlineContent = { Text(text = data.windDir)},
+                        leadingContent = {
+                            Icon(painterResource(id = R.drawable.air), contentDescription = null)
+                        },
+                        trailingContent = {
+                            Button(onClick = {
+                                MyToast("正在开发")
 //                            countWeather = 0
 //                            showBottomSheet_Weather = true
-                        }) {
-                            Text(text = "天气详情")
-                        }
-                    },
-                    modifier = Modifier
-                        .weight(1f)
-                )
+                            }) {
+                                Text(text = "天气详情")
+                            }
+                        },
+                        modifier = Modifier
+                            .weight(1f)
+                    )
+                }
             }
         }
+        BottomTip("数据来源 和风天气")
     }
-    BottomTip("数据来源 和风天气")
-    DividerText(text = "楼层导向")
-    DevelopingUI()
-    DividerText(text = "校园地图")
-    DevelopingUI()
+
+
+    DividerTextExpandedWith(text = "楼层导向") {
+        DevelopingUI()
+    }
+
+    DividerTextExpandedWith(text = "校园地图") {
+        DevelopingUI()
+    }
 }
 
 

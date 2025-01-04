@@ -12,13 +12,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -34,13 +33,18 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.ClipBoard
 import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.SharePrefs.saveBoolean
 import com.hfut.schedule.logic.utils.Starter.loginGuaGua
 
-import com.hfut.schedule.ui.utils.MyToast
+import com.hfut.schedule.ui.utils.components.MyToast
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GuaGuaSettings(innerPadding: PaddingValues) {
+    val switch_usecode = prefs.getBoolean("SWITCHUSECODE",false)
+    var autoUseCode by remember { mutableStateOf(switch_usecode) }
+    saveBoolean("SWITCHUSECODE",true,autoUseCode)
        Column(modifier = Modifier
            .fillMaxSize()
            .verticalScroll(rememberScrollState())) {
@@ -54,14 +58,25 @@ fun GuaGuaSettings(innerPadding: PaddingValues) {
             modifier = Modifier.clickable { loginGuaGua() }
         )
            ListItem(
+               headlineContent = { Text(text = "预加载使用码") },
+               supportingContent = { Text(text = "打开后将主动加载使用码，即使您不需要使用时") },
+               leadingContent = {
+                   Icon(painterResource(id = R.drawable.reset_iso), contentDescription = "")
+               },
+               trailingContent = {
+                   Switch(checked = autoUseCode, onCheckedChange = { autoUseCode = it })
+               },
+               modifier = Modifier.clickable { autoUseCode = !autoUseCode }
+           )
+           ListItem(
                headlineContent = { Text(text = "修改loginCode") },
                supportingContent = { Text(text = "保持多端loginCode一致可实现多端登录") },
                leadingContent = {
                    Icon(painterResource(id = R.drawable.cookie), contentDescription = "")
                }
            )
-        EditLoginCode()
-        Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding()))
+            EditLoginCode()
+            Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding()))
     }
 }
 

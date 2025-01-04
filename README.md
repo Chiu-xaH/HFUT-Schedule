@@ -71,11 +71,12 @@ UI设计 Material You (Material Design 3) + Material Design
 
 ## [更新日志](markdown/UPDATE.md)
 
-## 访问量统计
+## 统计
 使用为期3个月的服务器进行统计
 
 ![visitsChart](/img/visitsChart.png)
 
+截止到2025-01-03 23:45 统计总代码行数为356XX行（只算业务代码，且不包括空行）
 ## 助力开发
 如果有功能层面改进或创新、Bug，可在issue提交
 

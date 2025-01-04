@@ -53,8 +53,8 @@ import com.hfut.schedule.logic.beans.Jxglstu.datumResponse
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.ui.activity.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.activity.home.calendar.next.DatumMode.*
-import com.hfut.schedule.ui.utils.MyToast
-import com.hfut.schedule.ui.utils.Round
+import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 
 enum class DatumMode {

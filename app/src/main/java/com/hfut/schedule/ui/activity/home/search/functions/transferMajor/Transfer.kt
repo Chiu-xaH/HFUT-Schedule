@@ -33,9 +33,9 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
-import com.hfut.schedule.ui.utils.MyCard
-import com.hfut.schedule.ui.utils.Round
-import com.hfut.schedule.ui.utils.ScrollText
+import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.components.ScrollText
 
 
 @OptIn(ExperimentalMaterial3Api::class)

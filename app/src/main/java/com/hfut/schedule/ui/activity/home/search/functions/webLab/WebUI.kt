@@ -29,9 +29,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.activity.news.departments.SchoolsUI
-import com.hfut.schedule.ui.utils.BottomTip
-import com.hfut.schedule.ui.utils.DividerText
-import com.hfut.schedule.ui.utils.Round
+import com.hfut.schedule.ui.utils.components.BottomTip
+import com.hfut.schedule.ui.utils.components.DividerText
+import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
+import com.hfut.schedule.ui.utils.style.Round
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -82,11 +83,14 @@ fun WebUI() {
                         .verticalScroll(rememberScrollState())
                         .fillMaxSize()
                 ) {
-                    DividerText(text = "固定项")
-                    WebItem()
-                    DividerText(text = "实验室")
-                    LabUI()
-                    BottomTip(str = "有需求? 欢迎反馈")
+                    DividerTextExpandedWith(text = "固定项") {
+                        WebItem()
+                    }
+
+                    DividerTextExpandedWith(text = "实验室") {
+                        LabUI()
+                        BottomTip(str = "有需求? 欢迎反馈")
+                    }
                 }
             }
         }

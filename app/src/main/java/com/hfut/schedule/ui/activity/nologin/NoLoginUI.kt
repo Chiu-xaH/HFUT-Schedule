@@ -66,12 +66,13 @@ import com.hfut.schedule.ui.activity.home.search.functions.notifications.Notific
 import com.hfut.schedule.ui.activity.home.search.functions.notifications.getNotifications
 import com.hfut.schedule.ui.activity.home.search.functions.webLab.LabUI
 import com.hfut.schedule.ui.activity.home.search.main.SearchFuncs
-import com.hfut.schedule.ui.utils.CustomTabRow
-import com.hfut.schedule.ui.utils.DividerText
-import com.hfut.schedule.ui.utils.Round
-import com.hfut.schedule.ui.utils.ScrollText
-import com.hfut.schedule.ui.utils.bottomBarBlur
-import com.hfut.schedule.ui.utils.topBarBlur
+import com.hfut.schedule.ui.utils.components.CustomTabRow
+import com.hfut.schedule.ui.utils.components.DividerText
+import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
+import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.components.ScrollText
+import com.hfut.schedule.ui.utils.style.bottomBarBlur
+import com.hfut.schedule.ui.utils.style.topBarBlur
 import com.hfut.schedule.viewmodel.LoginViewModel
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
@@ -137,10 +138,14 @@ fun NoLoginUI(vm : NetWorkViewModel,vm2 : LoginViewModel,vmUI : UIViewModel) {
                         .verticalScroll(rememberScrollState())
                 ){
                     MyAPIItem()
-                    DividerText("通知")
-                    NotificationItems()
-                    DividerText("实验室")
-                    LabUI()
+                    DividerTextExpandedWith("通知") {
+                        NotificationItems()
+                    }
+
+                    DividerTextExpandedWith("实验室") {
+                        LabUI()
+                    }
+
                 }
             }
         }

@@ -2,7 +2,7 @@ package com.hfut.schedule.ui.utils
 
 import androidx.navigation.NavHostController
 
-object NavigateUtils {
+object NavigateManager {
     fun turnToBottomBar(navController : NavHostController, route : String) {
         navController.navigate(route) {
             popUpTo(navController.graph.startDestinationId) {

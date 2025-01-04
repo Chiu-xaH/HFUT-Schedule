@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.ui.utils.MyCard
+import com.hfut.schedule.ui.utils.components.MyCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

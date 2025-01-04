@@ -49,8 +49,9 @@ import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.VersionInfo
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.downloadUI
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.getUpdates
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
-import com.hfut.schedule.ui.utils.DividerText
-import com.hfut.schedule.ui.utils.Round
+import com.hfut.schedule.ui.utils.components.DividerText
+import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
+import com.hfut.schedule.ui.utils.style.Round
 
 
 fun apiCheck() : Boolean {
@@ -144,24 +145,31 @@ fun HomeSettingScreen(navController: NavController,
 
         Spacer(modifier = Modifier.height(5.dp))
 
-        DividerText(text = "登录信息")
-        PersonPart()
+        DividerTextExpandedWith(text = "登录信息") {
+            PersonPart()
+        }
+
 
         MyAPIItem()
 
         if (APPVersion.getVersionName() != getUpdates().version) {
             if(!APPVersion.getVersionName().contains("Preview")) {
-                DividerText(text = "更新版本")
-                UpdateUI()
-                downloadUI()
+                DividerTextExpandedWith(text = "更新版本") {
+                    UpdateUI()
+                    downloadUI()
+                }
+
             }
         }
 
-        DividerText(text = "猜你想用")
-        AlwaysItem()
+        DividerTextExpandedWith(text = "猜你想用") {
+            AlwaysItem()
+        }
 
-        DividerText(text = "应用设置")
-        PartOne(vm,showlable,showlablechanged,ifSaved,blur,blurchanged,navController)
+
+        DividerTextExpandedWith(text = "应用设置") {
+            PartOne(vm,showlable,showlablechanged,ifSaved,blur,blurchanged,navController)
+        }
 
         Spacer(modifier = Modifier.height(5.dp))
     }

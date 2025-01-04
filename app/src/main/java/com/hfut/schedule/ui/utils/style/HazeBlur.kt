@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.utils
+package com.hfut.schedule.ui.utils.style
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable

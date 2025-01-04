@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.activity.home.cube.items.subitems
 
+import androidx.camera.core.processing.SurfaceProcessorNode.In
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -33,7 +34,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.saveBoolean
 import com.hfut.schedule.logic.utils.SharePrefs.saveString
-import com.hfut.schedule.ui.utils.MyToast
+import com.hfut.schedule.ui.utils.components.MyToast
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -178,14 +179,14 @@ fun Key(num : Int, modifier: Modifier = Modifier, onKeyClick: (Int) -> Unit) {
 }
 
 @Composable
-fun CirclePoint(modifier: Modifier = Modifier, text : String, password : String) {
+fun CirclePoint(modifier: Modifier = Modifier, text : String, password : String,num : Int = 6) {
     Column(modifier = modifier) {
         Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
             Text(text = text)
         }
         Spacer(modifier = Modifier.height(10.dp))
         Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
-            for(i in 0 until 6) {
+            for(i in 0 until num) {
                 Icon(painter = painterResource(id = if(i < password.length) R.drawable.circle_filled else R.drawable.circle), contentDescription = "",modifier = Modifier.padding(7.dp).size(17.dp),tint = MaterialTheme.colorScheme.primary)
             }
         }

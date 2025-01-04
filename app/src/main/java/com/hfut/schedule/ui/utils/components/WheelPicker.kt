@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.utils
+package com.hfut.schedule.ui.utils.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior

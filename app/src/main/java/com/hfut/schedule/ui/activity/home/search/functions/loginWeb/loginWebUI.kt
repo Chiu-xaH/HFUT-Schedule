@@ -42,7 +42,8 @@ import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.utils.ReservDecimal
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.getWebNew
-import com.hfut.schedule.ui.utils.DividerText
+import com.hfut.schedule.ui.utils.components.DividerText
+import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -79,110 +80,114 @@ fun loginWebUI(vmUI : UIViewModel,vm : NetWorkViewModel) {
     var textLogout by  remember { mutableStateOf("注销") }
     vmUI.getWebInfo()
     getWebNew(vm,vmUI)
-    DividerText(text = "账户数据")
-    Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 15.dp, vertical = 5.dp),
-        shape = MaterialTheme.shapes.medium,
-    ) {
-        val scrollState = rememberScrollState()
-        LaunchedEffect(key1 = textStatus.substringBefore("\n") ) {
-            delay(500L)
-            scrollState.animateScrollTo(scrollState.maxValue)
-            delay(4000L)
-            scrollState.animateScrollTo(0)
-        }
+    DividerTextExpandedWith(text = "账户数据") {
+        Card(
+            elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 15.dp, vertical = 5.dp),
+            shape = MaterialTheme.shapes.medium,
+        ) {
+            val scrollState = rememberScrollState()
+            LaunchedEffect(key1 = textStatus.substringBefore("\n") ) {
+                delay(500L)
+                scrollState.animateScrollTo(scrollState.maxValue)
+                delay(4000L)
+                scrollState.animateScrollTo(0)
+            }
 
 
-        ListItem(
-            headlineContent = {
-                Text(
-                    text = "已用 ${str} GB",
-                    fontSize = 28.sp,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.horizontalScroll(scrollState))
-            },
-            trailingContent = {
-                Text(text = "$flow MB")
-            }
-        )
-        ListItem(
-            headlineContent = { Text(text = "余额 ￥${vmUI.webValue.value?.fee?: "0"}") },
-            leadingContent = { Icon(painter = painterResource(id = R.drawable.paid), contentDescription = "")},
-            trailingContent = {
-                FilledTonalButton(
-                    onClick = {
-                        vmUI.loginWeb()
-                        vmUI.loginWeb2()
-                    },modifier = Modifier
-                        .scale(scale.value),
-                    interactionSource = interactionSource,) {
-                    Text(text = textLogin)
-                }
-            }
-        )
-        Row {
             ListItem(
-                modifier = Modifier.weight(.5f),
-                overlineContent = { Text(text = "月免费额度 50GB") },
-                headlineContent = { Text(text = "已用 ${precent} %", fontWeight = FontWeight.Bold)},
-                leadingContent = { Icon(painterResource(R.drawable.percent), contentDescription = "Localized description",) },
+                headlineContent = {
+                    Text(
+                        text = "已用 ${str} GB",
+                        fontSize = 28.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.horizontalScroll(scrollState))
+                },
                 trailingContent = {
-                    FilledTonalButton (
+                    Text(text = "$flow MB")
+                }
+            )
+            ListItem(
+                headlineContent = { Text(text = "余额 ￥${vmUI.webValue.value?.fee?: "0"}") },
+                leadingContent = { Icon(painter = painterResource(id = R.drawable.paid), contentDescription = "")},
+                trailingContent = {
+                    FilledTonalButton(
                         onClick = {
-                            vmUI.logoutWeb()
-                        },
-                        //modifier = Modifier
-                        //  .scale(scale.value),
-                        //interactionSource = interactionSource,
-                    ) {
-                        Text(text = textLogout)
+                            vmUI.loginWeb()
+                            vmUI.loginWeb2()
+                        },modifier = Modifier
+                            .scale(scale.value),
+                        interactionSource = interactionSource,) {
+                        Text(text = textLogin)
                     }
                 }
             )
+            Row {
+                ListItem(
+                    modifier = Modifier.weight(.5f),
+                    overlineContent = { Text(text = "月免费额度 50GB") },
+                    headlineContent = { Text(text = "已用 ${precent} %", fontWeight = FontWeight.Bold)},
+                    leadingContent = { Icon(painterResource(R.drawable.percent), contentDescription = "Localized description",) },
+                    trailingContent = {
+                        FilledTonalButton (
+                            onClick = {
+                                vmUI.logoutWeb()
+                            },
+                            //modifier = Modifier
+                            //  .scale(scale.value),
+                            //interactionSource = interactionSource,
+                        ) {
+                            Text(text = textLogout)
+                        }
+                    }
+                )
+            }
         }
     }
-    DividerText(text = "使用说明")
-    ListItem(
-        headlineContent = { Text(text = "WLAN连接'hfut-wlan'后自动弹出认证") },
-        supportingContent = { Text(text = "校区内两大校园网中心位于图书馆、教室，WLAN质量最好") },
-        leadingContent = {
-            Icon(painter = painterResource(id = R.drawable.wifi_tethering), contentDescription = "")
-        }
-    )
-    ListItem(
-        headlineContent = { Text(text = "宿舍连接缆线后自动弹出认证") },
-        leadingContent = {
-            Icon(painter = painterResource(id = R.drawable.lan), contentDescription = "")
-        }
-    )
-    ListItem(
-        headlineContent = { Text(text = "认证初始密码位于 查询中心-个人信息") },
-        leadingContent = {
-            Icon(painter = painterResource(id = R.drawable.key), contentDescription = "")
-        }
-    )
-    ListItem(
-        headlineContent = { Text(text = "部分内网必须连接校园网打开") },
-        supportingContent = {
-                            Text(text = "学校提供WEBVPN供外网访问部分内网地址,可在 查询中心-网址导航 打开")
-        },
-        leadingContent = {
-            Icon(painter = painterResource(id = R.drawable.vpn_key), contentDescription = "")
-        }
-    )
-    ListItem(
-        headlineContent = { Text(text = "免费时期") },
-        supportingContent = {
-            Text(text = "法定节假日与寒暑假均不限额度")
-        },
-        leadingContent = {
-            Icon(painter = painterResource(id = R.drawable.paid), contentDescription = "")
-        }
-    )
+
+    DividerTextExpandedWith(text = "使用说明") {
+        ListItem(
+            headlineContent = { Text(text = "WLAN连接'hfut-wlan'后自动弹出认证") },
+            supportingContent = { Text(text = "校区内两大校园网中心位于图书馆、教室，WLAN质量最好") },
+            leadingContent = {
+                Icon(painter = painterResource(id = R.drawable.wifi_tethering), contentDescription = "")
+            }
+        )
+        ListItem(
+            headlineContent = { Text(text = "宿舍连接缆线后自动弹出认证") },
+            leadingContent = {
+                Icon(painter = painterResource(id = R.drawable.lan), contentDescription = "")
+            }
+        )
+        ListItem(
+            headlineContent = { Text(text = "认证初始密码位于 查询中心-个人信息") },
+            leadingContent = {
+                Icon(painter = painterResource(id = R.drawable.key), contentDescription = "")
+            }
+        )
+        ListItem(
+            headlineContent = { Text(text = "部分内网必须连接校园网打开") },
+            supportingContent = {
+                Text(text = "学校提供WEBVPN供外网访问部分内网地址,可在 查询中心-网址导航 打开")
+            },
+            leadingContent = {
+                Icon(painter = painterResource(id = R.drawable.vpn_key), contentDescription = "")
+            }
+        )
+        ListItem(
+            headlineContent = { Text(text = "免费时期") },
+            supportingContent = {
+                Text(text = "法定节假日与寒暑假均不限额度")
+            },
+            leadingContent = {
+                Icon(painter = painterResource(id = R.drawable.paid), contentDescription = "")
+            }
+        )
+    }
+
 
 
 

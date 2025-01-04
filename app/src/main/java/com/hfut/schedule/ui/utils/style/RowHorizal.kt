@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.utils
+package com.hfut.schedule.ui.utils.style
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

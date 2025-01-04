@@ -59,10 +59,10 @@ import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.grade.analysis.GradeCountUI
 import com.hfut.schedule.ui.activity.grade.grade.community.GradeItemUI
 import com.hfut.schedule.ui.activity.grade.grade.jxglstu.GradeItemUIJXGLSTU
-import com.hfut.schedule.ui.utils.MyCard
-import com.hfut.schedule.ui.utils.Round
-import com.hfut.schedule.ui.utils.bottomBarBlur
-import com.hfut.schedule.ui.utils.topBarBlur
+import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.bottomBarBlur
+import com.hfut.schedule.ui.utils.style.topBarBlur
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 

@@ -29,7 +29,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import com.hfut.schedule.ui.utils.LoadingUI
+import com.hfut.schedule.ui.utils.components.LoadingUI
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
@@ -81,13 +81,14 @@ import com.hfut.schedule.logic.utils.Starter.refreshLogin
 import com.hfut.schedule.ui.activity.home.search.functions.dormitoryScore.DormitoryScoreUI
 import com.hfut.schedule.ui.activity.home.search.functions.life.countFunc
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
-import com.hfut.schedule.ui.utils.BottomTip
-import com.hfut.schedule.ui.utils.CardForListColor
-import com.hfut.schedule.ui.utils.DividerText
-import com.hfut.schedule.ui.utils.MyCard
-import com.hfut.schedule.ui.utils.Round
-import com.hfut.schedule.ui.utils.schoolIcons
-import com.hfut.schedule.ui.utils.statusUI
+import com.hfut.schedule.ui.utils.components.BottomTip
+import com.hfut.schedule.ui.utils.style.CardForListColor
+import com.hfut.schedule.ui.utils.components.DividerText
+import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
+import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.components.schoolIcons
+import com.hfut.schedule.ui.utils.components.statusUI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -349,119 +350,123 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean) {
         }
     }
 
-    DividerText(text = if(ifSaved)"完成情况(登录后可查看)" else "完成情况")
-    Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .scale(scale2.value)
-            .padding(horizontal = 15.dp, vertical = 5.dp),
-        shape = MaterialTheme.shapes.medium,
-        colors = CardForListColor()
-    ) {
-        Column (modifier = Modifier
-            .blur(blurSize)
-            .scale(scale.value)){
-            val res = completion.total.actual/completion.total.full * 100.0
-            ListItem(
-                headlineContent = { Text(text = "已修 ${completion.total.actual}/${completion.total.full}",fontSize = 28.sp) },
-                trailingContent = {
-                    Text(text = "${ReservDecimal.reservDecimal(res,1)} %")
-                }
-            )
-            for(i in 0 until completion.other.size step 2)
-            Row {
+    DividerTextExpandedWith(text = if(ifSaved)"完成情况(登录后可查看)" else "完成情况") {
+        Card(
+            elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .scale(scale2.value)
+                .padding(horizontal = 15.dp, vertical = 5.dp),
+            shape = MaterialTheme.shapes.medium,
+            colors = CardForListColor()
+        ) {
+            Column (modifier = Modifier
+                .blur(blurSize)
+                .scale(scale.value)){
+                val res = completion.total.actual/completion.total.full * 100.0
                 ListItem(
-                    headlineContent = { Text(text = completion.other[i].name) },
-                    overlineContent = {Text(text = "${completion.other[i].actual}/${completion.other[i].full}", fontWeight = FontWeight.Bold) },
-                    modifier = Modifier.weight(.5f)
+                    headlineContent = { Text(text = "已修 ${completion.total.actual}/${completion.total.full}",fontSize = 28.sp) },
+                    trailingContent = {
+                        Text(text = "${ReservDecimal.reservDecimal(res,1)} %")
+                    }
                 )
-                if(i+1 < completion.other.size)
-                ListItem(
-                    headlineContent = { Text(text = completion.other[i+1].name) },
-                    overlineContent = {Text(text = "${completion.other[i+1].actual}/${completion.other[i+1].full}",fontWeight = FontWeight.Bold) },
-                    modifier = Modifier.weight(.5f)
-                )
+                for(i in 0 until completion.other.size step 2)
+                    Row {
+                        ListItem(
+                            headlineContent = { Text(text = completion.other[i].name) },
+                            overlineContent = {Text(text = "${completion.other[i].actual}/${completion.other[i].full}", fontWeight = FontWeight.Bold) },
+                            modifier = Modifier.weight(.5f)
+                        )
+                        if(i+1 < completion.other.size)
+                            ListItem(
+                                headlineContent = { Text(text = completion.other[i+1].name) },
+                                overlineContent = {Text(text = "${completion.other[i+1].actual}/${completion.other[i+1].full}",fontWeight = FontWeight.Bold) },
+                                modifier = Modifier.weight(.5f)
+                            )
+                    }
             }
+        }
+
+        Button(
+            onClick = {
+                if(ifSaved) refreshLogin()
+                else showBottomSheet_Performance = true
+            },
+            modifier = Modifier
+                .fillMaxWidth().scale(scale2.value)
+                .padding(horizontal = 15.dp),
+        ) {
+            Text(text = "培养方案进度")
         }
     }
 
-    Button(
-        onClick = {
-            if(ifSaved) refreshLogin()
-            else showBottomSheet_Performance = true
-        },
-        modifier = Modifier
-        .fillMaxWidth().scale(scale2.value)
-        .padding(horizontal = 15.dp),
-    ) {
-        Text(text = "培养方案进度")
-    }
 
-    DividerText(text = "课程安排")
-    Box {
-        AnimatedVisibility(
-            visible = loading,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
+    DividerTextExpandedWith(text = "课程安排") {
+        Box {
+            AnimatedVisibility(
+                visible = loading,
+                enter = fadeIn(),
+                exit = fadeOut()
             ) {
-                Spacer(modifier = Modifier.height(5.dp))
-                LoadingUI()
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Spacer(modifier = Modifier.height(5.dp))
+                    LoadingUI()
+                }
             }
-        }
-        AnimatedVisibility(
+            AnimatedVisibility(
                 visible = !loading,
-        enter = fadeIn(),
-        exit = fadeOut()
-        ) {
-        var total = 0.0
-        LazyColumn {
-            items(listOne.size) {item ->
-                total += listOne[item].requiedCredits ?: 0.0
-                MyCard {
-                    ListItem(
-                        headlineContent = { Text(text = listOne[item].type + " | 学分要求 " + listOne[item].requiedCredits) },
-                        trailingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "")},
-                        //   leadingContent = { Icon(painterResource(id = R.drawable.calendar), contentDescription = "Localized description") },
-                        modifier = Modifier.clickable {
-                            showBottomSheet_Program = true
-                            num = item
-                            title = listOne[item].type.toString()
-                        },
-                    )
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                var total = 0.0
+                LazyColumn {
+                    items(listOne.size) {item ->
+                        total += listOne[item].requiedCredits ?: 0.0
+                        MyCard {
+                            ListItem(
+                                headlineContent = { Text(text = listOne[item].type + " | 学分要求 " + listOne[item].requiedCredits) },
+                                trailingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "")},
+                                //   leadingContent = { Icon(painterResource(id = R.drawable.calendar), contentDescription = "Localized description") },
+                                modifier = Modifier.clickable {
+                                    showBottomSheet_Program = true
+                                    num = item
+                                    title = listOne[item].type.toString()
+                                },
+                            )
+                        }
+                    }
+
+                    item {
+                        val scrollState = rememberScrollState()
+                        val text = getPersonInfo().program
+                        LaunchedEffect(key1 = text ) {
+                            delay(500L)
+                            scrollState.animateScrollTo(scrollState.maxValue)
+                            delay(4000L)
+                            scrollState.animateScrollTo(0)
+                        }
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                            text?.let { Text(
+                                text = it,
+                                color = Color.Gray,
+                                fontSize = 14.sp,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.horizontalScroll(scrollState)
+                            ) }
+                        }
+                    }
+                    item { BottomTip(str = "总修 $total 学分") }
                 }
             }
 
-            item {
-                val scrollState = rememberScrollState()
-                val text = getPersonInfo().program
-                LaunchedEffect(key1 = text ) {
-                    delay(500L)
-                    scrollState.animateScrollTo(scrollState.maxValue)
-                    delay(4000L)
-                    scrollState.animateScrollTo(0)
-                }
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                    text?.let { Text(
-                        text = it,
-                        color = Color.Gray,
-                        fontSize = 14.sp,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.horizontalScroll(scrollState)
-                    ) }
-                }
-            }
-            item { BottomTip(str = "总修 $total 学分") }
+
         }
     }
 
-
-    }
 
 //    val nestedScrollConnection = remember {
 //        object : NestedScrollConnection {

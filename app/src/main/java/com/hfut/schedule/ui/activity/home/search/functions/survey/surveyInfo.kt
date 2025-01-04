@@ -24,7 +24,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import com.hfut.schedule.ui.utils.LoadingUI
+import com.hfut.schedule.ui.utils.components.LoadingUI
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -55,12 +55,12 @@ import com.hfut.schedule.logic.beans.Jxglstu.blankQuestionAnswer
 import com.hfut.schedule.logic.beans.Jxglstu.radioQuestionAnswer
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.ui.utils.DevelopingUI
-import com.hfut.schedule.ui.utils.MyCard
-import com.hfut.schedule.ui.utils.MyToast
-import com.hfut.schedule.ui.utils.RowHorizal
-import com.hfut.schedule.ui.utils.statusUI
-import com.hfut.schedule.ui.utils.statusUI2
+import com.hfut.schedule.ui.utils.components.DevelopingUI
+import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.style.RowHorizal
+import com.hfut.schedule.ui.utils.components.statusUI
+import com.hfut.schedule.ui.utils.components.statusUI2
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async

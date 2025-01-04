@@ -31,7 +31,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.hfut.schedule.R
-import com.hfut.schedule.ui.utils.WebViewScreen
+import com.hfut.schedule.ui.utils.components.WebViewScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

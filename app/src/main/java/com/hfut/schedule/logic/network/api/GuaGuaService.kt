@@ -24,6 +24,16 @@ interface GuaGuaService {
         @Query("telPhone") phoneNumber : String,
         @Query("loginCode") loginCode : String,
     ): Call<ResponseBody>
+    //修改使用码
+    @POST("user/useCode/set")
+    @FormUrlEncoded
+    fun reSetUseCode(
+        @Field("telPhone") phoneNumber: String,
+        @Field("password") password: String,
+        @Field("loginCode") loginCode : String,
+        @Field("securityCode") newCode : String,
+        @Field("appId") appId : String = "10010"
+    ): Call<ResponseBody>
     //账单
     @GET("wallet/billList")
     fun getBills(

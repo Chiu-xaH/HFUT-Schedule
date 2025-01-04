@@ -26,7 +26,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import com.hfut.schedule.ui.utils.LoadingUI
+import com.hfut.schedule.ui.utils.components.LoadingUI
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,7 +40,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.ui.utils.MyToast
+import com.hfut.schedule.ui.utils.components.MyToast
 import java.io.File
 
 fun installApk(uri: Uri) {

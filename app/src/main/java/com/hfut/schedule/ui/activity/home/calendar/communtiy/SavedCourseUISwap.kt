@@ -79,7 +79,7 @@ import com.hfut.schedule.ui.activity.home.calendar.examToCalendar
 import com.hfut.schedule.ui.activity.home.calendar.getScheduleDate
 import com.hfut.schedule.ui.activity.home.search.functions.exam.getExam
 import com.hfut.schedule.ui.activity.home.search.functions.exam.getExamJXGLSTU
-import com.hfut.schedule.ui.utils.MyToast
+import com.hfut.schedule.ui.utils.components.MyToast
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.time.LocalDate

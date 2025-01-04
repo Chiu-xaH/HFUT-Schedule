@@ -51,16 +51,17 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.ui.activity.card.function.main.turnToBottomBar
 import com.hfut.schedule.ui.activity.shower.bills.GuaguaBills
 import com.hfut.schedule.ui.activity.shower.function.GuaGuaSettings
-import com.hfut.schedule.ui.activity.shower.home.GuaguaStart
-import com.hfut.schedule.ui.utils.bottomBarBlur
-import com.hfut.schedule.ui.utils.topBarBlur
+import com.hfut.schedule.ui.activity.shower.home.main.GuaguaStart
+import com.hfut.schedule.ui.utils.style.bottomBarBlur
+import com.hfut.schedule.ui.utils.style.topBarBlur
+import com.hfut.schedule.viewmodel.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShowerGuaGua(vm: GuaGuaViewModel) {
+fun ShowerGuaGua(vm: GuaGuaViewModel,netVm : NetWorkViewModel) {
     val animation by remember { mutableStateOf(SharePrefs.prefs.getInt("ANIMATION", MyApplication.Animation)) }
     val navController = rememberNavController()
     val context = LocalContext.current
@@ -158,7 +159,7 @@ fun ShowerGuaGua(vm: GuaGuaViewModel) {
                 )) {
             composable(ShowerBarItems.HOME.name) {
                 Scaffold {
-                    GuaguaStart(vm,innerPadding)
+                    GuaguaStart(vm,innerPadding,netVm)
                 }
             }
             composable(ShowerBarItems.BILLS.name) {

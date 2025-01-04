@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
-import com.hfut.schedule.ui.utils.LoadingUI
+import com.hfut.schedule.ui.utils.components.LoadingUI
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -31,8 +31,8 @@ import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
-import com.hfut.schedule.ui.utils.RowHorizal
-import com.hfut.schedule.ui.utils.ScrollText
+import com.hfut.schedule.ui.utils.style.RowHorizal
+import com.hfut.schedule.ui.utils.components.ScrollText
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -44,7 +44,7 @@ fun Mail(ifSaved : Boolean,vm : NetWorkViewModel) {
     val mail = "$savedUsername@mail.hfut.edu.cn"
     ListItem(
         headlineContent = { Text(text = "邮箱") },
-        overlineContent = { ScrollText(text = mail)},
+        overlineContent = { ScrollText(text = mail) },
         leadingContent = { Icon(painter = painterResource(id = R.drawable.mail), contentDescription = "") },
         modifier = Modifier.clickable {
             if(ifSaved) refreshLogin()

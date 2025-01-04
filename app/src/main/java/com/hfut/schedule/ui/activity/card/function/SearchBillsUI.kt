@@ -17,7 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
-import com.hfut.schedule.ui.utils.LoadingUI
+import com.hfut.schedule.ui.utils.components.LoadingUI
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -49,8 +49,8 @@ import com.hfut.schedule.logic.beans.zjgd.BillResponse
 import com.hfut.schedule.logic.beans.zjgd.records
 import com.hfut.schedule.ui.activity.card.bills.main.BillItem
 import com.hfut.schedule.ui.activity.card.bills.main.processTranamt
-import com.hfut.schedule.ui.utils.BillsIcons
-import com.hfut.schedule.ui.utils.MyCard
+import com.hfut.schedule.ui.utils.components.BillsIcons
+import com.hfut.schedule.ui.utils.components.MyCard
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async

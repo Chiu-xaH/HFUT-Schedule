@@ -13,9 +13,9 @@ import androidx.compose.material3.ListItem
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.hfut.schedule.logic.utils.Starter
-import com.hfut.schedule.ui.utils.MyCard
-import com.hfut.schedule.ui.utils.ScrollText
-import com.hfut.schedule.ui.utils.schoolIcons
+import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.ScrollText
+import com.hfut.schedule.ui.utils.components.schoolIcons
 
 @Composable
 fun SchoolsUI(innerPdding : PaddingValues? = null) {
@@ -55,7 +55,7 @@ fun SchoolsUI(innerPdding : PaddingValues? = null) {
                 ListItem(
                     headlineContent = { ScrollText(text = title) },
                     leadingContent = { schoolIcons(title) },
-                    overlineContent = { ScrollText(text = url)},
+                    overlineContent = { ScrollText(text = url) },
                     modifier = Modifier.clickable {
                         Starter.startWebUrl(url)
                     },

@@ -16,7 +16,7 @@ import com.hfut.schedule.ui.activity.home.main.saved.Add
 import com.hfut.schedule.ui.activity.home.main.saved.NoNetWork
 import com.hfut.schedule.ui.activity.home.main.saved.getNum
 import com.hfut.schedule.ui.activity.login.LoginUI
-import com.hfut.schedule.ui.utils.MyToast
+import com.hfut.schedule.ui.utils.components.MyToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch

@@ -63,8 +63,8 @@ import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.WebInfo
 import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.getWebInfos
 import com.hfut.schedule.ui.activity.home.search.functions.card.SchoolCardItem
 import com.hfut.schedule.ui.activity.home.search.functions.shower.getInGuaGua
-import com.hfut.schedule.ui.utils.MyCard
-import com.hfut.schedule.ui.utils.Round
+import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.style.Round
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -164,7 +164,7 @@ fun FocusCardSettings() {
     )
     ListItem(
         headlineContent = { Text(text = "绩点排名")} ,
-        leadingContent = { Icon(painter = painterResource(id = R.drawable.hive), contentDescription = "")},
+        leadingContent = { Icon(painter = painterResource(id = R.drawable.filter_vintage), contentDescription = "")},
         trailingContent = { Switch(checked = false, onCheckedChange = {}, enabled = false)}
     )
     ListItem(

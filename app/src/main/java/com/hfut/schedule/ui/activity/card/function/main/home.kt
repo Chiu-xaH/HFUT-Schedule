@@ -74,12 +74,13 @@ import com.hfut.schedule.ui.activity.home.search.functions.electric.EleUI
 import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.loginWebUI
 
 import com.hfut.schedule.ui.activity.home.search.functions.shower.ShowerUI
-import com.hfut.schedule.ui.utils.CardForListColor
-import com.hfut.schedule.ui.utils.DividerText
-import com.hfut.schedule.ui.utils.MyCard
-import com.hfut.schedule.ui.utils.MyToast
-import com.hfut.schedule.ui.utils.Round
-import com.hfut.schedule.ui.utils.WebViewScreen
+import com.hfut.schedule.ui.utils.style.CardForListColor
+import com.hfut.schedule.ui.utils.components.DividerText
+import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
+import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.components.WebViewScreen
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -490,16 +491,16 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                 Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
                 Spacer(modifier = Modifier.height(5.dp))
 
-                DividerText(text = "实体卡")
-                Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .scale(scale2.value)
-                        .padding(horizontal = 15.dp, vertical = 5.dp),
-                    shape = MaterialTheme.shapes.medium,
-                    colors = CardForListColor()
-                ) {
+                DividerTextExpandedWith(text = "实体卡") {
+                    Card(
+                        elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .scale(scale2.value)
+                            .padding(horizontal = 15.dp, vertical = 5.dp),
+                        shape = MaterialTheme.shapes.medium,
+                        colors = CardForListColor()
+                    ) {
                         Column(modifier = Modifier
                             .blur(blurSize)
                             .scale(scale.value)) {
@@ -515,7 +516,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                                             async {
                                                 delay(500)
                                                 refreshing = false
-                                               // MyToast("刷新成功")
+                                                // MyToast("刷新成功")
                                             }
                                         }
                                     }) {
@@ -564,76 +565,80 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                                     overlineContent = { Text(text = "今日支出")},
                                     leadingContent = { Icon(painter = painterResource(id = R.drawable.send_money), contentDescription = "")})
                             }
-                          //  limitRow(vmUI)
+                            //  limitRow(vmUI)
                         }
+                    }
                 }
-                DividerText(text = "功能")
-                ListItem(
-                    headlineContent = { Text(text = "账单") },
-                    supportingContent = { Text(text = "按消费先后查看交易记录")},
-                    leadingContent = { Icon(painter = painterResource(id = R.drawable.receipt_long), contentDescription = "") },
-                    modifier = Modifier.clickable { turnToBottomBar(navController,CardBarItems.BILLS.name) }
-                )
-                ListItem(
-                    headlineContent = { Text(text = "统计") },
-                    supportingContent = { Text(text = "按时间段归纳统计消费")},
-                    leadingContent = { Icon(painter = painterResource(id = R.drawable.leaderboard), contentDescription = "") },
-                    modifier = Modifier.clickable { turnToBottomBar(navController,CardBarItems.COUNT.name) }
-                )
-                ListItem(
-                    headlineContent = { Text(text = "充值") },
-                    supportingContent = { Text(text = "跳转至支付宝校园卡页面")},
-                    leadingContent = { Icon(painter = painterResource(id = R.drawable.add_card), contentDescription = "")},
-                    modifier = Modifier.clickable { Starter.startAppUrl(MyApplication.AlipayCardURL) }
-                )
-                ListItem(
-                    headlineContent = { Text(text = "搜索") },
-                    supportingContent = { Text(text = "仅检索标题")},
-                    leadingContent = { Icon(painter = painterResource(id = R.drawable.search), contentDescription = "")},
-                    modifier = Modifier.clickable { showBottomSheet_Search = true }
-                )
-                ListItem(
-                    headlineContent = { Text(text = "限额") },
-                    supportingContent = { Text(text = "超出设置的日额度后需在支付机输入密码")},
-                    leadingContent = { Icon(painter = painterResource(id = R.drawable.block), contentDescription = "")},
-                    modifier = Modifier.clickable { showBottomSheet_Settings = true }
-                )
-                ListItem(
-                    headlineContent = { Text(text = "卡状态") },
-                    supportingContent = { Text(text = "挂失 解挂 冻结")},
-                    leadingContent = { Icon(painter = painterResource(id = R.drawable.pie_chart), contentDescription = "")},
-                    modifier = Modifier.clickable { MyToast("暂未开发") }
-                )
-                ListItem(
-                    headlineContent = { Text(text = "付款码") },
-                    supportingContent = { Text(text = "在支持扫码的食堂支付机使用以替代实体卡")},
-                    leadingContent = { Icon(painter = painterResource(id = R.drawable.barcode), contentDescription = "")},
-                    modifier = Modifier.clickable { showDialog = true }
-                )
-                ListItem(
-                    headlineContent = { Text(text = "范围支出") },
-                    supportingContent = { Text(text = "手动点选范围查询总消费")},
-                    leadingContent = { Icon(painter = painterResource(id = R.drawable.settings_ethernet), contentDescription = "")},
-                    modifier = Modifier.clickable { showBottomSheet_Range = true }
-                )
-                ListItem(
-                    headlineContent = { Text(text = "网电缴费") },
-                    supportingContent = { Text(text = "查询网费、宿舍电费、洗浴使用情况并缴费")},
-                    leadingContent = { Icon(painter = painterResource(id = R.drawable.corporate_fare), contentDescription = "")},
-                    modifier = Modifier.clickable { showBottomSheet_Fee = true }
-                )
-                ListItem(
-                    headlineContent = { Text(text = "慧新易校") },
-                    supportingContent = { Text(text = "跳转到慧新易校平台进行充值、查询等")},
-                    leadingContent = { Icon(painter = painterResource(id = R.drawable.handshake), contentDescription = "")},
-                    modifier = Modifier.clickable { showDialog_Huixin = true }
-                )
-                ListItem(
-                    headlineContent = { Text(text = "实体卡复制") },
-                    supportingContent = { Text(text = "对实体卡使用设备NFC复制功能")},
-                    leadingContent = { Icon(painter = painterResource(id = R.drawable.contactless), contentDescription = "")},
-                    modifier = Modifier.clickable { showBottomSheet_NFC = true }
-                )
+
+                DividerTextExpandedWith(text = "功能") {
+                    ListItem(
+                        headlineContent = { Text(text = "账单") },
+                        supportingContent = { Text(text = "按消费先后查看交易记录")},
+                        leadingContent = { Icon(painter = painterResource(id = R.drawable.receipt_long), contentDescription = "") },
+                        modifier = Modifier.clickable { turnToBottomBar(navController,CardBarItems.BILLS.name) }
+                    )
+                    ListItem(
+                        headlineContent = { Text(text = "统计") },
+                        supportingContent = { Text(text = "按时间段归纳统计消费")},
+                        leadingContent = { Icon(painter = painterResource(id = R.drawable.leaderboard), contentDescription = "") },
+                        modifier = Modifier.clickable { turnToBottomBar(navController,CardBarItems.COUNT.name) }
+                    )
+                    ListItem(
+                        headlineContent = { Text(text = "充值") },
+                        supportingContent = { Text(text = "跳转至支付宝校园卡页面")},
+                        leadingContent = { Icon(painter = painterResource(id = R.drawable.add_card), contentDescription = "")},
+                        modifier = Modifier.clickable { Starter.startAppUrl(MyApplication.AlipayCardURL) }
+                    )
+                    ListItem(
+                        headlineContent = { Text(text = "搜索") },
+                        supportingContent = { Text(text = "仅检索标题")},
+                        leadingContent = { Icon(painter = painterResource(id = R.drawable.search), contentDescription = "")},
+                        modifier = Modifier.clickable { showBottomSheet_Search = true }
+                    )
+                    ListItem(
+                        headlineContent = { Text(text = "限额") },
+                        supportingContent = { Text(text = "超出设置的日额度后需在支付机输入密码")},
+                        leadingContent = { Icon(painter = painterResource(id = R.drawable.block), contentDescription = "")},
+                        modifier = Modifier.clickable { showBottomSheet_Settings = true }
+                    )
+                    ListItem(
+                        headlineContent = { Text(text = "卡状态") },
+                        supportingContent = { Text(text = "挂失 解挂 冻结")},
+                        leadingContent = { Icon(painter = painterResource(id = R.drawable.pie_chart), contentDescription = "")},
+                        modifier = Modifier.clickable { MyToast("暂未开发") }
+                    )
+                    ListItem(
+                        headlineContent = { Text(text = "付款码") },
+                        supportingContent = { Text(text = "在支持扫码的食堂支付机使用以替代实体卡")},
+                        leadingContent = { Icon(painter = painterResource(id = R.drawable.barcode), contentDescription = "")},
+                        modifier = Modifier.clickable { showDialog = true }
+                    )
+                    ListItem(
+                        headlineContent = { Text(text = "范围支出") },
+                        supportingContent = { Text(text = "手动点选范围查询总消费")},
+                        leadingContent = { Icon(painter = painterResource(id = R.drawable.settings_ethernet), contentDescription = "")},
+                        modifier = Modifier.clickable { showBottomSheet_Range = true }
+                    )
+                    ListItem(
+                        headlineContent = { Text(text = "网电缴费") },
+                        supportingContent = { Text(text = "查询网费、宿舍电费、洗浴使用情况并缴费")},
+                        leadingContent = { Icon(painter = painterResource(id = R.drawable.corporate_fare), contentDescription = "")},
+                        modifier = Modifier.clickable { showBottomSheet_Fee = true }
+                    )
+                    ListItem(
+                        headlineContent = { Text(text = "慧新易校") },
+                        supportingContent = { Text(text = "跳转到慧新易校平台进行充值、查询等")},
+                        leadingContent = { Icon(painter = painterResource(id = R.drawable.handshake), contentDescription = "")},
+                        modifier = Modifier.clickable { showDialog_Huixin = true }
+                    )
+                    ListItem(
+                        headlineContent = { Text(text = "实体卡复制") },
+                        supportingContent = { Text(text = "对实体卡使用设备NFC复制功能")},
+                        leadingContent = { Icon(painter = painterResource(id = R.drawable.contactless), contentDescription = "")},
+                        modifier = Modifier.clickable { showBottomSheet_NFC = true }
+                    )
+                }
+
                 Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding()))
             }
         }

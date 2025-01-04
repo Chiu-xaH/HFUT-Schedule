@@ -34,9 +34,9 @@ import com.hfut.schedule.activity.funiction.CardActivity
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.ui.activity.home.focus.funictions.getToday
-import com.hfut.schedule.ui.utils.EmptyUI
-import com.hfut.schedule.ui.utils.MyCard
-import com.hfut.schedule.ui.utils.ScrollText
+import com.hfut.schedule.ui.utils.components.EmptyUI
+import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.ScrollText
 
 
 @SuppressLint("SuspiciousIndentation")

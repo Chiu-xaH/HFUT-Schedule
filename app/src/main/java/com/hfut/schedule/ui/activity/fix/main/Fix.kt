@@ -55,8 +55,8 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.fix.about.AboutUI
 import com.hfut.schedule.ui.activity.fix.fix.FixUI
-import com.hfut.schedule.ui.utils.bottomBarBlur
-import com.hfut.schedule.ui.utils.topBarBlur
+import com.hfut.schedule.ui.utils.style.bottomBarBlur
+import com.hfut.schedule.ui.utils.style.topBarBlur
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 

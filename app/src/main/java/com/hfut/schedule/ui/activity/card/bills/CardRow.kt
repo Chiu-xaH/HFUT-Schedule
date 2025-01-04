@@ -40,10 +40,10 @@ import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.card.bills.main.BillItem
 import com.hfut.schedule.ui.activity.card.bills.main.processTranamt
-import com.hfut.schedule.ui.utils.BillsIcons
-import com.hfut.schedule.ui.utils.MyCard
-import com.hfut.schedule.ui.utils.Round
-import com.hfut.schedule.ui.utils.ScrollText
+import com.hfut.schedule.ui.utils.components.BillsIcons
+import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.components.ScrollText
 import java.math.BigDecimal
 import java.math.RoundingMode
 @OptIn(ExperimentalMaterial3Api::class)

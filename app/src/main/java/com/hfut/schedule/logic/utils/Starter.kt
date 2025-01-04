@@ -9,7 +9,7 @@ import com.hfut.schedule.activity.main.LoginActivity
 import com.hfut.schedule.activity.shower.ShowerActivity
 import com.hfut.schedule.activity.shower.ShowerLoginActivity
 import com.hfut.schedule.ui.activity.home.search.functions.life.countFunc
-import com.hfut.schedule.ui.utils.MyToast
+import com.hfut.schedule.ui.utils.components.MyToast
 
 object Starter {
     //通过包名启动第三方应用

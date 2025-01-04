@@ -15,9 +15,10 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.beans.MyAPIResponse
 import com.hfut.schedule.logic.utils.DateTimeManager
-import com.hfut.schedule.ui.utils.APIIcons
-import com.hfut.schedule.ui.utils.DividerText
-import com.hfut.schedule.ui.utils.MyCard
+import com.hfut.schedule.ui.utils.components.APIIcons
+import com.hfut.schedule.ui.utils.components.DividerText
+import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
+import com.hfut.schedule.ui.utils.components.MyCard
 
 @Composable
 fun MyAPIItem() {
@@ -45,17 +46,19 @@ fun MyAPIItem() {
     }
 
     if(show) {
-        DividerText(text = "重要通知")
-        MyCard {
-            ListItem(
-                headlineContent = {
-                    Text(text = title, fontWeight = FontWeight.Bold)
-                },
-                supportingContent = { Text(text = content) },
-                leadingContent = { APIIcons(celebration = celebration) },
-                modifier = Modifier.clickable{}
-            )
+        DividerTextExpandedWith(text = "重要通知") {
+            MyCard {
+                ListItem(
+                    headlineContent = {
+                        Text(text = title, fontWeight = FontWeight.Bold)
+                    },
+                    supportingContent = { Text(text = content) },
+                    leadingContent = { APIIcons(celebration = celebration) },
+                    modifier = Modifier.clickable{}
+                )
+            }
         }
+
     }
 
 

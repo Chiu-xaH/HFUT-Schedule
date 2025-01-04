@@ -2,7 +2,7 @@ package com.hfut.schedule.ui.activity.home.focus.funictions
 
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.utils.Starter
-import com.hfut.schedule.ui.utils.MyToast
+import com.hfut.schedule.ui.utils.components.MyToast
 
 fun openOperation(info : String) {
     if(info.contains("学习通")) Starter.startLaunchAPK("com.chaoxing.mobile","学习通")

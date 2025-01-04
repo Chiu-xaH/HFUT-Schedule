@@ -23,7 +23,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import com.hfut.schedule.ui.utils.LoadingUI
+import com.hfut.schedule.ui.utils.components.LoadingUI
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -57,9 +57,9 @@ import com.hfut.schedule.ui.activity.home.cube.items.subitems.CirclePoint
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.KeyBoard
 
 import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.getIdentifyID
-import com.hfut.schedule.ui.utils.LittleDialog
-import com.hfut.schedule.ui.utils.Round
-import com.hfut.schedule.ui.utils.statusUI
+import com.hfut.schedule.ui.utils.components.LittleDialog
+import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.components.statusUI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async

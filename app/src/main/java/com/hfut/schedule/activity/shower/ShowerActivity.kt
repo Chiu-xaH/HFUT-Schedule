@@ -9,6 +9,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class ShowerActivity : BaseActivity() {
     @Composable
     override fun UI() {
-        ShowerGuaGua(super.showerVm)
+        ShowerGuaGua(super.showerVm,super.networkVm)
     }
 }

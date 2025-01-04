@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.utils
+package com.hfut.schedule.ui.utils.components
 
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
-import com.hfut.schedule.ui.utils.LoadingUI
+import com.hfut.schedule.ui.utils.components.LoadingUI
 //import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 //import androidx.compose.material3.LoadingIndicator
 //import androidx.compose.material3.LoadingIndicatorDefaults
@@ -28,7 +28,9 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.google.android.material.loadingindicator.LoadingIndicator
 import com.hfut.schedule.R
+import com.hfut.schedule.ui.utils.style.RowHorizal
 import kotlinx.coroutines.delay
 //
 //@OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -80,7 +82,7 @@ fun LoadingUI(
                 },
                 update = { view ->
                     // 动态更新 View
-                    val load = view.findViewById<com.google.android.material.loadingindicator.LoadingIndicator>(R.id.load)
+                    val load = view.findViewById<LoadingIndicator>(R.id.load)
                     load.indicatorSize *= sizeX
                     load.setIndicatorColor(
                         primaryColor.toArgb(),

@@ -54,14 +54,14 @@ import com.hfut.schedule.logic.utils.DateTimeManager.TimeState.*
 import com.hfut.schedule.ui.activity.home.search.functions.failRate.permit
 import com.hfut.schedule.ui.activity.home.search.functions.failRate.ApiToFailRate
 import com.hfut.schedule.ui.activity.home.search.functions.teacherSearch.ApiToTeacherSearch
-import com.hfut.schedule.ui.utils.EmptyUI
-import com.hfut.schedule.ui.utils.LoadingUI
-import com.hfut.schedule.ui.utils.MyCard
-import com.hfut.schedule.ui.utils.MyToast
-import com.hfut.schedule.ui.utils.RotatingIcon
-import com.hfut.schedule.ui.utils.Round
-import com.hfut.schedule.ui.utils.ScrollText
-import com.hfut.schedule.ui.utils.schoolIcons
+import com.hfut.schedule.ui.utils.components.EmptyUI
+import com.hfut.schedule.ui.utils.components.LoadingUI
+import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.RotatingIcon
+import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.components.ScrollText
+import com.hfut.schedule.ui.utils.components.schoolIcons
 
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -310,7 +310,7 @@ fun DetailItems(lessons: lessons,json: String?,vm : NetWorkViewModel) {
                             //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
                             leadingContent = {
                                 Icon(
-                                    painterResource(R.drawable.hive),
+                                    painterResource(R.drawable.filter_vintage),
                                     contentDescription = "Localized description",
                                 )
                             },

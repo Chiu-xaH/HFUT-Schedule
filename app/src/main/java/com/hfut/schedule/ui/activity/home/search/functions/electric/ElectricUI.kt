@@ -75,12 +75,13 @@ import com.hfut.schedule.logic.beans.zjgd.FeeType
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter
-import com.hfut.schedule.ui.utils.BottomTip
-import com.hfut.schedule.ui.utils.CardForListColor
-import com.hfut.schedule.ui.utils.DividerText
-import com.hfut.schedule.ui.utils.MyToast
-import com.hfut.schedule.ui.utils.WebViewScreen
+import com.hfut.schedule.ui.utils.components.BottomTip
+import com.hfut.schedule.ui.utils.style.CardForListColor
+import com.hfut.schedule.ui.utils.components.DividerText
+import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.WebViewScreen
 import com.hfut.schedule.ui.theme.FWDTColr
+import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -483,9 +484,8 @@ fun EleUI(vm : NetWorkViewModel) {
                 label = "" // 使用弹簧动画
             )
 
-            DividerText(text = "查询结果")
-
-            Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
+            DividerTextExpandedWith(text = "查询结果") {
+                Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
                     Spacer(modifier = Modifier.height(100.dp))
                     Card(
                         elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
@@ -516,9 +516,9 @@ fun EleUI(vm : NetWorkViewModel) {
                         }
                     }
                 }
-            Spacer(modifier = Modifier.height(10.dp))
-            BottomTip(str = "月末补贴 照明空调各￥15")
-
+                Spacer(modifier = Modifier.height(10.dp))
+                BottomTip(str = "月末补贴 照明空调各￥15")
+            }
             //Spacer(modifier = Modifier.height(30.dp))
         }
     }

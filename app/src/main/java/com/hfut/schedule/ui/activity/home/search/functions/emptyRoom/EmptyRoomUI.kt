@@ -26,7 +26,7 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
-import com.hfut.schedule.ui.utils.Round
+import com.hfut.schedule.ui.utils.style.Round
 
 
 @OptIn(ExperimentalMaterial3Api::class)

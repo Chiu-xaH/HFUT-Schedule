@@ -38,12 +38,13 @@ import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
-import com.hfut.schedule.ui.utils.BottomTip
-import com.hfut.schedule.ui.utils.CardForListColor
-import com.hfut.schedule.ui.utils.DividerText
-import com.hfut.schedule.ui.utils.LoadingUI
-import com.hfut.schedule.ui.utils.ScrollText
-import com.hfut.schedule.ui.utils.schoolIcons
+import com.hfut.schedule.ui.utils.components.BottomTip
+import com.hfut.schedule.ui.utils.style.CardForListColor
+import com.hfut.schedule.ui.utils.components.DividerText
+import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
+import com.hfut.schedule.ui.utils.components.LoadingUI
+import com.hfut.schedule.ui.utils.components.ScrollText
+import com.hfut.schedule.ui.utils.components.schoolIcons
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -126,32 +127,31 @@ fun MyApply(vm: NetWorkViewModel) {
         ,animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
     )
     val status = getPersonInfo().status
-
-    DividerText(text = "状态")
     val data = getMyTransfer(vm)
     val isSuccessTransfer = isSuccessTransfer()
-    Box {
+    DividerTextExpandedWith(text = "状态") {
+        Box {
 
-        Card(
+            Card(
                 elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .scale(scale2.value)
                     .padding(horizontal = 15.dp, vertical = 5.dp),
                 shape = MaterialTheme.shapes.medium,
-            colors = CardForListColor()
+                colors = CardForListColor()
             ) {
 
                 Column (modifier = Modifier
                     .blur(blurSize)
                     .scale(scale.value)){
 
-                        ListItem(headlineContent = { Text(text =
-                        if(isSuccessTransfer)"恭喜 已转入"
-                            else if(getApplyStatus(vm) == true) "学籍尚未变更"
-                            else if(getApplyStatus(vm) == false) "未申请或申请不通过"
-                            else "状态未知"
-                            , fontSize = 28.sp) })
+                    ListItem(headlineContent = { Text(text =
+                    if(isSuccessTransfer)"恭喜 已转入"
+                    else if(getApplyStatus(vm) == true) "学籍尚未变更"
+                    else if(getApplyStatus(vm) == false) "未申请或申请不通过"
+                    else "状态未知"
+                        , fontSize = 28.sp) })
 
                     if(isSuccessTransfer) {
                         ListItem(
@@ -181,84 +181,87 @@ fun MyApply(vm: NetWorkViewModel) {
                     }
                 }
             }
+        }
     }
-    DividerText("成绩")
-    if(loading2) {
-        LoadingUI()
-    } else {
-        val bean = getMyTransferInfo(vm)
-        val grade = bean?.grade
 
-        if(!isSuccessTransfer) {
-            val examSchedule = bean?.examSchedule
-            val meetSchedule = bean?.meetSchedule
 
-            if(examSchedule != null) {
-                ListItem(
-                    headlineContent = { Text(examSchedule.place.replace("；","\n").replace("："," ").replace("。","")) },
-                    supportingContent = { Text(examSchedule.time) },
-                    overlineContent = { Text("笔试安排") }
-                )
+    DividerTextExpandedWith("成绩") {
+        if(loading2) {
+            LoadingUI()
+        } else {
+            val bean = getMyTransferInfo(vm)
+            val grade = bean?.grade
+
+            if(!isSuccessTransfer) {
+                val examSchedule = bean?.examSchedule
+                val meetSchedule = bean?.meetSchedule
+
+                if(examSchedule != null) {
+                    ListItem(
+                        headlineContent = { Text(examSchedule.place.replace("；","\n").replace("："," ").replace("。","")) },
+                        supportingContent = { Text(examSchedule.time) },
+                        overlineContent = { Text("笔试安排") }
+                    )
+                }
+                if(meetSchedule != null) {
+                    ListItem(
+                        headlineContent = { Text(meetSchedule.place.replace("；","\n").replace("："," ")) },
+                        supportingContent = { Text(meetSchedule.time) },
+                        overlineContent = { Text("面试安排") }
+                    )
+                }
             }
-            if(meetSchedule != null) {
-                ListItem(
-                    headlineContent = { Text(meetSchedule.place.replace("；","\n").replace("："," ")) },
-                    supportingContent = { Text(meetSchedule.time) },
-                    overlineContent = { Text("面试安排") }
-                )
+
+            if(grade != null) {
+                Row {
+                    ListItem(
+                        leadingContent = { Icon(painter = painterResource(id = R.drawable.award_star), contentDescription = "") },
+                        overlineContent = { ScrollText(text = "绩点") },
+                        headlineContent = { Text(text = "${grade.gpa.score}" ) },
+                        supportingContent = {
+                            Text("${grade.gpa.rank}/${data.applyStdCount} 名")
+                        },
+                        modifier = Modifier.weight(.5f)
+                    )
+                    ListItem(
+                        leadingContent = { Icon(painter = painterResource(id = R.drawable.filter_vintage), contentDescription = "") },
+                        overlineContent = { ScrollText(text = "加权均分") },
+                        headlineContent = { Text(text = "${grade.weightAvg.score}" ) },
+                        supportingContent = {
+                            Text("${grade.weightAvg.rank}/${data.applyStdCount} 名")
+                        },
+                        modifier = Modifier.weight(.5f)
+                    )
+                }
+                Row {
+                    ListItem(
+                        leadingContent = { Icon(painter = painterResource(id = R.drawable.award_star), contentDescription = "") },
+                        overlineContent = { ScrollText(text = "转专业考核") },
+                        headlineContent = { Text(text = "${grade.transferAvg.score}", fontWeight = FontWeight.Bold ) },
+                        supportingContent = {
+                            val rank = grade.transferAvg.rank
+                            if(rank != null) {
+                                Text("$rank/${data.applyStdCount} 名")
+                            } else {
+                                Text("教务无数据")
+                            }
+                        },
+                        modifier = Modifier.weight(.5f)
+                    )
+                    ListItem(
+                        leadingContent = { Icon(painter = painterResource(id = R.drawable.filter_vintage), contentDescription = "") },
+                        overlineContent = { ScrollText(text = "算术均分") },
+                        headlineContent = { Text(text = "${grade.operateAvg.score}") },
+                        supportingContent = {
+                            Text("${grade.operateAvg.rank}/${data.applyStdCount} 名")
+                        },
+                        modifier = Modifier.weight(.5f)
+                    )
+                }
             }
         }
-
-        if(grade != null) {
-            Row {
-                ListItem(
-                    leadingContent = { Icon(painter = painterResource(id = R.drawable.award_star), contentDescription = "") },
-                    overlineContent = { ScrollText(text = "绩点") },
-                    headlineContent = { Text(text = "${grade.gpa.score}" ) },
-                    supportingContent = {
-                        Text("${grade.gpa.rank}/${data.applyStdCount} 名")
-                    },
-                    modifier = Modifier.weight(.5f)
-                )
-                ListItem(
-                    leadingContent = { Icon(painter = painterResource(id = R.drawable.hive), contentDescription = "") },
-                    overlineContent = { ScrollText(text = "加权均分") },
-                    headlineContent = { Text(text = "${grade.weightAvg.score}" ) },
-                    supportingContent = {
-                        Text("${grade.weightAvg.rank}/${data.applyStdCount} 名")
-                    },
-                    modifier = Modifier.weight(.5f)
-                )
-            }
-            Row {
-                ListItem(
-                    leadingContent = { Icon(painter = painterResource(id = R.drawable.award_star), contentDescription = "") },
-                    overlineContent = { ScrollText(text = "转专业考核") },
-                    headlineContent = { Text(text = "${grade.transferAvg.score}", fontWeight = FontWeight.Bold ) },
-                    supportingContent = {
-                        val rank = grade.transferAvg.rank
-                        if(rank != null) {
-                            Text("$rank/${data.applyStdCount} 名")
-                        } else {
-                            Text("教务无数据")
-                        }
-                    },
-                    modifier = Modifier.weight(.5f)
-                )
-                ListItem(
-                    leadingContent = { Icon(painter = painterResource(id = R.drawable.hive), contentDescription = "") },
-                    overlineContent = { ScrollText(text = "算术均分") },
-                    headlineContent = { Text(text = "${grade.operateAvg.score}") },
-                    supportingContent = {
-                        Text("${grade.operateAvg.rank}/${data.applyStdCount} 名")
-                    },
-                    modifier = Modifier.weight(.5f)
-                )
-            }
-        }
-
-
     }
+
 
 //    BottomTip("具体详情请一定关注QQ群、查询中心-通知公告、教务系统")
 }

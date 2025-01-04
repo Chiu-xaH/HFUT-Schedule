@@ -61,9 +61,10 @@ import com.hfut.schedule.logic.utils.Starter.loginGuaGua
 import com.hfut.schedule.logic.utils.Starter.startGuagua
 import com.hfut.schedule.ui.activity.shower.function.EditLoginCode
 
-import com.hfut.schedule.ui.utils.BottomTip
-import com.hfut.schedule.ui.utils.DividerText
-import com.hfut.schedule.ui.utils.MyToast
+import com.hfut.schedule.ui.utils.components.BottomTip
+import com.hfut.schedule.ui.utils.components.DividerText
+import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
+import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -235,28 +236,29 @@ fun GuaGuaLoginUI(vm : GuaGuaViewModel,netVm : NetWorkViewModel) {
             ) { Text("登录") }
         }
         Spacer(modifier = Modifier.height(30.dp))
-        DividerText(text = "备用登录方式")
-        Row(
-            modifier = Modifier.padding(horizontal = 5.dp)
-        ) {
-            EditLoginCode(true,{
-                saveString("PHONENUM",username)
-                CoroutineScope(Job()).launch {
-                    async { netVm.getGuaGuaUserInfo() }.await()
-                    async {
-                        Handler(Looper.getMainLooper()).post {
-                            netVm.guaguaUserInfo.observeForever { result ->
-                                if (result?.contains("成功") == true) {
-                                    saveString("GuaGuaPersonInfo",result)
-                                    startGuagua()
-                                } else if(result?.contains("error") == true) {
-                                    MyToast("登陆失败")
+        DividerTextExpandedWith(text = "备用登录方式") {
+            Row(
+                modifier = Modifier.padding(horizontal = 5.dp)
+            ) {
+                EditLoginCode(true,{
+                    saveString("PHONENUM",username)
+                    CoroutineScope(Job()).launch {
+                        async { netVm.getGuaGuaUserInfo() }.await()
+                        async {
+                            Handler(Looper.getMainLooper()).post {
+                                netVm.guaguaUserInfo.observeForever { result ->
+                                    if (result?.contains("成功") == true) {
+                                        saveString("GuaGuaPersonInfo",result)
+                                        startGuagua()
+                                    } else if(result?.contains("error") == true) {
+                                        MyToast("登陆失败")
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            })
+                })
+            }
         }
     }
 }

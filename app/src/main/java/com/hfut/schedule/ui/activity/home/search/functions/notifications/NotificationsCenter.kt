@@ -30,7 +30,7 @@ import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.ui.utils.Round
+import com.hfut.schedule.ui.utils.style.Round
 
 
 @SuppressLint("SuspiciousIndentation")

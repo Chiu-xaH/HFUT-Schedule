@@ -32,9 +32,9 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.Starter
-import com.hfut.schedule.ui.utils.MyCard
-import com.hfut.schedule.ui.utils.URLImage
-import com.hfut.schedule.ui.utils.WebViewScreen
+import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.URLImage
+import com.hfut.schedule.ui.utils.components.WebViewScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

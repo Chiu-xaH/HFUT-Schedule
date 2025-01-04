@@ -62,7 +62,7 @@ import com.hfut.schedule.logic.utils.Semseter.getSemseter
 import com.hfut.schedule.logic.utils.Semseter.getSemseterCloud
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.ui.activity.home.calendar.jxglstu.getNewWeek
-import com.hfut.schedule.ui.utils.MyToast
+import com.hfut.schedule.ui.utils.components.MyToast
 import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)

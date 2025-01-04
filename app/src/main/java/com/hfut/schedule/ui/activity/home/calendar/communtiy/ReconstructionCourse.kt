@@ -43,8 +43,8 @@ import com.hfut.schedule.logic.beans.Community.courseDetailDTOList
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.DetailItems
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.getTotalCourse
-import com.hfut.schedule.ui.utils.MyCard
-import com.hfut.schedule.ui.utils.Round
+import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.style.Round
 
 
 @RequiresApi(Build.VERSION_CODES.O)

@@ -57,11 +57,12 @@ import com.hfut.schedule.ui.activity.home.calendar.multi.getFriendsCourse
 import com.hfut.schedule.ui.activity.home.calendar.next.DatumUI
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotalForApi
 
-import com.hfut.schedule.ui.utils.DividerText
-import com.hfut.schedule.ui.utils.LittleDialog
-import com.hfut.schedule.ui.utils.MyCard
-import com.hfut.schedule.ui.utils.MyToast
-import com.hfut.schedule.ui.utils.Round
+import com.hfut.schedule.ui.utils.components.DividerText
+import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
+import com.hfut.schedule.ui.utils.components.LittleDialog
+import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.viewmodel.UIViewModel
 import java.io.File
 
@@ -388,44 +389,46 @@ fun MultiScheduleSettings(
                 }
             }
         }
-        DividerText(text = "操作")
-        ListItem(
-            headlineContent = { Text(text = "导出教务课表") },
-            leadingContent = {
-                Icon(painterResource(id = R.drawable.ios_share), contentDescription = "")
-            },
-            modifier = Modifier.clickable {
-                prefs.getString("json","")?.let { saveTextToFile("HFUT-Schedule-Share.txt", it) }
-                shareTextFile("HFUT-Schedule-Share.txt")
-            }
-        )
-        ListItem(
-            headlineContent = { Text(text = "刷新教务课表") },
-            leadingContent = {
-                Icon(painterResource(id = R.drawable.rotate_right), contentDescription = "")
-            },
-            modifier = Modifier.clickable {
-                if(ifSaved)
-                refreshLogin()
-                else MyToast("目前已是登陆状态")
-            }
-        )
-        ListItem(
-            headlineContent = { Text(text = "写入日历日程") },
-            leadingContent = {
-                Icon(painterResource(id = R.drawable.calendar), contentDescription = "")
-            },
-            modifier = Modifier.clickable { MyToast("正在开发") }
-        )
-        ListItem(
-            headlineContent = { Text(text = "恢复默认状态") },
-            leadingContent = {
-                Icon(painterResource(id = R.drawable.delete), contentDescription = "")
-            },
-            modifier = Modifier.clickable {
-                showDialog_Del = true
-            }
-        )
+        DividerTextExpandedWith(text = "操作") {
+            ListItem(
+                headlineContent = { Text(text = "导出教务课表") },
+                leadingContent = {
+                    Icon(painterResource(id = R.drawable.ios_share), contentDescription = "")
+                },
+                modifier = Modifier.clickable {
+                    prefs.getString("json","")?.let { saveTextToFile("HFUT-Schedule-Share.txt", it) }
+                    shareTextFile("HFUT-Schedule-Share.txt")
+                }
+            )
+            ListItem(
+                headlineContent = { Text(text = "刷新教务课表") },
+                leadingContent = {
+                    Icon(painterResource(id = R.drawable.rotate_right), contentDescription = "")
+                },
+                modifier = Modifier.clickable {
+                    if(ifSaved)
+                        refreshLogin()
+                    else MyToast("目前已是登陆状态")
+                }
+            )
+            ListItem(
+                headlineContent = { Text(text = "写入日历日程") },
+                leadingContent = {
+                    Icon(painterResource(id = R.drawable.calendar), contentDescription = "")
+                },
+                modifier = Modifier.clickable { MyToast("正在开发") }
+            )
+            ListItem(
+                headlineContent = { Text(text = "恢复默认状态") },
+                leadingContent = {
+                    Icon(painterResource(id = R.drawable.delete), contentDescription = "")
+                },
+                modifier = Modifier.clickable {
+                    showDialog_Del = true
+                }
+            )
+        }
+
     }
 }
 

@@ -25,7 +25,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.Starter
-import com.hfut.schedule.ui.utils.WebViewScreen
+import com.hfut.schedule.ui.utils.components.WebViewScreen
 
 
 @OptIn(ExperimentalMaterial3Api::class)

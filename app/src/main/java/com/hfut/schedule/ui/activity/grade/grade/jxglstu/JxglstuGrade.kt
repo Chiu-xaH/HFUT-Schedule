@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -45,6 +46,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -58,14 +61,15 @@ import com.hfut.schedule.ui.activity.card.counts.RadarData
 import com.hfut.schedule.ui.activity.grade.getGradeJXGLSTU
 import com.hfut.schedule.ui.activity.home.search.functions.survey.SurveyUI
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotalForApi
-import com.hfut.schedule.ui.utils.DividerText
-import com.hfut.schedule.ui.utils.EmptyUI
-import com.hfut.schedule.ui.utils.LittleDialog
-import com.hfut.schedule.ui.utils.LoadingUI
-import com.hfut.schedule.ui.utils.MyCard
-import com.hfut.schedule.ui.utils.MyToast
-import com.hfut.schedule.ui.utils.Round
-import com.hfut.schedule.ui.utils.ScrollText
+import com.hfut.schedule.ui.utils.components.DividerText
+import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
+import com.hfut.schedule.ui.utils.components.EmptyUI
+import com.hfut.schedule.ui.utils.components.LittleDialog
+import com.hfut.schedule.ui.utils.components.LoadingUI
+import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -148,9 +152,11 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel,showSea
                 Column(
                     modifier = Modifier
                         .padding(innerPadding)
+                        .verticalScroll(rememberScrollState())
                         .fillMaxSize()
                 ){
                     GradeInfo(num,vm)
+                    Spacer(modifier = Modifier.height(30.dp))
                 }
             }
         }
@@ -316,7 +322,7 @@ fun GradeInfo(num : GradeResponseJXGLSTU,vm: NetWorkViewModel) {
     }
     val scrollState = rememberScrollState()
     val GPA = num.GPA
-    val title = "成绩 ${num.totalGrade} 绩点 $GPA 学分 ${num.score}"
+    val title = "成绩 ${num.totalGrade} 绩点 $GPA"
 
     var avgPingshi = 0f
     var examScore = 0f
@@ -356,78 +362,154 @@ fun GradeInfo(num : GradeResponseJXGLSTU,vm: NetWorkViewModel) {
         delay(4000L)
         scrollState.animateScrollTo(0)
     }
-    DividerText(text = "雷达图")
-    Spacer(modifier = Modifier.height(10.dp))
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-        RadarChart(data = radarList, modifier = Modifier.size(200.dp))
+    DividerTextExpandedWith(text = "雷达图") {
+        Spacer(modifier = Modifier.height(10.dp))
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+            RadarChart(data = radarList, modifier = Modifier.size(200.dp))
+        }
+        Spacer(modifier = Modifier.height(10.dp))
     }
-    Spacer(modifier = Modifier.height(10.dp))
-    DividerText(text = "成绩详情")
-    Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 15.dp, vertical = 5.dp),
-        shape = MaterialTheme.shapes.medium,
-    ) {
-        ListItem(
-            headlineContent = {
-                Text(
-                    text = title,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.horizontalScroll(scrollState),
-                    fontSize = 28.sp
-                )
-            },
-        )
-        for (i in list.indices step 2)
+
+    DividerTextExpandedWith(text = "成绩详情") {
+        Card(
+            elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 15.dp, vertical = 5.dp),
+            shape = MaterialTheme.shapes.medium,
+        ) {
+            ListItem(
+                headlineContent = {
+                    Text(
+                        text = title,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.horizontalScroll(scrollState),
+                        fontSize = 28.sp
+                    )
+                },
+            )
+            for (i in list.indices step 2)
+                Row {
+                    val l1 = list[i]
+                    val t1 = l1.substringBefore(":")
+                    val score1 = l1.substringAfter(":")
+
+                    ListItem(
+                        headlineContent = {
+                            Text(
+                                text = score1,
+                                fontWeight = if(t1.contains("期末考试") || t1.contains("期中考试")) FontWeight.Bold else FontWeight.Normal,
+                                textDecoration = if(t1.contains("期末考试") || t1.contains("期中考试")) TextDecoration.Underline else TextDecoration.None
+                            ) },
+                        overlineContent = { Text(t1) },
+                        modifier = Modifier.weight(.5f),
+                        leadingContent = { GradeIcons(t1) }
+                    )
+                    if (i + 1 < list.size) {
+                        val l2 = list[i+1]
+                        val t2 = l2.substringBefore(":")
+                        val score2 = l2.substringAfter(":")
+                        ListItem(
+                            headlineContent = {
+                                Text(
+                                    text = score2,
+                                    fontWeight = if(t2.contains("期末考试") || t2.contains("期中考试")) FontWeight.Bold else FontWeight.Normal,
+                                    textDecoration = if(t2.contains("期末考试") || t2.contains("期中考试")) TextDecoration.Underline else TextDecoration.None
+                                ) },
+                            overlineContent = { Text(t2) },
+                            modifier = Modifier.weight(.5f),
+                            leadingContent = { GradeIcons(t2) }
+                        )
+                    }
+                }
             Row {
+//                ListItem(
+//                    leadingContent = {
+//                        Icon(
+//                            painter = painterResource(id = if (GPA.toFloat() >= 3.0) R.drawable.sentiment_very_satisfied else R.drawable.sentiment_dissatisfied),
+//                            contentDescription = ""
+//                        )
+//                    },
+//                    headlineContent = {
+//                        ScrollText(
+//                            text = if (GPA == "4.3") "满绩" else if (GPA == "4") "优秀" else if (GPA.toFloat() >= 3) "不错" else if (GPA == "0") "挂科" else "薄弱"
+//                        )
+//                    },
+//                    modifier = Modifier.weight(.4f)
+//                )
                 ListItem(
-                    headlineContent = { ScrollText(text = list[i]) },
+                    leadingContent = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.filter_vintage),
+                            contentDescription = ""
+                        )
+                    },
+                    headlineContent = {
+                        ScrollText(
+                            text =  num.score
+                        )
+                    },
+                    overlineContent = {
+                        Text("学分")
+                    },
                     modifier = Modifier.weight(.5f)
                 )
-                if (i + 1 < list.size)
-                    ListItem(
-                        headlineContent = { ScrollText(text = list[i + 1]) },
-                        modifier = Modifier.weight(.5f)
-                    )
-            }
-        Row {
-            ListItem(
-                leadingContent = {
-                    Icon(
-                        painter = painterResource(id = if (GPA.toFloat() >= 3.0) R.drawable.sentiment_very_satisfied else R.drawable.sentiment_dissatisfied),
-                        contentDescription = ""
-                    )
-                },
-                headlineContent = {
-                    ScrollText(
-                        text = if (GPA == "4.3") "满绩" else if (GPA == "4") "优秀" else if (GPA.toFloat() >= 3) "不错" else if (GPA == "0") "挂科" else "薄弱"
-                    )
-                },
-                modifier = Modifier.weight(.4f)
-            )
-            ListItem(
-                leadingContent = {
-                    Icon(painter = painterResource(R.drawable.percent), contentDescription = "")
-                },
-                headlineContent = {
-                    ScrollText(
-                        text = "平时因数 ${
-                            if (avgPingshi != 0f) ReservDecimal.reservDecimal(
+                ListItem(
+                    leadingContent = {
+                        Icon(painter = painterResource(R.drawable.percent), contentDescription = "")
+                    },
+                    headlineContent = {
+                        ScrollText(
+                            text = if (avgPingshi != 0f) ReservDecimal.reservDecimal(
                                 avgPingshi.toDouble(),
                                 2
                             ) else "未知"
-                        }"
-                    )
-                },
-                modifier = Modifier
-                    .weight(.6f)
-                    .clickable {
-                        showDialog = true
-                    }
-            )
+                        )
+                    },
+                    overlineContent = {
+                        Text("平时因数")
+                    },
+                    modifier = Modifier
+                        .weight(.5f)
+                        .clickable {
+                            showDialog = true
+                        }
+                )
+            }
         }
+    }
+
+}
+
+
+@Composable
+fun GradeIcons(text : String) {
+    if(text.contains("考试")) {
+        Icon(painterResource(R.drawable.draw),null)
+    } else if(text.contains("报告")) {
+        Icon(painterResource(R.drawable.description),null)
+    } else if(text.contains("实验")) {
+        Icon(painterResource(R.drawable.body_fat),null)
+    } else if(text.contains("作业")) {
+        Icon(painterResource(R.drawable.article),null)
+    } else if(text.contains("实习")) {
+        Icon(painterResource(R.drawable.work),null)
+    } else if(text.contains("测试")) {
+        Icon(painterResource(R.drawable.tactic),null)
+    } else if(text == "平时成绩") {
+        Icon(painterResource(R.drawable.hotel_class),null)
+    } else if(text.contains("演讲")) {
+        Icon(painterResource(R.drawable.groups),null)
+    }  else if(text.contains("提问及讨论")) {
+        Icon(painterResource(R.drawable.lightbulb),null)
+    } else if(text.contains("口试")) {
+        Icon(painterResource(R.drawable.voice_selection),null)
+    } else if(text.contains("上机")) {
+        Icon(painterResource(R.drawable.computer),null)
+    } else if(text.contains("论文")) {
+        Icon(painterResource(R.drawable.newsstand),null)
+    } else {
+        Icon(painterResource(R.drawable.category),null)
     }
 }

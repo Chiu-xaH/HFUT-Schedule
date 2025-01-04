@@ -36,9 +36,9 @@ import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter
-import com.hfut.schedule.ui.utils.Round
-import com.hfut.schedule.ui.utils.ScrollText
-import com.hfut.schedule.ui.utils.WebViewScreen
+import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.components.ScrollText
+import com.hfut.schedule.ui.utils.components.WebViewScreen
 import com.hfut.schedule.ui.theme.FWDTColr
 import org.jsoup.Jsoup
 import java.math.BigDecimal
@@ -80,7 +80,7 @@ fun LoginWeb(vmUI : UIViewModel, card : Boolean,vm :  NetWorkViewModel) {
 
     ListItem(
         headlineContent = { if(!card)Text(text = "校园网") else ScrollText(text = "${str}GB") },
-        overlineContent = { if(!card)ScrollText(text = "${vmUI.webValue.value?.flow?: memoryWeb}MB") else Text(text = "校园网 ${precent}%")},
+        overlineContent = { if(!card) ScrollText(text = "${vmUI.webValue.value?.flow?: memoryWeb}MB") else Text(text = "校园网 ${precent}%")},
         leadingContent = { Icon(
             painterResource(R.drawable.net),
             contentDescription = "Localized description",

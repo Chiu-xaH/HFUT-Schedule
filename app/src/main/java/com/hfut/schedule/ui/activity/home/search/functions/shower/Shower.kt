@@ -83,14 +83,15 @@ import com.hfut.schedule.logic.utils.Starter.loginGuaGua
 import com.hfut.schedule.logic.utils.Starter.startGuagua
 import com.hfut.schedule.ui.activity.home.search.functions.electric.PayFor
 import com.hfut.schedule.ui.activity.home.search.functions.life.countFunc
-import com.hfut.schedule.ui.utils.BottomTip
-import com.hfut.schedule.ui.utils.CardForListColor
-import com.hfut.schedule.ui.utils.DividerText
-import com.hfut.schedule.ui.utils.MyToast
-import com.hfut.schedule.ui.utils.Round
-import com.hfut.schedule.ui.utils.ScrollText
-import com.hfut.schedule.ui.utils.WebViewScreen
+import com.hfut.schedule.ui.utils.components.BottomTip
+import com.hfut.schedule.ui.utils.style.CardForListColor
+import com.hfut.schedule.ui.utils.components.DividerText
+import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.components.ScrollText
+import com.hfut.schedule.ui.utils.components.WebViewScreen
 import com.hfut.schedule.ui.theme.FWDTColr
+import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -101,99 +102,20 @@ import java.math.BigDecimal
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Shower(vm: NetWorkViewModel) {
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(true)
     var showBottomSheet by remember { mutableStateOf(false) }
-
-    //val interactionSource = remember { MutableInteractionSource() }
-    //val isPressed by interactionSource.collectIsPressedAsState()
-
-  //  val scale = animateFloatAsState(
-    //    targetValue = if (isPressed) 0.9f else 1f, // 按下时为0.9，松开时为1
-      //  animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-       // label = "" // 使用弹簧动画
-    //)
 
     if (showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
             sheetState = sheetState
-            , shape = Round(sheetState)
+//            , shape = Round(sheetState)
         ) {
             ShowerUI(vm)
         }
     }
 
 
-    /*
-    val showAdd = SharePrefs.prefs.getBoolean("SWITCHELEADD",true)
-    val memoryEle = SharePrefs.prefs.getString("memoryEle","0")
-    var showDialog by remember { mutableStateOf(false) }
-    val auth = SharePrefs.prefs.getString("auth","")
-    val url = MyApplication.ZJGDBillURL + "charge-app/?name=pays&appsourse=ydfwpt&id=261&name=pays&paymentUrl=http://121.251.19.62/plat&token=" + auth
-
-    val switch_startUri = SharePrefs.prefs.getBoolean("SWITCHSTARTURI",true)
-    if (showDialog) {
-        if(switch_startUri) {
-            androidx.compose.ui.window.Dialog(
-                onDismissRequest = { showDialog = false },
-                properties = DialogProperties(usePlatformDefaultWidth = false)
-            ) {
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    topBar = {
-                        TopAppBar(
-                            colors = TopAppBarDefaults.mediumTopAppBarColors(
-                                containerColor = FWDTColr,
-                                titleContentColor = Color.White,
-                            ),
-                            actions = {
-                                Row{
-                                    IconButton(onClick = { StartApp.startUri( url) }) { Icon(painterResource(id = R.drawable.net), contentDescription = "", tint = Color.White) }
-                                    IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "", tint = Color.White) }
-                                }
-
-                            },
-                            title = { androidx.compose.material3.Text("宣城校区 电费缴纳") }
-                        )
-                    },
-                ) { innerPadding ->
-                    Column(
-                        modifier = Modifier
-                            .padding(innerPadding)
-                            .fillMaxSize()
-                    ) {
-                        WebViewScreen(url)
-                    }
-                }
-            }
-        } else {
-            StartApp.startUri(url)
-        }
-    }
-
-    ListItem(
-        headlineContent = { if(!card) androidx.compose.material3.Text(text = "寝室电费") else ScrollText(text = "￥${vmUI.electricValue.value ?: memoryEle}") },
-        overlineContent = { if(!card) ScrollText(text = "￥${vmUI.electricValue.value ?: memoryEle}") else ScrollText(text = room) },
-        leadingContent = { Icon(painterResource(R.drawable.flash_on), contentDescription = "Localized description",) },
-        trailingContent = {
-            if(card && showAdd)
-                FilledTonalIconButton(
-                    modifier = Modifier
-                        .scale(scale.value)
-                        .size(30.dp),
-                    interactionSource = interactionSource,
-                    onClick = {
-                        showDialog = true
-                        // ClipBoard.copy(input)
-                        //  MyToast("已将房间号复制到剪切板")
-                    },
-                    //  colors =  if(test.length <= 4) {
-                    //      IconButtonDefaults.filledTonalIconButtonColors(MaterialTheme.colorScheme.error.copy(alpha = 0.1f))
-                    //  } else IconButtonDefaults.filledTonalIconButtonColors()
-                ) { Icon( painterResource(R.drawable.add), contentDescription = "Localized description",) }
-        },
-        modifier = Modifier.clickable { showBottomSheet  = true }
-    )*/
     ListItem(
         headlineContent = { Text(text = "洗浴") },
         leadingContent = {
@@ -216,7 +138,7 @@ fun Shower(vm: NetWorkViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShowerUI(vm : NetWorkViewModel) {
+fun ShowerUI(vm : NetWorkViewModel,isInGuagua : Boolean = false) {
     var savedPhoneNumber = prefs.getString("PhoneNumber","")
     var phoneNumber by remember { mutableStateOf(savedPhoneNumber ?: "") }
     var balance by remember { mutableStateOf(0) }
@@ -237,6 +159,29 @@ fun ShowerUI(vm : NetWorkViewModel) {
     var show by remember { mutableStateOf(false) }
     var json by remember { mutableStateOf("") }
 
+    val blurSize by animateDpAsState(
+        targetValue = if (!show) 10.dp else 0.dp, label = ""
+        ,animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
+    )
+
+    val scale = animateFloatAsState(
+        targetValue = if (!show) 0.9f else 1f, // 按下时为0.9，松开时为1
+        //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
+        animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
+        label = "" // 使用弹簧动画
+    )
+    val scale2 = animateFloatAsState(
+        targetValue = if (!show) 0.97f else 1f, // 按下时为0.9，松开时为1
+        //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
+        animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
+        label = "" // 使用弹簧动画
+    )
+    val auth = SharePrefs.prefs.getString("auth","")
+
+    val url = MyApplication.ZJGDBillURL + "charge-app/?name=pays&appsourse=ydfwpt&id=223&name=pays&paymentUrl=http://121.251.19.62/plat&token=" + auth
+    val switch_startUri = SharePrefs.prefs.getBoolean("SWITCHSTARTURI",true)
+    var showDialog2 by remember { mutableStateOf(false) }
+
     if (showBottomSheet) {
 
         ModalBottomSheet(
@@ -253,7 +198,7 @@ fun ShowerUI(vm : NetWorkViewModel) {
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        title = { androidx.compose.material3.Text("支付订单确认") },
+                        title = { Text("支付订单确认") },
                     )
                     val info by remember { mutableStateOf("绑定手机号 $phoneNumber") }
                     var int by remember { mutableStateOf(payNumber.toInt()) }
@@ -265,226 +210,67 @@ fun ShowerUI(vm : NetWorkViewModel) {
         }
     }
 
-    val auth = SharePrefs.prefs.getString("auth","")
-
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = Color.Transparent,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                title = { ScrollText("洗浴-宣城校区") },
-                actions = {
-                    Row(modifier = Modifier.padding(horizontal = 15.dp)) {
-                        if(showitem4)
-                            IconButton(onClick = {phoneNumber = phoneNumber.replaceFirst(".$".toRegex(), "")}) {
-                                Icon(painter = painterResource(R.drawable.backspace), contentDescription = "description") }
-                        FilledTonalIconButton(onClick = {
-                            show = false
-                            CoroutineScope(Job()).launch {
-                                async {
-                                    showitem4 = false
-                                    Handler(Looper.getMainLooper()).post{
-                                        vm.ElectricData.value = "{}"
-                                    }
-                                    SharePrefs.saveString("PhoneNumber",phoneNumber )
-                                }.await()
-                                async { vm.getFee("bearer $auth", FeeType.SHOWER, phoneNumber = phoneNumber) }.await()
-                                async {
-                                    Handler(Looper.getMainLooper()).post{
-                                        vm.showerData.observeForever { result ->
-                                            if (result?.contains("success") == true) {
-                                                showButton = true
-                                                val jsons = Gson().fromJson(result, ShowerFeeResponse::class.java).map.data
-                                                try {
-                                                    studentID = jsons.identifier.toString()
-                                                    //val name = jsons.name
-                                                    balance = jsons.accountMoney
-                                                    givenBalance = jsons.accountGivenMoney
-                                                    val jsonObject = JSONObject(result)
-                                                    val dataObject = jsonObject.getJSONObject("map").getJSONObject("data")
-                                                    dataObject.put("myCustomInfo", "undefined：$phoneNumber")
-                                                    json = dataObject.toString()
-                                                    show = true
-                                                } catch (e:Exception) {
-                                                    Log.d("JSON",result)
-                                                    e.printStackTrace()
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }) { Icon(painter = painterResource(R.drawable.search), contentDescription = "description") }
-                        FilledTonalButton(onClick = {
-                            getInGuaGua(vm)
-                        }) {
-                            Text(text = "呱呱物联")
-                        }
-                    }
-                }
-            )
-        },
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-        ) {
-
-            val url = MyApplication.ZJGDBillURL + "charge-app/?name=pays&appsourse=ydfwpt&id=223&name=pays&paymentUrl=http://121.251.19.62/plat&token=" + auth
-            val switch_startUri = SharePrefs.prefs.getBoolean("SWITCHSTARTURI",true)
-            if (showDialog) {
-                if(switch_startUri) {
-                    androidx.compose.ui.window.Dialog(
-                        onDismissRequest = { showDialog = false },
-                        properties = DialogProperties(usePlatformDefaultWidth = false)
-                    ) {
-                        Scaffold(
-                            modifier = Modifier.fillMaxSize(),
-                            topBar = {
-                                TopAppBar(
-                                    colors = TopAppBarDefaults.mediumTopAppBarColors(
-                                        containerColor = FWDTColr,
-                                        titleContentColor = Color.White,
-                                    ),
-                                    actions = {
-                                        Row{
-                                            IconButton(onClick = { Starter.startWebUrl( url) }) { Icon(painterResource(id = R.drawable.net), contentDescription = "", tint = Color.White) }
-                                            IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "", tint = Color.White) }
-                                        }
-
-                                    },
-                                    title = { androidx.compose.material3.Text("宣城校区 洗浴缴纳") }
-                                )
-                            },
-                        ) { innerPadding ->
-                            Column(
-                                modifier = Modifier
-                                    .padding(innerPadding)
-                                    .fillMaxSize()
-                            ) {
-                                WebViewScreen(url)
-                            }
-                        }
-                    }
-                } else {
-                    Starter.startWebUrl(url)
-                }
-            }
-            var showDialog2 by remember { mutableStateOf(false) }
-            if(showDialog2)
-                Dialog(onDismissRequest = { showDialog2 = false }) {
-                    Column {
-                        Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
-                            OutlinedCard{
-                                LazyColumn(modifier = Modifier.padding(horizontal = 10.dp)) {
-                                    item {
-                                        androidx.compose.material3.Text(text = "选取金额 ￥${payNumber}", modifier = Modifier.padding(10.dp))
-                                    }
-                                    item {
-                                        LazyRow {
-                                            items(5) { items ->
-                                                IconButton(onClick = {
-                                                    if (payNumber.length < 3)
-                                                        payNumber += items.toString()
-                                                    else Toast.makeText(
-                                                        MyApplication.context,
-                                                        "最高999元",
-                                                        Toast.LENGTH_SHORT
-                                                    ).show()
-                                                }) { androidx.compose.material3.Text(text = items.toString()) }
-                                            }
-                                        }
-                                    }
-                                    item {
-                                        LazyRow {
-                                            items(5) { items ->
-                                                val num = items + 5
-                                                IconButton(onClick = {
-                                                    if (payNumber.length < 3)
-                                                        payNumber += num
-                                                    else Toast.makeText(MyApplication.context, "最高999元", Toast.LENGTH_SHORT).show()
-                                                }) { androidx.compose.material3.Text(text = num.toString()) }
-                                            }
-                                        }
-                                    }
-                                }
-                                Spacer(modifier = Modifier.height(10.dp))
-                            }
-                        }
-                        Spacer(modifier = Modifier.height(10.dp))
-                        Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
-                            FilledTonalIconButton(
-                                onClick = {payNumber = payNumber.replaceFirst(".$".toRegex(), "")},
-                                modifier = Modifier.padding(horizontal = 5.dp)
-                            ) {
-                                Icon(painter = painterResource(R.drawable.backspace), contentDescription = "description")
-                            }
-
-                            FilledTonalIconButton(
-                                onClick = {
-                                    showDialog2 = false
-                                    if(payNumber != "" && payNumber != "0" && payNumber != "00" && payNumber != "000")
-                                        showBottomSheet = true
-                                },
-                                modifier = Modifier.padding(horizontal = 5.dp)
-                            ) {
-                                Icon(Icons.Filled.Check, contentDescription = "description")
-                            }
-                        }
-                    }
-                }
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 15.dp, vertical = 0.dp), horizontalArrangement = Arrangement.Start) {
-                AssistChip(
-                    onClick = { showitem4 = !showitem4 },
-                    label = { androidx.compose.material3.Text(text = "手机号 ${phoneNumber}") },
-                    //leadingIcon = { Icon(painter = painterResource(R.drawable.add), contentDescription = "description") }
-                )
-            }
-
-
-            // Spacer(modifier = Modifier.height(7.dp))
-
-//充值界面
-            Spacer(modifier = Modifier.height(7.dp))
-            AnimatedVisibility(
-                visible = showitem4,
-                enter = slideInVertically(
-                    initialOffsetY = { -40 }
-                ) + expandVertically(
-                    expandFrom = Alignment.Top
-                ) + scaleIn(
-                    // Animate scale from 0f to 1f using the top center as the pivot point.
-                    transformOrigin = TransformOrigin(0.5f, 0f)
-                ) + fadeIn(initialAlpha = 0.3f),
-                exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
+    if (showDialog) {
+        if(switch_startUri) {
+            androidx.compose.ui.window.Dialog(
+                onDismissRequest = { showDialog = false },
+                properties = DialogProperties(usePlatformDefaultWidth = false)
             ) {
-                Row (modifier = Modifier.padding(horizontal = 15.dp)){
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    topBar = {
+                        TopAppBar(
+                            colors = TopAppBarDefaults.mediumTopAppBarColors(
+                                containerColor = FWDTColr,
+                                titleContentColor = Color.White,
+                            ),
+                            actions = {
+                                Row{
+                                    IconButton(onClick = { Starter.startWebUrl( url) }) { Icon(painterResource(id = R.drawable.net), contentDescription = "", tint = Color.White) }
+                                    IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "", tint = Color.White) }
+                                }
+
+                            },
+                            title = { Text("宣城校区 洗浴缴纳") }
+                        )
+                    },
+                ) { innerPadding ->
+                    Column(
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .fillMaxSize()
+                    ) {
+                        WebViewScreen(url)
+                    }
+                }
+            }
+        } else {
+            Starter.startWebUrl(url)
+        }
+    }
+
+
+    if(showDialog2)
+        Dialog(onDismissRequest = { showDialog2 = false }) {
+            Column {
+                Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
                     OutlinedCard{
                         LazyColumn(modifier = Modifier.padding(horizontal = 10.dp)) {
                             item {
-                                androidx.compose.material3.Text(
-                                    text = " 选取手机号",
-                                    modifier = Modifier.padding(10.dp)
-                                )
+                                Text(text = "选取金额 ￥${payNumber}", modifier = Modifier.padding(10.dp))
                             }
                             item {
                                 LazyRow {
                                     items(5) { items ->
                                         IconButton(onClick = {
-                                            if (phoneNumber.length < 11)
-                                                phoneNumber += items.toString()
+                                            if (payNumber.length < 3)
+                                                payNumber += items.toString()
                                             else Toast.makeText(
                                                 MyApplication.context,
-                                                "11位数",
+                                                "最高999元",
                                                 Toast.LENGTH_SHORT
                                             ).show()
-                                        }) { androidx.compose.material3.Text(text = items.toString()) }
+                                        }) { Text(text = items.toString()) }
                                     }
                                 }
                             }
@@ -493,10 +279,10 @@ fun ShowerUI(vm : NetWorkViewModel) {
                                     items(5) { items ->
                                         val num = items + 5
                                         IconButton(onClick = {
-                                            if (phoneNumber.length < 11)
-                                                phoneNumber += num
-                                            else Toast.makeText(MyApplication.context, "11位数", Toast.LENGTH_SHORT).show()
-                                        }) { androidx.compose.material3.Text(text = num.toString()) }
+                                            if (payNumber.length < 3)
+                                                payNumber += num
+                                            else Toast.makeText(MyApplication.context, "最高999元", Toast.LENGTH_SHORT).show()
+                                        }) { Text(text = num.toString()) }
                                     }
                                 }
                             }
@@ -504,28 +290,156 @@ fun ShowerUI(vm : NetWorkViewModel) {
                         Spacer(modifier = Modifier.height(10.dp))
                     }
                 }
+                Spacer(modifier = Modifier.height(10.dp))
+                Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
+                    FilledTonalIconButton(
+                        onClick = {payNumber = payNumber.replaceFirst(".$".toRegex(), "")},
+                        modifier = Modifier.padding(horizontal = 5.dp)
+                    ) {
+                        Icon(painter = painterResource(R.drawable.backspace), contentDescription = "description")
+                    }
+
+                    FilledTonalIconButton(
+                        onClick = {
+                            showDialog2 = false
+                            if(payNumber != "" && payNumber != "0" && payNumber != "00" && payNumber != "000")
+                                showBottomSheet = true
+                        },
+                        modifier = Modifier.padding(horizontal = 5.dp)
+                    ) {
+                        Icon(Icons.Filled.Check, contentDescription = "description")
+                    }
+                }
             }
+        }
 
-            val blurSize by animateDpAsState(
-                targetValue = if (!show) 10.dp else 0.dp, label = ""
-                ,animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
+    //布局///////////////////////////////////////////////////////////////////////////
+    Column {
+
+        TopAppBar(
+            colors = TopAppBarDefaults.mediumTopAppBarColors(
+                containerColor = Color.Transparent,
+                titleContentColor = MaterialTheme.colorScheme.primary,
+            ),
+            title = { ScrollText("洗浴-宣城校区") },
+            actions = {
+                Row(modifier = Modifier.padding(horizontal = 15.dp)) {
+                    if(showitem4)
+                        IconButton(onClick = {phoneNumber = phoneNumber.replaceFirst(".$".toRegex(), "")}) {
+                            Icon(painter = painterResource(R.drawable.backspace), contentDescription = "description") }
+                    FilledTonalIconButton(onClick = {
+                        show = false
+                        CoroutineScope(Job()).launch {
+                            async {
+                                showitem4 = false
+                                Handler(Looper.getMainLooper()).post{
+                                    vm.ElectricData.value = "{}"
+                                }
+                                SharePrefs.saveString("PhoneNumber",phoneNumber )
+                            }.await()
+                            async { vm.getFee("bearer $auth", FeeType.SHOWER, phoneNumber = phoneNumber) }.await()
+                            async {
+                                Handler(Looper.getMainLooper()).post{
+                                    vm.showerData.observeForever { result ->
+                                        if (result?.contains("success") == true) {
+                                            showButton = true
+                                            val jsons = Gson().fromJson(result, ShowerFeeResponse::class.java).map.data
+                                            try {
+                                                studentID = jsons.identifier.toString()
+                                                //val name = jsons.name
+                                                balance = jsons.accountMoney
+                                                givenBalance = jsons.accountGivenMoney
+                                                val jsonObject = JSONObject(result)
+                                                val dataObject = jsonObject.getJSONObject("map").getJSONObject("data")
+                                                dataObject.put("myCustomInfo", "undefined：$phoneNumber")
+                                                json = dataObject.toString()
+                                                show = true
+                                            } catch (e:Exception) {
+                                                Log.d("JSON",result)
+                                                e.printStackTrace()
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }) { Icon(painter = painterResource(R.drawable.search), contentDescription = "description") }
+                    if(!isInGuagua) {
+                        FilledTonalButton(onClick = {
+                            getInGuaGua(vm)
+                        }) {
+                            Text(text = "呱呱物联")
+                        }
+                    }
+                }
+            }
+        )
+
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 15.dp, vertical = 0.dp), horizontalArrangement = Arrangement.Start) {
+            AssistChip(
+                onClick = { showitem4 = !showitem4 },
+                label = { Text(text = "手机号 ${phoneNumber}") },
             )
+        }
 
-            val scale = animateFloatAsState(
-                targetValue = if (!show) 0.9f else 1f, // 按下时为0.9，松开时为1
-                //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-                animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
-                label = "" // 使用弹簧动画
-            )
-            val scale2 = animateFloatAsState(
-                targetValue = if (!show) 0.97f else 1f, // 按下时为0.9，松开时为1
-                //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-                animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
-                label = "" // 使用弹簧动画
-            )
+        Spacer(modifier = Modifier.height(7.dp))
+        AnimatedVisibility(
+            visible = showitem4,
+            enter = slideInVertically(
+                initialOffsetY = { -40 }
+            ) + expandVertically(
+                expandFrom = Alignment.Top
+            ) + scaleIn(
+                // Animate scale from 0f to 1f using the top center as the pivot point.
+                transformOrigin = TransformOrigin(0.5f, 0f)
+            ) + fadeIn(initialAlpha = 0.3f),
+            exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
+        ) {
+            Row (modifier = Modifier.padding(horizontal = 15.dp)){
+                OutlinedCard{
+                    LazyColumn(modifier = Modifier.padding(horizontal = 10.dp)) {
+                        item {
+                            Text(
+                                text = " 选取手机号",
+                                modifier = Modifier.padding(10.dp)
+                            )
+                        }
+                        item {
+                            LazyRow {
+                                items(5) { items ->
+                                    IconButton(onClick = {
+                                        if (phoneNumber.length < 11)
+                                            phoneNumber += items.toString()
+                                        else Toast.makeText(
+                                            MyApplication.context,
+                                            "11位数",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }) { Text(text = items.toString()) }
+                                }
+                            }
+                        }
+                        item {
+                            LazyRow {
+                                items(5) { items ->
+                                    val num = items + 5
+                                    IconButton(onClick = {
+                                        if (phoneNumber.length < 11)
+                                            phoneNumber += num
+                                        else Toast.makeText(MyApplication.context, "11位数", Toast.LENGTH_SHORT).show()
+                                    }) { Text(text = num.toString()) }
+                                }
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(10.dp))
+                }
+            }
+        }
 
-            DividerText(text = "查询结果")
-
+        DividerTextExpandedWith(text = "查询结果") {
             Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
                 Spacer(modifier = Modifier.height(100.dp))
                 Card(
@@ -541,17 +455,17 @@ fun ShowerUI(vm : NetWorkViewModel) {
                         .blur(blurSize)
                         .scale(scale.value)) {
                         ListItem(
-                            headlineContent = { androidx.compose.material3.Text(text = if(!show)"￥XX.XX" else {     "￥${tranamt(balance)}"
+                            headlineContent = { Text(text = if(!show)"￥XX.XX" else {     "￥${tranamt(balance)}"
                             }, fontSize = 28.sp) },
                             trailingContent = {
                                 if(show) {
                                     if(showButton)
-                                        FilledTonalButton(onClick = { if(showAdd && payNumber != "") showBottomSheet = true   else showDialog2 = true  }) { androidx.compose.material3.Text(text = if(showAdd && payNumber != "") "提交订单" else "快速充值") }
-                                } else FilledTonalButton(onClick = { null }) { androidx.compose.material3.Text(text = "快速充值") } }
+                                        FilledTonalButton(onClick = { if(showAdd && payNumber != "") showBottomSheet = true   else showDialog2 = true  }) { Text(text = if(showAdd && payNumber != "") "提交订单" else "快速充值") }
+                                } else FilledTonalButton(onClick = { null }) { Text(text = "快速充值") } }
                         )
                         ListItem(
                             //headlineContent = { androidx.compose.material3.Text( text = if(!show)"学号 " + " 2000000000" else "学号 $studentID") },
-                            headlineContent = { (if(!show)"手机号 1XXXXXXXXXX" else "手机号 $phoneNumber").let { androidx.compose.material3.Text(text = it) } },
+                            headlineContent = { (if(!show)"手机号 1XXXXXXXXXX" else "手机号 $phoneNumber").let { Text(text = it) } },
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")}
                         )
                     }
@@ -561,6 +475,8 @@ fun ShowerUI(vm : NetWorkViewModel) {
             BottomTip(str = "慧新易校已集成 可前往 查询中心-一卡通-卡包")
             BottomTip(str = "首次使用前需在微信小程序-呱呱物联绑定手机号")
         }
+
+        Spacer(modifier = Modifier.height(15.dp))
     }
 }
 //适配

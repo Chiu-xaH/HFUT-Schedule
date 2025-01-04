@@ -60,8 +60,8 @@ import com.hfut.schedule.ui.activity.home.cube.items.main.Screen
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.VersionInfo
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.VersionInfoCard
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.getUpdates
-import com.hfut.schedule.ui.utils.MyToast
-import com.hfut.schedule.ui.utils.Round
+import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.style.Round
 
 import java.util.Hashtable
 

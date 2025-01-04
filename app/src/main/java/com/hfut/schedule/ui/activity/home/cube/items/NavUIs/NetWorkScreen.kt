@@ -35,7 +35,7 @@ import com.hfut.schedule.logic.utils.SharePrefs.saveBoolean
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.RequestArrange
 import com.hfut.schedule.ui.activity.home.search.functions.lepaoYun.InfoSet
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
-import com.hfut.schedule.ui.utils.Round
+import com.hfut.schedule.ui.utils.style.Round
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

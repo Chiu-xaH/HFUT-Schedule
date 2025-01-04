@@ -27,7 +27,7 @@ import com.hfut.schedule.ui.utils.monet.LocalCurrentStickerUuid
 import com.hfut.schedule.ui.utils.monet.MainIntent
 import com.hfut.schedule.ui.utils.monet.MainViewModel
 import com.hfut.schedule.ui.utils.monet.SettingsProvider
-import com.hfut.schedule.ui.utils.TransparentSystemBars
+import com.hfut.schedule.ui.utils.style.TransparentSystemBars
 import com.hfut.schedule.ui.theme.MonetColor
 import dagger.hilt.android.AndroidEntryPoint
 

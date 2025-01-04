@@ -47,11 +47,12 @@ import com.hfut.schedule.logic.beans.PayData
 import com.hfut.schedule.logic.beans.PayResponse
 import com.hfut.schedule.logic.utils.ClipBoard
 import com.hfut.schedule.logic.utils.Starter
-import com.hfut.schedule.ui.utils.CardForListColor
-import com.hfut.schedule.ui.utils.DividerText
-import com.hfut.schedule.ui.utils.MyToast
-import com.hfut.schedule.ui.utils.Round
-import com.hfut.schedule.ui.utils.ScrollText
+import com.hfut.schedule.ui.utils.style.CardForListColor
+import com.hfut.schedule.ui.utils.components.DividerText
+import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
+import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.components.ScrollText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -146,58 +147,60 @@ fun PayUI(url : String,vm: NetWorkViewModel) {
 
 
     val data = getPay(vm)
-    DividerText(text = "欠缴费用")
-    Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
-        modifier = Modifier
-            .fillMaxWidth().scale(scale2.value)
-            .padding(horizontal = 15.dp, vertical = 5.dp),
-        shape = MaterialTheme.shapes.medium,
-        colors = CardForListColor()
-    ) {
-        Column (modifier = Modifier.blur(blurSize).scale(scale.value)) {
-            ListItem(
-                headlineContent = { Text(text = "￥${if(!loading) data.total else "0.0"}", fontSize = 28.sp) },
-                trailingContent = {
-                    FilledTonalButton(
-                        onClick = { Starter.startWebUrl(url) },
-                        modifier = Modifier.padding(horizontal = 15.dp)
-                    ) {
-                        Text(text = "缴费")
+    DividerTextExpandedWith(text = "欠缴费用") {
+        Card(
+            elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
+            modifier = Modifier
+                .fillMaxWidth().scale(scale2.value)
+                .padding(horizontal = 15.dp, vertical = 5.dp),
+            shape = MaterialTheme.shapes.medium,
+            colors = CardForListColor()
+        ) {
+            Column (modifier = Modifier.blur(blurSize).scale(scale.value)) {
+                ListItem(
+                    headlineContent = { Text(text = "￥${if(!loading) data.total else "0.0"}", fontSize = 28.sp) },
+                    trailingContent = {
+                        FilledTonalButton(
+                            onClick = { Starter.startWebUrl(url) },
+                            modifier = Modifier.padding(horizontal = 15.dp)
+                        ) {
+                            Text(text = "缴费")
+                        }
                     }
-                }
-            )
-            Row {
-                ListItem(
-                    headlineContent = { ScrollText(text = "学费 ￥${if(!loading)data.xf else "0.0"}") },
-                    modifier = Modifier.weight(.5f)
                 )
-                ListItem(
-                    headlineContent = { ScrollText(text = "体检费 ￥${if(!loading) data.dstjf else "0.0"}") },
-                    modifier = Modifier.weight(.5f)
-                )
+                Row {
+                    ListItem(
+                        headlineContent = { ScrollText(text = "学费 ￥${if(!loading)data.xf else "0.0"}") },
+                        modifier = Modifier.weight(.5f)
+                    )
+                    ListItem(
+                        headlineContent = { ScrollText(text = "体检费 ￥${if(!loading) data.dstjf else "0.0"}") },
+                        modifier = Modifier.weight(.5f)
+                    )
 
-            }
-            Row {
-                ListItem(
-                    headlineContent = { ScrollText(text = "住宿费 ￥${if(!loading) data.zsf else "0.0"}") },
-                    modifier = Modifier.weight(.5f)
-                )
-                ListItem(
-                    headlineContent = { ScrollText(text = "军训费 ￥${if(!loading) data.dsjxf else "0.0"}") },
-                    modifier = Modifier.weight(.5f)
-                )
+                }
+                Row {
+                    ListItem(
+                        headlineContent = { ScrollText(text = "住宿费 ￥${if(!loading) data.zsf else "0.0"}") },
+                        modifier = Modifier.weight(.5f)
+                    )
+                    ListItem(
+                        headlineContent = { ScrollText(text = "军训费 ￥${if(!loading) data.dsjxf else "0.0"}") },
+                        modifier = Modifier.weight(.5f)
+                    )
+                }
             }
         }
     }
-    DividerText(text = "缴费方式")
+
+    DividerTextExpandedWith(text = "缴费方式") {
 
         ListItem(
             headlineContent = { Text(text = "提前在中国农业银行卡预存费用,学校到期自动扣取") },
             leadingContent = { Icon(
-            painter = painterResource(id = R.drawable.credit_card),
-            contentDescription = ""
-        )})
+                painter = painterResource(id = R.drawable.credit_card),
+                contentDescription = ""
+            )})
         ListItem(
             headlineContent = { Text(text = "点击右上角打开链接即可调用电子支付(Apple Pay通道)") },
             leadingContent = {Icon(
@@ -217,8 +220,10 @@ fun PayUI(url : String,vm: NetWorkViewModel) {
                 MyToast("已复制到剪切板")
             }
         )
+    }
+
   //  }
-    DividerText(text = "防骗警告")
+    DividerTextExpandedWith(text = "防骗警告") {
         ListItem(
             headlineContent = { Text(text = "电子支付只能通过学校缴费平台官方链接(右上角按钮提供)发起,其余线上途径均需谨慎甄别!") },
             leadingContent = {Icon(
@@ -226,6 +231,8 @@ fun PayUI(url : String,vm: NetWorkViewModel) {
                 contentDescription = ""
             )}
         )
+    }
+
 
 }
 

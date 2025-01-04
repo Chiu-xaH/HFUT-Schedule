@@ -22,7 +22,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import com.hfut.schedule.ui.utils.LoadingUI
+import com.hfut.schedule.ui.utils.components.LoadingUI
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -53,13 +53,14 @@ import com.hfut.schedule.logic.beans.Jxglstu.CourseItem
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.search.functions.life.countFunc
-import com.hfut.schedule.ui.utils.CardForListColor
-import com.hfut.schedule.ui.utils.DividerText
-import com.hfut.schedule.ui.utils.MyCard
-import com.hfut.schedule.ui.utils.MyToast
-import com.hfut.schedule.ui.utils.Round
-import com.hfut.schedule.ui.utils.RowHorizal
-import com.hfut.schedule.ui.utils.ScrollText
+import com.hfut.schedule.ui.utils.style.CardForListColor
+import com.hfut.schedule.ui.utils.components.DividerText
+import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
+import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.RowHorizal
+import com.hfut.schedule.ui.utils.components.ScrollText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -164,43 +165,44 @@ fun ProgramPerformance(vm : NetWorkViewModel) {
                         val item = it[index]
                         val requireInfo = item.requireInfo
                         val summary = item.completionSummary
-                        DividerText(text = item.nameZh + " 要求 ${requireInfo.courseNum} 门 ${requireInfo.credits} 学分")
-                        MyCard {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.Center
-                            ) {
-                                ListItem(
-                                    headlineContent = { Text(text = "${summary.passedCourseNum} 门 ${summary.passedCredits} 学分") },
-                                    overlineContent = { Text(text = "已通过") },
-                                    modifier = Modifier.weight(.5f)
-                                )
-                                ListItem(
-                                    headlineContent = { Text(text = "${summary.failedCourseNum} 门 ${summary.failedCredits} 学分") },
-                                    overlineContent = { Text(text = "未通过") },
-                                    modifier = Modifier.weight(.5f)
-                                )
-                            }
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.Center
-                            ) {
-                                ListItem(
-                                    headlineContent = { Text(text = "${summary.takingCourseNum} 门 ${summary.takingCredits} 学分") },
-                                    overlineContent = { Text(text = "本学期在修") },
-                                    modifier = Modifier.weight(1f),
-                                    trailingContent = {
-                                        Button(
-                                            onClick = {
-                                                moduleIndex = index
-                                                title = item.nameZh
-                                                showBottomSheet = true
-                                            },
-                                        ) {
-                                            Text(text = "查看详情")
+                        DividerTextExpandedWith(text = item.nameZh + " 要求 ${requireInfo.courseNum} 门 ${requireInfo.credits} 学分") {
+                            MyCard {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    ListItem(
+                                        headlineContent = { Text(text = "${summary.passedCourseNum} 门 ${summary.passedCredits} 学分") },
+                                        overlineContent = { Text(text = "已通过") },
+                                        modifier = Modifier.weight(.5f)
+                                    )
+                                    ListItem(
+                                        headlineContent = { Text(text = "${summary.failedCourseNum} 门 ${summary.failedCredits} 学分") },
+                                        overlineContent = { Text(text = "未通过") },
+                                        modifier = Modifier.weight(.5f)
+                                    )
+                                }
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    ListItem(
+                                        headlineContent = { Text(text = "${summary.takingCourseNum} 门 ${summary.takingCredits} 学分") },
+                                        overlineContent = { Text(text = "本学期在修") },
+                                        modifier = Modifier.weight(1f),
+                                        trailingContent = {
+                                            Button(
+                                                onClick = {
+                                                    moduleIndex = index
+                                                    title = item.nameZh
+                                                    showBottomSheet = true
+                                                },
+                                            ) {
+                                                Text(text = "查看详情")
+                                            }
                                         }
-                                    }
-                                )
+                                    )
+                                }
                             }
                         }
                     }
@@ -511,7 +513,7 @@ fun ProgramInfoItem(item : CourseItem) {
                 overlineContent = { Text(text = "学分") },
                 modifier = Modifier.weight(.5f),
                 leadingContent = {
-                    Icon(painterResource(id = R.drawable.hive), contentDescription = null)
+                    Icon(painterResource(id = R.drawable.filter_vintage), contentDescription = null)
                 },
             )
         }

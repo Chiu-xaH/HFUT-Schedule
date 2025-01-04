@@ -5,7 +5,7 @@ import android.content.ContentValues
 import android.provider.CalendarContract
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.utils.PermissionManager.checkAndRequestCalendarPermission
-import com.hfut.schedule.ui.utils.MyToast
+import com.hfut.schedule.ui.utils.components.MyToast
 import java.util.Calendar
 
 object AddCalendar {

@@ -1112,6 +1112,18 @@ Query["telPhone"] 手机号
 
 Query["loginCode"] 登录获取过
 
+### 修改使用码
+@POST user/useCode/set
+#### 请求
+Form(表单)
+```
+"telPhone"=手机号,
+“password”=用户密码经过MD5加密后10位字符，注意MD5密文英文必须为大写字母,
+"loginCode"=登录获取过,
+"securityCode"=新使用码 必须为5位数字
+"appId"="10010" 固定字符
+```
+
 ## 校园网-宣城 http://172.18.3.3/  http://172.18.2.2/
 
 有两个地址，多数情况下 图书馆和宿舍为3.3，敬亭、新安学堂为2.2

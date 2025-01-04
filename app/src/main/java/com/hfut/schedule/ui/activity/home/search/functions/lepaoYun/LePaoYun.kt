@@ -42,8 +42,8 @@ import com.hfut.schedule.logic.utils.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.beans.LePaoYun.LePaoYunHomeResponse
 import com.hfut.schedule.logic.utils.Starter
-import com.hfut.schedule.ui.utils.LittleDialog
-import com.hfut.schedule.ui.utils.MyCard
+import com.hfut.schedule.ui.utils.components.LittleDialog
+import com.hfut.schedule.ui.utils.components.MyCard
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async

@@ -18,9 +18,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.APPVersion
-import com.hfut.schedule.ui.utils.DividerText
-import com.hfut.schedule.ui.utils.MyToast
-import com.hfut.schedule.ui.utils.ScrollText
+import com.hfut.schedule.ui.utils.components.DividerText
+import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
+import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.ScrollText
 
 
 @SuppressLint("SuspiciousIndentation")
@@ -45,7 +46,7 @@ fun VersionInfoCard() {
             ListItem(headlineContent = { Text(text = "聚在工大 " + APPVersion.getVersionName(), fontSize = 28.sp) })
             Row {
                 ListItem(
-                    overlineContent = { Text(text = "2025-01-01") },
+                    overlineContent = { Text(text = "2025-01-04") },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.sdk), contentDescription = "") },
                     headlineContent = { ScrollText(text = "第${APPVersion.getVersionCode()}次更新") },
                     modifier = Modifier.weight(.5f)
@@ -67,11 +68,15 @@ fun VersionInfoCard() {
 @Composable
 fun VersionInfo() {
     VersionInfoCard()
-    DividerText(text = "新特性")
-    UpdateItems("重构 转专业我的申请","显示更多信息(已经成功转走的会隐藏考试安排等信息)", UpdateType.RENEW)
-    UpdateItems("修复 外地访问失效的Bug",null, UpdateType.FIX)
-    UpdateItems("优化 外地访问支持更多场景","当大家离校后，由于距离服务器较远，普通的刷新登陆状态大概率无法使用，此时勾选外地访问，再登陆", UpdateType.OPTIMIZE)
-    UpdateItems("优化 成绩界面的布局",null, UpdateType.OPTIMIZE)
+    DividerTextExpandedWith(text = "新特性") {
+        UpdateItems("新增 所有小标题都可以点击，收起或展开项目",null, UpdateType.ADD)
+        UpdateItems("新增 洗浴使用码展示、重置使用码、预加载设置","位于洗浴-呱呱物联", UpdateType.ADD)
+        UpdateItems("修复 成绩详情无法翻页Bug",null, UpdateType.FIX)
+        UpdateItems("修复 洗浴扫码关闭后再次扫码崩溃Bug",null, UpdateType.FIX)
+        UpdateItems("优化 成绩详情大卡片的布局",null, UpdateType.OPTIMIZE)
+        UpdateItems("优化 部分界面的布局",null, UpdateType.OPTIMIZE)
+        UpdateItems("优化 洗浴扫码的界面",null, UpdateType.OPTIMIZE)
+    }
 }
 
 enum class UpdateType {

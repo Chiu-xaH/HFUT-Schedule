@@ -85,8 +85,8 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.activity.card.counts.RadarChart
 import com.hfut.schedule.ui.activity.card.counts.RadarData
-import com.hfut.schedule.ui.utils.CardForListColor
-import com.hfut.schedule.ui.utils.RowHorizal
+import com.hfut.schedule.ui.utils.style.CardForListColor
+import com.hfut.schedule.ui.utils.style.RowHorizal
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt

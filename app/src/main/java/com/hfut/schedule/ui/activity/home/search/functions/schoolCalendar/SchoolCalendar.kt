@@ -30,8 +30,8 @@ import com.hfut.schedule.logic.beans.MyAPIResponse
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter
-import com.hfut.schedule.ui.utils.WebViewScreen
-import com.hfut.schedule.ui.utils.MyToast
+import com.hfut.schedule.ui.utils.components.WebViewScreen
+import com.hfut.schedule.ui.utils.components.MyToast
 import java.io.File
 import java.io.FileOutputStream
 

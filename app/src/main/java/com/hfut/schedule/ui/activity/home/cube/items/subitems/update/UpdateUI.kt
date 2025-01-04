@@ -30,7 +30,7 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.APPVersion
 import com.hfut.schedule.logic.utils.Starter
-import com.hfut.schedule.ui.utils.MyCard
+import com.hfut.schedule.ui.utils.components.MyCard
 
 @Composable
 fun UpdateUI() {

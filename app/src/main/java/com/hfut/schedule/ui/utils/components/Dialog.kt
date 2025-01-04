@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.utils
+package com.hfut.schedule.ui.utils.components
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button

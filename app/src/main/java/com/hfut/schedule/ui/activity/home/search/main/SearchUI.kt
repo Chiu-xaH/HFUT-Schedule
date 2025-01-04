@@ -66,7 +66,7 @@ import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.Transfe
 import com.hfut.schedule.ui.activity.home.search.functions.webLab.WebUI
 import com.hfut.schedule.ui.activity.home.search.functions.work.Work
 import com.hfut.schedule.ui.activity.home.search.functions.xueXin.XueXin
-import com.hfut.schedule.ui.utils.MyToast
+import com.hfut.schedule.ui.utils.components.MyToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -122,7 +122,7 @@ fun SearchScreen(vm : NetWorkViewModel, ifSaved : Boolean, innerPaddings : Paddi
         "课程汇总" to { CourseTotal(vm) },
         "个人信息" to { PersonUI(ifSaved) },
         "网址导航 实验室 收纳" to { WebUI() },
-        "报修 维修" to { Repair() },
+        "洗浴 洗澡 呱呱物联 慧新易校 缴费" to { Shower(vm) },
         "选课" to { SelectCourse(ifSaved, vm) },
         "寝室卫生评分 寝室卫生分数" to { DormitoryScoreXuanCheng(vm) },
         "消息中心 通知中心 收纳" to { NotificationsCenter() },
@@ -131,7 +131,7 @@ fun SearchScreen(vm : NetWorkViewModel, ifSaved : Boolean, innerPaddings : Paddi
         "培养方案" to { Program(vm, ifSaved) },
         "校历" to { SchoolCalendar() },
         "校车" to { SchoolBus() },
-        "洗浴 洗澡 呱呱物联 慧新易校 缴费" to { Shower(vm) },
+        "报修 维修" to { Repair() },
         "下学期课程表 下学期课表" to { NextCourse(ifSaved, vmUI,vm) },
         "热水机 趣智校园" to { HotWater() },
         "空教室" to { EmptyRoom(vm, ifSaved) },
