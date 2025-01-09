@@ -72,7 +72,7 @@ UI设计 Material You (Material Design 3) + Material Design
 ## [更新日志](markdown/UPDATE.md)
 
 ## 统计
-使用为期3个月的服务器进行统计
+使用为期3个月(2024-10-07 ~ 2025-01-06)的服务器进行统计
 
 ![visitsChart](/img/visitsChart.png)
 

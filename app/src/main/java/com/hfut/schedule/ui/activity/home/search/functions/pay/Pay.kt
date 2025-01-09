@@ -147,7 +147,7 @@ fun PayUI(url : String,vm: NetWorkViewModel) {
 
 
     val data = getPay(vm)
-    DividerTextExpandedWith(text = "欠缴费用") {
+    DividerTextExpandedWith(text = "欠缴费用",false) {
         Card(
             elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
             modifier = Modifier

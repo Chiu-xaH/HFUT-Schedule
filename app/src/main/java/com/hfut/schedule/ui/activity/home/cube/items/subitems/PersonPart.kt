@@ -42,7 +42,7 @@ import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
 import com.hfut.schedule.ui.utils.components.MyCard
 import com.hfut.schedule.ui.utils.components.ScrollText
-import com.hfut.schedule.ui.utils.components.schoolIcons
+import com.hfut.schedule.ui.utils.components.DepartmentIcons
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -123,7 +123,7 @@ fun PersonPart() {
                             ListItem(
                                 overlineContent = { getPersonInfo().school?.let { Text(text = it) } },
                                 leadingContent = {
-                                    getPersonInfo().department?.let { schoolIcons(name = it) }
+                                    getPersonInfo().department?.let { DepartmentIcons(name = it) }
                                 },
                                 headlineContent = { getPersonInfo().department?.let { ScrollText(text = it) } },
                                 modifier = Modifier.weight(0.5f),

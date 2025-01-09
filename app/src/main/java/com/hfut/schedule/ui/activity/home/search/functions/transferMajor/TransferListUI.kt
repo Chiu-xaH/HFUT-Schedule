@@ -44,7 +44,7 @@ import com.hfut.schedule.logic.utils.reEmptyLiveDta
 import com.hfut.schedule.ui.utils.components.MyCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.ScrollText
-import com.hfut.schedule.ui.utils.components.schoolIcons
+import com.hfut.schedule.ui.utils.components.DepartmentIcons
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -52,7 +52,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TransferUI(vm: NetWorkViewModel, campus: CampusId) {
+fun TransferUI(vm: NetWorkViewModel, batchId: String) {
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
     val cookie = if (!vm.webVpn) prefs.getString(
@@ -62,7 +62,7 @@ fun TransferUI(vm: NetWorkViewModel, campus: CampusId) {
 
    // val campus =
 
-    LaunchedEffect(key1 = campus) {
+    LaunchedEffect(key1 = batchId) {
         loading = true
         reEmptyLiveDta(vm.transferData)
         refresh = true
@@ -70,7 +70,7 @@ fun TransferUI(vm: NetWorkViewModel, campus: CampusId) {
     if(refresh) {
         loading = true
         CoroutineScope(Job()).launch{
-            async{ cookie?.let { vm.getTransfer(it,campus)} }.await()
+            async{ cookie?.let { vm.getTransfer(it,batchId)} }.await()
             async {
                 Handler(Looper.getMainLooper()).post{
                     vm.transferData.observeForever { result ->
@@ -157,7 +157,7 @@ fun TransferUI(vm: NetWorkViewModel, campus: CampusId) {
                                 headlineContent = { Text(text = searchList[item].major.nameZh) },
                                 supportingContent = { searchList[item].registrationConditions?.let { Text(text = it) } },
                                 overlineContent = { ScrollText(text = department + " 已申请 " + searchList[item].applyStdCount.toString() + " / " + searchList[item].preparedStdCount) },
-                                leadingContent = { schoolIcons(searchList[item].department.nameZh) },
+                                leadingContent = { DepartmentIcons(searchList[item].department.nameZh) },
                                 trailingContent = {  FilledTonalIconButton(onClick = {
                                     MyToast("正在开发")
                                 }) { Icon(painter = painterResource(id = R.drawable.add_task), contentDescription = "") } },

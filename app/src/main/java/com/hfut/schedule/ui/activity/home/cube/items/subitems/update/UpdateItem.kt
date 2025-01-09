@@ -46,7 +46,7 @@ fun VersionInfoCard() {
             ListItem(headlineContent = { Text(text = "聚在工大 " + APPVersion.getVersionName(), fontSize = 28.sp) })
             Row {
                 ListItem(
-                    overlineContent = { Text(text = "2025-01-04") },
+                    overlineContent = { Text(text = "2025-01-09") },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.sdk), contentDescription = "") },
                     headlineContent = { ScrollText(text = "第${APPVersion.getVersionCode()}次更新") },
                     modifier = Modifier.weight(.5f)
@@ -69,13 +69,9 @@ fun VersionInfoCard() {
 fun VersionInfo() {
     VersionInfoCard()
     DividerTextExpandedWith(text = "新特性") {
-        UpdateItems("新增 所有小标题都可以点击，收起或展开项目",null, UpdateType.ADD)
-        UpdateItems("新增 洗浴使用码展示、重置使用码、预加载设置","位于洗浴-呱呱物联", UpdateType.ADD)
-        UpdateItems("修复 成绩详情无法翻页Bug",null, UpdateType.FIX)
-        UpdateItems("修复 洗浴扫码关闭后再次扫码崩溃Bug",null, UpdateType.FIX)
-        UpdateItems("优化 成绩详情大卡片的布局",null, UpdateType.OPTIMIZE)
-        UpdateItems("优化 部分界面的布局",null, UpdateType.OPTIMIZE)
-        UpdateItems("优化 洗浴扫码的界面",null, UpdateType.OPTIMIZE)
+        UpdateItems("新增 运动实时模糊","位于选项-界面显示-动效，默认处于关闭状态，开启后可能会加大性能压力", UpdateType.ADD)
+        UpdateItems("修复 转专业无法查看的Bug",null, UpdateType.FIX)
+        UpdateItems("优化 部分界面的显示",null, UpdateType.OPTIMIZE)
     }
 }
 

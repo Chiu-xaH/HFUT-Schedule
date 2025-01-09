@@ -146,7 +146,7 @@ fun LifeUIS(vm : NetWorkViewModel) {
     }
     val cityName = if((getPersonInfo().school ?: "合肥").contains("宣城")) "宣城" else "合肥"
     val data = getWeather(vm)
-    DividerTextExpandedWith(text = "天气预警") {
+    DividerTextExpandedWith(text = "天气预警",false) {
         Card(
             elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
             modifier = Modifier

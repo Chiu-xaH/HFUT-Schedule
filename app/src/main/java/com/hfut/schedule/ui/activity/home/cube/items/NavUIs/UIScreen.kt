@@ -18,6 +18,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -32,6 +33,10 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.SharePrefs.saveBoolean
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.monet.MonetColorItem
+import com.hfut.schedule.ui.utils.BlurManager
+import com.hfut.schedule.ui.utils.components.DividerText
+import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
+import com.hfut.schedule.ui.utils.components.MyToast
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -41,6 +46,8 @@ fun UIScreen(navController: NavController, innerPaddings : PaddingValues,
              showlablechanged :(Boolean) -> Unit,
              blur : Boolean,
              blurchanged :(Boolean) -> Unit,) {
+    var animationBlur by remember { mutableStateOf(BlurManager.getValue()) }
+    var animation by remember { mutableStateOf(true) }
     // Design your second screen here
     Column(modifier = Modifier
         .verticalScroll(rememberScrollState())
@@ -51,7 +58,8 @@ fun UIScreen(navController: NavController, innerPaddings : PaddingValues,
         saveBoolean("SWITCH",true,showlable)
         saveBoolean("SWITCHBLUR",true,blur)
 
-        var sliderPosition by remember { mutableStateOf((prefs.getInt("ANIMATION", MyApplication.Animation)).toFloat()) }
+
+        var sliderPosition by remember { mutableFloatStateOf((prefs.getInt("ANIMATION", MyApplication.Animation)).toFloat()) }
         val bd = BigDecimal(sliderPosition.toString())
         val str = bd.setScale(0, RoundingMode.HALF_UP).toString()
         SharePrefs.saveInt("ANIMATION",sliderPosition.toInt())
@@ -61,49 +69,87 @@ fun UIScreen(navController: NavController, innerPaddings : PaddingValues,
             supportingContent = { Text(text = "屏幕底部的Tab栏底栏标签") },
             leadingContent = { Icon(painterResource(R.drawable.label), contentDescription = "Localized description",) },
             trailingContent = { Switch(checked = showlable, onCheckedChange = showlablechanged) },
-            modifier = Modifier.clickable { showlablechanged }
-        )
-        ListItem(
-            headlineContent = { Text(text = "实时模糊") },
-            supportingContent = {
-                if(canBlur) {
-                    Text(text = "开启后将会转换部分渲染为实时模糊")
-                } else {
-                    Text(text = "需为 Android 13+")
-                }
-            },
-            leadingContent = { Icon(painterResource(R.drawable.deblur), contentDescription = "Localized description",) },
-            trailingContent = {  Switch(checked = blur, onCheckedChange = blurchanged, enabled = canBlur ) },
-            modifier = Modifier.clickable { blurchanged }
+            modifier = Modifier.clickable { showlablechanged.invoke(showlable) }
         )
 
-        ListItem(
-            headlineContent = { Text(text = "转场动画") },
-            supportingContent = {
-                Column {
-                    Text(text = "时长 $str 毫秒 重启后生效")
-                    Slider(
-                        value = sliderPosition,
-                        onValueChange = {
-                            sliderPosition = it
-                            SharePrefs.saveInt("ANIMATION",sliderPosition.toInt())
-                        },
-                        colors = SliderDefaults.colors(
-                            thumbColor = MaterialTheme.colorScheme.secondary,
-                            activeTrackColor = MaterialTheme.colorScheme.secondary,
-                            inactiveTrackColor = MaterialTheme.colorScheme.secondaryContainer,
-                        ),
-                        steps = 19,
-                        valueRange = 0f..1000f
+        DividerTextExpandedWith("动效") {
+            ListItem(
+                headlineContent = { Text(text = "层级实时模糊") },
+                supportingContent = {
+                    if(canBlur) {
+                        Text(text = "开启后将会转换部分层级渲染为实时渐变模糊,此过程会加大性能压力")
+                    } else {
+                        Text(text = "需为 Android 13+")
+                    }
+                },
+                leadingContent = { Icon(painterResource(R.drawable.deblur), contentDescription = "Localized description",) },
+                trailingContent = {  Switch(checked = blur, onCheckedChange = blurchanged, enabled = canBlur ) },
+                modifier = Modifier.clickable { blurchanged.invoke(blur) }
+            )
+            ListItem(
+                headlineContent = { Text(text = "运动实时模糊") },
+                supportingContent = { Text(text = "开启后部分运动状态的组件伴随实时模糊,此过程可能会加大性能压力") },
+                leadingContent = { Icon(painterResource(R.drawable.motion_mode), contentDescription = "Localized description",) },
+                trailingContent = {
+                    Switch(
+                        checked = animationBlur,
+                        onCheckedChange = {
+                            animationBlur = it
+                            BlurManager.setValue(animationBlur)
+                        }
                     )
+                },
+                modifier = Modifier.clickable {
+                    animationBlur = !animationBlur
+                    BlurManager.setValue(animationBlur)
                 }
-            },
-            leadingContent = { Icon(painterResource(R.drawable.animation), contentDescription = "Localized description",) },
-            trailingContent = {  Switch(checked = true, onCheckedChange = null, enabled = false ) },
-            modifier = Modifier.clickable {  }
-        )
+            )
 
-        MonetColorItem()
+            ListItem(
+                headlineContent = { Text(text = "全局动画速度") },
+                supportingContent = {
+                    Column {
+                        Text(text = "时长 $str ms 重启后生效")
+                        Slider(
+                            value = sliderPosition,
+                            onValueChange = {
+                                sliderPosition = it
+                                SharePrefs.saveInt("ANIMATION",sliderPosition.toInt())
+                            },
+                            colors = SliderDefaults.colors(
+                                thumbColor = MaterialTheme.colorScheme.secondary,
+                                activeTrackColor = MaterialTheme.colorScheme.secondary,
+                                inactiveTrackColor = MaterialTheme.colorScheme.secondaryContainer,
+                            ),
+                            steps = 19,
+                            valueRange = 0f..1000f
+                        )
+                    }
+                },
+                leadingContent = { Icon(painterResource(R.drawable.schedule), contentDescription = "Localized description",) },
+                trailingContent = {  },
+            )
+
+            ListItem(
+                headlineContent = { Text(text = "界面转场动画") },
+                supportingContent = {
+                    Text("自定义同级页面之间进行转场的动画")
+                },
+                leadingContent = { Icon(painterResource(R.drawable.animation), contentDescription = "Localized description",) },
+//            trailingContent = {  },
+                modifier = Modifier.clickable {
+                    MyToast("正在开发")
+//                animationBlur = !animationBlur
+//                BlurManager.setValue(animationBlur)
+                }
+            )
+        }
+
+        DividerTextExpandedWith("主题色") {
+            MonetColorItem()
+        }
+
+
     }
 
 }

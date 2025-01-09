@@ -2,7 +2,9 @@ package com.hfut.schedule.ui.activity.grade.main
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
@@ -40,21 +42,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.viewmodel.NetWorkViewModel
-import com.hfut.schedule.logic.enums.GradeBarItems
 import com.hfut.schedule.logic.beans.NavigationBarItemData
+import com.hfut.schedule.logic.enums.GradeBarItems
 import com.hfut.schedule.logic.utils.AndroidVersion
-import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.grade.analysis.GradeCountUI
 import com.hfut.schedule.ui.activity.grade.grade.community.GradeItemUI
@@ -63,6 +65,7 @@ import com.hfut.schedule.ui.utils.components.MyCard
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.style.bottomBarBlur
 import com.hfut.schedule.ui.utils.style.topBarBlur
+import com.hfut.schedule.viewmodel.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 
@@ -71,12 +74,12 @@ import dev.chrisbanes.haze.haze
 @Composable
 fun GradeUI(ifSaved : Boolean,vm : NetWorkViewModel) {
 
-    val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR",  AndroidVersion.canBlur)
-    var blur by remember { mutableStateOf(switchblur) }
+    val switchblur = prefs.getBoolean("SWITCHBLUR",  AndroidVersion.canBlur)
+    val blur by remember { mutableStateOf(switchblur) }
     val hazeState = remember { HazeState() }
     val navController = rememberNavController()
     val context = LocalContext.current
-    var animation by remember { mutableIntStateOf(prefs.getInt("ANIMATION", MyApplication.Animation)) }
+    val animation by remember { mutableIntStateOf(prefs.getInt("ANIMATION", MyApplication.Animation)) }
 
     var showSearch by remember { mutableStateOf(false) }
 
@@ -144,17 +147,12 @@ fun GradeUI(ifSaved : Boolean,vm : NetWorkViewModel) {
                         }
                     }
                 )
-//                if(!blur)
-//                    Divider()
             }
         },
         bottomBar = {
             Column {
-//                if(!blur)
-//                    Divider()
                 NavigationBar(containerColor = Color.Transparent ,
                     modifier = Modifier.bottomBarBlur(hazeState, blur)
-                      //  .hazeChild(state = hazeState, blurRadius = MyApplication.Blur, tint = Color.Transparent, noiseFactor = 0f)
                 ) {
 
                     val items = listOf(
@@ -194,7 +192,7 @@ fun GradeUI(ifSaved : Boolean,vm : NetWorkViewModel) {
                             },
                             label = { Text(text = item.label) },
                             icon = {
-                                BadgedBox(badge = {}) { Icon(if(selected)item.filledIcon else item.icon, contentDescription = item.label) }
+                                 Icon(if(selected)item.filledIcon else item.icon, contentDescription = item.label)
                             }
                         )
                     }
@@ -202,12 +200,7 @@ fun GradeUI(ifSaved : Boolean,vm : NetWorkViewModel) {
             }
 
         }
-        ) {innerPadding ->
-//        Column(
-//            modifier = Modifier
-//                .padding(innerPadding)
-//                .fillMaxSize()
-//        ){
+        ) { innerPadding ->
             NavHost(navController = navController,
                 startDestination = GradeBarItems.GRADE.name,
                 enterTransition = {
@@ -218,25 +211,35 @@ fun GradeUI(ifSaved : Boolean,vm : NetWorkViewModel) {
                     scaleOut(animationSpec = tween(durationMillis = animation)) +
                             shrinkVertically(shrinkTowards = Alignment.Top,animationSpec = tween(durationMillis = animation))
                 },
-                modifier = Modifier
-                .haze(
-                    state = hazeState,
-                    //backgroundColor = MaterialTheme.colorScheme.surface,
-                )) {
+                modifier = Modifier.haze(state = hazeState)
+            ) {
                 composable(GradeBarItems.GRADE.name) {
-                    Scaffold {
+//                    val selected = navController.currentBackStackEntryAsState().value?.destination?.route == GradeBarItems.GRADE.name
+//                    val blurSize by animateDpAsState(
+//                        targetValue = if (!selected) 10.dp else 0.dp, label = ""
+//                        ,animationSpec = tween(animation, easing = LinearOutSlowInEasing),
+//                    )
+                    Scaffold(
+//                        modifier = Modifier.blur(blurSize)
+                    ) {
                         if (ifSaved) GradeItemUI(vm,innerPadding)
                         else GradeItemUIJXGLSTU(innerPadding,vm,showSearch)
                     }
 
                 }
                 composable(GradeBarItems.COUNT.name) {
-                    Scaffold {
+//                    val selected = navController.currentBackStackEntryAsState().value?.destination?.route == GradeBarItems.COUNT.name
+//                    val blurSize by animateDpAsState(
+//                        targetValue = if (!selected) 100.dp else 0.dp, label = ""
+//                        ,animationSpec = tween(animation, easing = LinearOutSlowInEasing),
+//                    )
+                    Scaffold(
+//                        modifier = Modifier.blur(blurSize)
+                    ) {
                         GradeCountUI(innerPadding)
                     }
                 }
             }
-//        }
     }
 }
 

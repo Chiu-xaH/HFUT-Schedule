@@ -65,7 +65,7 @@ fun GuaGuaPersonInfoUI(vm: NetWorkViewModel) {
         ListItem(
             headlineContent = { personInfo?.let { Text(text = "￥${tranamt(it.accountMoney)}",fontSize = 28.sp) } },
             trailingContent = {
-                FilledIconButton(
+                FilledTonalIconButton(
                     onClick = {
                         showBottomSheet = true
                     },

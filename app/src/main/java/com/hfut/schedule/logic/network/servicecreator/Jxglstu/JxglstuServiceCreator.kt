@@ -37,7 +37,7 @@ object JxglstuJSONServiceCreator {
         .followRedirects(false)
         .build()
 
-    fun getRetrofit(useAlternativeUrl: Boolean): Retrofit {
+    private fun getRetrofit(useAlternativeUrl: Boolean): Retrofit {
         val baseUrl = if (useAlternativeUrl) {
             MyApplication.JxglstuWebVpnURL
         } else {

@@ -1,5 +1,7 @@
 package com.hfut.schedule.ui.activity.home.search.functions.transferMajor
 
+import android.os.Handler
+import android.os.Looper
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -7,8 +9,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
@@ -31,11 +36,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
+import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.MyCard
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.ScrollText
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -44,13 +55,8 @@ fun Transfer(ifSaved : Boolean,vm : NetWorkViewModel){
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
 
-    val sheetState_apply = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var showBottomSheet_apply by remember { mutableStateOf(false) }
-
     val sheetState_info = rememberModalBottomSheetState()
     var showBottomSheet_info by remember { mutableStateOf(false) }
-
-    var campusId by remember { mutableStateOf(if(getCampus()?.contains("宣城") == true) CampusId.XUANCHENG else CampusId.HEFEI) }
 
     ListItem(
         headlineContent = { Text(text = "转专业") },
@@ -60,35 +66,6 @@ fun Transfer(ifSaved : Boolean,vm : NetWorkViewModel){
                 showBottomSheet = true
         }
     )
-    if (showBottomSheet_apply) {
-        ModalBottomSheet(
-            onDismissRequest = { showBottomSheet_apply = false },
-            sheetState = sheetState_apply,
-            shape = Round(sheetState_apply)
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("我的申请") },
-                    )
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .verticalScroll(rememberScrollState())
-                        .fillMaxSize()
-                ) {
-                    MyApply(vm)
-                }
-            }
-        }
-    }
 
     if (showBottomSheet_info) {
         ModalBottomSheet(
@@ -136,21 +113,11 @@ fun Transfer(ifSaved : Boolean,vm : NetWorkViewModel){
                         ),
                         title = { ScrollText("转专业") },
                         actions = {
-                            Row(modifier = Modifier.padding(horizontal = 15.dp)) {
-                                FilledTonalIconButton(onClick = { showBottomSheet_info = true }) {
-                                    Icon(painterResource(id = R.drawable.info), contentDescription = "")
-                                }
-                                FilledTonalButton(
-                                    onClick = {
-                                    campusId = if(campusId == CampusId.XUANCHENG) CampusId.HEFEI else CampusId.XUANCHENG
-                                              },
-                                    ) {
-                                    Text(text = if(campusId == CampusId.XUANCHENG) "宣城" else "合肥")
-                                }
-                                Spacer(modifier = Modifier.width(5.dp))
-                                FilledTonalButton(onClick = { showBottomSheet_apply = true }) {
-                                    Text(text = "我的申请")
-                                }
+                            FilledTonalIconButton(
+                                onClick = { showBottomSheet_info = true },
+                                modifier = Modifier.padding(horizontal = 15.dp)
+                            ) {
+                                Icon(painterResource(R.drawable.info),null)
                             }
                         }
                     )
@@ -161,11 +128,142 @@ fun Transfer(ifSaved : Boolean,vm : NetWorkViewModel){
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    TransferUI(vm,campusId)
+//                    TransferUI(vm,campusId)
+                    TransferListUI(vm)
                 }
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TransferListUI(vm: NetWorkViewModel) {
+
+
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showBottomSheet by remember { mutableStateOf(false) }
+    var batchId by remember { mutableStateOf("") }
+    var title by remember { mutableStateOf("转专业") }
+    var loading by remember { mutableStateOf(true) }
+    var refresh by remember { mutableStateOf(true) }
+    val cookie = if (!vm.webVpn) prefs.getString(
+        "redirect",
+        ""
+    ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
+
+    val sheetState_apply = rememberModalBottomSheetState()
+    var showBottomSheet_apply by remember { mutableStateOf(false) }
+
+    if (showBottomSheet_apply) {
+        ModalBottomSheet(
+            onDismissRequest = { showBottomSheet_apply = false },
+            sheetState = sheetState_apply,
+            shape = Round(sheetState_apply)
+        ) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        title = { Text("我的申请") },
+                    )
+                },
+            ) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+//                        .verticalScroll(rememberScrollState())
+                        .fillMaxSize()
+                ) {
+                    MyApplyListUI(vm,batchId)
+                }
+            }
+        }
+    }
+
+
+    if (showBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { showBottomSheet = false },
+            sheetState = sheetState,
+            shape = Round(sheetState)
+        ) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        title = { ScrollText(title) },
+                        actions = {
+                            FilledTonalButton(
+                                onClick = { showBottomSheet_apply = true },
+                                modifier = Modifier.padding(horizontal = 15.dp)
+                            ) {
+                                Text("我的申请")
+                            }
+                        }
+                    )
+                },
+            ) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                ) {
+                    TransferUI(vm,batchId)
+                }
+            }
+        }
+    }
+
+    if(refresh) {
+        loading = true
+        CoroutineScope(Job()).launch{
+            async{ cookie?.let { vm.getTransferList(it)} }.await()
+            async {
+                Handler(Looper.getMainLooper()).post{
+                    vm.transferListData.observeForever { result ->
+                        if (result != null) {
+                            if(result.contains("转专业")) {
+                                loading = false
+                                refresh = false
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if(loading) {
+        LoadingUI()
+    } else {
+        val transferList = getTransferList(vm)
+        LazyColumn {
+            items(transferList.size) { index ->
+                val data = transferList[index]
+                MyCard {
+                    ListItem(
+                        headlineContent = { Text(data.title) },
+                        supportingContent = { Text("申请日期 " + data.applicationDate + "\n转专业时期 " + data.admissionDate) },
+                        trailingContent = { Icon(Icons.Filled.ArrowForward,null) },
+                        modifier = Modifier.clickable {
+                            title = data.title
+                            batchId = data.batchId
+                            showBottomSheet = true
+                        }
+                    )
+                }
+            }
+        }
+    }
+
 }
 
 @Composable

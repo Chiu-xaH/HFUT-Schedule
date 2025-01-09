@@ -47,7 +47,7 @@ import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.ScrollText
-import com.hfut.schedule.ui.utils.components.schoolIcons
+import com.hfut.schedule.ui.utils.components.DepartmentIcons
 import org.jsoup.Jsoup
 
 
@@ -192,7 +192,7 @@ fun PersonItems(ifSaved : Boolean) {
                     headlineContent = { yuanxi?.let { ScrollText(text = it) } },
                     overlineContent = { Text(text = "学院")},
                     leadingContent = {
-                        yuanxi?.let { schoolIcons(name = it) }
+                        yuanxi?.let { DepartmentIcons(name = it) }
                     },
                     modifier = Modifier.clickable {
                         ClipBoard.copy(yuanxi)

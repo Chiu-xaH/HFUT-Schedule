@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.ui.utils.components.MyCard
 import com.hfut.schedule.ui.utils.components.ScrollText
-import com.hfut.schedule.ui.utils.components.schoolIcons
+import com.hfut.schedule.ui.utils.components.DepartmentIcons
 
 @Composable
 fun SchoolsUI(innerPdding : PaddingValues? = null) {
@@ -54,7 +54,7 @@ fun SchoolsUI(innerPdding : PaddingValues? = null) {
             MyCard {
                 ListItem(
                     headlineContent = { ScrollText(text = title) },
-                    leadingContent = { schoolIcons(title) },
+                    leadingContent = { DepartmentIcons(title) },
                     overlineContent = { ScrollText(text = url) },
                     modifier = Modifier.clickable {
                         Starter.startWebUrl(url)

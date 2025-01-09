@@ -181,13 +181,21 @@ interface JxglstuService {
     fun getMyProfile( @Header("Cookie") cookie: String) : Call<ResponseBody>
 
     //转专业申请列表
-    //batchId 1为合肥校区 3为宣城校区
+    @GET("for-std/change-major-apply/index/{studentId}")
+    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0","Content-Type: application/x-www-form-urlencoded")
+    fun getTransferList(
+        @Header("Cookie") cookie: String,
+        @Path("studentId") studentId : Int
+    ): Call<ResponseBody>
+
+    //具体转专业申请列表
+    //batchId
     @GET("for-std/change-major-apply/get-applies")
     @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0","Content-Type: application/x-www-form-urlencoded")
     fun getTransfer(
         @Header("Cookie") cookie: String,
         @Query("auto") auto : Boolean,
-        @Query("batchId") campusId : Int,
+        @Query("batchId") batchId : String,
         @Query("studentId") studentId : Int
     ): Call<ResponseBody>
 
@@ -196,18 +204,19 @@ interface JxglstuService {
     @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0","Content-Type: application/x-www-form-urlencoded")
     fun getMyTransfer(
         @Header("Cookie") cookie: String,
-        @Query("batchId") campusId : Int,
+        @Query("batchId") batchId : String,
         @Query("studentId") studentId : Int
     ): Call<ResponseBody>
 
     //提交/撤销转专业申请
 
     //我的转专业详情
-    @GET("for-std/change-major-apply/info/2162")
+    @GET("for-std/change-major-apply/info/{listId}")
     @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0","Content-Type: application/x-www-form-urlencoded")
     fun getMyTransferInfo(
         @Header("Cookie") cookie: String,
-        @Query("studentId") studentId : Int
+        @Path("listId") listId : Int,
+        @Query("studentId") studentId : Int,
     ): Call<ResponseBody>
 
 

@@ -8,7 +8,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.Birthday
 
 @Composable
-fun schoolIcons(name : String,modifier: Modifier = Modifier) {
+fun DepartmentIcons(name : String, modifier: Modifier = Modifier) {
     val contentDescription = ""
     if(name.contains("计算机")) Icon(painterResource(R.drawable.data_object), contentDescription,modifier)
     else if(name.contains("资源与环境工程")) Icon(painterResource(R.drawable.eco), contentDescription,modifier)

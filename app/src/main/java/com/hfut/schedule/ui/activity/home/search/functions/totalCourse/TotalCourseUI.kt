@@ -61,7 +61,7 @@ import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.RotatingIcon
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.ScrollText
-import com.hfut.schedule.ui.utils.components.schoolIcons
+import com.hfut.schedule.ui.utils.components.DepartmentIcons
 
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -154,7 +154,7 @@ fun CourseTotalUI(json : String?,isSearch : Boolean,sortType: Boolean,vm : NetWo
                                 },
                                 //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
                                 leadingContent = {
-                                    list[item].openDepartment.nameZh.let { schoolIcons(name = it) }
+                                    list[item].openDepartment.nameZh.let { DepartmentIcons(name = it) }
                                                  },
                                 modifier = Modifier.clickable {
                                     showBottomSheet = true
@@ -379,7 +379,7 @@ fun DetailItems(lessons: lessons,json: String?,vm : NetWorkViewModel) {
 
                             //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
                             leadingContent = {
-                                lists.openDepartment.nameZh?.let { schoolIcons(name = it) }
+                                lists.openDepartment.nameZh?.let { DepartmentIcons(name = it) }
                             },
                             modifier = Modifier
                                 .clickable {}

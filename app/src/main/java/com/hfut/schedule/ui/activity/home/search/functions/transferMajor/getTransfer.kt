@@ -1,37 +1,24 @@
 package com.hfut.schedule.ui.activity.home.search.functions.transferMajor
 
 import com.google.gson.Gson
+import com.hfut.schedule.logic.beans.Jxglstu.MyApplyModels
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.beans.Jxglstu.MyApplyResponse
 import com.hfut.schedule.logic.beans.Jxglstu.TransferData
 import com.hfut.schedule.logic.beans.Jxglstu.TransferResponse
 import com.hfut.schedule.logic.beans.Jxglstu.courseType
 import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
 import org.jsoup.Jsoup
 
 enum class CampusId {
     HEFEI,XUANCHENG
 }
-fun getCampus() : String? {
-    try {
-        val info = SharePrefs.prefs.getString("info","")
-
-
-        val doc = info?.let { Jsoup.parse(it) }
-        val elements = doc?.select("dl dt, dl dd")
-
-        val infoMap = mutableMapOf<String, String>()
-        if (elements != null) {
-            for (i in 0 until elements.size step 2) {
-                val key = elements[i].text()
-                val value = elements[i+1].text()
-                infoMap[key] = value
-            }
-        }
-
-        return infoMap[elements?.get(18)?.text()]
-    } catch (_:Exception) {
-        return null
+fun getCampus() : CampusId {
+    return if(getPersonInfo().school?.contains("宣城") == true) {
+        CampusId.XUANCHENG
+    } else {
+        CampusId.HEFEI
     }
 }
 
@@ -54,12 +41,30 @@ fun getTransfer(vm : NetWorkViewModel) : MutableList<TransferData> {
     }
 }
 
-fun getMyTransfer(vm : NetWorkViewModel) : TransferData {
+
+
+fun getMyTransferPre(vm : NetWorkViewModel) : List<MyApplyModels>? {
     //  val list = mutableListOf<TransferData>()
     return try {
         val json = vm.myApplyData.value
-        Gson().fromJson(json, MyApplyResponse::class.java).models[0].changeMajorSubmit
 
+        val data = Gson().fromJson(json, MyApplyResponse::class.java).models
+        data.ifEmpty {
+            emptyList()
+        }
+        // list
+    } catch (e : Exception) {
+        //list
+        emptyList()
+    }
+}
+
+
+
+fun getMyTransfer(vm : NetWorkViewModel,index : Int) : TransferData {
+    //  val list = mutableListOf<TransferData>()
+    return try {
+        getMyTransferPre(vm)?.get(index)!!.changeMajorSubmit
         // list
     } catch (e : Exception) {
         //list
@@ -67,10 +72,10 @@ fun getMyTransfer(vm : NetWorkViewModel) : TransferData {
     }
 }
 
-fun getApplyStatus(vm : NetWorkViewModel) : Boolean? {
+
+fun getApplyStatus(vm : NetWorkViewModel,index : Int) : Boolean? {
     return try {
-        val json = vm.myApplyData.value
-        val data = Gson().fromJson(json, MyApplyResponse::class.java).models[0].applyStatus
+       val data = getMyTransferPre(vm)?.get(index)!!.applyStatus
         data == "ACCEPTED"
     } catch (_:Exception) {
         null
@@ -80,4 +85,45 @@ fun getApplyStatus(vm : NetWorkViewModel) : Boolean? {
 data class MyApplyScore(val gpaValue : String,val gpaSort : String,val scoreValue : String,val scoreSort : String,val examValue : String,val examSort : String)
 
 fun getMyApplyScore()  {
+}
+
+data class ChangeMajorInfo(val title: String, val batchId: String, val applicationDate: String, val admissionDate: String)
+
+fun getTransferList(vm: NetWorkViewModel): List<ChangeMajorInfo> {
+    val html = vm.transferListData.value
+    try {
+        val document = Jsoup.parse(html!!)
+        val result = mutableListOf<ChangeMajorInfo>()
+
+        // 获取所有的 turn-panel 元素
+        val turnPanels = document.select(".turn-panel")
+        for (panel in turnPanels) {
+            // 获取 <span> 的中文标题
+            val title = panel.select(".turn-title span").text()
+
+            // 获取 data 属性值
+            val dataValue = panel.select(".change-major-enter").attr("data")
+
+            // 获取申请日期时间范围
+            val applicationDate = panel.select(".open-date .text-primary").text()
+
+            // 获取录取日期时间范围
+            val admissionDate = panel.select(".select-date .text-warning").text()
+
+            // 构建 ChangeMajorInfo 数据类并添加到列表
+            if (title.isNotBlank() && dataValue.isNotBlank()) {
+                result.add(
+                    ChangeMajorInfo(
+                        title = title,
+                        batchId = dataValue,
+                        applicationDate = applicationDate,
+                        admissionDate = admissionDate
+                    )
+                )
+            }
+        }
+        return result
+    } catch (e: Exception) {
+        return emptyList()
+    }
 }

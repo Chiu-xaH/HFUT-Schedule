@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Divider
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -363,14 +364,30 @@ fun GradeInfo(num : GradeResponseJXGLSTU,vm: NetWorkViewModel) {
         scrollState.animateScrollTo(0)
     }
     DividerTextExpandedWith(text = "雷达图") {
-        Spacer(modifier = Modifier.height(10.dp))
+//        Divider()
+        val topPadding = if(radarList.size == 0) {
+            0
+        } else {
+            35
+        }
+        Spacer(modifier = Modifier.height(topPadding.dp))
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
             RadarChart(data = radarList, modifier = Modifier.size(200.dp))
         }
-        Spacer(modifier = Modifier.height(10.dp))
+        val bottomPadding = if(radarList.size == 0) {
+            0
+        } else if(radarList.size == 1) {
+            0
+        } else if(radarList.size == 3) {
+            0
+        } else {
+            25
+        }
+        Spacer(modifier = Modifier.height(bottomPadding.dp))
+//        Divider()
     }
 
-    DividerTextExpandedWith(text = "成绩详情") {
+    DividerTextExpandedWith(text = "成绩详情",false) {
         Card(
             elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
             modifier = Modifier

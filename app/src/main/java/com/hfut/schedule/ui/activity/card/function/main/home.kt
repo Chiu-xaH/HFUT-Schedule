@@ -491,7 +491,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                 Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
                 Spacer(modifier = Modifier.height(5.dp))
 
-                DividerTextExpandedWith(text = "实体卡") {
+                DividerTextExpandedWith(text = "校园卡",false) {
                     Card(
                         elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
                         modifier = Modifier

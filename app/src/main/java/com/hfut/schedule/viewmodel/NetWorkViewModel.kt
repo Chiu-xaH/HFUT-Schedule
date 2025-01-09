@@ -267,12 +267,9 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     }
 
     val transferData = MutableLiveData<String?>()
-    fun getTransfer(cookie: String,campus: CampusId) {
-        val campusId = when(campus) {
-            CampusId.XUANCHENG -> 3
-            CampusId.HEFEI -> 1
-        }
-        val call = studentId.value?.let { JxglstuJSON.getTransfer(cookie,true, campusId, it) }
+    fun getTransfer(cookie: String,batchId: String) {
+
+        val call = studentId.value?.let { JxglstuJSON.getTransfer(cookie,true, batchId, it) }
 
         if (call != null) {
             call.enqueue(object : Callback<ResponseBody> {
@@ -285,14 +282,14 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         }
     }
 
+    val transferListData = MutableLiveData<String?>()
+    fun getTransferList(cookie: String) = studentId.value?.let { NetWork.makeRequest(JxglstuHTML.getTransferList(cookie,it),transferListData) }
+
 
     val myApplyData = MutableLiveData<String?>()
-    fun getMyApply(cookie: String,campus: CampusId) {
-        val campusId = when(campus) {
-            CampusId.XUANCHENG -> 3
-            CampusId.HEFEI -> 1
-        }
-        val call = studentId.value?.let { JxglstuJSON.getMyTransfer(cookie, campusId, it) }
+    fun getMyApply(cookie: String,batchId: String) {
+
+        val call = studentId.value?.let { JxglstuJSON.getMyTransfer(cookie,batchId,it) }
 
         if (call != null) {
             call.enqueue(object : Callback<ResponseBody> {
@@ -306,9 +303,9 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     }
 
     val myApplyInfoData = MutableLiveData<String?>()
-    fun getMyApplyInfo(cookie: String) {
+    fun getMyApplyInfo(cookie: String,listId: Int) {
 
-        val call = studentId.value?.let { JxglstuHTML.getMyTransferInfo(cookie, it) }
+        val call = studentId.value?.let { JxglstuHTML.getMyTransferInfo(cookie,listId,it) }
 
         if (call != null) {
             call.enqueue(object : Callback<ResponseBody> {

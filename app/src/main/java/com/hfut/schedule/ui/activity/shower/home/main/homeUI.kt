@@ -41,7 +41,7 @@ fun GuaguaStart(vm: GuaGuaViewModel, innerPadding : PaddingValues,netWm : NetWor
         .fillMaxSize()
         .verticalScroll(rememberScrollState())) {
         Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
-        DividerTextExpandedWith(text = "个人信息") {
+        DividerTextExpandedWith(text = "个人信息",false) {
             GuaGuaPersonInfoUI(netWm)
         }
 

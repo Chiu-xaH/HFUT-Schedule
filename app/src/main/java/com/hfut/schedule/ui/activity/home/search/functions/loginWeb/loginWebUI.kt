@@ -80,7 +80,7 @@ fun loginWebUI(vmUI : UIViewModel,vm : NetWorkViewModel) {
     var textLogout by  remember { mutableStateOf("注销") }
     vmUI.getWebInfo()
     getWebNew(vm,vmUI)
-    DividerTextExpandedWith(text = "账户数据") {
+    DividerTextExpandedWith(text = "账户数据",false) {
         Card(
             elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
             modifier = Modifier

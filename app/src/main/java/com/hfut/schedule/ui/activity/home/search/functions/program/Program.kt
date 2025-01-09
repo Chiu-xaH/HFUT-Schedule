@@ -87,7 +87,7 @@ import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.MyCard
 import com.hfut.schedule.ui.utils.style.Round
-import com.hfut.schedule.ui.utils.components.schoolIcons
+import com.hfut.schedule.ui.utils.components.DepartmentIcons
 import com.hfut.schedule.ui.utils.components.statusUI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -628,7 +628,7 @@ fun ProgramUIInfo2(num1 : Int, num2 : Int, vm : NetWorkViewModel, ifSaved : Bool
                         headlineContent = { Text(text = searchList[item].name) },
                         supportingContent = { Text(text = department) },
                         overlineContent = { Text(text = "第" + searchList[item].term + "学期 | 学分 ${searchList[item].credit}")},
-                        leadingContent = { schoolIcons(name = searchList[item].depart) },
+                        leadingContent = { DepartmentIcons(name = searchList[item].depart) },
                         modifier = Modifier.clickable {
                         },
                     )
