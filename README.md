@@ -7,6 +7,7 @@
 
 ## UI展示(4.12.2版本 与最新版本可能有所差异)
 ![截图](/img/screenShot.jpg)
+### [Material3 一些自己写的组件与动效](/%e7%bb%84%e4%bb%b6%e5%8f%8a%e5%8a%a8%e7%94%bb%e8%ae%be%e8%ae%a1)
 
 ## 功能设计(4.12.2版本 与最新版本可能有所差异)
 ![导图](/img/mindMaster.png)
@@ -77,6 +78,7 @@ UI设计 Material You (Material Design 3) + Material Design
 ![visitsChart](/img/visitsChart.png)
 
 截止到2025-01-03 23:45 统计总代码行数为356XX行（只算业务代码，且不包括空行）
+
 ## 助力开发
 如果有功能层面改进或创新、Bug，可在issue提交
 
@@ -105,8 +107,6 @@ UI层异步加载，编写UI逻辑
 ###### 半覆盖(中间弹窗 底部上弹卡片) 适用于小操作 原界面压暗，层次分明
 ###### 全覆盖 二级界面 适用于功能区块较多或数据较多
 ###### 翻页 同级别页面进行平移，无上下层之分
-
-
 
 ## [联系方式](zsh0908@outlook.com)
 zsh0908@outlook.com

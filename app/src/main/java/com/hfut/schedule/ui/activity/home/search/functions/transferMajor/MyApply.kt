@@ -1,23 +1,31 @@
 package com.hfut.schedule.ui.activity.home.search.functions.transferMajor
 
+import android.annotation.SuppressLint
 import android.os.Handler
 import android.os.Looper
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -53,6 +61,7 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.reEmptyLiveDta
 import com.hfut.schedule.ui.activity.home.calendar.multi.getApplyingList
+import com.hfut.schedule.ui.activity.home.search.functions.life.countFunc
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
 import com.hfut.schedule.ui.utils.components.APIIcons
 import com.hfut.schedule.ui.utils.components.BottomTip
@@ -65,6 +74,7 @@ import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.DepartmentIcons
 import com.hfut.schedule.ui.utils.components.EmptyUI
 import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.statusUI2
 import com.hfut.schedule.ui.utils.style.Round
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -115,7 +125,40 @@ fun MyApplyListUI(vm: NetWorkViewModel,batchId : String) {
             }
         }
     }
+    var showBottomSheet by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState()
 
+    if(showBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                showBottomSheet = false
+            },
+            sheetState = sheetState,
+            shape = Round(sheetState)
+        ) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        title = { Text("结果") },
+                    )
+                },
+            ) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                ) {
+                    countFunc = 0
+                    getMyTransferPre(vm)?.get(indexs)?.let { TransferCancelStatusUI(vm,batchId, it.id) }
+                }
+            }
+        }
+    }
 
     if(refresh) {
         loading = true
@@ -153,7 +196,7 @@ fun MyApplyListUI(vm: NetWorkViewModel,batchId : String) {
                                 trailingContent = {
                                     FilledTonalIconButton(
                                         onClick = {
-                                            MyToast("正在开发")
+                                            showBottomSheet = true
                                         }
                                     ) {
                                         Icon(Icons.Filled.Close,null)
@@ -397,3 +440,74 @@ fun MyApply(vm: NetWorkViewModel,batchId : String,indexs : Int) {
 //    BottomTip("具体详情请一定关注QQ群、查询中心-通知公告、教务系统")
 }
 
+
+@SuppressLint("CoroutineCreationDuringComposition")
+@Composable
+fun TransferCancelStatusUI(vm : NetWorkViewModel,batchId: String,id: Int) {
+
+    var loading by remember { mutableStateOf(true) }
+    var refresh by remember { mutableStateOf(true) }
+
+//    var phoneNumber by remember { mutableStateOf("") }
+    var msg  by remember { mutableStateOf("结果") }
+
+    var cookie = if (!vm.webVpn) prefs.getString(
+        "redirect",
+        ""
+    ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
+
+    if(refresh) {
+        loading = true
+        CoroutineScope(Job()).launch {
+            async { reEmptyLiveDta(vm.cancelTransferResponse) }
+            async {
+                cookie?.let { vm.cancelTransfer(it,batchId,id.toString()) }
+            }.await()
+            async {
+                Handler(Looper.getMainLooper()).post {
+                    vm.cancelTransferResponse.observeForever { result ->
+                        if (result != null) {
+                            msg = if(result) {
+                                "成功"
+                            } else {
+                                "未知错误"
+                            }
+                            refresh = false
+                            loading = false
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    Box {
+        AnimatedVisibility(
+            visible = loading,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Spacer(modifier = Modifier.height(5.dp))
+                LoadingUI()
+            }
+        }
+
+
+        AnimatedVisibility(
+            visible = !loading,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            statusUI2(painter =
+            if(msg == "成功" ) Icons.Filled.Check
+            else Icons.Filled.Close
+                , text = msg)
+        }
+    }
+
+}

@@ -22,20 +22,11 @@ fun getCampus() : CampusId {
     }
 }
 
-fun getTransfer(vm : NetWorkViewModel) : MutableList<TransferData> {
+fun getTransfer(vm : NetWorkViewModel) : List<TransferData> {
     val list = mutableListOf<TransferData>()
     return try {
         val json = vm.transferData.value
-        val data = Gson().fromJson(json, TransferResponse::class.java).data
-        for (i in data.indices) {
-            val planCount = data[i].preparedStdCount
-            val count = data[i].applyStdCount
-            val request = data[i].registrationConditions
-            val department = data[i].department
-            val major = data[i].major
-            list.add(TransferData(request, department, major, planCount, count))
-        }
-        list
+        Gson().fromJson(json, TransferResponse::class.java).data
     } catch (e : Exception) {
         list
     }
@@ -68,7 +59,7 @@ fun getMyTransfer(vm : NetWorkViewModel,index : Int) : TransferData {
         // list
     } catch (e : Exception) {
         //list
-        TransferData(null, courseType(""), courseType(""),0,0)
+        TransferData(null,0, courseType(""), courseType(""),0,0)
     }
 }
 

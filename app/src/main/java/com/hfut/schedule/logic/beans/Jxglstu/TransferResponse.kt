@@ -2,6 +2,7 @@ package com.hfut.schedule.logic.beans.Jxglstu
 
 data class TransferResponse(val data : List<TransferData>)
 data class TransferData(val registrationConditions : String?,
+                        val id : Int,
                     //    val changeMajorBatch : changeMajorBatch,
                         val department : courseType,
                         val major : courseType,

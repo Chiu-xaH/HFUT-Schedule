@@ -59,6 +59,8 @@ import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.getUserInfo
 import com.hfut.schedule.ui.activity.news.main.transferToPostData
 import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.CampusId
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -101,7 +103,75 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     var lessonIds = MutableLiveData<List<Int>>()
     var token = MutableLiveData<String>()
 
-    @RequiresApi(Build.VERSION_CODES.O)
+
+
+
+    val postTransferResponse = MutableLiveData<String?>()
+    fun postTransfer(
+        cookie: String,
+        batchId: String,
+        id : String,
+        phoneNumber : String,
+                     ) = NetWork.makeRequest(
+        JxglstuJSON.postTransfer(
+            cookie = cookie,
+            redirectUrl = "/for-std/change-major-apply/apply?PARENT_URL=/for-std/change-major-apply/index/${studentId.value}&batchId=${batchId}&studentId=${studentId.value}".toRequestBody("text/plain".toMediaTypeOrNull()),
+            batchId = batchId.toRequestBody("text/plain".toMediaTypeOrNull()),
+            id = id.toRequestBody("text/plain".toMediaTypeOrNull()),
+            studentID = studentId.value.toString().toRequestBody("text/plain".toMediaTypeOrNull()),
+            telephone = phoneNumber.toRequestBody("text/plain".toMediaTypeOrNull())
+        ), postTransferResponse)
+
+    val formCookie = MutableLiveData<String?>()
+    fun getFormCookie(
+        cookie: String,
+        batchId: String,
+        id : String,
+    )  {
+        val call = JxglstuHTML.getFormCookie(
+            cookie = cookie,
+            id = id,
+            studentId = studentId.value.toString(),
+            redirectUrl = "/for-std/change-major-apply/apply?PARENT_URL=/for-std/change-major-apply/index/${studentId.value}&batchId=${batchId}&studentId=${studentId.value}",
+            batchId = batchId
+        )
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                response.headers()["Set-Cookie"].toString().let {
+                    formCookie.value = it.split(";")[0]
+                }
+            }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
+
+
+    val cancelTransferResponse = MutableLiveData<Boolean?>()
+    fun cancelTransfer(
+        cookie: String,
+        batchId: String,
+        id : String,
+    ) {
+        val call = JxglstuJSON.cancelTransfer(
+                cookie = cookie,
+                redirectUrl = "/for-std/change-major-apply/apply?PARENT_URL=/for-std/change-major-apply/index/${studentId.value}&batchId=${batchId}&studentId=${studentId.value}",
+                batchId = batchId,
+                studentId = studentId.value.toString(),
+                applyId = id
+            )
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                cancelTransferResponse.value = response.code() == 302
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                cancelTransferResponse.value = false
+            }
+        })
+    }
+
+
     fun postUser() {
         val data = getUserInfo()
         val call = server.postUse(
@@ -118,7 +188,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         })
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun feedBack(info : String,contact : String?) {
         val data = getUserInfo()
         val time = data.dateTime
@@ -482,6 +551,16 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 saveString("info", response.body()?.string())
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+
+        val call2 = JxglstuHTML.getMyProfile(cookie)
+
+        call2.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                saveString("profile", response.body()?.string())
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }

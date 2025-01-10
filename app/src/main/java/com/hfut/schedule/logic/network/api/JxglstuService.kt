@@ -1,6 +1,10 @@
 package com.hfut.schedule.logic.network.api
 
 import com.google.gson.JsonObject
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
@@ -9,7 +13,9 @@ import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
+import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -177,12 +183,12 @@ interface JxglstuService {
 
     //我的档案（个人信息的补充）
     @GET("my/profile")
-    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0","Content-Type: application/x-www-form-urlencoded")
+    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0")
     fun getMyProfile( @Header("Cookie") cookie: String) : Call<ResponseBody>
 
     //转专业申请列表
     @GET("for-std/change-major-apply/index/{studentId}")
-    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0","Content-Type: application/x-www-form-urlencoded")
+    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0")
     fun getTransferList(
         @Header("Cookie") cookie: String,
         @Path("studentId") studentId : Int
@@ -191,7 +197,7 @@ interface JxglstuService {
     //具体转专业申请列表
     //batchId
     @GET("for-std/change-major-apply/get-applies")
-    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0","Content-Type: application/x-www-form-urlencoded")
+    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0")
     fun getTransfer(
         @Header("Cookie") cookie: String,
         @Query("auto") auto : Boolean,
@@ -201,18 +207,96 @@ interface JxglstuService {
 
     //我的转专业申请
     @GET("for-std/change-major-apply/get-my-applies")
-    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0","Content-Type: application/x-www-form-urlencoded")
+    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0")
     fun getMyTransfer(
         @Header("Cookie") cookie: String,
         @Query("batchId") batchId : String,
         @Query("studentId") studentId : Int
     ): Call<ResponseBody>
 
-    //提交/撤销转专业申请
+    //撤销转专业申请
+    @FormUrlEncoded
+    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0")
+    @POST("for-std/change-major-apply/cancel")
+    fun cancelTransfer(
+        @Header("Cookie") cookie: String,
+        @Field("batchId") batchId : String,
+        @Field("studentId") studentId : String,
+        @Field("applyId") applyId : String,
+        ///for-std/change-major-apply/my-applies?PARENT_URL=/for-std/change-major-apply/index/{studentID}&batchId={}&studentId={}
+        @Field("REDIRECT_URL") redirectUrl: String ,
+    ): Call<ResponseBody>
+
+    //提交转专业申请需要一个_T_std_change_major_apply_new_form的Cookie
+    //获_T_std_change_major_apply_new_form
+    @GET("for-std/change-major-apply/new")
+    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0")
+    fun getFormCookie(
+        @Header("Cookie") cookie: String,
+        @Query("REDIRECT_URL") redirectUrl: String ,
+        @Query("submitId") id : String,
+        @Query("batchId") batchId: String,
+        @Query("studentId") studentId : String
+    ): Call<ResponseBody>
+    //提交转专业申请
+    /*
+    *       <option value="1">个人原因-创业</option>
+            <option value="2">个人原因-工作实践</option>
+            <option value="3">个人原因-出国出境</option>
+            <option value="4">个人原因-厌学</option>
+            <option value="5">个人原因-不适应课程学习</option>
+            <option value="6">个人原因-不适应校园生活</option>
+            <option value="7">个人原因-结婚生子</option>
+            <option value="8">个人原因-精神疾病</option>
+            <option value="9">个人原因-传染疾病</option>
+            <option value="10">个人原因-其他疾病</option>
+            <option value="11">个人原因-心理疾病</option>
+            <option value="12">家庭原因-经济困难</option>
+            <option value="13">家庭原因-照顾家人</option>
+            <option value="14">其他</option>
+            <option value="15">个人原因-休学期满未按时复学</option>
+            <option value="16">个人原因-长期不参加教学活动</option>
+            <option value="17">个人原因-超过最长学习年限</option>
+            <option value="18">个人原因-成绩低劣</option>
+            <option value="1246">复读</option>
+            <option value="1226">短缺学分</option>
+            <option value="1286">转专业-考核</option>
+            <option value="41">身体康复</option>
+            <option value="42">留学期满</option>
+            <option value="43">创业、实习结束</option>
+            <option value="44">个人原因-退伍</option>
+            <option value="45">个人原因-入伍</option>
+            <option value="1208">短缺学分</option>
+            <option value="1209">不喜欢本专业</option>
+            <option value="1210">转专业</option>
+            <option value="1211">延长学制</option>
+            <option value="1266">学习困难</option>
+    * */
+
+    @Multipart
+    @POST("for-std/change-major-apply/save")
+    @Headers(
+        "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0"
+    )
+    fun postTransfer(
+        @Header("Cookie") cookie: String,
+        //固定字符串
+        @Part("stdAlterReasonAssoc") reasonId: RequestBody = "1286".toRequestBody("text/plain".toMediaTypeOrNull()),
+        @Part("applyRemark") remark: RequestBody = "".toRequestBody("text/plain".toMediaTypeOrNull()),
+        @Part file: MultipartBody.Part? = null, // 可选文件
+        //从我的档案接口获取手机号
+        @Part("telephone") telephone: RequestBody,
+        @Part("email") email: RequestBody = "".toRequestBody("text/plain".toMediaTypeOrNull()),
+        //REDIRECT_URL = for-std/change-major-apply/apply?PARENT_URL=/for-std/change-major-apply/index/{studentId}&batchId={batchId}&studentId={studentId}
+        @Part("REDIRECT_URL") redirectUrl : RequestBody,
+        @Part("changeMajorBatchAssoc") batchId : RequestBody,
+        @Part("studentAssoc") studentID :RequestBody,
+        @Part("changeMajorSubmitAssoc") id: RequestBody //转专业的专业列表里的id
+    ): Call<ResponseBody>
 
     //我的转专业详情
     @GET("for-std/change-major-apply/info/{listId}")
-    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0","Content-Type: application/x-www-form-urlencoded")
+    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0")
     fun getMyTransferInfo(
         @Header("Cookie") cookie: String,
         @Path("listId") listId : Int,
@@ -222,7 +306,7 @@ interface JxglstuService {
 
     //获取培养方案完成情况
     @GET("ws/student/home-page/programCompletionPreview")
-    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0","Content-Type: application/x-www-form-urlencoded")
+    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0")
     fun getProgramCompletion(
         @Header("Cookie") cookie: String
     ): Call<ResponseBody>

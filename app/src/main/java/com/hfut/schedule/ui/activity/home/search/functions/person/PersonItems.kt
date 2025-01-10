@@ -36,6 +36,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.google.gson.Gson
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.ClipBoard
 import com.hfut.schedule.logic.utils.DateTimeManager
@@ -423,7 +424,16 @@ data class PersonInfo(val name : String?,
                       val startDate : String?,
                       val endDate : String?,
                       val majorDirection : String?,
-                      val studyTime : String?)
+                      val studyTime : String?,
+                      val gender: String?,
+                      val politicalStatus: String?,
+                      val email: String?,
+                      val phone: String?,
+                      val mobile: String?,
+                      val address: String?,
+                      val postalCode: String?
+
+)
 
 
 fun getPersonInfo() : PersonInfo {
@@ -431,7 +441,6 @@ fun getPersonInfo() : PersonInfo {
  //   val photo = prefs.getString("photo",null)
     try {
         val info = prefs.getString("info","")
-
 
         val doc = info?.let { Jsoup.parse(it) }
         val studentnumber = doc?.select("li.list-group-item.text-right:contains(学号) span")?.last()?.text()
@@ -466,8 +475,29 @@ fun getPersonInfo() : PersonInfo {
         val endDate = infoMap[elements?.get(86)?.text()]
         val majorDirection = infoMap[elements?.get(14)?.text()] //专业方向
         val studyTime = infoMap[elements?.get(36)?.text()]//学制 4.0
-        return PersonInfo(name,studentnumber,chineseid,classes,zhuanye,yuanxi, school,benorsshuo,home,xueJiStatus,program, startDate, endDate, majorDirection, studyTime)
+
+        val profileJson = prefs.getString("profile","") ?: ""
+        val doc2 = Jsoup.parse(profileJson)
+        val items = doc2.select(".list-group-item")
+
+        val dataMap = mutableMapOf<String, String>()
+        items.forEach { item ->
+            val key = item.select("div.col-md-3 span strong").text()
+            val value = item.select("div.col-md-6 span").text()
+            if (key.isNotEmpty()) {
+                dataMap[key] = value
+            }
+        }
+        val gender = dataMap["性别"]
+        val politicalStatus = dataMap["政治面貌"]
+        val email = dataMap["邮箱"]
+        val phone = dataMap["电话"]
+        val mobile = dataMap["手机"]
+        val address = dataMap["地址"]
+        val postalCode = dataMap["邮编"]
+
+        return PersonInfo(name,studentnumber,chineseid,classes,zhuanye,yuanxi, school,benorsshuo,home,xueJiStatus,program, startDate, endDate, majorDirection, studyTime,gender, politicalStatus, email, phone, mobile, address, postalCode)
     } catch (_:Exception) {
-        return PersonInfo(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
+        return PersonInfo(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
     }
 }

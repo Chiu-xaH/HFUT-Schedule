@@ -46,7 +46,7 @@ fun VersionInfoCard() {
             ListItem(headlineContent = { Text(text = "聚在工大 " + APPVersion.getVersionName(), fontSize = 28.sp) })
             Row {
                 ListItem(
-                    overlineContent = { Text(text = "2025-01-09") },
+                    overlineContent = { Text(text = "2025-01-10") },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.sdk), contentDescription = "") },
                     headlineContent = { ScrollText(text = "第${APPVersion.getVersionCode()}次更新") },
                     modifier = Modifier.weight(.5f)
@@ -69,9 +69,7 @@ fun VersionInfoCard() {
 fun VersionInfo() {
     VersionInfoCard()
     DividerTextExpandedWith(text = "新特性") {
-        UpdateItems("新增 运动实时模糊","位于选项-界面显示-动效，默认处于关闭状态，开启后可能会加大性能压力", UpdateType.ADD)
-        UpdateItems("修复 转专业无法查看的Bug",null, UpdateType.FIX)
-        UpdateItems("优化 部分界面的显示",null, UpdateType.OPTIMIZE)
+        UpdateItems("新增 转专业的申请、取消功能",null, UpdateType.ADD)
     }
 }
 
