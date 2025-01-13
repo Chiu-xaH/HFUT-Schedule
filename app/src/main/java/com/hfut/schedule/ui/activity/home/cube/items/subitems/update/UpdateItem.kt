@@ -46,7 +46,7 @@ fun VersionInfoCard() {
             ListItem(headlineContent = { Text(text = "聚在工大 " + APPVersion.getVersionName(), fontSize = 28.sp) })
             Row {
                 ListItem(
-                    overlineContent = { Text(text = "2025-01-10") },
+                    overlineContent = { Text(text = "2025-01-13") },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.sdk), contentDescription = "") },
                     headlineContent = { ScrollText(text = "第${APPVersion.getVersionCode()}次更新") },
                     modifier = Modifier.weight(.5f)
@@ -69,7 +69,9 @@ fun VersionInfoCard() {
 fun VersionInfo() {
     VersionInfoCard()
     DividerTextExpandedWith(text = "新特性") {
-        UpdateItems("新增 转专业的申请、取消功能",null, UpdateType.ADD)
+        UpdateItems("优化 选课界面加载完成的衔接细节",null, UpdateType.OPTIMIZE)
+        UpdateItems("优化 选课界面的显示",null, UpdateType.OPTIMIZE)
+        UpdateItems("优化 部分界面的显示",null, UpdateType.OPTIMIZE)
     }
 }
 

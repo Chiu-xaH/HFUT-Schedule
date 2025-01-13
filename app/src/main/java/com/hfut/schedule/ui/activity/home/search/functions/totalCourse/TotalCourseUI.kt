@@ -104,7 +104,7 @@ fun CourseTotalUI(json : String?,isSearch : Boolean,sortType: Boolean,vm : NetWo
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    DetailItems(list[numItem],json,vm)
+                    DetailItems(list[numItem],vm)
                 }
             }
         }
@@ -175,7 +175,7 @@ fun CourseTotalUI(json : String?,isSearch : Boolean,sortType: Boolean,vm : NetWo
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun DetailItems(lessons: lessons,json: String?,vm : NetWorkViewModel) {
+fun DetailItems(lessons: lessons,vm : NetWorkViewModel) {
 
     val lists = lessons
 

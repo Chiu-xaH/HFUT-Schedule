@@ -300,7 +300,7 @@ fun JxglstuExamUI(item : Map<String,String>,status : Boolean) {
                                                         e.printStackTrace()
                                                     }
                                                 }) {
-                                                Icon(painter = painterResource(id = R.drawable.add_task), contentDescription = "")
+                                                Icon(painter = painterResource(id = R.drawable.event_upcoming), contentDescription = "")
                                             }
                                             time?.substringBefore(" ")?.let {
 //                                                Row(horizontalArrangement = Arrangement.Center) {

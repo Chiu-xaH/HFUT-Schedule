@@ -29,7 +29,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -48,6 +50,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Observer
 import com.google.gson.Gson
@@ -165,7 +168,7 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String) {
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        title = { Text("手机号(教务非得要)") },
+                        title = { Text("手机号 (教务要求)") },
                     )
                 },
             ) { innerPadding ->
@@ -209,44 +212,51 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String) {
                             ),
                         )
                     }
+                    Spacer(Modifier.height(5.dp))
                     personInfo.mobile?.let {
                         if(it.isNotEmpty()) {
-                            ListItem(
-                                headlineContent = { Text(it) },
-                                overlineContent = { Text("教务系统预留手机号") },
-                                modifier = Modifier.clickable {
-                                    telephone = it
-                                    showBottomSheet_select = false
-                                    showBottomSheet = true
-                                }
-                            )
+                            MyCard {
+                                ListItem(
+                                    headlineContent = { Text(it) },
+                                    overlineContent = { Text("教务系统预留手机号") },
+                                    modifier = Modifier.clickable {
+                                        telephone = it
+                                        showBottomSheet_select = false
+                                        showBottomSheet = true
+                                    }
+                                )
+                            }
                         }
-
                     }
                     personInfo.phone?.let {
                         if(it.isNotEmpty()) {
-                            ListItem(
-                                headlineContent = { Text(it) },
-                                overlineContent = { Text("教务系统预留电话号") },
-                                modifier = Modifier.clickable {
-                                    telephone = it
-                                    showBottomSheet_select = false
-                                    showBottomSheet = true
-                                }
-                            )
+                            MyCard {
+                                ListItem(
+                                    headlineContent = { Text(it) },
+                                    overlineContent = { Text("教务系统预留电话号") },
+                                    modifier = Modifier.clickable {
+                                        telephone = it
+                                        showBottomSheet_select = false
+                                        showBottomSheet = true
+                                    }
+                                )
+                            }
+
                         }
                     }
                     prefs.getString("PHONENUM","")?.let {
                         if(it.isNotEmpty()) {
-                            ListItem(
-                                headlineContent = { Text(it) },
-                                overlineContent = { Text("呱呱物联登录手机号") },
-                                modifier = Modifier.clickable {
-                                    telephone = it
-                                    showBottomSheet_select = false
-                                    showBottomSheet = true
-                                }
-                            )
+                            MyCard  {
+                                ListItem(
+                                    headlineContent = { Text(it) },
+                                    overlineContent = { Text("呱呱物联登录手机号") },
+                                    modifier = Modifier.clickable {
+                                        telephone = it
+                                        showBottomSheet_select = false
+                                        showBottomSheet = true
+                                    }
+                                )
+                            }
                         }
                     }
                     Spacer(modifier = Modifier.height(20.dp))
@@ -322,15 +332,25 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String) {
                             var department = dataItem.department.nameZh
                             if(department.contains("（")) department = department.substringBefore("（")
                             if(department.contains("(")) department = department.substringBefore("(")
+                            val count = dataItem.applyStdCount
+                            val limit = dataItem.preparedStdCount
+                            val isFull = count > limit
                             ListItem(
-                                headlineContent = { Text(text = dataItem.major.nameZh) },
+                                headlineContent = { Text(text = dataItem.major.nameZh, fontWeight = FontWeight.Bold) },
                                 supportingContent = { dataItem.registrationConditions?.let { Text(text = it) } },
-                                overlineContent = { ScrollText(text = department + " 已申请 " + dataItem.applyStdCount.toString() + " / " + dataItem.preparedStdCount) },
+                                overlineContent = { ScrollText(text = "已申请 $count / $limit $department") },
                                 leadingContent = { DepartmentIcons(dataItem.department.nameZh) },
                                 trailingContent = {  FilledTonalIconButton(onClick = {
                                     id = dataItem.id
                                     showBottomSheet_select = true
-                                }) { Icon(painter = painterResource(id = R.drawable.add_task), contentDescription = "") } },
+                                },
+                                    colors = if(!isFull) IconButtonDefaults.filledTonalIconButtonColors() else IconButtonDefaults.filledTonalIconButtonColors(MaterialTheme.colorScheme.error.copy(alpha = 0.1f))
+                                ) { Icon(painter = painterResource(id = R.drawable.add_2), contentDescription = "") } },
+                                colors = if(isFull) {
+                                    ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
+                                } else {
+                                    ListItemDefaults.colors()
+                                }
                             )
                         }
                     }
@@ -348,7 +368,7 @@ fun TransferStatusUI(vm : NetWorkViewModel,batchId: String,id: Int,phoneNumber :
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
 
-    var msg  by remember { mutableStateOf("结果") }
+    var msg  by remember { mutableStateOf("") }
 
     var cookie = if (!vm.webVpn) prefs.getString(
         "redirect",
@@ -372,7 +392,7 @@ fun TransferStatusUI(vm : NetWorkViewModel,batchId: String,id: Int,phoneNumber :
                 } else {
                     val errors = data.errors
                     errors.forEach { item ->
-                        msg += item.textZh + "、"
+                        msg += item.textZh + " "
                     }
                 }
                 refresh = false

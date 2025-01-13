@@ -847,14 +847,14 @@ fun ScheduleTopDate(showAll: Boolean,today : LocalDate,blur : Boolean) {
                         textAlign = TextAlign.Center,
                         fontSize = if(showAll)12.sp else 14.sp,
                         color = if(date == DateTimeManager.Date_yyyy_MM_dd) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.primary,
-                        style = if(date == DateTimeManager.Date_yyyy_MM_dd) {
-                            TextStyle(shadow = Shadow(
-                                color = Color.Gray,
-                                offset = Offset(2.0f,2.0f),
-                                blurRadius = 7.0f
-                            ))
-                        } else TextStyle()
-                        , fontWeight = if(date == DateTimeManager.Date_yyyy_MM_dd) FontWeight.Bold else FontWeight.Normal
+//                        style = if(date == DateTimeManager.Date_yyyy_MM_dd) {
+//                            TextStyle(shadow = Shadow(
+//                                color = Color.Gray,
+//                                offset = Offset(2.0f,2.0f),
+//                                blurRadius = 7.0f
+//                            ))
+//                        } else TextStyle(),
+                         fontWeight = if(date == DateTimeManager.Date_yyyy_MM_dd) FontWeight.Bold else FontWeight.Normal
                     )
                 else Text(
                     text = "未开学",

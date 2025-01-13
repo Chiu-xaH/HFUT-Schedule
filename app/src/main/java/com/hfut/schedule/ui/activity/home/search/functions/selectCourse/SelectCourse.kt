@@ -35,7 +35,9 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -56,6 +58,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -68,6 +71,9 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
 import com.hfut.schedule.ui.activity.home.main.saved.UpdateCourses
+import com.hfut.schedule.ui.activity.home.search.functions.failRate.ApiToFailRate
+import com.hfut.schedule.ui.activity.home.search.functions.failRate.permit
+import com.hfut.schedule.ui.activity.home.search.functions.teacherSearch.ApiToTeacherSearch
 import com.hfut.schedule.ui.utils.components.LittleDialog
 import com.hfut.schedule.ui.utils.components.MyCard
 import com.hfut.schedule.ui.utils.components.MyToast
@@ -230,33 +236,18 @@ fun selectCourseListLoading(vm : NetWorkViewModel) {
     }
 
 
-    AnimatedVisibility(
-        visible = loading,
-        enter = fadeIn(),
-        exit = fadeOut()
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Spacer(modifier = Modifier.height(5.dp))
-            LoadingUI()
-        }
+    if(loading) {
+        LoadingUI()
+    } else {
+        SelectCourseList(vm)
     }
 
 
-    AnimatedVisibility(
-        visible = !loading,
-        enter = fadeIn(),
-        exit = fadeOut()
-    ) {
-        selectCourseList(vm)
-    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun selectCourseList(vm: NetWorkViewModel) {
+fun SelectCourseList(vm: NetWorkViewModel) {
     val list = getSelectCourseList(vm)
     var courseId by remember { mutableStateOf(0) }
     var name by remember { mutableStateOf("选课") }
@@ -265,7 +256,7 @@ fun selectCourseList(vm: NetWorkViewModel) {
 
 
     var showBottomSheet_selected by remember { mutableStateOf(false) }
-    val sheetState_selected = rememberModalBottomSheetState()
+    val sheetState_selected = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     if (showBottomSheet_selected) {
         ModalBottomSheet(
@@ -288,7 +279,7 @@ fun selectCourseList(vm: NetWorkViewModel) {
                 Column(modifier = Modifier
                     .padding(innerPadding)
                     .fillMaxSize()) {
-                    haveSelectedCourseLoad(vm, courseId)
+                    HaveSelectedCourseLoad(vm, courseId)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
@@ -322,7 +313,7 @@ fun selectCourseList(vm: NetWorkViewModel) {
                 Column(modifier = Modifier
                     .padding(innerPadding)
                     .fillMaxSize()) {
-                    selectCourseInfoLoad(courseId,vm)
+                    SelectCourseInfoLoad(courseId,vm)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
@@ -396,7 +387,7 @@ fun selectCourseList(vm: NetWorkViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun selectCourseInfoLoad(courseId : Int, vm: NetWorkViewModel) {
+fun SelectCourseInfoLoad(courseId : Int, vm: NetWorkViewModel) {
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
     val cookie = if (!vm.webVpn) prefs.getString(
@@ -426,27 +417,11 @@ fun selectCourseInfoLoad(courseId : Int, vm: NetWorkViewModel) {
     }
 
 
-    AnimatedVisibility(
-        visible = loading,
-        enter = fadeIn(),
-        exit = fadeOut()
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Spacer(modifier = Modifier.height(5.dp))
-            LoadingUI()
-        }
-    }
+
 
     var input by remember { mutableStateOf("") }
 
-    AnimatedVisibility(
-        visible = !loading,
-        enter = fadeIn(),
-        exit = fadeOut()
-    ) {
+    if(!loading) {
         Column {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -460,7 +435,7 @@ fun selectCourseInfoLoad(courseId : Int, vm: NetWorkViewModel) {
                     onValueChange = {
                         input = it
                     },
-                    label = { Text("搜索 名称|代码|类型" ) },
+                    label = { Text("搜索 名称、代码、类型" ) },
                     singleLine = true,
                     trailingIcon = {
                         IconButton(
@@ -478,14 +453,16 @@ fun selectCourseInfoLoad(courseId : Int, vm: NetWorkViewModel) {
                 )
             }
             Spacer(modifier = Modifier.height(10.dp))
-            selectCourseInfo(vm,courseId,input)
+            SelectCourseInfo(vm,courseId,input)
         }
+    } else {
+        LoadingUI()
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun selectCourseInfo(vm: NetWorkViewModel, courseId : Int, search : String = "") {
+fun SelectCourseInfo(vm: NetWorkViewModel, courseId : Int, search : String = "") {
     val list = getSelectCourseInfo(vm)
     val cookie = if (!vm.webVpn) prefs.getString(
         "redirect",
@@ -497,7 +474,7 @@ fun selectCourseInfo(vm: NetWorkViewModel, courseId : Int, search : String = "")
     var showBottomSheet by remember { mutableStateOf(false) }
     var name by remember { mutableStateOf("课程详情") }
     var num by remember { mutableStateOf(0) }
-    val sheetState_info = rememberModalBottomSheetState()
+    val sheetState_info = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_info by remember { mutableStateOf(false) }
 
     if (showBottomSheet) {
@@ -529,7 +506,7 @@ fun selectCourseInfo(vm: NetWorkViewModel, courseId : Int, search : String = "")
     }
     val searchList = mutableListOf<SelectCourseInfo>()
     list.forEach { item ->
-        if(item.code.contains(search) || item.course.nameZh.contains(search) || item.nameZh.contains(search)) {
+        if(item.code.contains(search) || item.course.nameZh.contains(search) || item.nameZh.contains(search) || item.remark?.contains(search) == true) {
             searchList.add(item)
         }
     }
@@ -539,33 +516,25 @@ fun selectCourseInfo(vm: NetWorkViewModel, courseId : Int, search : String = "")
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet_info = false },
             sheetState = sheetState_info,
-            shape = Round(sheetState_info)
+//            shape = Round(sheetState_info)
         ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { ScrollText(text = name) },
-                        actions = {
-                            FilledTonalButton(onClick = {
-                                showBottomSheet = true
-                            }, modifier = Modifier.padding(horizontal = 15.dp)) {
-                                Text(text = "选课")
-                            }
+            Column {
+                TopAppBar(
+                    colors = TopAppBarDefaults.mediumTopAppBarColors(
+                        containerColor = Color.Transparent,
+                        titleContentColor = MaterialTheme.colorScheme.primary,
+                    ),
+                    title = { ScrollText(text = name) },
+                    actions = {
+                        FilledTonalButton(onClick = {
+                            showBottomSheet = true
+                        }, modifier = Modifier.padding(horizontal = 15.dp)) {
+                            Text(text = "选课")
                         }
-                    )
-                },
-            ) { innerPadding ->
-                Column(modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()) {
-                    courseInfo(num,searchList)
-                    Spacer(modifier = Modifier.height(20.dp))
-                }
+                    }
+                )
+                courseInfo(num,searchList,vm)
+                Spacer(modifier = Modifier.height(20.dp))
             }
         }
     }
@@ -590,19 +559,38 @@ fun selectCourseInfo(vm: NetWorkViewModel, courseId : Int, search : String = "")
                 }
             }
             MyCard {
+                val limit = lists.limitCount
+                val isFull = stdCount.toInt() >= lists.limitCount
+                val remark = lists.remark
                 ListItem(
-                    headlineContent = { Text(text = lists.course.nameZh) },
-                    overlineContent = { Text(text =   "代码 ${lists.code}\n"+"已选 " + stdCount + " / " +lists.limitCount)},
-                    supportingContent = { Text(text = lists.nameZh  + if(lists.remark != null) "\n${lists.remark}" else "")},
-                    trailingContent = {  FilledTonalIconButton(onClick = {
-                        lessonId = lists.id
-                        showBottomSheet = true
-                    }) { Icon(painter = painterResource(id = R.drawable.add_task), contentDescription = "") }},
+                    headlineContent = { Text(text = lists.course.nameZh, fontWeight = FontWeight.Bold) },
+                    overlineContent = { Text(text =   "已选 " + stdCount + " / " + limit + " | ${lists.code}")},
+                    supportingContent = { Text(text = lists.nameZh  + if(remark != null && remark != "") "\n${remark}" else "")},
+                    trailingContent = {
+
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            FilledTonalIconButton(
+                                onClick = {
+                                    lessonId = lists.id
+                                    showBottomSheet = true
+                                },
+                                colors = if(!isFull) IconButtonDefaults.filledTonalIconButtonColors() else IconButtonDefaults.filledTonalIconButtonColors(MaterialTheme.colorScheme.error.copy(alpha = 0.1f))
+                            ) { Icon(painter = painterResource(id = R.drawable.add_2), contentDescription = "") }
+                            if(isFull) {
+                                Text("已满")
+                            }
+                        }
+                                      },
                     modifier = Modifier.clickable {
                         showBottomSheet_info = true
                         name = lists.course.nameZh
                         num = item
                         lessonId = lists.id
+                    },
+                    colors = if(isFull) {
+                        ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
+                    } else {
+                        ListItemDefaults.colors()
                     }
                 )
             }
@@ -668,26 +656,9 @@ fun selectCourseResultLoad(vm : NetWorkViewModel, courseId : Int, lessonId : Int
     }
 
 
-    AnimatedVisibility(
-        visible = loading,
-        enter = fadeIn(),
-        exit = fadeOut()
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Spacer(modifier = Modifier.height(5.dp))
-            LoadingUI()
-        }
-    }
 
 
-    AnimatedVisibility(
-        visible = !loading,
-        enter = fadeIn(),
-        exit = fadeOut()
-    ) {
+    if(!loading) {
         Column {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center){
                 Icon( if(statusBoolean) Icons.Filled.Check else Icons.Filled.Close, contentDescription = "",Modifier.size(100.dp), tint = MaterialTheme.colorScheme.primary)
@@ -696,12 +667,85 @@ fun selectCourseResultLoad(vm : NetWorkViewModel, courseId : Int, lessonId : Int
                 Text(text = statusText, color = MaterialTheme.colorScheme.primary)
             }
         }
+    } else {
+        LoadingUI()
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun courseInfo(num : Int,lists : List<SelectCourseInfo>) {
+fun courseInfo(num : Int,lists : List<SelectCourseInfo>,vm: NetWorkViewModel) {
     val data = lists[num]
+
+    val sheetState_FailRate = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showBottomSheet_FailRate by remember { mutableStateOf(false) }
+
+    if (showBottomSheet_FailRate) {
+        ModalBottomSheet(
+            onDismissRequest = { showBottomSheet_FailRate = false },
+            sheetState = sheetState_FailRate,
+            shape = Round(sheetState_FailRate)
+        ) {
+
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        title = { Text("挂科率 ${data.course.nameZh}") }
+                    )
+                },
+            ) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                ) {
+                    ApiToFailRate(data.course.nameZh,vm)
+                }
+            }
+        }
+    }
+
+    val sheetState_Teacher = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showBottomSheet_Teacher by remember { mutableStateOf(false) }
+
+    var teacherTitle by remember { mutableStateOf("") }
+
+    if (showBottomSheet_Teacher) {
+        ModalBottomSheet(
+            onDismissRequest = { showBottomSheet_Teacher = false },
+            sheetState = sheetState_Teacher,
+            shape = Round(sheetState_Teacher)
+        ) {
+
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        title = { Text("教师检索 $teacherTitle") }
+                    )
+                },
+            ) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                ) {
+                    ApiToTeacherSearch(teacherTitle,vm)
+                }
+            }
+        }
+    }
+
+
     Row {
         ListItem(
             overlineContent = { Text(text = "学分")},
@@ -724,12 +768,44 @@ fun courseInfo(num : Int,lists : List<SelectCourseInfo>) {
             modifier = Modifier.weight(.5f)
         )
         ListItem(
-            overlineContent = { Text(text = "教师(仅展示第一位)")},
-            headlineContent = { Text(text = data.teachers[0].nameZh) },
-            leadingContent = { Icon(painter = painterResource(id = R.drawable.person), contentDescription = "")},
-            modifier = Modifier.weight(.5f)
+            headlineContent = { Text(text = "挂科率查询") },
+            leadingContent = { Icon(painterResource(R.drawable.monitoring), contentDescription = "Localized description",) },
+            modifier = Modifier
+                .clickable {
+                    permit = 1
+                    showBottomSheet_FailRate = true
+                }
+                .weight(.5f),
         )
     }
+    val teachers = data.teachers
+    for(i in teachers.indices step 2) {
+        val item = teachers[i]
+        Row {
+            ListItem(
+                overlineContent = { Text(text = "教师 ${i+1}")},
+                headlineContent = { Text(text = item.nameZh) },
+                leadingContent = { Icon(painter = painterResource(id = R.drawable.person), contentDescription = "")},
+                modifier = Modifier.weight(.5f).clickable {
+                    teacherTitle = item.nameZh
+                    showBottomSheet_Teacher = true
+                }
+            )
+            if(i+1 < teachers.size) {
+                val item2 = teachers[i+1]
+                ListItem(
+                    overlineContent = { Text(text = "教师 ${i+2}")},
+                    headlineContent = { Text(text = item2.nameZh) },
+                    leadingContent = { Icon(painter = painterResource(id = R.drawable.person), contentDescription = "")},
+                    modifier = Modifier.weight(.5f).clickable {
+                        teacherTitle = item2.nameZh
+                        showBottomSheet_Teacher = true
+                    }
+                )
+            }
+        }
+    }
+
     Row {
         ListItem(
             overlineContent = { Text(text = "代码")},
@@ -748,7 +824,7 @@ fun courseInfo(num : Int,lists : List<SelectCourseInfo>) {
 }
 
 @Composable
-fun haveSelectedCourseLoad(vm: NetWorkViewModel, courseId: Int) {
+fun HaveSelectedCourseLoad(vm: NetWorkViewModel, courseId: Int) {
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
     val cookie = if (!vm.webVpn) prefs.getString(
@@ -777,27 +853,13 @@ fun haveSelectedCourseLoad(vm: NetWorkViewModel, courseId: Int) {
     }
 
 
-    AnimatedVisibility(
-        visible = loading,
-        enter = fadeIn(),
-        exit = fadeOut()
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Spacer(modifier = Modifier.height(5.dp))
-            LoadingUI()
-        }
-    }
 
 
-    AnimatedVisibility(
-        visible = !loading,
-        enter = fadeIn(),
-        exit = fadeOut()
-    ) {
+
+    if(!loading) {
         haveSelectedCourse(vm, courseId)
+    } else {
+        LoadingUI()
     }
 }
 
@@ -807,7 +869,7 @@ fun haveSelectedCourse(vm: NetWorkViewModel, courseId : Int) {
     val lists = getSelectedCourse(vm)
     var name by remember { mutableStateOf("课程详情") }
     var num by remember { mutableStateOf(0) }
-    val sheetState_info = rememberModalBottomSheetState()
+    val sheetState_info = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_info by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -819,31 +881,23 @@ fun haveSelectedCourse(vm: NetWorkViewModel, courseId : Int) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet_info = false },
             sheetState = sheetState_info,
-            shape = Round(sheetState_info)
+//            shape = Round(sheetState_info)
         ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { ScrollText(text = name) },
-                        actions = {
-                            FilledTonalButton(onClick = { showDialog = true }, modifier = Modifier.padding(horizontal = 15.dp)) {
-                                Text(text = "退课")
-                            }
+            Column {
+                TopAppBar(
+                    colors = TopAppBarDefaults.mediumTopAppBarColors(
+                        containerColor = Color.Transparent,
+                        titleContentColor = MaterialTheme.colorScheme.primary,
+                    ),
+                    title = { ScrollText(text = name) },
+                    actions = {
+                        FilledTonalButton(onClick = { showDialog = true }, modifier = Modifier.padding(horizontal = 15.dp)) {
+                            Text(text = "退课")
                         }
-                    )
-                },
-            ) { innerPadding ->
-                Column(modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()) {
-                    courseInfo(num,lists)
-                    Spacer(modifier = Modifier.height(20.dp))
-                }
+                    }
+                )
+                courseInfo(num,lists,vm)
+                Spacer(modifier = Modifier.height(20.dp))
             }
         }
     }
@@ -884,7 +938,7 @@ fun haveSelectedCourse(vm: NetWorkViewModel, courseId : Int) {
                 showDialog = false
                              },
             dialogTitle = "警告",
-            dialogText = "请再次确定;是培养计划内的必修课,退课会造成严重后果!",
+            dialogText = "请再次确定,是否退掉 ${name}\n若为培养计划内的公共或专业课,如需再选需在教务完全关闭之前选择!否则无法再修改",
             conformtext = "确定",
             dismisstext = "取消"
         )
@@ -892,12 +946,14 @@ fun haveSelectedCourse(vm: NetWorkViewModel, courseId : Int) {
 
     LazyColumn {
         items(lists.size) {item ->
+            val names =  lists[item].course.nameZh
             MyCard {
                 ListItem(
-                    headlineContent = { Text(text = lists[item].course.nameZh)  },
+                    headlineContent = { Text(text = names)  },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.category), contentDescription = "")},
                     trailingContent = { FilledTonalIconButton(onClick = {
                         lessonId = lists[item].id
+                        name = names
                         showDialog = true
                     }) {
                         Icon(Icons.Filled.Close, contentDescription = "")
@@ -905,7 +961,7 @@ fun haveSelectedCourse(vm: NetWorkViewModel, courseId : Int) {
                     modifier = Modifier.clickable {
                         showBottomSheet_info = true
                         num = item
-                        name = lists[item].course.nameZh
+                        name = names
                         lessonId = lists[item].id
                     }
                 )

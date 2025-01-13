@@ -22,13 +22,13 @@ fun examToCalendar() : List<ExamToCalanderBean> {
             val dayLong = day?.replace("-","")?.toLong() ?: 0L
             val todayLong = DateTimeManager.Date_yyyy_MM_dd.replace("-","").toLong()
 
-            if(todayLong <= dayLong) {
+//            if(todayLong <= dayLong) {
                 val startTime = examMap["日期时间"]?.substringAfter(" ")?.substringBefore("~")
                 val place = examMap["考场"]
                 val course = examMap["课程名称"]
                 val examToCalendarBean = ExamToCalanderBean(day, startTime, place, course)
                 newList.add(examToCalendarBean)
-            }
+//            }
         }
         newList
     } catch (e:Exception) {

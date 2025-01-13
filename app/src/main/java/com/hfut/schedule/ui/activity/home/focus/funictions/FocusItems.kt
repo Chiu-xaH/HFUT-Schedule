@@ -164,7 +164,7 @@ fun ScheduleItems(MySchedule: MutableList<Schedule>, item : Int,Future : Boolean
                                 }
                             }
                         ) {
-                            Icon( painterResource(R.drawable.add_task),
+                            Icon( painterResource(R.drawable.event_upcoming),
                                 contentDescription = "Localized description",)
                         }
                 }
@@ -242,7 +242,7 @@ fun WangkeItem(item : Int, MyWangKe: MutableList<Schedule>,Future: Boolean,activ
 
                                     }
                                 ) {
-                                    Icon( painterResource(R.drawable.add_task),
+                                    Icon( painterResource(R.drawable.event_upcoming),
                                         contentDescription = "Localized description",)
                                 }
                             },

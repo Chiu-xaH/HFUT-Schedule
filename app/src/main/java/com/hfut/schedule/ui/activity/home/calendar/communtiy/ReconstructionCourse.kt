@@ -222,7 +222,7 @@ fun CourseDetailApi(isNext : Boolean = false,courseName : String,vm : NetWorkVie
                 .padding(innerPadding)
                 .fillMaxSize()
         ){
-            DetailItems(getTotalCourse(json)[numItem],json, vm)
+            DetailItems(getTotalCourse(json)[numItem], vm)
             Spacer(modifier = Modifier.height(20.dp))
         }
     }
