@@ -1,0 +1,1 @@
+HFUT-Schedule is an all-in-one school service app for Hefei University of Technology students. You can view your academic affairs information, school card information and Internet electric bills.
