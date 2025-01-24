@@ -351,7 +351,7 @@ fun getWebNew(vm: NetWorkViewModel, vmUI : UIViewModel)  {
         Handler(Looper.getMainLooper()).post{
             vm.infoValue.observeForever { result ->
                 if (result != null)
-                    if(result.contains("success")) {
+                    if(result.contains("success")&&!result.contains("账号不存在")) {
                         val data = Gson().fromJson(result,FeeResponse::class.java).map.showData
 
                        vmUI.webValue.value = data["本期已使用流量"]?.let {
