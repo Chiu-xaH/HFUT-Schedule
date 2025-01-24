@@ -126,7 +126,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
 
 
 
-    val sheetState_ELectric = rememberModalBottomSheetState()
+    val sheetState_ELectric = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_ELectric by remember { mutableStateOf(false) }
 
     var showBottomSheet_Web by remember { mutableStateOf(false) }
@@ -337,7 +337,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                 showBottomSheet_ELectric = false
             },
             sheetState = sheetState_ELectric,
-            shape = Round(sheetState_ELectric)
+//            shape = Round(sheetState_ELectric)
         ) {
             EleUI(vm = vm)
         }

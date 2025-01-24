@@ -2,12 +2,12 @@ package com.hfut.schedule.ui.activity.home.search.functions.survey
 
 import com.google.gson.Gson
 import com.hfut.schedule.viewmodel.NetWorkViewModel
-import com.hfut.schedule.logic.beans.Jxglstu.SurveyResponse
-import com.hfut.schedule.logic.beans.Jxglstu.SurveyTeacherResponse
-import com.hfut.schedule.logic.beans.Jxglstu.blankQuestions
-import com.hfut.schedule.logic.beans.Jxglstu.lessonSurveyTasks
-import com.hfut.schedule.logic.beans.Jxglstu.options
-import com.hfut.schedule.logic.beans.Jxglstu.radioQuestions
+import com.hfut.schedule.logic.beans.jxglstu.SurveyResponse
+import com.hfut.schedule.logic.beans.jxglstu.SurveyTeacherResponse
+import com.hfut.schedule.logic.beans.jxglstu.blankQuestions
+import com.hfut.schedule.logic.beans.jxglstu.lessonSurveyTasks
+import com.hfut.schedule.logic.beans.jxglstu.options
+import com.hfut.schedule.logic.beans.jxglstu.radioQuestions
 
 fun getSurveyList(vm : NetWorkViewModel) : MutableList<lessonSurveyTasks> {
     var list = mutableListOf<lessonSurveyTasks>()

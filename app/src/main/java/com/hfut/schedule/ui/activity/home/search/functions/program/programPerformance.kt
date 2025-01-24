@@ -49,7 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
-import com.hfut.schedule.logic.beans.Jxglstu.CourseItem
+import com.hfut.schedule.logic.beans.jxglstu.CourseItem
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.search.functions.life.countFunc
@@ -327,20 +327,20 @@ fun PerformanceInfo(vm: NetWorkViewModel,moduleIndex : Int) {
 
     Spacer(modifier = Modifier.height(5.dp))
 
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 15.dp),
-        horizontalArrangement = Arrangement.Start
-    ) {
-        AssistChip(onClick = { MyToast("正在开发") }, label = { Text(text = "学期") })
-        Spacer(modifier = Modifier.width(10.dp))
-        AssistChip(onClick = { MyToast("正在开发") }, label = { Text(text = "类型") })
-        Spacer(modifier = Modifier.width(10.dp))
-        AssistChip(onClick = { MyToast("正在开发") }, label = { Text(text = "排序") })
-    }
-
-    Spacer(modifier = Modifier.height(5.dp))
+//    Row(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .padding(horizontal = 15.dp),
+//        horizontalArrangement = Arrangement.Start
+//    ) {
+//        AssistChip(onClick = { MyToast("正在开发") }, label = { Text(text = "学期") })
+//        Spacer(modifier = Modifier.width(10.dp))
+//        AssistChip(onClick = { MyToast("正在开发") }, label = { Text(text = "类型") })
+//        Spacer(modifier = Modifier.width(10.dp))
+//        AssistChip(onClick = { MyToast("正在开发") }, label = { Text(text = "排序") })
+//    }
+//
+//    Spacer(modifier = Modifier.height(5.dp))
 
     if(moduleIndex != 999) {
         val dataList = getProgramPerformance(vm)?.moduleList?.get(moduleIndex)

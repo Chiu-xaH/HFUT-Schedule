@@ -2,9 +2,9 @@ package com.hfut.schedule.ui.activity.home.search.functions.failRate
 
 import com.google.gson.Gson
 import com.hfut.schedule.viewmodel.NetWorkViewModel
-import com.hfut.schedule.logic.beans.Community.FailRateRecord
-import com.hfut.schedule.logic.beans.Community.FailRateResponse
-import com.hfut.schedule.logic.beans.Community.courseFailRateDTOList
+import com.hfut.schedule.logic.beans.community.FailRateRecord
+import com.hfut.schedule.logic.beans.community.FailRateResponse
+import com.hfut.schedule.logic.beans.community.courseFailRateDTOList
 
 fun getFailRate(vm : NetWorkViewModel)  :  MutableList<FailRateRecord>{
     val json = vm.FailRateData.value

@@ -46,4 +46,9 @@ object PermissionManager {
             ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.READ_CALENDAR),1)
     }
 
+
+    fun checkAndRequestCameraPermission(activity: Activity) {
+        if(ContextCompat.checkSelfPermission(activity,Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+            ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.CAMERA),1)
+    }
 }

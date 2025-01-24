@@ -1,12 +1,12 @@
 package com.hfut.schedule.ui.activity.home.search.functions.transferMajor
 
 import com.google.gson.Gson
-import com.hfut.schedule.logic.beans.Jxglstu.MyApplyModels
+import com.hfut.schedule.logic.beans.jxglstu.MyApplyModels
 import com.hfut.schedule.viewmodel.NetWorkViewModel
-import com.hfut.schedule.logic.beans.Jxglstu.MyApplyResponse
-import com.hfut.schedule.logic.beans.Jxglstu.TransferData
-import com.hfut.schedule.logic.beans.Jxglstu.TransferResponse
-import com.hfut.schedule.logic.beans.Jxglstu.courseType
+import com.hfut.schedule.logic.beans.jxglstu.MyApplyResponse
+import com.hfut.schedule.logic.beans.jxglstu.TransferData
+import com.hfut.schedule.logic.beans.jxglstu.TransferResponse
+import com.hfut.schedule.logic.beans.jxglstu.courseType
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
 import org.jsoup.Jsoup

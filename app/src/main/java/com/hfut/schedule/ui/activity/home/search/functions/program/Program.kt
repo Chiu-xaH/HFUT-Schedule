@@ -71,9 +71,10 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.beans.jxglstu.ProgramPartOne
 import com.hfut.schedule.viewmodel.NetWorkViewModel
-import com.hfut.schedule.logic.beans.Jxglstu.ProgramPartThree
-import com.hfut.schedule.logic.beans.Jxglstu.ProgramShow
+import com.hfut.schedule.logic.beans.jxglstu.ProgramPartThree
+import com.hfut.schedule.logic.beans.jxglstu.ProgramShow
 import com.hfut.schedule.logic.utils.ReservDecimal
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
@@ -81,6 +82,9 @@ import com.hfut.schedule.logic.utils.Starter.refreshLogin
 import com.hfut.schedule.ui.activity.home.search.functions.dormitoryScore.DormitoryScoreUI
 import com.hfut.schedule.ui.activity.home.search.functions.life.countFunc
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
+import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.CampusId
+import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.CampusId.*
+import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.getCampus
 import com.hfut.schedule.ui.utils.components.BottomTip
 import com.hfut.schedule.ui.utils.style.CardForListColor
 import com.hfut.schedule.ui.utils.components.DividerText
@@ -149,6 +153,20 @@ fun Program(vm : NetWorkViewModel, ifSaved : Boolean) {
         }
     }
 
+    val sheetState_search = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showBottomSheet_search by remember { mutableStateOf(false) }
+
+
+    if (showBottomSheet_search) {
+        ModalBottomSheet(
+            onDismissRequest = { showBottomSheet_search = false },
+            sheetState = sheetState_search,
+            shape = Round(sheetState_search)
+        ) {
+            ProgramSearch(vm)
+        }
+    }
+
 
     if (showBottomSheet_Program ) {
         ModalBottomSheet(
@@ -168,10 +186,17 @@ fun Program(vm : NetWorkViewModel, ifSaved : Boolean) {
                         title = { Text("培养方案") },
                         actions = {
                             Row (modifier = Modifier.padding(horizontal = 15.dp)){
-                                FilledTonalIconButton(
-                                    onClick = { showBottomSheet_info = true },
+//                                FilledTonalIconButton(
+//                                    onClick = { showBottomSheet_info = true },
+//                                ) {
+//                                    Icon(painterResource(id = R.drawable.info), contentDescription = "")
+//                                }
+                                FilledTonalButton(
+                                    onClick = {
+                                        showBottomSheet_search = true
+                                    }
                                 ) {
-                                    Icon(painterResource(id = R.drawable.info), contentDescription = "")
+                                    Text("全校培养方案")
                                 }
                             }
                         }
@@ -211,7 +236,7 @@ fun ProgramUI() {
         item {
             MyCard{
                 ListItem(
-                    headlineContent = { Text(text = "合计 ${list.size} 门 ${sum} 学分") },
+                    headlineContent = { Text(text = "合计 ${list.size} 门 $sum 学分") },
                     supportingContent = { Text(text = "不含选修课!")},
                  //   overlineContent = { },
                  //   trailingContent = { Text(text = "学分 " +  list[item].credit)},
@@ -221,7 +246,7 @@ fun ProgramUI() {
                 )
             }
         }
-        items(list.size) {item ->
+        items(list.size) { item ->
             MyCard{
                 ListItem(
                     headlineContent = { Text(text = list[item].name) },
@@ -350,7 +375,7 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean) {
         }
     }
 
-    DividerTextExpandedWith(text = if(ifSaved)"完成情况(登录后可查看)" else "完成情况") {
+    DividerTextExpandedWith(text = if(ifSaved)"完成情况(登录后可查看)" else "完成情况",openBlurAnimation = false) {
         Card(
             elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
             modifier = Modifier
@@ -399,6 +424,7 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean) {
             Text(text = "培养方案进度")
         }
     }
+
 
 
     DividerTextExpandedWith(text = "课程安排") {
@@ -468,15 +494,6 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean) {
     }
 
 
-//    val nestedScrollConnection = remember {
-//        object : NestedScrollConnection {
-//            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-//                // 合并滚动行为
-//                return Offset.Zero
-//            }
-//        }
-//    }
-//
 
     if (showBottomSheet_Program ) {
         ModalBottomSheet(
@@ -502,17 +519,14 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean) {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ){
-
                     ProgramUIInfo(num,vm, ifSaved)
-
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
         }
     }
-
-
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

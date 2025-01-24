@@ -1,6 +1,7 @@
 package com.hfut.schedule.ui.activity.shower.home.function
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.os.Handler
 import android.os.Looper
 import androidx.camera.core.ImageAnalysis
@@ -59,6 +60,7 @@ import androidx.core.content.ContextCompat
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.utils.PermissionManager.checkAndRequestCameraPermission
 import com.hfut.schedule.logic.utils.QRCodeAnalyzer
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.ui.activity.shower.home.ShowerDataBaseManager
@@ -152,6 +154,9 @@ data class StatusMsgResponse(val message : String)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StartShowerUI(vm: GuaGuaViewModel) {
+    val context = LocalContext.current
+    val activity = context as Activity
+
     var input by remember { mutableStateOf("") }
     var id by remember { mutableStateOf(-1) }
     var editMode by remember { mutableStateOf(false) }
@@ -164,7 +169,7 @@ fun StartShowerUI(vm: GuaGuaViewModel) {
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
 
-    val context = LocalContext.current
+//    val context = LocalContext.current
     val imageAnalysis = ImageAnalysis.Builder() .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888).build().also {
         it.setAnalyzer(ContextCompat.getMainExecutor(context), QRCodeAnalyzer { result ->
             result?.let {
@@ -352,6 +357,7 @@ fun StartShowerUI(vm: GuaGuaViewModel) {
             trailingIcon = {
                 IconButton(
                     onClick = {
+                        checkAndRequestCameraPermission(activity)
                         show = true
                     }) {
                     Icon(painter = painterResource(R.drawable.qr_code_scanner), contentDescription = "description")

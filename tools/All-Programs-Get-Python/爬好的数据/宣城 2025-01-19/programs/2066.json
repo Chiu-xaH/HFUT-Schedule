@@ -1,0 +1,4512 @@
+{
+    "result": 0,
+    "message": null,
+    "data": {
+        "type": null,
+        "requireInfo": {
+            "requiredSubModuleNum": 0,
+            "requiredCredits": 0.0,
+            "requiredCourseNum": 0
+        },
+        "reference": null,
+        "copy": null,
+        "index": 0,
+        "remark": null,
+        "culTypeIndex": 0,
+        "planCourses": [],
+        "children": [
+            {
+                "type": {
+                    "id": 1,
+                    "code": "01",
+                    "nameZh": "校定必修课",
+                    "nameEn": null
+                },
+                "requireInfo": {
+                    "requiredSubModuleNum": 0,
+                    "requiredCredits": 62.5,
+                    "requiredCourseNum": 31
+                },
+                "reference": null,
+                "copy": null,
+                "index": 0,
+                "remark": null,
+                "culTypeIndex": 0,
+                "planCourses": [
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 186,
+                            "code": "151",
+                            "nameZh": "体育部",
+                            "nameEn": "P.E. Department"
+                        },
+                        "terms": [
+                            "TERM_2"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18942,
+                            "code": "5109791B",
+                            "nameZh": "大学体育（2）",
+                            "nameEn": "College Physical Education(2)",
+                            "credits": 0.75,
+                            "courseType": {
+                                "id": 1,
+                                "code": "1B",
+                                "nameZh": "通识必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 36.0,
+                            "weeks": 18,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 2.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 186,
+                            "code": "151",
+                            "nameZh": "体育部",
+                            "nameEn": "P.E. Department"
+                        },
+                        "terms": [
+                            "TERM_1"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18943,
+                            "code": "5109781B",
+                            "nameZh": "大学体育（1）",
+                            "nameEn": "College Physical Education(1)",
+                            "credits": 0.75,
+                            "courseType": {
+                                "id": 1,
+                                "code": "1B",
+                                "nameZh": "通识必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 36.0,
+                            "weeks": 18,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 2.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 169,
+                            "code": "109",
+                            "nameZh": "管理学院",
+                            "nameEn": "School of Management"
+                        },
+                        "terms": [
+                            "TERM_7"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 8644,
+                            "code": "1100011B",
+                            "nameZh": "现代企业管理",
+                            "nameEn": "Modern Enterprise Management",
+                            "credits": 1.5,
+                            "courseType": {
+                                "id": 1,
+                                "code": "1B",
+                                "nameZh": "通识必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 24.0,
+                            "weeks": 6,
+                            "theory": 24.0,
+                            "theoryUnit": "HOUR",
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 4.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 178,
+                            "code": "118",
+                            "nameZh": "马克思主义学院",
+                            "nameEn": "School of Marxism"
+                        },
+                        "terms": [
+                            "TERM_1"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18737,
+                            "code": "1209651B",
+                            "nameZh": "形势与政策（1）",
+                            "nameEn": null,
+                            "credits": 0.0,
+                            "courseType": {
+                                "id": 1,
+                                "code": "1B",
+                                "nameZh": "通识必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 16.0,
+                            "weeks": 4,
+                            "theory": 8.0,
+                            "theoryUnit": "HOUR",
+                            "requireTheory": null,
+                            "practice": 8.0,
+                            "practiceUnit": "HOUR",
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 2.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 178,
+                            "code": "118",
+                            "nameZh": "马克思主义学院",
+                            "nameEn": "School of Marxism"
+                        },
+                        "terms": [
+                            "TERM_2"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18727,
+                            "code": "1209751B",
+                            "nameZh": "形势与政策（2）",
+                            "nameEn": null,
+                            "credits": 0.0,
+                            "courseType": {
+                                "id": 1,
+                                "code": "1B",
+                                "nameZh": "通识必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 16.0,
+                            "weeks": 4,
+                            "theory": 8.0,
+                            "theoryUnit": "HOUR",
+                            "requireTheory": null,
+                            "practice": 8.0,
+                            "practiceUnit": "HOUR",
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": 0.0,
+                            "experimentUnit": "HOUR",
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 2.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 178,
+                            "code": "118",
+                            "nameZh": "马克思主义学院",
+                            "nameEn": "School of Marxism"
+                        },
+                        "terms": [
+                            "TERM_3"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18726,
+                            "code": "1209761B",
+                            "nameZh": "形势与政策（3）",
+                            "nameEn": null,
+                            "credits": 0.0,
+                            "courseType": {
+                                "id": 1,
+                                "code": "1B",
+                                "nameZh": "通识必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 16.0,
+                            "weeks": 4,
+                            "theory": 8.0,
+                            "theoryUnit": "HOUR",
+                            "requireTheory": null,
+                            "practice": 8.0,
+                            "practiceUnit": "HOUR",
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 2.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 178,
+                            "code": "118",
+                            "nameZh": "马克思主义学院",
+                            "nameEn": "School of Marxism"
+                        },
+                        "terms": [
+                            "TERM_4"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18725,
+                            "code": "1209771B",
+                            "nameZh": "形势与政策（4）",
+                            "nameEn": null,
+                            "credits": 0.0,
+                            "courseType": {
+                                "id": 1,
+                                "code": "1B",
+                                "nameZh": "通识必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 16.0,
+                            "weeks": 4,
+                            "theory": 8.0,
+                            "theoryUnit": "HOUR",
+                            "requireTheory": null,
+                            "practice": 8.0,
+                            "practiceUnit": "HOUR",
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 2.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 186,
+                            "code": "151",
+                            "nameZh": "体育部",
+                            "nameEn": "P.E. Department"
+                        },
+                        "terms": [
+                            "TERM_4"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18940,
+                            "code": "5109811B",
+                            "nameZh": "大学体育（4）",
+                            "nameEn": "College Physical Education(4)",
+                            "credits": 0.75,
+                            "courseType": {
+                                "id": 1,
+                                "code": "1B",
+                                "nameZh": "通识必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 36.0,
+                            "weeks": 18,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 2.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 186,
+                            "code": "151",
+                            "nameZh": "体育部",
+                            "nameEn": "P.E. Department"
+                        },
+                        "terms": [
+                            "TERM_3"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18941,
+                            "code": "5109801B",
+                            "nameZh": "大学体育（3）",
+                            "nameEn": "College Physical Education(3)",
+                            "credits": 0.75,
+                            "courseType": {
+                                "id": 1,
+                                "code": "1B",
+                                "nameZh": "通识必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 36.0,
+                            "weeks": 18,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 2.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 178,
+                            "code": "118",
+                            "nameZh": "马克思主义学院",
+                            "nameEn": "School of Marxism"
+                        },
+                        "terms": [
+                            "TERM_5"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18724,
+                            "code": "1209781B",
+                            "nameZh": "形势与政策（5）",
+                            "nameEn": null,
+                            "credits": 0.0,
+                            "courseType": {
+                                "id": 1,
+                                "code": "1B",
+                                "nameZh": "通识必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 16.0,
+                            "weeks": 4,
+                            "theory": 8.0,
+                            "theoryUnit": "HOUR",
+                            "requireTheory": null,
+                            "practice": 8.0,
+                            "practiceUnit": "HOUR",
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 2.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 166,
+                            "code": "104",
+                            "nameZh": "计算机与信息学院（人工智能学院）",
+                            "nameEn": "School of Computer science and Information Engineering"
+                        },
+                        "terms": [
+                            "TERM_2"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18108,
+                            "code": "0509801B",
+                            "nameZh": "C|C++语言程序设计",
+                            "nameEn": "C++Language Program Design",
+                            "credits": 3.0,
+                            "courseType": {
+                                "id": 1,
+                                "code": "1B",
+                                "nameZh": "通识必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 48.0,
+                            "weeks": 12,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": 24.0,
+                            "experimentUnit": "HOUR",
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 2.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 178,
+                            "code": "118",
+                            "nameZh": "马克思主义学院",
+                            "nameEn": "School of Marxism"
+                        },
+                        "terms": [
+                            "TERM_8"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18721,
+                            "code": "1209811B",
+                            "nameZh": "形势与政策（8）",
+                            "nameEn": null,
+                            "credits": 2.0,
+                            "courseType": {
+                                "id": 1,
+                                "code": "1B",
+                                "nameZh": "通识必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 16.0,
+                            "weeks": 4,
+                            "theory": 8.0,
+                            "theoryUnit": "HOUR",
+                            "requireTheory": null,
+                            "practice": 8.0,
+                            "practiceUnit": "HOUR",
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 2.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 178,
+                            "code": "118",
+                            "nameZh": "马克思主义学院",
+                            "nameEn": "School of Marxism"
+                        },
+                        "terms": [
+                            "TERM_7"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18722,
+                            "code": "1209801B",
+                            "nameZh": "形势与政策（7）",
+                            "nameEn": null,
+                            "credits": 0.0,
+                            "courseType": {
+                                "id": 1,
+                                "code": "1B",
+                                "nameZh": "通识必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 16.0,
+                            "weeks": 4,
+                            "theory": 8.0,
+                            "theoryUnit": "HOUR",
+                            "requireTheory": null,
+                            "practice": 8.0,
+                            "practiceUnit": "HOUR",
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 2.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 188,
+                            "code": "205",
+                            "nameZh": "党委学生工作部（处）",
+                            "nameEn": "57"
+                        },
+                        "terms": [
+                            "TERM_1"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18948,
+                            "code": "5209801B",
+                            "nameZh": "军事理论",
+                            "nameEn": "Military Theory",
+                            "credits": 1.5,
+                            "courseType": {
+                                "id": 1,
+                                "code": "1B",
+                                "nameZh": "通识必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 32.0,
+                            "weeks": 12,
+                            "theory": 24.0,
+                            "theoryUnit": "HOUR",
+                            "requireTheory": null,
+                            "practice": 8.0,
+                            "practiceUnit": "HOUR",
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 2.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 188,
+                            "code": "205",
+                            "nameZh": "党委学生工作部（处）",
+                            "nameEn": "57"
+                        },
+                        "terms": [
+                            "TERM_1"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18947,
+                            "code": "5209811B",
+                            "nameZh": "大学生心理健康",
+                            "nameEn": null,
+                            "credits": 1.5,
+                            "courseType": {
+                                "id": 1,
+                                "code": "1B",
+                                "nameZh": "通识必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 32.0,
+                            "weeks": 12,
+                            "theory": 24.0,
+                            "theoryUnit": "HOUR",
+                            "requireTheory": null,
+                            "practice": 8.0,
+                            "practiceUnit": "HOUR",
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 2.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 174,
+                            "code": "107",
+                            "nameZh": "数学学院",
+                            "nameEn": "School of Mathematics"
+                        },
+                        "terms": [
+                            "TERM_2"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18836,
+                            "code": "1409711B",
+                            "nameZh": "高等数学A（2）",
+                            "nameEn": null,
+                            "credits": 6.0,
+                            "courseType": {
+                                "id": 1,
+                                "code": "1B",
+                                "nameZh": "通识必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 96.0,
+                            "weeks": 16,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": 0.0,
+                            "experimentUnit": "HOUR",
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 0.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 174,
+                            "code": "107",
+                            "nameZh": "数学学院",
+                            "nameEn": "School of Mathematics"
+                        },
+                        "terms": [
+                            "TERM_2"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18832,
+                            "code": "1409751B",
+                            "nameZh": "线性代数",
+                            "nameEn": null,
+                            "credits": 2.5,
+                            "courseType": {
+                                "id": 1,
+                                "code": "1B",
+                                "nameZh": "通识必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 40.0,
+                            "weeks": 16,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": 0.0,
+                            "experimentUnit": "HOUR",
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 0.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 174,
+                            "code": "107",
+                            "nameZh": "数学学院",
+                            "nameEn": "School of Mathematics"
+                        },
+                        "terms": [
+                            "TERM_3"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18831,
+                            "code": "1409761B",
+                            "nameZh": "概率论与数理统计",
+                            "nameEn": null,
+                            "credits": 3.0,
+                            "courseType": {
+                                "id": 1,
+                                "code": "1B",
+                                "nameZh": "通识必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 48.0,
+                            "weeks": 16,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": 0.0,
+                            "experimentUnit": "HOUR",
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 0.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 178,
+                            "code": "118",
+                            "nameZh": "马克思主义学院",
+                            "nameEn": "School of Marxism"
+                        },
+                        "terms": [
+                            "TERM_2"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18736,
+                            "code": "1209661B",
+                            "nameZh": "马克思主义基本原理概论",
+                            "nameEn": null,
+                            "credits": 3.0,
+                            "courseType": {
+                                "id": 1,
+                                "code": "1B",
+                                "nameZh": "通识必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 48.0,
+                            "weeks": 8,
+                            "theory": 32.0,
+                            "theoryUnit": "HOUR",
+                            "requireTheory": null,
+                            "practice": 16.0,
+                            "practiceUnit": "HOUR",
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 4.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 178,
+                            "code": "118",
+                            "nameZh": "马克思主义学院",
+                            "nameEn": "School of Marxism"
+                        },
+                        "terms": [
+                            "TERM_1"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18733,
+                            "code": "1209691B",
+                            "nameZh": "思想道德修养与法律基础",
+                            "nameEn": null,
+                            "credits": 3.0,
+                            "courseType": {
+                                "id": 1,
+                                "code": "1B",
+                                "nameZh": "通识必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 48.0,
+                            "weeks": 8,
+                            "theory": 32.0,
+                            "theoryUnit": "HOUR",
+                            "requireTheory": null,
+                            "practice": 16.0,
+                            "practiceUnit": "HOUR",
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 4.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 178,
+                            "code": "118",
+                            "nameZh": "马克思主义学院",
+                            "nameEn": "School of Marxism"
+                        },
+                        "terms": [
+                            "TERM_3"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18731,
+                            "code": "1209711B",
+                            "nameZh": "中国近现代史纲要",
+                            "nameEn": null,
+                            "credits": 2.5,
+                            "courseType": {
+                                "id": 1,
+                                "code": "1B",
+                                "nameZh": "通识必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 40.0,
+                            "weeks": 8,
+                            "theory": 32.0,
+                            "theoryUnit": "HOUR",
+                            "requireTheory": null,
+                            "practice": 8.0,
+                            "practiceUnit": "HOUR",
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 4.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 178,
+                            "code": "118",
+                            "nameZh": "马克思主义学院",
+                            "nameEn": "School of Marxism"
+                        },
+                        "terms": [
+                            "TERM_3"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18729,
+                            "code": "1209731B",
+                            "nameZh": "毛泽东思想与中国特色社会主义理论体系概论",
+                            "nameEn": null,
+                            "credits": 3.0,
+                            "courseType": {
+                                "id": 1,
+                                "code": "1B",
+                                "nameZh": "通识必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 48.0,
+                            "weeks": 8,
+                            "theory": 32.0,
+                            "theoryUnit": "HOUR",
+                            "requireTheory": null,
+                            "practice": 16.0,
+                            "practiceUnit": "HOUR",
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 4.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 178,
+                            "code": "118",
+                            "nameZh": "马克思主义学院",
+                            "nameEn": "School of Marxism"
+                        },
+                        "terms": [
+                            "TERM_4"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18728,
+                            "code": "1209741B",
+                            "nameZh": "毛泽东思想与中国特色社会主义理论体系概论（2）",
+                            "nameEn": null,
+                            "credits": 2.5,
+                            "courseType": {
+                                "id": 1,
+                                "code": "1B",
+                                "nameZh": "通识必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 40.0,
+                            "weeks": 6,
+                            "theory": 24.0,
+                            "theoryUnit": "HOUR",
+                            "requireTheory": null,
+                            "practice": 16.0,
+                            "practiceUnit": "HOUR",
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 4.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 164,
+                            "code": "102",
+                            "nameZh": "电气与自动化工程学院",
+                            "nameEn": "School of Electric Engineering and Automation "
+                        },
+                        "terms": [
+                            "TERM_3"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 17998,
+                            "code": "0409732B",
+                            "nameZh": "电工与电子技术A",
+                            "nameEn": "Electrotechnics and Electronic Technology A",
+                            "credits": 4.5,
+                            "courseType": {
+                                "id": 2,
+                                "code": "2B",
+                                "nameZh": "学科基础和专业必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 72.0,
+                            "weeks": 12,
+                            "theory": 48.0,
+                            "theoryUnit": "HOUR",
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": 24.0,
+                            "experimentUnit": "HOUR",
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 4.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 180,
+                            "code": "101",
+                            "nameZh": "机械工程学院",
+                            "nameEn": "School of Mechanical Engineering"
+                        },
+                        "terms": [
+                            "TERM_1"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 17799,
+                            "code": "0209801B",
+                            "nameZh": "工程图学C",
+                            "nameEn": null,
+                            "credits": 3.0,
+                            "courseType": {
+                                "id": 1,
+                                "code": "1B",
+                                "nameZh": "通识必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 48.0,
+                            "weeks": 12,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 4.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 181,
+                            "code": "110",
+                            "nameZh": "外国语学院",
+                            "nameEn": "School of Foreign Studies"
+                        },
+                        "terms": [
+                            "TERM_4"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 17584,
+                            "code": "1500141B",
+                            "nameZh": "英语（四）",
+                            "nameEn": "English (4)",
+                            "credits": 2.5,
+                            "courseType": {
+                                "id": 1,
+                                "code": "1B",
+                                "nameZh": "通识必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 40.0,
+                            "weeks": 10,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 4.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 181,
+                            "code": "110",
+                            "nameZh": "外国语学院",
+                            "nameEn": "School of Foreign Studies"
+                        },
+                        "terms": [
+                            "TERM_3"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18839,
+                            "code": "1509801B",
+                            "nameZh": "英语（三）",
+                            "nameEn": "English(3)",
+                            "credits": 3.0,
+                            "courseType": {
+                                "id": 1,
+                                "code": "1B",
+                                "nameZh": "通识必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 48.0,
+                            "weeks": 12,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 4.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 181,
+                            "code": "110",
+                            "nameZh": "外国语学院",
+                            "nameEn": "School of Foreign Studies"
+                        },
+                        "terms": [
+                            "TERM_2"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18840,
+                            "code": "1509791B",
+                            "nameZh": "英语（二）",
+                            "nameEn": "English(2)",
+                            "credits": 3.0,
+                            "courseType": {
+                                "id": 1,
+                                "code": "1B",
+                                "nameZh": "通识必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 48.0,
+                            "weeks": 12,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 4.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 181,
+                            "code": "110",
+                            "nameZh": "外国语学院",
+                            "nameEn": "School of Foreign Studies"
+                        },
+                        "terms": [
+                            "TERM_1"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18841,
+                            "code": "1509781B",
+                            "nameZh": "英语（一）",
+                            "nameEn": "English(1)",
+                            "credits": 2.5,
+                            "courseType": {
+                                "id": 1,
+                                "code": "1B",
+                                "nameZh": "通识必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 40.0,
+                            "weeks": 10,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 4.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 174,
+                            "code": "107",
+                            "nameZh": "数学学院",
+                            "nameEn": "School of Mathematics"
+                        },
+                        "terms": [
+                            "TERM_1"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18829,
+                            "code": "1409781B",
+                            "nameZh": "高等数学A（1）",
+                            "nameEn": null,
+                            "credits": 6.0,
+                            "courseType": {
+                                "id": 1,
+                                "code": "1B",
+                                "nameZh": "通识必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 96.0,
+                            "weeks": 16,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": 0.0,
+                            "experimentUnit": "HOUR",
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 6.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 178,
+                            "code": "118",
+                            "nameZh": "马克思主义学院",
+                            "nameEn": "School of Marxism"
+                        },
+                        "terms": [
+                            "TERM_6"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18723,
+                            "code": "1209791B",
+                            "nameZh": "形势与政策（6）",
+                            "nameEn": null,
+                            "credits": 0.0,
+                            "courseType": {
+                                "id": 1,
+                                "code": "1B",
+                                "nameZh": "通识必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 16.0,
+                            "weeks": 4,
+                            "theory": 8.0,
+                            "theoryUnit": "HOUR",
+                            "requireTheory": null,
+                            "practice": 8.0,
+                            "practiceUnit": "HOUR",
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 2.0
+                        },
+                        "marks": []
+                    }
+                ],
+                "children": []
+            },
+            {
+                "type": {
+                    "id": 45,
+                    "code": "14",
+                    "nameZh": "学科基础课程和专业必修课",
+                    "nameEn": null
+                },
+                "requireInfo": {
+                    "requiredSubModuleNum": 0,
+                    "requiredCredits": 49.0,
+                    "requiredCourseNum": 15
+                },
+                "reference": null,
+                "copy": null,
+                "index": 1,
+                "remark": null,
+                "culTypeIndex": 0,
+                "planCourses": [
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 165,
+                            "code": "108",
+                            "nameZh": "物理学院",
+                            "nameEn": "School of Electronic Science and Applied Physics"
+                        },
+                        "terms": [
+                            "TERM_2"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18590,
+                            "code": "1009791B",
+                            "nameZh": "大学物理B(1)",
+                            "nameEn": null,
+                            "credits": 3.0,
+                            "courseType": {
+                                "id": 1,
+                                "code": "1B",
+                                "nameZh": "通识必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 50.0,
+                            "weeks": 12,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": 2.0,
+                            "experimentUnit": "HOUR",
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 4.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 182,
+                            "code": "103",
+                            "nameZh": "材料科学与工程学院",
+                            "nameEn": "School of Materials Science and Engineering"
+                        },
+                        "terms": [
+                            "TERM_5"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 17988,
+                            "code": "0379813B",
+                            "nameZh": "电化学原理与测试技术",
+                            "nameEn": "Electrochemical Principles and Testing Technology",
+                            "credits": 3.0,
+                            "courseType": {
+                                "id": 2,
+                                "code": "2B",
+                                "nameZh": "学科基础和专业必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 48.0,
+                            "weeks": 8,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": 0.0,
+                            "experimentUnit": "HOUR",
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 6.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 182,
+                            "code": "103",
+                            "nameZh": "材料科学与工程学院",
+                            "nameEn": "School of Materials Science and Engineering"
+                        },
+                        "terms": [
+                            "TERM_5"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 17980,
+                            "code": "0379812B",
+                            "nameZh": "量子力学",
+                            "nameEn": null,
+                            "credits": 4.0,
+                            "courseType": {
+                                "id": 2,
+                                "code": "2B",
+                                "nameZh": "学科基础和专业必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 64.0,
+                            "weeks": 11,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 6.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 182,
+                            "code": "103",
+                            "nameZh": "材料科学与工程学院",
+                            "nameEn": "School of Materials Science and Engineering"
+                        },
+                        "terms": [
+                            "TERM_5"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 17176,
+                            "code": "0370330X",
+                            "nameZh": "无机材料合成与制备",
+                            "nameEn": "Synthesis and Preparation of Inorganic Materials",
+                            "credits": 2.0,
+                            "courseType": {
+                                "id": 5,
+                                "code": "0X",
+                                "nameZh": "各专业选修课",
+                                "nameEn": "gzyxxk"
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 32.0,
+                            "weeks": 8,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 4.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 182,
+                            "code": "103",
+                            "nameZh": "材料科学与工程学院",
+                            "nameEn": "School of Materials Science and Engineering"
+                        },
+                        "terms": [
+                            "TERM_6"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 17171,
+                            "code": "0370142B",
+                            "nameZh": "半导体物理与器件",
+                            "nameEn": "Semiconductor Physics and Devices",
+                            "credits": 3.0,
+                            "courseType": {
+                                "id": 5,
+                                "code": "0X",
+                                "nameZh": "各专业选修课",
+                                "nameEn": "gzyxxk"
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 48.0,
+                            "weeks": 12,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": 0.0,
+                            "experimentUnit": "HOUR",
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 4.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 182,
+                            "code": "103",
+                            "nameZh": "材料科学与工程学院",
+                            "nameEn": "School of Materials Science and Engineering"
+                        },
+                        "terms": [
+                            "TERM_6"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 17169,
+                            "code": "0370132B",
+                            "nameZh": "固体物理学",
+                            "nameEn": "Solid State Physics",
+                            "credits": 4.0,
+                            "courseType": {
+                                "id": 2,
+                                "code": "2B",
+                                "nameZh": "学科基础和专业必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 64.0,
+                            "weeks": 16,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": 0.0,
+                            "experimentUnit": "HOUR",
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 4.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 182,
+                            "code": "103",
+                            "nameZh": "材料科学与工程学院",
+                            "nameEn": "School of Materials Science and Engineering"
+                        },
+                        "terms": [
+                            "TERM_5"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 17167,
+                            "code": "0370113B",
+                            "nameZh": "新能源材料导论(双语)",
+                            "nameEn": "Introduction to new energy materials",
+                            "credits": 3.0,
+                            "courseType": {
+                                "id": 2,
+                                "code": "2B",
+                                "nameZh": "学科基础和专业必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 48.0,
+                            "weeks": 12,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 4.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 165,
+                            "code": "108",
+                            "nameZh": "物理学院",
+                            "nameEn": "School of Electronic Science and Applied Physics"
+                        },
+                        "terms": [
+                            "TERM_3"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18589,
+                            "code": "1009801B",
+                            "nameZh": "大学物理B（2）",
+                            "nameEn": "College Physics B(2)",
+                            "credits": 4.0,
+                            "courseType": {
+                                "id": 1,
+                                "code": "1B",
+                                "nameZh": "通识必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 66.0,
+                            "weeks": 16,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": 2.0,
+                            "experimentUnit": "HOUR",
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 4.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 176,
+                            "code": "106",
+                            "nameZh": "化学与化工学院",
+                            "nameEn": "School of Chemistry and Chemical Engineering"
+                        },
+                        "terms": [
+                            "TERM_2"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18237,
+                            "code": "0609762B",
+                            "nameZh": "分析化学",
+                            "nameEn": "analytical chemistry",
+                            "credits": 2.5,
+                            "courseType": {
+                                "id": 2,
+                                "code": "2B",
+                                "nameZh": "学科基础和专业必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 40.0,
+                            "weeks": 10,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 4.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 165,
+                            "code": "108",
+                            "nameZh": "物理学院",
+                            "nameEn": "School of Electronic Science and Applied Physics"
+                        },
+                        "terms": [
+                            "TERM_3"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 17579,
+                            "code": "0621452B",
+                            "nameZh": "物理化学B",
+                            "nameEn": "physical chemistry B",
+                            "credits": 4.0,
+                            "courseType": {
+                                "id": 2,
+                                "code": "2B",
+                                "nameZh": "学科基础和专业必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 64.0,
+                            "weeks": 14,
+                            "theory": 56.0,
+                            "theoryUnit": "HOUR",
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": 8.0,
+                            "experimentUnit": "HOUR",
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 4.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 182,
+                            "code": "103",
+                            "nameZh": "材料科学与工程学院",
+                            "nameEn": "School of Materials Science and Engineering"
+                        },
+                        "terms": [
+                            "TERM_4"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 17918,
+                            "code": "0309802B",
+                            "nameZh": "材料科学基础3",
+                            "nameEn": "Fundamentals of Materials Science 3",
+                            "credits": 5.0,
+                            "courseType": {
+                                "id": 2,
+                                "code": "2B",
+                                "nameZh": "学科基础和专业必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 80.0,
+                            "weeks": 12,
+                            "theory": 72.0,
+                            "theoryUnit": "HOUR",
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": 8.0,
+                            "experimentUnit": "HOUR",
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 6.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 176,
+                            "code": "106",
+                            "nameZh": "化学与化工学院",
+                            "nameEn": "School of Chemistry and Chemical Engineering"
+                        },
+                        "terms": [
+                            "TERM_1"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18246,
+                            "code": "0609672B",
+                            "nameZh": "无机化学A",
+                            "nameEn": "Inorganic Chemistry A",
+                            "credits": 5.0,
+                            "courseType": {
+                                "id": 2,
+                                "code": "2B",
+                                "nameZh": "学科基础和专业必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 80.0,
+                            "weeks": 15,
+                            "theory": 60.0,
+                            "theoryUnit": "HOUR",
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": 20.0,
+                            "experimentUnit": "HOUR",
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 4.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 182,
+                            "code": "103",
+                            "nameZh": "材料科学与工程学院",
+                            "nameEn": "School of Materials Science and Engineering"
+                        },
+                        "terms": [
+                            "TERM_1"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 17492,
+                            "code": "0300013B",
+                            "nameZh": "专业导论（新能源）",
+                            "nameEn": "Introduction to new energy materials and devices",
+                            "credits": 0.5,
+                            "courseType": {
+                                "id": 2,
+                                "code": "2B",
+                                "nameZh": "学科基础和专业必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 8.0,
+                            "weeks": 4,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 2.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 176,
+                            "code": "106",
+                            "nameZh": "化学与化工学院",
+                            "nameEn": "School of Chemistry and Chemical Engineering"
+                        },
+                        "terms": [
+                            "TERM_4"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18247,
+                            "code": "0609662B",
+                            "nameZh": "有机化学C",
+                            "nameEn": "Organic Chemistry C",
+                            "credits": 3.0,
+                            "courseType": {
+                                "id": 5,
+                                "code": "0X",
+                                "nameZh": "各专业选修课",
+                                "nameEn": "gzyxxk"
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 48.0,
+                            "weeks": 12,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 4.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 182,
+                            "code": "103",
+                            "nameZh": "材料科学与工程学院",
+                            "nameEn": "School of Materials Science and Engineering"
+                        },
+                        "terms": [
+                            "TERM_5"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 17935,
+                            "code": "0339802B",
+                            "nameZh": "材料分析测试方法",
+                            "nameEn": "Analysis and Testing Methods of Materials",
+                            "credits": 3.0,
+                            "courseType": {
+                                "id": 2,
+                                "code": "2B",
+                                "nameZh": "学科基础和专业必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 48.0,
+                            "weeks": 10,
+                            "theory": 40.0,
+                            "theoryUnit": "HOUR",
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": 8.0,
+                            "experimentUnit": "HOUR",
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 4.0
+                        },
+                        "marks": []
+                    }
+                ],
+                "children": []
+            },
+            {
+                "type": {
+                    "id": 3,
+                    "code": "04",
+                    "nameZh": "专业选修课程",
+                    "nameEn": "04"
+                },
+                "requireInfo": {
+                    "requiredSubModuleNum": 0,
+                    "requiredCredits": 22.0,
+                    "requiredCourseNum": 11
+                },
+                "reference": null,
+                "copy": null,
+                "index": 2,
+                "remark": null,
+                "culTypeIndex": 0,
+                "planCourses": [
+                    {
+                        "compulsory": false,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 182,
+                            "code": "103",
+                            "nameZh": "材料科学与工程学院",
+                            "nameEn": "School of Materials Science and Engineering"
+                        },
+                        "terms": [
+                            "TERM_7"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 19009,
+                            "code": "0370400X",
+                            "nameZh": "微电子材料与器件工艺",
+                            "nameEn": "Microelectronic Materials and Devices",
+                            "credits": 2.0,
+                            "courseType": {
+                                "id": 5,
+                                "code": "0X",
+                                "nameZh": "各专业选修课",
+                                "nameEn": "gzyxxk"
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 32.0,
+                            "weeks": 8,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 4.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": false,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 182,
+                            "code": "103",
+                            "nameZh": "材料科学与工程学院",
+                            "nameEn": "School of Materials Science and Engineering"
+                        },
+                        "terms": [
+                            "TERM_5"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 17177,
+                            "code": "0370360X",
+                            "nameZh": "真空与薄膜技术",
+                            "nameEn": "Vacuum and Membrance Technology",
+                            "credits": 2.0,
+                            "courseType": {
+                                "id": 5,
+                                "code": "0X",
+                                "nameZh": "各专业选修课",
+                                "nameEn": "gzyxxk"
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 32.0,
+                            "weeks": 8,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 4.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": false,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 182,
+                            "code": "103",
+                            "nameZh": "材料科学与工程学院",
+                            "nameEn": "School of Materials Science and Engineering"
+                        },
+                        "terms": [
+                            "TERM_6"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 17978,
+                            "code": "0379790X",
+                            "nameZh": "锂离子电池原理与工艺",
+                            "nameEn": "Principle and technique of lithium ion batteries",
+                            "credits": 2.0,
+                            "courseType": {
+                                "id": 5,
+                                "code": "0X",
+                                "nameZh": "各专业选修课",
+                                "nameEn": "gzyxxk"
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 32.0,
+                            "weeks": 8,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 4.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": false,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 182,
+                            "code": "103",
+                            "nameZh": "材料科学与工程学院",
+                            "nameEn": "School of Materials Science and Engineering"
+                        },
+                        "terms": [
+                            "TERM_7"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 1958,
+                            "code": "0310140X",
+                            "nameZh": "纳米材料学",
+                            "nameEn": "Nano-materials Science",
+                            "credits": 2.0,
+                            "courseType": {
+                                "id": 5,
+                                "code": "0X",
+                                "nameZh": "各专业选修课",
+                                "nameEn": "gzyxxk"
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 32.0,
+                            "weeks": 8,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 4.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": false,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 182,
+                            "code": "103",
+                            "nameZh": "材料科学与工程学院",
+                            "nameEn": "School of Materials Science and Engineering"
+                        },
+                        "terms": [
+                            "TERM_7"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 19008,
+                            "code": "0370220X",
+                            "nameZh": "物质结构",
+                            "nameEn": "Structure of Matter",
+                            "credits": 2.0,
+                            "courseType": {
+                                "id": 5,
+                                "code": "0X",
+                                "nameZh": "各专业选修课",
+                                "nameEn": "gzyxxk"
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 32.0,
+                            "weeks": 8,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 4.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": false,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 182,
+                            "code": "103",
+                            "nameZh": "材料科学与工程学院",
+                            "nameEn": "School of Materials Science and Engineering"
+                        },
+                        "terms": [
+                            "TERM_7"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 17172,
+                            "code": "0370180X",
+                            "nameZh": "超级电容器材料与技术",
+                            "nameEn": "Supercapacitors: Materials and Technologies ",
+                            "credits": 2.0,
+                            "courseType": {
+                                "id": 5,
+                                "code": "0X",
+                                "nameZh": "各专业选修课",
+                                "nameEn": "gzyxxk"
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 32.0,
+                            "weeks": 8,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 4.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": false,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 182,
+                            "code": "103",
+                            "nameZh": "材料科学与工程学院",
+                            "nameEn": "School of Materials Science and Engineering"
+                        },
+                        "terms": [
+                            "TERM_6"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 17178,
+                            "code": "0370370X",
+                            "nameZh": "材料物理性能",
+                            "nameEn": "Physical Properties of Materials",
+                            "credits": 2.0,
+                            "courseType": {
+                                "id": 5,
+                                "code": "0X",
+                                "nameZh": "各专业选修课",
+                                "nameEn": "gzyxxk"
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 32.0,
+                            "weeks": 8,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 4.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": false,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 182,
+                            "code": "103",
+                            "nameZh": "材料科学与工程学院",
+                            "nameEn": "School of Materials Science and Engineering"
+                        },
+                        "terms": [
+                            "TERM_7"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 17175,
+                            "code": "0370210X",
+                            "nameZh": "储能材料与技术",
+                            "nameEn": "Energy Storage Material and Technology",
+                            "credits": 2.0,
+                            "courseType": {
+                                "id": 5,
+                                "code": "0X",
+                                "nameZh": "各专业选修课",
+                                "nameEn": "gzyxxk"
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 32.0,
+                            "weeks": 8,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 4.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": false,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 182,
+                            "code": "103",
+                            "nameZh": "材料科学与工程学院",
+                            "nameEn": "School of Materials Science and Engineering"
+                        },
+                        "terms": [
+                            "TERM_6"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 17977,
+                            "code": "0379800X",
+                            "nameZh": "太阳能电池原理与工艺",
+                            "nameEn": "Principles and Technology of Solar Battery",
+                            "credits": 2.0,
+                            "courseType": {
+                                "id": 5,
+                                "code": "0X",
+                                "nameZh": "各专业选修课",
+                                "nameEn": "gzyxxk"
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 32.0,
+                            "weeks": 8,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 4.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": false,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 182,
+                            "code": "103",
+                            "nameZh": "材料科学与工程学院",
+                            "nameEn": "School of Materials Science and Engineering"
+                        },
+                        "terms": [
+                            "TERM_6"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 17976,
+                            "code": "0379810X",
+                            "nameZh": "燃料电池原理与技术",
+                            "nameEn": "Fuel Cells: Principles and Technologies",
+                            "credits": 2.0,
+                            "courseType": {
+                                "id": 5,
+                                "code": "0X",
+                                "nameZh": "各专业选修课",
+                                "nameEn": "gzyxxk"
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 32.0,
+                            "weeks": 8,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 4.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": false,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 182,
+                            "code": "103",
+                            "nameZh": "材料科学与工程学院",
+                            "nameEn": "School of Materials Science and Engineering"
+                        },
+                        "terms": [
+                            "TERM_7"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 17173,
+                            "code": "0370190X",
+                            "nameZh": "光电子发光材料与器件",
+                            "nameEn": "Optoelectronic Materials and Devices",
+                            "credits": 2.0,
+                            "courseType": {
+                                "id": 5,
+                                "code": "0X",
+                                "nameZh": "各专业选修课",
+                                "nameEn": "gzyxxk"
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 32.0,
+                            "weeks": 8,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 4.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": false,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 182,
+                            "code": "103",
+                            "nameZh": "材料科学与工程学院",
+                            "nameEn": "School of Materials Science and Engineering"
+                        },
+                        "terms": [
+                            "TERM_7"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 17174,
+                            "code": "0370200X",
+                            "nameZh": "磁性材料与节能技术",
+                            "nameEn": "Magnetic Materials and Energy-saving Technology",
+                            "credits": 2.0,
+                            "courseType": {
+                                "id": 5,
+                                "code": "0X",
+                                "nameZh": "各专业选修课",
+                                "nameEn": "gzyxxk"
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 32.0,
+                            "weeks": 8,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": 0.0,
+                            "experimentUnit": "HOUR",
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 4.0
+                        },
+                        "marks": []
+                    }
+                ],
+                "children": []
+            },
+            {
+                "type": {
+                    "id": 4,
+                    "code": "05",
+                    "nameZh": "实践环节",
+                    "nameEn": null
+                },
+                "requireInfo": {
+                    "requiredSubModuleNum": 0,
+                    "requiredCredits": 41.5,
+                    "requiredCourseNum": 26
+                },
+                "reference": null,
+                "copy": null,
+                "index": 3,
+                "remark": null,
+                "culTypeIndex": 0,
+                "planCourses": [
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 188,
+                            "code": "205",
+                            "nameZh": "党委学生工作部（处）",
+                            "nameEn": "57"
+                        },
+                        "terms": [
+                            "TERM_1"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18968,
+                            "code": "5709763B",
+                            "nameZh": "公益活动",
+                            "nameEn": null,
+                            "credits": 0.0,
+                            "courseType": {
+                                "id": 3,
+                                "code": "3B",
+                                "nameZh": "实践环节",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 24.0,
+                            "weeks": 1,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": 0.0,
+                            "experimentUnit": "HOUR",
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 24.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 182,
+                            "code": "103",
+                            "nameZh": "材料科学与工程学院",
+                            "nameEn": "School of Materials Science and Engineering"
+                        },
+                        "terms": [
+                            "TERM_8"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 2690,
+                            "code": "0350034B",
+                            "nameZh": "创新教育",
+                            "nameEn": "Innovative Education",
+                            "credits": 4.0,
+                            "courseType": {
+                                "id": 4,
+                                "code": "4B",
+                                "nameZh": "创新创业教育",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 96.0,
+                            "weeks": 4,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 24.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 188,
+                            "code": "205",
+                            "nameZh": "党委学生工作部（处）",
+                            "nameEn": "57"
+                        },
+                        "terms": [
+                            "TERM_6"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18963,
+                            "code": "5709813B",
+                            "nameZh": "公益活动",
+                            "nameEn": null,
+                            "credits": 0.0,
+                            "courseType": {
+                                "id": 3,
+                                "code": "3B",
+                                "nameZh": "实践环节",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 24.0,
+                            "weeks": 1,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": 0.0,
+                            "experimentUnit": "HOUR",
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 24.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 182,
+                            "code": "103",
+                            "nameZh": "材料科学与工程学院",
+                            "nameEn": "School of Materials Science and Engineering"
+                        },
+                        "terms": [
+                            "TERM_5"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 17166,
+                            "code": "0370104B",
+                            "nameZh": "电化学实验",
+                            "nameEn": "a",
+                            "credits": 1.0,
+                            "courseType": {
+                                "id": 3,
+                                "code": "3B",
+                                "nameZh": "实践环节",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 24.0,
+                            "weeks": 16,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": 24.0,
+                            "experimentUnit": "HOUR",
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 0.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 188,
+                            "code": "205",
+                            "nameZh": "党委学生工作部（处）",
+                            "nameEn": "57"
+                        },
+                        "terms": [
+                            "TERM_3"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18966,
+                            "code": "5709783B",
+                            "nameZh": "公益活动",
+                            "nameEn": null,
+                            "credits": 0.0,
+                            "courseType": {
+                                "id": 3,
+                                "code": "3B",
+                                "nameZh": "实践环节",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 24.0,
+                            "weeks": 1,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 24.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 188,
+                            "code": "205",
+                            "nameZh": "党委学生工作部（处）",
+                            "nameEn": "57"
+                        },
+                        "terms": [
+                            "TERM_4"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18965,
+                            "code": "5709793B",
+                            "nameZh": "公益活动",
+                            "nameEn": null,
+                            "credits": 0.0,
+                            "courseType": {
+                                "id": 3,
+                                "code": "3B",
+                                "nameZh": "实践环节",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 24.0,
+                            "weeks": 1,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 24.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 188,
+                            "code": "205",
+                            "nameZh": "党委学生工作部（处）",
+                            "nameEn": "57"
+                        },
+                        "terms": [
+                            "TERM_5"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18964,
+                            "code": "5709803B",
+                            "nameZh": "公益活动",
+                            "nameEn": null,
+                            "credits": 0.0,
+                            "courseType": {
+                                "id": 3,
+                                "code": "3B",
+                                "nameZh": "实践环节",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 24.0,
+                            "weeks": 1,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 24.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 184,
+                            "code": "30515",
+                            "nameZh": "本科生院工程素质教育中心",
+                            "nameEn": "30515"
+                        },
+                        "terms": [
+                            "TERM_2"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18959,
+                            "code": "5309773B",
+                            "nameZh": "工程训练C",
+                            "nameEn": "Engineering Training C",
+                            "credits": 2.0,
+                            "courseType": {
+                                "id": 3,
+                                "code": "3B",
+                                "nameZh": "实践环节",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 2.0,
+                            "weeks": 16,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": 0.0,
+                            "experimentUnit": "HOUR",
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 0.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 184,
+                            "code": "30515",
+                            "nameZh": "本科生院工程素质教育中心",
+                            "nameEn": "30515"
+                        },
+                        "terms": [
+                            "TERM_3"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18957,
+                            "code": "5309793B",
+                            "nameZh": "电子实习",
+                            "nameEn": "Electronic Practice",
+                            "credits": 1.0,
+                            "courseType": {
+                                "id": 3,
+                                "code": "3B",
+                                "nameZh": "实践环节",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 1.0,
+                            "weeks": 16,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": 0.0,
+                            "experimentUnit": "HOUR",
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 0.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 165,
+                            "code": "108",
+                            "nameZh": "物理学院",
+                            "nameEn": "School of Electronic Science and Applied Physics"
+                        },
+                        "terms": [
+                            "TERM_3"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18608,
+                            "code": "1009803B",
+                            "nameZh": "大学物理实验（上）",
+                            "nameEn": null,
+                            "credits": 1.0,
+                            "courseType": {
+                                "id": 3,
+                                "code": "3B",
+                                "nameZh": "实践环节",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 24.0,
+                            "weeks": 16,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": 0.0,
+                            "experimentUnit": "HOUR",
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 0.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 165,
+                            "code": "108",
+                            "nameZh": "物理学院",
+                            "nameEn": "School of Electronic Science and Applied Physics"
+                        },
+                        "terms": [
+                            "TERM_4"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18607,
+                            "code": "1009813B",
+                            "nameZh": "大学物理实验（下）",
+                            "nameEn": null,
+                            "credits": 1.0,
+                            "courseType": {
+                                "id": 3,
+                                "code": "3B",
+                                "nameZh": "实践环节",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 24.0,
+                            "weeks": 16,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": 24.0,
+                            "experimentUnit": "HOUR",
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 0.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 176,
+                            "code": "106",
+                            "nameZh": "化学与化工学院",
+                            "nameEn": "School of Chemistry and Chemical Engineering"
+                        },
+                        "terms": [
+                            "TERM_4"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18261,
+                            "code": "0609733B",
+                            "nameZh": "有机化学实验",
+                            "nameEn": "Organic chemistry experiment",
+                            "credits": 1.0,
+                            "courseType": {
+                                "id": 3,
+                                "code": "3B",
+                                "nameZh": "实践环节",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 24.0,
+                            "weeks": 16,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": 24.0,
+                            "experimentUnit": "HOUR",
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 0.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 176,
+                            "code": "106",
+                            "nameZh": "化学与化工学院",
+                            "nameEn": "School of Chemistry and Chemical Engineering"
+                        },
+                        "terms": [
+                            "TERM_2"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18260,
+                            "code": "0609743B",
+                            "nameZh": "分析化学实验",
+                            "nameEn": "Analytical chemistry experiment",
+                            "credits": 1.0,
+                            "courseType": {
+                                "id": 3,
+                                "code": "3B",
+                                "nameZh": "实践环节",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 24.0,
+                            "weeks": 16,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": 24.0,
+                            "experimentUnit": "HOUR",
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 0.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 182,
+                            "code": "103",
+                            "nameZh": "材料科学与工程学院",
+                            "nameEn": "School of Materials Science and Engineering"
+                        },
+                        "terms": [
+                            "TERM_6"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 17168,
+                            "code": "0370123B",
+                            "nameZh": "新能源综合实验（上）",
+                            "nameEn": "Comprehensive Experiment of New Energy (I)",
+                            "credits": 2.0,
+                            "courseType": {
+                                "id": 3,
+                                "code": "3B",
+                                "nameZh": "实践环节",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 48.0,
+                            "weeks": 2,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 24.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 182,
+                            "code": "103",
+                            "nameZh": "材料科学与工程学院",
+                            "nameEn": "School of Materials Science and Engineering"
+                        },
+                        "terms": [
+                            "TERM_7"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 2770,
+                            "code": "0370082B",
+                            "nameZh": "新能源材料综合实验",
+                            "nameEn": "Comprehensive Experiment of New Energy Materials",
+                            "credits": 2.0,
+                            "courseType": {
+                                "id": 2,
+                                "code": "2B",
+                                "nameZh": "学科基础和专业必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 48.0,
+                            "weeks": 2,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 24.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 188,
+                            "code": "205",
+                            "nameZh": "党委学生工作部（处）",
+                            "nameEn": "57"
+                        },
+                        "terms": [
+                            "TERM_1"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18953,
+                            "code": "5209813B",
+                            "nameZh": "军事训练",
+                            "nameEn": null,
+                            "credits": 2.0,
+                            "courseType": {
+                                "id": 3,
+                                "code": "3B",
+                                "nameZh": "实践环节",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 48.0,
+                            "weeks": 2,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 24.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 164,
+                            "code": "102",
+                            "nameZh": "电气与自动化工程学院",
+                            "nameEn": "School of Electric Engineering and Automation "
+                        },
+                        "terms": [
+                            "TERM_4"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18002,
+                            "code": "0409803B",
+                            "nameZh": "电子电路课程设计",
+                            "nameEn": "Project of Electronic Circuit",
+                            "credits": 2.0,
+                            "courseType": {
+                                "id": 3,
+                                "code": "3B",
+                                "nameZh": "实践环节",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 48.0,
+                            "weeks": 1,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": 24.0,
+                            "experimentUnit": "HOUR",
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 24.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 188,
+                            "code": "205",
+                            "nameZh": "党委学生工作部（处）",
+                            "nameEn": "57"
+                        },
+                        "terms": [
+                            "TERM_2"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18967,
+                            "code": "5709773B",
+                            "nameZh": "公益活动",
+                            "nameEn": null,
+                            "credits": 0.0,
+                            "courseType": {
+                                "id": 3,
+                                "code": "3B",
+                                "nameZh": "实践环节",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 24.0,
+                            "weeks": 1,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": 0.0,
+                            "experimentUnit": "HOUR",
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 24.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 188,
+                            "code": "205",
+                            "nameZh": "党委学生工作部（处）",
+                            "nameEn": "57"
+                        },
+                        "terms": [
+                            "TERM_8"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 16143,
+                            "code": "5700093B",
+                            "nameZh": "公益活动D（下）",
+                            "nameEn": "Volunteer Activity (Posterior Volume)",
+                            "credits": 0.0,
+                            "courseType": {
+                                "id": 3,
+                                "code": "3B",
+                                "nameZh": "实践环节",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 24.0,
+                            "weeks": 1,
+                            "theory": 0.0,
+                            "theoryUnit": "HOUR",
+                            "requireTheory": null,
+                            "practice": 24.0,
+                            "practiceUnit": "HOUR",
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 24.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 188,
+                            "code": "205",
+                            "nameZh": "党委学生工作部（处）",
+                            "nameEn": "57"
+                        },
+                        "terms": [
+                            "TERM_7"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 16142,
+                            "code": "5700083B",
+                            "nameZh": "公益活动D（上）",
+                            "nameEn": "Volunteer Activity (Anterior  Volume)",
+                            "credits": 0.0,
+                            "courseType": {
+                                "id": 3,
+                                "code": "3B",
+                                "nameZh": "实践环节",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 24.0,
+                            "weeks": 1,
+                            "theory": 0.0,
+                            "theoryUnit": "HOUR",
+                            "requireTheory": null,
+                            "practice": 24.0,
+                            "practiceUnit": "HOUR",
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 24.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 182,
+                            "code": "103",
+                            "nameZh": "材料科学与工程学院",
+                            "nameEn": "School of Materials Science and Engineering"
+                        },
+                        "terms": [
+                            "TERM_7"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 2764,
+                            "code": "0370052B",
+                            "nameZh": "生产实习",
+                            "nameEn": "Production Practice",
+                            "credits": 2.0,
+                            "courseType": {
+                                "id": 2,
+                                "code": "2B",
+                                "nameZh": "学科基础和专业必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 48.0,
+                            "weeks": 2,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 24.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 182,
+                            "code": "103",
+                            "nameZh": "材料科学与工程学院",
+                            "nameEn": "School of Materials Science and Engineering"
+                        },
+                        "terms": [
+                            "TERM_8"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 2772,
+                            "code": "0370092B",
+                            "nameZh": "毕业设计",
+                            "nameEn": "Graduation Design",
+                            "credits": 15.0,
+                            "courseType": {
+                                "id": 2,
+                                "code": "2B",
+                                "nameZh": "学科基础和专业必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 360.0,
+                            "weeks": 15,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 24.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 191,
+                            "code": "56",
+                            "nameZh": "学生就业指导中心",
+                            "nameEn": "56"
+                        },
+                        "terms": [
+                            "TERM_6"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18962,
+                            "code": "5700103B",
+                            "nameZh": "就业指导",
+                            "nameEn": "Directions on Hunting for a Job",
+                            "credits": 0.5,
+                            "courseType": {
+                                "id": 3,
+                                "code": "3B",
+                                "nameZh": "实践环节",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 16.0,
+                            "weeks": 4,
+                            "theory": 8.0,
+                            "theoryUnit": "HOUR",
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": 8.0,
+                            "experimentUnit": "HOUR",
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 2.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 182,
+                            "code": "103",
+                            "nameZh": "材料科学与工程学院",
+                            "nameEn": "School of Materials Science and Engineering"
+                        },
+                        "terms": [
+                            "TERM_8"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 2766,
+                            "code": "0370062B",
+                            "nameZh": "毕业实习",
+                            "nameEn": "Graduation Exercitation",
+                            "credits": 2.0,
+                            "courseType": {
+                                "id": 2,
+                                "code": "2B",
+                                "nameZh": "学科基础和专业必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 48.0,
+                            "weeks": 2,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 24.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 182,
+                            "code": "103",
+                            "nameZh": "材料科学与工程学院",
+                            "nameEn": "School of Materials Science and Engineering"
+                        },
+                        "terms": [
+                            "TERM_7"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 2768,
+                            "code": "0370072B",
+                            "nameZh": "专业课程设计",
+                            "nameEn": "Specialized Curriculum Design",
+                            "credits": 2.0,
+                            "courseType": {
+                                "id": 2,
+                                "code": "2B",
+                                "nameZh": "学科基础和专业必修课",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 48.0,
+                            "weeks": 2,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": null,
+                            "experimentUnit": null,
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 24.0
+                        },
+                        "marks": []
+                    },
+                    {
+                        "compulsory": true,
+                        "remark": null,
+                        "openDepartment": {
+                            "id": 188,
+                            "code": "205",
+                            "nameZh": "党委学生工作部（处）",
+                            "nameEn": "57"
+                        },
+                        "terms": [
+                            "TERM_1"
+                        ],
+                        "suggestTerms": [],
+                        "course": {
+                            "id": 18969,
+                            "code": "5709753B",
+                            "nameZh": "入学教育",
+                            "nameEn": null,
+                            "credits": 0.0,
+                            "courseType": {
+                                "id": 3,
+                                "code": "3B",
+                                "nameZh": "实践环节",
+                                "nameEn": null
+                            }
+                        },
+                        "indications": [],
+                        "periodInfo": {
+                            "total": 16.0,
+                            "weeks": 1,
+                            "theory": null,
+                            "theoryUnit": null,
+                            "requireTheory": null,
+                            "practice": null,
+                            "practiceUnit": null,
+                            "requirePractice": null,
+                            "test": null,
+                            "testUnit": null,
+                            "requireTest": null,
+                            "experiment": 0.0,
+                            "experimentUnit": "HOUR",
+                            "requireExperiment": null,
+                            "machine": null,
+                            "machineUnit": null,
+                            "requireMachine": null,
+                            "design": null,
+                            "designUnit": null,
+                            "requireDesign": null,
+                            "periodsPerWeek": 16.0
+                        },
+                        "marks": []
+                    }
+                ],
+                "children": []
+            },
+            {
+                "type": {
+                    "id": 97,
+                    "code": "X001",
+                    "nameZh": "通识教育选修课",
+                    "nameEn": "X001"
+                },
+                "requireInfo": {
+                    "requiredSubModuleNum": 0,
+                    "requiredCredits": 9.0,
+                    "requiredCourseNum": 5
+                },
+                "reference": null,
+                "copy": null,
+                "index": 4,
+                "remark": null,
+                "culTypeIndex": 0,
+                "planCourses": [],
+                "children": []
+            },
+            {
+                "type": {
+                    "id": 96,
+                    "code": "F01",
+                    "nameZh": "辅修",
+                    "nameEn": "F01"
+                },
+                "requireInfo": {
+                    "requiredSubModuleNum": 0,
+                    "requiredCredits": 6.0,
+                    "requiredCourseNum": 3
+                },
+                "reference": null,
+                "copy": null,
+                "index": 5,
+                "remark": null,
+                "culTypeIndex": 0,
+                "planCourses": [],
+                "children": []
+            }
+        ]
+    }
+}

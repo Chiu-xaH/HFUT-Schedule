@@ -4,8 +4,8 @@ import android.annotation.SuppressLint
 import android.util.Log
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
-import com.hfut.schedule.logic.beans.Community.ExamResponse
-import com.hfut.schedule.logic.beans.Community.examArrangementList
+import com.hfut.schedule.logic.beans.community.ExamResponse
+import com.hfut.schedule.logic.beans.community.examArrangementList
 import com.hfut.schedule.logic.utils.DateTimeManager
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs

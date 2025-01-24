@@ -22,6 +22,7 @@ import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.ScrollText
+import com.hfut.schedule.ui.utils.components.num
 
 
 @SuppressLint("SuspiciousIndentation")
@@ -46,13 +47,13 @@ fun VersionInfoCard() {
             ListItem(headlineContent = { Text(text = "聚在工大 " + APPVersion.getVersionName(), fontSize = 28.sp) })
             Row {
                 ListItem(
-                    overlineContent = { Text(text = "2025-01-13") },
+                    overlineContent = { Text(text = "2025-01-24") },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.sdk), contentDescription = "") },
                     headlineContent = { ScrollText(text = "第${APPVersion.getVersionCode()}次更新") },
                     modifier = Modifier.weight(.5f)
                 )
                 ListItem(
-                    headlineContent = { ScrollText(text = "Chiu-xaH") },
+                    headlineContent = { ScrollText(text = "Chiu-xaH\nlinsui") },
                     overlineContent = { Text(text = "构建") },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.support), contentDescription = "") },
                     modifier = Modifier.weight(.5f).clickable {
@@ -69,9 +70,11 @@ fun VersionInfoCard() {
 fun VersionInfo() {
     VersionInfoCard()
     DividerTextExpandedWith(text = "新特性") {
-        UpdateItems("优化 选课界面加载完成的衔接细节",null, UpdateType.OPTIMIZE)
-        UpdateItems("优化 选课界面的显示",null, UpdateType.OPTIMIZE)
-        UpdateItems("优化 部分界面的显示",null, UpdateType.OPTIMIZE)
+        UpdateItems("新增 宣城校区-通知公告",null, UpdateType.ADD)
+        UpdateItems("新增 全校培养方案查询","位于 查询中心-培养方案，目前通过爬虫仅收录宣城校区187个方案，合肥校区需要账号，在APP内已提供引导接入指南", UpdateType.ADD)
+        UpdateItems("修复 一卡通统计的多翻页Bug", null, UpdateType.FIX)
+        UpdateItems("优化 相机权限的申请", null, UpdateType.OPTIMIZE)
+        UpdateItems("优化 部分界面的显示", null, UpdateType.OPTIMIZE)
     }
 }
 

@@ -55,9 +55,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Observer
 import com.google.gson.Gson
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.beans.Community.LoginCommunityResponse
+import com.hfut.schedule.logic.beans.community.LoginCommunityResponse
 import com.hfut.schedule.viewmodel.NetWorkViewModel
-import com.hfut.schedule.logic.beans.Jxglstu.TransferData
+import com.hfut.schedule.logic.beans.jxglstu.TransferData
 import com.hfut.schedule.logic.utils.ClipBoard
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs

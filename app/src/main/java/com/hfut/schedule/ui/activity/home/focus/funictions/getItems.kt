@@ -8,7 +8,7 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.dao.dataBase
-import com.hfut.schedule.logic.beans.Focus.AddFocus
+import com.hfut.schedule.logic.beans.focus.AddFocus
 import com.hfut.schedule.logic.beans.MyAPIResponse
 import com.hfut.schedule.logic.beans.Schedule
 import com.hfut.schedule.logic.beans.zjgd.BalanceResponse

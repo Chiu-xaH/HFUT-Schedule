@@ -4,6 +4,7 @@ import android.preference.PreferenceManager
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.logic.network.NetWork
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.network.api.LoginService
 import com.hfut.schedule.logic.network.servicecreator.Login.GetAESKeyServiceCreator
@@ -33,7 +34,6 @@ class LoginViewModel : ViewModel() {
     private val GetCookie = GetCookieServiceCreator.create(LoginService::class.java)
     private val GetAESKey = GetAESKeyServiceCreator.create(LoginService::class.java)
     private val MyAPI = MyServiceCreator.create(MyService::class.java)
-
 
     var TICKET = MutableLiveData<String?>()
     fun login(username : String,password : String,keys : String,webVpn : Boolean)  {
@@ -190,18 +190,10 @@ class LoginViewModel : ViewModel() {
 
     fun My() {
         val call = MyAPI.my()
-
-        PreferenceManager.getDefaultSharedPreferences(MyApplication.context).edit().putString("semesterId","234")
-
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 saveString("my", response.body()?.string())
-               // val semesterId = Gson().fromJson(response.body()?.string(), data4::class.java).semesterId
-               // if(semesterId != null)
-               // PreferenceManager.getDefaultSharedPreferences(MyApplication.context).edit().putString("semesterId",semesterId)
-               // else  PreferenceManager.getDefaultSharedPreferences(MyApplication.context).edit().putString("semesterId","234")
             }
-
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }

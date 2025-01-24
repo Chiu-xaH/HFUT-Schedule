@@ -47,11 +47,11 @@ import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
-import com.hfut.schedule.logic.beans.Community.ApplyFriendResponse
-import com.hfut.schedule.logic.beans.Community.ApplyingLists
-import com.hfut.schedule.logic.beans.Community.ApplyingResponse
-import com.hfut.schedule.logic.beans.Community.FriendsList
-import com.hfut.schedule.logic.beans.Community.FriendsResopnse
+import com.hfut.schedule.logic.beans.community.ApplyFriendResponse
+import com.hfut.schedule.logic.beans.community.ApplyingLists
+import com.hfut.schedule.logic.beans.community.ApplyingResponse
+import com.hfut.schedule.logic.beans.community.FriendsList
+import com.hfut.schedule.logic.beans.community.FriendsResopnse
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.utils.components.BottomTip

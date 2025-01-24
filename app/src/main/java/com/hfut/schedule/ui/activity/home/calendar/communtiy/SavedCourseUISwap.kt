@@ -70,7 +70,7 @@ import androidx.compose.ui.unit.sp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
-import com.hfut.schedule.logic.beans.Community.courseDetailDTOList
+import com.hfut.schedule.logic.beans.community.courseDetailDTOList
 import com.hfut.schedule.logic.utils.DateTimeManager
 import com.hfut.schedule.logic.utils.DateTimeManager.Benweeks
 import com.hfut.schedule.logic.utils.Semseter.getSemseter

@@ -3,8 +3,8 @@ package com.hfut.schedule.ui.activity.home.search.functions.selectCourse
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.viewmodel.NetWorkViewModel
-import com.hfut.schedule.logic.beans.Jxglstu.SelectCourse
-import com.hfut.schedule.logic.beans.Jxglstu.SelectCourseInfo
+import com.hfut.schedule.logic.beans.jxglstu.SelectCourse
+import com.hfut.schedule.logic.beans.jxglstu.SelectCourseInfo
 
 fun getSelectCourseList(vm : NetWorkViewModel) : List<SelectCourse> {
     val json = vm.selectCourseData.value

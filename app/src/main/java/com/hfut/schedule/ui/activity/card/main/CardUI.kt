@@ -92,7 +92,7 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
     var loading by remember { mutableStateOf(true) }
     var bottomBarItems by remember { mutableStateOf(CardBarItems.BILLS) }
 
-    val pagerState = rememberPagerState(pageCount = { 4 })
+    val pagerState = rememberPagerState(pageCount = { 3 })
     val titles = listOf("日","月","学期")
 
 

@@ -6,11 +6,12 @@ import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface XuanChengService {
     //宣区通知公告
-    @GET("1955/list.htm")
-    fun getNotications() : Call<ResponseBody>
+    @GET("1955/list{page}.htm")
+    fun getNotications(@Path("page") page : String = "") : Call<ResponseBody>
 
     //检索通知公告
     @FormUrlEncoded

@@ -2,9 +2,9 @@ package com.hfut.schedule.ui.activity.grade
 
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
-import com.hfut.schedule.logic.beans.Community.GradeResponse
-import com.hfut.schedule.logic.beans.Community.GradeResponseJXGLSTU
-import com.hfut.schedule.logic.beans.Community.scoreInfoDTOList
+import com.hfut.schedule.logic.beans.community.GradeResponse
+import com.hfut.schedule.logic.beans.community.GradeResponseJXGLSTU
+import com.hfut.schedule.logic.beans.community.scoreInfoDTOList
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import org.jsoup.Jsoup

@@ -90,7 +90,7 @@ fun NewsItem(vm : NetWorkViewModel, innerPadding : PaddingValues? = null) {
                             overlineContent = { getNews(vm)[item].date?.let { Text(text = it) } },
                             headlineContent = { getNews(vm)[item].title?.let { Text(it) } },
                             leadingContent = { Text(text = (item + 1).toString()) },
-                            trailingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "") },
+//                            trailingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "") },
                             modifier = Modifier.clickable {
                                 val link = getNews(vm)[item].link
                                 if (link != null) {
@@ -105,9 +105,7 @@ fun NewsItem(vm : NetWorkViewModel, innerPadding : PaddingValues? = null) {
             }
         }
         item { if (innerPadding != null) Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding())) }
-        item {
-            Spacer(modifier = Modifier.height(85.dp))
-        }
+        item { Spacer(modifier = Modifier.height(85.dp)) }
     }
 }
 

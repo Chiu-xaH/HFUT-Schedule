@@ -74,7 +74,7 @@ fun PersonPart() {
                 
                 ListItem(
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.person), contentDescription = "")},
-                    headlineContent = { getPersonInfo().name?.let { Text(text = it) } },
+                    headlineContent = { Text(text = getPersonInfo().name ?: "游客")  },
                     trailingContent = {
                         if(startDate != null && endDate != null && startDate != "" && endDate != "") {
                             Text(text = "已陪伴 ${ReservDecimal.reservDecimal(DateTimeManager.getPercent(startDate,endDate),1)}%")
@@ -105,45 +105,49 @@ fun PersonPart() {
                     exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
                 ) {
                     Column {
-                        Row {
-                            ListItem(
-                                overlineContent = { Text(text = "学号") },
-                                headlineContent = { getPersonInfo().username?.let { ScrollText(text = it) } },
-                                leadingContent = {
-                                    Icon(
-                                        painterResource(R.drawable.tag),
-                                        contentDescription = "Localized description",
-                                    )
-                                },
-                                modifier = Modifier.weight(0.5f),
-                                colors = ListItemDefaults.colors(containerColor = Color.Transparent)
-                            )
+                        getPersonInfo().username?.let{
+                            Row {
+                                ListItem(
+                                    overlineContent = { Text(text = "学号") },
+                                    headlineContent = {  ScrollText(text = it)  },
+                                    leadingContent = {
+                                        Icon(
+                                            painterResource(R.drawable.tag),
+                                            contentDescription = "Localized description",
+                                        )
+                                    },
+                                    modifier = Modifier.weight(0.5f),
+                                    colors = ListItemDefaults.colors(containerColor = Color.Transparent)
+                                )
+                            }
                         }
-                        Row {
-                            ListItem(
-                                overlineContent = { getPersonInfo().school?.let { Text(text = it) } },
-                                leadingContent = {
-                                    getPersonInfo().department?.let { DepartmentIcons(name = it) }
-                                },
-                                headlineContent = { getPersonInfo().department?.let { ScrollText(text = it) } },
-                                modifier = Modifier.weight(0.5f),
-                                colors = ListItemDefaults.colors(containerColor = Color.Transparent)
-                            )
+                        getPersonInfo().department?.let {
+                            Row {
+                                ListItem(
+                                    overlineContent = { getPersonInfo().school?.let { Text(text = it) } },
+                                    leadingContent = { DepartmentIcons(name = it) },
+                                    headlineContent = {  ScrollText(text = it)  },
+                                    modifier = Modifier.weight(0.5f),
+                                    colors = ListItemDefaults.colors(containerColor = Color.Transparent)
+                                )
+                            }
                         }
-                        Row {
-                            ListItem(
-                                overlineContent = { getPersonInfo().classes?.let { Text(text = it) } },
-                                leadingContent = {
-                                    Icon(
-                                        painterResource(R.drawable.square_foot),
-                                        contentDescription = "Localized description",
-                                    )
-                                },
-                                headlineContent = { getPersonInfo().major?.let { ScrollText(text = it) } }
-                                ,
-                                modifier = Modifier.weight(1f),
-                                colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                            )
+                        getPersonInfo().classes?.let {
+                            Row {
+                                ListItem(
+                                    overlineContent = {  Text(text = it)  },
+                                    leadingContent = {
+                                        Icon(
+                                            painterResource(R.drawable.square_foot),
+                                            contentDescription = "Localized description",
+                                        )
+                                    },
+                                    headlineContent = { getPersonInfo().major?.let { ScrollText(text = it) } }
+                                    ,
+                                    modifier = Modifier.weight(1f),
+                                    colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                                )
+                            }
                         }
                     }
                 }

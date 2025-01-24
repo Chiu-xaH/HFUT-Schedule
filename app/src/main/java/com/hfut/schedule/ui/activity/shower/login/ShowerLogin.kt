@@ -51,9 +51,9 @@ import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.GuaGuaViewModel
-import com.hfut.schedule.logic.beans.guaGua.GuaGuaLogin
-import com.hfut.schedule.logic.beans.guaGua.GuaGuaLoginResponse
-import com.hfut.schedule.logic.beans.guaGua.GuaguaLoginMsg
+import com.hfut.schedule.logic.beans.guagua.GuaGuaLogin
+import com.hfut.schedule.logic.beans.guagua.GuaGuaLoginResponse
+import com.hfut.schedule.logic.beans.guagua.GuaguaLoginMsg
 import com.hfut.schedule.logic.utils.Encrypt
 import com.hfut.schedule.logic.utils.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.SharePrefs.prefs

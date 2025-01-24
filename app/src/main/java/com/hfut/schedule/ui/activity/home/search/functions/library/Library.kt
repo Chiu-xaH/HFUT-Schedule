@@ -49,8 +49,8 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.enums.LibraryItems
-import com.hfut.schedule.logic.beans.Community.LibRecord
-import com.hfut.schedule.logic.beans.Community.LibraryResponse
+import com.hfut.schedule.logic.beans.community.LibRecord
+import com.hfut.schedule.logic.beans.community.LibraryResponse
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter

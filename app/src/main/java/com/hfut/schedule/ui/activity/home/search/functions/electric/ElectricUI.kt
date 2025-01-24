@@ -28,6 +28,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.AssistChip
@@ -90,18 +92,15 @@ import org.json.JSONObject
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-fun EleUIs() {
-
-}
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EleUI(vm : NetWorkViewModel) {
-    val SavedBuildNumber = SharePrefs.prefs.getString("BuildNumber", "0")
+    val SavedBuildNumber = prefs.getString("BuildNumber", "0")
     var BuildingsNumber by remember { mutableStateOf(SavedBuildNumber ?: "0") }
-    val SavedRoomNumber = SharePrefs.prefs.getString("RoomNumber", "")
+    val SavedRoomNumber = prefs.getString("RoomNumber", "")
     var RoomNumber by remember { mutableStateOf(SavedRoomNumber ?: "") }
-    val SavedEndNumber = SharePrefs.prefs.getString("EndNumber", "")
+    val SavedEndNumber = prefs.getString("EndNumber", "")
     var EndNumber by remember { mutableStateOf(SavedEndNumber ?: "") }
 
     var region by remember { mutableStateOf("选择南北") }
@@ -132,7 +131,6 @@ fun EleUI(vm : NetWorkViewModel) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
             sheetState = sheetState,
-            //shape = sheetState
         ) {
                 Column(
 
@@ -160,155 +158,146 @@ fun EleUI(vm : NetWorkViewModel) {
         "22" -> region = "北边空调"
         else -> region = "选择南北"
     }
-    val auth = SharePrefs.prefs.getString("auth","")
+    val auth = prefs.getString("auth","")
     //var roomInfo  = "${BuildingsNumber}号楼${RoomNumber}寝室${region}"
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = Color.Transparent,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                title = { Text("寝室电费-宣城校区") },
-                actions = {
-                    Row(modifier = Modifier.padding(horizontal = 15.dp)) {
-                        if(showitem4)
-                            IconButton(onClick = {RoomNumber = RoomNumber.replaceFirst(".$".toRegex(), "")}) {
-                                Icon(painter = painterResource(R.drawable.backspace), contentDescription = "description") }
-                        FilledTonalIconButton(onClick = {
-                            show = false
-                            CoroutineScope(Job()).launch {
-                                async {
-                                    showitem4 = false
-                                    Handler(Looper.getMainLooper()).post{
-                                        vm.ElectricData.value = "{}"
-                                    }
-                                    SharePrefs.saveString("BuildNumber", BuildingsNumber)
-                                    SharePrefs.saveString("EndNumber", EndNumber)
-                                    SharePrefs.saveString("RoomNumber", RoomNumber)
-                                    SharePrefs.saveString("RoomText","${BuildingsNumber}号楼${RoomNumber}寝室${region}" )
-                                }.await()
-                                async { vm.getFee("bearer $auth", FeeType.ELECTRIC, room = input) }.await()
-                               // async { vm.searchEle(jsons) }.await()
-                                async {
-                                    Handler(Looper.getMainLooper()).post{
-                                        vm.ElectricData.observeForever { result ->
-                                            if (result?.contains("success") == true) {
-                                                showButton = true
-                                                val jsons = Gson().fromJson(result, FeeResponse::class.java).map
-                                                val data = jsons.showData
-                                                for ((_, value) in data) {
-                                                    Result = value
-                                                }
+    Column() {
 
-                                                val jsonObject = JSONObject(result)
-                                                val dataObject = jsonObject.getJSONObject("map").getJSONObject("data")
-                                                dataObject.put("myCustomInfo", "房间：$input")
-                                                json = dataObject.toString()
-                                                show = false
+        TopAppBar(
+            colors = TopAppBarDefaults.mediumTopAppBarColors(
+                containerColor = Color.Transparent,
+                titleContentColor = MaterialTheme.colorScheme.primary,
+            ),
+            title = { Text("寝室电费-宣城校区") },
+            actions = {
+                Row(modifier = Modifier.padding(horizontal = 15.dp)) {
+                    if(showitem4)
+                        IconButton(onClick = {RoomNumber = RoomNumber.replaceFirst(".$".toRegex(), "")}) {
+                            Icon(painter = painterResource(R.drawable.backspace), contentDescription = "description") }
+                    FilledTonalIconButton(onClick = {
+                        show = false
+                        CoroutineScope(Job()).launch {
+                            async {
+                                showitem4 = false
+                                Handler(Looper.getMainLooper()).post{
+                                    vm.ElectricData.value = "{}"
+                                }
+                                SharePrefs.saveString("BuildNumber", BuildingsNumber)
+                                SharePrefs.saveString("EndNumber", EndNumber)
+                                SharePrefs.saveString("RoomNumber", RoomNumber)
+                                SharePrefs.saveString("RoomText","${BuildingsNumber}号楼${RoomNumber}寝室${region}" )
+                            }.await()
+                            async { vm.getFee("bearer $auth", FeeType.ELECTRIC, room = input) }.await()
+                            // async { vm.searchEle(jsons) }.await()
+                            async {
+                                Handler(Looper.getMainLooper()).post{
+                                    vm.ElectricData.observeForever { result ->
+                                        if (result?.contains("success") == true) {
+                                            showButton = true
+                                            val jsons = Gson().fromJson(result, FeeResponse::class.java).map
+                                            val data = jsons.showData
+                                            for ((_, value) in data) {
+                                                Result = value
                                             }
+
+                                            val jsonObject = JSONObject(result)
+                                            val dataObject = jsonObject.getJSONObject("map").getJSONObject("data")
+                                            dataObject.put("myCustomInfo", "房间：$input")
+                                            json = dataObject.toString()
+                                            show = false
                                         }
                                     }
                                 }
                             }
-                        }) { Icon(painter = painterResource(R.drawable.search), contentDescription = "description") }
-                    }
+                        }
+                    }) { Icon(painter = painterResource(R.drawable.search), contentDescription = "description") }
                 }
-            )
-        },
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-        ) {
-
-
-            DropdownMenu(expanded = showitem, onDismissRequest = { showitem = false }, offset = DpOffset(103.dp,0.dp)) {
-                DropdownMenuItem(text = { Text(text = "北一号楼") }, onClick = { BuildingsNumber =  "1"
-                    showitem = false})
-                DropdownMenuItem(text = { Text(text = "北二号楼") }, onClick = {  BuildingsNumber =  "2"
-                    showitem = false})
-                DropdownMenuItem(text = { Text(text = "北三号楼") }, onClick = {  BuildingsNumber =  "3"
-                    showitem = false})
-                DropdownMenuItem(text = { Text(text = "北四号楼") }, onClick = {  BuildingsNumber =  "4"
-                    showitem = false})
-                DropdownMenuItem(text = { Text(text = "北五号楼") }, onClick = {  BuildingsNumber =  "5"
-                    showitem = false})
-                DropdownMenuItem(text = { Text(text = "南六号楼") }, onClick = {  BuildingsNumber =  "6"
-                    showitem = false})
-                DropdownMenuItem(text = { Text(text = "南七号楼") }, onClick = {  BuildingsNumber =  "7"
-                    showitem = false})
-                DropdownMenuItem(text = { Text(text = "南八号楼") }, onClick = {  BuildingsNumber =  "8"
-                    showitem = false})
-                DropdownMenuItem(text = { Text(text = "南九号楼") }, onClick = {  BuildingsNumber =  "9"
-                    showitem = false})
-                DropdownMenuItem(text = { Text(text = "南十号楼") }, onClick = {  BuildingsNumber = "10"
-                    showitem = false})
             }
-            DropdownMenu(expanded = showitem2, onDismissRequest = { showitem2 = false }, offset = DpOffset(210.dp,0.dp)) {
-                DropdownMenuItem(text = { Text(text = "南边照明") }, onClick = { EndNumber = "11"
-                    showitem2 = false})
-                DropdownMenuItem(text = { Text(text = "南边空调") }, onClick = { EndNumber = "12"
-                    showitem2 = false})
-                DropdownMenuItem(text = { Text(text = "北边照明") }, onClick = { EndNumber = "21"
-                    showitem2 = false})
-                DropdownMenuItem(text = { Text(text = "北边空调") }, onClick = { EndNumber = "22"
-                    showitem2 = false})
-            }
-            DropdownMenu(expanded = showitem3, onDismissRequest = { showitem3 = false }) {
-                DropdownMenuItem(text = { Text(text = "南边") }, onClick = { EndNumber = "11"
-                    showitem3 = false })
-                DropdownMenuItem(text = { Text(text = "北边") }, onClick = { EndNumber = "21"
-                    showitem3 = false })
-            }
+        )
+
+        DropdownMenu(expanded = showitem, onDismissRequest = { showitem = false }, offset = DpOffset(103.dp,0.dp)) {
+            DropdownMenuItem(text = { Text(text = "北一号楼") }, onClick = { BuildingsNumber =  "1"
+                showitem = false})
+            DropdownMenuItem(text = { Text(text = "北二号楼") }, onClick = {  BuildingsNumber =  "2"
+                showitem = false})
+            DropdownMenuItem(text = { Text(text = "北三号楼") }, onClick = {  BuildingsNumber =  "3"
+                showitem = false})
+            DropdownMenuItem(text = { Text(text = "北四号楼") }, onClick = {  BuildingsNumber =  "4"
+                showitem = false})
+            DropdownMenuItem(text = { Text(text = "北五号楼") }, onClick = {  BuildingsNumber =  "5"
+                showitem = false})
+            DropdownMenuItem(text = { Text(text = "南六号楼") }, onClick = {  BuildingsNumber =  "6"
+                showitem = false})
+            DropdownMenuItem(text = { Text(text = "南七号楼") }, onClick = {  BuildingsNumber =  "7"
+                showitem = false})
+            DropdownMenuItem(text = { Text(text = "南八号楼") }, onClick = {  BuildingsNumber =  "8"
+                showitem = false})
+            DropdownMenuItem(text = { Text(text = "南九号楼") }, onClick = {  BuildingsNumber =  "9"
+                showitem = false})
+            DropdownMenuItem(text = { Text(text = "南十号楼") }, onClick = {  BuildingsNumber = "10"
+                showitem = false})
+        }
+        DropdownMenu(expanded = showitem2, onDismissRequest = { showitem2 = false }, offset = DpOffset(210.dp,0.dp)) {
+            DropdownMenuItem(text = { Text(text = "南边照明") }, onClick = { EndNumber = "11"
+                showitem2 = false})
+            DropdownMenuItem(text = { Text(text = "南边空调") }, onClick = { EndNumber = "12"
+                showitem2 = false})
+            DropdownMenuItem(text = { Text(text = "北边照明") }, onClick = { EndNumber = "21"
+                showitem2 = false})
+            DropdownMenuItem(text = { Text(text = "北边空调") }, onClick = { EndNumber = "22"
+                showitem2 = false})
+        }
+        DropdownMenu(expanded = showitem3, onDismissRequest = { showitem3 = false }) {
+            DropdownMenuItem(text = { Text(text = "南边") }, onClick = { EndNumber = "11"
+                showitem3 = false })
+            DropdownMenuItem(text = { Text(text = "北边") }, onClick = { EndNumber = "21"
+                showitem3 = false })
+        }
 
 
-            if (BuildingsNumber == "0") BuildingsNumber = ""
+        if (BuildingsNumber == "0") BuildingsNumber = ""
 
-            val url = MyApplication.ZJGDBillURL + "charge-app/?name=pays&appsourse=ydfwpt&id=261&name=pays&paymentUrl=http://121.251.19.62/plat&token=" + auth
-            val switch_startUri = SharePrefs.prefs.getBoolean("SWITCHSTARTURI",true)
-            if (showDialog) {
-                if(switch_startUri) {
-                    androidx.compose.ui.window.Dialog(
-                        onDismissRequest = { showDialog = false },
-                        properties = DialogProperties(usePlatformDefaultWidth = false)
-                    ) {
-                        Scaffold(
-                            modifier = Modifier.fillMaxSize(),
-                            topBar = {
-                                TopAppBar(
-                                    colors = TopAppBarDefaults.mediumTopAppBarColors(
-                                        containerColor = FWDTColr,
-                                        titleContentColor = Color.White,
-                                    ),
-                                    actions = {
-                                        Row{
-                                            IconButton(onClick = { Starter.startWebUrl( url) }) { Icon(painterResource(id = R.drawable.net), contentDescription = "", tint = Color.White) }
-                                            IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "", tint = Color.White) }
-                                        }
+        val url = MyApplication.ZJGDBillURL + "charge-app/?name=pays&appsourse=ydfwpt&id=261&name=pays&paymentUrl=http://121.251.19.62/plat&token=" + auth
+        val switch_startUri = SharePrefs.prefs.getBoolean("SWITCHSTARTURI",true)
+        if (showDialog) {
+            if(switch_startUri) {
+                androidx.compose.ui.window.Dialog(
+                    onDismissRequest = { showDialog = false },
+                    properties = DialogProperties(usePlatformDefaultWidth = false)
+                ) {
+                    Scaffold(
+                        modifier = Modifier.fillMaxSize(),
+                        topBar = {
+                            TopAppBar(
+                                colors = TopAppBarDefaults.mediumTopAppBarColors(
+                                    containerColor = FWDTColr,
+                                    titleContentColor = Color.White,
+                                ),
+                                actions = {
+                                    Row{
+                                        IconButton(onClick = { Starter.startWebUrl( url) }) { Icon(painterResource(id = R.drawable.net), contentDescription = "", tint = Color.White) }
+                                        IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "", tint = Color.White) }
+                                    }
 
-                                    },
-                                    title = { Text("宣城校区 电费缴纳") }
-                                )
-                            },
-                        ) { innerPadding ->
-                            Column(
-                                modifier = Modifier
-                                    .padding(innerPadding)
-                                    .fillMaxSize()
-                            ) {
-                                WebViewScreen(url)
-                            }
+                                },
+                                title = { Text("宣城校区 电费缴纳") }
+                            )
+                        },
+                    ) { innerPadding ->
+                        Column(
+                            modifier = Modifier
+                                .padding(innerPadding)
+                                .fillMaxSize()
+                        ) {
+                            WebViewScreen(url)
                         }
                     }
-                } else {
-                    Starter.startWebUrl(url)
                 }
+            } else {
+                Starter.startWebUrl(url)
             }
-            var showDialog2 by remember { mutableStateOf(false) }
-            if(showDialog2)
+        }
+        var showDialog2 by remember { mutableStateOf(false) }
+        if(showDialog2)
             Dialog(onDismissRequest = { showDialog2 = false }) {
                 Column {
                     Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
@@ -361,8 +350,8 @@ fun EleUI(vm : NetWorkViewModel) {
                             onClick = {
                                 showDialog2 = false
                                 if(payNumber != "" && payNumber != "0" && payNumber != "00" && payNumber != "000")
-                                showBottomSheet = true
-                                      },
+                                    showBottomSheet = true
+                            },
                             modifier = Modifier.padding(horizontal = 5.dp)
                         ) {
                             Icon(Icons.Filled.Check, contentDescription = "description")
@@ -370,162 +359,156 @@ fun EleUI(vm : NetWorkViewModel) {
                     }
                 }
             }
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 15.dp, vertical = 0.dp), horizontalArrangement = Arrangement.Start) {
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 15.dp, vertical = 0.dp), horizontalArrangement = Arrangement.Start) {
 
-                AssistChip(
-                    onClick = { showitem = true },
-                    label = { Text(text = "楼栋 $BuildingsNumber") }
-                )
+            AssistChip(
+                onClick = { showitem = true },
+                label = { Text(text = "楼栋 $BuildingsNumber") }
+            )
 
-                Spacer(modifier = Modifier.width(10.dp))
+            Spacer(modifier = Modifier.width(10.dp))
 
-                AssistChip(
-                    onClick = {
-                        when {
-                            BuildingsNumber.toInt() > 5 -> showitem2 = true
-                            BuildingsNumber.toInt() in 1..4 -> showitem3 = true
-                            else -> Toast.makeText(MyApplication.context,"请选择楼栋", Toast.LENGTH_SHORT).show()
-                        }
-                    },
-                    label = { Text(text = region) },
-                    //    leadingIcon = { Icon(painter = painterResource(R.drawable.calendar), contentDescription = "description") }
-                )
+            AssistChip(
+                onClick = {
+                    when {
+                        BuildingsNumber.toInt() > 5 -> showitem2 = true
+                        BuildingsNumber.toInt() in 1..4 -> showitem3 = true
+                        else -> Toast.makeText(MyApplication.context,"请选择楼栋", Toast.LENGTH_SHORT).show()
+                    }
+                },
+                label = { Text(text = region) },
+                //    leadingIcon = { Icon(painter = painterResource(R.drawable.calendar), contentDescription = "description") }
+            )
 
-                Spacer(modifier = Modifier.width(10.dp))
-                AssistChip(
-                    onClick = { showitem4 = !showitem4 },
-                    label = { Text(text = "寝室 ${RoomNumber}") },
-                    //leadingIcon = { Icon(painter = painterResource(R.drawable.add), contentDescription = "description") }
-                )
-            }
+            Spacer(modifier = Modifier.width(10.dp))
+            AssistChip(
+                onClick = { showitem4 = !showitem4 },
+                label = { Text(text = "寝室 ${RoomNumber}") },
+                //leadingIcon = { Icon(painter = painterResource(R.drawable.add), contentDescription = "description") }
+            )
+        }
 
 
-           // Spacer(modifier = Modifier.height(7.dp))
+        // Spacer(modifier = Modifier.height(7.dp))
 
 //充值界面
-            Spacer(modifier = Modifier.height(7.dp))
-            AnimatedVisibility(
-                visible = showitem4,
-                enter = slideInVertically(
-                    initialOffsetY = { -40 }
-                ) + expandVertically(
-                    expandFrom = Alignment.Top
-                ) + scaleIn(
-                    // Animate scale from 0f to 1f using the top center as the pivot point.
-                    transformOrigin = TransformOrigin(0.5f, 0f)
-                ) + fadeIn(initialAlpha = 0.3f),
-                exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
-            ){
-                Row (modifier = Modifier.padding(horizontal = 15.dp)){
-                    OutlinedCard{
-                        LazyColumn(modifier = Modifier.padding(horizontal = 10.dp)) {
-                            item {
-                                Text(text = " 选取寝室号", modifier = Modifier.padding(10.dp))
-                            }
-                            item {
-                                LazyRow {
-                                    items(5) { items ->
-                                        IconButton(onClick = {
-                                            if (RoomNumber.length < 3)
-                                                RoomNumber += items.toString()
-                                            else Toast.makeText(
-                                                MyApplication.context,
-                                                "三位数",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        }) { Text(text = items.toString()) }
-                                    }
-                                }
-                            }
-                            item {
-                                LazyRow {
-                                    items(5) { items ->
-                                        val num = items + 5
-                                        IconButton(onClick = {
-                                            if (RoomNumber.length < 3)
-                                                RoomNumber += num
-                                            else Toast.makeText(MyApplication.context, "三位数", Toast.LENGTH_SHORT).show()
-                                        }) { Text(text = num.toString()) }
-                                    }
+        Spacer(modifier = Modifier.height(7.dp))
+        AnimatedVisibility(
+            visible = showitem4,
+            enter = slideInVertically(
+                initialOffsetY = { -40 }
+            ) + expandVertically(
+                expandFrom = Alignment.Top
+            ) + scaleIn(
+                // Animate scale from 0f to 1f using the top center as the pivot point.
+                transformOrigin = TransformOrigin(0.5f, 0f)
+            ) + fadeIn(initialAlpha = 0.3f),
+            exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
+        ){
+            Row (modifier = Modifier.padding(horizontal = 15.dp)){
+                OutlinedCard{
+                    LazyColumn(modifier = Modifier.padding(horizontal = 10.dp)) {
+                        item {
+                            Text(text = " 选取寝室号", modifier = Modifier.padding(10.dp))
+                        }
+                        item {
+                            LazyRow {
+                                items(5) { items ->
+                                    IconButton(onClick = {
+                                        if (RoomNumber.length < 3)
+                                            RoomNumber += items.toString()
+                                        else Toast.makeText(
+                                            MyApplication.context,
+                                            "三位数",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }) { Text(text = items.toString()) }
                                 }
                             }
                         }
-                        Spacer(modifier = Modifier.height(10.dp))
-                    }
-                }
-            }
-
-            val blurSize by animateDpAsState(
-                targetValue = if (!show) 10.dp else 0.dp, label = ""
-                ,animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
-            )
-
-            if(Result.contains("剩余金额")){
-                Result2 = "剩余金额 " +Result.substringAfter("剩余金额")
-                Result2 = Result2.replace(":","")
-                Result = Result.substringBefore("剩余金额").replace(":","")
-                show = true
-
-            } else if(Result.contains("无法获取房间信息") || Result.contains("hfut")) Result2 = "失败"
-
-
-            val scale = animateFloatAsState(
-                targetValue = if (!show) 0.9f else 1f, // 按下时为0.9，松开时为1
-                //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-                animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
-                label = "" // 使用弹簧动画
-            )
-            val scale2 = animateFloatAsState(
-                targetValue = if (!show) 0.97f else 1f, // 按下时为0.9，松开时为1
-                //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-                animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
-                label = "" // 使用弹簧动画
-            )
-
-            DividerTextExpandedWith(text = "查询结果") {
-                Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
-                    Spacer(modifier = Modifier.height(100.dp))
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .scale(scale2.value)
-                            .padding(horizontal = 15.dp, vertical = 5.dp),
-                        shape = MaterialTheme.shapes.medium,
-                        colors = CardForListColor()
-                    ) {
-                        Column(modifier = Modifier
-                            .blur(blurSize)
-                            .scale(scale.value)) {
-                            ListItem(
-                                headlineContent = { Text(text = if(!show)"￥XX.XX" else {     "￥${BigDecimal(Result2.substringAfter(" ")).setScale(2, RoundingMode.HALF_UP).toString()}"
-                                }, fontSize = 28.sp) },
-                                trailingContent = {
-                                    if(show) {
-                                        if(showButton)
-                                            FilledTonalButton(onClick = { if(showAdd && payNumber != "") showBottomSheet = true   else showDialog2 = true  }) { Text(text = if(showAdd && payNumber != "") "提交订单" else "快速充值") }
-                                    } else FilledTonalButton(onClick = { null }) { Text(text = "快速充值") } }
-                            )
-                            ListItem(
-                                overlineContent = {Text( text = if(!show)"房间号 " + " 300XXXXX1" else "房间号 " + Result.substringAfter(" ")  )},
-                                headlineContent = { (if(!show)"X号楼XXX寝室方向设施" else prefs.getString("RoomText",null))?.let { Text(text = it) } },
-                                leadingContent = { Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")}
-                            )
+                        item {
+                            LazyRow {
+                                items(5) { items ->
+                                    val num = items + 5
+                                    IconButton(onClick = {
+                                        if (RoomNumber.length < 3)
+                                            RoomNumber += num
+                                        else Toast.makeText(MyApplication.context, "三位数", Toast.LENGTH_SHORT).show()
+                                    }) { Text(text = num.toString()) }
+                                }
+                            }
                         }
                     }
+                    Spacer(modifier = Modifier.height(10.dp))
                 }
-                Spacer(modifier = Modifier.height(10.dp))
-                BottomTip(str = "月末补贴 照明空调各￥15")
             }
-            //Spacer(modifier = Modifier.height(30.dp))
         }
+
+        val blurSize by animateDpAsState(
+            targetValue = if (!show) 10.dp else 0.dp, label = ""
+            ,animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
+        )
+
+        if(Result.contains("剩余金额")){
+            Result2 = "剩余金额 " +Result.substringAfter("剩余金额")
+            Result2 = Result2.replace(":","")
+            Result = Result.substringBefore("剩余金额").replace(":","")
+            show = true
+
+        } else if(Result.contains("无法获取房间信息") || Result.contains("hfut")) Result2 = "失败"
+
+
+        val scale = animateFloatAsState(
+            targetValue = if (!show) 0.9f else 1f, // 按下时为0.9，松开时为1
+            //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
+            animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
+            label = "" // 使用弹簧动画
+        )
+        val scale2 = animateFloatAsState(
+            targetValue = if (!show) 0.97f else 1f, // 按下时为0.9，松开时为1
+            //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
+            animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
+            label = "" // 使用弹簧动画
+        )
+
+        DividerTextExpandedWith(text = "查询结果") {
+            Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
+                Spacer(modifier = Modifier.height(100.dp))
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .scale(scale2.value)
+                        .padding(horizontal = 15.dp, vertical = 5.dp),
+                    shape = MaterialTheme.shapes.medium,
+                    colors = CardForListColor()
+                ) {
+                    Column(modifier = Modifier
+                        .blur(blurSize)
+                        .scale(scale.value)) {
+                        ListItem(
+                            headlineContent = { Text(text = if(!show)"￥XX.XX" else {     "￥${BigDecimal(Result2.substringAfter(" ")).setScale(2, RoundingMode.HALF_UP).toString()}"
+                            }, fontSize = 28.sp) },
+                            trailingContent = {
+                                if(show) {
+                                    if(showButton)
+                                        FilledTonalButton(onClick = { if(showAdd && payNumber != "") showBottomSheet = true   else showDialog2 = true  }) { Text(text = if(showAdd && payNumber != "") "提交订单" else "快速充值") }
+                                } else FilledTonalButton(onClick = { null }) { Text(text = "快速充值") } }
+                        )
+                        ListItem(
+                            overlineContent = {Text( text = if(!show)"房间号 " + " 300XXXXX1" else "房间号 " + Result.substringAfter(" ")  )},
+                            headlineContent = { (if(!show)"X号楼XXX寝室方向设施" else prefs.getString("RoomText",null))?.let { Text(text = it) } },
+                            leadingContent = { Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")}
+                        )
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+            BottomTip(str = "月末补贴 照明空调各￥15")
+        }
+        Spacer(modifier = Modifier.height(10.dp))
     }
-}
-
-
-@Composable
-fun searchResult(roomInfo : String) {
 
 }

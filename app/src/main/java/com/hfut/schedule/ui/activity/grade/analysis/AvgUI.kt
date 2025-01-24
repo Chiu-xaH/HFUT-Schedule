@@ -28,9 +28,9 @@ import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.beans.Community.GradeAllResponse
-import com.hfut.schedule.logic.beans.Community.GradeAllResult
-import com.hfut.schedule.logic.beans.Community.GradeAvgResponse
+import com.hfut.schedule.logic.beans.community.GradeAllResponse
+import com.hfut.schedule.logic.beans.community.GradeAllResult
+import com.hfut.schedule.logic.beans.community.GradeAvgResponse
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.utils.components.DividerText

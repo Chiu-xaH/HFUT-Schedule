@@ -135,14 +135,13 @@ fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVie
 
 
     var showBottomSheet by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var Infonum by remember { mutableStateOf(0) }
 
     if(showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
             sheetState = sheetState,
-            shape = Round(sheetState)
         ){
             BillsInfo(vm,Infonum)
         }
@@ -292,63 +291,55 @@ fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVie
 @Composable
 fun BillsInfo(vm : NetWorkViewModel, Infonum : Int) {
     val bills = BillItem(vm)[Infonum]
+    Column {
+        TopAppBar(
+            colors = TopAppBarDefaults.mediumTopAppBarColors(
+                containerColor = Color.Transparent,
+                titleContentColor = MaterialTheme.colorScheme.primary,
+            ),
+            title = { Text("详情") },
+        )
+        MyCard{
+            ListItem(
+                headlineContent = { Text( bills.resume.substringBefore("-") ) },
+                leadingContent = {
+                    BillsIcons(bills.resume)
+                },
+                overlineContent = { Text(text = "商家")}
+            )
+            ListItem(
+                headlineContent = { Text( bills.resume.substringAfter("-")) },
+                leadingContent = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.credit_card),
+                        contentDescription = "Localized description",
+                    )
+                },
+                overlineContent = { Text(text = "类型 ${Text( bills.turnoverType)}")}
+            )
+            ListItem(
+                headlineContent = { Text(  "出账 "+ bills.jndatetimeStr+ "\n入账 " + bills.effectdateStr ) },
+                leadingContent = {
+                    Icon(
+                        painterResource(id = R.drawable.schedule),
+                        contentDescription = "Localized description",
+                    )
+                },
+                overlineContent = { Text(text = "时间")}
+            )
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = {
-            Column {
-                TopAppBar(
-                    colors = TopAppBarDefaults.mediumTopAppBarColors(
-                        containerColor = Color.Transparent,
-                        titleContentColor = MaterialTheme.colorScheme.primary,
-                    ),
-                    title = { Text("详情") },
-                )
-            }
-        },
-    ) {innerPadding ->
-        Column(modifier = Modifier.padding(innerPadding)) {
-            MyCard{
-                ListItem(
-                    headlineContent = { Text( bills.resume.substringBefore("-") ) },
-                    leadingContent = {
-                        BillsIcons(bills.resume)
-                    },
-                    overlineContent = { Text(text = "商家")}
-                )
-                ListItem(
-                    headlineContent = { Text( bills.resume.substringAfter("-")) },
-                    leadingContent = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.credit_card),
-                            contentDescription = "Localized description",
-                        )
-                    },
-                    overlineContent = { Text(text = "类型 ${Text( bills.turnoverType)}")}
-                )
-                ListItem(
-                    headlineContent = { Text(  "出账 "+ bills.jndatetimeStr+ "\n入账 " + bills.effectdateStr ) },
-                    leadingContent = {
-                        Icon(
-                            painterResource(id = R.drawable.schedule),
-                            contentDescription = "Localized description",
-                        )
-                    },
-                    overlineContent = { Text(text = "时间")}
-                )
-
-                ListItem(
-                    headlineContent = { Text( processTranamt(bills)) },
-                    leadingContent = {
-                        Icon(
-                            painterResource(id = R.drawable.paid),
-                            contentDescription = "Localized description",
-                        )
-                    },
-                    overlineContent = { Text(text = "金额")}
-                )
-            }
+            ListItem(
+                headlineContent = { Text( processTranamt(bills)) },
+                leadingContent = {
+                    Icon(
+                        painterResource(id = R.drawable.paid),
+                        contentDescription = "Localized description",
+                    )
+                },
+                overlineContent = { Text(text = "金额")}
+            )
         }
+        Spacer(Modifier.height(10.dp))
     }
 }
 

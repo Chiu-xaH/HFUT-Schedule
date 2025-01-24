@@ -23,8 +23,8 @@ android {
         applicationId "com.hfut.schedule"
         minSdk 26
         targetSdk 33
-        versionCode 154
-        versionName "4.13.3.1"
+        versionCode 155
+        versionName "4.13.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
@@ -56,6 +56,12 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+    dependenciesInfo {
+        // Disables dependency metadata when building APKs.
+        includeInApk = false
+        // Disables dependency metadata when building Android App Bundles.
+        includeInBundle = false
+    }
 }
 
 
@@ -71,7 +77,6 @@ dependencies {
 
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.camera:camera-view:1.3.4'
-    implementation 'com.google.mlkit:vision-common:17.3.0'
     //测试
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
@@ -104,7 +109,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     //Material Design 1
     implementation 'androidx.compose.material:material:1.0.5'
-    //Material Design 3
+    //Material Design 3 不要更新，新版本颜色有所改变，导致全局风格发生异常
     implementation 'androidx.compose.material3:material3:1.1.2'
     implementation 'com.google.android.material:material:1.13.0-alpha09'
     //透明状态栏
@@ -127,10 +132,11 @@ dependencies {
     //莫奈取色
     implementation "com.github.Kyant0:Monet:0.1.0-alpha03"
     //DataStore
-    implementation "androidx.datastore:datastore-preferences:1.0.0"
-    //小组件
-    //implementation 'androidx.glance:glance:1.0.0'
-    //implementation 'androidx.glance:glance-appwidget:1.0.0'
+    implementation "androidx.datastore:datastore-preferences:1.1.2"
+//    implementation "androidx.datastore:datastore:1.1.2"
+    //小组件 引入此依赖后注意区分平常Compose组件！混用会崩溃
+//    implementation "androidx.glance:glance-appwidget:1.1.1"
+//    implementation "androidx.glance:glance-material3:1.1.1"
     //Hilt注入
     var hilt_version = "2.52"
     implementation "com.google.dagger:hilt-android:$hilt_version"
@@ -139,6 +145,6 @@ dependencies {
     //implementation "androidx.biometric:biometric:1.1.0"
     //用于和风天气密钥生成的JWT
     implementation 'net.i2p.crypto:eddsa:0.3.0'
-    //展示MarkDown
-//    implementation 'com.github.jeziellago:compose-markdown:0.5.5'
+    //Fragment
+//    implementation "androidx.fragment:fragment-ktx:1.8.5"
 }

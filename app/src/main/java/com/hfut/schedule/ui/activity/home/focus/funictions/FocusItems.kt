@@ -60,9 +60,9 @@ import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
-import com.hfut.schedule.logic.beans.Community.TodayResponse
-import com.hfut.schedule.logic.beans.Community.TodayResult
-import com.hfut.schedule.logic.beans.Focus.AddFocus
+import com.hfut.schedule.logic.beans.community.TodayResponse
+import com.hfut.schedule.logic.beans.community.TodayResult
+import com.hfut.schedule.logic.beans.focus.AddFocus
 import com.hfut.schedule.logic.beans.Schedule
 import com.hfut.schedule.logic.utils.AddCalendar.addToCalendar
 import com.hfut.schedule.logic.utils.DateTimeManager

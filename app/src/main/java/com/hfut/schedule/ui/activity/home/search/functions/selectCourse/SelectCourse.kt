@@ -65,8 +65,8 @@ import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.enums.SelectType
-import com.hfut.schedule.logic.beans.Jxglstu.SelectCourseInfo
-import com.hfut.schedule.logic.beans.Jxglstu.SelectPostResponse
+import com.hfut.schedule.logic.beans.jxglstu.SelectCourseInfo
+import com.hfut.schedule.logic.beans.jxglstu.SelectPostResponse
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter.refreshLogin

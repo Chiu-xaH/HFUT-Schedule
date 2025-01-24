@@ -35,6 +35,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.CircularProgressIndicator
@@ -80,6 +81,7 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.ui.activity.card.function.main.turnToBottomBar
 import com.hfut.schedule.ui.activity.news.home.NewsItem
 import com.hfut.schedule.ui.activity.news.departments.SchoolsUI
+import com.hfut.schedule.ui.activity.news.xuancheng.XuanquNewsUI
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.style.bottomBarBlur
 import com.hfut.schedule.ui.utils.style.topBarBlur
@@ -102,6 +104,7 @@ fun NewsActivityUI(vm: NetWorkViewModel) {
     val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR",  AndroidVersion.canBlur)
     val blur by remember { mutableStateOf(switchblur) }
     val hazeState = remember { HazeState() }
+    var bottomBarItems by remember { mutableStateOf(NewsBarItems.News) }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -112,8 +115,15 @@ fun NewsActivityUI(vm: NetWorkViewModel) {
                         containerColor = Color.Transparent,
                         titleContentColor = MaterialTheme.colorScheme.primary,
                     ),
-                    title = { Text("新闻 通知 公告") },
+                    title = { Text("通知公告") },
                     actions = {
+                        if(bottomBarItems == NewsBarItems.XuanCheng) {
+                            IconButton(onClick = {
+                                MyToast("正在开发")
+                            }) {
+                                Icon(Icons.Filled.Search, contentDescription = "")
+                            }
+                        }
                         IconButton(onClick = {
                             (context as? Activity)?.finish()
                         }) {
@@ -139,7 +149,7 @@ fun NewsActivityUI(vm: NetWorkViewModel) {
                                 R.drawable.star_filled)
                         ),
                         NavigationBarItemData(
-                            NewsBarItems.XuanCheng.name,"宣城", painterResource(R.drawable.star_half), painterResource(
+                            NewsBarItems.XuanCheng.name,"宣城校区", painterResource(R.drawable.star_half), painterResource(
                                 R.drawable.star_filled)
                         ),
                         NavigationBarItemData(
@@ -163,6 +173,12 @@ fun NewsActivityUI(vm: NetWorkViewModel) {
                             interactionSource = interactionSource,
                             onClick = {
                                 //     atEnd = !atEnd
+                                bottomBarItems = when(item) {
+                                    items[0] -> NewsBarItems.News
+                                    items[1] -> NewsBarItems.XuanCheng
+                                    items[2] -> NewsBarItems.School
+                                    else -> NewsBarItems.News
+                                }
                                 if (!selected) { turnToBottomBar(navController, route) }
                             },
                             label = { Text(text = item.label) },
@@ -186,11 +202,7 @@ fun NewsActivityUI(vm: NetWorkViewModel) {
                 scaleOut(animationSpec = tween(durationMillis = animation)) +
                         shrinkVertically(shrinkTowards = Alignment.Top,animationSpec = tween(durationMillis = animation))
             },
-            modifier = Modifier
-                .haze(
-                    state = hazeState,
-                    //backgroundColor = MaterialTheme.colorScheme.surface,
-                )) {
+            modifier = Modifier.haze(state = hazeState)) {
             composable(NewsBarItems.News.name) {
                 Scaffold {
                     NewsUI(innerPadding,vm)
@@ -198,7 +210,7 @@ fun NewsActivityUI(vm: NetWorkViewModel) {
             }
             composable(NewsBarItems.XuanCheng.name) {
                 Scaffold {
-                    //NewsXuanChengUI(innerPadding, vm)
+                    XuanquNewsUI(innerPadding, vm)
                 }
             }
             composable(NewsBarItems.School.name) {
@@ -210,7 +222,6 @@ fun NewsActivityUI(vm: NetWorkViewModel) {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
@@ -222,6 +233,8 @@ fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
     var onclick by remember { mutableStateOf(true) }
     var loading by remember { mutableStateOf(true) }
     var page by remember { mutableStateOf(1) }
+
+
 
     Box(
         modifier = Modifier
@@ -383,183 +396,6 @@ fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
         }
     }
 }
-
-
-@RequiresApi(Build.VERSION_CODES.O)
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun NewsXuanChengUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
-
-
-    val words = listOf(
-        "停水","维修","转专业"
-    )
-
-    var input by remember { mutableStateOf( words[0]) }
-    var onclick by remember { mutableStateOf(true) }
-    var loading by remember { mutableStateOf(true) }
-    var page by remember { mutableStateOf(1) }
-
-    Box(
-        modifier = Modifier
-            // .padding(innerPadding)
-            .fillMaxSize()
-    ) {
-        Column {
-            Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
-            LazyRow(modifier = Modifier.padding(horizontal = 15.dp)) {
-                items(words.size) { index ->
-                    val word = words[index]
-                    AssistChip(onClick = {
-                        input = word
-                        loading = true
-                        onclick = true
-                    }, label = { Text(text = word) })
-                    Spacer(modifier = Modifier.width(10.dp))
-                }
-            }
-            Spacer(modifier = Modifier.height(10.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                TextField(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = 15.dp),
-                    value = input,
-                    onValueChange = {
-                        input = it
-                    },
-                    label = { Text("搜索通知") },
-                    singleLine = true,
-                    trailingIcon = {
-                        IconButton(
-                            // shape = RoundedCornerShape(5.dp),
-                            onClick = {
-                                loading = true
-                                onclick = true
-                            }) {
-                            Icon(
-                                painter = painterResource(R.drawable.search),
-                                contentDescription = "description"
-                            )
-                        }
-                    },
-                    shape = MaterialTheme.shapes.medium,
-                    colors = TextFieldDefaults.textFieldColors(
-                        focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                        unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-                    ),
-                )
-            }
-            Spacer(modifier = Modifier.height(10.dp))
-            if (onclick) {
-                CoroutineScope(Job()).launch {
-                    async {
-                        Handler(Looper.getMainLooper()).post {
-                            vm.NewsXuanChengData.value = "{}"
-                        }
-                    }.await()
-                    async { vm.searchXuanChengNews(input, page) }.await()
-                    async {
-                        Handler(Looper.getMainLooper()).post {
-                            vm.NewsXuanChengData.observeForever { result ->
-                                if (result != null) {
-                                    if (result.contains("data")) {
-                                        loading = false
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                AnimatedVisibility(
-                    visible = loading,
-                    enter = fadeIn(),
-                    exit = fadeOut()
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Spacer(modifier = Modifier.height(5.dp))
-                        Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
-                        LoadingUI()
-                    }
-                }////加载动画居中，3s后消失
-
-                AnimatedVisibility(
-                    visible = !loading,
-                    enter = fadeIn(),
-                    exit = fadeOut()
-                ) {
-                    Text(text = vm.NewsXuanChengData.value.toString())
-                }
-            }
-            Spacer(modifier = Modifier.height(30.dp))
-        }
-        AnimatedVisibility(
-            visible = !loading,
-            enter = scaleIn(),
-            exit = scaleOut(),
-            modifier = Modifier
-                .padding(innerPadding)
-                .align(Alignment.BottomStart)
-                .padding(horizontal = 15.dp, vertical = 15.dp)
-        ) {
-            FloatingActionButton(
-                onClick = {
-                    if (page > 1) {
-                        page--
-                        onclick = true
-                        loading = true
-                    } else {
-                        MyToast("第一页")
-                    }
-                },
-            ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
-        }
-
-
-        AnimatedVisibility(
-            visible = !loading,
-            enter = scaleIn(),
-            exit = scaleOut(),
-            modifier = Modifier
-                .padding(innerPadding)
-                .align(Alignment.BottomCenter)
-                .padding(horizontal = 15.dp, vertical = 15.dp)
-        ) {
-            ExtendedFloatingActionButton(
-                onClick = {
-                    page = 1
-                    onclick = true
-                    loading = true
-                },
-            ) { Text(text = "第${page}页") }
-        }
-
-        AnimatedVisibility(
-            visible = !loading,
-            enter = scaleIn(),
-            exit = scaleOut(),
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(innerPadding)
-                .padding(horizontal = 15.dp, vertical = 15.dp)
-        ) {
-            FloatingActionButton(
-                onClick = {
-                    page++
-                    onclick = true
-                    loading = true
-                },
-            ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
-        }
-    }
-}
-
 
 
 @RequiresApi(Build.VERSION_CODES.O)

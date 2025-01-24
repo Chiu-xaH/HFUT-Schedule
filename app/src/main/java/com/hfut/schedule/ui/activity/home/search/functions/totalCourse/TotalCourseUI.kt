@@ -46,9 +46,9 @@ import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
-import com.hfut.schedule.logic.beans.Jxglstu.CourseSearchResponse
-import com.hfut.schedule.logic.beans.Jxglstu.lessonResponse
-import com.hfut.schedule.logic.beans.Jxglstu.lessons
+import com.hfut.schedule.logic.beans.jxglstu.CourseSearchResponse
+import com.hfut.schedule.logic.beans.jxglstu.lessonResponse
+import com.hfut.schedule.logic.beans.jxglstu.lessons
 import com.hfut.schedule.logic.utils.DateTimeManager
 import com.hfut.schedule.logic.utils.DateTimeManager.TimeState.*
 import com.hfut.schedule.ui.activity.home.search.functions.failRate.permit
@@ -111,7 +111,7 @@ fun CourseTotalUI(json : String?,isSearch : Boolean,sortType: Boolean,vm : NetWo
     }
     if(getTotalCourse(json).size != 0) {
         LazyColumn {
-            item{ SemsterInfo(json) }
+            item { SemsterInfo(json) }
             items(list.size) { item ->
                 val weeksInfo = list[item].scheduleWeeksInfo
                 val startWeek = weeksInfo?.substringBefore("~")
@@ -128,6 +128,7 @@ fun CourseTotalUI(json : String?,isSearch : Boolean,sortType: Boolean,vm : NetWo
                         state = DateTimeManager.TimeState.ENDED
                     }
                 }
+
                 val infiniteTransition = rememberInfiniteTransition(label = "")
                 val alpha by infiniteTransition.animateFloat(
                     initialValue = 1f,
@@ -147,7 +148,7 @@ fun CourseTotalUI(json : String?,isSearch : Boolean,sortType: Boolean,vm : NetWo
                                 trailingContent = {
                                     when(state) {
                                         ONGOING -> Text("开课中", modifier = Modifier.alpha(alpha))
-                                        NOT_STARTED -> "未开课"
+                                        NOT_STARTED -> Text("未开课")
                                         ENDED -> Icon(Icons.Filled.Check,null)
                                         null -> Icon(Icons.Filled.ArrowForward,null)
                                     }

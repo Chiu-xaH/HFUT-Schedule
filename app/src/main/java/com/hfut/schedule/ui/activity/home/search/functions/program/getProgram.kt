@@ -4,14 +4,14 @@ import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.viewmodel.NetWorkViewModel
-import com.hfut.schedule.logic.beans.Jxglstu.ProgramBean
-import com.hfut.schedule.logic.beans.Jxglstu.ProgramCompletionResponse
-import com.hfut.schedule.logic.beans.Jxglstu.ProgramPartOne
-import com.hfut.schedule.logic.beans.Jxglstu.ProgramPartThree
-import com.hfut.schedule.logic.beans.Jxglstu.ProgramPartTwo
-import com.hfut.schedule.logic.beans.Jxglstu.ProgramResponse
-import com.hfut.schedule.logic.beans.Jxglstu.ProgramShow
-import com.hfut.schedule.logic.beans.Jxglstu.item
+import com.hfut.schedule.logic.beans.jxglstu.ProgramBean
+import com.hfut.schedule.logic.beans.jxglstu.ProgramCompletionResponse
+import com.hfut.schedule.logic.beans.jxglstu.ProgramPartOne
+import com.hfut.schedule.logic.beans.jxglstu.ProgramPartThree
+import com.hfut.schedule.logic.beans.jxglstu.ProgramPartTwo
+import com.hfut.schedule.logic.beans.jxglstu.ProgramResponse
+import com.hfut.schedule.logic.beans.jxglstu.ProgramShow
+import com.hfut.schedule.logic.beans.jxglstu.item
 import com.hfut.schedule.logic.utils.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 
@@ -58,8 +58,8 @@ fun getProgramListOne(vm : NetWorkViewModel, ifSaved : Boolean): MutableList<Pro
             prefs.getString("program","")
         } else vm.ProgramData.value
         val result = Gson().fromJson(json,ProgramResponse::class.java)
-
         val children = result.children
+
         for(i in children.indices) {
             val type = children[i].type?.nameZh
             val requiedCredits = children[i].requireInfo?.requiredCredits
@@ -69,7 +69,7 @@ fun getProgramListOne(vm : NetWorkViewModel, ifSaved : Boolean): MutableList<Pro
         }
         list
     } catch (e : Exception) {
-        Log.d("eeee",e.toString())
+//        Log.d("eeee",e.toString())
         list
     }
 }

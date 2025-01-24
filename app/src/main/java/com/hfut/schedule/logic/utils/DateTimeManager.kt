@@ -5,7 +5,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
-import com.hfut.schedule.logic.beans.Community.CourseTotalResponse
+import com.hfut.schedule.logic.beans.community.CourseTotalResponse
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import java.text.SimpleDateFormat
 import java.time.LocalDate

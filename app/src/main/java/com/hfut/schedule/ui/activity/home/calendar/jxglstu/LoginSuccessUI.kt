@@ -69,8 +69,8 @@ import com.google.gson.JsonPrimitive
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.LoginViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
-import com.hfut.schedule.logic.beans.Community.LoginCommunityResponse
-import com.hfut.schedule.logic.beans.Jxglstu.datumResponse
+import com.hfut.schedule.logic.beans.community.LoginCommunityResponse
+import com.hfut.schedule.logic.beans.jxglstu.datumResponse
 import com.hfut.schedule.logic.utils.DateTimeManager
 import com.hfut.schedule.logic.utils.Semseter.getSemseter
 import com.hfut.schedule.logic.utils.Semseter.getSemseterCloud

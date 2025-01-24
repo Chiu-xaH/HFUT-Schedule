@@ -51,7 +51,7 @@ import com.hfut.schedule.ui.theme.FWDTColr
 @Composable
 fun Electric(vm : NetWorkViewModel, card : Boolean, vmUI : UIViewModel) {
 
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
 
 
@@ -78,7 +78,7 @@ fun Electric(vm : NetWorkViewModel, card : Boolean, vmUI : UIViewModel) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
             sheetState = sheetState
-            , shape = Round(sheetState)
+//            , shape = Round(sheetState)
         ) {
 
             EleUI(vm = vm)

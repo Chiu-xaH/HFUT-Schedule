@@ -1,8 +1,8 @@
 package com.hfut.schedule.ui.activity.home.search.functions.library
 
 import com.google.gson.Gson
-import com.hfut.schedule.logic.beans.Community.BorrowRecords
-import com.hfut.schedule.logic.beans.Community.BorrowResponse
+import com.hfut.schedule.logic.beans.community.BorrowRecords
+import com.hfut.schedule.logic.beans.community.BorrowResponse
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 
 fun getBorrow(PrefsJson : String) : MutableList<BorrowRecords> {

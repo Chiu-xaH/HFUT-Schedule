@@ -2,9 +2,9 @@ package com.hfut.schedule.ui.activity.home.search.functions.totalCourse
 
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
-import com.hfut.schedule.logic.beans.Community.CourseTotalResponse
-import com.hfut.schedule.logic.beans.Community.courseBasicInfoDTOList
-import com.hfut.schedule.logic.beans.Community.courseDetailDTOList
+import com.hfut.schedule.logic.beans.community.CourseTotalResponse
+import com.hfut.schedule.logic.beans.community.courseBasicInfoDTOList
+import com.hfut.schedule.logic.beans.community.courseDetailDTOList
 import com.hfut.schedule.logic.utils.SharePrefs
 
 fun getCourse(): MutableList<courseBasicInfoDTOList>  {

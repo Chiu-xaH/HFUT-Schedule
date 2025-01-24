@@ -49,7 +49,7 @@ import androidx.compose.ui.zIndex
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.beans.guaGua.UseCodeResponse
+import com.hfut.schedule.logic.beans.guagua.UseCodeResponse
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.logic.utils.reEmptyLiveDta
@@ -68,7 +68,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-
+//*******最新模范写法****
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UseCodeUI(vm: GuaGuaViewModel) {

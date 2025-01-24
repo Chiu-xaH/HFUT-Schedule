@@ -14,10 +14,10 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import com.hfut.schedule.logic.enums.LibraryItems
-import com.hfut.schedule.logic.beans.Jxglstu.lessonResponse
-import com.hfut.schedule.logic.beans.One.BorrowBooksResponse
-import com.hfut.schedule.logic.beans.One.SubBooksResponse
-import com.hfut.schedule.logic.beans.One.getTokenResponse
+import com.hfut.schedule.logic.beans.jxglstu.lessonResponse
+import com.hfut.schedule.logic.beans.one.BorrowBooksResponse
+import com.hfut.schedule.logic.beans.one.SubBooksResponse
+import com.hfut.schedule.logic.beans.one.getTokenResponse
 import com.hfut.schedule.logic.beans.zjgd.FeeType
 import com.hfut.schedule.logic.beans.zjgd.FeeType.*
 import com.hfut.schedule.logic.network.NetWork
@@ -47,10 +47,12 @@ import com.hfut.schedule.logic.network.api.NewsService
 import com.hfut.schedule.logic.network.api.OneService
 import com.hfut.schedule.logic.network.api.ServerService
 import com.hfut.schedule.logic.network.api.DormitoryScore
+import com.hfut.schedule.logic.network.api.MyService
 import com.hfut.schedule.logic.network.api.QWeatherService
 import com.hfut.schedule.logic.network.api.TeachersService
 import com.hfut.schedule.logic.network.api.XuanChengService
 import com.hfut.schedule.logic.network.api.ZJGDBillService
+import com.hfut.schedule.logic.network.servicecreator.MyServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.QWeatherServiceCreator
 import com.hfut.schedule.logic.utils.Encrypt
 import com.hfut.schedule.logic.utils.SharePrefs.saveString
@@ -59,6 +61,7 @@ import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.getUserInfo
 import com.hfut.schedule.ui.activity.news.main.transferToPostData
 import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.CampusId
+import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.CampusId.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
@@ -96,13 +99,31 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     private val server = ServerServiceCreator.create(ServerService::class.java)
     private val guagua = GuaGuaServiceCreator.create(GuaGuaService::class.java)
     private val teacher = TeacherServiceCreator.create(TeachersService::class.java)
-
+    private val MyAPI = MyServiceCreator.create(MyService::class.java)
     private val qWeather = QWeatherServiceCreator.create(QWeatherService::class.java)
 
     var studentId = MutableLiveData<Int>(prefs.getInt("STUDENTID",0))
     var lessonIds = MutableLiveData<List<Int>>()
     var token = MutableLiveData<String>()
 
+
+    var programList = MutableLiveData<String?>()
+    fun getProgramList(campus : CampusId) {
+        val campusText = when(campus) {
+            HEFEI -> "hefei"
+            XUANCHENG -> "xuancheng"
+        }
+        NetWork.makeRequest(MyAPI.getProgramList(campusText),programList)
+    }
+
+    var programSearchData = MutableLiveData<String?>()
+    fun getProgramListInfo(id : Int,campus : CampusId) {
+        val campusText = when(campus) {
+            HEFEI -> "hefei"
+            XUANCHENG -> "xuancheng"
+        }
+        NetWork.makeRequest(MyAPI.getProgram(id,campusText),programSearchData)
+    }
 
 
 
@@ -404,7 +425,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
 
     val NewsXuanChengData = MutableLiveData<String?>()
-    @RequiresApi(Build.VERSION_CODES.O)
     fun searchXuanChengNews(title : String, page: Int = 1) {
 
         val postData = transferToPostData(title, page)
@@ -419,9 +439,15 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         })
     }
 
-    fun getXuanChengNews() {
+    fun getXuanChengNews(page: Int) {
 
-        val call = xuanCheng.getNotications()
+        val pageText = if(page <= 1) {
+            ""
+        } else {
+            page.toString()
+        }
+
+        val call = xuanCheng.getNotications(page = pageText)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {

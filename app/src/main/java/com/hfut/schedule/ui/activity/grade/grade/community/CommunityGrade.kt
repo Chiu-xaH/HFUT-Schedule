@@ -61,7 +61,7 @@ import kotlinx.coroutines.launch
 fun TotalGrade() {
 
     val json = SharePrefs.prefs.getString("Grade", MyApplication.NullGrades)
-    val result = Gson().fromJson(json,com.hfut.schedule.logic.beans.Community.GradeResponse::class.java).result
+    val result = Gson().fromJson(json,com.hfut.schedule.logic.beans.community.GradeResponse::class.java).result
     val Class = result.classRanking
     val Major = result.majorRanking
     val TotalGPA = result.gpa
