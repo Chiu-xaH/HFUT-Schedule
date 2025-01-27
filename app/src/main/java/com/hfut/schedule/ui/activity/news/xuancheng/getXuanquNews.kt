@@ -6,7 +6,6 @@ import org.jsoup.Jsoup
 
 
 fun getXuanquNews(vm : NetWorkViewModel): List<XuanquNewsItem> {
-    // 使用Jsoup解析HTML
     val html = vm.NewsXuanChengData.value
     try {
         val document = Jsoup.parse(html)
@@ -16,7 +15,6 @@ fun getXuanquNews(vm : NetWorkViewModel): List<XuanquNewsItem> {
             val url = titleElement?.attr("href") ?: "未知URL"
             val date = element.selectFirst("span.news_meta")?.text() ?: "未知日期"
 
-            // 返回解析后的新闻条目
             XuanquNewsItem(title, date, url)
         }
     } catch (e: Exception) {

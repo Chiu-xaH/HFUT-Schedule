@@ -84,6 +84,7 @@ import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.WebViewScreen
 import com.hfut.schedule.ui.theme.FWDTColr
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
+import com.hfut.schedule.ui.utils.components.WebDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -257,45 +258,47 @@ fun EleUI(vm : NetWorkViewModel) {
         if (BuildingsNumber == "0") BuildingsNumber = ""
 
         val url = MyApplication.ZJGDBillURL + "charge-app/?name=pays&appsourse=ydfwpt&id=261&name=pays&paymentUrl=http://121.251.19.62/plat&token=" + auth
-        val switch_startUri = SharePrefs.prefs.getBoolean("SWITCHSTARTURI",true)
-        if (showDialog) {
-            if(switch_startUri) {
-                androidx.compose.ui.window.Dialog(
-                    onDismissRequest = { showDialog = false },
-                    properties = DialogProperties(usePlatformDefaultWidth = false)
-                ) {
-                    Scaffold(
-                        modifier = Modifier.fillMaxSize(),
-                        topBar = {
-                            TopAppBar(
-                                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                                    containerColor = FWDTColr,
-                                    titleContentColor = Color.White,
-                                ),
-                                actions = {
-                                    Row{
-                                        IconButton(onClick = { Starter.startWebUrl( url) }) { Icon(painterResource(id = R.drawable.net), contentDescription = "", tint = Color.White) }
-                                        IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "", tint = Color.White) }
-                                    }
 
-                                },
-                                title = { Text("宣城校区 电费缴纳") }
-                            )
-                        },
-                    ) { innerPadding ->
-                        Column(
-                            modifier = Modifier
-                                .padding(innerPadding)
-                                .fillMaxSize()
-                        ) {
-                            WebViewScreen(url)
-                        }
-                    }
-                }
-            } else {
-                Starter.startWebUrl(url)
-            }
-        }
+        WebDialog(showDialog,{ showDialog = false },url,"宣城校区 电费缴纳")
+//        val switch_startUri = SharePrefs.prefs.getBoolean("SWITCHSTARTURI",true)
+//        if (showDialog) {
+//            if(switch_startUri) {
+//                androidx.compose.ui.window.Dialog(
+//                    onDismissRequest = { showDialog = false },
+//                    properties = DialogProperties(usePlatformDefaultWidth = false)
+//                ) {
+//                    Scaffold(
+//                        modifier = Modifier.fillMaxSize(),
+//                        topBar = {
+//                            TopAppBar(
+//                                colors = TopAppBarDefaults.mediumTopAppBarColors(
+//                                    containerColor = FWDTColr,
+//                                    titleContentColor = Color.White,
+//                                ),
+//                                actions = {
+//                                    Row{
+//                                        IconButton(onClick = { Starter.startWebUrl( url) }) { Icon(painterResource(id = R.drawable.net), contentDescription = "", tint = Color.White) }
+//                                        IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "", tint = Color.White) }
+//                                    }
+//
+//                                },
+//                                title = { Text("宣城校区 电费缴纳") }
+//                            )
+//                        },
+//                    ) { innerPadding ->
+//                        Column(
+//                            modifier = Modifier
+//                                .padding(innerPadding)
+//                                .fillMaxSize()
+//                        ) {
+//                            WebViewScreen(url)
+//                        }
+//                    }
+//                }
+//            } else {
+//                Starter.startWebUrl(url)
+//            }
+//        }
         var showDialog2 by remember { mutableStateOf(false) }
         if(showDialog2)
             Dialog(onDismissRequest = { showDialog2 = false }) {

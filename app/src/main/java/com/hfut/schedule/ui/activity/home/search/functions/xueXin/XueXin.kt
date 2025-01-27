@@ -25,6 +25,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.Starter
+import com.hfut.schedule.ui.utils.components.WebDialog
 import com.hfut.schedule.ui.utils.components.WebViewScreen
 
 
@@ -41,47 +42,48 @@ fun XueXin() {
     )
 
     val url = "https://my.chsi.com.cn/archive/wap/gdjy/index.action"
-
-    val switch_startUri = SharePrefs.prefs.getBoolean("SWITCHSTARTURI",true)
-
-    if (showDialog) {
-        if(switch_startUri) {
-            androidx.compose.ui.window.Dialog(
-                onDismissRequest = { showDialog = false },
-                properties = DialogProperties(usePlatformDefaultWidth = false)
-            ) {
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    topBar = {
-                        TopAppBar(
-                            colors = TopAppBarDefaults.mediumTopAppBarColors(
-                                containerColor = Color(0xFF26B887),
-                                titleContentColor = Color.White,
-                            ),
-                            actions = {
-                                Row{
-                                    IconButton(onClick = { Starter.startWebUrl(url) }) { Icon(
-                                        painterResource(id = R.drawable.net), contentDescription = "", tint = Color.White
-                                    ) }
-                                    IconButton(onClick = { showDialog = false }) { Icon(
-                                        painterResource(id = R.drawable.close), contentDescription = "", tint = Color.White) }
-                                }
-                            },
-                            title = { Text("学信网") }
-                        )
-                    },
-                ) { innerPadding ->
-                    Column(
-                        modifier = Modifier
-                            .padding(innerPadding)
-                            .fillMaxSize()
-                    ) {
-                        WebViewScreen(url)
-                    }
-                }
-            }
-        } else {
-            Starter.startWebUrl(url)
-        }
-    }
+    WebDialog(showDialog,{ showDialog = false },url,"学信网")
+//
+//    val switch_startUri = SharePrefs.prefs.getBoolean("SWITCHSTARTURI",true)
+//
+//    if (showDialog) {
+//        if(switch_startUri) {
+//            androidx.compose.ui.window.Dialog(
+//                onDismissRequest = { showDialog = false },
+//                properties = DialogProperties(usePlatformDefaultWidth = false)
+//            ) {
+//                Scaffold(
+//                    modifier = Modifier.fillMaxSize(),
+//                    topBar = {
+//                        TopAppBar(
+//                            colors = TopAppBarDefaults.mediumTopAppBarColors(
+//                                containerColor = Color(0xFF26B887),
+//                                titleContentColor = Color.White,
+//                            ),
+//                            actions = {
+//                                Row{
+//                                    IconButton(onClick = { Starter.startWebUrl(url) }) { Icon(
+//                                        painterResource(id = R.drawable.net), contentDescription = "", tint = Color.White
+//                                    ) }
+//                                    IconButton(onClick = { showDialog = false }) { Icon(
+//                                        painterResource(id = R.drawable.close), contentDescription = "", tint = Color.White) }
+//                                }
+//                            },
+//                            title = { Text("学信网") }
+//                        )
+//                    },
+//                ) { innerPadding ->
+//                    Column(
+//                        modifier = Modifier
+//                            .padding(innerPadding)
+//                            .fillMaxSize()
+//                    ) {
+//                        WebViewScreen(url)
+//                    }
+//                }
+//            }
+//        } else {
+//            Starter.startWebUrl(url)
+//        }
+//    }
 }

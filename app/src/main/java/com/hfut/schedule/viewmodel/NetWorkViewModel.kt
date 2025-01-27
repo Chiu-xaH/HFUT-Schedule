@@ -59,6 +59,7 @@ import com.hfut.schedule.logic.utils.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.SharePrefs.saveInt
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.getUserInfo
+import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
 import com.hfut.schedule.ui.activity.news.main.transferToPostData
 import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.CampusId
 import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.CampusId.*
@@ -1098,11 +1099,12 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
 
     val mailData = MutableLiveData<String?>()
-    fun getMailURL(secert : String,token : String)  {
-
-        val savedUsername = prefs.getString("Username", "") + "@mail.hfut.edu.cn"
-        val chipperText = Encrypt.encryptAesECB(savedUsername,secert)
-        val call = One.getMailURL(chipperText, "Bearer $token")
+    fun getMailURL(token : String)  {
+        val secret = Encrypt.generateRandomHexString()
+        val savedUsername = getPersonInfo().username + "@mail.hfut.edu.cn"
+        val chipperText = Encrypt.encryptAesECB(savedUsername,secret)
+        val cookie = "secret=$secret"
+        val call = One.getMailURL(chipperText, "Bearer $token",cookie)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {

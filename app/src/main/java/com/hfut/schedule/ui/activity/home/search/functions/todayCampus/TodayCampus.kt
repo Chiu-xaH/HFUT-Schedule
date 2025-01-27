@@ -42,45 +42,45 @@ fun ToadyCampus(ifSaved : Boolean){
     //val headers = mapOf("X-Access-Token" to CommuityTOKEN.toString())
 
 
-    val switch_startUri = SharePrefs.prefs.getBoolean("SWITCHSTARTURI",true)
-
-    if (showDialog) {
-        if(switch_startUri) {
-            androidx.compose.ui.window.Dialog(
-                onDismissRequest = { showDialog = false },
-                properties = DialogProperties(usePlatformDefaultWidth = false)
-            ) {
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    topBar = {
-                        TopAppBar(
-                            colors = TopAppBarDefaults.mediumTopAppBarColors(
-                                containerColor = Color.Transparent,
-                                titleContentColor = MaterialTheme.colorScheme.primary,
-                            ),
-                            actions = {
-                                Row{
-                                    IconButton(onClick = { Starter.startLaunchAPK("com.wisedu.cpdaily","今日校园") }) { Icon(painterResource(id = R.drawable.net), contentDescription = "") }
-                                    IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "") }
-                                }
-                            },
-                            title = { Text("学工系统") }
-                        )
-                    },
-                ) { innerPadding ->
-                    Column(
-                        modifier = Modifier
-                            .padding(innerPadding)
-                            .fillMaxSize()
-                    ) {
-                        WebViewScreen(url)
-                    }
-                }
-            }
-        } else {
-            Starter.startWebUrl(url)
-        }
-    }
+//    val switch_startUri = SharePrefs.prefs.getBoolean("SWITCHSTARTURI",true)
+//
+//    if (showDialog) {
+//        if(switch_startUri) {
+//            androidx.compose.ui.window.Dialog(
+//                onDismissRequest = { showDialog = false },
+//                properties = DialogProperties(usePlatformDefaultWidth = false)
+//            ) {
+//                Scaffold(
+//                    modifier = Modifier.fillMaxSize(),
+//                    topBar = {
+//                        TopAppBar(
+//                            colors = TopAppBarDefaults.mediumTopAppBarColors(
+//                                containerColor = Color.Transparent,
+//                                titleContentColor = MaterialTheme.colorScheme.primary,
+//                            ),
+//                            actions = {
+//                                Row{
+//                                    IconButton(onClick = { Starter.startLaunchAPK("com.wisedu.cpdaily","今日校园") }) { Icon(painterResource(id = R.drawable.net), contentDescription = "") }
+//                                    IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "") }
+//                                }
+//                            },
+//                            title = { Text("学工系统") }
+//                        )
+//                    },
+//                ) { innerPadding ->
+//                    Column(
+//                        modifier = Modifier
+//                            .padding(innerPadding)
+//                            .fillMaxSize()
+//                    ) {
+//                        WebViewScreen(url)
+//                    }
+//                }
+//            }
+//        } else {
+//            Starter.startWebUrl(url)
+//        }
+//    }
 
     ListItem(
         overlineContent = { Text(text = "今日校园") },

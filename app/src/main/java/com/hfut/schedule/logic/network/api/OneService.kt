@@ -1,5 +1,6 @@
 package com.hfut.schedule.logic.network.api
 
+import com.hfut.schedule.logic.utils.Encrypt.generateRandomHexString
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.GET
@@ -47,5 +48,7 @@ interface OneService {
     //获取邮箱URL
     @GET ("api/msg/mailBusiness/getLoginUrl")
     fun getMailURL(@Query("mail") chipperText : String,
-                   @Header("Authorization") authorization : String) : Call<ResponseBody>
+                   @Header("Authorization") authorization : String,
+                   @Header("cookie") cookie : String
+    ) : Call<ResponseBody>
 }

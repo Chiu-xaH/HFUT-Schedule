@@ -1,13 +1,7 @@
 # 合肥工业大学 常用API文档
-💡 暂时缓更一些接口（转专业相关），期末周
-
 供给校内同学学习和参考，如有变化及其补充，欢迎修改
 
-这个文档是2024-11-23~24完成的，此时聚在工大已经运营一年有余，好多登陆的接口细节己经忘记了，登录还是比较麻烦的，主要是需要获取若干参数，如果你是一名开发者，可以clone下安卓源代码，用Android Studio构建一下，接口定义在logic/network/api，接口实现函数在那几个viewmodel里，UI层通过vm.XXX函数调用接口，使用Observer+LiveData监听实时返回结果，处理数据在类似getXXX(vm)的函数中，(由于我早期开发经验不足，viewmodel堆积了大量复用代码，也许后面有时间会封装起来)
-
-# 思维导图
-
-# 主体内容
+这个文档是2024-11-23~24完成的，此时聚在工大已经运营一年有余，好多登陆的接口细节己经忘记了，登录还是比较墨迹的，主要是需要获取若干参数，如果你是一名开发者，可以看下APP源代码，接口定义在logic/network/api，接口实现函数在那几个viewmodel里，UI层通过vm.XXX函数调用接口，使用Observer+LiveData监听实时返回结果，处理数据在类似getXXX(vm)的函数中，(由于我早期开发经验不足，viewmodel堆积了大量复用代码，也许后面有时间会封装起来)
 
 ## CAS统一认证 https://cas.hfut.edu.cn/
 
@@ -132,7 +126,7 @@ Form(表单)
 Header["Location"] 若末尾存在ticket=XXX 拿到ticket保存，后面会用，不存在说明Cookie过期或无效
 
 ## 教务系统 http://jxglstu.hfut.edu.cn/eams5-student/
-注意：建议Header["User-Agent"]带上手机或电脑UA
+!!! Header["User-Agent"]带上手机或电脑UA,否则拿不到数据 !!!
 ### 登录(不用CAS统一认证)
 教务系统登录默认密码为"Hfut@#$%"+身份证号后六位，这里无论有没有X都时后六位，并且X要大写
 #### 第一步
@@ -528,17 +522,50 @@ Body(JSON) 与获取选课列表响应一致，可以共用解析方法
 #### 请求
 Header["Cookie"] 上面得到的Cookie，类似SESSION=XXX...
 
-### 转专业申请列表
-@GET for-std/change-major-apply/get-applies
+### 转专业类型列表(第一步)
+@GET for-std/change-major-apply/index/学生ID
+#### 请求
+Header["Cookie"] 上面得到的Cookie，类似SESSION=XXX...
+#### 响应
+从HTML中解析列表，记录每个项目的batchId,后面要用
+```Kotlin
+val document = Jsoup.parse(html!!)
+val result = mutableListOf<ChangeMajorInfo>()
 
+val turnPanels = document.select(".turn-panel")
+for (panel in turnPanels) {
+    val title = panel.select(".turn-title span").text()
+    val dataValue = panel.select(".change-major-enter").attr("data")
+    val applicationDate = panel.select(".open-date .text-primary").text()
+    val admissionDate = panel.select(".select-date .text-warning").text()
+            
+    if (title.isNotBlank() && dataValue.isNotBlank()) {
+        result.add(
+            ChangeMajorInfo(
+                title = title,
+                batchId = dataValue,
+                applicationDate = applicationDate,
+                admissionDate = admissionDate
+            )
+        )
+    }
+}
+return result
+```
+
+### 具体转专业列表(第二步)
+@GET for-std/change-major-apply/get-applies
 #### 请求
 Header["Cookie"] 上面得到的Cookie，类似SESSION=XXX...
 
 Query["auto"] Boolean 是否启用自动筛选符合申请要求的专业(没什么用,默认false吧)
 
-Query["batchId"] 1 合肥校区 ，3 宣城校区 
+Query["batchId"] 上面获取过
 
 Query["studentId"] 学生ID
+
+#### 响应
+从JSON列表中保存每个项目的id,暂时叫做listId,下面要用
 
 ### 我的转专业申请
 @GET for-std/change-major-apply/get-my-applies
@@ -546,20 +573,174 @@ Query["studentId"] 学生ID
 #### 请求
 Header["Cookie"] 上面得到的Cookie，类似SESSION=XXX...
 
-Query["batchId"] 1 合肥校区 ，3 宣城校区 
+Query["batchId"] 上面获取过
 
 Query["studentId"] 学生ID
 
+#### 响应
+JSON从列表中记录项目的(一般情况只有1个或0个，因为学校只能申请同时转一个专业)的id，暂时叫做applyId，记录用于撤销和查看详情
 
-### 我的转专业状态
-@GET for-std/change-major-apply/info/2162
+### 撤销转专业
+@POST for-std/change-major-apply/cancel
+
+#### 请求
+Header["Cookie"] 上面得到的Cookie，类似SESSION=XXX...
+
+```
+"batchId"=获取过
+"studentId"=学生ID
+"applyId"=上面获取的applyId
+"REDIRECT_URL"=/for-std/change-major-apply/my-applies?PARENT_URL=/for-std/change-major-apply/index/{学生ID}&batchId={上面获取过}&studentId={学生ID}
+```
+
+#### 响应
+根据JSON的result布尔值判断是否成功
+
+### 我的某个项目的转专业详情
+@GET for-std/change-major-apply/info/上面获取的applyId
 #### 请求
 Query["studentId"] 学生ID
 #### 响应
 响应为HTML网页，需要自行按XML解析
+```Kotlin
+val doc = Jsoup.parse(html)
+// 面试安排
+val interviewRow = doc.select("div.interview-arrange-1 tr:contains(面试安排)").first()
+val interviewTime = interviewRow?.select(".arrange-text:nth-of-type(1) span:nth-of-type(2)")?.text().orEmpty()
+val interviewPlace = interviewRow?.select(".arrange-text:nth-of-type(2) span:nth-of-type(2)")?.text().orEmpty()
+val interview = if (interviewTime.isNotEmpty() && interviewPlace.isNotEmpty()) {
+    PlaceAndTime(interviewPlace, interviewTime)
+} else null
+// 笔试安排
+val examRow = doc.select("div.interview-arrange-1 tr:contains(笔试安排)").first()
+val examTime = examRow?.select(".arrange-text:nth-of-type(1) span:nth-of-type(2)")?.text().orEmpty()
+val examPlace = examRow?.select(".arrange-text:nth-of-type(2) span:nth-of-type(2)")?.text().orEmpty()
+val exam = if (examTime.isNotEmpty() && examPlace.isNotEmpty()) {
+    PlaceAndTime(examPlace, examTime)
+} else null
+// 成绩信息
+val gpaScore = doc.select("div.score-box:has(span:contains(GPA)) span.score-text").text().toDoubleOrNull() ?: 0.0
+val gpaRank = doc.select("div.score-box:has(span:contains(GPA)) span.score-rank span").text().toIntOrNull()
 
-### 申请/撤销转专业
-这里我忘记做了，因为我就是要转专业的，不敢随便来回选退，很遗憾，现在也没机会再做了，只有大一学弟学妹才能做了
+val operateAvgScore = doc.select("div.score-box:has(span:contains(算术平均分)) span.score-text").text().toDoubleOrNull() ?: 0.0
+val operateAvgRank = doc.select("div.score-box:has(span:contains(算术平均分)) span.score-rank span").text().toIntOrNull()
+
+val weightAvgScore = doc.select("div.score-box:has(span:contains(加权平均分)) span.score-text").text().toDoubleOrNull() ?: 0.0
+val weightAvgRank = doc.select("div.score-box:has(span:contains(加权平均分)) span.score-rank span").text().toIntOrNull()
+
+val transferAvgScore = doc.select("div.score-box:has(span:contains(转专业考核成绩)) span.score-text").text().toDoubleOrNull() ?: 0.0
+val transferAvgRank = doc.select("div.score-box:has(span:contains(转专业考核成绩)) span.score-rank span").text().toIntOrNull()
+
+val grade = ApplyGrade(
+    gpa = GradeAndRank(gpaScore, gpaRank),
+    operateAvg = GradeAndRank(operateAvgScore, operateAvgRank),
+    weightAvg = GradeAndRank(weightAvgScore, weightAvgRank),
+    transferAvg = GradeAndRank(transferAvgScore, transferAvgRank)
+)
+// 构造结果
+return MyApplyInfoBean(meetSchedule = interview, examSchedule = exam, grade = grade)
+```
+
+### 申请转专业
+提交转专业申请需要一个_T_std_change_major_apply_new_form的Cookie
+#### 获取_T_std_change_major_apply_new_form
+@GET for-std/change-major-apply/new
+##### 请求
+Header["Cookie"] 上面得到的Cookie，类似SESSION=XXX...
+
+Query["batchId"] 上面获取过
+
+Query["studentId"] 学生ID
+
+Query["submitId"] 转专业详情专业列表里的listId，上面获取过
+
+Query["REDIRECT_URL"] /for-std/change-major-apply/my-applies?PARENT_URL=/for-std/change-major-apply/index/{学生ID}&batchId={上面获取过}&studentId={学生ID}
+
+##### 响应
+拿响应头Header["Set-Cookie"]中的["_T_std_change_major_apply_new_form"]字符串并保存
+
+#### 开始申请转专业
+@POST for-std/change-major-apply/save
+##### 请求
+Header["Cookie"] 上面得到的Cookie，类似SESSION=XXX...,再加上上面获取的_T_std_change_major_apply_new_form=XXX
+
+MultiPart["changeMajorSubmitAssoc"] 转专业详情专业列表里的listId，上面获取过
+
+MultiPart["studentAssoc"] 学生ID
+
+MultiPart["changeMajorBatchAssoc"] batchId,上面获取过
+
+MultiPart["REDIRECT_URL"] /for-std/change-major-apply/my-applies?PARENT_URL=/for-std/change-major-apply/index/{学生ID}&batchId={上面获取过}&studentId={学生ID}
+
+MultiPart["email"] 电子邮箱，默认为"",教务都用QQ群发通知，根本不需要电子邮箱
+
+MultiPart["telephone"] 手机号，必须项，从我的档案接口获取手机号,或者让用户自己输
+
+MultiPart 提交文件作为附件，默认为null，教务只管是否达到审核通过要求，不会管你传什么华而不实的照片证明，所以直接传空
+
+MultiPart["applyRemark"] 备注，默认为"",教务只管是否达到审核通过要求，不会管你说什么华丽的话语，所以直接传""
+
+MultiPart["stdAlterReasonAssoc"] 理由ID，固定，这里时参加转专业考核，所以传1286，参考如下：
+```HTML
+<option value="1">个人原因-创业</option>
+<option value="2">个人原因-工作实践</option>
+<option value="3">个人原因-出国出境</option>
+<option value="4">个人原因-厌学</option>
+<option value="5">个人原因-不适应课程学习</option>
+<option value="6">个人原因-不适应校园生活</option>
+<option value="7">个人原因-结婚生子</option>
+<option value="8">个人原因-精神疾病</option>
+<option value="9">个人原因-传染疾病</option>
+<option value="10">个人原因-其他疾病</option>
+<option value="11">个人原因-心理疾病</option>
+<option value="12">家庭原因-经济困难</option>
+<option value="13">家庭原因-照顾家人</option>
+<option value="14">其他</option>
+<option value="15">个人原因-休学期满未按时复学</option>
+<option value="16">个人原因-长期不参加教学活动</option>
+<option value="17">个人原因-超过最长学习年限</option>
+<option value="18">个人原因-成绩低劣</option>
+<option value="1246">复读</option>
+<option value="1226">短缺学分</option>
+<option value="1286">转专业-考核</option>
+<option value="41">身体康复</option>
+<option value="42">留学期满</option>
+<option value="43">创业、实习结束</option>
+<option value="44">个人原因-退伍</option>
+<option value="45">个人原因-入伍</option>
+<option value="1208">短缺学分</option>
+<option value="1209">不喜欢本专业</option>
+<option value="1210">转专业</option>
+<option value="1211">延长学制</option>
+<option value="1266">学习困难</option>
+```
+
+!!! 注意：这个接口请求在整个文档中不同于其他的，注意请求体为MultiPart，详细Retrofit接口定义如下参考 !!!
+```Kotlin
+interface JxglstuService {
+    @Multipart
+    @POST("for-std/change-major-apply/save")
+    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0")
+    fun postTransfer(
+        @Header("Cookie") cookie: String,
+        // 固定字符串,参考上面
+        @Part("stdAlterReasonAssoc") reasonId: RequestBody = "1286".toRequestBody("text/plain".toMediaTypeOrNull()),
+        @Part("applyRemark") remark: RequestBody = "".toRequestBody("text/plain".toMediaTypeOrNull()),
+        @Part file: MultipartBody.Part? = null, // 可选文件
+        // 必须项,从我的档案接口获取手机号,或者让用户自己输
+        @Part("telephone") telephone: RequestBody,
+        @Part("email") email: RequestBody = "".toRequestBody("text/plain".toMediaTypeOrNull()),
+        // 固定字符串 REDIRECT_URL = /for-std/change-major-apply/apply?PARENT_URL=/for-std/change-major-apply/index/{studentId}&batchId={batchId}&studentId={studentId}
+        @Part("REDIRECT_URL") redirectUrl: RequestBody,
+        @Part("changeMajorBatchAssoc") batchId: RequestBody,
+        @Part("studentAssoc") studentID: RequestBody,
+        @Part("changeMajorSubmitAssoc") id: RequestBody // 转专业的专业列表里的id
+    ): Call<ResponseBody>
+}
+```
+
+##### 响应
+根据JSON的result布尔值判断
 
 ### 培养方案完成情况 1.0(只有数据信息)
 @GET ws/student/home-page/programCompletionPreview
@@ -1043,13 +1224,21 @@ Query["redirect"]
 
 Query["code"] 
 
-### 获取校园邮箱的跳转URL
+### 获取校园邮箱的跳转URL(使用URL可直接进入邮箱)
 @GET api/msg/mailBusiness/getLoginUrl
 #### 请求
 Header["Authorization"] 登陆后获取，有效期大约24h
-
-Query["mail"] AES ECB模式，密钥为Cookie中的secert值，明文为邮箱20XXXXXXXX@mail.hfut.edu.cn
-
+Header["Cookie"] secret=XXX XXX为密钥，在本地生成
+Query["mail"] AES ECB模式，密钥为XXX，下面细说，明文为邮箱20XXXXXXXX@mail.hfut.edu.cn
+##### 密钥
+使用secret生成函数，生成密钥XXX，然后以 secret=XXX 的形式作为Header["Cookie"]提交
+```JavaScript
+secret生成函数() {
+    for (var B = "", e = 0; e < 16; e++)
+        B += Math.floor(16 * Math.random()).toString(16);
+    return B.toUpperCase()
+}
+```
 #### 逆向过程
 F12 检索API关键字"getLoginUrl"，打断点向前分析堆栈，就能找出调用Encrycpt的地方，这里用调试台打印一下密钥、原文，学校的平台确实容易逆向
 #### 响应
@@ -1213,9 +1402,9 @@ Header["isApp"] "app"
 
 Header["token"] 口令
 
-## 新闻 https://news.hfut.edu.cn/
+## 新闻、通知公告 https://news.hfut.edu.cn/
 
-### 新闻检索
+### 新闻、通知公告检索
 @POST zq_search.jsp?wbtreeid=1137
 #### 请求
 Form 
@@ -1295,67 +1484,127 @@ X号楼 ,D只能为 N/S ，代表 北楼/南楼,YYY房间号
 ## 通知公告-宣城校区 https://xc.hfut.edu.cn/
 
 ### 获取通知公告 
-@GET 1955/list.htm
+@GET 1955/list{页码}.htm
 
 #### 请求
-无
+页码，第1页list.htm，第2页list2.htm...
 #### 响应
 HTML，需自行解析，参考Kotlin代码
-
-### 检索通知公告
-
-@POST _web/_search/api/searchCon/create.rst?_p=YXM9MiZ0PTE0NTcmZD0zODcxJnA9MiZmPTEmbT1TTiZ8Ym5uQ29sdW1uVmlydHVhbE5hbWU9MS0m
-
-看一下JS代码，都是用Base64处理的
-
-#### 请求
-Form seachInfo=Base64编码后的JSON
-```json
-[
-    {
-        "field": "pageIndex",
-        "value": 1 //页数，默认第一页
-    },
-    {
-        "field": "group",
-        "value": 0
-    },
-    {
-        "field": "searchType",
-        "value": ""
-    },
-    {
-        "field": "keyword",
-        "value": "物理" //关键词检索
-    },
-    {
-        "field": "recommend",
-        "value": "1"
-    },
-    {
-        "field": 4,
-        "value": ""
-    },
-    {
-        "field": 5,
-        "value": ""
-    },
-    {
-        "field": 6,
-        "value": ""
-    },
-    {
-        "field": 7,
-        "value": ""
-    }
-]
+```Kotlin
+val document = Jsoup.parse(html)
+return document.select("ul.news_list > li").map { element ->
+    val titleElement = element.selectFirst("span.news_title a")
+    val title = titleElement?.attr("title") ?: "未知标题"
+    val url = titleElement?.attr("href") ?: "未知URL"
+    val date = element.selectFirst("span.news_meta")?.text() ?: "未知日期"
+    XuanquNewsItem(title, date, url) 
+}
 ```
 
-#### 响应
-Body(JSON) 很迷惑的响应，居然给一堆HTML，自己用Jsoup解析一下吧
-```json
-{ "data": "一堆HTML" }
-```
+[//]: # ()
+[//]: # (### 检索通知公告)
+
+[//]: # ()
+[//]: # (@POST _web/_search/api/searchCon/create.rst?_p=YXM9MiZ0PTE0NTcmZD0zODcxJnA9MiZmPTEmbT1TTiZ8Ym5uQ29sdW1uVmlydHVhbE5hbWU9MS0m)
+
+[//]: # ()
+[//]: # (看一下JS代码，都是用Base64处理的)
+
+[//]: # ()
+[//]: # (#### 请求)
+
+[//]: # (Form seachInfo=Base64编码后的JSON)
+
+[//]: # (```json)
+
+[//]: # ([)
+
+[//]: # (    {)
+
+[//]: # (        "field": "pageIndex",)
+
+[//]: # (        "value": 1 //页数，默认第一页)
+
+[//]: # (    },)
+
+[//]: # (    {)
+
+[//]: # (        "field": "group",)
+
+[//]: # (        "value": 0)
+
+[//]: # (    },)
+
+[//]: # (    {)
+
+[//]: # (        "field": "searchType",)
+
+[//]: # (        "value": "")
+
+[//]: # (    },)
+
+[//]: # (    {)
+
+[//]: # (        "field": "keyword",)
+
+[//]: # (        "value": "物理" //关键词检索)
+
+[//]: # (    },)
+
+[//]: # (    {)
+
+[//]: # (        "field": "recommend",)
+
+[//]: # (        "value": "1")
+
+[//]: # (    },)
+
+[//]: # (    {)
+
+[//]: # (        "field": 4,)
+
+[//]: # (        "value": "")
+
+[//]: # (    },)
+
+[//]: # (    {)
+
+[//]: # (        "field": 5,)
+
+[//]: # (        "value": "")
+
+[//]: # (    },)
+
+[//]: # (    {)
+
+[//]: # (        "field": 6,)
+
+[//]: # (        "value": "")
+
+[//]: # (    },)
+
+[//]: # (    {)
+
+[//]: # (        "field": 7,)
+
+[//]: # (        "value": "")
+
+[//]: # (    })
+
+[//]: # (])
+
+[//]: # (```)
+
+[//]: # ()
+[//]: # (#### 响应)
+
+[//]: # (Body&#40;JSON&#41; 很迷惑的响应，居然给一堆HTML，自己用Jsoup解析一下吧)
+
+[//]: # (```json)
+
+[//]: # ({ "data": "一堆HTML" })
+
+[//]: # (```)
 
 
 ## 教师主页 https://faculty.hfut.edu.cn/

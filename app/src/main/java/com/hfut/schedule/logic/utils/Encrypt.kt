@@ -63,6 +63,15 @@ object Encrypt {
         return Base64.encodeToString(encryptedBytes, Base64.DEFAULT)
     }
 
+    fun generateRandomHexString(): String {
+        var result = ""
+        repeat(16) {
+            val randomHex = (0..15).random().toString(16) // 生成随机16进制数
+            result += randomHex
+        }
+        return result.uppercase() // 转换为大写
+    }
+
     //用于生成和风天气密钥
     fun getQWeatherAuth() : String {
         return "Bearer " + GenerateQWeather().generate(
@@ -71,6 +80,7 @@ object Encrypt {
             "THB3UBK56Q"
         )
     }
+
 }
 
 

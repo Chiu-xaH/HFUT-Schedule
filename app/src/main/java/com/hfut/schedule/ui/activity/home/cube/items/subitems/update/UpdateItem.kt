@@ -3,7 +3,9 @@ package com.hfut.schedule.ui.activity.home.cube.items.subitems.update
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -23,6 +25,7 @@ import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.num
+import com.hfut.schedule.ui.utils.style.CardForListColor
 
 
 @SuppressLint("SuspiciousIndentation")
@@ -43,17 +46,18 @@ fun VersionInfoCard() {
                 .fillMaxWidth()
                 .padding(horizontal = 15.dp, vertical = 5.dp),
             shape = MaterialTheme.shapes.medium,
+            colors = CardForListColor()
         ) {
             ListItem(headlineContent = { Text(text = "聚在工大 " + APPVersion.getVersionName(), fontSize = 28.sp) })
             Row {
                 ListItem(
-                    overlineContent = { Text(text = "2025-01-24") },
+                    overlineContent = { Text(text = "2025-01-27") },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.sdk), contentDescription = "") },
                     headlineContent = { ScrollText(text = "第${APPVersion.getVersionCode()}次更新") },
                     modifier = Modifier.weight(.5f)
                 )
                 ListItem(
-                    headlineContent = { ScrollText(text = "Chiu-xaH\nlinsui") },
+                    headlineContent = { Text(text = "Chiu-xaH\ntinyvan") },
                     overlineContent = { Text(text = "构建") },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.support), contentDescription = "") },
                     modifier = Modifier.weight(.5f).clickable {
@@ -68,12 +72,11 @@ fun VersionInfoCard() {
 @SuppressLint("SuspiciousIndentation")
 @Composable
 fun VersionInfo() {
+    Spacer(Modifier.height(3.dp))
     VersionInfoCard()
     DividerTextExpandedWith(text = "新特性") {
-        UpdateItems("新增 宣城校区-通知公告",null, UpdateType.ADD)
-        UpdateItems("新增 全校培养方案查询","位于 查询中心-培养方案，目前通过爬虫仅收录宣城校区187个方案，合肥校区需要账号，在APP内已提供引导接入指南", UpdateType.ADD)
-        UpdateItems("修复 一卡通统计的多翻页Bug", null, UpdateType.FIX)
-        UpdateItems("优化 相机权限的申请", null, UpdateType.OPTIMIZE)
+        UpdateItems("新增 邮箱","可在此处查看自己的学生邮箱，用于接收高校优惠的验证码", UpdateType.ADD)
+        UpdateItems("修复 校园网在合肥校区的某些Bug", null, UpdateType.FIX)
         UpdateItems("优化 部分界面的显示", null, UpdateType.OPTIMIZE)
     }
 }
@@ -103,7 +106,7 @@ fun UpdateItems(title : String,info : String?,type : UpdateType) {
 
 fun updateTypeIcons(type : UpdateType) : Int {
     return when(type) {
-        UpdateType.ADD -> R.drawable.add_circle
+        UpdateType.ADD -> R.drawable.add_2
         UpdateType.DEGREE -> R.drawable.do_not_disturb_on
         UpdateType.OPTIMIZE -> R.drawable.tune
         UpdateType.FIX -> R.drawable.build

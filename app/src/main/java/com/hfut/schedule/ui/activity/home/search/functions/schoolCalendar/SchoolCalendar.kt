@@ -32,6 +32,7 @@ import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.ui.utils.components.WebViewScreen
 import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.WebDialog
 import java.io.File
 import java.io.FileOutputStream
 
@@ -52,45 +53,47 @@ fun SchoolCalendar() {
 
     val url = Gson().fromJson(prefs.getString("my", MyApplication.NullMy),MyAPIResponse::class.java).SchoolCalendar
 
-    val switch_startUri = SharePrefs.prefs.getBoolean("SWITCHSTARTURI",true)
-
-    if (showDialog) {
-        if(switch_startUri) {
-            androidx.compose.ui.window.Dialog(
-                onDismissRequest = { showDialog = false },
-                properties = DialogProperties(usePlatformDefaultWidth = false)
-            ) {
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    topBar = {
-                        TopAppBar(
-                            colors = TopAppBarDefaults.mediumTopAppBarColors(
-                                containerColor = Color.Transparent,
-                                titleContentColor = MaterialTheme.colorScheme.primary,
-                            ),
-                            actions = {
-                                Row{
-                                    IconButton(onClick = { Starter.startWebUrl(url) }) { Icon(painterResource(id = R.drawable.net), contentDescription = "") }
-                                    IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "") }
-                                }
-                            },
-                            title = { Text("校历") }
-                        )
-                    },
-                ) { innerPadding ->
-                    Column(
-                        modifier = Modifier
-                            .padding(innerPadding)
-                            .fillMaxSize()
-                    ) {
-                        WebViewScreen(url)
-                    }
-                }
-            }
-        } else {
-            Starter.startWebUrl(url)
-        }
-    }
+    WebDialog(showDialog,{showDialog = false},url,"校历")
+//
+//    val switch_startUri = SharePrefs.prefs.getBoolean("SWITCHSTARTURI",true)
+//
+//    if (showDialog) {
+//        if(switch_startUri) {
+//            androidx.compose.ui.window.Dialog(
+//                onDismissRequest = { showDialog = false },
+//                properties = DialogProperties(usePlatformDefaultWidth = false)
+//            ) {
+//                Scaffold(
+//                    modifier = Modifier.fillMaxSize(),
+//                    topBar = {
+//                        TopAppBar(
+//                            colors = TopAppBarDefaults.mediumTopAppBarColors(
+//                                containerColor = Color.Transparent,
+//                                titleContentColor = MaterialTheme.colorScheme.primary,
+//                            ),
+//                            actions = {
+//                                Row{
+//                                    IconButton(onClick = { Starter.startWebUrl(url) }) { Icon(painterResource(id = R.drawable.net), contentDescription = "") }
+//                                    IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "") }
+//                                }
+//                            },
+//                            title = { Text("校历") }
+//                        )
+//                    },
+//                ) { innerPadding ->
+//                    Column(
+//                        modifier = Modifier
+//                            .padding(innerPadding)
+//                            .fillMaxSize()
+//                    ) {
+//                        WebViewScreen(url)
+//                    }
+//                }
+//            }
+//        } else {
+//            Starter.startWebUrl(url)
+//        }
+//    }
 }
 
 fun SavePictures() {

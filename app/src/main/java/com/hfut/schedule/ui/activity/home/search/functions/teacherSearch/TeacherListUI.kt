@@ -34,6 +34,7 @@ import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.ui.utils.components.MyCard
 import com.hfut.schedule.ui.utils.components.URLImage
+import com.hfut.schedule.ui.utils.components.WebDialog
 import com.hfut.schedule.ui.utils.components.WebViewScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -44,41 +45,43 @@ fun TeacherListUI(vm: NetWorkViewModel) {
     var title by remember { mutableStateOf("教师主页") }
     val dataList = getTeacherList(vm)
 
-    if (showDialog) {
-        androidx.compose.ui.window.Dialog(
-            onDismissRequest = { showDialog = false },
-            properties = DialogProperties(usePlatformDefaultWidth = false)
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        actions = {
-                            Row{
-                                IconButton(onClick = { Starter.startWebUrl(links) }) { Icon(
-                                    painterResource(id = R.drawable.net), contentDescription = "") }
-                                IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "") }
-                            }
-                        },
-                        title = { Text(title) }
-                    )
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    WebViewScreen(url = links)
-                }
-            }
-        }
-    }
+    WebDialog(showDialog,{ showDialog = false },links,title)
 
+//    if (showDialog) {
+//        androidx.compose.ui.window.Dialog(
+//            onDismissRequest = { showDialog = false },
+//            properties = DialogProperties(usePlatformDefaultWidth = false)
+//        ) {
+//            Scaffold(
+//                modifier = Modifier.fillMaxSize(),
+//                topBar = {
+//                    TopAppBar(
+//                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+//                            containerColor = Color.Transparent,
+//                            titleContentColor = MaterialTheme.colorScheme.primary,
+//                        ),
+//                        actions = {
+//                            Row{
+//                                IconButton(onClick = { Starter.startWebUrl(links) }) { Icon(
+//                                    painterResource(id = R.drawable.net), contentDescription = "") }
+//                                IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "") }
+//                            }
+//                        },
+//                        title = { Text(title) }
+//                    )
+//                },
+//            ) { innerPadding ->
+//                Column(
+//                    modifier = Modifier
+//                        .padding(innerPadding)
+//                        .fillMaxSize()
+//                ) {
+//                    WebViewScreen(url = links)
+//                }
+//            }
+//        }
+//    }
+//
 
     LazyVerticalGrid(columns = GridCells.Fixed(2),modifier = Modifier.padding(horizontal = 11.dp))  {
         items(dataList.size) { index->

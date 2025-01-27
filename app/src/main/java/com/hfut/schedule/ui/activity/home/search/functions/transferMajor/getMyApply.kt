@@ -33,7 +33,6 @@ data class GradeAndRank(
 fun getMyTransferInfo(vm: NetWorkViewModel): MyApplyInfoBean? {
     val html = vm.myApplyInfoData.value ?: return null
     return try {
-        // 使用 Jsoup 解析 HTML
         val doc = Jsoup.parse(html)
         // 面试安排
         val interviewRow = doc.select("div.interview-arrange-1 tr:contains(面试安排)").first()
@@ -42,7 +41,6 @@ fun getMyTransferInfo(vm: NetWorkViewModel): MyApplyInfoBean? {
         val interview = if (interviewTime.isNotEmpty() && interviewPlace.isNotEmpty()) {
             PlaceAndTime(interviewPlace, interviewTime)
         } else null
-
         // 笔试安排
         val examRow = doc.select("div.interview-arrange-1 tr:contains(笔试安排)").first()
         val examTime = examRow?.select(".arrange-text:nth-of-type(1) span:nth-of-type(2)")?.text().orEmpty()
@@ -50,8 +48,6 @@ fun getMyTransferInfo(vm: NetWorkViewModel): MyApplyInfoBean? {
         val exam = if (examTime.isNotEmpty() && examPlace.isNotEmpty()) {
             PlaceAndTime(examPlace, examTime)
         } else null
-
-
         // 成绩信息
         val gpaScore = doc.select("div.score-box:has(span:contains(GPA)) span.score-text").text().toDoubleOrNull() ?: 0.0
         val gpaRank = doc.select("div.score-box:has(span:contains(GPA)) span.score-rank span").text().toIntOrNull()
@@ -71,7 +67,6 @@ fun getMyTransferInfo(vm: NetWorkViewModel): MyApplyInfoBean? {
             weightAvg = GradeAndRank(weightAvgScore, weightAvgRank),
             transferAvg = GradeAndRank(transferAvgScore, transferAvgRank)
         )
-
         // 构造结果
         MyApplyInfoBean(meetSchedule = interview, examSchedule = exam, grade = grade)
     } catch (e: Exception) {

@@ -79,6 +79,7 @@ import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.MyCard
 import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.WebDialog
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.WebViewScreen
 import kotlinx.coroutines.async
@@ -197,82 +198,84 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
 
     val urlHuixin = MyApplication.ZJGDBillURL + "plat" + "?synjones-auth=" + auth
 
-    val switch_startUri = SharePrefs.prefs.getBoolean("SWITCHSTARTURI",true)
+//    val switch_startUri = SharePrefs.prefs.getBoolean("SWITCHSTARTURI",true)
 
-    if (showDialog) {
-        androidx.compose.ui.window.Dialog(
-            onDismissRequest = { showDialog = false },
-            properties = DialogProperties(usePlatformDefaultWidth = false)
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        actions = {
-                            Row{
-                                IconButton(onClick = { Starter.startWebUrl(url) }) { Icon(painterResource(id = R.drawable.net), contentDescription = "") }
-                                IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "") }
-                            }
-                        },
-                        title = { Text("付款码") }
-                    )
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    WebViewScreen(url)
-                }
-            }
-        }
-    }
+//    if (showDialog) {
+//        androidx.compose.ui.window.Dialog(
+//            onDismissRequest = { showDialog = false },
+//            properties = DialogProperties(usePlatformDefaultWidth = false)
+//        ) {
+//            Scaffold(
+//                modifier = Modifier.fillMaxSize(),
+//                topBar = {
+//                    TopAppBar(
+//                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+//                            containerColor = Color.Transparent,
+//                            titleContentColor = MaterialTheme.colorScheme.primary,
+//                        ),
+//                        actions = {
+//                            Row{
+//                                IconButton(onClick = { Starter.startWebUrl(url) }) { Icon(painterResource(id = R.drawable.net), contentDescription = "") }
+//                                IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "") }
+//                            }
+//                        },
+//                        title = { Text("付款码") }
+//                    )
+//                },
+//            ) { innerPadding ->
+//                Column(
+//                    modifier = Modifier
+//                        .padding(innerPadding)
+//                        .fillMaxSize()
+//                ) {
+//                    WebViewScreen(url)
+//                }
+//            }
+//        }
+//    }
 
-    if (showDialog_Huixin) {
-        if(switch_startUri) {
-            androidx.compose.ui.window.Dialog(
-                onDismissRequest = { showDialog_Huixin = false },
-                properties = DialogProperties(usePlatformDefaultWidth = false)
-            ) {
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    topBar = {
-                        TopAppBar(
-                            colors = TopAppBarDefaults.mediumTopAppBarColors(
-                                containerColor = Color(0xFFFDCA31),
-                                titleContentColor = Color.White,
-                            ),
-                            actions = {
-                                Row{
-                                    IconButton(onClick = { Starter.startWebUrl(urlHuixin) }) { Icon(
-                                        painterResource(id = R.drawable.net), contentDescription = "", tint = Color.White
-                                    ) }
-                                    IconButton(onClick = { showDialog_Huixin = false }) { Icon(
-                                        painterResource(id = R.drawable.close), contentDescription = "", tint = Color.White) }
-                                }
-                            },
-                            title = { Text("慧新易校") }
-                        )
-                    },
-                ) { innerPadding ->
-                    Column(
-                        modifier = Modifier
-                            .padding(innerPadding)
-                            .fillMaxSize()
-                    ) {
-                        WebViewScreen(urlHuixin)
-                    }
-                }
-            }
-        } else {
-            Starter.startWebUrl(urlHuixin)
-        }
-    }
+    WebDialog(showDialog,{ showDialog = false },url,"付款码")
+    WebDialog(showDialog_Huixin,{ showDialog_Huixin = false },urlHuixin,"慧新易校")
+//    if (showDialog_Huixin) {
+//        if(switch_startUri) {
+//            androidx.compose.ui.window.Dialog(
+//                onDismissRequest = { showDialog_Huixin = false },
+//                properties = DialogProperties(usePlatformDefaultWidth = false)
+//            ) {
+//                Scaffold(
+//                    modifier = Modifier.fillMaxSize(),
+//                    topBar = {
+//                        TopAppBar(
+//                            colors = TopAppBarDefaults.mediumTopAppBarColors(
+//                                containerColor = Color(0xFFFDCA31),
+//                                titleContentColor = Color.White,
+//                            ),
+//                            actions = {
+//                                Row{
+//                                    IconButton(onClick = { Starter.startWebUrl(urlHuixin) }) { Icon(
+//                                        painterResource(id = R.drawable.net), contentDescription = "", tint = Color.White
+//                                    ) }
+//                                    IconButton(onClick = { showDialog_Huixin = false }) { Icon(
+//                                        painterResource(id = R.drawable.close), contentDescription = "", tint = Color.White) }
+//                                }
+//                            },
+//                            title = { Text("慧新易校") }
+//                        )
+//                    },
+//                ) { innerPadding ->
+//                    Column(
+//                        modifier = Modifier
+//                            .padding(innerPadding)
+//                            .fillMaxSize()
+//                    ) {
+//                        WebViewScreen(urlHuixin)
+//                    }
+//                }
+//            }
+//        } else {
+//            Starter.startWebUrl(urlHuixin)
+//        }
+//    }
 
     if(showBottomSheet_Fee) {
         ModalBottomSheet(

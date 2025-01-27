@@ -33,6 +33,7 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.ui.utils.components.MyCard
 import com.hfut.schedule.ui.utils.components.ScrollText
+import com.hfut.schedule.ui.utils.components.WebDialog
 import com.hfut.schedule.ui.utils.components.WebViewScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,45 +42,46 @@ fun LabUI() {
     var showDialog by remember { mutableStateOf(false) }
     var num by remember { mutableStateOf(0) }
 
-    val switch_startUri = SharePrefs.prefs.getBoolean("SWITCHSTARTURI",true)
-
-    if (showDialog) {
-        if(switch_startUri) {
-            androidx.compose.ui.window.Dialog(
-                onDismissRequest = { showDialog = false },
-                properties = DialogProperties(usePlatformDefaultWidth = false)
-            ) {
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    topBar = {
-                        TopAppBar(
-                            colors = TopAppBarDefaults.mediumTopAppBarColors(
-                                containerColor = Color.Transparent,
-                                titleContentColor = MaterialTheme.colorScheme.primary,
-                            ),
-                            actions = {
-                                Row{
-                                    IconButton(onClick = { Starter.startWebUrl(getLab()[num].info) }) { Icon(painterResource(id = R.drawable.net), contentDescription = "") }
-                                    IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "") }
-                                }
-                            },
-                            title = { ScrollText(getLab()[num].title) }
-                        )
-                    },
-                ) { innerPadding ->
-                    Column(
-                        modifier = Modifier
-                            .padding(innerPadding)
-                            .fillMaxSize()
-                    ) {
-                        WebViewScreen(getLab()[num].info)
-                    }
-                }
-            }
-        } else {
-            Starter.startWebUrl(getLab()[num].info)
-        }
-    }
+    WebDialog(showDialog,{ showDialog = false },getLab()[num].info,getLab()[num].title)
+//    val switch_startUri = SharePrefs.prefs.getBoolean("SWITCHSTARTURI",true)
+//
+//    if (showDialog) {
+//        if(switch_startUri) {
+//            androidx.compose.ui.window.Dialog(
+//                onDismissRequest = { showDialog = false },
+//                properties = DialogProperties(usePlatformDefaultWidth = false)
+//            ) {
+//                Scaffold(
+//                    modifier = Modifier.fillMaxSize(),
+//                    topBar = {
+//                        TopAppBar(
+//                            colors = TopAppBarDefaults.mediumTopAppBarColors(
+//                                containerColor = Color.Transparent,
+//                                titleContentColor = MaterialTheme.colorScheme.primary,
+//                            ),
+//                            actions = {
+//                                Row{
+//                                    IconButton(onClick = { Starter.startWebUrl(getLab()[num].info) }) { Icon(painterResource(id = R.drawable.net), contentDescription = "") }
+//                                    IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "") }
+//                                }
+//                            },
+//                            title = { ScrollText(getLab()[num].title) }
+//                        )
+//                    },
+//                ) { innerPadding ->
+//                    Column(
+//                        modifier = Modifier
+//                            .padding(innerPadding)
+//                            .fillMaxSize()
+//                    ) {
+//                        WebViewScreen(getLab()[num].info)
+//                    }
+//                }
+//            }
+//        } else {
+//            Starter.startWebUrl(getLab()[num].info)
+//        }
+//    }
     ListItem(
         headlineContent = { Text(text = "选项会随云端发生变动,即使不更新软件") },
         leadingContent = { Icon(painterResource(R.drawable.cloud_download), contentDescription = "Localized description",) },

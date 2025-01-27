@@ -272,26 +272,23 @@ interface JxglstuService {
             <option value="1211">延长学制</option>
             <option value="1266">学习困难</option>
     * */
-
     @Multipart
     @POST("for-std/change-major-apply/save")
-    @Headers(
-        "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0"
-    )
+    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0")
     fun postTransfer(
         @Header("Cookie") cookie: String,
-        //固定字符串
+        // 固定字符串,参考上面
         @Part("stdAlterReasonAssoc") reasonId: RequestBody = "1286".toRequestBody("text/plain".toMediaTypeOrNull()),
         @Part("applyRemark") remark: RequestBody = "".toRequestBody("text/plain".toMediaTypeOrNull()),
         @Part file: MultipartBody.Part? = null, // 可选文件
-        //从我的档案接口获取手机号
+        // 必须项,从我的档案接口获取手机号,或者让用户自己输
         @Part("telephone") telephone: RequestBody,
         @Part("email") email: RequestBody = "".toRequestBody("text/plain".toMediaTypeOrNull()),
-        //REDIRECT_URL = for-std/change-major-apply/apply?PARENT_URL=/for-std/change-major-apply/index/{studentId}&batchId={batchId}&studentId={studentId}
+        // 固定字符串 REDIRECT_URL = /for-std/change-major-apply/apply?PARENT_URL=/for-std/change-major-apply/index/{studentId}&batchId={batchId}&studentId={studentId}
         @Part("REDIRECT_URL") redirectUrl : RequestBody,
         @Part("changeMajorBatchAssoc") batchId : RequestBody,
         @Part("studentAssoc") studentID :RequestBody,
-        @Part("changeMajorSubmitAssoc") id: RequestBody //转专业的专业列表里的id
+        @Part("changeMajorSubmitAssoc") id: RequestBody // 转专业的专业列表里的id
     ): Call<ResponseBody>
 
     //我的转专业详情

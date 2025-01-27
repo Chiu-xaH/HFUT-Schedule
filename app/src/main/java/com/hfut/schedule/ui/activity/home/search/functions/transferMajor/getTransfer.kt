@@ -89,19 +89,11 @@ fun getTransferList(vm: NetWorkViewModel): List<ChangeMajorInfo> {
         // 获取所有的 turn-panel 元素
         val turnPanels = document.select(".turn-panel")
         for (panel in turnPanels) {
-            // 获取 <span> 的中文标题
             val title = panel.select(".turn-title span").text()
-
-            // 获取 data 属性值
             val dataValue = panel.select(".change-major-enter").attr("data")
-
-            // 获取申请日期时间范围
             val applicationDate = panel.select(".open-date .text-primary").text()
-
-            // 获取录取日期时间范围
             val admissionDate = panel.select(".select-date .text-warning").text()
 
-            // 构建 ChangeMajorInfo 数据类并添加到列表
             if (title.isNotBlank() && dataValue.isNotBlank()) {
                 result.add(
                     ChangeMajorInfo(

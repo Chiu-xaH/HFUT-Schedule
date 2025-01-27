@@ -50,6 +50,7 @@ import com.hfut.schedule.logic.utils.reEmptyLiveDta
 import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.MyCard
 import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.WebDialog
 import com.hfut.schedule.ui.utils.components.WebViewScreen
 import com.hfut.schedule.ui.utils.style.topBarBlur
 import com.hfut.schedule.viewmodel.NetWorkViewModel
@@ -95,43 +96,44 @@ fun XuanquNewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
 
     if(refresh) { refresh() }
 
-    if(showDialog) {
-        val link = host + url
-        androidx.compose.ui.window.Dialog(
-            onDismissRequest = { showDialog = false },
-            properties = DialogProperties(usePlatformDefaultWidth = false)
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                topBar = {
-                    TopAppBar(
-//                        modifier = Modifier.topBarBlur(hazeState, blur),
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        actions = {
-                            Row{
-                                IconButton(onClick = { Starter.startWebUrl(link) }) { Icon(
-                                    painterResource(id = R.drawable.net), contentDescription = "") }
-                                IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "") }
-                            }
-                        },
-                        title = { Text("新闻详情") }
-                    )
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-//                        .haze(state = hazeState)
-                ) {
-                    WebViewScreen(url = link)
-                }
-            }
-        }
-    }
+    WebDialog(showDialog,{ showDialog = false },host + url,"新闻详情")
+//    if(showDialog) {
+//        val link = host + url
+//        androidx.compose.ui.window.Dialog(
+//            onDismissRequest = { showDialog = false },
+//            properties = DialogProperties(usePlatformDefaultWidth = false)
+//        ) {
+//            Scaffold(
+//                modifier = Modifier.fillMaxSize(),
+//                topBar = {
+//                    TopAppBar(
+////                        modifier = Modifier.topBarBlur(hazeState, blur),
+//                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+//                            containerColor = Color.Transparent,
+//                            titleContentColor = MaterialTheme.colorScheme.primary,
+//                        ),
+//                        actions = {
+//                            Row{
+//                                IconButton(onClick = { Starter.startWebUrl(link) }) { Icon(
+//                                    painterResource(id = R.drawable.net), contentDescription = "") }
+//                                IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "") }
+//                            }
+//                        },
+//                        title = { Text("新闻详情") }
+//                    )
+//                },
+//            ) { innerPadding ->
+//                Column(
+//                    modifier = Modifier
+//                        .padding(innerPadding)
+//                        .fillMaxSize()
+////                        .haze(state = hazeState)
+//                ) {
+//                    WebViewScreen(url = link)
+//                }
+//            }
+//        }
+//    }
 
     Box {
         if(loading) {

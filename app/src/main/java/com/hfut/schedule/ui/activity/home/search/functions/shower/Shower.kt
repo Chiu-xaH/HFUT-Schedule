@@ -92,6 +92,7 @@ import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.WebViewScreen
 import com.hfut.schedule.ui.theme.FWDTColr
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
+import com.hfut.schedule.ui.utils.components.WebDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -210,45 +211,47 @@ fun ShowerUI(vm : NetWorkViewModel,isInGuagua : Boolean = false) {
         }
     }
 
-    if (showDialog) {
-        if(switch_startUri) {
-            androidx.compose.ui.window.Dialog(
-                onDismissRequest = { showDialog = false },
-                properties = DialogProperties(usePlatformDefaultWidth = false)
-            ) {
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    topBar = {
-                        TopAppBar(
-                            colors = TopAppBarDefaults.mediumTopAppBarColors(
-                                containerColor = FWDTColr,
-                                titleContentColor = Color.White,
-                            ),
-                            actions = {
-                                Row{
-                                    IconButton(onClick = { Starter.startWebUrl( url) }) { Icon(painterResource(id = R.drawable.net), contentDescription = "", tint = Color.White) }
-                                    IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "", tint = Color.White) }
-                                }
+    WebDialog(showDialog,{ showDialog = false },url,"宣城校区 洗浴缴纳")
 
-                            },
-                            title = { Text("宣城校区 洗浴缴纳") }
-                        )
-                    },
-                ) { innerPadding ->
-                    Column(
-                        modifier = Modifier
-                            .padding(innerPadding)
-                            .fillMaxSize()
-                    ) {
-                        WebViewScreen(url)
-                    }
-                }
-            }
-        } else {
-            Starter.startWebUrl(url)
-        }
-    }
-
+//    if (showDialog) {
+//        if(switch_startUri) {
+//            androidx.compose.ui.window.Dialog(
+//                onDismissRequest = { showDialog = false },
+//                properties = DialogProperties(usePlatformDefaultWidth = false)
+//            ) {
+//                Scaffold(
+//                    modifier = Modifier.fillMaxSize(),
+//                    topBar = {
+//                        TopAppBar(
+//                            colors = TopAppBarDefaults.mediumTopAppBarColors(
+//                                containerColor = FWDTColr,
+//                                titleContentColor = Color.White,
+//                            ),
+//                            actions = {
+//                                Row{
+//                                    IconButton(onClick = { Starter.startWebUrl( url) }) { Icon(painterResource(id = R.drawable.net), contentDescription = "", tint = Color.White) }
+//                                    IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "", tint = Color.White) }
+//                                }
+//
+//                            },
+//                            title = { Text("宣城校区 洗浴缴纳") }
+//                        )
+//                    },
+//                ) { innerPadding ->
+//                    Column(
+//                        modifier = Modifier
+//                            .padding(innerPadding)
+//                            .fillMaxSize()
+//                    ) {
+//                        WebViewScreen(url)
+//                    }
+//                }
+//            }
+//        } else {
+//            Starter.startWebUrl(url)
+//        }
+//    }
+//
 
     if(showDialog2)
         Dialog(onDismissRequest = { showDialog2 = false }) {
