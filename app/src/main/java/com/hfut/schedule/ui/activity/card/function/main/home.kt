@@ -27,7 +27,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -51,7 +50,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavHostController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
@@ -74,14 +72,14 @@ import com.hfut.schedule.ui.activity.home.search.functions.electric.EleUI
 import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.loginWebUI
 
 import com.hfut.schedule.ui.activity.home.search.functions.shower.ShowerUI
+import com.hfut.schedule.ui.utils.NavigateManager.turnTo
+import com.hfut.schedule.ui.utils.NavigateManager.turnToAndClear
 import com.hfut.schedule.ui.utils.style.CardForListColor
-import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.MyCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.WebDialog
 import com.hfut.schedule.ui.utils.style.Round
-import com.hfut.schedule.ui.utils.components.WebViewScreen
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -578,13 +576,13 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                         headlineContent = { Text(text = "账单") },
                         supportingContent = { Text(text = "按消费先后查看交易记录")},
                         leadingContent = { Icon(painter = painterResource(id = R.drawable.receipt_long), contentDescription = "") },
-                        modifier = Modifier.clickable { turnToBottomBar(navController,CardBarItems.BILLS.name) }
+                        modifier = Modifier.clickable { turnToAndClear(navController,CardBarItems.BILLS.name) }
                     )
                     ListItem(
                         headlineContent = { Text(text = "统计") },
                         supportingContent = { Text(text = "按时间段归纳统计消费")},
                         leadingContent = { Icon(painter = painterResource(id = R.drawable.leaderboard), contentDescription = "") },
-                        modifier = Modifier.clickable { turnToBottomBar(navController,CardBarItems.COUNT.name) }
+                        modifier = Modifier.clickable { turnToAndClear(navController,CardBarItems.COUNT.name) }
                     )
                     ListItem(
                         headlineContent = { Text(text = "充值") },
@@ -649,16 +647,6 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
             Modifier
                 .align(Alignment.TopCenter)
                 .padding(innerPadding))
-    }
-}
-
-fun turnToBottomBar(navController :  NavHostController,route : String) {
-    navController.navigate(route) {
-        popUpTo(navController.graph.startDestinationId) {
-            saveState = true
-        }
-        launchSingleTop = true
-        restoreState = true
     }
 }
 

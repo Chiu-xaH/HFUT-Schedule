@@ -42,6 +42,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -69,6 +71,7 @@ import com.hfut.schedule.logic.enums.BottomBarItems.*
 import com.hfut.schedule.logic.beans.NavigationBarItemData
 import com.hfut.schedule.logic.utils.APPVersion
 import com.hfut.schedule.logic.utils.AndroidVersion.canBlur
+import com.hfut.schedule.logic.utils.DataStoreManager
 import com.hfut.schedule.logic.utils.DateTimeManager
 import com.hfut.schedule.logic.utils.DateTimeManager.Benweeks
 import com.hfut.schedule.logic.utils.DateTimeManager.Date_MM_dd
@@ -92,6 +95,11 @@ import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTot
 import com.hfut.schedule.ui.activity.home.search.functions.webLab.LabUI
 import com.hfut.schedule.ui.activity.home.search.main.SearchFuncs
 import com.hfut.schedule.ui.activity.home.search.main.SearchScreen
+import com.hfut.schedule.ui.activity.login.First
+import com.hfut.schedule.ui.utils.NavigateManager
+import com.hfut.schedule.ui.utils.NavigateManager.ANIMATION_SPEED
+import com.hfut.schedule.ui.utils.NavigateManager.currentPage
+import com.hfut.schedule.ui.utils.NavigateManager.turnToAndClear
 import com.hfut.schedule.ui.utils.components.CustomTabRow
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
@@ -124,7 +132,7 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
     var showlable by remember { mutableStateOf(switch) }
     val hazeState = remember { HazeState() }
 
-    var bottomBarItems by remember { mutableStateOf(FOCUS) }
+//    var bottomBarItems by remember { mutableStateOf(FOCUS) }
     var showBadge by remember { mutableStateOf(false) }
     if (getUpdates().version != APPVersion.getVersionName()) showBadge = true
     val switchblur = prefs.getBoolean("SWITCHBLUR", canBlur)
@@ -134,12 +142,18 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
     //if (savenum != getnum) showBadge2 = true
     val animation by remember { mutableStateOf(prefs.getInt("ANIMATION", MyApplication.Animation)) }
 
+
+
     //Log.d("动画",animation.toString())
 //判定是否以聚焦作为第一页
-    val first : String = when (prefs.getBoolean("SWITCHFOCUS",true)) {
-        true -> FOCUS.name
-        false -> COURSES.name
+    val first  = when (prefs.getBoolean("SWITCHFOCUS",true)) {
+        true -> FOCUS
+        false -> COURSES
     }
+
+    // 按下底栏按钮后，要准备去的导航
+    var targetPage by remember { mutableStateOf(first) }
+    // 记录上一个
 
     var showAll by remember { mutableStateOf(false) }
     var findCourse by remember { mutableStateOf(false) }
@@ -210,7 +224,7 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
             }
         }
     }
-
+    val currentAnimationIndex by DataStoreManager.animationTypeFlow.collectAsState(initial = 0)
 
     if (showBottomSheet_multi) {
         ModalBottomSheet(onDismissRequest = { showBottomSheet_multi = false }, sheetState = sheetState_multi, modifier = Modifier,
@@ -250,6 +264,14 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
     var showSearch by remember { mutableStateOf(false) }
     vmUI.findNewCourse.observeForever(Observer)
     if(findCourse) vmUI.findNewCourse.removeObserver(Observer)
+
+    // 保存上一页页码 用于决定左右动画
+    if(currentAnimationIndex == 2) {
+        LaunchedEffect(targetPage) {
+            currentPage = targetPage.page
+        }
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
             //.blur(blurRadius, BlurredEdgeTreatment.Unbounded),
@@ -264,8 +286,8 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
                     ),
                     title = {
 
-                        if(bottomBarItems != SEARCH) {
-                            ScrollText(texts(bottomBarItems))
+                        if(targetPage != SEARCH) {
+                            ScrollText(texts(targetPage))
                         } else {
                             if(!showSearch) {
                                 ScrollText(texts(SEARCH))
@@ -277,7 +299,7 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
                         }
                             },
                     actions = {
-                        when(bottomBarItems){
+                        when(targetPage){
                             COURSES -> {
                                 CourseTotalForApi(vm=vm, isIconOrText = true)
                                 IconButton(onClick = {
@@ -327,7 +349,7 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
 //                    if(bottomBarItems != FOCUS)
 //                        Divider()
 //                }
-                when(bottomBarItems){
+                when(targetPage){
                     COURSES -> ScheduleTopDate(showAll,today,blur)
                     FOCUS -> CustomTabRow(pagerState, titles, blur)
                    // SEARCH -> SearchFuncs()
@@ -367,19 +389,14 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
                             modifier = Modifier.scale(scale.value),
                             interactionSource = interactionSource,
                             onClick = {
-                                if(item == items[0]) bottomBarItems = COURSES
-                                if(item == items[1]) bottomBarItems = FOCUS
-                                if(item == items[2]) bottomBarItems = SEARCH
-                                if(item == items[3]) bottomBarItems = SETTINGS
-                                //     atEnd = !atEnd
+                                when(item) {
+                                    items[0] -> targetPage = COURSES
+                                    items[1] -> targetPage = FOCUS
+                                    items[2] -> targetPage = SEARCH
+                                    items[3] -> targetPage = SETTINGS
+                                }
                                 if (!selected) {
-                                    navController.navigate(route) {
-                                        popUpTo(navController.graph.startDestinationId) {
-                                            saveState = true
-                                        }
-                                        launchSingleTop = true
-                                        restoreState = true
-                                    }
+                                    turnToAndClear(navController,route)
                                 }
                             },
                             label = { Text(text = item.label) },
@@ -397,23 +414,15 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
             }
         }
     ) { innerPadding ->
+        val animation = NavigateManager.getAnimationType(currentAnimationIndex,targetPage.page)
         NavHost(
             navController = navController,
-            startDestination = first,
-            enterTransition = {
-                     //   fadeIn(animationSpec = tween(durationMillis = animation)) +
-                        scaleIn(animationSpec = tween(durationMillis = animation)) +
-                        expandVertically(expandFrom = Alignment.Top,animationSpec = tween(durationMillis = animation))
-            },
-            exitTransition = {
-                      //  fadeOut(animationSpec = tween(durationMillis = animation)) +
-                        scaleOut(animationSpec = tween(durationMillis = animation)) +
-                        shrinkVertically(shrinkTowards = Alignment.Top,animationSpec = tween(durationMillis = animation))
-            },
+            startDestination = first.name,
+            enterTransition = { animation.enter },
+            exitTransition = { animation.exit },
             modifier = Modifier
             .haze(
                 state = hazeState,
-                //backgroundColor = MaterialTheme.colorScheme.surface,
             )) {
             composable(COURSES.name) {
             Scaffold(modifier = Modifier.pointerInput(Unit) {

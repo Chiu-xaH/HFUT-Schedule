@@ -16,8 +16,12 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.with
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -77,6 +81,9 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.LoginViewModel
@@ -90,6 +97,7 @@ import com.hfut.schedule.logic.utils.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter.noLogin
 import com.hfut.schedule.ui.activity.home.cube.items.main.FirstCube
+import com.hfut.schedule.ui.utils.NavigateManager.ANIMATION_SPEED
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.style.Round
 import kotlinx.coroutines.CoroutineScope
@@ -186,8 +194,17 @@ fun SavedClick() {
     } else noLogin()
 }
 
+//
+//@Composable
+//fun FirstUI(vm: LoginViewModel) {
+//
+//}
 
-@RequiresApi(Build.VERSION_CODES.O)
+enum class First {
+    HOME,USE_AGREEMENT
+}
+
+
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -199,6 +216,7 @@ fun LoginUI(vm : LoginViewModel) {
     var showBadge by remember { mutableStateOf(false) }
     if (APPVersion.getVersionName() != prefs.getString("version", APPVersion.getVersionName())) showBadge = true
   //  val hazeState = remember { HazeState() }
+
 
 
     if (showBottomSheet) {
@@ -279,7 +297,6 @@ fun LoginUI(vm : LoginViewModel) {
             .padding(innerPadding)
             .fillMaxSize()) {
             TwoTextField(vm)
-            //Text(text = "欢迎使用")
         }
     }
 }
@@ -288,7 +305,7 @@ fun LoginUI(vm : LoginViewModel) {
 @Composable
 fun AnimatedWelcomeScreen() {
     val welcomeTexts = listOf(
-        "你好", "(｡･ω･)ﾉﾞ", "欢迎使用", "ヾ(*ﾟ▽ﾟ)ﾉ", "Hello","(^-^*)", "Hola", "U｡･x･)ﾉ", "Bonjour","＼(≧▽≦)／"
+        "你好", "(｡･ω･)ﾉﾞ", "欢迎使用", "ヾ(*ﾟ▽ﾟ)ﾉ","Hello", "*｡٩(ˊωˋ*)و✧*｡","Hola", "(⸝•̀֊•́⸝)", "Bonjour","＼(≧▽≦)／"
     )
     var currentIndex by remember { mutableStateOf(0) }
     LaunchedEffect(Unit) {

@@ -30,6 +30,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,10 +53,14 @@ import com.hfut.schedule.viewmodel.LoginViewModel
 import com.hfut.schedule.logic.enums.FixBarItems
 import com.hfut.schedule.logic.beans.NavigationBarItemData
 import com.hfut.schedule.logic.utils.AndroidVersion
+import com.hfut.schedule.logic.utils.DataStoreManager
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.fix.about.AboutUI
 import com.hfut.schedule.ui.activity.fix.fix.FixUI
+import com.hfut.schedule.ui.utils.NavigateManager
+import com.hfut.schedule.ui.utils.NavigateManager.currentPage
+import com.hfut.schedule.ui.utils.NavigateManager.turnToAndClear
 import com.hfut.schedule.ui.utils.style.bottomBarBlur
 import com.hfut.schedule.ui.utils.style.topBarBlur
 import dev.chrisbanes.haze.HazeState
@@ -69,6 +75,16 @@ fun Fix(vm : LoginViewModel,vm2 : NetWorkViewModel) {
     var animation by remember { mutableStateOf(prefs.getInt("ANIMATION", MyApplication.Animation)) }
     val hazeState = remember { HazeState() }
     val navController = rememberNavController()
+    val currentAnimationIndex by DataStoreManager.animationTypeFlow.collectAsState(initial = 0)
+    var targetPage by remember { mutableStateOf(FixBarItems.Fix) }
+    // 保存上一页页码 用于决定左右动画
+    if(currentAnimationIndex == 2) {
+        LaunchedEffect(targetPage) {
+            currentPage = targetPage.page
+        }
+    }
+
+
     val context = LocalContext.current
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -125,14 +141,15 @@ fun Fix(vm : LoginViewModel,vm2 : NetWorkViewModel) {
                             modifier = Modifier.scale(scale.value),
                             interactionSource = interactionSource,
                             onClick = {
-                                if (!selected) {
-                                    navController.navigate(route) {
-                                        popUpTo(navController.graph.startDestinationId) {
-                                            saveState = true
-                                        }
-                                        launchSingleTop = true
-                                        restoreState = true
+                                if(currentAnimationIndex == 2) {
+                                    when(item){
+                                        items[0] -> targetPage = FixBarItems.Fix
+                                        items[0] -> targetPage = FixBarItems.About
                                     }
+                                }
+
+                                if (!selected) {
+                                    turnToAndClear(navController,route)
                                 }
                             },
                             label = { Text(text = item.label) },
@@ -146,16 +163,12 @@ fun Fix(vm : LoginViewModel,vm2 : NetWorkViewModel) {
 
         }
     ) {innerPadding ->
+        val animation = NavigateManager.getAnimationType(currentAnimationIndex,targetPage.page)
+
         NavHost(navController = navController,
             startDestination = FixBarItems.Fix.name,
-            enterTransition = {
-                scaleIn(animationSpec = tween(durationMillis = animation)) +
-                        expandVertically(expandFrom = Alignment.Top,animationSpec = tween(durationMillis = animation))
-            },
-            exitTransition = {
-                scaleOut(animationSpec = tween(durationMillis = animation)) +
-                        shrinkVertically(shrinkTowards = Alignment.Top,animationSpec = tween(durationMillis = animation))
-            },
+            enterTransition = { animation.enter },
+            exitTransition = { animation.exit },
             modifier = Modifier
             .haze(
                 state = hazeState,

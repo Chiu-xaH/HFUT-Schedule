@@ -1,5 +1,5 @@
 package com.hfut.schedule.logic.enums
 
-enum class GradeBarItems {
-    GRADE,COUNT
+enum class GradeBarItems(val page : Int) {
+    GRADE(0),COUNT(1)
 }

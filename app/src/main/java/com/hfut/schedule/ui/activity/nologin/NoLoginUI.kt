@@ -36,6 +36,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,6 +58,7 @@ import com.hfut.schedule.logic.beans.NavigationBarItemData
 import com.hfut.schedule.logic.enums.BottomBarItems
 import com.hfut.schedule.logic.utils.APPVersion
 import com.hfut.schedule.logic.utils.AndroidVersion
+import com.hfut.schedule.logic.utils.DataStoreManager
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.MyAPIItem
@@ -66,6 +69,9 @@ import com.hfut.schedule.ui.activity.home.search.functions.notifications.Notific
 import com.hfut.schedule.ui.activity.home.search.functions.notifications.getNotifications
 import com.hfut.schedule.ui.activity.home.search.functions.webLab.LabUI
 import com.hfut.schedule.ui.activity.home.search.main.SearchFuncs
+import com.hfut.schedule.ui.utils.NavigateManager
+import com.hfut.schedule.ui.utils.NavigateManager.currentPage
+import com.hfut.schedule.ui.utils.NavigateManager.turnToAndClear
 import com.hfut.schedule.ui.utils.components.CustomTabRow
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
@@ -93,7 +99,6 @@ fun NoLoginUI(vm : NetWorkViewModel,vm2 : LoginViewModel,vmUI : UIViewModel) {
     var showlable by remember { mutableStateOf(switch) }
     val hazeState = remember { HazeState() }
 
-    var bottomBarItems by remember { mutableStateOf(BottomBarItems.SEARCH) }
     var showBadge by remember { mutableStateOf(false) }
     if (getUpdates().version != APPVersion.getVersionName()) showBadge = true
     val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR", AndroidVersion.canBlur)
@@ -101,8 +106,9 @@ fun NoLoginUI(vm : NetWorkViewModel,vm2 : LoginViewModel,vmUI : UIViewModel) {
 
     val animation by remember { mutableStateOf(SharePrefs.prefs.getInt("ANIMATION", MyApplication.Animation)) }
 
-    val first : String = BottomBarItems.SEARCH.name
+    val first = BottomBarItems.SEARCH
 
+    var bottomBarItems by remember { mutableStateOf(first) }
 
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -111,6 +117,13 @@ fun NoLoginUI(vm : NetWorkViewModel,vm2 : LoginViewModel,vmUI : UIViewModel) {
     val ifSaved = false
 
     CoroutineScope(Job()).launch { NetWorkUpdateNoLogin(vm2) }
+
+    val currentAnimationIndex by DataStoreManager.animationTypeFlow.collectAsState(initial = 0)
+//    var targetPage by remember { mutableStateOf(FixBarItems.Fix) }
+    // 保存上一页页码 用于决定左右动画
+    LaunchedEffect(bottomBarItems) {
+        currentPage = bottomBarItems.page
+    }
 
 
 
@@ -273,13 +286,7 @@ fun NoLoginUI(vm : NetWorkViewModel,vm2 : LoginViewModel,vmUI : UIViewModel) {
                                 if(item == items[2]) bottomBarItems = BottomBarItems.SETTINGS
                                 //     atEnd = !atEnd
                                 if (!selected) {
-                                    navController.navigate(route) {
-                                        popUpTo(navController.graph.startDestinationId) {
-                                            saveState = true
-                                        }
-                                        launchSingleTop = true
-                                        restoreState = true
-                                    }
+                                    turnToAndClear(navController,route)
                                 }
                             },
                             label = { Text(text = item.label) },
@@ -297,19 +304,13 @@ fun NoLoginUI(vm : NetWorkViewModel,vm2 : LoginViewModel,vmUI : UIViewModel) {
             }
         }
     ) { innerPadding ->
+        val animation = NavigateManager.getAnimationType(currentAnimationIndex,bottomBarItems.page)
+
         NavHost(
             navController = navController,
-            startDestination = first,
-            enterTransition = {
-                //   fadeIn(animationSpec = tween(durationMillis = animation)) +
-                scaleIn(animationSpec = tween(durationMillis = animation)) +
-                        expandVertically(expandFrom = Alignment.Top,animationSpec = tween(durationMillis = animation))
-            },
-            exitTransition = {
-                //  fadeOut(animationSpec = tween(durationMillis = animation)) +
-                scaleOut(animationSpec = tween(durationMillis = animation)) +
-                        shrinkVertically(shrinkTowards = Alignment.Top,animationSpec = tween(durationMillis = animation))
-            },
+            startDestination = first.name,
+            enterTransition = { animation.enter },
+            exitTransition = { animation.exit },
             modifier = Modifier
                 .haze(
                     state = hazeState,

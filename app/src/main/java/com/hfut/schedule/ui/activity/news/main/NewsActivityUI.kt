@@ -38,7 +38,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.BadgedBox
-import androidx.compose.material3.CircularProgressIndicator
 import com.hfut.schedule.ui.utils.components.LoadingUI
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -55,6 +54,8 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -76,12 +77,17 @@ import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.enums.NewsBarItems
 import com.hfut.schedule.logic.beans.NavigationBarItemData
 import com.hfut.schedule.logic.utils.AndroidVersion
+import com.hfut.schedule.logic.utils.DataStoreManager
 import com.hfut.schedule.logic.utils.Encrypt
 import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.ui.activity.card.function.main.turnToBottomBar
+//import com.hfut.schedule.ui.activity.card.function.main.turnToBottomBar
 import com.hfut.schedule.ui.activity.news.home.NewsItem
 import com.hfut.schedule.ui.activity.news.departments.SchoolsUI
 import com.hfut.schedule.ui.activity.news.xuancheng.XuanquNewsUI
+import com.hfut.schedule.ui.utils.NavigateManager
+import com.hfut.schedule.ui.utils.NavigateManager.currentPage
+import com.hfut.schedule.ui.utils.NavigateManager.turnTo
+import com.hfut.schedule.ui.utils.NavigateManager.turnToAndClear
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.style.bottomBarBlur
 import com.hfut.schedule.ui.utils.style.topBarBlur
@@ -104,7 +110,18 @@ fun NewsActivityUI(vm: NetWorkViewModel) {
     val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR",  AndroidVersion.canBlur)
     val blur by remember { mutableStateOf(switchblur) }
     val hazeState = remember { HazeState() }
-    var bottomBarItems by remember { mutableStateOf(NewsBarItems.News) }
+//    var bottomBarItems by remember { mutableStateOf(NewsBarItems.News) }
+    val currentAnimationIndex by DataStoreManager.animationTypeFlow.collectAsState(initial = 0)
+    var targetPage by remember { mutableStateOf(NewsBarItems.News) }
+    // 保存上一页页码 用于决定左右动画
+    if(currentAnimationIndex == 2) {
+        LaunchedEffect(targetPage) {
+            currentPage = targetPage.page
+        }
+    }
+
+
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -117,7 +134,7 @@ fun NewsActivityUI(vm: NetWorkViewModel) {
                     ),
                     title = { Text("通知公告") },
                     actions = {
-                        if(bottomBarItems == NewsBarItems.XuanCheng) {
+                        if(targetPage == NewsBarItems.XuanCheng) {
                             IconButton(onClick = {
                                 MyToast("正在开发")
                             }) {
@@ -173,13 +190,15 @@ fun NewsActivityUI(vm: NetWorkViewModel) {
                             interactionSource = interactionSource,
                             onClick = {
                                 //     atEnd = !atEnd
-                                bottomBarItems = when(item) {
-                                    items[0] -> NewsBarItems.News
-                                    items[1] -> NewsBarItems.XuanCheng
-                                    items[2] -> NewsBarItems.School
-                                    else -> NewsBarItems.News
+                                if(currentAnimationIndex == 2) {
+                                    targetPage = when(item) {
+                                        items[0] -> NewsBarItems.News
+                                        items[1] -> NewsBarItems.XuanCheng
+                                        items[2] -> NewsBarItems.School
+                                        else -> NewsBarItems.News
+                                    }
                                 }
-                                if (!selected) { turnToBottomBar(navController, route) }
+                                if (!selected) { turnToAndClear(navController, route) }
                             },
                             label = { Text(text = item.label) },
                             icon = {
@@ -192,16 +211,13 @@ fun NewsActivityUI(vm: NetWorkViewModel) {
 
         }
     ) {innerPadding ->
+
+        val animation = NavigateManager.getAnimationType(currentAnimationIndex,targetPage.page)
+
         NavHost(navController = navController,
             startDestination = NewsBarItems.News.name,
-            enterTransition = {
-                scaleIn(animationSpec = tween(durationMillis = animation)) +
-                        expandVertically(expandFrom = Alignment.Top,animationSpec = tween(durationMillis = animation))
-            },
-            exitTransition = {
-                scaleOut(animationSpec = tween(durationMillis = animation)) +
-                        shrinkVertically(shrinkTowards = Alignment.Top,animationSpec = tween(durationMillis = animation))
-            },
+            enterTransition = { animation.enter },
+            exitTransition = { animation.exit },
             modifier = Modifier.haze(state = hazeState)) {
             composable(NewsBarItems.News.name) {
                 Scaffold {

@@ -35,6 +35,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -55,12 +57,17 @@ import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.beans.NavigationBarItemData
+import com.hfut.schedule.logic.enums.FixBarItems
 import com.hfut.schedule.logic.enums.GradeBarItems
 import com.hfut.schedule.logic.utils.AndroidVersion
+import com.hfut.schedule.logic.utils.DataStoreManager
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.grade.analysis.GradeCountUI
 import com.hfut.schedule.ui.activity.grade.grade.community.GradeItemUI
 import com.hfut.schedule.ui.activity.grade.grade.jxglstu.GradeItemUIJXGLSTU
+import com.hfut.schedule.ui.utils.NavigateManager
+import com.hfut.schedule.ui.utils.NavigateManager.currentPage
+import com.hfut.schedule.ui.utils.NavigateManager.turnToAndClear
 import com.hfut.schedule.ui.utils.components.MyCard
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.style.bottomBarBlur
@@ -85,6 +92,16 @@ fun GradeUI(ifSaved : Boolean,vm : NetWorkViewModel) {
 
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    val currentAnimationIndex by DataStoreManager.animationTypeFlow.collectAsState(initial = 0)
+    var targetPage by remember { mutableStateOf(GradeBarItems.GRADE) }
+    // 保存上一页页码 用于决定左右动画
+    if(currentAnimationIndex == 2) {
+        LaunchedEffect(targetPage) {
+            currentPage = targetPage.page
+        }
+    }
+
 
     if (showBottomSheet) {
         ModalBottomSheet(
@@ -180,14 +197,15 @@ fun GradeUI(ifSaved : Boolean,vm : NetWorkViewModel) {
                             modifier = Modifier.scale(scale.value),
                             interactionSource = interactionSource,
                             onClick = {
-                                if (!selected) {
-                                    navController.navigate(route) {
-                                        popUpTo(navController.graph.startDestinationId) {
-                                            saveState = true
-                                        }
-                                        launchSingleTop = true
-                                        restoreState = true
+                                if(currentAnimationIndex == 2) {
+                                    when(item) {
+                                        items[0] -> targetPage = GradeBarItems.GRADE
+                                        items[1] -> targetPage = GradeBarItems.COUNT
                                     }
+                                }
+
+                                if (!selected) {
+                                    turnToAndClear(navController,route)
                                 }
                             },
                             label = { Text(text = item.label) },
@@ -201,16 +219,12 @@ fun GradeUI(ifSaved : Boolean,vm : NetWorkViewModel) {
 
         }
         ) { innerPadding ->
-            NavHost(navController = navController,
+        val animation = NavigateManager.getAnimationType(currentAnimationIndex,targetPage.page)
+
+        NavHost(navController = navController,
                 startDestination = GradeBarItems.GRADE.name,
-                enterTransition = {
-                    scaleIn(animationSpec = tween(durationMillis = animation)) +
-                            expandVertically(expandFrom = Alignment.Top,animationSpec = tween(durationMillis = animation))
-                },
-                exitTransition = {
-                    scaleOut(animationSpec = tween(durationMillis = animation)) +
-                            shrinkVertically(shrinkTowards = Alignment.Top,animationSpec = tween(durationMillis = animation))
-                },
+                enterTransition = { animation.enter },
+                exitTransition = { animation.exit },
                 modifier = Modifier.haze(state = hazeState)
             ) {
                 composable(GradeBarItems.GRADE.name) {

@@ -89,9 +89,16 @@ import com.hfut.schedule.ui.utils.style.CardForListColor
 import com.hfut.schedule.ui.utils.style.RowHorizal
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import nl.dionsegijn.konfetti.compose.KonfettiView
+import nl.dionsegijn.konfetti.core.Party
+import nl.dionsegijn.konfetti.core.Position
+import nl.dionsegijn.konfetti.core.emitter.Emitter
+import nl.dionsegijn.konfetti.core.models.Shape
+import nl.dionsegijn.konfetti.core.models.Size
+import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun TEST(innerPaddings : PaddingValues) {
 //    Column (modifier = Modifier.padding(innerPaddings)){
@@ -224,43 +231,84 @@ fun TEST(innerPaddings : PaddingValues) {
 //
 //      //  Gesture()
 //    }
-    val listSnacks = listOf<Snack>(
-        Snack("桌面","des",R.drawable.home),
-        Snack("搜索","des",R.drawable.search),
-        Snack("动画","des",R.drawable.animation),
-        Snack("堆栈","des",R.drawable.stacks)
+
+
+    val party = Party(
+        emitter = Emitter(duration = 5, TimeUnit.SECONDS).perSecond(30)
     )
 
-    SharedTransitionLayout {
-        val navController = rememberNavController()
-        NavHost(
-            navController = navController,
-            startDestination = "home"
-        ) {
-            composable("home") {
-                HomeScreen(
-                    navController,
-                    this@SharedTransitionLayout,
-                    this@composable,
-                    listSnacks,
-                    innerPaddings
-                )
-            }
-            composable(
-                "details/{item}",
-                arguments = listOf(navArgument("item") { type = NavType.IntType })
-            ) { backStackEntry ->
-                val id = backStackEntry.arguments?.getInt("item")
-                val snack = listSnacks[id!!]
-                DetailsScreen(
-                    navController,
-                    id,
-                    snack,
-                    this@SharedTransitionLayout,
-                    this@composable
-                )
+    Box() {
+        KonfettiView(
+            modifier = Modifier.fillMaxSize(),
+            parties = listOf(party),
+        )
+        val listSnacks = listOf<Snack>(
+            Snack("桌面","des",R.drawable.home),
+            Snack("搜索","des",R.drawable.search),
+            Snack("动画","des",R.drawable.animation),
+            Snack("堆栈","des",R.drawable.stacks)
+        )
+
+        SharedTransitionLayout {
+            val navController = rememberNavController()
+            NavHost(
+                navController = navController,
+                startDestination = "home"
+            ) {
+                composable("home") {
+                    HomeScreen(
+                        navController,
+                        this@SharedTransitionLayout,
+                        this@composable,
+                        listSnacks,
+                        innerPaddings
+                    )
+                }
+                composable(
+                    "details/{item}",
+                    arguments = listOf(navArgument("item") { type = NavType.IntType })
+                ) { backStackEntry ->
+                    val id = backStackEntry.arguments?.getInt("item")
+                    val snack = listSnacks[id!!]
+                    DetailsScreen(
+                        navController,
+                        id,
+                        snack,
+                        this@SharedTransitionLayout,
+                        this@composable
+                    )
+                }
             }
         }
+    }
+
+}
+
+@Composable
+@Preview
+fun t() {
+    val partyTopStart = Party(
+        emitter = Emitter(duration = 1, TimeUnit.SECONDS).perSecond(30),
+        position = Position.Relative(0.0,0.0)
+    )
+    val partyTopEnd = Party(
+        emitter = Emitter(duration = 1, TimeUnit.SECONDS).perSecond(30),
+        position = Position.Relative(1.0,0.0)
+    )
+    val partyBottomStart = Party(
+        emitter = Emitter(duration = 1, TimeUnit.SECONDS).perSecond(30),
+        position = Position.Relative(0.0,1.0)
+    )
+    val partyBottomEnd = Party(
+        emitter = Emitter(duration = 1, TimeUnit.SECONDS).perSecond(30),
+        position = Position.Relative(1.0,1.0)
+    )
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        KonfettiView(
+            modifier = Modifier.fillMaxSize(),
+            parties = listOf(partyTopStart,partyTopEnd,partyBottomStart,partyBottomEnd),
+        )
     }
 }
 

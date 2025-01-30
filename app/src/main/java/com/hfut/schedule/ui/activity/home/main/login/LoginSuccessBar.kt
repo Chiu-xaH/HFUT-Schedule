@@ -38,6 +38,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -67,6 +69,7 @@ import com.hfut.schedule.ui.activity.home.cube.main.SettingsScreen
 import com.hfut.schedule.ui.activity.home.focus.main.TodayScreen
 import com.hfut.schedule.logic.enums.BottomBarItems.*
 import com.hfut.schedule.logic.utils.APPVersion
+import com.hfut.schedule.logic.utils.DataStoreManager
 import com.hfut.schedule.ui.activity.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.activity.home.calendar.jxglstu.CalendarScreen
 import com.hfut.schedule.ui.activity.home.main.saved.texts
@@ -84,6 +87,9 @@ import com.hfut.schedule.ui.activity.home.search.functions.notifications.getNoti
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotalForApi
 import com.hfut.schedule.ui.activity.home.search.functions.webLab.LabUI
 import com.hfut.schedule.ui.activity.home.search.main.SearchFuncs
+import com.hfut.schedule.ui.utils.NavigateManager
+import com.hfut.schedule.ui.utils.NavigateManager.currentPage
+import com.hfut.schedule.ui.utils.NavigateManager.turnToAndClear
 import com.hfut.schedule.ui.utils.components.CustomTabRow
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
@@ -113,7 +119,7 @@ fun SuccessUI(vm : NetWorkViewModel, grade : String, vm2 : LoginViewModel, vmUI 
     val navController = rememberNavController()
     var isEnabled by remember { mutableStateOf(false) }
     var showlable by remember { mutableStateOf(switch) }
-    var bottomBarItems by remember { mutableStateOf(COURSES) }
+
     val hazeState = remember { HazeState() }
     var showBadge by remember { mutableStateOf(false) }
     if (getUpdates().version != APPVersion.getVersionName()) showBadge = true
@@ -184,9 +190,12 @@ fun SuccessUI(vm : NetWorkViewModel, grade : String, vm2 : LoginViewModel, vmUI 
         }
     }
 
+
+
+
     var swapUI by remember { mutableStateOf(JXGLSTU) }
     var isFriend by remember { mutableStateOf(false) }
-
+    var bottomBarItems by remember { mutableStateOf(COURSES) }
     val sheetState_multi = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_multi by remember { mutableStateOf(false) }
     if (showBottomSheet_multi) {
@@ -212,8 +221,14 @@ fun SuccessUI(vm : NetWorkViewModel, grade : String, vm2 : LoginViewModel, vmUI 
     var today by remember { mutableStateOf(LocalDate.now()) }
 
 
-    var searchText by remember { mutableStateOf("") }
 
+    var searchText by remember { mutableStateOf("") }
+    val currentAnimationIndex by DataStoreManager.animationTypeFlow.collectAsState(initial = 0)
+    if(currentAnimationIndex == 2) {
+        LaunchedEffect(bottomBarItems) {
+            currentPage = bottomBarItems.page
+        }
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -341,18 +356,14 @@ fun SuccessUI(vm : NetWorkViewModel, grade : String, vm2 : LoginViewModel, vmUI 
                             enabled = isEnabled,
                             onClick = {
                                 saveString("tip","0000")
-                                if(item == items[0]) bottomBarItems = COURSES
-                                if(item == items[1]) bottomBarItems = FOCUS
-                                if(item == items[2]) bottomBarItems = SEARCH
-                                if(item == items[3]) bottomBarItems = SETTINGS
+                                when(item) {
+                                    items[0] -> bottomBarItems = COURSES
+                                    items[1] -> bottomBarItems = FOCUS
+                                    items[2] -> bottomBarItems = SEARCH
+                                    items[3] -> bottomBarItems = SETTINGS
+                                }
                                 if (!selected) {
-                                    navController.navigate(route) {
-                                        popUpTo(navController.graph.startDestinationId) {
-                                            saveState = true
-                                        }
-                                        launchSingleTop = true
-                                        restoreState = true
-                                    }
+                                    turnToAndClear(navController,route)
                                 }
                             },
                             label = { Text(text = item.label) },
@@ -370,16 +381,12 @@ fun SuccessUI(vm : NetWorkViewModel, grade : String, vm2 : LoginViewModel, vmUI 
             }
         }
     ) { innerPadding ->
+        val animation = NavigateManager.getAnimationType(currentAnimationIndex,bottomBarItems.page)
+
         NavHost(navController = navController,
             startDestination = COURSES.name,
-            enterTransition = {
-                scaleIn(animationSpec = tween(durationMillis = animation)) +
-                        expandVertically(expandFrom = Alignment.Top,animationSpec = tween(durationMillis = animation))
-            },
-            exitTransition = {
-                scaleOut(animationSpec = tween(durationMillis = animation)) +
-                        shrinkVertically(shrinkTowards = Alignment.Top,animationSpec = tween(durationMillis = animation))
-            },
+            enterTransition = { animation.enter },
+            exitTransition = { animation.exit },
             modifier = Modifier
             .haze(
                 state = hazeState,

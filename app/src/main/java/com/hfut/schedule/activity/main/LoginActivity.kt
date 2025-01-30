@@ -7,16 +7,33 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.logic.utils.PermissionManager.checkAndRequestStoragePermission
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.getCelebration
 import com.hfut.schedule.ui.activity.home.main.saved.Add
 import com.hfut.schedule.ui.activity.home.main.saved.NoNetWork
 import com.hfut.schedule.ui.activity.home.main.saved.getNum
+import com.hfut.schedule.ui.activity.login.First
+//import com.hfut.schedule.ui.activity.login.FirstUI
 import com.hfut.schedule.ui.activity.login.LoginUI
+import com.hfut.schedule.ui.activity.login.UseAgreementUI
+import com.hfut.schedule.ui.utils.NavigateManager
+import com.hfut.schedule.ui.utils.NavigateManager.ANIMATION_SPEED
 import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.PartyAnimation
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -31,11 +48,37 @@ class LoginActivity : BaseActivity() {
     val switchUpload = prefs.getBoolean("SWITCHUPLOAD",true )
     var value = 0
 
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @Composable
     override fun UI() {
-        if(startAcitivity && intent.getBooleanExtra("nologin",true)) {
-            NoNetWork(super.networkVm,super.loginVm,super.uiVm)
-        } else LoginUI(super.loginVm)
+        val navController = rememberNavController()
+        val first = if(prefs.getBoolean("canUse",false)) First.HOME.name else First.USE_AGREEMENT.name
+        NavHost(
+            navController = navController,
+            startDestination = first,
+            enterTransition = {
+                NavigateManager.fadeAnimation.enter
+            },
+            exitTransition = {
+                NavigateManager.fadeAnimation.exit
+            }
+        ) {
+            composable(First.HOME.name) {
+                // 如果庆祝为true则庆祝
+                val time = if(getCelebration()) 1L else 0L
+                PartyAnimation(timeSecond = time) {
+                    if(startAcitivity && intent.getBooleanExtra("nologin",true)) {
+                        NoNetWork(super.networkVm,super.loginVm,super.uiVm)
+                    } else LoginUI(super.loginVm)
+                }
+            }
+            composable(First.USE_AGREEMENT.name) {
+                PartyAnimation {
+                    UseAgreementUI(navController)
+                }
+            }
+        }
+
     }
 
     //打开方式txt

@@ -28,9 +28,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -47,11 +50,16 @@ import com.hfut.schedule.viewmodel.GuaGuaViewModel
 import com.hfut.schedule.logic.enums.ShowerBarItems
 import com.hfut.schedule.logic.beans.NavigationBarItemData
 import com.hfut.schedule.logic.utils.AndroidVersion
+import com.hfut.schedule.logic.utils.DataStoreManager
 import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.ui.activity.card.function.main.turnToBottomBar
+//import com.hfut.schedule.ui.activity.card.function.main.turnToBottomBar
 import com.hfut.schedule.ui.activity.shower.bills.GuaguaBills
 import com.hfut.schedule.ui.activity.shower.function.GuaGuaSettings
 import com.hfut.schedule.ui.activity.shower.home.main.GuaguaStart
+import com.hfut.schedule.ui.utils.NavigateManager
+import com.hfut.schedule.ui.utils.NavigateManager.currentPage
+import com.hfut.schedule.ui.utils.NavigateManager.turnTo
+import com.hfut.schedule.ui.utils.NavigateManager.turnToAndClear
 import com.hfut.schedule.ui.utils.style.bottomBarBlur
 import com.hfut.schedule.ui.utils.style.topBarBlur
 import com.hfut.schedule.viewmodel.NetWorkViewModel
@@ -68,6 +76,17 @@ fun ShowerGuaGua(vm: GuaGuaViewModel,netVm : NetWorkViewModel) {
     val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR",  AndroidVersion.canBlur)
     val blur by remember { mutableStateOf(switchblur) }
     val hazeState = remember { HazeState() }
+
+    val currentAnimationIndex by DataStoreManager.animationTypeFlow.collectAsState(initial = 0)
+    var targetPage by remember { mutableStateOf(ShowerBarItems.HOME) }
+    // 保存上一页页码 用于决定左右动画
+    if(currentAnimationIndex == 2) {
+        LaunchedEffect(targetPage) {
+            currentPage = targetPage.page
+        }
+    }
+
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -129,7 +148,14 @@ fun ShowerGuaGua(vm: GuaGuaViewModel,netVm : NetWorkViewModel) {
                             interactionSource = interactionSource,
                             onClick = {
                                 //     atEnd = !atEnd
-                                if (!selected) { turnToBottomBar(navController, route) }
+                                if(currentAnimationIndex == 2) {
+                                    when(item) {
+                                        items[0] -> targetPage = ShowerBarItems.HOME
+                                        items[1] -> targetPage = ShowerBarItems.BILLS
+                                        items[2] -> targetPage = ShowerBarItems.FUNCTION
+                                    }
+                                }
+                                if (!selected) { turnToAndClear(navController, route) }
                             },
                             label = { Text(text = item.label) },
                             icon = {
@@ -142,16 +168,12 @@ fun ShowerGuaGua(vm: GuaGuaViewModel,netVm : NetWorkViewModel) {
 
         }
     ) {innerPadding ->
+        val animation = NavigateManager.getAnimationType(currentAnimationIndex,targetPage.page)
+
         NavHost(navController = navController,
             startDestination = ShowerBarItems.HOME.name,
-            enterTransition = {
-                scaleIn(animationSpec = tween(durationMillis = animation)) +
-                        expandVertically(expandFrom = Alignment.Top,animationSpec = tween(durationMillis = animation))
-            },
-            exitTransition = {
-                scaleOut(animationSpec = tween(durationMillis = animation)) +
-                        shrinkVertically(shrinkTowards = Alignment.Top,animationSpec = tween(durationMillis = animation))
-            },
+            enterTransition = { animation.enter },
+            exitTransition = { animation.exit },
             modifier = Modifier
                 .haze(
                     state = hazeState,

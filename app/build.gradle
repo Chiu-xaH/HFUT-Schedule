@@ -23,8 +23,8 @@ android {
         applicationId "com.hfut.schedule"
         minSdk 26
         targetSdk 33
-        versionCode 156
-        versionName "4.13.4.1"
+        versionCode 157
+        versionName "4.13.4.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
@@ -145,6 +145,8 @@ dependencies {
     //implementation "androidx.biometric:biometric:1.1.0"
     //用于和风天气密钥生成的JWT
     implementation 'net.i2p.crypto:eddsa:0.3.0'
+    //礼花
+    implementation 'nl.dionsegijn:konfetti-compose:2.0.5'
     //Fragment
 //    implementation "androidx.fragment:fragment-ktx:1.8.5"
 }

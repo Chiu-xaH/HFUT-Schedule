@@ -34,6 +34,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,13 +60,18 @@ import com.hfut.schedule.logic.beans.NavigationBarItemData
 import com.hfut.schedule.logic.beans.zjgd.BillResponse
 import com.hfut.schedule.logic.beans.zjgd.records
 import com.hfut.schedule.logic.utils.AndroidVersion
+import com.hfut.schedule.logic.utils.DataStoreManager
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.card.function.main.HomeScreen
 import com.hfut.schedule.ui.activity.card.bills.main.CardBills
 import com.hfut.schedule.ui.activity.card.counts.CardHome
-import com.hfut.schedule.ui.activity.card.function.main.turnToBottomBar
+//import com.hfut.schedule.ui.activity.card.function.main.turnToBottomBar
 import com.hfut.schedule.ui.activity.home.focus.funictions.GetZjgdCard
+import com.hfut.schedule.ui.utils.NavigateManager
+import com.hfut.schedule.ui.utils.NavigateManager.currentPage
+import com.hfut.schedule.ui.utils.NavigateManager.turnTo
+import com.hfut.schedule.ui.utils.NavigateManager.turnToAndClear
 import com.hfut.schedule.ui.utils.components.CustomTabRow
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.style.bottomBarBlur
@@ -90,7 +97,7 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
     val navController = rememberNavController()
     var page by remember { mutableStateOf(1) }
     var loading by remember { mutableStateOf(true) }
-    var bottomBarItems by remember { mutableStateOf(CardBarItems.BILLS) }
+    var bottomBarItems by remember { mutableStateOf(CardBarItems.HOME) }
 
     val pagerState = rememberPagerState(pageCount = { 3 })
     val titles = listOf("日","月","学期")
@@ -148,6 +155,16 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
                     }
                 }.await()
             }
+        }
+    }
+
+
+
+    val currentAnimationIndex by DataStoreManager.animationTypeFlow.collectAsState(initial = 0)
+// 保存上一页页码 用于决定左右动画
+    if(currentAnimationIndex == 2) {
+        LaunchedEffect(bottomBarItems) {
+            currentPage = bottomBarItems.page
         }
     }
 
@@ -223,7 +240,9 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
                                     items[2] -> bottomBarItems = CardBarItems.COUNT
                                 }
                                 //     atEnd = !atEnd
-                                if (!selected) { turnToBottomBar(navController, route) }
+                                if (!selected) {
+                                    turnToAndClear(navController, route)
+                                }
                             },
                             label = { Text(text = item.label) },
                             icon = {
@@ -236,16 +255,12 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
 
         }
     ) {innerPadding ->
+        val animation = NavigateManager.getAnimationType(currentAnimationIndex,bottomBarItems.page)
+
         NavHost(navController = navController,
             startDestination = CardBarItems.HOME.name,
-            enterTransition = {
-                scaleIn(animationSpec = tween(durationMillis = animation)) +
-                        expandVertically(expandFrom = Alignment.Top,animationSpec = tween(durationMillis = animation))
-            },
-            exitTransition = {
-                scaleOut(animationSpec = tween(durationMillis = animation)) +
-                        shrinkVertically(shrinkTowards = Alignment.Top,animationSpec = tween(durationMillis = animation))
-            },
+            enterTransition = { animation.enter },
+            exitTransition = { animation.exit },
             modifier = Modifier
             .haze(
                 state = hazeState,

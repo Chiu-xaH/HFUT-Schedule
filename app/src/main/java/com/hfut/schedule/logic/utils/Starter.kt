@@ -91,4 +91,11 @@ object Starter {
         MyApplication.context.startActivity(it)
     }
 
+    fun emailMe() {
+        val it = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:zsh0908@outlook.com"))
+        it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        MyApplication.context.startActivity(it)
+    }
+
+
 }

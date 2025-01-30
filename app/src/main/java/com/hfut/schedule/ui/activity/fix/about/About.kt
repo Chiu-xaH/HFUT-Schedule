@@ -1,10 +1,9 @@
 package com.hfut.schedule.ui.activity.fix.about
 
-import android.content.Intent
+//import com.hfut.schedule.ui.utils.componentsAbout
+
 import android.graphics.Bitmap
 import android.graphics.Color
-import android.net.Uri
-import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -18,11 +17,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -34,7 +30,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,7 +37,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -51,18 +45,16 @@ import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.viewmodel.LoginViewModel
 import com.hfut.schedule.logic.utils.APPVersion
 import com.hfut.schedule.logic.utils.ClipBoard
 import com.hfut.schedule.logic.utils.ShareAPK
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.ui.activity.home.cube.items.main.Screen
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.VersionInfo
-import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.VersionInfoCard
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.getUpdates
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.style.Round
-
+import com.hfut.schedule.viewmodel.LoginViewModel
 import java.util.Hashtable
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
@@ -124,56 +116,23 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean
                 }
             }
         }
-//        val sheetState_github = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-//        var showBottomSheet_github by remember { mutableStateOf(false) }
-//        if (showBottomSheet_github) {
-//            ModalBottomSheet(
-//                onDismissRequest = { showBottomSheet_github = false },
-//                sheetState = sheetState_github,
-//                shape = Round(sheetState_github)
-//            ) {
-//                Scaffold(
-//                    modifier = Modifier.fillMaxSize(),
-//                    topBar = {
-//                        TopAppBar(
-//                            colors = TopAppBarDefaults.mediumTopAppBarColors(
-//                                containerColor = androidx.compose.ui.graphics.Color.Transparent,
-//                                titleContentColor = MaterialTheme.colorScheme.primary,
-//                            ),
-//                            title = { Text("Github") },
-//                        )
-//                    },
-//                ) { innerPadding ->
-//                    Column(
-//                        modifier = Modifier
-//                            .padding(innerPadding)
-//                            .verticalScroll(rememberScrollState())
-//                            .fillMaxSize()
-//                    ) {
-//                        val context = LocalContext.current
-//                        var markdownContent by remember { mutableStateOf("") }
-//
-//                        val markdownFileName = "README-zh_rCN.md"
-//                        val inputStream = context.assets.open(markdownFileName)
-//                        val bufferedReader = BufferedReader(InputStreamReader(inputStream))
-//                        markdownContent = bufferedReader.use { it.readText() }
-//                        MarkdownText(
-//                            markdown = markdownContent,
-//                            modifier = Modifier.padding(15.dp)
-//                        )
-//                    }
-//                }
-//            }
-//        }
-        if(!cubeShow) {
-            Spacer(modifier = Modifier.height(5.dp))
-            VersionInfoCard()
-            Spacer(modifier = Modifier.height(18.dp))
+
+        val sheetState_info = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+        var showBottomSheet_info by remember { mutableStateOf(false) }
+        if (showBottomSheet_info) {
+            ModalBottomSheet(
+                onDismissRequest = { showBottomSheet_info = false },
+                sheetState = sheetState_info,
+                shape = Round(sheetState_info)
+            ) {
+                About()
+            }
         }
+
 
         ListItem(
             headlineContent = { Text(text = "Github开源") },
-            supportingContent = { Text(text = "欢迎来参观项目,如您想成为下个版本的构建者,来这里Fork项目并提交你的代码吧")},
+            supportingContent = { Text(text = "如您想成为下个版本的构建者,来这里提交你的代码吧")},
             leadingContent = {
                 Icon(
                     painterResource(R.drawable.github),
@@ -188,21 +147,6 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean
                 //  }
             }
         )
-        ListItem(
-            headlineContent = { Text(text = "联系开发者") },
-            leadingContent = {
-                Icon(
-                    painterResource(R.drawable.mail),
-                    contentDescription = "Localized description",
-                )
-            },
-            modifier = Modifier.clickable{
-                val it = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:zsh0908@outlook.com"))
-                it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                MyApplication.context.startActivity(it)
-            }
-        )
-
 
         ListItem(
             headlineContent = { Text(text = "推广本应用") },
@@ -232,23 +176,6 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean
         if (version.version != APPVersion.getVersionName()) showBadge = true
 
         ListItem(
-            headlineContent = { Text(text = "获取更新") },
-            supportingContent = { Text(text = if(version.version == APPVersion.getVersionName()) "当前为最新版本 ${APPVersion.getVersionName()}" else "当前版本  ${APPVersion.getVersionName()}\n最新版本  ${version.version}") },
-            leadingContent = {
-                BadgedBox(badge = {
-                    if(showBadge)
-                        Badge(modifier = Modifier.size(7.dp)) }) {
-                    Icon(painterResource(R.drawable.arrow_upward), contentDescription = "Localized description",)
-                }
-            },
-            modifier = Modifier.clickable{
-                if (version.version != APPVersion.getVersionName())
-                    Starter.startWebUrl(MyApplication.UpdateURL + "releases/download/Android/${version.version}.apk")
-                else Toast.makeText(MyApplication.context,"与云端版本一致", Toast.LENGTH_SHORT).show()
-            }
-        )
-
-        ListItem(
             headlineContent = { Text(text = "本版本新特性") },
             supportingContent = { Text(text = "查看此版本的更新内容")},
             modifier = Modifier.clickable { showBottomSheet_version = true },
@@ -256,14 +183,10 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean
         )
 
         ListItem(
-            headlineContent = { Text(text = "版本日志") },
-            supportingContent = { Text("查看历代版本的更新内容") },
-            leadingContent = {
-                    Icon(painterResource(R.drawable.crossword), contentDescription = "Localized description",)
-            },
-            modifier = Modifier.clickable{
-                Starter.startWebUrl("https://github.com/Chiu-xaH/HFUT-Schedule/blob/main/UPDATE.md")
-            }
+            headlineContent = { Text(text = "关于本应用") },
+            supportingContent = { Text(text = "开源 构建 开发者")},
+            modifier = Modifier.clickable { showBottomSheet_info = true },
+            leadingContent = { Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")}
         )
 
 

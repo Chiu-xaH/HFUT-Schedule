@@ -39,6 +39,7 @@ import com.hfut.schedule.ui.activity.home.cube.items.NavUIs.NetWorkScreen
 import com.hfut.schedule.ui.activity.home.cube.items.main.Screen
 import com.hfut.schedule.ui.activity.home.cube.items.NavUIs.UIScreen
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.TEST
+import com.hfut.schedule.ui.utils.NavigateManager
 
 @SuppressLint("SuspiciousIndentation", "UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -73,10 +74,10 @@ fun SettingsScreen(vm : NetWorkViewModel
                 navController = navController,
                 startDestination = Screen.HomeScreen.route,
                 enterTransition = {
-                    scaleIn(animationSpec = tween(durationMillis = animation)) + expandVertically(expandFrom = Alignment.CenterVertically,animationSpec = tween(durationMillis = animation))
+                    NavigateManager.centerAnimation.enter
                 },
                 exitTransition = {
-                    scaleOut(animationSpec = tween(durationMillis = animation)) + shrinkVertically(shrinkTowards = Alignment.CenterVertically,animationSpec = tween(durationMillis = animation))
+                    NavigateManager.centerAnimation.exit
                 }
             ) {
 

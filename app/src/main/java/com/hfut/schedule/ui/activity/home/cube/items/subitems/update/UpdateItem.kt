@@ -31,15 +31,15 @@ import com.hfut.schedule.ui.utils.style.CardForListColor
 @SuppressLint("SuspiciousIndentation")
 @Composable
 fun VersionInfoCard() {
-    if(APPVersion.getVersionName().contains("Preview")) {
-        Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 15.dp, vertical = 5.dp),
-            shape = MaterialTheme.shapes.medium,
-        ) { ListItem(headlineContent = { Text(text = APPVersion.getVersionName(), fontSize = 28.sp) }) }
-    } else
+//    if(APPVersion.getVersionName().contains("Preview")) {
+//        Card(
+//            elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(horizontal = 15.dp, vertical = 5.dp),
+//            shape = MaterialTheme.shapes.medium,
+//        ) { ListItem(headlineContent = { Text(text = APPVersion.getVersionName(), fontSize = 28.sp) }) }
+//    } else
         Card(
             elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
             modifier = Modifier
@@ -48,22 +48,22 @@ fun VersionInfoCard() {
             shape = MaterialTheme.shapes.medium,
             colors = CardForListColor()
         ) {
-            ListItem(headlineContent = { Text(text = "聚在工大 " + APPVersion.getVersionName(), fontSize = 28.sp) })
+            ListItem(headlineContent = { Text(text = "版本 " + APPVersion.getVersionName(), fontSize = 28.sp) })
             Row {
                 ListItem(
-                    overlineContent = { Text(text = "2025-01-27") },
-                    leadingContent = { Icon(painter = painterResource(id = R.drawable.sdk), contentDescription = "") },
-                    headlineContent = { ScrollText(text = "第${APPVersion.getVersionCode()}次更新") },
-                    modifier = Modifier.weight(.5f)
+                    overlineContent = { Text(text = "2025-01-30") },
+                    leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
+                    headlineContent = { Text(text = "版本号 ${APPVersion.getVersionCode()}") },
+//                    modifier = Modifier.weight(.5f)
                 )
-                ListItem(
-                    headlineContent = { Text(text = "Chiu-xaH\ntinyvan") },
-                    overlineContent = { Text(text = "构建") },
-                    leadingContent = { Icon(painter = painterResource(id = R.drawable.support), contentDescription = "") },
-                    modifier = Modifier.weight(.5f).clickable {
-                        MyToast("想成为下个版本的构建者吗?跟随 设置-维护关于-开源主页")
-                    }
-                )
+//                ListItem(
+//                    headlineContent = { Text(text = "Chiu-xaH") },
+//                    overlineContent = { Text(text = "构建") },
+//                    leadingContent = { Icon(painter = painterResource(id = R.drawable.support), contentDescription = "") },
+//                    modifier = Modifier.weight(.5f).clickable {
+//                        MyToast("想成为下个版本的构建者吗?跟随 设置-维护关于-开源主页")
+//                    }
+//                )
             }
         }
 }
@@ -75,9 +75,11 @@ fun VersionInfo() {
     Spacer(Modifier.height(3.dp))
     VersionInfoCard()
     DividerTextExpandedWith(text = "新特性") {
-        UpdateItems("新增 邮箱","可在此处查看自己的学生邮箱，用于接收高校优惠的验证码", UpdateType.ADD)
-        UpdateItems("修复 校园网在合肥校区的某些Bug", null, UpdateType.FIX)
-        UpdateItems("优化 部分界面的显示", null, UpdateType.OPTIMIZE)
+        UpdateItems("新增 节日开屏礼花", null, UpdateType.ADD)
+        UpdateItems("新增 用户协议", null, UpdateType.ADD)
+        UpdateItems("新增 底栏转场动画", "位于选项-界面显示，有5种动画自定义", UpdateType.ADD)
+        UpdateItems("重构 关于", "删减冗余的选项；新增 关于本应用，位于 选项-维护关于", UpdateType.RENEW)
+        UpdateItems("移除 转场动画时长自定义", "强制所有动画为默认值400ms", UpdateType.DEGREE)
     }
 }
 

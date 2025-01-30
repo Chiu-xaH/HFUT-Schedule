@@ -11,34 +11,25 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.AndroidVersion.canBlur
-import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.SharePrefs.saveBoolean
+import com.hfut.schedule.ui.activity.home.cube.items.subitems.AnimationSetting
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.monet.MonetColorItem
 import com.hfut.schedule.ui.utils.BlurManager
-import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
-import com.hfut.schedule.ui.utils.components.MyToast
-import java.math.BigDecimal
-import java.math.RoundingMode
 
 @Composable
 fun UIScreen(navController: NavController, innerPaddings : PaddingValues,
@@ -59,10 +50,6 @@ fun UIScreen(navController: NavController, innerPaddings : PaddingValues,
         saveBoolean("SWITCHBLUR",true,blur)
 
 
-        var sliderPosition by remember { mutableFloatStateOf((prefs.getInt("ANIMATION", MyApplication.Animation)).toFloat()) }
-        val bd = BigDecimal(sliderPosition.toString())
-        val str = bd.setScale(0, RoundingMode.HALF_UP).toString()
-        SharePrefs.saveInt("ANIMATION",sliderPosition.toInt())
 
         ListItem(
             headlineContent = { Text(text = "底栏标签") },
@@ -104,45 +91,16 @@ fun UIScreen(navController: NavController, innerPaddings : PaddingValues,
                     BlurManager.setValue(animationBlur)
                 }
             )
+            val cor = rememberCoroutineScope()
 
             ListItem(
-                headlineContent = { Text(text = "全局动画速度") },
+                headlineContent = { Text(text = "底栏转场动画") },
                 supportingContent = {
-                    Column {
-                        Text(text = "时长 $str ms 重启后生效")
-                        Slider(
-                            value = sliderPosition,
-                            onValueChange = {
-                                sliderPosition = it
-                                SharePrefs.saveInt("ANIMATION",sliderPosition.toInt())
-                            },
-                            colors = SliderDefaults.colors(
-                                thumbColor = MaterialTheme.colorScheme.secondary,
-                                activeTrackColor = MaterialTheme.colorScheme.secondary,
-                                inactiveTrackColor = MaterialTheme.colorScheme.secondaryContainer,
-                            ),
-                            steps = 19,
-                            valueRange = 0f..1000f
-                        )
-                    }
-                },
-                leadingContent = { Icon(painterResource(R.drawable.schedule), contentDescription = "Localized description",) },
-                trailingContent = {  },
-            )
-
-            ListItem(
-                headlineContent = { Text(text = "界面转场动画") },
-                supportingContent = {
-                    Text("自定义同级页面之间进行转场的动画")
+                    Text("自定义底栏切换页面进行转场的动画")
                 },
                 leadingContent = { Icon(painterResource(R.drawable.animation), contentDescription = "Localized description",) },
-//            trailingContent = {  },
-                modifier = Modifier.clickable {
-                    MyToast("正在开发")
-//                animationBlur = !animationBlur
-//                BlurManager.setValue(animationBlur)
-                }
             )
+            AnimationSetting()
         }
 
         DividerTextExpandedWith("主题色") {
