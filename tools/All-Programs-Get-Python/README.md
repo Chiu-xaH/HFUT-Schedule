@@ -1,19 +1,20 @@
-# 使用方法
-【依赖安装】pip install requests
+# 爬取全校专业培养方案
+数据来源：合工大教务 https://jwglapp.hfut.edu.cn/
 
-【必须配置】api.py中的auth变量，从【合工大教务】公众号-移动教务，抓包获取
-
-【可选配置】api.py中的post_search_json中是用来筛选结果的，默认不用配置，获取全部方案，截止2025-01-19，有187份
-
-运行main.py，即可自动下载培养方案JSON到文件夹，JSON可在聚在工大解析
-
-![图片4](shot.png)
-
+注意：合肥校区学生只能抓到合肥校区专业，宣城校区学生只能抓到宣城校区专业
 
 # 合肥校区培养方案接入聚在工大
+0.确定你是合肥校区的学生
 
-1.Fork并Clone 我的 Chiu-xaH.github.io 的仓库
+1.Fork并Clone [Chiu-xaH.github.io](https://github.com/Chiu-xaH/Chiu-xaH.github.io)
 
-2.使用脚本抓取后，将其文件夹programs中的两个项目放置到Chiu-xaH.github.io/program/hefei中
+2.(按使用方法)使用脚本下载后，其会生成文件夹programs，将里面的文件放置到 Chiu-xaH.github.io 仓库的/program/hefei中
 
-3.向我PR，合并请求后APP端即可查询到培养方案
+3.向我PR，合并请求后APP(4.13.4+)即可查询到培养方案
+
+# 脚本使用方法
+【依赖安装】 pip install requests
+
+【必须配置】 填写api.py中的auth变量，从【合工大教务】公众号-移动教务，或微信打开 https://jwglapp.hfut.edu.cn/ 登录，抓包请求头Authorization
+
+【运行】 python main.py
