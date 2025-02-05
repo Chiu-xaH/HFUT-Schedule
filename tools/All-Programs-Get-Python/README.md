@@ -14,6 +14,7 @@
 
 ## 脚本使用方法
 【下载】 [跳转到目录](/tools/All-Programs-Get-Python)
+
 【依赖安装】 pip install requests
 
 【必须配置】 填写api.py中的auth变量，从【合工大教务】公众号-移动教务，或微信打开 https://jwglapp.hfut.edu.cn/ 登录，抓包请求头Authorization
