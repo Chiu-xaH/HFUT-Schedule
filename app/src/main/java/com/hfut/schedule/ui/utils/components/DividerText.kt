@@ -88,13 +88,14 @@ fun DividerText(text: String, onClick: (() -> Unit?)? = null) {
 fun DividerTextExpandedWith(
     text : String,
     openBlurAnimation : Boolean = true,
+    defaultIsExpanded : Boolean = true,
     content: @Composable () -> Unit
 ) {
 
 
     val speed = MyApplication.Animation
 
-    var expanded by remember { mutableStateOf(true) }
+    var expanded by remember { mutableStateOf(defaultIsExpanded) }
     fun set() {
         expanded = !expanded
     }

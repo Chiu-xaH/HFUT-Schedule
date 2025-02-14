@@ -67,9 +67,9 @@ import kotlinx.coroutines.launch
 import java.math.BigDecimal
 
 
-fun BillItem(vm : NetWorkViewModel) :MutableList<records> {
+fun getBills(vm : NetWorkViewModel) : List<records> {
     val billjson = vm.BillsData.value
-    var BillItems = mutableListOf<records>()
+//    var BillItems = mutableListOf<records>()
     if(billjson?.contains("操作成功") == true){
         val bill = Gson().fromJson(billjson, BillResponse::class.java)
         val data = bill.data.records
@@ -80,11 +80,14 @@ fun BillItem(vm : NetWorkViewModel) :MutableList<records> {
             if (msg.contains("成功")) {
                 val cardAccount = bill.data.records[0].fromAccount
                 SharePrefs.saveString("cardAccount", cardAccount)
-            } else { Toast.makeText(MyApplication.context,msg,Toast.LENGTH_SHORT).show() }
+            } else {
+                MyToast(msg)
+            }
         }
-        data.forEach {  BillItems.add(it) }
+        return data
+//        data.forEach {  BillItems.add(it) }
     }
-    return BillItems
+    return emptyList()
 }
 
 
@@ -117,7 +120,7 @@ fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVie
                             if (result != null) {
                                 if (result.contains("操作成功")) {
                                     loading = false
-                                    if (result.contains("操作成功")) BillItem(vm)
+                                    if (result.contains("操作成功")) getBills(vm)
                                     else {
                                         val ONE = prefs.getString("ONE", "")
                                         val TGC = prefs.getString("TGC", "")
@@ -159,7 +162,7 @@ fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVie
                     Handler(Looper.getMainLooper()).post {
                         vm.libraryData.observeForever { result ->
                             loading = false
-                            BillItem(vm)
+                            getBills(vm)
                         }
                     }
                 }
@@ -188,12 +191,13 @@ fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVie
             enter = fadeIn(),
             exit = fadeOut()
         ) {
+            val list = getBills(vm)
             LazyColumn() {
                 item { Spacer(modifier = Modifier.height(innerPaddings.calculateTopPadding())) }
                 if (page == 1)
                     item { CardRow(vm,vmUI) }
-                items(BillItem(vm).size) { item ->
-                    val bills = BillItem(vm)[item]
+                items(list.size) { item ->
+                    val bills = list[item]
                     var name = bills.resume
                     if (name.contains("有限公司")) name = name.replace("有限公司","")
 
@@ -238,7 +242,7 @@ fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVie
                                             Handler(Looper.getMainLooper()).post{
                                                 vm.libraryData.observeForever { result ->
                                                     loading = false
-                                                    BillItem(vm)
+                                                    getBills(vm)
                                                 }
                                             }
                                         }
@@ -270,7 +274,7 @@ fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVie
                                                 Handler(Looper.getMainLooper()).post {
                                                     vm.libraryData.observeForever { result ->
                                                         loading = false
-                                                        BillItem(vm)
+                                                        getBills(vm)
                                                     }
                                                 }
                                             }
@@ -290,7 +294,7 @@ fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVie
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BillsInfo(vm : NetWorkViewModel, Infonum : Int) {
-    val bills = BillItem(vm)[Infonum]
+    val bills = getBills(vm)[Infonum]
     Column {
         TopAppBar(
             colors = TopAppBarDefaults.mediumTopAppBarColors(

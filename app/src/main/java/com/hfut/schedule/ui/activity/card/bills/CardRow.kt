@@ -38,7 +38,7 @@ import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.utils.DateTimeManager
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.ui.activity.card.bills.main.BillItem
+import com.hfut.schedule.ui.activity.card.bills.main.getBills
 import com.hfut.schedule.ui.activity.card.bills.main.processTranamt
 import com.hfut.schedule.ui.utils.components.BillsIcons
 import com.hfut.schedule.ui.utils.components.MyCard
@@ -52,11 +52,11 @@ fun CardRow(vm : NetWorkViewModel, vmUI : UIViewModel) {
     var todaypay = 0.0
     var date = DateTimeManager.Date_yyyy_MM_dd
 
-    for (item in 0 until BillItem(vm).size) {
-        val get = BillItem(vm)[item].effectdateStr
-        val name = BillItem(vm)[item].resume
+    for (item in 0 until getBills(vm).size) {
+        val get = getBills(vm)[item].effectdateStr
+        val name = getBills(vm)[item].resume
         val todaydate = get?.substringBefore(" ")
-        var num = BillItem(vm)[item].tranamt.toString()
+        var num = getBills(vm)[item].tranamt.toString()
 
         //优化0.0X元Bug
         if(num.length == 1)
@@ -124,8 +124,7 @@ fun CardRow(vm : NetWorkViewModel, vmUI : UIViewModel) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TodayBills(vm: NetWorkViewModel) {
-    val bills = BillItem(vm)
-
+//    val bills = getBills(vm)
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -141,15 +140,15 @@ fun TodayBills(vm: NetWorkViewModel) {
         },
     ) {innerPadding ->
         LazyColumn(modifier = Modifier.padding(innerPadding)) {
-            items(BillItem(vm).size) { item ->
-                todayCount(vm, item )
+            items(getBills(vm).size) { item ->
+                TodayCount(vm, item )
             }
         }
     }
 }
 @Composable
-fun todayCount(vm  : NetWorkViewModel, item : Int) {
-    val bills = BillItem(vm)[item]
+fun TodayCount(vm  : NetWorkViewModel, item : Int) {
+    val bills = getBills(vm)[item]
     var name = bills.resume
     if (name.contains("有限公司")) name = name.replace("有限公司","")
 

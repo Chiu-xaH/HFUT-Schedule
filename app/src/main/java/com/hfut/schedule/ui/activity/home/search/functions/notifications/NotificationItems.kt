@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.window.DialogProperties
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.beans.Notifications
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.ui.utils.components.EmptyUI
@@ -39,49 +40,10 @@ import com.hfut.schedule.ui.utils.components.WebViewScreen
 fun NotificationItems() {
     val list = getNotifications()
     var showDialog by remember { mutableStateOf(false) }
-    var num by remember { mutableStateOf(0) }
+    var notice : Notifications? by remember { mutableStateOf(null) }
 
-//    val switch_startUri = SharePrefs.prefs.getBoolean("SWITCHSTARTURI",true)
-//
-//    if (showDialog) {
-//        if(switch_startUri) {
-//            androidx.compose.ui.window.Dialog(
-//                onDismissRequest = { showDialog = false },
-//                properties = DialogProperties(usePlatformDefaultWidth = false)
-//            ) {
-//                Scaffold(
-//                    modifier = Modifier.fillMaxSize(),
-//                    topBar = {
-//                        TopAppBar(
-//                            colors = TopAppBarDefaults.mediumTopAppBarColors(
-//                                containerColor = Color.Transparent,
-//                                titleContentColor = MaterialTheme.colorScheme.primary,
-//                            ),
-//                            actions = {
-//                                Row{
-//                                    IconButton(onClick = { list[num].url?.let { Starter.startWebUrl(it) } }) { Icon(painterResource(id = R.drawable.net), contentDescription = "") }
-//                                    IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "") }
-//                                }
-//                            },
-//                            title = { Text("网页") }
-//                        )
-//                    },
-//                ) { innerPadding ->
-//                    Column(
-//                        modifier = Modifier
-//                            .padding(innerPadding)
-//                            .fillMaxSize()
-//                    ) {
-//                        list[num].url?.let { WebViewScreen(it) }
-//                    }
-//                }
-//            }
-//        } else {
-//            list[num].url?.let { Starter.startWebUrl(it) }
-//        }
-//    }
-    list[num].url?.let { WebDialog(showDialog,{ showDialog = false }, it,"宣城校区 电费缴纳") }
-    if(list.size == 0) EmptyUI() else {
+    notice?.let { it.url?.let { it1 -> WebDialog(showDialog,{ showDialog = false }, it1,it.title) } }
+    if(list.isEmpty()) EmptyUI() else {
         for(item in list.indices) {
             MyCard {
                 ListItem(
@@ -91,7 +53,7 @@ fun NotificationItems() {
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.notifications), contentDescription = "") },
                     modifier = Modifier.clickable {
                         if(list[item].url != null) {
-                            num = item
+                            notice = list[item]
                             showDialog = true
                         } else {
                             MyToast("暂无点击操作")

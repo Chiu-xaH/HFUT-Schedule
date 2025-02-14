@@ -46,6 +46,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.beans.jxglstu.PlanCoursesSearch
 import com.hfut.schedule.logic.beans.jxglstu.RequireInfo
 import com.hfut.schedule.logic.beans.jxglstu.Type
+import com.hfut.schedule.logic.utils.GithubConsts
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.logic.utils.reEmptyLiveDta
 import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.CampusId
@@ -60,7 +61,7 @@ import com.hfut.schedule.ui.utils.components.MyCard
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.statusUI
 import com.hfut.schedule.ui.utils.style.Round
-import com.hfut.schedule.ui.utils.style.RowHorizal
+import com.hfut.schedule.ui.utils.style.RowHorizontal
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -253,10 +254,10 @@ fun ProgramSearch(vm : NetWorkViewModel) {
                     }
                     statusUI(R.drawable.manga,"需要${campusText}校区在读生贡献数据源")
                     Spacer(Modifier.height(5.dp))
-                    RowHorizal {
+                    RowHorizontal {
                         Button(
                             onClick = {
-                                Starter.startWebUrl("https://github.com/Chiu-xaH/HFUT-Schedule/blob/main/tools/All-Programs-Get-Python/README.md")
+                                Starter.startWebUrl("https://github.com/${GithubConsts.DEVELOPER_NAME}/${GithubConsts.REPO_NAME}/blob/main/tools/All-Programs-Get-Python/README.md")
                             }
                         ) {
                             Text("接入指南(Github)")

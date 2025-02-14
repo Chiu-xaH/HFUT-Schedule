@@ -13,19 +13,23 @@ import org.jsoup.Jsoup
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-fun getExam() : MutableList<examArrangementList> {
+fun getExam() : List<examArrangementList> {
     val json = prefs.getString("Exam", MyApplication.NullExams)
-    val result = Gson().fromJson(json,ExamResponse::class.java)
-    val list = result.result.examArrangementList
-    var AddExam = mutableListOf<examArrangementList>()
-    for (i in 0 until list.size) {
-        val name = list[i].courseName
-        val place = list[i].place
-        val starttime = list[i].formatStartTime
-        val endtime = list[i].formatEndTime
-        AddExam.add(examArrangementList(name,place,starttime,endtime))
+    try {
+        val result = Gson().fromJson(json,ExamResponse::class.java)
+        val list = result.result.examArrangementList
+//    var AddExam = mutableListOf<examArrangementList>()
+//    for (i in 0 until list.size) {
+//        val name = list[i].courseName
+//        val place = list[i].place
+//        val starttime = list[i].formatStartTime
+//        val endtime = list[i].formatEndTime
+//        AddExam.add(examArrangementList(name,place,starttime,endtime))
+//    }
+        return list
+    } catch (e:Exception) {
+        return emptyList()
     }
-    return AddExam
 }
 
 @SuppressLint("SuspiciousIndentation")

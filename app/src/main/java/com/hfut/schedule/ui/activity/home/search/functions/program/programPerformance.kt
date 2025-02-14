@@ -59,7 +59,7 @@ import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.MyCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.style.Round
-import com.hfut.schedule.ui.utils.style.RowHorizal
+import com.hfut.schedule.ui.utils.style.RowHorizontal
 import com.hfut.schedule.ui.utils.components.ScrollText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -141,11 +141,11 @@ fun ProgramPerformance(vm : NetWorkViewModel) {
         ) {
             Column {
                 Spacer(modifier = Modifier.height(5.dp))
-                RowHorizal{
+                RowHorizontal{
                     LoadingUI()
                 }
                 Spacer(modifier = Modifier.height(5.dp))
-                RowHorizal {
+                RowHorizontal {
                     TextButton(onClick = { /*TODO*/ }) {
                         Text(text = "培养方案较大 加载较慢")
                     }

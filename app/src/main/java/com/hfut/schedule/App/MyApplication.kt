@@ -16,10 +16,10 @@ class MyApplication : Application() {
         val Animation = 400
         const val maxFreeFlow = 50
         const val JxglstuURL = "http://jxglstu.hfut.edu.cn/eams5-student/"
+        const val GithubURL = "https://api.github.com/"
         const val JxglstuWebVpnURL = "https://webvpn.hfut.edu.cn/http/77726476706e69737468656265737421faef469034247d1e760e9cb8d6502720ede479/eams5-student/"
         const val WebVpnURL = "https://webvpn.hfut.edu.cn/"
         const val NewsURL = "https://news.hfut.edu.cn/"
-        //const val DownloadURL = "https://gitee.com/chiu-xah/HFUT-Schedule/releases/tag/Android"
         const val JwglappURL = "https://jwglapp.hfut.edu.cn/"
         const val UpdateURL = "https://gitee.com/chiu-xah/HFUT-Schedule/"
         const val EleURL = "http://172.31.248.26:8988/"
@@ -39,6 +39,7 @@ class MyApplication : Application() {
         const val GuaGuaURL = "https://guagua.klcxkj-qzxy.cn/"
         const val XuanChengURL = "https://xc.hfut.edu.cn/"
         const val TeacherURL = "https://faculty.hfut.edu.cn/"
+        const val GithubUserImageURL = "https://avatars.githubusercontent.com/u/"
         const val QWeatherURL = "https://devapi.qweather.com/v7/"
 
         const val NullExams = "{\"result\": {\"examArrangementList\": []}}"

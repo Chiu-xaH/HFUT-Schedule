@@ -87,31 +87,18 @@ fun LibraryItem(vm : NetWorkViewModel) {
 
     var input by remember { mutableStateOf( "") }
 
-    fun LibItem() : MutableList<LibRecord> {
-
+    fun LibItem() : List<LibRecord> {
         val library = vm.libraryData.value
-        //library?.let { Log.d("direige", it) }
-        var LibItems = mutableListOf<LibRecord>()
-        if (library != null) {
-            if(library.contains("操作成功")){
+        try {
+            if(library != null && library.contains("操作成功")){
                 val data = Gson().fromJson(library, LibraryResponse::class.java)
-                val result = data.result.records
-                if (result != null) {
-                    for (i in 0 until result.size){
-                        val num = result[i].callNumber
-                        val name = result[i].name
-                        val author = result[i].author
-                        val pubisher = result[i].publisher
-                        val year = result[i].year
-                        val place = result[i].place
-                        val status = result[i].status_dictText
-                        LibItems.add(LibRecord(num,name,author,pubisher,year, place,status))
-                    }
-                }
+                return data.result.records
+            } else {
+                return emptyList()
             }
+        } catch (e:Exception) {
+            return emptyList()
         }
-
-        return LibItems
     }
 
     if (showBottomSheet_Library) {

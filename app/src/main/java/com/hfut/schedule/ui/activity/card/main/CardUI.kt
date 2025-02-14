@@ -105,25 +105,28 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
 
     GetZjgdCard(vm, vmUI)
 
-    fun BillItem() :MutableList<records> {
+    fun BillItem() :List<records> {
         val billjson = vm.BillsData.value
-        var BillItems = mutableListOf<records>()
-        if(billjson?.contains("操作成功") == true){
-            val bill = Gson().fromJson(billjson, BillResponse::class.java)
-            val data = bill.data.records
-            val msg = bill.data.msg
-            val totalpage = bill.data.pages
-            SharePrefs.saveString("totalpage",totalpage.toString())
-            if (msg != null) {
-                if (msg.contains("成功")) {
-                    val cardAccount = bill.data.records[0].fromAccount
-                    SharePrefs.saveString("cardAccount", cardAccount)
-                } else { Toast.makeText(MyApplication.context,msg, Toast.LENGTH_SHORT).show() }
+        try {
+            if(billjson?.contains("操作成功") == true){
+                val bill = Gson().fromJson(billjson, BillResponse::class.java)
+                val data = bill.data.records
+                val msg = bill.data.msg
+                val totalpage = bill.data.pages
+                SharePrefs.saveString("totalpage",totalpage.toString())
+                if (msg != null) {
+                    if (msg.contains("成功")) {
+                        val cardAccount = bill.data.records[0].fromAccount
+                        SharePrefs.saveString("cardAccount", cardAccount)
+                    } else { Toast.makeText(MyApplication.context,msg, Toast.LENGTH_SHORT).show() }
+                }
+                return data
+            } else {
+                return emptyList()
             }
-            data.forEach {  BillItems.add(it) }
+        } catch (e:Exception) {
+            return emptyList()
         }
-
-        return BillItems
     }
 
 

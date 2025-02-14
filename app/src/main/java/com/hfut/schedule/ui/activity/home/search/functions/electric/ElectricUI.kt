@@ -21,15 +21,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.AssistChip
@@ -46,7 +43,6 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -67,24 +63,18 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.beans.zjgd.FeeResponse
 import com.hfut.schedule.logic.beans.zjgd.FeeType
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.ui.utils.components.BottomTip
-import com.hfut.schedule.ui.utils.style.CardForListColor
-import com.hfut.schedule.ui.utils.components.DividerText
-import com.hfut.schedule.ui.utils.components.MyToast
-import com.hfut.schedule.ui.utils.components.WebViewScreen
-import com.hfut.schedule.ui.theme.FWDTColr
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
-import com.hfut.schedule.ui.utils.components.WebDialog
+import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.style.CardForListColor
+import com.hfut.schedule.viewmodel.NetWorkViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -114,7 +104,7 @@ fun EleUI(vm : NetWorkViewModel) {
     var showitem2 by remember { mutableStateOf(false) }
     var showitem3 by remember { mutableStateOf(false) }
     var showitem4 by remember { mutableStateOf(false) }
-    var showDialog by remember { mutableStateOf(false) }
+
     var Result by remember { mutableStateOf("") }
     var Result2 by remember { mutableStateOf("") }
 
@@ -257,48 +247,6 @@ fun EleUI(vm : NetWorkViewModel) {
 
         if (BuildingsNumber == "0") BuildingsNumber = ""
 
-        val url = MyApplication.ZJGDBillURL + "charge-app/?name=pays&appsourse=ydfwpt&id=261&name=pays&paymentUrl=http://121.251.19.62/plat&token=" + auth
-
-        WebDialog(showDialog,{ showDialog = false },url,"宣城校区 电费缴纳")
-//        val switch_startUri = SharePrefs.prefs.getBoolean("SWITCHSTARTURI",true)
-//        if (showDialog) {
-//            if(switch_startUri) {
-//                androidx.compose.ui.window.Dialog(
-//                    onDismissRequest = { showDialog = false },
-//                    properties = DialogProperties(usePlatformDefaultWidth = false)
-//                ) {
-//                    Scaffold(
-//                        modifier = Modifier.fillMaxSize(),
-//                        topBar = {
-//                            TopAppBar(
-//                                colors = TopAppBarDefaults.mediumTopAppBarColors(
-//                                    containerColor = FWDTColr,
-//                                    titleContentColor = Color.White,
-//                                ),
-//                                actions = {
-//                                    Row{
-//                                        IconButton(onClick = { Starter.startWebUrl( url) }) { Icon(painterResource(id = R.drawable.net), contentDescription = "", tint = Color.White) }
-//                                        IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "", tint = Color.White) }
-//                                    }
-//
-//                                },
-//                                title = { Text("宣城校区 电费缴纳") }
-//                            )
-//                        },
-//                    ) { innerPadding ->
-//                        Column(
-//                            modifier = Modifier
-//                                .padding(innerPadding)
-//                                .fillMaxSize()
-//                        ) {
-//                            WebViewScreen(url)
-//                        }
-//                    }
-//                }
-//            } else {
-//                Starter.startWebUrl(url)
-//            }
-//        }
         var showDialog2 by remember { mutableStateOf(false) }
         if(showDialog2)
             Dialog(onDismissRequest = { showDialog2 = false }) {

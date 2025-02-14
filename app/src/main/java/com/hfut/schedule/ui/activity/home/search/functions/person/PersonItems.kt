@@ -10,6 +10,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -30,12 +31,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.google.gson.Gson
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.ClipBoard
@@ -49,6 +52,8 @@ import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.DepartmentIcons
+import com.hfut.schedule.ui.utils.components.Party
+import nl.dionsegijn.konfetti.core.Party
 import org.jsoup.Jsoup
 
 
@@ -126,13 +131,7 @@ fun PersonItems(ifSaved : Boolean) {
                         )
                     },
                     modifier = Modifier.clickable {
-                        ClipBoard.copy(name)
-                        MyToast("已复制到剪切板")
-                    },
-                    trailingContent = {
-                        FilledTonalIconButton(onClick = { show2 = !show2 }) {
-                            Icon(painter = painterResource(id = if(show2)R.drawable.visibility else R.drawable.visibility_off), contentDescription = "")
-                        }
+                        name?.let { ClipBoard.copy(it) }
                     }
                 )
 
@@ -146,25 +145,28 @@ fun PersonItems(ifSaved : Boolean) {
                         )
                     },
                     modifier = Modifier.clickable {
-                        ClipBoard.copy(studentnumber)
-                        MyToast("已复制到剪切板")
+                        studentnumber?.let { ClipBoard.copy(it) }
                     }
                 )
-                Column(modifier = Modifier.blur(radius = blurSize2)) {
-                    ListItem(
-                        headlineContent = { chineseid?.let { ScrollText(text = it) } },
-                        overlineContent = { Text(text = "身份证号")},
-                        leadingContent = {
-                            Icon(
-                                painterResource(R.drawable.tag),
-                                contentDescription = "Localized description",
-                            )
-                        },
-                        modifier = Modifier.clickable {
-                            ClipBoard.copy(chineseid)
-                            MyToast("已复制到剪切板")
-                        }
-                    )
+                Box() {
+                    FilledTonalIconButton(onClick = { show2 = !show2 }, modifier = Modifier.zIndex(1f).align(Alignment.CenterEnd).padding(horizontal = 15.dp)) {
+                        Icon(painter = painterResource(id = if(show2)R.drawable.visibility else R.drawable.visibility_off), contentDescription = "")
+                    }
+                    Column(modifier = Modifier.blur(radius = blurSize2)) {
+                        ListItem(
+                            headlineContent = { chineseid?.let { Text(text = it) } },
+                            overlineContent = { Text(text = "身份证号")},
+                            leadingContent = {
+                                Icon(
+                                    painterResource(R.drawable.tag),
+                                    contentDescription = "Localized description",
+                                )
+                            },
+                            modifier = Modifier.clickable {
+                                chineseid?.let { ClipBoard.copy(it) }
+                            }
+                        )
+                    }
                 }
             }
            // MyCard {
@@ -183,8 +185,7 @@ fun PersonItems(ifSaved : Boolean) {
                         )
                     },
                     modifier = Modifier.clickable {
-                        ClipBoard.copy(school)
-                        MyToast("已复制到剪切板")
+                        school?.let { ClipBoard.copy(it) }
                     }
                 )
 
@@ -196,8 +197,7 @@ fun PersonItems(ifSaved : Boolean) {
                         yuanxi?.let { DepartmentIcons(name = it) }
                     },
                     modifier = Modifier.clickable {
-                        ClipBoard.copy(yuanxi)
-                        MyToast("已复制到剪切板")
+                        yuanxi?.let { ClipBoard.copy(it) }
                     }
                 )
 
@@ -215,8 +215,7 @@ fun PersonItems(ifSaved : Boolean) {
                         )
                     },
                     modifier = Modifier.clickable {
-                        ClipBoard.copy(major)
-                        MyToast("已复制到剪切板")
+                        major?.let { ClipBoard.copy(it) }
                     }
                 )
 
@@ -230,8 +229,7 @@ fun PersonItems(ifSaved : Boolean) {
                         )
                     },
                     modifier = Modifier.clickable {
-                        ClipBoard.copy(classes)
-                        MyToast("已复制到剪切板")
+                        classes?.let { ClipBoard.copy(it) }
                     }
                 )
             }
@@ -256,12 +254,12 @@ fun PersonItems(ifSaved : Boolean) {
                     }
                 )
                 Column(modifier = Modifier.blur(radius = blurSize)) {
+                    val pwd= prefs.getString("Password","")
                     ListItem(
-                        headlineContent = { prefs.getString("Password","")?.let { Text(text = it) } },
+                        headlineContent = { pwd?.let { Text(text = it) } },
                         overlineContent = { Text(text = "CAS统一认证密码")},
                         modifier = Modifier.clickable {
-                            ClipBoard.copy(prefs.getString("Password",""))
-                            MyToast("已复制到剪切板")
+                            pwd?.let { ClipBoard.copy(it) }
                         }
                     )
                     ListItem(
@@ -272,7 +270,6 @@ fun PersonItems(ifSaved : Boolean) {
                         modifier = Modifier.clickable {
                             if (chineseid != null) {
                                 ClipBoard.copy("Hfut@#\$%${chineseid.takeLast(6)}")
-                                MyToast("已复制到剪切板")
                             }
                         }
                     )
@@ -280,8 +277,7 @@ fun PersonItems(ifSaved : Boolean) {
                         headlineContent = { getIdentifyID()?.let { Text(text = it) } },
                         overlineContent = { Text(text = "一卡通&校园网初始密码")},
                         modifier = Modifier.clickable {
-                            ClipBoard.copy(getIdentifyID())
-                            MyToast("已复制到剪切板")
+                            getIdentifyID()?.let { ClipBoard.copy(it) }
                         }
                     )
                 }
@@ -343,8 +339,7 @@ fun PersonItems(ifSaved : Boolean) {
                         } else { null }
                     },
                     modifier = Modifier.clickable {
-                        ClipBoard.copy(xueJiStatus)
-                        MyToast("已复制到剪切板")
+                        xueJiStatus?.let { ClipBoard.copy(it) }
                     }
                 )
                 ListItem(
@@ -500,4 +495,17 @@ fun getPersonInfo() : PersonInfo {
     } catch (_:Exception) {
         return PersonInfo(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
     }
+}
+
+
+
+fun extractPassword(html: String): String? {
+    // 解析 HTML 内容
+    val document = Jsoup.parse(html)
+
+    // 查找包含密码的 input 元素
+    val passwordElement = document.select("input#plainPassword").first()
+
+    // 获取密码值
+    return passwordElement?.attr("value")
 }

@@ -184,7 +184,6 @@ fun AllGrade() {
 
 fun getAllGrade() : List<GradeAllResult> {
     val json = prefs.getString("AvgAll","")
-//    var addList = mutableListOf<GradeAllResult>()
     return try {
         Gson().fromJson(json,GradeAllResponse::class.java).result
     } catch (e : Exception) {

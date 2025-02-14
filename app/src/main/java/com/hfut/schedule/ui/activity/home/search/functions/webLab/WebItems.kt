@@ -51,7 +51,7 @@ fun WebItem() {
             ListItem(
                 headlineContent = { Text(text = "教务系统") },
                 leadingContent = { Icon(painterResource(R.drawable.school), contentDescription = "Localized description",) },
-                modifier = Modifier.clickable { Starter.startWebUrl("http://jxglstu.hfut.edu.cn/eams5-student/login?refer=http://jxglstu.hfut.edu.cn/eams5-student/home") }
+                modifier = Modifier.clickable { Starter.startWebUrl("http://jxglstu.hfut.edu.cn/eams5-student/home") }
             )
         }
     }
@@ -68,9 +68,9 @@ fun WebItem() {
             shape = MaterialTheme.shapes.small,
         ){
             ListItem(
-                headlineContent = { ScrollText(text = "旧热水(支付宝社慧通)") },
-                leadingContent = { Icon(painterResource(R.drawable.water_voc), contentDescription = "Localized description",) },
-                modifier = Modifier.clickable { Starter.startAppUrl(MyApplication.AlipayHotWaterOldURL) }
+                headlineContent = { ScrollText(text = "就业网") },
+                leadingContent = { Icon(painterResource(R.drawable.work), contentDescription = "Localized description",) },
+                modifier = Modifier.clickable { Starter.startAppUrl("https://gdjy.hfut.edu.cn/") }
             )
         }
         Spacer(modifier = Modifier.width(10.dp))

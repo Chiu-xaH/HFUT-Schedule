@@ -125,28 +125,28 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean
                 sheetState = sheetState_info,
                 shape = Round(sheetState_info)
             ) {
-                About()
+                About(vm)
             }
         }
 
-
-        ListItem(
-            headlineContent = { Text(text = "Github开源") },
-            supportingContent = { Text(text = "如您想成为下个版本的构建者,来这里提交你的代码吧")},
-            leadingContent = {
-                Icon(
-                    painterResource(R.drawable.github),
-                    contentDescription = "Localized description",
-                )
-            },
-            modifier = Modifier.clickable{
-                //when(select) {
-                //   false -> StartUri("https://gitee.com/chiu-xah/HFUT-Schedule")
-                //true ->
-                Starter.startWebUrl("https://github.com/Chiu-xaH/HFUT-Schedule")
-                //  }
-            }
-        )
+//
+//        ListItem(
+//            headlineContent = { Text(text = "Github开源") },
+//            supportingContent = { Text(text = "如您想成为下个版本的构建者,来这里提交你的代码吧")},
+//            leadingContent = {
+//                Icon(
+//                    painterResource(R.drawable.github),
+//                    contentDescription = "Localized description",
+//                )
+//            },
+//            modifier = Modifier.clickable{
+//                //when(select) {
+//                //   false -> StartUri("https://gitee.com/chiu-xah/HFUT-Schedule")
+//                //true ->
+//                Starter.startWebUrl("https://github.com/Chiu-xaH/HFUT-Schedule")
+//                //  }
+//            }
+//        )
 
         ListItem(
             headlineContent = { Text(text = "推广本应用") },
@@ -163,8 +163,7 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean
                 },
                 onLongClick = { ShareAPK.shareAPK() },
                 onDoubleClick = {
-                    ClipBoard.copy(MyApplication.UpdateURL + "releases/tag/Android")
-                    MyToast("已将下载链接复制到剪切板")
+                    ClipBoard.copy(MyApplication.UpdateURL + "releases/tag/Android","已将下载链接复制到剪切板")
                 }
 
             )
@@ -183,7 +182,7 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean
         )
 
         ListItem(
-            headlineContent = { Text(text = "关于本应用") },
+            headlineContent = { Text(text = "关于") },
             supportingContent = { Text(text = "开源 构建 开发者")},
             modifier = Modifier.clickable { showBottomSheet_info = true },
             leadingContent = { Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")}

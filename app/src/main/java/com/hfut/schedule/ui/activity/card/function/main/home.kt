@@ -18,6 +18,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -62,14 +64,15 @@ import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
 import com.hfut.schedule.ui.activity.card.bills.TodayBills
-import com.hfut.schedule.ui.activity.card.bills.main.BillItem
+import com.hfut.schedule.ui.activity.card.bills.main.getBills
 import com.hfut.schedule.ui.activity.card.function.CardLimit
 import com.hfut.schedule.ui.activity.card.function.SearchBillsUI
 import com.hfut.schedule.ui.activity.card.function.SelecctDateRange
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.getUserInfo
 import com.hfut.schedule.ui.activity.home.focus.funictions.GetZjgdCard
 import com.hfut.schedule.ui.activity.home.search.functions.electric.EleUI
-import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.loginWebUI
+import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.LoginWebScaUI
+import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.LoginWebUI
 
 import com.hfut.schedule.ui.activity.home.search.functions.shower.ShowerUI
 import com.hfut.schedule.ui.utils.NavigateManager.turnTo
@@ -129,7 +132,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
     var showBottomSheet_ELectric by remember { mutableStateOf(false) }
 
     var showBottomSheet_Web by remember { mutableStateOf(false) }
-    val sheetState_Web = rememberModalBottomSheetState()
+    val sheetState_Web = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
 
     val sheetState_Shower = rememberModalBottomSheetState()
@@ -157,11 +160,11 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
     var todaypay = 0.0
     var date = DateTimeManager.Date_yyyy_MM_dd
 
-    for (item in 0 until BillItem(vm).size) {
-        val get = BillItem(vm)[item].effectdateStr
-        val name = BillItem(vm)[item].resume
+    for (item in 0 until getBills(vm).size) {
+        val get = getBills(vm)[item].effectdateStr
+        val name = getBills(vm)[item].resume
         val todaydate = get?.substringBefore(" ")
-        var num = BillItem(vm)[item].tranamt.toString()
+        var num = getBills(vm)[item].tranamt.toString()
 
         //优化0.0X元Bug
         if(num.length == 1)
@@ -350,36 +353,9 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                 showBottomSheet_Web = false
             },
             sheetState = sheetState_Web,
-            shape = Round(sheetState_Web)
+//            shape = Round(sheetState_Web)
         ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("校园网") },
-                        actions = {
-                            FilledTonalIconButton(onClick = {
-                                showDialog = true
-                            }, modifier = Modifier.padding(horizontal = 15.dp)
-                            ) {
-                                Icon(painter = painterResource(id = R.drawable.add), contentDescription = "")
-                            }
-                        }
-                    )
-                },) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    loginWebUI(vmUI,vm)
-                    Spacer(modifier = Modifier.height(20.dp))
-                }
-            }
+            LoginWebScaUI(vmUI, vm)
         }
     }
 

@@ -213,23 +213,15 @@ fun removeFocus(vm : NetViewModel) {
 }
 
 //真为Schedule。否则Wangke
-fun getResult(vm : NetViewModel,mode : Boolean): MutableList<Schedule> {
-    val listSchedule = mutableListOf<Schedule>()
-    val listWangke = mutableListOf<Schedule>()
+fun getResult(vm : NetViewModel,mode : Boolean): List<Schedule> {
     return try {
         val json = Gson().fromJson(vm.result.value,APIResponse::class.java)
         val schedule = json.Schedule
         val wangke = json.Wangke
 
-        for(i in schedule.indices) {
-            listSchedule.add(schedule[i])
-        }
-        for(i in wangke.indices) {
-            listWangke.add(wangke[i])
-        }
-        if(mode) listSchedule else listWangke
+        if(mode) schedule else wangke
     } catch (e : Exception) {
+        emptyList()
         if(mode) listSchedule else listWangke
     }
-
 }

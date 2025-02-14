@@ -61,7 +61,7 @@ import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.statusUI
 import com.hfut.schedule.ui.utils.components.statusUI2
 import com.hfut.schedule.ui.utils.style.CardForListColor
-import com.hfut.schedule.ui.utils.style.RowHorizal
+import com.hfut.schedule.ui.utils.style.RowHorizontal
 import com.hfut.schedule.viewmodel.GuaGuaViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -155,7 +155,7 @@ fun UseCodeUI(vm: GuaGuaViewModel) {
                         } else if(msg == "密码错误")  {
                             statusUI(R.drawable.login,"您从未使用密码登录过 需要重新用密码登录")
                             Spacer(Modifier.height(10.dp))
-                            RowHorizal {
+                            RowHorizontal {
                                 Button(
                                     onClick = {
                                         Starter.loginGuaGua()

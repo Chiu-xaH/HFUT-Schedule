@@ -33,7 +33,7 @@ import com.hfut.schedule.ui.activity.login.UseAgreementUI
 import com.hfut.schedule.ui.utils.NavigateManager
 import com.hfut.schedule.ui.utils.NavigateManager.ANIMATION_SPEED
 import com.hfut.schedule.ui.utils.components.MyToast
-import com.hfut.schedule.ui.utils.components.PartyAnimation
+import com.hfut.schedule.ui.utils.components.Party
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -64,16 +64,17 @@ class LoginActivity : BaseActivity() {
             }
         ) {
             composable(First.HOME.name) {
-                // 如果庆祝为true则庆祝
-                val time = if(getCelebration()) 1L else 0L
-                PartyAnimation(timeSecond = time) {
+                @Composable
+                fun MainUI() {
                     if(startAcitivity && intent.getBooleanExtra("nologin",true)) {
                         NoNetWork(super.networkVm,super.loginVm,super.uiVm)
                     } else LoginUI(super.loginVm)
                 }
+                // 如果庆祝为true则庆祝
+                Party(show = getCelebration()) { MainUI() }
             }
             composable(First.USE_AGREEMENT.name) {
-                PartyAnimation {
+                Party(timeSecond = 3L) {
                     UseAgreementUI(navController)
                 }
             }

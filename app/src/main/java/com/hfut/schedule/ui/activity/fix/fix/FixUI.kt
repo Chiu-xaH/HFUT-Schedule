@@ -162,11 +162,11 @@ fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel,vm2 : NetWorkViewMode
             modifier = Modifier.clickable{ Starter.startWebUrl(MyApplication.UpdateURL + "releases/tag/Android") }
         )
 
-        ListItem(
-            headlineContent = { Text(text = "抹掉数据") },
-            leadingContent = { Icon(painterResource(R.drawable.delete), contentDescription = "Localized description",) },
-            modifier = Modifier.clickable{ showDialog = true }
-        )
+//        ListItem(
+//            headlineContent = { Text(text = "抹掉数据") },
+//            leadingContent = { Icon(painterResource(R.drawable.delete), contentDescription = "Localized description",) },
+//            modifier = Modifier.clickable{ showDialog = true }
+//        )
         BugShare()
         ListItem(
             headlineContent = { Text(text = "进入主界面") },
@@ -187,9 +187,9 @@ fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel,vm2 : NetWorkViewMode
         )
         ListItem(
             headlineContent = { Text(text = "反馈") },
-            supportingContent = { Text(text = "直接输入内容,将会发送至开发者的服务器")},
+//            supportingContent = { Text(text = "直接输入内容,将会发送至开发者的服务器")},
             leadingContent = { Icon(painterResource(R.drawable.feedback), contentDescription = "Localized description",) },
-            modifier = Modifier.clickable{ showBottomSheet_feedBack = true }
+            modifier = Modifier.clickable{ Starter.startWebUrl("https://docs.qq.com/form/page/DWHlwd1JZYlRtcVZ0") }
         )
 
         ListItem(

@@ -1,13 +1,13 @@
 package com.hfut.schedule.ui.activity.fix.about
 
+import android.os.Handler
+import android.os.Looper
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -17,28 +17,38 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.google.gson.Gson
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.beans.GithubBean
+import com.hfut.schedule.logic.utils.GithubConsts
 import com.hfut.schedule.logic.utils.Starter
+import com.hfut.schedule.logic.utils.reEmptyLiveDta
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
+import com.hfut.schedule.ui.utils.components.Party
 import com.hfut.schedule.ui.utils.components.ScrollText
+import com.hfut.schedule.ui.utils.components.URLImage
+import com.hfut.schedule.viewmodel.LoginViewModel
+import kotlinx.coroutines.async
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@Preview
-fun About() {
+fun About(vm : LoginViewModel) {
     data class Build(
         val languages : List<String>,
         val build : List<String>,
@@ -65,116 +75,133 @@ fun About() {
         languages = listOf("Kotlin","Java"),
         build = listOf( "Gradle 8.3 With Groovy","OpenJDK 17"),
     )
-//    var showBottomSheet by remember { mutableStateOf(false) }
-//    UseAgreement(showBottomSheet, showBottomSheetChange = { showBottomSheet = false })
 
-    androidx.compose.material3.Scaffold(
-        topBar = {
-            LargeTopAppBar(
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = Color.Transparent,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                title = {
-                    Box(modifier = Modifier.fillMaxWidth()) {
-                        Text(
-                            text = "关于",
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.Center,
-                            //style = MaterialTheme.typography.titleLarge
-                        )
-                    }
-                },
-                navigationIcon = {
-                    Column(modifier = Modifier
-                        .padding(horizontal = 23.dp)) {
-                        Spacer(modifier = Modifier.height(20.dp))
-                        Text(
-                            text = "聚在工大",
-                            fontSize = 38.sp,
-                            color = MaterialTheme.colorScheme.secondaryContainer
-                        )
-                    }
-                },
-            )
-        },
-        bottomBar = {
-            Row(modifier = Modifier.padding(15.dp),horizontalArrangement = Arrangement.Center) {
-                Button(
-                    onClick = { Starter.startWebUrl("https://github.com/Chiu-xaH/HFUT-Schedule") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(.5f)
-                ) {
-                    Text("给颗⭐")
-                }
-
-                Spacer(modifier = Modifier.width(15.dp))
-                FilledTonalButton(
-                    onClick = { Starter.startWebUrl("https://github.com/Chiu-xaH") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(.5f)
-                ) {
-                    Text("我的Github")
-                }
-            }
-        },
-    ) { innerPadding ->
-        Column(modifier = Modifier.padding(innerPadding).verticalScroll(rememberScrollState())) {
-            DividerTextExpandedWith("开发者") {
-                ListItem(
-                    modifier = Modifier.clickable {
-                        Starter.startWebUrl("https://github.com/Chiu-xaH")
-                    },
-                    headlineContent = { ScrollText("Chiu-xaH") },
-                    leadingContent = { Icon(painterResource(R.drawable.github), null) },
-                    supportingContent = {
-                        Text("一名热爱安卓的开发者,宣城校区23级计算机科学与技术专业(转)本科生")
-                    },
-                    trailingContent = {
-                        FilledTonalIconButton(
-                            onClick = {
-                                Starter.emailMe()
+    var starsNum by remember { mutableStateOf("") }
+    var loading by remember { mutableStateOf(true) }
+    if(loading) {
+        LaunchedEffect(Unit) {
+            async { reEmptyLiveDta(vm.githubData) }
+            async { vm.getStarsNum() }.await()
+            async {
+                Handler(Looper.getMainLooper()).post{
+                    vm.githubData.observeForever { result ->
+                        if (result != null) {
+                            if(result.contains("stargazers_count")) {
+                                starsNum = (Gson().fromJson(result,GithubBean::class.java).stargazers_count).toString()
+                                loading = false
                             }
-                        ) {
-                            Icon(painterResource(R.drawable.mail),null)
                         }
                     }
-                )
-
-            }
-
-            DividerTextExpandedWith("构建") {
-                val lans = dependencies.languages
-                for(index in lans.indices) {
-                    ListItem(
-                        headlineContent = { Text(lans[index]) },
-                        overlineContent = { Text("主体语言") }
-                    )
-                }
-                ListItem(
-                    headlineContent = { Text(dependencies.ui) },
-                    overlineContent = { Text("UI设计") }
-                )
-                ListItem(
-                    headlineContent = { Text(dependencies.jetpack) },
-                )
-                val builds = dependencies.build
-                for(index in builds.indices) {
-                    ListItem(
-                        headlineContent = { Text(builds[index]) },
-                        overlineContent = { Text("构建 打包") }
-                    )
                 }
             }
+        }
+    }
 
-            DividerTextExpandedWith("开源") {
-                for(index in openSourceProjects.indices) {
+
+    Party(
+        show = !loading
+    ) {
+        androidx.compose.material3.Scaffold(
+            topBar = {
+                TopAppBar(
+                    colors = TopAppBarDefaults.mediumTopAppBarColors(
+                        containerColor = Color.Transparent,
+                        titleContentColor = MaterialTheme.colorScheme.primary,
+                    ),
+                    title = {
+                        Text(text = "关于")
+                    },
+                )
+            },
+            bottomBar = {
+                Row(modifier = Modifier.padding(15.dp),horizontalArrangement = Arrangement.Center) {
+                    Button(
+                        onClick = { Starter.startWebUrl("https://github.com/${GithubConsts.DEVELOPER_NAME}/${GithubConsts.REPO_NAME}") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(.5f)
+                    ) {
+                        Text("Stars ⭐ $starsNum")
+                    }
+
+                    Spacer(modifier = Modifier.width(15.dp))
+                    FilledTonalButton(
+                        onClick = { Starter.startWebUrl("https://github.com/${GithubConsts.DEVELOPER_NAME}/${GithubConsts.REPO_NAME}/releases/latest") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(.5f)
+                    ) {
+                        Text("最新版本")
+                    }
+                }
+            },
+        ) { innerPadding ->
+            Column(modifier = Modifier
+                .padding(innerPadding)
+                .verticalScroll(rememberScrollState())) {
+                DividerTextExpandedWith("开发者") {
                     ListItem(
-                        headlineContent = { Text(openSourceProjects[index].first) },
-                        supportingContent = { Text(openSourceProjects[index].second) }
+                        modifier = Modifier.clickable {
+                            Starter.startWebUrl("https://github.com/${GithubConsts.DEVELOPER_NAME}")
+                        },
+                        headlineContent = { ScrollText(GithubConsts.DEVELOPER_NAME) },
+                        leadingContent = {
+                            URLImage(url = MyApplication.GithubUserImageURL + GithubConsts.USER_ID, size = 50.dp)
+                        },
+                        supportingContent = {
+                            Text("一名热爱安卓的开发者,宣城校区23级计算机科学与技术专业(转)本科生")
+                        },
+                        trailingContent = {
+                            FilledTonalIconButton(
+                                onClick = {
+                                    Starter.emailMe()
+                                }
+                            ) {
+                                Icon(painterResource(R.drawable.mail),null)
+                            }
+                        }
                     )
+
+                }
+
+                DividerTextExpandedWith("构建") {
+                    ListItem(
+                        headlineContent = { Text("Kotlin / Java") },
+                        overlineContent = { Text("主语言") }
+                    )
+                    ListItem(
+                        headlineContent = { Text(dependencies.ui) },
+                        overlineContent = { Text("UI设计") }
+                    )
+                    ListItem(
+                        headlineContent = { Text(dependencies.jetpack) },
+                    )
+                    val builds = dependencies.build
+                    for(index in builds.indices) {
+                        ListItem(
+                            headlineContent = { Text(builds[index]) },
+                            overlineContent = { Text("构建 打包") }
+                        )
+                    }
+                }
+
+                DividerTextExpandedWith("开源引用") {
+                    for(index in openSourceProjects.indices step 2) {
+                        Row {
+                            ListItem(
+                                headlineContent = { Text(openSourceProjects[index].first) },
+                                supportingContent = { Text(openSourceProjects[index].second) },
+                                modifier = Modifier.weight(.5f)
+                            )
+                            if(index+1 < openSourceProjects.size)
+                                ListItem(
+                                    headlineContent = { Text(openSourceProjects[index+1].first) },
+                                    supportingContent = { Text(openSourceProjects[index+1].second) },
+                                    modifier = Modifier.weight(.5f)
+                                )
+                        }
+
+                    }
                 }
             }
         }

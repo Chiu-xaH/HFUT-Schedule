@@ -47,7 +47,7 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.beans.zjgd.BillResponse
 import com.hfut.schedule.logic.beans.zjgd.records
-import com.hfut.schedule.ui.activity.card.bills.main.BillItem
+import com.hfut.schedule.ui.activity.card.bills.main.getBills
 import com.hfut.schedule.ui.activity.card.bills.main.processTranamt
 import com.hfut.schedule.ui.utils.components.BillsIcons
 import com.hfut.schedule.ui.utils.components.MyCard
@@ -67,18 +67,18 @@ fun SearchBillsUI(vm : NetWorkViewModel) {
     var input by remember { mutableStateOf("") }
     var page by remember { mutableStateOf(1) }
 
-  fun Items() : MutableList<records> {
+  fun Items() : List<records> {
     val result = vm.SearchBillsData.value
-      var BillItems = mutableListOf<records>()
       if(result?.contains("操作成功") == true) {
           val data = Gson().fromJson(result,BillResponse::class.java)
           val records = data.data.records
           val totalpage = data.data.pages
           val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
           if(sp.getInt("totalsearch",0) != totalpage){ sp.edit().putInt("totalsearch", totalpage).apply() }
-          records.forEach {  BillItems.add(it) }
+          return records
       }
-    return BillItems
+      return emptyList()
+//    return BillItems
   }
 
     fun get()  {
@@ -224,7 +224,7 @@ fun SearchBillsUI(vm : NetWorkViewModel) {
                                         MyCard {
                                             ListItem(
                                                 headlineContent = { Text(text = name) },
-                                                supportingContent = {Text(text = processTranamt(BillItem(vm)[item]))},
+                                                supportingContent = {Text(text = processTranamt(getBills(vm)[item]))},
                                                 overlineContent = {Text(text = Items()[item].effectdateStr)},
                                                 leadingContent = { BillsIcons(name) }
                                             )

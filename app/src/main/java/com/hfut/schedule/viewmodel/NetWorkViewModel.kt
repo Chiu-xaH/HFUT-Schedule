@@ -47,11 +47,13 @@ import com.hfut.schedule.logic.network.api.NewsService
 import com.hfut.schedule.logic.network.api.OneService
 import com.hfut.schedule.logic.network.api.ServerService
 import com.hfut.schedule.logic.network.api.DormitoryScore
+import com.hfut.schedule.logic.network.api.GithubService
 import com.hfut.schedule.logic.network.api.MyService
 import com.hfut.schedule.logic.network.api.QWeatherService
 import com.hfut.schedule.logic.network.api.TeachersService
 import com.hfut.schedule.logic.network.api.XuanChengService
 import com.hfut.schedule.logic.network.api.ZJGDBillService
+import com.hfut.schedule.logic.network.servicecreator.GithubServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.MyServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.QWeatherServiceCreator
 import com.hfut.schedule.logic.utils.Encrypt
@@ -69,15 +71,6 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-
-class LoginSuccessViewModelFactory(private val webVpn: Boolean) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(NetWorkViewModel::class.java)) {
-            return NetWorkViewModel(webVpn) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
-    }
-}
 
 
 class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
@@ -103,9 +96,11 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     private val MyAPI = MyServiceCreator.create(MyService::class.java)
     private val qWeather = QWeatherServiceCreator.create(QWeatherService::class.java)
 
+
     var studentId = MutableLiveData<Int>(prefs.getInt("STUDENTID",0))
     var lessonIds = MutableLiveData<List<Int>>()
     var token = MutableLiveData<String>()
+
 
 
     var programList = MutableLiveData<String?>()

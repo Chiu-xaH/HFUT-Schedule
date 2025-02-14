@@ -49,7 +49,7 @@ import com.hfut.schedule.ui.utils.components.EmptyUI
 import com.hfut.schedule.ui.utils.components.MyCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.style.Round
-import com.hfut.schedule.ui.utils.style.RowHorizal
+import com.hfut.schedule.ui.utils.style.RowHorizontal
 
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -71,14 +71,15 @@ fun Exam(vm : NetWorkViewModel, ifSaved : Boolean) {
         headlineContent = { Text(text = "考试") },
         overlineContent = { Text(text = "${if(ifSaved) getNewExam().size else getExamJXGLSTU().size} 门")},
         leadingContent = {
-            BadgedBox(badge = {
-                if(prefs.getString("ExamNum","0") != getNewExam().size.toString())
-                Badge(){
-                    Text(text = getNewExam().size.toString())
-                }
-            }) {
-                Icon(painterResource(R.drawable.draw), contentDescription = "Localized description",)
-            }
+            Icon(painterResource(R.drawable.draw), contentDescription = "Localized description",)
+//            BadgedBox(badge = {
+//                if(prefs.getString("ExamNum","0") != getNewExam().size.toString())
+//                Badge(){
+//                    Text(text = getNewExam().size.toString())
+//                }
+//            }) {
+//
+//            }
         },
         modifier = Modifier.clickable {
 

@@ -73,7 +73,7 @@ import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.statusUI2
 import com.hfut.schedule.ui.utils.style.Round
-import com.hfut.schedule.ui.utils.style.RowHorizal
+import com.hfut.schedule.ui.utils.style.RowHorizontal
 import com.hfut.schedule.viewmodel.GuaGuaViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -426,7 +426,7 @@ fun StartShowerUI(vm: GuaGuaViewModel) {
                     Spacer(modifier = Modifier.width(10.dp))
                 }
             }
-            RowHorizal {
+            RowHorizontal {
                 FilledTonalButton(onClick = { editMode = !editMode }) {
                     Text(text = if(editMode)"完成" else "编辑标签")
                 }

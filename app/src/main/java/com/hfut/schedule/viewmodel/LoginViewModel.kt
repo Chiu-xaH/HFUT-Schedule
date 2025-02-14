@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.network.NetWork
+import com.hfut.schedule.logic.network.api.GithubService
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.network.api.LoginService
 import com.hfut.schedule.logic.network.servicecreator.Login.GetAESKeyServiceCreator
@@ -14,6 +15,7 @@ import com.hfut.schedule.logic.network.servicecreator.Login.LoginWebVpnServiceCr
 import com.hfut.schedule.logic.network.servicecreator.MyServiceCreator
 import com.hfut.schedule.logic.network.api.MyService
 import com.hfut.schedule.logic.network.api.WebVpnService
+import com.hfut.schedule.logic.network.servicecreator.GithubServiceCreator
 import com.hfut.schedule.logic.utils.SharePrefs.saveString
 import okhttp3.ResponseBody
 import org.jsoup.Jsoup
@@ -34,6 +36,11 @@ class LoginViewModel : ViewModel() {
     private val GetCookie = GetCookieServiceCreator.create(LoginService::class.java)
     private val GetAESKey = GetAESKeyServiceCreator.create(LoginService::class.java)
     private val MyAPI = MyServiceCreator.create(MyService::class.java)
+
+
+    private val github = GithubServiceCreator.create(GithubService::class.java)
+    var githubData = MutableLiveData<String?>()
+    fun getStarsNum() = NetWork.makeRequest(github.getRepoInfo(),githubData)
 
     var TICKET = MutableLiveData<String?>()
     fun login(username : String,password : String,keys : String,webVpn : Boolean)  {

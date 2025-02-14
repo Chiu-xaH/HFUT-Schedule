@@ -81,7 +81,7 @@ fun transferNum(num : Int) : Float {
     return settle
 }
 
-fun getTodayNet(vm : NetWorkViewModel, vmUI : UIViewModel) {
+fun getTodayNet(vm : NetWorkViewModel) {
 
         val CommuityTOKEN = prefs.getString("TOKEN","")
         CommuityTOKEN?.let { vm.getToday(it) }
@@ -106,32 +106,26 @@ fun AddedItems() : MutableList<AddFocus> {
 }
 
 fun MySchedule() : MutableList<Schedule> {
-    var Schedule = mutableListOf<Schedule>()
     return try {
         val my = prefs.getString("my", MyApplication.NullMy)
         val data = Gson().fromJson(my, MyAPIResponse::class.java).Lessons
-        val list = data.Schedule
-        list.forEach { Schedule.add(it) }
-        Schedule
+        data.Schedule.toMutableList()
     } catch (e : Exception) {
         e.printStackTrace()
         MyToast("解析出错,请联系开发者纠正")
-        Schedule
+        mutableListOf()
     }
 }
 
 fun MyWangKe() : MutableList<Schedule> {
-    var Wabgke = mutableListOf<Schedule>()
     return try {
         val my = prefs.getString("my", MyApplication.NullMy)
         val data = Gson().fromJson(my, MyAPIResponse::class.java).Lessons
-        val list = data.MyList
-        list.forEach {  Wabgke.add(it) }
-        Wabgke
+        data.MyList.toMutableList()
     } catch (e : Exception) {
         e.printStackTrace()
         MyToast("解析出错,请联系开发者纠正")
-        Wabgke
+        mutableListOf()
     }
 }
 

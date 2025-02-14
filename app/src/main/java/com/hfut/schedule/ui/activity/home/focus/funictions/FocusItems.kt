@@ -450,7 +450,6 @@ fun TomorrowCourseItem(item : Int,vm: NetWorkViewModel) {
 @Composable
 fun AddItem(item : Int, AddedItems : MutableList<AddFocus>) {
     var isClicked by remember { mutableStateOf(false) }
-        var Lists by remember { mutableStateOf( AddedItems() ) }
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
             //Spacer(modifier = Modifier.height(100.dp))
             MyCard {

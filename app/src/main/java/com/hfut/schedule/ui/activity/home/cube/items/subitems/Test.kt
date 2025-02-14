@@ -86,7 +86,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.ui.activity.card.counts.RadarChart
 import com.hfut.schedule.ui.activity.card.counts.RadarData
 import com.hfut.schedule.ui.utils.style.CardForListColor
-import com.hfut.schedule.ui.utils.style.RowHorizal
+import com.hfut.schedule.ui.utils.style.RowHorizontal
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import nl.dionsegijn.konfetti.compose.KonfettiView
@@ -544,7 +544,7 @@ private fun DetailsScreen(
                     .aspectRatio(1f)
                     .fillMaxWidth()
             )
-            RowHorizal {
+            RowHorizontal {
                 Text(
                     snack.name, fontSize = 18.sp,
                     modifier =

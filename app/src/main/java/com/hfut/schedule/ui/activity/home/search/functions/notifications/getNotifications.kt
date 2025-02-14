@@ -8,15 +8,11 @@ import com.hfut.schedule.logic.utils.SharePrefs
 
 
 //解析通知
-fun getNotifications() : MutableList<Notifications> {
-    var Notifications = mutableListOf<Notifications>()
+fun getNotifications() : List<Notifications> {
     try {
         val json = SharePrefs.prefs.getString("my", MyApplication.NullMy)
-        val list = Gson().fromJson(json, MyAPIResponse::class.java)?.Notifications
-
-        list?.forEach { Notifications.add(it) }
-        return Notifications
+        return Gson().fromJson(json, MyAPIResponse::class.java).Notifications
     } catch (_:Exception) {
-        return Notifications
+        return emptyList()
     }
 }

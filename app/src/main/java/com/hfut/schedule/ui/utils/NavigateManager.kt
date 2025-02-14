@@ -12,40 +12,8 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.hfut.schedule.logic.utils.DataStoreManager
-import com.hfut.schedule.ui.utils.NavigateManager.ANIMATION_SPEED
-import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 object NavigateManager {
     data class TransferAnimation(val remark : String,val enter : EnterTransition, val exit : ExitTransition)
@@ -164,12 +132,20 @@ object NavigateManager {
 
     fun getAnimationType(index : Int,targetPage: Int = 0) : TransferAnimation {
         return when(index) {
-            0 -> upDownAnimation
-            1 -> centerAnimation
-            2 -> getLeftRightAnimation(targetPage)
-            3 -> fadeAnimation
-            4 -> nullAnimation
-            else -> upDownAnimation
+            AnimationTypes.UpDownAnimation.code -> upDownAnimation
+            AnimationTypes.CenterAnimation.code -> centerAnimation
+            AnimationTypes.LeftRightAnimation.code -> getLeftRightAnimation(targetPage)
+            AnimationTypes.FadeAnimation.code -> fadeAnimation
+            AnimationTypes.NullAnimation.code -> nullAnimation
+            else -> fadeAnimation
         }
+    }
+
+    enum class AnimationTypes(val code : Int) {
+        UpDownAnimation(0),
+        CenterAnimation(1),
+        LeftRightAnimation(2),
+        FadeAnimation(3),
+        NullAnimation(4)
     }
 }

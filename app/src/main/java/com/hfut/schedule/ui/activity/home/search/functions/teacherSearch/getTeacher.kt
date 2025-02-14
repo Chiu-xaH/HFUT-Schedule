@@ -7,11 +7,9 @@ import com.hfut.schedule.logic.beans.TeacherResponse
 
 fun getTeacherList(vm: NetWorkViewModel) : List<TeacherBean?> {
     val json = vm.teacherSearchData.value
-    try {
-        val data = Gson().fromJson(json, TeacherResponse::class.java).teacherData
-        return data
+    return try {
+        Gson().fromJson(json, TeacherResponse::class.java).teacherData
     } catch (e: Exception) {
-        val lists = mutableListOf<TeacherBean>()
-        return lists
+        emptyList()
     }
 }

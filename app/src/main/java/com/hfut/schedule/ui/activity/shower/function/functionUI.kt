@@ -114,7 +114,6 @@ fun EditLoginCode(isOnLogin: Boolean = false, onClickLogin: (() -> Unit)? = null
                     IconButton(
                         onClick = {
                             ClipBoard.copy(input)
-                            MyToast("已复制")
                         }) {
                         Icon(painter = painterResource(R.drawable.copy_all), contentDescription = "description")
                     }

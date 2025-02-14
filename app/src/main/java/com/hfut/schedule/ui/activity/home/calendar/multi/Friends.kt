@@ -67,7 +67,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 fun getFriendsList() : List<FriendsList?> {
-    val list = mutableListOf<FriendsList>()
     return try {
         val json = prefs.getString("feiends","")
 
@@ -75,10 +74,10 @@ fun getFriendsList() : List<FriendsList?> {
         if(data.success) {
             data.result
         } else {
-            list
+            emptyList()
         }
     } catch(_ : Exception) {
-        list
+        emptyList()
     }
 }
 
@@ -316,13 +315,10 @@ fun getMsg(json : String) : String {
 }
 
 fun getApplyingList(vm: NetWorkViewModel) : List<ApplyingLists?> {
-    val list  = mutableListOf<ApplyingLists>()
     return try {
         val json = vm.applyData.value
-           // "{\"success\":true,\"message\":\"\",\"code\":200,\"result\":{\"records\":[{\"id\":\"1847573967695351809\",\"applyUserId\":\"2023218526\",\"applyUsername\":\"王星凯\",\"avatar\":\"https://community.hfut.edu.cn/group1/default/20230824/16/39/0/touxiang@2x_1692866372584.png\"}],\"total\":1,\"size\":10,\"current\":1,\"orders\":[],\"optimizeCountSql\":true,\"searchCount\":true,\"countId\":null,\"maxLimit\":null,\"pages\":1},\"timestamp\":1729330970720}\n"
-        val data = Gson().fromJson(json,ApplyingResponse::class.java).result.records
-        data
+        Gson().fromJson(json,ApplyingResponse::class.java).result.records
     } catch (e:Exception) {
-        list
+        emptyList()
     }
 }

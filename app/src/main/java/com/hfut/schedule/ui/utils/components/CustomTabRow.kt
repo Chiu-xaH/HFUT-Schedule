@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.hfut.schedule.ui.utils.style.RowHorizontal
 import kotlinx.coroutines.launch
 
 @Composable

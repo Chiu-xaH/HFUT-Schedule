@@ -60,8 +60,9 @@ import com.hfut.schedule.ui.activity.home.focus.funictions.getTodayNet
 import com.hfut.schedule.ui.activity.home.search.functions.electric.Electric
 import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.LoginWeb
 import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.WebInfo
-import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.getWebInfos
+import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.getWebInfoOld
 import com.hfut.schedule.ui.activity.home.search.functions.card.SchoolCardItem
+import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.getWebInfo
 import com.hfut.schedule.ui.activity.home.search.functions.shower.getInGuaGua
 import com.hfut.schedule.ui.utils.components.MyCard
 import com.hfut.schedule.ui.utils.style.Round
@@ -69,6 +70,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -233,7 +235,7 @@ fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel, refreshing : Boolean) {
     CoroutineScope(Job()).launch {
         async {
             if(showWeb)
-                getWebNew(vm,vmUI)
+                getWebInfoFromZJGD(vm,vmUI)
         }
         async {
             if(showEle)
@@ -241,7 +243,7 @@ fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel, refreshing : Boolean) {
         }
         async {
             if(showToday)
-                getTodayNet(vm,vmUI)
+                getTodayNet(vm)
         }
         async {
             if(showCard)
@@ -336,37 +338,32 @@ fun getWeb(vmUI : UIViewModel)  {
             vmUI.infoValue.observeForever { result ->
                 if (result != null)
                     if(result.contains("flow")) {
-                        vmUI.webValue.value = getWebInfos(result)
-                        SharePrefs.saveString("memoryWeb", vmUI.webValue.value?.flow)
+                        vmUI.webValue.value = getWebInfoOld(result)
+                        saveString("memoryWeb", vmUI.webValue.value?.flow)
                     }
             }
         }
     }
 }
 
-fun getWebNew(vm: NetWorkViewModel, vmUI : UIViewModel)  {
+fun getWebInfoFromZJGD(vm: NetWorkViewModel, vmUI : UIViewModel)  {
     val auth = prefs.getString("auth","")
     CoroutineScope(Job()).launch {
-        async { vm.getFee("bearer $auth",FeeType.WEB) }
-        Handler(Looper.getMainLooper()).post{
-            vm.infoValue.observeForever { result ->
-                if (result != null)
-                    if(result.contains("success")&&!result.contains("账号不存在")) {
-                        val data = Gson().fromJson(result,FeeResponse::class.java).map.showData
-
-                       vmUI.webValue.value = data["本期已使用流量"]?.let {
-                           data["储值余额"]?.let { it1 ->
-                               WebInfo(
-                                   it1.substringBefore("（"),
-                                   it.substringBefore("（"))
-                           }
-                       }
-                        SharePrefs.saveString("memoryWeb", vmUI.webValue.value?.flow)
-                    }
+        async { vm.getFee("bearer $auth",FeeType.WEB) }.await()
+        async {
+            Handler(Looper.getMainLooper()).post{
+                vm.infoValue.observeForever { result ->
+                    if (result != null)
+                        if(result.contains("success")&&!result.contains("账号不存在")) {
+                            vmUI.webValue.value = getWebInfo(vm)
+                        }
+                }
             }
         }
     }
 }
+
+
 //废弃旧的方法
 fun getEle(vm : NetWorkViewModel, vmUI : UIViewModel) {
     val BuildingsNumber = prefs.getString("BuildNumber", "0")

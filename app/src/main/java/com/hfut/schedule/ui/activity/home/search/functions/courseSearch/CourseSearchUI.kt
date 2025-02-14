@@ -312,6 +312,4 @@ fun courseSearchUI(vm : NetWorkViewModel) {
             }
         }
     }
-
-
 }

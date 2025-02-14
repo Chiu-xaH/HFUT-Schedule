@@ -23,6 +23,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
@@ -38,10 +39,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.hfut.schedule.R
@@ -49,6 +53,7 @@ import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.beans.jxglstu.CourseSearchResponse
 import com.hfut.schedule.logic.beans.jxglstu.lessonResponse
 import com.hfut.schedule.logic.beans.jxglstu.lessons
+import com.hfut.schedule.logic.utils.ClipBoard
 import com.hfut.schedule.logic.utils.DateTimeManager
 import com.hfut.schedule.logic.utils.DateTimeManager.TimeState.*
 import com.hfut.schedule.ui.activity.home.search.functions.failRate.permit
@@ -62,6 +67,7 @@ import com.hfut.schedule.ui.utils.components.RotatingIcon
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.DepartmentIcons
+import com.hfut.schedule.ui.utils.style.ColumnVertical
 
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -117,17 +123,17 @@ fun CourseTotalUI(json : String?,isSearch : Boolean,sortType: Boolean,vm : NetWo
                 val startWeek = weeksInfo?.substringBefore("~")
                 val endWeek = weeksInfo?.substringAfter("~")?.substringBefore("周")
 
-                var state : DateTimeManager.TimeState? = null
-                if(startWeek != null && endWeek != null && !isSearch) {
-                    val week = DateTimeManager.weeksBetween
-                    if(week in startWeek.toInt()..endWeek.toInt()) {
-                        state = DateTimeManager.TimeState.ONGOING
-                    } else if(week < startWeek.toInt()) {
-                        state = DateTimeManager.TimeState.NOT_STARTED
-                    } else if(week > endWeek.toInt()) {
-                        state = DateTimeManager.TimeState.ENDED
-                    }
-                }
+//                var state : DateTimeManager.TimeState? = null
+//                if(startWeek != null && endWeek != null && !isSearch) {
+//                    val week = DateTimeManager.weeksBetween
+//                    if(week in startWeek.toInt()..endWeek.toInt()) {
+//                        state = DateTimeManager.TimeState.ONGOING
+//                    } else if(week < startWeek.toInt()) {
+//                        state = DateTimeManager.TimeState.NOT_STARTED
+//                    } else if(week > endWeek.toInt()) {
+//                        state = DateTimeManager.TimeState.ENDED
+//                    }
+//                }
 
                 val infiniteTransition = rememberInfiniteTransition(label = "")
                 val alpha by infiniteTransition.animateFloat(
@@ -146,12 +152,27 @@ fun CourseTotalUI(json : String?,isSearch : Boolean,sortType: Boolean,vm : NetWo
                                 headlineContent = {  Text(list[item].course.nameZh) },
                                 overlineContent = { ScrollText(text = "学分 ${list[item].course.credits}" + if(list[item].scheduleWeeksInfo != null) " | $weeksInfo" else "") },
                                 trailingContent = {
-                                    when(state) {
-                                        ONGOING -> Text("开课中", modifier = Modifier.alpha(alpha))
-                                        NOT_STARTED -> Text("未开课")
-                                        ENDED -> Icon(Icons.Filled.Check,null)
-                                        null -> Icon(Icons.Filled.ArrowForward,null)
+                                    val type = list[item].courseType.nameZh
+
+                                    ColumnVertical() {
+                                        if(type.contains("选修") || type.contains("慕课") || type.contains("公选")) {
+                                            Text("选修")
+                                        } else if(type.contains("实践")) {
+                                            Text("实践")
+                                        }
+                                        if(!type.contains("实践")) {
+                                            if(list[item].scheduleWeeksInfo == null && list[item].scheduleText.dateTimePlacePersonText.textZh == null) {
+                                                Text("非教室")
+                                            }
+                                        }
                                     }
+
+//                                    when(state) {
+//                                        ONGOING -> Text("开课中", modifier = Modifier.alpha(alpha))
+//                                        NOT_STARTED -> Text("未开课")
+//                                        ENDED -> Icon(Icons.Filled.Check,null)
+//                                        null -> Icon(Icons.Filled.ArrowForward,null)
+//                                    }
                                 },
                                 //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
                                 leadingContent = {
@@ -233,7 +254,7 @@ fun DetailItems(lessons: lessons,vm : NetWorkViewModel) {
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
-                        title = { Text("教师检索 " + teacherTitle) }
+                        title = { Text("教师检索 $teacherTitle") }
                     )
                 },
             ) { innerPadding ->
@@ -290,7 +311,7 @@ fun DetailItems(lessons: lessons,vm : NetWorkViewModel) {
                     Row {
                         ListItem(
                             overlineContent = { Text("类型") },
-                            headlineContent = { lists.courseType.nameZh?.let { ScrollText(it) } },
+                            headlineContent = { lists.courseType.nameZh.let { Text(it) } },
 
                             //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
                             leadingContent = {
@@ -349,7 +370,8 @@ fun DetailItems(lessons: lessons,vm : NetWorkViewModel) {
                             ListItem(
                                 headlineContent = {
                                     if (teacherList != null) {
-                                        ScrollText( teacherList.teacher.title?.nameZh.toString()  +" " + (teacherList.teacher?.type?.nameZh ?: ""))
+                                        val t = teacherList.teacher.title?.nameZh ?: "未知"
+                                        ScrollText( t  +" " + (teacherList.teacher?.type?.nameZh ?: ""))
                                     }
                                 },
                                 overlineContent = {
@@ -372,15 +394,15 @@ fun DetailItems(lessons: lessons,vm : NetWorkViewModel) {
                     }
 
                     Row {
-                        var department = lists.openDepartment.nameZh.toString()
+                        var department = lists.openDepartment.nameZh
                         if(department.contains("（")) department = department.substringBefore("（")
                         ListItem(
                             overlineContent = { Text("开设学院") },
-                            headlineContent = { ScrollText(department) },
+                            headlineContent = { Text(department) },
 
                             //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
                             leadingContent = {
-                                lists.openDepartment.nameZh?.let { DepartmentIcons(name = it) }
+                                DepartmentIcons(name = department)
                             },
                             modifier = Modifier
                                 .clickable {}
@@ -403,9 +425,10 @@ fun DetailItems(lessons: lessons,vm : NetWorkViewModel) {
                         )
                     }
                     Row {
+                        val code = lists.code
                         ListItem(
-                            overlineContent = { Text("课程代码") },
-                            headlineContent = { ScrollText(lists.code) },
+                            overlineContent = { Text("课程代码--教学班") },
+                            headlineContent = { Text(code) },
 
                             leadingContent = {
                                 Icon(
@@ -414,24 +437,10 @@ fun DetailItems(lessons: lessons,vm : NetWorkViewModel) {
                                 )
                             },
                             modifier = Modifier
-                                .clickable {}
-                                .weight(.5f),
-                        )
-                        ListItem(
-                            overlineContent = { Text("同班同学") },
-                            headlineContent = { Text("查看") },
-                            trailingContent = {
-                            },
-                            //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
-                            leadingContent = {
-                                Icon(
-                                    Icons.Filled.ArrowForward,
-                                    contentDescription = "Localized description",
-                                )
-                            },
-                            modifier = Modifier
-                                .clickable { MyToast("请前往 合工大教务 微信公众号") }
-                                .weight(.5f),
+                                .clickable {
+                                    ClipBoard.copy(code)
+                                }
+//                                .weight(.5f),
                         )
                     }
                     Row {
@@ -452,20 +461,35 @@ fun DetailItems(lessons: lessons,vm : NetWorkViewModel) {
                                 .weight(.5f),
                         )
                         ListItem(
-                            headlineContent = { Text("添加到收藏") },
+                            headlineContent = { Text("同班同学") },
                             trailingContent = {
                             },
                             //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
                             leadingContent = {
                                 Icon(
-                                    painterResource(id = R.drawable.star),
+                                    Icons.Filled.ArrowForward,
                                     contentDescription = "Localized description",
                                 )
                             },
                             modifier = Modifier
-                                .clickable { MyToast("正在开发") }
+                                .clickable { MyToast("请前往 合工大教务 微信公众号") }
                                 .weight(.5f),
                         )
+//                        ListItem(
+//                            headlineContent = { Text("添加到收藏") },
+//                            trailingContent = {
+//                            },
+//                            //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
+//                            leadingContent = {
+//                                Icon(
+//                                    painterResource(id = R.drawable.star),
+//                                    contentDescription = "Localized description",
+//                                )
+//                            },
+//                            modifier = Modifier
+//                                .clickable { MyToast("正在开发") }
+//                                .weight(.5f),
+//                        )
                     }
                     if(lists.nameZh != null)
                         ListItem(
@@ -506,7 +530,7 @@ fun DetailItems(lessons: lessons,vm : NetWorkViewModel) {
                             //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
                             leadingContent = {
                                 Icon(
-                                    painterResource(R.drawable.calendar),
+                                    painterResource(R.drawable.info),
                                     contentDescription = "Localized description",
                                 )
                             },
@@ -519,25 +543,19 @@ fun DetailItems(lessons: lessons,vm : NetWorkViewModel) {
 }
 
 fun getTotalCourse(json : String?): MutableList<lessons>  {
-    var list = mutableListOf<lessons>()
+    val list = mutableListOf<lessons>()
 
     try {
         if (json != null) {
             if(json.contains("lessonIds")) {
-                var result = Gson().fromJson(json,lessonResponse::class.java).lessons
-
-
-                for (i in result.indices) {
-                    val courses = result[i]
-                    list.add(lessons(courses.nameZh,courses.remark,courses.scheduleText,courses.stdCount,courses.course,courses.courseType,courses.openDepartment,courses.examMode,courses.scheduleWeeksInfo,courses.planExamWeek,courses.teacherAssignmentList,courses.semester,courses.code))
-                }
-                return list
+                val result = Gson().fromJson(json,lessonResponse::class.java).lessons
+                return result.toMutableList()
             }
             else {
                 val result = Gson().fromJson(json,CourseSearchResponse::class.java).data
                 for (i in result.indices) {
                     val courses = result[i].lesson
-                    list.add(lessons(courses.nameZh,courses.remark,courses.scheduleText,courses.stdCount,courses.course,courses.courseType,courses.openDepartment,courses.examMode,courses.scheduleWeeksInfo,courses.planExamWeek,courses.teacherAssignmentList,courses.semester,courses.code))
+                    list.add(courses)
                 }
                 return list
             }

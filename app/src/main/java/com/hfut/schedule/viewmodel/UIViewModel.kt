@@ -27,16 +27,6 @@ class UIViewModel : ViewModel()  {
     var CardValue = MutableLiveData<ReturnCard>()
     var electricValue = MutableLiveData<String?>()
     var webValue = MutableLiveData<WebInfo>()
-   // var CardAuth = MutableLiveData<String?>(prefs.getString("auth",""))
-
-//    fun download(version : String) {
-//
-//        val call = Gitee.download(version)
-//        NetWork.makeRequest(call)
-//    }
-
-
-
 
     fun getUpdate() {
 
@@ -89,45 +79,39 @@ class UIViewModel : ViewModel()  {
 
     fun logoutWeb() {
         val call =  LoginWeb.logoutWeb()
-        if (call != null) {
-            call.enqueue(object : Callback<ResponseBody> {
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    resultValue.value = response?.body()?.string()
-                }
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    t.printStackTrace()
-                    resultValue.value = "Error"
-                }
-            })
-        }
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                resultValue.value = response.body()?.string()
+            }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                t.printStackTrace()
+                resultValue.value = "Error"
+            }
+        })
     }
     val infoValue = MutableLiveData<String?>()
     fun getWebInfo() {
         val call =  LoginWeb.getInfo()
-        if (call != null) {
-            call.enqueue(object : Callback<ResponseBody> {
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    infoValue.value = response?.body()?.string()
-                }
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    t.printStackTrace()
-                    infoValue.value = "Error"
-                }
-            })
-        }
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                infoValue.value = response.body()?.string()
+            }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                t.printStackTrace()
+                infoValue.value = "Error"
+            }
+        })
     }
     fun getWebInfo2() {
         val call =  LoginWeb2.getInfo()
-        if (call != null) {
-            call.enqueue(object : Callback<ResponseBody> {
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    infoValue.value = response?.body()?.string()
-                }
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    t.printStackTrace()
-                    infoValue.value = "Error"
-                }
-            })
-        }
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                infoValue.value = response.body()?.string()
+            }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                t.printStackTrace()
+                infoValue.value = "Error"
+            }
+        })
     }
 }

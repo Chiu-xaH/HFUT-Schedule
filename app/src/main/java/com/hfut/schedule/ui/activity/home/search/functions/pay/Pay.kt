@@ -217,7 +217,6 @@ fun PayUI(url : String,vm: NetWorkViewModel) {
             )},
             modifier = Modifier.clickable {
                 ClipBoard.copy(url)
-                MyToast("已复制到剪切板")
             }
         )
     }

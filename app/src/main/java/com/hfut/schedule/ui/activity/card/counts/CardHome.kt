@@ -13,9 +13,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.hfut.schedule.viewmodel.NetWorkViewModel
-import com.hfut.schedule.ui.activity.card.bills.main.BillItem
+import com.hfut.schedule.ui.activity.card.bills.main.getBills
 import com.hfut.schedule.ui.activity.card.counts.main.monthCount
-import com.hfut.schedule.ui.activity.card.bills.todayCount
+import com.hfut.schedule.ui.activity.card.bills.TodayCount
 import com.hfut.schedule.ui.utils.components.DevelopingUI
 import com.hfut.schedule.ui.utils.components.EmptyUI
 
@@ -56,8 +56,8 @@ fun CardHome(innerPadding : PaddingValues, vm : NetWorkViewModel, blur : Boolean
                     LazyColumn() {
                         when (page) {
                             TAB_DAY ->  {
-                                if(BillItem(vm).size == 0) item { EmptyUI() }
-                                else { items(BillItem(vm).size) { item -> todayCount(vm, item) } }
+                                if(getBills(vm).size == 0) item { EmptyUI() }
+                                else { items(getBills(vm).size) { item -> TodayCount(vm, item) } }
                             }
                             TAB_TERM -> item { DevelopingUI() }
                         }
