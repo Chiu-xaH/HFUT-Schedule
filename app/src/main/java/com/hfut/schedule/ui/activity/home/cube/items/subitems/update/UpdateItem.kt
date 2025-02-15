@@ -51,7 +51,7 @@ fun VersionInfoCard() {
             ListItem(headlineContent = { Text(text = "版本 " + APPVersion.getVersionName(), fontSize = 28.sp) })
             Row {
                 ListItem(
-                    overlineContent = { Text(text = "2025-02-14") },
+                    overlineContent = { Text(text = "2025-02-15(v2)") },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                     headlineContent = { Text(text = "版本号 ${APPVersion.getVersionCode()}") },
 //                    modifier = Modifier.weight(.5f)
@@ -75,16 +75,7 @@ fun VersionInfo() {
     Spacer(Modifier.height(3.dp))
     VersionInfoCard()
     DividerTextExpandedWith(text = "新特性") {
-        UpdateItems("重构 校园网", null, UpdateType.RENEW)
-        UpdateItems("新增 网费快速充值(宣城)", null, UpdateType.ADD)
-        UpdateItems("重构 反馈","原实验室挂网的腾讯文档反馈收集移步到新的位置，位于 选项-疑惑解答 修复-反馈",UpdateType.RENEW)
-        UpdateItems("修改 底栏转场动画默认值为淡入淡出", "经测试，原默认动画(底栏吸附)在界面过于复杂时，且性能不在主流的机型易掉帧", UpdateType.RENEW)
-        UpdateItems("修复 主界面无限礼花Bug",null,UpdateType.FIX)
-        UpdateItems("修复 查询中心-考试 图标显示0红点的Bug",null,UpdateType.FIX)
-        UpdateItems("优化 关于 界面的显示", null, UpdateType.OPTIMIZE)
-        UpdateItems("优化 课程汇总的显示",null,UpdateType.OPTIMIZE)
-        UpdateItems("优化 早期若干功能的性能和稳定性","对早期功能的数据组装代码进行了重构",UpdateType.OPTIMIZE)
-        UpdateItems("优化 部分界面的显示",null,UpdateType.OPTIMIZE)
+        UpdateItems("修复 初次使用状态下进入游客模式，由于加载未完成导致崩溃的Bug",null,UpdateType.FIX)
     }
 }
 

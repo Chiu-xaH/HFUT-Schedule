@@ -40,21 +40,27 @@ import java.io.FileOutputStream
 @Composable
 fun SchoolCalendar() {
     var showDialog by remember { mutableStateOf(false) }
+    val url = try {
+        Gson().fromJson(prefs.getString("my", MyApplication.NullMy),MyAPIResponse::class.java).SchoolCalendar
+    } catch (e:Exception) {
+        null
+    }
+
     ListItem(
         headlineContent = { Text(text = "校历") },
         leadingContent = { Icon(painter = painterResource(id = R.drawable.calendar_view_day), contentDescription = "")},
         modifier = Modifier.clickable {
-            showDialog = true
-        //    SavePictures()
-           // StartUri("https://sm.ms/image/9IgudCfOADF85Kw")
-            MyToast("即将打开网页链接,可自行下载保存图片")
+            if(url == null) {
+                MyToast("正在从云端获取数据")
+            } else {
+                showDialog = true
+                MyToast("即将打开网页链接,可自行下载保存图片")
+            }
         }
     )
 
-    val url = Gson().fromJson(prefs.getString("my", MyApplication.NullMy),MyAPIResponse::class.java).SchoolCalendar
 
-    WebDialog(showDialog,{showDialog = false},url,"校历")
-//
+    url?.let { WebDialog(showDialog,{showDialog = false}, it,"校历") }
 //    val switch_startUri = SharePrefs.prefs.getBoolean("SWITCHSTARTURI",true)
 //
 //    if (showDialog) {
