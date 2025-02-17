@@ -68,10 +68,10 @@ import com.hfut.schedule.ui.activity.card.bills.main.CardBills
 import com.hfut.schedule.ui.activity.card.counts.CardHome
 //import com.hfut.schedule.ui.activity.card.function.main.turnToBottomBar
 import com.hfut.schedule.ui.activity.home.focus.funictions.GetZjgdCard
-import com.hfut.schedule.ui.utils.NavigateManager
-import com.hfut.schedule.ui.utils.NavigateManager.currentPage
-import com.hfut.schedule.ui.utils.NavigateManager.turnTo
-import com.hfut.schedule.ui.utils.NavigateManager.turnToAndClear
+import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
+import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.currentPage
+import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
+import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnToAndClear
 import com.hfut.schedule.ui.utils.components.CustomTabRow
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.style.bottomBarBlur
@@ -258,7 +258,7 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
 
         }
     ) {innerPadding ->
-        val animation = NavigateManager.getAnimationType(currentAnimationIndex,bottomBarItems.page)
+        val animation = NavigateAndAnimationManager.getAnimationType(currentAnimationIndex,bottomBarItems.page)
 
         NavHost(navController = navController,
             startDestination = CardBarItems.HOME.name,

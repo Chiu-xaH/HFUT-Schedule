@@ -50,7 +50,8 @@ import com.hfut.schedule.logic.beans.zjgd.records
 import com.hfut.schedule.ui.activity.card.bills.main.getBills
 import com.hfut.schedule.ui.activity.card.bills.main.processTranamt
 import com.hfut.schedule.ui.utils.components.BillsIcons
-import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyCustomCard
+import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -152,10 +153,7 @@ fun SearchBillsUI(vm : NetWorkViewModel) {
                         }
                     },
                     shape = MaterialTheme.shapes.medium,
-                    colors = TextFieldDefaults.textFieldColors(
-                        focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                        unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-                    ),
+                    colors = textFiledTransplant(),
                 )
                 Spacer(modifier = Modifier.height(500.dp))
 
@@ -205,10 +203,7 @@ fun SearchBillsUI(vm : NetWorkViewModel) {
                                                 }
                                             },
                                             shape = MaterialTheme.shapes.medium,
-                                            colors = TextFieldDefaults.textFieldColors(
-                                                focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                                                unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-                                            ),
+                                            colors = textFiledTransplant(),
                                         )
                                     }
 
@@ -221,7 +216,7 @@ fun SearchBillsUI(vm : NetWorkViewModel) {
 
                                     Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)
                                     {
-                                        MyCard {
+                                        MyCustomCard {
                                             ListItem(
                                                 headlineContent = { Text(text = name) },
                                                 supportingContent = {Text(text = processTranamt(getBills(vm)[item]))},

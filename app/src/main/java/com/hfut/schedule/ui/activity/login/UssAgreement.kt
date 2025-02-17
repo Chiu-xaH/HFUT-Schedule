@@ -38,7 +38,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.AndroidVersion.canBlur
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.ui.utils.NavigateManager
+import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.style.bottomBarBlur
 import com.hfut.schedule.ui.utils.style.topBarBlur
@@ -115,7 +115,7 @@ fun UseAgreementUI(navController : NavHostController) {
                     Button(
                         onClick = {
                             SharePrefs.saveBoolean("canUse", default = false, save = true)
-                            NavigateManager.turnToAndClear(navController, First.HOME.name)
+                            NavigateAndAnimationManager.turnToAndClear(navController, First.HOME.name)
                         },
                         modifier = Modifier
                             .fillMaxWidth()

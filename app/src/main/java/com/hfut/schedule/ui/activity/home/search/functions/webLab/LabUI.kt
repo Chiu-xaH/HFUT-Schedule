@@ -31,7 +31,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.Starter
-import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.WebDialog
 import com.hfut.schedule.ui.utils.components.WebViewScreen
@@ -88,7 +88,7 @@ fun LabUI() {
         modifier = Modifier.clickable {}
     )
     for(item in 0 until getLab().size) {
-        MyCard {
+        MyCustomCard {
             ListItem(
                 headlineContent = { Text(text = getLab()[item].title) },
                 leadingContent = { Icon(painterResource(R.drawable.net), contentDescription = "Localized description",) },

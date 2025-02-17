@@ -41,7 +41,7 @@ import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.card.bills.main.getBills
 import com.hfut.schedule.ui.activity.card.bills.main.processTranamt
 import com.hfut.schedule.ui.utils.components.BillsIcons
-import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.ScrollText
 import java.math.BigDecimal
@@ -96,7 +96,7 @@ fun CardRow(vm : NetWorkViewModel, vmUI : UIViewModel) {
     Spacer(modifier = Modifier.height(5.dp))
 
 
-    MyCard {
+    MyCustomCard {
         Row {
             ListItem(
                 headlineContent = { ScrollText(text = "余额 ￥${vmUI.CardValue.value?.now ?: now}") },
@@ -156,7 +156,7 @@ fun TodayCount(vm  : NetWorkViewModel, item : Int) {
     val getTime = time.substringBefore(" ")
 
     if(DateTimeManager.Date_yyyy_MM_dd == getTime)
-        MyCard {
+        MyCustomCard {
             ListItem(
                 headlineContent = { Text(text = name) },
                 supportingContent = { Text(text = processTranamt(bills)) },

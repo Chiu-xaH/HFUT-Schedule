@@ -48,7 +48,7 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.logic.utils.reEmptyLiveDta
 import com.hfut.schedule.ui.utils.components.LoadingUI
-import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.WebDialog
 import com.hfut.schedule.ui.utils.components.WebViewScreen
@@ -148,7 +148,7 @@ fun XuanquNewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                 item { Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding())) }
                 items(list.size) { index ->
                     val item = list[index]
-                    MyCard {
+                    MyCustomCard {
                         ListItem(
                             headlineContent = { Text(item.title) },
                             overlineContent = { Text(item.date) },

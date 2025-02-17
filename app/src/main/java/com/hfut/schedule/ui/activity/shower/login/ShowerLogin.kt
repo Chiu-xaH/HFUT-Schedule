@@ -65,6 +65,7 @@ import com.hfut.schedule.ui.utils.components.BottomTip
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -173,10 +174,7 @@ fun GuaGuaLoginUI(vm : GuaGuaViewModel,netVm : NetWorkViewModel) {
                 singleLine = true,
                 // placeholder = { Text("请输入正确格式")},
                 shape = MaterialTheme.shapes.medium,
-                colors = TextFieldDefaults.textFieldColors(
-                    focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                    unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-                ),
+                colors = textFiledTransplant(),
                 leadingIcon = { Icon( painterResource(R.drawable.call), contentDescription = "Localized description") },
 
                 trailingIcon = {
@@ -198,10 +196,7 @@ fun GuaGuaLoginUI(vm : GuaGuaViewModel,netVm : NetWorkViewModel) {
                 onValueChange = { inputAES = it },
                 label = { Text("密码") },
                 singleLine = true,
-                colors = TextFieldDefaults.textFieldColors(
-                    focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                    unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-                ),
+                colors = textFiledTransplant(),
                 supportingText = { Text(showTip)},
                 visualTransformation = if (hidden) PasswordVisualTransformation()
                 else VisualTransformation.None,

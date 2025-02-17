@@ -74,6 +74,7 @@ import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.statusUI2
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.style.RowHorizontal
+import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.GuaGuaViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -262,10 +263,7 @@ fun StartShowerUI(vm: GuaGuaViewModel) {
                         label = { Text("备注名称(可参考花洒红色贴纸)" ) },
                         singleLine = true,
                         shape = MaterialTheme.shapes.medium,
-                        colors = TextFieldDefaults.textFieldColors(
-                            focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                            unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-                        ),
+                        colors = textFiledTransplant(),
                         supportingText = {
                             Text(text = input)
                         }
@@ -364,10 +362,7 @@ fun StartShowerUI(vm: GuaGuaViewModel) {
                 }
             },
             shape = MaterialTheme.shapes.medium,
-            colors = TextFieldDefaults.textFieldColors(
-                focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-            ),
+            colors = textFiledTransplant(),
         )
     }
     Spacer(modifier = Modifier.height(10.dp))

@@ -58,9 +58,10 @@ import com.hfut.schedule.ui.activity.home.cube.items.main.Clear
 import com.hfut.schedule.ui.activity.home.cube.items.main.apiCheck
 import com.hfut.schedule.ui.activity.home.focus.funictions.getTimeStamp
 import com.hfut.schedule.ui.utils.components.LittleDialog
-import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.textFiledTransplant
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -126,7 +127,7 @@ fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel,vm2 : NetWorkViewMode
         .padding(innerPadding)) {
         Spacer(modifier = Modifier.height(5.dp))
 
-        MyCard{
+        MyCustomCard{
             ListItem(
                 headlineContent = { Text(text = "版本信息") },
                 supportingContent = {Text("安卓版本 ${AndroidVersion.sdkInt} | 应用版本 ${APPVersion.getVersionName()} (${APPVersion.getVersionCode()})")},
@@ -338,7 +339,7 @@ fun questionUI() {
 @Composable
 fun questionItem(title : String,
                  info : String) {
-    MyCard {
+    MyCustomCard {
         ListItem(
             headlineContent = { Text(text = title) },
             supportingContent = { Text(text = info) }
@@ -401,10 +402,7 @@ fun feedBackUI(vm : NetWorkViewModel) {
                     },
                     label = { Text("反馈内容" ) },
                     shape = MaterialTheme.shapes.medium,
-                    colors = TextFieldDefaults.textFieldColors(
-                        focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                        unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-                    ),
+                    colors = textFiledTransplant(),
                 )
             }
             Spacer(modifier = Modifier.height(10.dp))
@@ -419,21 +417,18 @@ fun feedBackUI(vm : NetWorkViewModel) {
                     label = { Text("你的联系方式(可不填)" ) },
                     singleLine = true,
                     shape = MaterialTheme.shapes.medium,
-                    colors = TextFieldDefaults.textFieldColors(
-                        focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                        unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-                    ),
+                    colors = textFiledTransplant(),
                 )
             }
             Spacer(modifier = Modifier.height(5.dp))
-            MyCard {
+            MyCustomCard {
                 ListItem(
                     headlineContent = { Text(text = "或者通过电子邮件联系") },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.mail), contentDescription ="" )},
                     modifier = Modifier.clickable { emailMe() }
                 )
             }
-            MyCard {
+            MyCustomCard {
                 ListItem(
                     headlineContent = { Text(text = "提交时会自动提交当前APP版本、日期时间等信息，以协助开发者分析反馈内容") },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.info), contentDescription ="" )},

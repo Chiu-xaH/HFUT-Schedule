@@ -56,10 +56,10 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.ui.activity.shower.bills.GuaguaBills
 import com.hfut.schedule.ui.activity.shower.function.GuaGuaSettings
 import com.hfut.schedule.ui.activity.shower.home.main.GuaguaStart
-import com.hfut.schedule.ui.utils.NavigateManager
-import com.hfut.schedule.ui.utils.NavigateManager.currentPage
-import com.hfut.schedule.ui.utils.NavigateManager.turnTo
-import com.hfut.schedule.ui.utils.NavigateManager.turnToAndClear
+import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
+import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.currentPage
+import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
+import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnToAndClear
 import com.hfut.schedule.ui.utils.style.bottomBarBlur
 import com.hfut.schedule.ui.utils.style.topBarBlur
 import com.hfut.schedule.viewmodel.NetWorkViewModel
@@ -168,7 +168,7 @@ fun ShowerGuaGua(vm: GuaGuaViewModel,netVm : NetWorkViewModel) {
 
         }
     ) {innerPadding ->
-        val animation = NavigateManager.getAnimationType(currentAnimationIndex,targetPage.page)
+        val animation = NavigateAndAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
 
         NavHost(navController = navController,
             startDestination = ShowerBarItems.HOME.name,

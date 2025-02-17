@@ -46,7 +46,7 @@ import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
 import com.hfut.schedule.ui.utils.components.EmptyUI
-import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.style.RowHorizontal
@@ -151,7 +151,7 @@ fun ExamItems(item : Int,status : Boolean) {
     fun Item() {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
             Column() {
-                MyCard {
+                MyCustomCard {
                     ListItem(
                         headlineContent = { getExam()[item].courseName?.let { Text(text = it) } },
                         overlineContent = { Text(text = st?.substring(5,st.length - 3) + "~" + get?.substring(11,get.length-3)) },
@@ -204,7 +204,7 @@ fun JxglstuExamUI(item : Map<String,String>,status : Boolean) {
     if(status) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
             Column() {
-                MyCard{
+                MyCustomCard{
                     ListItem(
                         headlineContent = {  Text(text = "${item["课程名称"]}") },
                         overlineContent = { examDate?.let { Text(text = it) } },
@@ -250,7 +250,7 @@ fun JxglstuExamUI(item : Map<String,String>,status : Boolean) {
             } else {
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                     Column() {
-                        MyCard {
+                        MyCustomCard {
                             ListItem(
                                 headlineContent = {  Text(text = "$course") },
                                 overlineContent = { Text(text = "${time?.substringAfter("-")}") },

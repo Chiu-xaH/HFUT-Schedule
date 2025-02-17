@@ -78,7 +78,9 @@ import com.hfut.schedule.logic.beans.jxglstu.ProgramShow
 import com.hfut.schedule.logic.utils.ReservDecimal
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
+import com.hfut.schedule.ui.activity.home.search.functions.courseSearch.ApiForCourseSearch
 import com.hfut.schedule.ui.activity.home.search.functions.dormitoryScore.DormitoryScoreUI
 import com.hfut.schedule.ui.activity.home.search.functions.life.countFunc
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
@@ -89,10 +91,12 @@ import com.hfut.schedule.ui.utils.components.BottomTip
 import com.hfut.schedule.ui.utils.style.CardForListColor
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
-import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.DepartmentIcons
+import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.statusUI
+import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -218,7 +222,7 @@ fun Program(vm : NetWorkViewModel, ifSaved : Boolean) {
 }
 
 @Composable
-fun ProgramUI() {
+fun ProgramUI(vm: NetWorkViewModel,ifSaved: Boolean) {
   //  val list =
         val json = prefs.getString("programJSON","")
        // try {
@@ -231,10 +235,14 @@ fun ProgramUI() {
         val credits = list[i].credit
         if (credits != null) { sum += credits }
     }
-
+    var showBottomSheet_Search by remember { mutableStateOf(false) }
+    var courseName by remember { mutableStateOf("") }
+    ApiForCourseSearch(vm,courseName,null,showBottomSheet_Search) {
+        showBottomSheet_Search = false
+    }
     LazyColumn {
         item {
-            MyCard{
+            MyCustomCard{
                 ListItem(
                     headlineContent = { Text(text = "合计 ${list.size} 门 $sum 学分") },
                     supportingContent = { Text(text = "不含选修课!")},
@@ -247,14 +255,18 @@ fun ProgramUI() {
             }
         }
         items(list.size) { item ->
-            MyCard{
+            val name = list[item].name
+            MyCustomCard{
                 ListItem(
-                    headlineContent = { Text(text = list[item].name) },
+                    headlineContent = { Text(text = name) },
                     supportingContent = { Text(text = list[item].school + "  第" + list[item].term[0] + "学期")},
                     overlineContent = { list[item].type?.let { Text(text = it) } },
                     trailingContent = { Text(text = "学分 " +  list[item].credit)},
                     leadingContent = { Icon(painterResource(id = R.drawable.calendar), contentDescription = "Localized description") },
-                    modifier = Modifier.clickable {},
+                    modifier = Modifier.clickable {
+                        courseName = name
+                        showBottomSheet_Search = true
+                    },
                 )
             }
         }
@@ -451,7 +463,7 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean) {
                 LazyColumn {
                     items(listOne.size) {item ->
                         total += listOne[item].requiedCredits ?: 0.0
-                        MyCard {
+                        MyCustomCard {
                             ListItem(
                                 headlineContent = { Text(text = listOne[item].type + " | 学分要求 " + listOne[item].requiedCredits) },
                                 trailingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "")},
@@ -572,7 +584,7 @@ fun ProgramUIInfo(num : Int, vm : NetWorkViewModel, ifSaved : Boolean) {
     if(show) {
         LazyColumn {
             items(listTwo.size) {item ->
-                MyCard{
+                MyCustomCard{
                     ListItem(
                         headlineContent = { Text(text = listTwo[item].type + " | 学分要求 " + listTwo[item].requiedCredits) },
                         trailingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "")},
@@ -599,6 +611,12 @@ fun ProgramUIInfo2(num1 : Int, num2 : Int, vm : NetWorkViewModel, ifSaved : Bool
         listThree.sortBy { it.term }
         var input by remember { mutableStateOf("") }
 
+        var showBottomSheet_Search by remember { mutableStateOf(false) }
+        var courseName by remember { mutableStateOf("") }
+        ApiForCourseSearch(vm,courseName,null,showBottomSheet_Search) {
+            showBottomSheet_Search = false
+        }
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
@@ -620,10 +638,7 @@ fun ProgramUIInfo2(num1 : Int, num2 : Int, vm : NetWorkViewModel, ifSaved : Bool
                     }
                 },
                 shape = MaterialTheme.shapes.medium,
-                colors = TextFieldDefaults.textFieldColors(
-                    focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                    unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-                ),
+                colors = textFiledTransplant(),
             )
         }
         val searchList = mutableListOf<ProgramPartThree>()
@@ -635,15 +650,24 @@ fun ProgramUIInfo2(num1 : Int, num2 : Int, vm : NetWorkViewModel, ifSaved : Bool
         Spacer(modifier = Modifier.height(10.dp))
         LazyColumn {
             items(searchList.size) {item ->
-                MyCard{
-                    var department = searchList[item].depart
+                val listItem = searchList[item]
+                val name = listItem.name
+                MyCustomCard{
+                    var department = listItem.depart
                     if(department.contains("（")) department = department.substringBefore("（")
                     ListItem(
-                        headlineContent = { Text(text = searchList[item].name) },
+                        headlineContent = { Text(text = name) },
                         supportingContent = { Text(text = department) },
-                        overlineContent = { Text(text = "第" + searchList[item].term + "学期 | 学分 ${searchList[item].credit}")},
-                        leadingContent = { DepartmentIcons(name = searchList[item].depart) },
+                        overlineContent = { Text(text = "第" + listItem.term + "学期 | 学分 ${listItem.credit}")},
+                        leadingContent = { DepartmentIcons(name = listItem.depart) },
                         modifier = Modifier.clickable {
+                            if(!ifSaved) {
+                                courseName = name
+                                showBottomSheet_Search = true
+                            } else {
+                                MyToast("登录教务后可查询开课")
+                                Starter.refreshLogin()
+                            }
                         },
                     )
                 }
@@ -660,13 +684,13 @@ fun ProgramUIInfo2(num1 : Int, num2 : Int, vm : NetWorkViewModel, ifSaved : Bool
 
 @Composable
 fun ProgramTips() {
-    MyCard {
+    MyCustomCard {
         ListItem(
             headlineContent = { Text("选修课不显示") },
             supportingContent = { Text("选修课多而杂,没必要都显示在培养方案里,按时按通知选课即可") },
         )
     }
-    MyCard {
+    MyCustomCard {
         ListItem(
             headlineContent = { Text("查询全校其他专业培养方案") },
             supportingContent = { Text("请前往 合工大教务 公众号") },

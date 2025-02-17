@@ -33,7 +33,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
-import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.style.Round
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,7 +50,7 @@ fun FailRateUI(vm : NetWorkViewModel) {
         items(getFailRate(vm).size){ item ->
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 Column() {
-                    MyCard{
+                    MyCustomCard{
                         ListItem(
                             headlineContent = {  Text(getFailRate(vm)[item].courseName) },
                             leadingContent = { Icon(painterResource(R.drawable.monitoring), contentDescription = "Localized description",) },
@@ -98,7 +98,7 @@ fun FailRateUI(vm : NetWorkViewModel) {
                             val formattedNumber = String.format("%.2f", rate)
                             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                                 Column() {
-                                    MyCard{
+                                    MyCustomCard{
                                         ListItem(
                                             headlineContent = {  Text("平均分 ${getLists(num,vm)[item].avgScore}") },
                                             supportingContent = { Text("人数: 挂科 ${getLists(num,vm)[item].failCount} | 总 ${getLists(num,vm)[item].totalCount}") },

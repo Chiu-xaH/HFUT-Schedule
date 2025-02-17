@@ -65,10 +65,10 @@ import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.grade.analysis.GradeCountUI
 import com.hfut.schedule.ui.activity.grade.grade.community.GradeItemUI
 import com.hfut.schedule.ui.activity.grade.grade.jxglstu.GradeItemUIJXGLSTU
-import com.hfut.schedule.ui.utils.NavigateManager
-import com.hfut.schedule.ui.utils.NavigateManager.currentPage
-import com.hfut.schedule.ui.utils.NavigateManager.turnToAndClear
-import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
+import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.currentPage
+import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnToAndClear
+import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.style.bottomBarBlur
 import com.hfut.schedule.ui.utils.style.topBarBlur
@@ -219,7 +219,7 @@ fun GradeUI(ifSaved : Boolean,vm : NetWorkViewModel) {
 
         }
         ) { innerPadding ->
-        val animation = NavigateManager.getAnimationType(currentAnimationIndex,targetPage.page)
+        val animation = NavigateAndAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
 
         NavHost(navController = navController,
                 startDestination = GradeBarItems.GRADE.name,
@@ -259,19 +259,19 @@ fun GradeUI(ifSaved : Boolean,vm : NetWorkViewModel) {
 
 @Composable
 fun Infos() {
-    MyCard {
+    MyCustomCard {
         ListItem(
             headlineContent = { Text(text = "平时因数") },
             supportingContent = { Text(text = "平时因数=除去期末成绩各项平均分/期末分数,可大致反映最终成绩平时分占比;\n越接近1则平衡,越>1则表明最终成绩可能更靠平时分,越<1表明最终成绩可能因平时分拖后腿")}
         )
     }
-    MyCard {
+    MyCustomCard {
         ListItem(
             headlineContent = { Text(text = "绩点与均分") },
             supportingContent = { Text(text = "满绩 4.3 均分 95-100\n绩点 3.7 均分 85-89\n绩点 3.3 均分 83-84\n绩点 3.0 均分 78-82\n2.7之后不清楚,欢迎联系开发者补充")}
         )
     }
-    MyCard{
+    MyCustomCard{
         ListItem(
             headlineContent = { Text(text = "校务行") },
             supportingContent = { Text(text = "微信小程序搜校务行，注意宣区选择 合肥工业大学（宣城校区），学号为账号，身份证后六位为密码（包括最后的X）")}

@@ -18,7 +18,7 @@ import com.hfut.schedule.logic.utils.DateTimeManager
 import com.hfut.schedule.ui.utils.components.APIIcons
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
-import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyCustomCard
 
 @Composable
 fun MyAPIItem() {
@@ -47,7 +47,7 @@ fun MyAPIItem() {
 
     if(show) {
         DividerTextExpandedWith(text = "重要通知") {
-            MyCard {
+            MyCustomCard {
                 ListItem(
                     headlineContent = {
                         Text(text = title, fontWeight = FontWeight.Bold)

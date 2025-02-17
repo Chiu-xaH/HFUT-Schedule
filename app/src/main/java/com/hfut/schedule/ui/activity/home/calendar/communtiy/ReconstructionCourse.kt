@@ -43,7 +43,7 @@ import com.hfut.schedule.logic.beans.community.courseDetailDTOList
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.DetailItems
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.getTotalCourse
-import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.style.Round
 
 
@@ -114,7 +114,7 @@ fun DetailInfos(sheet : courseDetailDTOList,isFriend : Boolean = false,vm: NetWo
         item{
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 Column {
-                    MyCard {
+                    MyCustomCard {
                         ListItem(
                             headlineContent = { sheet.place?.let { Text(it) } },
                             leadingContent = {
@@ -154,7 +154,7 @@ fun DetailInfos(sheet : courseDetailDTOList,isFriend : Boolean = false,vm: NetWo
                         )
                     }
                     if(!isFriend)
-                    MyCard{
+                    MyCustomCard{
                         ListItem(
                             headlineContent = { Text( "更多信息") },
                             leadingContent = {

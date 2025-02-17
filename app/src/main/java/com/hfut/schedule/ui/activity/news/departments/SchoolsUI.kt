@@ -13,7 +13,7 @@ import androidx.compose.material3.ListItem
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.hfut.schedule.logic.utils.Starter
-import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.DepartmentIcons
 
@@ -51,7 +51,7 @@ fun SchoolsUI(innerPdding : PaddingValues? = null) {
             val m = maps.entries.toList()[index]
             val title = m.value
             val url = m.key
-            MyCard {
+            MyCustomCard {
                 ListItem(
                     headlineContent = { ScrollText(text = title) },
                     leadingContent = { DepartmentIcons(title) },

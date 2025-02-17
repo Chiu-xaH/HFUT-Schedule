@@ -67,10 +67,11 @@ import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.EmptyUI
 import com.hfut.schedule.ui.utils.components.LittleDialog
 import com.hfut.schedule.ui.utils.components.LoadingUI
-import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.ScrollText
+import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -232,10 +233,7 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel,showSea
                                 }
                             },
                             shape = MaterialTheme.shapes.medium,
-                            colors = TextFieldDefaults.textFieldColors(
-                                focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                                unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-                            ),
+                            colors = textFiledTransplant(),
                         )
                     }
                     gradeList.forEach { item ->
@@ -261,7 +259,7 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel,showSea
                             val grade = searchList[item]
                             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                                 Column() {
-                                    MyCard{
+                                    MyCustomCard{
                                         ListItem(
                                             headlineContent = {  Text(grade.title) },
                                             overlineContent = { Text( "成绩  "+ grade.totalGrade + "  |  绩点  " + grade.GPA +  "  |  学分  " + grade.score) },

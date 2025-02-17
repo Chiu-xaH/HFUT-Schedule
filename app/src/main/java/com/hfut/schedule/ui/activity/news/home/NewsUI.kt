@@ -37,7 +37,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.ui.activity.news.getNews
-import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.WebDialog
 import com.hfut.schedule.ui.utils.components.WebViewScreen
 
@@ -88,7 +88,7 @@ fun NewsItem(vm : NetWorkViewModel, innerPadding : PaddingValues? = null) {
         items(getNews(vm).size){ item ->
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 Column() {
-                    MyCard {
+                    MyCustomCard {
                         ListItem(
                             overlineContent = { getNews(vm)[item].date?.let { Text(text = it) } },
                             headlineContent = { getNews(vm)[item].title?.let { Text(it) } },

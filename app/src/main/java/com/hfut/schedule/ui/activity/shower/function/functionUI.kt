@@ -38,6 +38,7 @@ import com.hfut.schedule.logic.utils.SharePrefs.saveBoolean
 import com.hfut.schedule.logic.utils.Starter.loginGuaGua
 
 import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.style.textFiledTransplant
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -120,10 +121,7 @@ fun EditLoginCode(isOnLogin: Boolean = false, onClickLogin: (() -> Unit)? = null
                 }
             },
             shape = MaterialTheme.shapes.medium,
-            colors = TextFieldDefaults.textFieldColors(
-                focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-            ),
+            colors = textFiledTransplant(),
             supportingText = {
                 if(isOnLogin)
                     Text("填写上方手机号,填写loginCode,点击右侧登录")

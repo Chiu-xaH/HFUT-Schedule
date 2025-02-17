@@ -40,7 +40,7 @@ import com.hfut.schedule.logic.utils.ReservDecimal
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
-import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.DepartmentIcons
 
@@ -68,7 +68,7 @@ fun PersonPart() {
 //                shape = MaterialTheme.shapes.medium,
 //                colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primaryContainer)
 //            )
-            MyCard(containerColor = MaterialTheme.colorScheme.primaryContainer)
+            MyCustomCard(containerColor = MaterialTheme.colorScheme.primaryContainer)
             {
 
                 

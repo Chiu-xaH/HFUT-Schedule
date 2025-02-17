@@ -29,7 +29,7 @@ import com.hfut.schedule.logic.beans.Notifications
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.ui.utils.components.EmptyUI
-import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.WebDialog
 import com.hfut.schedule.ui.utils.components.WebViewScreen
@@ -45,7 +45,7 @@ fun NotificationItems() {
     notice?.let { it.url?.let { it1 -> WebDialog(showDialog,{ showDialog = false }, it1,it.title) } }
     if(list.isEmpty()) EmptyUI() else {
         for(item in list.indices) {
-            MyCard {
+            MyCustomCard {
                 ListItem(
                     headlineContent = { Text(text = list[item].title) },
                     supportingContent = { Text(text = list[item].info) },

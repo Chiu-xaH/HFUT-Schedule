@@ -97,9 +97,10 @@ import com.hfut.schedule.logic.utils.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter.noLogin
 import com.hfut.schedule.ui.activity.home.cube.items.main.FirstCube
-import com.hfut.schedule.ui.utils.NavigateManager.ANIMATION_SPEED
+import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.ANIMATION_SPEED
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -384,10 +385,7 @@ fun TwoTextField(vm : LoginViewModel) {
                 singleLine = true,
                 // placeholder = { Text("请输入正确格式")},
                 shape = MaterialTheme.shapes.medium,
-                colors = TextFieldDefaults.textFieldColors(
-                    focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                    unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-                ),
+                colors = textFiledTransplant(),
                 leadingIcon = { Icon( painterResource(R.drawable.person), contentDescription = "Localized description") },
 
                 trailingIcon = {
@@ -409,10 +407,7 @@ fun TwoTextField(vm : LoginViewModel) {
                 onValueChange = { inputAES = it },
                 label = { Text("信息门户密码") },
                 singleLine = true,
-                colors = TextFieldDefaults.textFieldColors(
-                    focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                    unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-                ),
+                colors = textFiledTransplant(),
                 //  supportingText = { Text("密码为信息门户")},
                 visualTransformation = if (hidden) PasswordVisualTransformation()
                 else VisualTransformation.None,

@@ -75,11 +75,11 @@ import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.LoginWebScaU
 import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.LoginWebUI
 
 import com.hfut.schedule.ui.activity.home.search.functions.shower.ShowerUI
-import com.hfut.schedule.ui.utils.NavigateManager.turnTo
-import com.hfut.schedule.ui.utils.NavigateManager.turnToAndClear
+import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
+import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnToAndClear
 import com.hfut.schedule.ui.utils.style.CardForListColor
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
-import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.WebDialog
 import com.hfut.schedule.ui.utils.style.Round
@@ -303,7 +303,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    MyCard {
+                    MyCustomCard {
                         ListItem(
                             headlineContent = { Text(text = "电费") },
                             leadingContent = {
@@ -312,7 +312,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                             modifier = Modifier.clickable { showBottomSheet_ELectric = true }
                         )
                     }
-                    MyCard{
+                    MyCustomCard{
                         ListItem(
                             headlineContent = { Text(text = "网费") },
                             leadingContent = {
@@ -321,7 +321,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                             modifier = Modifier.clickable { showBottomSheet_Web= true }
                         )
                     }
-                    MyCard {
+                    MyCustomCard {
                         ListItem(
                             headlineContent = { Text(text = "洗浴") },
                             leadingContent = {

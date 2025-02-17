@@ -69,7 +69,7 @@ import com.hfut.schedule.ui.utils.style.CardForListColor
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.LoadingUI
-import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.DepartmentIcons
 import com.hfut.schedule.ui.utils.components.EmptyUI
@@ -189,7 +189,7 @@ fun MyApplyListUI(vm: NetWorkViewModel,batchId : String) {
                     items(applyList.size) { index ->
                         val data = applyList.get(index)
                         val info = data.changeMajorSubmit
-                        MyCard {
+                        MyCustomCard {
                             ListItem(
                                 headlineContent = { Text(info.major.nameZh) },
                                 leadingContent = { DepartmentIcons(info.department.nameZh) },

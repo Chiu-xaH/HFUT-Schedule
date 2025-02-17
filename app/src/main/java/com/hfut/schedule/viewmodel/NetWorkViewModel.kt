@@ -655,13 +655,13 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
     val courseData = MutableLiveData<String?>()
     val courseRsponseData = MutableLiveData<String?>()
-    fun searchCourse(cookie: String, className : String?,courseName : String?, semester : Int) {
-        val call = JxglstuJSON.searchCourse(cookie,studentId.value.toString(),semester,className,"1,20",courseName)
+    fun searchCourse(cookie: String, className : String?,courseName : String?, semester : Int,courseId : String?) {
+        val call = JxglstuJSON.searchCourse(cookie,studentId.value.toString(),semester,className,"1,100",courseName,courseId)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                courseData.value = response?.code().toString()
-                courseRsponseData.value = response?.body()?.string()
+                courseData.value = response.code().toString()
+                courseRsponseData.value = response.body()?.string()
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -673,7 +673,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                surveyListData.value = response?.body()?.string()
+                surveyListData.value = response.body()?.string()
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }

@@ -81,7 +81,8 @@ interface JxglstuService {
                      @Path("semester") semester : Int,
                      @Query("nameZhLike") className : String?,
                      @Query("queryPage__") queryPage : String,
-                     @Query("courseNameZhLike") courseName : String?
+                     @Query("courseNameZhLike") courseName : String?,
+                     @Query("codeLike") courseId : String?
                      ) : Call<ResponseBody>
 
     //获取教评列表

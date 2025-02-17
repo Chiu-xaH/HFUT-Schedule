@@ -64,7 +64,7 @@ import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.getWebInfoOl
 import com.hfut.schedule.ui.activity.home.search.functions.card.SchoolCardItem
 import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.getWebInfo
 import com.hfut.schedule.ui.activity.home.search.functions.shower.getInGuaGua
-import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.style.Round
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -116,7 +116,7 @@ fun FocusCardSettings() {
     SharePrefs.saveBoolean("SWITCHSHORTCUT", false, showShortCut)
 
 
-    MyCard{
+    MyCustomCard{
         ListItem(headlineContent = { Text(text = "打开开关则会在APP启动时自动获取信息,并显示在聚焦即时卡片内，如需减少性能开销可按需开启或关闭") }, leadingContent = { Icon(
             painter = painterResource(id = R.drawable.info),
             contentDescription = ""
@@ -262,7 +262,7 @@ fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel, refreshing : Boolean) {
 //                .scale(scale.value),
 //            shape = MaterialTheme.shapes.medium,
 //        )
-        MyCard(modifier = Modifier
+        MyCustomCard(modifier = Modifier
             .fillMaxWidth()
             .scale(scale.value))
         {

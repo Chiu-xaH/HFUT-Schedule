@@ -96,10 +96,10 @@ import com.hfut.schedule.ui.activity.home.search.functions.webLab.LabUI
 import com.hfut.schedule.ui.activity.home.search.main.SearchFuncs
 import com.hfut.schedule.ui.activity.home.search.main.SearchScreen
 import com.hfut.schedule.ui.activity.login.First
-import com.hfut.schedule.ui.utils.NavigateManager
-import com.hfut.schedule.ui.utils.NavigateManager.ANIMATION_SPEED
-import com.hfut.schedule.ui.utils.NavigateManager.currentPage
-import com.hfut.schedule.ui.utils.NavigateManager.turnToAndClear
+import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
+import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.ANIMATION_SPEED
+import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.currentPage
+import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnToAndClear
 import com.hfut.schedule.ui.utils.components.CustomTabRow
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
@@ -414,7 +414,7 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
             }
         }
     ) { innerPadding ->
-        val animation = NavigateManager.getAnimationType(currentAnimationIndex,targetPage.page)
+        val animation = NavigateAndAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
         NavHost(
             navController = navController,
             startDestination = first.name,

@@ -32,7 +32,7 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.Starter
-import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.URLImage
 import com.hfut.schedule.ui.utils.components.WebDialog
 import com.hfut.schedule.ui.utils.components.WebViewScreen
@@ -87,7 +87,7 @@ fun TeacherListUI(vm: NetWorkViewModel) {
         items(dataList.size) { index->
             val item = dataList[index]
             item?.let {
-                MyCard(modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp)) {
+                MyCustomCard(modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp)) {
                     ListItem(
                         headlineContent = { Text(text = it.name) },
                         supportingContent = {

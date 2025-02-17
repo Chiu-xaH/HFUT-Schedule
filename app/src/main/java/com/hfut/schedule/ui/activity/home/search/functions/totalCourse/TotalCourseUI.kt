@@ -10,6 +10,7 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,19 +18,23 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -61,7 +66,7 @@ import com.hfut.schedule.ui.activity.home.search.functions.failRate.ApiToFailRat
 import com.hfut.schedule.ui.activity.home.search.functions.teacherSearch.ApiToTeacherSearch
 import com.hfut.schedule.ui.utils.components.EmptyUI
 import com.hfut.schedule.ui.utils.components.LoadingUI
-import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.RotatingIcon
 import com.hfut.schedule.ui.utils.style.Round
@@ -92,7 +97,6 @@ fun CourseTotalUI(json : String?,isSearch : Boolean,sortType: Boolean,vm : NetWo
             sheetState = sheetState,
             shape = Round(sheetState)
         ) {
-
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 topBar = {
@@ -144,13 +148,18 @@ fun CourseTotalUI(json : String?,isSearch : Boolean,sortType: Boolean,vm : NetWo
                         repeatMode = RepeatMode.Reverse
                     ), label = ""
                 )
+                val code = list[item].code
 
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                     Column() {
-                        MyCard {
+                        MyCustomCard {
                             ListItem(
                                 headlineContent = {  Text(list[item].course.nameZh) },
-                                overlineContent = { ScrollText(text = "学分 ${list[item].course.credits}" + if(list[item].scheduleWeeksInfo != null) " | $weeksInfo" else "") },
+                                overlineContent = { ScrollText(text =
+                                        "学分 ${list[item].course.credits}" +
+                                        (if(list[item].scheduleWeeksInfo != null) " | $weeksInfo" else "") +
+                                        (if(isSearch && code.contains("--")) " | " + code.substringAfter("--") + "班" else "")
+                                ) },
                                 trailingContent = {
                                     val type = list[item].courseType.nameZh
 
@@ -273,6 +282,39 @@ fun DetailItems(lessons: lessons,vm : NetWorkViewModel) {
         item{
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 Column() {
+                    Row {
+                        ListItem(
+                            overlineContent = { Text("类型") },
+                            headlineContent = { lists.courseType.nameZh.let { Text(it) } },
+
+                            //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
+                            leadingContent = {
+                                Icon(
+                                    painterResource(R.drawable.hotel_class),
+                                    contentDescription = "Localized description",
+                                )
+                            },
+                            modifier = Modifier
+                                .clickable {}
+                                .weight(.5f),
+                        )
+                        if(lists.scheduleWeeksInfo != null)
+                            ListItem(
+                                overlineContent = { Text("周数") },
+                                headlineContent = { ScrollText(lists.scheduleWeeksInfo) },
+
+                                //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
+                                leadingContent = {
+                                    Icon(
+                                        painterResource(R.drawable.calendar),
+                                        contentDescription = "Localized description",
+                                    )
+                                },
+                                modifier = Modifier
+                                    .clickable {}
+                                    .weight(.5f),
+                            )
+                    }
 
                     Row {
                         if(lists.stdCount != null)
@@ -291,55 +333,22 @@ fun DetailItems(lessons: lessons,vm : NetWorkViewModel) {
                                 .clickable {}
                                 .weight(.5f),
                         )
-                        if(lists.scheduleWeeksInfo != null)
-                        ListItem(
-                            overlineContent = { Text("周数") },
-                            headlineContent = { ScrollText(lists.scheduleWeeksInfo) },
-
-                            //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
-                            leadingContent = {
-                                Icon(
-                                    painterResource(R.drawable.calendar),
-                                    contentDescription = "Localized description",
-                                )
-                            },
-                            modifier = Modifier
-                                .clickable {}
-                                .weight(.5f),
-                        )
-                    }
-                    Row {
-                        ListItem(
-                            overlineContent = { Text("类型") },
-                            headlineContent = { lists.courseType.nameZh.let { Text(it) } },
-
-                            //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
-                            leadingContent = {
-                                Icon(
-                                    painterResource(R.drawable.hotel_class),
-                                    contentDescription = "Localized description",
-                                )
-                            },
-                            modifier = Modifier
-                                .clickable {}
-                                .weight(.5f),
-                        )
                         if(lists.course.credits != null)
-                        ListItem(
-                            overlineContent = { Text("学分") },
-                            headlineContent = { Text(lists.course.credits.toString()) },
+                            ListItem(
+                                overlineContent = { Text("学分") },
+                                headlineContent = { Text(lists.course.credits.toString()) },
 
-                            //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
-                            leadingContent = {
-                                Icon(
-                                    painterResource(R.drawable.filter_vintage),
-                                    contentDescription = "Localized description",
-                                )
-                            },
-                            modifier = Modifier
-                                .clickable {}
-                                .weight(.5f),
-                        )
+                                //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
+                                leadingContent = {
+                                    Icon(
+                                        painterResource(R.drawable.filter_vintage),
+                                        contentDescription = "Localized description",
+                                    )
+                                },
+                                modifier = Modifier
+                                    .clickable {}
+                                    .weight(.5f),
+                            )
                     }
                     val teacherNum = lists.teacherAssignmentList?.size ?: 0
                     for (i in 0 until teacherNum) {
@@ -355,7 +364,7 @@ fun DetailItems(lessons: lessons,vm : NetWorkViewModel) {
                                 overlineContent = { Text("教师 " + if(teacherNum == 1) "" else (i+1).toString()) },
                                 headlineContent = {
                                     if (teacherList != null) {
-                                        ScrollText( teacherList.teacher.person?.nameZh.toString() )
+                                        Text( teacherList.teacher.person?.nameZh.toString() )
                                     }
                                 },
                                 leadingContent = {
@@ -426,6 +435,8 @@ fun DetailItems(lessons: lessons,vm : NetWorkViewModel) {
                     }
                     Row {
                         val code = lists.code
+                        val classes = if(code.contains("--")) code.substringAfter("--") else null
+                        val classCode = if(code.contains("--")) code.substringBefore("--") else null
                         ListItem(
                             overlineContent = { Text("课程代码--教学班") },
                             headlineContent = { Text(code) },
@@ -440,7 +451,22 @@ fun DetailItems(lessons: lessons,vm : NetWorkViewModel) {
                                 .clickable {
                                     ClipBoard.copy(code)
                                 }
-//                                .weight(.5f),
+                                .weight(.5f),
+                        )
+                        ListItem(
+                            overlineContent = classes?.let{ { Text(it + "班") } },
+                            headlineContent = { Text("教学班对比") },
+                            leadingContent = {
+                                Icon(
+                                    painterResource(R.drawable.compare_arrows),
+                                    contentDescription = "Localized description",
+                                )
+                            },
+                            modifier = Modifier
+                                .clickable {
+                                    MyToast("正在开发")
+                                }
+                                .weight(.5f),
                         )
                     }
                     Row {

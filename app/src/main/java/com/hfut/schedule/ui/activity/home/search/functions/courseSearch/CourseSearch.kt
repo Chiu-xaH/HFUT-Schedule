@@ -49,7 +49,7 @@ fun CoursesSearch(ifSaved :  Boolean, vm : NetWorkViewModel) {
             sheetState = sheetState,
             shape = Round(sheetState)
         ) {
-            courseSearchUI(vm)
+            CourseSearchUI(vm)
         }
     }
 }

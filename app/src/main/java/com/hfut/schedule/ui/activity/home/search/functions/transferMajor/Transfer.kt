@@ -40,7 +40,7 @@ import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
 import com.hfut.schedule.ui.utils.components.LoadingUI
-import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.ScrollText
 import kotlinx.coroutines.CoroutineScope
@@ -248,7 +248,7 @@ fun TransferListUI(vm: NetWorkViewModel) {
         LazyColumn {
             items(transferList.size) { index ->
                 val data = transferList[index]
-                MyCard {
+                MyCustomCard {
                     ListItem(
                         headlineContent = { Text(data.title) },
                         supportingContent = { Text("申请日期 " + data.applicationDate + "\n转专业时期 " + data.admissionDate) },
@@ -268,7 +268,7 @@ fun TransferListUI(vm: NetWorkViewModel) {
 
 @Composable
 fun TransferTips() {
-    MyCard {
+    MyCustomCard {
         ListItem(
             headlineContent = { Text("具体要求") },
             supportingContent = { Text("请关注所在系QQ群或在 查询中心-新闻公告 检索已公示的转专业要求") },

@@ -57,11 +57,12 @@ import com.hfut.schedule.ui.utils.components.BottomTip
 import com.hfut.schedule.ui.utils.components.DepartmentIcons
 import com.hfut.schedule.ui.utils.components.EmptyUI
 import com.hfut.schedule.ui.utils.components.LoadingUI
-import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.statusUI
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.style.RowHorizontal
+import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -216,10 +217,7 @@ fun ProgramSearch(vm : NetWorkViewModel) {
                             }
                         },
                         shape = MaterialTheme.shapes.medium,
-                        colors = TextFieldDefaults.textFieldColors(
-                            focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                            unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-                        )
+                        colors = textFiledTransplant()
                     )
                 }
                 Spacer(modifier = Modifier.height(5.dp))
@@ -234,7 +232,7 @@ fun ProgramSearch(vm : NetWorkViewModel) {
                             var department = data.department
                             val name = data.name
                             department = department.substringBefore("（")
-                            MyCard {
+                            MyCustomCard {
                                 ListItem(
                                     headlineContent = { Text(name) },
                                     overlineContent = { Text(data.grade + "级 " + department + " " + data.major) },
@@ -315,7 +313,7 @@ fun SearchProgramUI(vm: NetWorkViewModel) {
     LazyColumn {
         items(listOne.size) {item ->
             total += listOne[item].requiedCredits ?: 0.0
-            MyCard {
+            MyCustomCard {
                 ListItem(
                     headlineContent = { Text(text = listOne[item].type + " | 学分要求 " + listOne[item].requiedCredits) },
                     trailingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "")},
@@ -409,7 +407,7 @@ fun SearchProgramUIInfo(num : Int, vm : NetWorkViewModel) {
     if(show) {
         LazyColumn {
             items(listTwo.size) {item ->
-                MyCard{
+                MyCustomCard{
                     ListItem(
                         headlineContent = { Text(text = listTwo[item].type + " | 学分要求 " + listTwo[item].requiedCredits) },
                         trailingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "")},
@@ -459,10 +457,7 @@ fun SearchProgramUIInfo2(num1 : Int, num2 : Int, vm : NetWorkViewModel) {
                     }
                 },
                 shape = MaterialTheme.shapes.medium,
-                colors = TextFieldDefaults.textFieldColors(
-                    focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                    unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-                ),
+                colors = textFiledTransplant(),
             )
         }
         val searchList = mutableListOf<ProgramPartThreeSearch>()
@@ -474,7 +469,7 @@ fun SearchProgramUIInfo2(num1 : Int, num2 : Int, vm : NetWorkViewModel) {
         Spacer(modifier = Modifier.height(10.dp))
         LazyColumn {
             items(searchList.size) {item ->
-                MyCard{
+                MyCustomCard{
                     var department = searchList[item].depart
                     if(department.contains("（")) department = department.substringBefore("（")
                     ListItem(

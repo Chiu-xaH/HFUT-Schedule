@@ -75,10 +75,11 @@ import com.hfut.schedule.ui.activity.home.search.functions.failRate.ApiToFailRat
 import com.hfut.schedule.ui.activity.home.search.functions.failRate.permit
 import com.hfut.schedule.ui.activity.home.search.functions.teacherSearch.ApiToTeacherSearch
 import com.hfut.schedule.ui.utils.components.LittleDialog
-import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.ScrollText
+import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -179,13 +180,13 @@ fun SelectCourse(ifSaved : Boolean, vm : NetWorkViewModel) {
 }
 @Composable
 fun SelectShuoming() {
-    MyCard {
+    MyCustomCard {
         ListItem(
             headlineContent = { Text(text = "免责声明") },
             supportingContent = { Text(text = "本应用不承担选课失败造成的后果\n请登录官方系统,确保一定选课成功")}
         )
     }
-    MyCard {
+    MyCustomCard {
         ListItem(
             headlineContent = { Text(text = "功能说明") },
             supportingContent = { Text(text = "点击右侧按钮选退课\n点击卡片查看详细课程信息\n退课后列表并不会更新,请手动刷新\n选退课时请核对课程代码\n若持续加载可能为教务服务器问题\n选退课完成后前往课表与课程汇总,会显示出新课程(也可在右上角手动刷新)")}
@@ -337,7 +338,7 @@ fun SelectCourseList(vm: NetWorkViewModel) {
 //                    },
 //                shape = MaterialTheme.shapes.medium,
 //            )
-            MyCard(Modifier.fillMaxWidth()
+            MyCustomCard(Modifier.fillMaxWidth()
                 .padding(horizontal = 15.dp, vertical = 5.dp)
                 .clickable {
                     courseId = list[item].id
@@ -446,10 +447,7 @@ fun SelectCourseInfoLoad(courseId : Int, vm: NetWorkViewModel) {
                         }
                     },
                     shape = MaterialTheme.shapes.medium,
-                    colors = TextFieldDefaults.textFieldColors(
-                        focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                        unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-                    ),
+                    colors = textFiledTransplant(),
                 )
             }
             Spacer(modifier = Modifier.height(10.dp))
@@ -558,7 +556,7 @@ fun SelectCourseInfo(vm: NetWorkViewModel, courseId : Int, search : String = "")
                     }
                 }
             }
-            MyCard {
+            MyCustomCard {
                 val limit = lists.limitCount
                 val isFull = stdCount.toInt() >= lists.limitCount
                 val remark = lists.remark
@@ -947,7 +945,7 @@ fun haveSelectedCourse(vm: NetWorkViewModel, courseId : Int) {
     LazyColumn {
         items(lists.size) {item ->
             val names =  lists[item].course.nameZh
-            MyCard {
+            MyCustomCard {
                 ListItem(
                     headlineContent = { Text(text = names)  },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.category), contentDescription = "")},

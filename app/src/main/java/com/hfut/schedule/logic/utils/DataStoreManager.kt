@@ -8,7 +8,7 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.hfut.schedule.App.MyApplication
-import com.hfut.schedule.ui.utils.NavigateManager
+import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
 import com.hfut.schedule.ui.utils.monet.dataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -29,7 +29,7 @@ object DataStoreManager {
 
     val animationTypeFlow: Flow<Int> = dataStore.data
         .map { preferences ->
-            preferences[ANIMATION_TYPE] ?: NavigateManager.AnimationTypes.FadeAnimation.code
+            preferences[ANIMATION_TYPE] ?: NavigateAndAnimationManager.AnimationTypes.FadeAnimation.code
         }
 
     /* 用法

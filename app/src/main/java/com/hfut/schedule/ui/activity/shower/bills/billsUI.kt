@@ -28,7 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.GuaGuaViewModel
-import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.ScrollText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -90,7 +90,7 @@ fun GuaguaBills(innerPadding: PaddingValues, vm: GuaGuaViewModel) {
                 item { Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding())) }
                 item { Spacer(modifier = Modifier.height(5.dp)) }
                 items(list.size) {item ->
-                    MyCard {
+                    MyCustomCard {
                         val info = list[item].description
                         ListItem(
                             headlineContent = {

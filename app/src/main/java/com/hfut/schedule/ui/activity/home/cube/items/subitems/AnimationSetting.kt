@@ -32,8 +32,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.utils.DataStoreManager
-import com.hfut.schedule.ui.utils.NavigateManager
-import com.hfut.schedule.ui.utils.NavigateManager.ANIMATION_SPEED
+import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
+import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.ANIMATION_SPEED
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -42,11 +42,11 @@ import kotlinx.coroutines.launch
 @Preview
 fun AnimationSetting() {
     val lists = listOf(
-        NavigateManager.upDownAnimation,
-        NavigateManager.centerAnimation,
-        NavigateManager.getLeftRightAnimation(0),
-        NavigateManager.fadeAnimation,
-        NavigateManager.nullAnimation
+        NavigateAndAnimationManager.upDownAnimation,
+        NavigateAndAnimationManager.centerAnimation,
+        NavigateAndAnimationManager.getLeftRightAnimation(0),
+        NavigateAndAnimationManager.fadeAnimation,
+        NavigateAndAnimationManager.nullAnimation
     )
     val currentAnimationIndex by DataStoreManager.animationTypeFlow.collectAsState(initial = 0)
 
@@ -63,7 +63,7 @@ fun AnimationSetting() {
 }
 
 @Composable
-fun AnimationCard(animation :  NavigateManager. TransferAnimation, currentAnimationIndex : Int, index : Int) {
+fun AnimationCard(animation :  NavigateAndAnimationManager. TransferAnimation, currentAnimationIndex : Int, index : Int) {
     val isSelected = currentAnimationIndex == index
 
     val cor = rememberCoroutineScope()

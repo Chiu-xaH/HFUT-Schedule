@@ -36,7 +36,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.main.saved.isNextOpen
-import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.ScrollText
 
@@ -144,7 +144,7 @@ fun SemsterInfo(json : String?) {
 
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
         Column() {
-            MyCard{
+            MyCustomCard{
                 ListItem(
                      overlineContent = { Text(text = semsterInfo.startDate + " ~ " + semsterInfo.endDate)},
                     headlineContent = {  ScrollText(semsterInfo.nameZh) },

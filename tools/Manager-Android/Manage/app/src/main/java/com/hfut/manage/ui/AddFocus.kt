@@ -237,9 +237,7 @@ fun addFocus(vm : NetViewModel) {
                             label = { Text("标题" ) },
                             singleLine = true,
                             shape = MaterialTheme.shapes.medium,
-                            colors = TextFieldDefaults.textFieldColors(focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                                unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-                            ),
+                            colors = TextFiledTransplant(),
                         )
                     }
                     Spacer(modifier = Modifier.height(10.dp))
@@ -256,9 +254,7 @@ fun addFocus(vm : NetViewModel) {
                             label = { Text("内容" ) },
                             singleLine = true,
                             shape = MaterialTheme.shapes.medium,
-                            colors = TextFieldDefaults.textFieldColors(focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                                unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-                            ),
+                            colors = TextFiledTransplant(),
                         )
                     }
                     Spacer(modifier = Modifier.height(10.dp))
@@ -274,10 +270,7 @@ fun addFocus(vm : NetViewModel) {
                             label = { Text("备注" ) },
                             singleLine = true,
                             shape = MaterialTheme.shapes.medium,
-                            colors = TextFieldDefaults.textFieldColors(focusedIndicatorColor = Color.Transparent,
-                                // 有焦点时的颜色，透明
-                                unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-                            ),
+                            colors = TextFiledTransplant(),
                         )
                     }
                     //Spacer(modifier = Modifier.height(10.dp))

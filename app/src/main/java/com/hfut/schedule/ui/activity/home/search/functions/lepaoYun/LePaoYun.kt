@@ -43,7 +43,7 @@ import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.beans.lepaoyun.LePaoYunHomeResponse
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.ui.utils.components.LittleDialog
-import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyCustomCard
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -177,7 +177,7 @@ fun LePaoYunUI() {
                         )
                     }
 
-                    MyCard{
+                    MyCustomCard{
                         ListItem(
                             headlineContent = { Text(text = "已跑 ${distance} 公里")},
                             leadingContent = { Icon(painterResource(id = R.drawable.directions_run), contentDescription = "")},
@@ -185,7 +185,7 @@ fun LePaoYunUI() {
                         )
                     }
 
-                    MyCard{
+                    MyCustomCard{
 
                         ListItem(
                             headlineContent = { Text(text = "单次要求")},
@@ -212,7 +212,7 @@ fun LePaoYunUI() {
                         }
                     }
 
-                    MyCard{
+                    MyCustomCard{
                         ListItem(
                             headlineContent = { Text(text = "日期")},
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.calendar), contentDescription = "")},
@@ -224,7 +224,7 @@ fun LePaoYunUI() {
                             supportingContent = { Text(text = "${cralist.dayStartTime} - ${cralist.dayEndTime}")},
                         )
                     }
-                    MyCard{
+                    MyCustomCard{
                         LazyColumn{
                             item {
                                 ListItem(

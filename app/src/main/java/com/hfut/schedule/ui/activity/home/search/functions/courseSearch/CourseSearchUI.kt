@@ -2,6 +2,7 @@ package com.hfut.schedule.ui.activity.home.search.functions.courseSearch
 
 import android.os.Handler
 import android.os.Looper
+import androidx.compose.animation.AnimatedVisibility
 //import androidx.compose.animation.AnimatedVisibility
 //import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -11,16 +12,19 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import com.hfut.schedule.ui.utils.components.LoadingUI
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -28,15 +32,19 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -46,13 +54,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.utils.ClipBoard
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.Semseter.getSemseter
 import com.hfut.schedule.logic.utils.Semseter.getSemseterCloud
-import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.Starter
+import com.hfut.schedule.logic.utils.reEmptyLiveDta
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotalUI
+import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
+import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -60,9 +74,10 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun courseSearchUI(vm : NetWorkViewModel) {
-    var className by remember { mutableStateOf( getPersonInfo().classes ?: "") }
-    var courseName by remember { mutableStateOf( "") }
+fun CourseSearchUI(vm : NetWorkViewModel) {
+    var className by remember { mutableStateOf( "") }
+    var courseName by remember { mutableStateOf("") }
+    var courseId by remember { mutableStateOf("") }
 
     var onclick by remember { mutableStateOf(false) }
     var loading by remember { mutableStateOf(false) }
@@ -72,19 +87,35 @@ fun courseSearchUI(vm : NetWorkViewModel) {
         ""
     ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
 
-    var sortType by remember { mutableStateOf(true) }
-   // var showitem by remember { mutableStateOf(false) }
 
-   // val saveSem = SharePrefs.prefs.getString("semesterId","")?.toInt()
-   // var semester by remember { mutableStateOf(saveSem) }
+    var showSearch by remember { mutableStateOf(true) }
 
-   // var buttonText by remember { mutableStateOf( "本学期") }
+    val semsters = getSemseterCloud()
+    var semester by remember { mutableIntStateOf(semsters) }
 
-   // val radioOptions = listOf("上学期", "本学期", "下学期")
-    //val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[1]) }
+    fun refresh() {
+        CoroutineScope(Job()).launch {
+            async {
+                reEmptyLiveDta(vm.courseData)
+                loading = true
+                onclick = true
+            }.await()
+            async {
+                cookie?.let { semester.let { it1 -> vm.searchCourse(it, className, courseName, it1,courseId) } }
+            }.await()
+            async {
+                Handler(Looper.getMainLooper()).post {
+                    vm.courseData.observeForever { result ->
+                        if (result != null && result == "200") {
+                            showSearch = false
+                            loading = false
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-    var semsters = getSemseterCloud()
-    var semester by remember { mutableStateOf(semsters) }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -95,39 +126,20 @@ fun courseSearchUI(vm : NetWorkViewModel) {
                 ),
                 title = { Text("开课查询") },
                 actions = {
+
                     Row(modifier = Modifier.padding(horizontal = 15.dp)) {
-                        FilledTonalIconButton(
-                            // shape = RoundedCornerShape(5.dp),
-                            onClick = {
-                                CoroutineScope(Job()).launch {
-                                    async {
-                                        cookie?.let { semester?.let { it1 -> vm.searchCourse(it, className, courseName, it1) } }
-                                        loading = true
-                                        onclick = true
-                                        Handler(Looper.getMainLooper()).post {
-                                            vm.courseData.value = "{}"
-                                        }
-                                    }.await()
-                                    async {
-                                        Handler(Looper.getMainLooper()).post {
-                                            vm.courseData.observeForever { result ->
-                                                if (result != null) {
-                                                    if (result == "200")
-                                                        loading = false
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }) {
-                            Icon(
-                                painter = painterResource(R.drawable.search),
-                                contentDescription = "description"
-                            )
-                        }
-                        FilledTonalButton(
-                            onClick = { sortType = !sortType },) {
-                            Text(text = if(sortType) "开课顺序" else "学分顺序")
+                        androidx.compose.animation.AnimatedVisibility(
+                            visible = !showSearch,
+                            enter = NavigateAndAnimationManager.upDownAnimation.enter,
+                            exit = NavigateAndAnimationManager.upDownAnimation.exit
+                        ) {
+                            FilledTonalButton(
+                                onClick = {
+                                    showSearch = !showSearch
+                                },
+                            ) {
+                                Text("显示搜索框")
+                            }
                         }
                     }
                 }
@@ -140,47 +152,118 @@ fun courseSearchUI(vm : NetWorkViewModel) {
                 .fillMaxSize()
         ) {
             Column {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
-                    horizontalArrangement = Arrangement.Center
+                AnimatedVisibility(
+                    visible = showSearch,
+                    enter = NavigateAndAnimationManager.downUpAnimation.enter,
+                    exit = NavigateAndAnimationManager.downUpAnimation.exit
                 ) {
-                    TextField(
-                        modifier = Modifier
-                            .weight(.5f)
-                            .padding(horizontal = 7.dp),
-                        value = className,
-                        onValueChange = {
-                            className = it
-                        },
-                        label = { Text("教学班级" ) },
-                        singleLine = true,
-                        shape = MaterialTheme.shapes.medium,
-                        colors = TextFieldDefaults.textFieldColors(
-                            focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                            unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-                        ),
-                    )
-                    TextField(
-                        modifier = Modifier
-                            .weight(.5f)
-                            .padding(horizontal = 7.dp),
-                        value = courseName,
-                        onValueChange = {
-                            courseName = it
-                        },
-                        label = { Text("课程名称" ) },
-                        singleLine = true,
-                        shape = MaterialTheme.shapes.medium,
-                        colors = TextFieldDefaults.textFieldColors(
-                            focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                            unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-                        ),
-                    )
-                }
+                    Column {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 8.dp),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            TextField(
+                                modifier = Modifier
+                                    .weight(.5f)
+                                    .padding(horizontal = 3.dp),
+                                value = courseId,
+                                onValueChange = {
+                                    courseId = it
+                                },
+                                label = { Text("课程代码" ) },
+                                singleLine = true,
+                                shape = MaterialTheme.shapes.medium,
+                                colors = textFiledTransplant(),
+                                trailingIcon = if(courseId == "") {
+                                    {
+                                        IconButton(
+                                            onClick = {
+                                                courseId = ClipBoard.paste()
+                                            },
+                                        ) {
+                                            Icon(painterResource(R.drawable.content_paste),null)
+                                        }
+                                    }
+                                } else null
+                            )
+                            TextField(
+                                modifier = Modifier
+                                    .weight(.5f)
+                                    .padding(horizontal = 3.dp),
+                                value = courseName,
+                                onValueChange = {
+                                    courseName = it
+                                },
+                                label = { Text("课程名称" ) },
+                                singleLine = true,
+                                shape = MaterialTheme.shapes.medium,
+                                colors = textFiledTransplant(),
+                                trailingIcon = if(courseName == "") {
+                                     {
+                                        IconButton(
+                                            onClick = {
+                                                courseName = ClipBoard.paste()
+                                            },
+                                        ) {
+                                            Icon(painterResource(R.drawable.content_paste),null)
+                                        }
+                                    }
+                                } else null
+                            )
+                        }
 
-                Spacer(modifier = Modifier.height(7.dp))
+                        Spacer(modifier = Modifier.height(6.dp))
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 8.dp),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            val myClass = getPersonInfo().classes
+                            TextField(
+                                modifier = Modifier
+                                    .weight(.5f)
+                                    .padding(horizontal = 3.dp),
+                                value = className,
+                                onValueChange = {
+                                    className = it
+                                },
+                                label = { Text("教学班级" ) },
+                                singleLine = true,
+                                shape = MaterialTheme.shapes.medium,
+                                colors = textFiledTransplant(),
+                                trailingIcon = if(myClass != className){
+                                     {
+                                        IconButton(
+                                            onClick = {
+                                                myClass?.let { className = it }
+                                            },
+                                        ) {
+                                            Icon(painterResource(R.drawable.person),null)
+                                        }
+                                    }
+                                } else null
+                            )
+                            FilledTonalIconButton(
+                                onClick = {
+                                    refresh()
+                                },
+                                modifier = Modifier.weight(.5f).height(56.dp).padding(horizontal = 3.dp),
+                                shape = MaterialTheme.shapes.medium
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.search),
+                                    contentDescription = "description"
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(6.dp))
+                    }
+                }
 
                 if(onclick){
                     Box() {
@@ -199,7 +282,7 @@ fun courseSearchUI(vm : NetWorkViewModel) {
                             enter = fadeIn(),
                             exit = fadeOut()
                         ) {
-                            CourseTotalUI(json = vm.courseRsponseData.value,true,sortType,vm)
+                            CourseTotalUI(json = vm.courseRsponseData.value, isSearch = true, sortType = true,vm)
                         }
                     }
                 }
@@ -217,26 +300,7 @@ fun courseSearchUI(vm : NetWorkViewModel) {
                 FloatingActionButton(
                     onClick = {
                         semester -= 20
-                        CoroutineScope(Job()).launch {
-                            async {
-                                cookie?.let { semester?.let { it1 -> vm.searchCourse(it, className, courseName, it1) } }
-                                loading = true
-                                onclick = true
-                                Handler(Looper.getMainLooper()).post {
-                                    vm.courseData.value = "{}"
-                                }
-                            }.await()
-                            async {
-                                Handler(Looper.getMainLooper()).post {
-                                    vm.courseData.observeForever { result ->
-                                        if (result != null) {
-                                            if (result == "200")
-                                                loading = false
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        refresh()
                     },
                 ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
             }
@@ -252,26 +316,7 @@ fun courseSearchUI(vm : NetWorkViewModel) {
             ) {
                 ExtendedFloatingActionButton(
                     onClick = {
-                        CoroutineScope(Job()).launch {
-                            async {
-                                cookie?.let { semester?.let { it1 -> vm.searchCourse(it, className, courseName, it1) } }
-                                loading = true
-                                onclick = true
-                                Handler(Looper.getMainLooper()).post {
-                                    vm.courseData.value = "{}"
-                                }
-                            }.await()
-                            async {
-                                Handler(Looper.getMainLooper()).post {
-                                    vm.courseData.observeForever { result ->
-                                        if (result != null) {
-                                            if (result == "200")
-                                                loading = false
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        refresh()
                     },
                 ) { Text(text = getSemseter(semester),) }
             }
@@ -287,28 +332,150 @@ fun courseSearchUI(vm : NetWorkViewModel) {
                 FloatingActionButton(
                     onClick = {
                         semester += 20
-                        CoroutineScope(Job()).launch {
-                            async {
-                                cookie?.let { semester?.let { it1 -> vm.searchCourse(it, className, courseName, it1) } }
-                                loading = true
-                                onclick = true
-                                Handler(Looper.getMainLooper()).post {
-                                    vm.courseData.value = "{}"
-                                }
-                            }.await()
-                            async {
-                                Handler(Looper.getMainLooper()).post {
-                                    vm.courseData.observeForever { result ->
-                                        if (result != null) {
-                                            if (result == "200")
-                                                loading = false
-                                        }
+                        refresh()
+                    },
+                ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
+            }
+        }
+    }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ApiForCourseSearch(vm: NetWorkViewModel,courseName : String?,courseId : String?,showBottomSheet : Boolean,onDismissRequest :  () -> Unit) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    val cookie = if (!vm.webVpn) prefs.getString(
+        "redirect",
+        ""
+    ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
+
+    if(showBottomSheet) {
+        var onclick by remember { mutableStateOf(false) }
+        var loading by remember { mutableStateOf(true) }
+        val semsters = getSemseterCloud()
+        var semester by remember { mutableIntStateOf(semsters) }
+
+        fun refresh() {
+            CoroutineScope(Job()).launch {
+                async {
+                    reEmptyLiveDta(vm.courseData)
+                    loading = true
+                    onclick = true
+                }.await()
+                async {
+                    cookie?.let { semester.let { it1 -> vm.searchCourse(it, null, courseName, it1,courseId) } }
+                }.await()
+                async {
+                    Handler(Looper.getMainLooper()).post {
+                        vm.courseData.observeForever { result ->
+                            if (result != null && result == "200") {
+                                loading = false
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if(loading) { refresh() }
+
+        ModalBottomSheet(
+            onDismissRequest,
+            sheetState = sheetState,
+            shape = Round(sheetState)
+        ) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        title = { Text("开课查询 ${courseName ?: courseId}") },
+                    )
+                },
+            ) { innerPadding ->
+                Box(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                ) {
+                    Column {
+                        if(onclick){
+                            Box() {
+                                androidx.compose.animation.AnimatedVisibility(
+                                    visible = loading,
+                                    enter = fadeIn(),
+                                    exit = fadeOut()
+                                ) {
+                                    Box(modifier = Modifier.align(Alignment.Center)) {
+                                        LoadingUI()
                                     }
+                                }////加载动画居中，3s后消失
+
+                                androidx.compose.animation.AnimatedVisibility(
+                                    visible = !loading,
+                                    enter = fadeIn(),
+                                    exit = fadeOut()
+                                ) {
+                                    CourseTotalUI(json = vm.courseRsponseData.value, isSearch = true, sortType = true,vm)
                                 }
                             }
                         }
-                    },
-                ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
+
+                        Spacer(modifier = Modifier.height(20.dp))
+                    }
+                    androidx.compose.animation.AnimatedVisibility(
+                        visible = !loading,
+                        enter = scaleIn(),
+                        exit = scaleOut(),
+                        modifier = Modifier
+                            .align(Alignment.BottomStart)
+                            .padding(horizontal = 15.dp, vertical = 15.dp)
+                    ) {
+                        FloatingActionButton(
+                            onClick = {
+                                semester -= 20
+                                refresh()
+                            },
+                        ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
+                    }
+
+
+                    androidx.compose.animation.AnimatedVisibility(
+                        visible = !loading,
+                        enter = scaleIn(),
+                        exit = scaleOut(),
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(horizontal = 15.dp, vertical = 15.dp)
+                    ) {
+                        ExtendedFloatingActionButton(
+                            onClick = {
+                                refresh()
+                            },
+                        ) { Text(text = getSemseter(semester),) }
+                    }
+
+                    androidx.compose.animation.AnimatedVisibility(
+                        visible = !loading,
+                        enter = scaleIn(),
+                        exit = scaleOut(),
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(horizontal = 15.dp, vertical = 15.dp)
+                    ) {
+                        FloatingActionButton(
+                            onClick = {
+                                semester += 20
+                                refresh()
+                            },
+                        ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
+                    }
+                }
             }
         }
     }

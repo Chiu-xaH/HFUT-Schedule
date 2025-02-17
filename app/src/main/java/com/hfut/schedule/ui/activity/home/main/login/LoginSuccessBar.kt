@@ -87,9 +87,9 @@ import com.hfut.schedule.ui.activity.home.search.functions.notifications.getNoti
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotalForApi
 import com.hfut.schedule.ui.activity.home.search.functions.webLab.LabUI
 import com.hfut.schedule.ui.activity.home.search.main.SearchFuncs
-import com.hfut.schedule.ui.utils.NavigateManager
-import com.hfut.schedule.ui.utils.NavigateManager.currentPage
-import com.hfut.schedule.ui.utils.NavigateManager.turnToAndClear
+import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
+import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.currentPage
+import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnToAndClear
 import com.hfut.schedule.ui.utils.components.CustomTabRow
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
@@ -381,7 +381,7 @@ fun SuccessUI(vm : NetWorkViewModel, grade : String, vm2 : LoginViewModel, vmUI 
             }
         }
     ) { innerPadding ->
-        val animation = NavigateManager.getAnimationType(currentAnimationIndex,bottomBarItems.page)
+        val animation = NavigateAndAnimationManager.getAnimationType(currentAnimationIndex,bottomBarItems.page)
 
         NavHost(navController = navController,
             startDestination = COURSES.name,

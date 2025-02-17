@@ -35,7 +35,7 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
-import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyCustomCard
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
@@ -56,7 +56,7 @@ fun GradeCountUI(innerPadding : PaddingValues) {
         }
 
         DividerTextExpandedWith(text = "统计图") {
-            MyCard {
+            MyCustomCard {
                 ListItem(
                     headlineContent = { Text("正在开发") },
                     leadingContent = { Icon(painterResource(R.drawable.info), contentDescription = "Localized description",) },
@@ -73,7 +73,7 @@ fun GradeCountUI(innerPadding : PaddingValues) {
 fun AvgGrade() {
     val jsonAvg = SharePrefs.prefs.getString("Avg", MyApplication.NullGrades)
     val resultAvg = Gson().fromJson(jsonAvg, GradeAvgResponse::class.java).result
-    MyCard {
+    MyCustomCard {
         Text(text = "我的水平", modifier = Modifier.padding(horizontal = 15.dp, vertical = 8.dp), color = MaterialTheme.colorScheme.primary)
 
         Row {
@@ -132,7 +132,7 @@ fun AllGrade() {
     for (index in list.indices) {
         val item = getAllGrade()[index]
         if(item.myAvgGpa != null || item.myAvgScore != null || item.majorAvgGpa != null || item.majorAvgScore != null)
-            MyCard {
+            MyCustomCard {
             Text(text = chineseList[index] + "学期", modifier = Modifier.padding(horizontal = 15.dp, vertical = 8.dp), color = MaterialTheme.colorScheme.primary)
                 Text(text = "我的水平", modifier = Modifier.padding(horizontal = 15.dp, vertical = 8.dp), color = MaterialTheme.colorScheme.primary)
                 Row {

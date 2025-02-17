@@ -30,8 +30,8 @@ import com.hfut.schedule.ui.activity.login.First
 //import com.hfut.schedule.ui.activity.login.FirstUI
 import com.hfut.schedule.ui.activity.login.LoginUI
 import com.hfut.schedule.ui.activity.login.UseAgreementUI
-import com.hfut.schedule.ui.utils.NavigateManager
-import com.hfut.schedule.ui.utils.NavigateManager.ANIMATION_SPEED
+import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
+import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.ANIMATION_SPEED
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.Party
 import dagger.hilt.android.AndroidEntryPoint
@@ -57,10 +57,10 @@ class LoginActivity : BaseActivity() {
             navController = navController,
             startDestination = first,
             enterTransition = {
-                NavigateManager.fadeAnimation.enter
+                NavigateAndAnimationManager.fadeAnimation.enter
             },
             exitTransition = {
-                NavigateManager.fadeAnimation.exit
+                NavigateAndAnimationManager.fadeAnimation.exit
             }
         ) {
             composable(First.HOME.name) {

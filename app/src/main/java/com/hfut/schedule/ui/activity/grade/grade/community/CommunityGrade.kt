@@ -50,7 +50,7 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.grade.getGrade
 import com.hfut.schedule.ui.utils.components.EmptyUI
-import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyCustomCard
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -70,7 +70,7 @@ fun TotalGrade() {
 
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
         Column() {
-            MyCard{
+            MyCustomCard{
                 ListItem(
                     headlineContent = {  Text("绩点(GPA)  $TotalGPA") },
                     supportingContent = { Text("班级排名: $Class   专业排名: $Major") },
@@ -199,7 +199,7 @@ fun GradeItemUI(vm :NetWorkViewModel, innerPadding : PaddingValues) {
                             horizontalArrangement = Arrangement.Center
                         ) {
                             Column() {
-                                MyCard {
+                                MyCustomCard {
                                     ListItem(
                                         headlineContent = { Text(getGrade()[item].courseName) },
                                         supportingContent = { Text("学分: " + getGrade()[item].credit + "   绩点: " + getGrade()[item].gpa + "   分数: ${getGrade()[item].score}") },
@@ -222,7 +222,7 @@ fun GradeItemUI(vm :NetWorkViewModel, innerPadding : PaddingValues) {
                             horizontalArrangement = Arrangement.Center
                         ) {
                             Column() {
-                                MyCard {
+                                MyCustomCard {
                                     ListItem(
                                         headlineContent = { Text("查看分数详细请点击此处进入教务数据") },
                                         supportingContent = { Text(text = "您现在使用的是智慧社区接口,使用教务系统数据可查看详细成绩") },

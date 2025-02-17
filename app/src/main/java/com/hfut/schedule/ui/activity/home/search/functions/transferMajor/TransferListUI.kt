@@ -67,12 +67,13 @@ import com.hfut.schedule.ui.activity.home.search.functions.life.countFunc
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
 import com.hfut.schedule.ui.activity.shower.home.function.ShowerStatusUI
 import com.hfut.schedule.ui.activity.shower.home.function.StatusMsgResponse
-import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.DepartmentIcons
 import com.hfut.schedule.ui.utils.components.statusUI2
 import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.GuaGuaViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -206,16 +207,13 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String) {
                                }
                             },
                             shape = MaterialTheme.shapes.medium,
-                            colors = TextFieldDefaults.textFieldColors(
-                                focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                                unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-                            ),
+                            colors = textFiledTransplant(),
                         )
                     }
                     Spacer(Modifier.height(5.dp))
                     personInfo.mobile?.let {
                         if(it.isNotEmpty()) {
-                            MyCard {
+                            MyCustomCard {
                                 ListItem(
                                     headlineContent = { Text(it) },
                                     overlineContent = { Text("教务系统预留手机号") },
@@ -230,7 +228,7 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String) {
                     }
                     personInfo.phone?.let {
                         if(it.isNotEmpty()) {
-                            MyCard {
+                            MyCustomCard {
                                 ListItem(
                                     headlineContent = { Text(it) },
                                     overlineContent = { Text("教务系统预留电话号") },
@@ -246,7 +244,7 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String) {
                     }
                     prefs.getString("PHONENUM","")?.let {
                         if(it.isNotEmpty()) {
-                            MyCard  {
+                            MyCustomCard  {
                                 ListItem(
                                     headlineContent = { Text(it) },
                                     overlineContent = { Text("呱呱物联登录手机号") },
@@ -310,10 +308,7 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String) {
                             }
                         },
                         shape = MaterialTheme.shapes.medium,
-                        colors = TextFieldDefaults.textFieldColors(
-                            focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                            unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-                        ),
+                        colors = textFiledTransplant(),
                     )
                 }
                 val list = getTransfer(vm)
@@ -328,7 +323,7 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String) {
                 LazyColumn {
                     items(searchList.size) {item ->
                         val dataItem = searchList[item]
-                        MyCard {
+                        MyCustomCard {
                             var department = dataItem.department.nameZh
                             if(department.contains("（")) department = department.substringBefore("（")
                             if(department.contains("(")) department = department.substringBefore("(")

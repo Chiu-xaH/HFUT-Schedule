@@ -84,11 +84,12 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.ui.activity.news.home.NewsItem
 import com.hfut.schedule.ui.activity.news.departments.SchoolsUI
 import com.hfut.schedule.ui.activity.news.xuancheng.XuanquNewsUI
-import com.hfut.schedule.ui.utils.NavigateManager
-import com.hfut.schedule.ui.utils.NavigateManager.currentPage
-import com.hfut.schedule.ui.utils.NavigateManager.turnTo
-import com.hfut.schedule.ui.utils.NavigateManager.turnToAndClear
+import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
+import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.currentPage
+import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
+import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnToAndClear
 import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import com.hfut.schedule.ui.utils.style.bottomBarBlur
 import com.hfut.schedule.ui.utils.style.topBarBlur
 import dev.chrisbanes.haze.HazeState
@@ -212,7 +213,7 @@ fun NewsActivityUI(vm: NetWorkViewModel) {
         }
     ) {innerPadding ->
 
-        val animation = NavigateManager.getAnimationType(currentAnimationIndex,targetPage.page)
+        val animation = NavigateAndAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
 
         NavHost(navController = navController,
             startDestination = NewsBarItems.News.name,
@@ -299,10 +300,7 @@ fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                         }
                     },
                     shape = MaterialTheme.shapes.medium,
-                    colors = TextFieldDefaults.textFieldColors(
-                        focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                        unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-                    ),
+                    colors = textFiledTransplant(),
                 )
             }
             Spacer(modifier = Modifier.height(10.dp))

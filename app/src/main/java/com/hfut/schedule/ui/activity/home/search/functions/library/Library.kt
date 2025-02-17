@@ -54,8 +54,9 @@ import com.hfut.schedule.logic.beans.community.LibraryResponse
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter
-import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -187,13 +188,10 @@ fun LibraryItem(vm : NetWorkViewModel) {
                                     }
                                 },
                                 shape = MaterialTheme.shapes.medium,
-                                colors = TextFieldDefaults.textFieldColors(
-                                    focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                                    unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-                                ),
+                                colors = textFiledTransplant(),
                                 // leadingIcon = { Icon( painterResource(R.drawable.search), contentDescription = "Localized description") },
                             )
-                            if (onclick == false)
+                            if (!onclick)
                                 Spacer(modifier = Modifier.fillMaxHeight())
 
                         }
@@ -225,7 +223,7 @@ fun LibraryItem(vm : NetWorkViewModel) {
                                     items (LibItem().size){ item ->
                                         Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)
                                         {
-                                            MyCard{
+                                            MyCustomCard{
                                                 ListItem(
                                                     headlineContent = { LibItem()[item].name?.let { Text(text = it,fontWeight = FontWeight.Bold) } },
                                                     supportingContent = { LibItem()[item].callNumber?.let { Text(text = it) } },

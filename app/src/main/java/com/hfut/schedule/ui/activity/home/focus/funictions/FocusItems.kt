@@ -78,12 +78,13 @@ import com.hfut.schedule.ui.activity.home.focus.funictions.FocusDataBaseManager.
 import com.hfut.schedule.ui.activity.home.focus.funictions.FocusDataBaseManager.removeItems
 import com.hfut.schedule.ui.activity.home.search.functions.card.TodayInfo
 import com.hfut.schedule.ui.utils.components.BottomTip
-import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.RotatingIcon
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.ScheduleIcons
 import com.hfut.schedule.ui.utils.components.ScrollText
+import com.hfut.schedule.ui.utils.style.textFiledTransplant
 
 @Composable
 fun MyScheuleItem(item : Int, MySchedule : MutableList<Schedule>,Future: Boolean,activity : Activity ) {
@@ -142,7 +143,7 @@ fun ScheduleItems(MySchedule: MutableList<Schedule>, item : Int,Future : Boolean
 
     @Composable
     fun Item() {
-        MyCard {
+        MyCustomCard {
             ListItem(
                 headlineContent = {  Text(text = title) },
                 overlineContent = {Text(text = time)},
@@ -224,7 +225,7 @@ fun WangkeItem(item : Int, MyWangKe: MutableList<Schedule>,Future: Boolean,activ
 
             if(Future) {
                 if(nowTime < getEndTime) {
-                    MyCard {
+                    MyCustomCard {
                         ListItem(
                             headlineContent = {  Text(text = title) },
                             overlineContent = { Text(text = time) },
@@ -252,7 +253,7 @@ fun WangkeItem(item : Int, MyWangKe: MutableList<Schedule>,Future: Boolean,activ
                 }
             } else {
                 if(nowTime == getEndTime) {
-                    MyCard {
+                    MyCustomCard {
                         ListItem(
                             headlineContent = {  Text(text = title) },
                             overlineContent = { Text(text = time) },
@@ -333,7 +334,7 @@ fun TodayCourseItem(item : Int,vm : NetWorkViewModel) {
     fun Item() {
         Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
             //Spacer(modifier = Modifier.height(100.dp))
-            MyCard {
+            MyCustomCard {
                 ListItem(
                     headlineContent = { Text(text = list.name) },
                     overlineContent = { Text(text = time)},
@@ -429,7 +430,7 @@ fun TomorrowCourseItem(item : Int,vm: NetWorkViewModel) {
 
     Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
         //Spacer(modifier = Modifier.height(100.dp))
-        MyCard {
+        MyCustomCard {
             ListItem(
                 headlineContent = { list.name?.let { Text(text = it) } },
                 overlineContent = {Text(text = list.classTime)},
@@ -452,7 +453,7 @@ fun AddItem(item : Int, AddedItems : MutableList<AddFocus>) {
     var isClicked by remember { mutableStateOf(false) }
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
             //Spacer(modifier = Modifier.height(100.dp))
-            MyCard {
+            MyCustomCard {
                 ListItem(
                     headlineContent = { Text(text = AddedItems[item].title) },
                     overlineContent = { Text(text = AddedItems[item].remark) },
@@ -545,7 +546,7 @@ fun BoxScope.AddButton(isVisible: Boolean,innerPaddings : PaddingValues) {
                 ) {
 
                     Spacer(modifier = Modifier.height(10.dp))
-                    MyCard {
+                    MyCustomCard {
                         ListItem(
                             headlineContent = {  Text(text = title) },
                             overlineContent = {Text(text = remark)},
@@ -569,9 +570,7 @@ fun BoxScope.AddButton(isVisible: Boolean,innerPaddings : PaddingValues) {
                             label = { Text("标题" ) },
                             singleLine = true,
                             shape = MaterialTheme.shapes.medium,
-                            colors = TextFieldDefaults.textFieldColors(focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                                unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-                            ),
+                            colors = textFiledTransplant(),
                         )
                     }
                     Spacer(modifier = Modifier.height(10.dp))
@@ -588,9 +587,7 @@ fun BoxScope.AddButton(isVisible: Boolean,innerPaddings : PaddingValues) {
                             label = { Text("内容" ) },
                             singleLine = true,
                             shape = MaterialTheme.shapes.medium,
-                            colors = TextFieldDefaults.textFieldColors(focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                                unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-                            ),
+                            colors = textFiledTransplant(),
                         )
                     }
                     Spacer(modifier = Modifier.height(10.dp))
@@ -606,10 +603,7 @@ fun BoxScope.AddButton(isVisible: Boolean,innerPaddings : PaddingValues) {
                             label = { Text("备注" ) },
                             singleLine = true,
                             shape = MaterialTheme.shapes.medium,
-                            colors = TextFieldDefaults.textFieldColors(focusedIndicatorColor = Color.Transparent,
-                                // 有焦点时的颜色，透明
-                                unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-                            ),
+                            colors = textFiledTransplant(),
                         )
                     }
                     Spacer(modifier = Modifier.height(100.dp))

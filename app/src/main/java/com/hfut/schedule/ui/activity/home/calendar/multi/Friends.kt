@@ -57,10 +57,11 @@ import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.utils.components.BottomTip
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
-import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.ScrollText
+import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -114,7 +115,7 @@ fun AddCourseUI(vm: NetWorkViewModel) {
             }
         }
     }
-    MyCard {
+    MyCustomCard {
         ListItem(
             headlineContent = { Text(text = "从文件导入") },
             supportingContent = {
@@ -129,7 +130,7 @@ fun AddCourseUI(vm: NetWorkViewModel) {
         )
     }
 
-    MyCard {
+    MyCustomCard {
         ListItem(
             headlineContent = { Text(text = "向他人申请好友课表") },
             supportingContent = {
@@ -218,17 +219,14 @@ fun FriendsSetting(vm : NetWorkViewModel) {
                     }
                 },
                 shape = MaterialTheme.shapes.medium,
-                colors = TextFieldDefaults.textFieldColors(
-                    focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                    unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-                ),
+                colors = textFiledTransplant(),
             )
         }
         if(msg != "")
             BottomTip(str = msg)
     }
     DividerTextExpandedWith(text = "好友列表(您目前可以查看的课表)") {
-        MyCard {
+        MyCustomCard {
             for(i in friendList.indices) {
                 ListItem(
                     headlineContent = { friendList[i]?.let { Text(text = it.realname) } },
@@ -268,7 +266,7 @@ fun FriendsSetting(vm : NetWorkViewModel) {
                 enter = fadeIn(),
                 exit = fadeOut()
             ) {
-                MyCard {
+                MyCustomCard {
                     val applyList = getApplyingList(vm)
                     for(i in applyList.indices) {
                         ListItem(

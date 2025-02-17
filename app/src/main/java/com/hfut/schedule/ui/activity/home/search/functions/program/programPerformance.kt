@@ -56,11 +56,12 @@ import com.hfut.schedule.ui.activity.home.search.functions.life.countFunc
 import com.hfut.schedule.ui.utils.style.CardForListColor
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
-import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.style.RowHorizontal
 import com.hfut.schedule.ui.utils.components.ScrollText
+import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -166,7 +167,7 @@ fun ProgramPerformance(vm : NetWorkViewModel) {
                         val requireInfo = item.requireInfo
                         val summary = item.completionSummary
                         DividerTextExpandedWith(text = item.nameZh + " 要求 ${requireInfo.courseNum} 门 ${requireInfo.credits} 学分") {
-                            MyCard {
+                            MyCustomCard {
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.Center
@@ -214,7 +215,7 @@ fun ProgramPerformance(vm : NetWorkViewModel) {
                         item { DividerText(text = "培养方案外课程 (包含转专业废弃课程)") }
                         item {
                             if(summary != null) {
-                                MyCard {
+                                MyCustomCard {
                                     Row(
                                         modifier = Modifier.fillMaxWidth(),
                                         horizontalArrangement = Arrangement.Center
@@ -318,10 +319,7 @@ fun PerformanceInfo(vm: NetWorkViewModel,moduleIndex : Int) {
                 }
             },
             shape = MaterialTheme.shapes.medium,
-            colors = TextFieldDefaults.textFieldColors(
-                focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-            )
+            colors = textFiledTransplant()
         )
     }
 
@@ -362,7 +360,7 @@ fun PerformanceInfo(vm: NetWorkViewModel,moduleIndex : Int) {
                         "UNREPAIRED" -> "待修"
                         else -> item.resultType
                     }
-                    MyCard {
+                    MyCustomCard {
                         ListItem(
                             headlineContent = { Text(text = item.nameZh) },
                             supportingContent = {
@@ -414,7 +412,7 @@ fun PerformanceInfo(vm: NetWorkViewModel,moduleIndex : Int) {
                         "UNREPAIRED" -> "待修"
                         else -> item.resultType
                     }
-                    MyCard {
+                    MyCustomCard {
                         ListItem(
                             headlineContent = { Text(text = item.nameZh) },
                             supportingContent = {

@@ -42,6 +42,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -148,10 +149,7 @@ fun FailRateSearch(vm: NetWorkViewModel) {
                 }
             },
             shape = MaterialTheme.shapes.medium,
-            colors = TextFieldDefaults.textFieldColors(
-                focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色
-            ),
+            colors = textFiledTransplant(),
         )
     }
     Spacer(modifier = Modifier.height(10.dp))

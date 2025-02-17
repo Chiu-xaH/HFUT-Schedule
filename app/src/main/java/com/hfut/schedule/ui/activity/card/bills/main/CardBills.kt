@@ -57,7 +57,7 @@ import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.card.bills.CardRow
 import com.hfut.schedule.ui.utils.components.BillsIcons
 import com.hfut.schedule.ui.utils.components.LoadingUI
-import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.style.Round
 import kotlinx.coroutines.CoroutineScope
@@ -205,7 +205,7 @@ fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVie
                     val getTime = time.substringBefore(" ")
 
 
-                    MyCard{
+                    MyCustomCard{
                         ListItem(
                             headlineContent = { Text(text = name) },
                             supportingContent = { Text(text = processTranamt(bills)) },
@@ -303,7 +303,7 @@ fun BillsInfo(vm : NetWorkViewModel, Infonum : Int) {
             ),
             title = { Text("详情") },
         )
-        MyCard{
+        MyCustomCard{
             ListItem(
                 headlineContent = { Text( bills.resume.substringBefore("-") ) },
                 leadingContent = {

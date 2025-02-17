@@ -59,7 +59,7 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.utils.components.EmptyUI
 import com.hfut.schedule.ui.utils.components.LittleDialog
-import com.hfut.schedule.ui.utils.components.MyCard
+import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.style.Round
 import kotlinx.coroutines.CoroutineScope
@@ -269,7 +269,7 @@ fun teacherList(vm : NetWorkViewModel, refresh : (Boolean) -> Unit) {
     if(list.size != 0)
         LazyColumn {
             items(list.size) { item ->
-                MyCard{
+                MyCustomCard{
                     ListItem(
                         headlineContent = { list[item].teacher.person?.let { Text(text = it.nameZh) } },
                         leadingContent = { Icon(painterResource(R.drawable.person), contentDescription = "Localized description",) },

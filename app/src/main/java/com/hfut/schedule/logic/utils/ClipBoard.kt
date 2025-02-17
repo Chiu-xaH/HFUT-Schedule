@@ -17,4 +17,17 @@ object ClipBoard {
             MyToast("复制到剪切板失败")
         }
     }
+    fun paste(): String {
+        return try {
+            val clipboard = MyApplication.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            if (clipboard.hasPrimaryClip() && clipboard.primaryClip!!.itemCount > 0) {
+                clipboard.primaryClip!!.getItemAt(0).text?.toString() ?: ""
+            } else {
+                ""
+            }
+        } catch (e: Exception) {
+            MyToast("获取剪切板内容失败")
+            ""
+        }
+    }
 }
