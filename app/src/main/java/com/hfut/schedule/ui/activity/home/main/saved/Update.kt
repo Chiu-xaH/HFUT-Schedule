@@ -20,7 +20,12 @@ import kotlinx.coroutines.launch
 suspend fun NetWorkUpdate(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel, ifSaved : Boolean){
     val CommuityTOKEN = SharePrefs.prefs.getString("TOKEN","")
     val auth = prefs.getString("auth","")
-    val grade = prefs.getString("Username","")?.substring(2,4)
+    //bizType特殊对待 @TinyWang
+    val grade = if( prefs.getString("Username","")?.substring(2,4).equals("24")){
+        "2"
+    }else{
+        prefs.getString("Username","")?.substring(2,4)
+    }
 
     val cookie = if(!vm.webVpn) prefs.getString("redirect", "")  else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket","")
     CoroutineScope(Job()).apply {
@@ -77,7 +82,12 @@ suspend fun NetWorkUpdate(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UI
 }
 //更新教务课表与课程汇总
 fun UpdateCourses(vm: NetWorkViewModel) {
-    val grade = prefs.getString("Username","")?.substring(2,4)
+    //bizType特殊对待 @TinyWang
+    val grade = if( prefs.getString("Username","")?.substring(2,4).equals("24")){
+        "2"
+    }else{
+        prefs.getString("Username","")?.substring(2,4)
+    }
     val cookie = if (!vm.webVpn) prefs.getString(
         "redirect",
         ""
