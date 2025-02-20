@@ -437,7 +437,7 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
                 if(!isFriend)
                     when (swapUI) {
                         COMMUNITY -> SaveCourse(showAll, innerPadding,vmUI, onDateChange = { new -> today = new}, today = today, vm = vm)
-                        JXGLSTU -> prefs.getString("Username","")?.let { it1 -> CalendarScreen(showAll,vm, it1.substring(0,2),innerPadding,vmUI,false,vm2,false,{newDate -> today = newDate},today) }
+                        JXGLSTU -> CalendarScreen(showAll,vm,innerPadding,vmUI,false,vm2,false,{newDate -> today = newDate},today)
                             ///CustomSchedules(showAll,innerPadding,vmUI,-1)
 //                        NEXT -> {
 //                            Column(modifier = Modifier.padding(innerPadding)) {

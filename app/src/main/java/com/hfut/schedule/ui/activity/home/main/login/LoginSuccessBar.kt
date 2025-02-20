@@ -110,9 +110,8 @@ import java.time.LocalDate
 @SuppressLint("CoroutineCreationDuringComposition", "SuspiciousIndentation",
     "UnusedMaterial3ScaffoldPaddingParameter"
 )
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun SuccessUI(vm : NetWorkViewModel, grade : String, vm2 : LoginViewModel, vmUI : UIViewModel, webVpn : Boolean) {
+fun SuccessUI(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel, webVpn : Boolean) {
 
     var animation by remember { mutableStateOf(prefs.getInt("ANIMATION", MyApplication.Animation)) }
     val switch = prefs.getBoolean("SWITCH",true)
@@ -398,7 +397,7 @@ fun SuccessUI(vm : NetWorkViewModel, grade : String, vm2 : LoginViewModel, vmUI 
                     if(!isFriend)
                         when (swapUI) {
                             COMMUNITY -> SaveCourse(showAll, innerPadding,vmUI, onDateChange = { new -> today = new}, today = today, vm = vm)
-                            JXGLSTU -> CalendarScreen(showAll,vm,grade,innerPadding,vmUI,webVpn,vm2,true,{newDate -> today = newDate},today)
+                            JXGLSTU -> CalendarScreen(showAll,vm,innerPadding,vmUI,webVpn,vm2,true,{newDate -> today = newDate},today)
                             ///CustomSchedules(showAll,innerPadding,vmUI,-1)
 //                        NEXT -> {
 //                            Column(modifier = Modifier.padding(innerPadding)) {

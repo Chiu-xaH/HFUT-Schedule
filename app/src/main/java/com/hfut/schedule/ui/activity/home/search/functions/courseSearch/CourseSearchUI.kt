@@ -56,8 +56,8 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.ClipBoard
 import com.hfut.schedule.viewmodel.NetWorkViewModel
-import com.hfut.schedule.logic.utils.Semseter.getSemseter
-import com.hfut.schedule.logic.utils.Semseter.getSemseterCloud
+import com.hfut.schedule.logic.utils.Semseter.parseSemseter
+import com.hfut.schedule.logic.utils.Semseter.getSemseterFromCloud
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.logic.utils.reEmptyLiveDta
@@ -90,7 +90,7 @@ fun CourseSearchUI(vm : NetWorkViewModel) {
 
     var showSearch by remember { mutableStateOf(true) }
 
-    val semsters = getSemseterCloud()
+    val semsters = getSemseterFromCloud()
     var semester by remember { mutableIntStateOf(semsters) }
 
     fun refresh() {
@@ -318,7 +318,7 @@ fun CourseSearchUI(vm : NetWorkViewModel) {
                     onClick = {
                         refresh()
                     },
-                ) { Text(text = getSemseter(semester),) }
+                ) { Text(text = parseSemseter(semester),) }
             }
 
             androidx.compose.animation.AnimatedVisibility(
@@ -354,7 +354,7 @@ fun ApiForCourseSearch(vm: NetWorkViewModel,courseName : String?,courseId : Stri
     if(showBottomSheet) {
         var onclick by remember { mutableStateOf(false) }
         var loading by remember { mutableStateOf(true) }
-        val semsters = getSemseterCloud()
+        val semsters = getSemseterFromCloud()
         var semester by remember { mutableIntStateOf(semsters) }
 
         fun refresh() {
@@ -457,7 +457,7 @@ fun ApiForCourseSearch(vm: NetWorkViewModel,courseName : String?,courseId : Stri
                             onClick = {
                                 refresh()
                             },
-                        ) { Text(text = getSemseter(semester),) }
+                        ) { Text(text = parseSemseter(semester),) }
                     }
 
                     androidx.compose.animation.AnimatedVisibility(

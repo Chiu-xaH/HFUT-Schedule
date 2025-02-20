@@ -57,6 +57,7 @@ import com.hfut.schedule.logic.network.servicecreator.GithubServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.MyServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.QWeatherServiceCreator
 import com.hfut.schedule.logic.utils.Encrypt
+import com.hfut.schedule.logic.utils.Semseter
 import com.hfut.schedule.logic.utils.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.SharePrefs.saveInt
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
@@ -507,6 +508,14 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         })
     }
 
+    val bizTypeIdResponse = MutableLiveData<String?>()
+    fun getBizTypeId(cookie: String) {
+        studentId.value?.let { NetWork.makeRequest(
+            call = JxglstuHTML.getBizTypeId(cookie,it),
+            liveData = bizTypeIdResponse
+        ) }
+    }
+
     fun getStudentId(cookie : String) {
 
         val call = JxglstuJSON.getStudentId(cookie)
@@ -525,10 +534,14 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         })
     }
 
-    fun getLessonIds(cookie : String, bizTypeId : String,studentid : String) {
-        //bizTypeId为年级数，例如23  //dataId为学生ID  //semesterId为学期Id，例如23-24第一学期为234
-        val call = prefs.getString("semesterId","234")
-            ?.let { JxglstuJSON.getLessonIds(cookie,bizTypeId, it,studentid) }
+    fun getLessonIds(cookie : String, bizTypeId : Int,studentid : String) {
+        //bizTypeId不是年级数！  //dataId为学生ID  //semesterId为学期Id，例如23-24第一学期为234
+        val call =  JxglstuJSON.getLessonIds(
+            cookie,
+            bizTypeId.toString(),
+            Semseter.getSemseterFromCloud().toString(),
+            studentid
+        )
 
         if (call != null) {
             call.enqueue(object : Callback<ResponseBody> {
@@ -1438,11 +1451,9 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
 
     var lessonIdsNext = MutableLiveData<List<Int>>()
-    fun getLessonIdsNext(cookie : String, bizTypeId : String,studentid : String) {
-        //bizTypeId为年级数，例如23  //dataId为学生ID  //semesterId为学期Id，例如23-24第一学期为234
-
-        val call = (prefs.getString("semesterId","234")?.toInt()?.plus(20)).toString()
-            ?.let { JxglstuJSON.getLessonIds(cookie,bizTypeId, it,studentid) }
+    fun getLessonIdsNext(cookie : String, bizTypeId : Int,studentid : String) {
+        val call = (Semseter.getSemseterFromCloud()?.plus(20)).toString()
+            ?.let { JxglstuJSON.getLessonIds(cookie,bizTypeId.toString(), it,studentid) }
 
         if (call != null) {
             call.enqueue(object : Callback<ResponseBody> {

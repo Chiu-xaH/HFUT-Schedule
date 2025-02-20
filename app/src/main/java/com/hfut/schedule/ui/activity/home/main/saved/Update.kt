@@ -6,6 +6,7 @@ import androidx.lifecycle.Observer
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
+import com.hfut.schedule.logic.utils.JxglstuParseUtils
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.LoginViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
@@ -36,7 +37,9 @@ suspend fun NetWorkUpdate(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UI
                     if (result != 0) {
                         SharePrefs.saveString("studentId", result.toString())
                         CoroutineScope(Job()).launch {
-                            async { grade?.let { vm.getLessonIds(cookie!!, it, result.toString()) } }
+                            JxglstuParseUtils.bizTypeId?.let {
+                                vm.getLessonIds(cookie!!,it,result.toString())
+                            }
                         }
                     }
                 }
@@ -77,7 +80,6 @@ suspend fun NetWorkUpdate(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UI
 }
 //更新教务课表与课程汇总
 fun UpdateCourses(vm: NetWorkViewModel) {
-    val grade = prefs.getString("Username","")?.substring(2,4)
     val cookie = if (!vm.webVpn) prefs.getString(
         "redirect",
         ""
@@ -88,7 +90,9 @@ fun UpdateCourses(vm: NetWorkViewModel) {
             if (result != 0) {
                 SharePrefs.saveString("studentId", result.toString())
                 CoroutineScope(Job()).launch {
-                    async { grade?.let { vm.getLessonIds(cookie!!, it, result.toString()) } }
+                    JxglstuParseUtils.bizTypeId?.let {
+                        vm.getLessonIds(cookie!!,it,result.toString())
+                    }
                 }
             }
         }

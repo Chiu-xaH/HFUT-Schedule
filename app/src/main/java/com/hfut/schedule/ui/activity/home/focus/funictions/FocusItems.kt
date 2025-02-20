@@ -67,8 +67,8 @@ import com.hfut.schedule.logic.beans.Schedule
 import com.hfut.schedule.logic.utils.AddCalendar.addToCalendar
 import com.hfut.schedule.logic.utils.DateTimeManager
 import com.hfut.schedule.logic.utils.DateTimeManager.TimeState.*
-import com.hfut.schedule.logic.utils.Semseter.getSemseter
-import com.hfut.schedule.logic.utils.Semseter.getSemseterCloud
+import com.hfut.schedule.logic.utils.Semseter.parseSemseter
+import com.hfut.schedule.logic.utils.Semseter.getSemseterFromCloud
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.calendar.communtiy.DetailInfos
@@ -637,7 +637,7 @@ fun TimeStampItem() {
 
 @Composable
 fun SemsterTip() {
-    BottomTip(getSemseter(getSemseterCloud()))
+    BottomTip(parseSemseter(getSemseterFromCloud()))
 }
 
 

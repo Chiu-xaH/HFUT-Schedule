@@ -72,8 +72,9 @@ import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.beans.community.LoginCommunityResponse
 import com.hfut.schedule.logic.beans.jxglstu.datumResponse
 import com.hfut.schedule.logic.utils.DateTimeManager
-import com.hfut.schedule.logic.utils.Semseter.getSemseter
-import com.hfut.schedule.logic.utils.Semseter.getSemseterCloud
+import com.hfut.schedule.logic.utils.JxglstuParseUtils
+import com.hfut.schedule.logic.utils.Semseter.parseSemseter
+import com.hfut.schedule.logic.utils.Semseter.getSemseterFromCloud
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.saveInt
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
@@ -97,16 +98,16 @@ import java.time.temporal.ChronoUnit
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class, ExperimentalAnimationApi::class)
 @SuppressLint("SuspiciousIndentation", "CoroutineCreationDuringComposition")
 @Composable
-fun CalendarScreen(showAll : Boolean,
-                   vm : NetWorkViewModel,
-                   grade : String,
-                   innerPadding : PaddingValues,
-                   vmUI : UIViewModel,
-                   webVpn : Boolean,
-                   vm2 : LoginViewModel,
-                   load : Boolean,
-                   onDateChange : (LocalDate) ->Unit,
-                   today: LocalDate) {
+fun CalendarScreen(
+    showAll: Boolean,
+    vm: NetWorkViewModel,
+    innerPadding: PaddingValues,
+    vmUI: UIViewModel,
+    webVpn: Boolean,
+    vm2: LoginViewModel,
+    load: Boolean,
+    onDateChange: (LocalDate) ->Unit,
+    today: LocalDate) {
 
 
     val sheetState_totalCourse = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -770,7 +771,7 @@ fun CalendarScreen(showAll : Boolean,
 
                //检测CommunityTOKEN的可用性
                val ExamObserver = Observer<Int> { result ->
-                   Log.d("result",(result == 500).toString())
+//                   Log.d("result",(result == 500).toString())
                    if (result == 500) {
                        CoroutineScope(Job()).async {
                            async { vm.GotoCommunity(cookies) }.await()
@@ -789,14 +790,6 @@ fun CalendarScreen(showAll : Boolean,
                    }
                }
 
-               //获取慧新易校
-               // val AuthObserver = Observer<String?> { result ->
-               //    if (result != null) {
-               //        if(result.contains("成功")) MyToast("一卡通登陆成功")
-               //          else
-               //       }
-               //     }
-
 
                //检测慧新易校可用性
                val auth = prefs.getString("auth", "")
@@ -807,13 +800,6 @@ fun CalendarScreen(showAll : Boolean,
 
                Handler(Looper.getMainLooper()).post { vm.ExamCodeData.observeForever(ExamObserver) }
 
-               //慧新易校获取TOKEN
-               //val liushui = prefs.getString("cardliushui", MyApplication.NullBill)
-               //if (liushui != null) {
-
-
-               //
-               ///}
 
                //登录信息门户的接口,还没做重构（懒）
                if (token != null) {
@@ -839,61 +825,51 @@ fun CalendarScreen(showAll : Boolean,
 
         scope.launch {
 //加载其他教务信息////////////////////////////////////////////////////////////////////////////////////////////////////
-            // async {
-            //   if(webVpn) {
-            //     prefs.getString("Password","")?.let { prefs.getString("Username","")?.let { it1 -> LoginClick(vm2, it1, it,true) } }
-            //   delay(200)
-            // }
-            // }.await()
             async {
                 val studentIdObserver = Observer<Int> { result ->
                     if (result != 0) {
                         //Log.d("result",result.toString())
                         SharePrefs.saveString("studentId", result.toString())
                         CoroutineScope(Job()).launch {
-                            async {
-                                grade?.let {
-                                    vm.getLessonIds(
-                                        cookie!!,
-                                        it,
-                                        result.toString()
-                                    )
-                                }
-                            }
-                            if (nextBoolean) {
-                                async {
-                                    grade?.let {
-                                        vm.getLessonIdsNext(
-                                            cookie!!,
-                                            it,
-                                            result.toString()
-                                        )
-                                    }
-                                }
-                            }
+                            async { vm.getBizTypeId(cookie!!) }.await()
+//                            async {
+//                                bizTypeId?.let {
+//                                    vm.getLessonIds(
+//                                        cookie!!,
+//                                        it,
+//                                        result.toString()
+//                                    )
+//                                }
+//                            }
+//                            if (nextBoolean) {
+//                                async {
+//                                    bizTypeId?.let {
+//                                        vm.getLessonIdsNext(
+//                                            cookie!!,
+//                                            it,
+//                                            result.toString()
+//                                        )
+//                                    }
+//                                }
+//                            }
                             async { vm.getInfo(cookie!!) }
                             if(prefs.getString("photo","") == null || prefs.getString("photo","") == "")
                             async { cookie?.let { vm.getPhoto(it) } }
                         }
-                    } else {
-                        ///Log.d("result0",result.toString())
-                        /*
-
-                        val studentid = prefs.getInt("STUDENTID",99999)
-                         if(studentid != 0) {
-                             CoroutineScope(Job()).launch {
-                                 async { grade?.let { vm.getLessonIds(cookie!!, it, studentid.toString()) } }
-                                 if(nextBoolean) { async { grade?.let { vm.getLessonIdsNext(cookie!!, it, studentid.toString()) }  } }
-
-                                 async { vm.getInfo(cookie!!) }
-                                 async { cookie?.let { vm.getPhoto(it) } }
-                                 async { vm.getProgram(cookie!!) }
-                             }
-                         }
-                      */
                     }
                 }
-
+                val getBizTypeIdObserver = Observer<String?> { result ->
+                    if(result != null) {
+                        // 开始解析
+                        val bizTypeId = JxglstuParseUtils.bizTypeId ?: JxglstuParseUtils.getBizTypeId(result)
+                        if(bizTypeId != null) {
+                            vm.getLessonIds(cookie!!,bizTypeId,vm.studentId.value.toString())
+                            if(nextBoolean) {
+                                vm.getLessonIdsNext(cookie!!,bizTypeId,vm.studentId.value.toString())
+                            }
+                        }
+                    }
+                }
                 val lessonIdObserver = Observer<List<Int>> { result ->
                     if (result.toString() != "") {
                         val lessonIdsArray = JsonArray()
@@ -920,6 +896,7 @@ fun CalendarScreen(showAll : Boolean,
                         // vm.lessonIdsNext.removeObserver(lessonIdObserver)
                     }
                 }
+
                 val datumObserver = Observer<String?> { result ->
                     if (result != null) {
                         if (result.contains("result")) {
@@ -946,6 +923,7 @@ fun CalendarScreen(showAll : Boolean,
 
                 Handler(Looper.getMainLooper()).post {
                     vm.studentId.observeForever(studentIdObserver)
+                    vm.bizTypeIdResponse.observeForever(getBizTypeIdObserver)
                     vm.lessonIds.observeForever(lessonIdObserver)
                     vm.datumData.observeForever(datumObserver)
                     if (nextBoolean)
@@ -1121,7 +1099,7 @@ fun CalendarScreen(showAll : Boolean,
                         ) {
                             TextButton(onClick = {  }) {
                                 Text(
-                                    text = getSemseter(getSemseterCloud()),
+                                    text = parseSemseter(getSemseterFromCloud()),
                                     style = TextStyle(shadow = Shadow(
                                         color = Color.Gray,
                                         offset = Offset(5.0f,5.0f),

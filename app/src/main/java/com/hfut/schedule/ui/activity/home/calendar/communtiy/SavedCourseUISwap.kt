@@ -73,8 +73,8 @@ import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.beans.community.courseDetailDTOList
 import com.hfut.schedule.logic.utils.DateTimeManager
 import com.hfut.schedule.logic.utils.DateTimeManager.Benweeks
-import com.hfut.schedule.logic.utils.Semseter.getSemseter
-import com.hfut.schedule.logic.utils.Semseter.getSemseterCloud
+import com.hfut.schedule.logic.utils.Semseter.parseSemseter
+import com.hfut.schedule.logic.utils.Semseter.getSemseterFromCloud
 import com.hfut.schedule.ui.activity.home.calendar.examToCalendar
 import com.hfut.schedule.ui.activity.home.calendar.getScheduleDate
 import com.hfut.schedule.ui.activity.home.search.functions.exam.getExam
@@ -795,7 +795,7 @@ fun SaveCourse(
                 ) {
                     TextButton(onClick = {  }) {
                         Text(
-                            text = getSemseter(getSemseterCloud()),
+                            text = parseSemseter(getSemseterFromCloud()),
                             style = TextStyle(shadow = Shadow(
                                 color = Color.Gray,
                                 offset = Offset(5.0f,5.0f),

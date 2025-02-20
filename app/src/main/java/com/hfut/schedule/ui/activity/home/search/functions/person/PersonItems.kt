@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory
 import android.os.Build
 import android.util.Base64
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -39,21 +41,18 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.google.gson.Gson
+import androidx.navigation.Navigation
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.ClipBoard
 import com.hfut.schedule.logic.utils.DateTimeManager
 import com.hfut.schedule.logic.utils.ReservDecimal
-import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.getIdentifyID
-import com.hfut.schedule.ui.utils.components.DividerText
+import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.DepartmentIcons
-import com.hfut.schedule.ui.utils.components.Party
-import nl.dionsegijn.konfetti.core.Party
 import org.jsoup.Jsoup
 
 
@@ -63,22 +62,12 @@ import org.jsoup.Jsoup
 @Composable
 fun PersonItems(ifSaved : Boolean) {
 
-   // val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
-
-
-    val cookie = SharePrefs.prefs.getString("redirect", "")
     val photo = prefs.getString("photo",null)
-
-
-
 
     val studentnumber = getPersonInfo().username
     val name = getPersonInfo().name
     val chineseid = getPersonInfo().chineseID
 
-
-
-    //SharePrefs.Save("ChineseId",chineseid)
 
     val studyType = getPersonInfo().benshuo
     var yuanxi = getPersonInfo().department
@@ -101,8 +90,7 @@ fun PersonItems(ifSaved : Boolean) {
     val blurSize by animateDpAsState(targetValue = if (!show) 10.dp else 0.dp, label = "")
     var show2 by remember { mutableStateOf(false) }
     val blurSize2 by animateDpAsState(targetValue = if (!show2) 10.dp else 0.dp, label = "")
-   // var showPicture by remember { mutableStateOf(false) }
-    //val sizePicture by animateDpAsState(targetValue = if (!showPicture) 130.dp else 0.dp, label = "")
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -121,122 +109,124 @@ fun PersonItems(ifSaved : Boolean) {
         ) {
 
             DividerTextExpandedWith(text = "账号信息") {
-                ListItem(
-                    headlineContent = { name?.let { Text(text = it) } },
-                    overlineContent = { Text(text ="姓名" )},
-                    leadingContent = {
-                        Icon(
-                            painterResource(R.drawable.signature),
-                            contentDescription = "Localized description",
-                        )
-                    },
-                    modifier = Modifier.clickable {
-                        name?.let { ClipBoard.copy(it) }
-                    }
-                )
+                name?.let {
+                    ListItem(
+                        headlineContent = { Text(text = it) },
+                        overlineContent = { Text(text ="姓名" )},
+                        leadingContent = {
+                            Icon(
+                                painterResource(R.drawable.signature),
+                                contentDescription = "Localized description",
+                            )
+                        }
+                    )
+                }
 
-                ListItem(
-                    headlineContent = { studentnumber?.let { Text(text = it) } },
-                    overlineContent = { Text(text ="学号" )},
-                    leadingContent = {
-                        Icon(
-                            painterResource(R.drawable.badge),
-                            contentDescription = "Localized description",
-                        )
-                    },
-                    modifier = Modifier.clickable {
-                        studentnumber?.let { ClipBoard.copy(it) }
-                    }
-                )
+                studentnumber?.let {
+                    ListItem(
+                        headlineContent = {   Text(text = it)  },
+                        overlineContent = { Text(text ="学号" )},
+                        leadingContent = {
+                            Icon(
+                                painterResource(R.drawable.badge),
+                                contentDescription = "Localized description",
+                            )
+                        },
+                        modifier = Modifier.clickable {
+                             ClipBoard.copy(it)
+                        }
+                    )
+                }
+
                 Box() {
                     FilledTonalIconButton(onClick = { show2 = !show2 }, modifier = Modifier.zIndex(1f).align(Alignment.CenterEnd).padding(horizontal = 15.dp)) {
                         Icon(painter = painterResource(id = if(show2)R.drawable.visibility else R.drawable.visibility_off), contentDescription = "")
                     }
                     Column(modifier = Modifier.blur(radius = blurSize2)) {
-                        ListItem(
-                            headlineContent = { chineseid?.let { Text(text = it) } },
-                            overlineContent = { Text(text = "身份证号")},
-                            leadingContent = {
-                                Icon(
-                                    painterResource(R.drawable.tag),
-                                    contentDescription = "Localized description",
-                                )
-                            },
-                            modifier = Modifier.clickable {
-                                chineseid?.let { ClipBoard.copy(it) }
-                            }
-                        )
+                        chineseid?.let {
+                            ListItem(
+                                headlineContent = { Text(text = it)  },
+                                overlineContent = { Text(text = "身份证号")},
+                                leadingContent = {
+                                    Icon(
+                                        painterResource(R.drawable.tag),
+                                        contentDescription = "Localized description",
+                                    )
+                                },
+                                modifier = Modifier.clickable {
+                                    ClipBoard.copy(it)
+                                }
+                            )
+                        }
                     }
                 }
             }
-           // MyCard {
-
-          //  }
-
 
             DividerTextExpandedWith(text = "就读信息") {
-                ListItem(
-                    headlineContent = { school?.let { Text(text = it) } },
-                    overlineContent = { Text(text = "校区")},
-                    leadingContent = {
-                        Icon(
-                            painterResource(R.drawable.near_me),
-                            contentDescription = "Localized description",
-                        )
-                    },
-                    modifier = Modifier.clickable {
-                        school?.let { ClipBoard.copy(it) }
-                    }
-                )
+                school?.let {
+                    ListItem(
+                        headlineContent = { Text(text = it) },
+                        overlineContent = { Text(text = "校区")},
+                        leadingContent = {
+                            Icon(
+                                painterResource(R.drawable.near_me),
+                                contentDescription = "Localized description",
+                            )
+                        },
+                    )
+                }
+
+                yuanxi?.let {
+                    ListItem(
+                        headlineContent = { Text(text = it)  },
+                        overlineContent = { Text(text = "学院")},
+                        leadingContent = {
+                            DepartmentIcons(name = it)
+                        },
+                        modifier = Modifier.clickable {
+                             ClipBoard.copy(it)
+                        }
+                    )
+                }
 
 
-                ListItem(
-                    headlineContent = { yuanxi?.let { ScrollText(text = it) } },
-                    overlineContent = { Text(text = "学院")},
-                    leadingContent = {
-                        yuanxi?.let { DepartmentIcons(name = it) }
-                    },
-                    modifier = Modifier.clickable {
-                        yuanxi?.let { ClipBoard.copy(it) }
-                    }
-                )
+                major?.let {
+                    ListItem(
+                        headlineContent = {
+                            Text(text = it)
+                        },
+                        overlineContent = { Text(text = "专业")},
+                        supportingContent = { majorDirection?.let { if(it != "") Text(text = "方向 $it") else null } },
+                        leadingContent = {
+                            Icon(
+                                painterResource(R.drawable.square_foot),
+                                contentDescription = "Localized description",
+                            )
+                        },
+                        modifier = Modifier.clickable {
+                           ClipBoard.copy(it)
+                        }
+                    )
+                }
 
+                classes?.let {
+                    ListItem(
+                        headlineContent = {  Text(text = it) },
+                        overlineContent = { Text(text = "班级")},
+                        leadingContent = {
+                            Icon(
+                                painterResource(R.drawable.sensor_door),
+                                contentDescription = "Localized description",
+                            )
+                        },
+                        modifier = Modifier.clickable {
+                            ClipBoard.copy(it)
+                        }
+                    )
+                }
 
-                ListItem(
-                    headlineContent = {
-                        major?.let { ScrollText(text = it) }
-                    },
-                    overlineContent = { Text(text = "专业")},
-                    supportingContent = { majorDirection?.let { if(it != "") ScrollText(text = "方向 $it") else null } },
-                    leadingContent = {
-                        Icon(
-                            painterResource(R.drawable.square_foot),
-                            contentDescription = "Localized description",
-                        )
-                    },
-                    modifier = Modifier.clickable {
-                        major?.let { ClipBoard.copy(it) }
-                    }
-                )
-
-                ListItem(
-                    headlineContent = { classes?.let { Text(text = it) } },
-                    overlineContent = { Text(text = "班级")},
-                    leadingContent = {
-                        Icon(
-                            painterResource(R.drawable.sensor_door),
-                            contentDescription = "Localized description",
-                        )
-                    },
-                    modifier = Modifier.clickable {
-                        classes?.let { ClipBoard.copy(it) }
-                    }
-                )
             }
 
-        //    MyCard {
-
-         //   }
 
             DividerTextExpandedWith(text = "密码信息") {
                 ListItem(
@@ -255,57 +245,61 @@ fun PersonItems(ifSaved : Boolean) {
                 )
                 Column(modifier = Modifier.blur(radius = blurSize)) {
                     val pwd= prefs.getString("Password","")
-                    ListItem(
-                        headlineContent = { pwd?.let { Text(text = it) } },
-                        overlineContent = { Text(text = "CAS统一认证密码")},
-                        modifier = Modifier.clickable {
-                            pwd?.let { ClipBoard.copy(it) }
-                        }
-                    )
-                    ListItem(
-                        headlineContent = {
-                            if (chineseid != null) { Text(text = "Hfut@#\$%${chineseid.takeLast(6)}") }
-                        },
-                        overlineContent = { Text(text = "教务系统初始密码")},
-                        modifier = Modifier.clickable {
-                            if (chineseid != null) {
-                                ClipBoard.copy("Hfut@#\$%${chineseid.takeLast(6)}")
+                    pwd?.let {
+                        ListItem(
+                            headlineContent = { Text(text = it) },
+                            overlineContent = { Text(text = "CAS统一认证密码")},
+                            modifier = Modifier.clickable {
+                                ClipBoard.copy(it)
                             }
-                        }
-                    )
-                    ListItem(
-                        headlineContent = { getIdentifyID()?.let { Text(text = it) } },
-                        overlineContent = { Text(text = "一卡通&校园网初始密码")},
-                        modifier = Modifier.clickable {
-                            getIdentifyID()?.let { ClipBoard.copy(it) }
-                        }
-                    )
+                        )
+                    }
+                    chineseid?.let {
+                        val p = it.takeLast(6)
+                        val d = "Hfut@#\$%${p}"
+                        ListItem(
+                            headlineContent = {
+                                Text(text = d)
+                            },
+                            overlineContent = { Text(text = "教务系统初始密码")},
+                            modifier = Modifier.clickable {
+                                ClipBoard.copy(d)
+                            }
+                        )
+                    }
+                    getIdentifyID()?.let {
+                        ListItem(
+                            headlineContent = {  Text(text = it) },
+                            overlineContent = { Text(text = "一卡通&校园网初始密码")},
+                            modifier = Modifier.clickable {
+                                ClipBoard.copy(it)
+                            }
+                        )
+                    }
+
                 }
             }
-        //    MyCard {
-
-
-       //     }
 
             DividerTextExpandedWith(text = "学籍信息") {
-                ListItem(
-                    headlineContent = { studyType?.let { Text(text = it) } },
-                    overlineContent = { Text(text = "类型")},
-                    leadingContent = {
-                        Icon(
-                            painterResource(R.drawable.school),
-                            contentDescription = "Localized description",
-                        )
-                    },
-                    modifier = Modifier.clickable {}
-                )
-                ListItem(
-                    headlineContent = { xueJiStatus?.let { Text(text = it) } },
-                    overlineContent = { Text(text = "学籍状态")},
-                    leadingContent = {
-                        Icon(
-                            painterResource(
-                                if (xueJiStatus != null) {
+                studyType?.let {
+                    ListItem(
+                        headlineContent = { Text(text = it)  },
+                        overlineContent = { Text(text = "类型")},
+                        leadingContent = {
+                            Icon(
+                                painterResource(R.drawable.school),
+                                contentDescription = "Localized description",
+                            )
+                        },
+                    )
+                }
+                xueJiStatus?.let {
+                    ListItem(
+                        headlineContent = {  Text(text = it) },
+                        overlineContent = { Text(text = "学籍状态")},
+                        leadingContent = {
+                            Icon(
+                                painterResource(
                                     if(xueJiStatus.contains("正常")) {
                                         R.drawable.check_circle
                                     } else if(xueJiStatus.contains("转专业")) {
@@ -315,15 +309,13 @@ fun PersonItems(ifSaved : Boolean) {
                                     } else {
                                         R.drawable.help
                                     }
-                                } else {
-                                    R.drawable.info
-                                }
-                            ),
-                            contentDescription = "Localized description",
-                        )
-                    },
-                    modifier = Modifier.clickable {}
-                )
+                                ),
+                                contentDescription = "Localized description",
+                            )
+                        },
+                    )
+                }
+
                 ListItem(
                     headlineContent = { Text(text = "$startDate\n$endDate") },
                     overlineContent = { Text(text = "学制 $studyTime")},
@@ -343,7 +335,7 @@ fun PersonItems(ifSaved : Boolean) {
                     }
                 )
                 ListItem(
-                    headlineContent = { program?.let { ScrollText(text = it) } },
+                    headlineContent = { program?.let { Text(text = it) } },
                     overlineContent = { Text(text = "培养方案")},
                     leadingContent = {
                         Icon(
@@ -355,52 +347,158 @@ fun PersonItems(ifSaved : Boolean) {
                         MyToast("前往 查询中心-培养方案查看详情")
                     }
                 )
-
-                ListItem(
-                    headlineContent = { home?.let { Text(text = it) } },
-                    overlineContent = { Text(text = "来源")},
-                    leadingContent = {
-                        Icon(
-                            painterResource(R.drawable.home),
-                            contentDescription = "Localized description",
-                        )
-                    },
-                    modifier = Modifier.clickable {}
-                )
-                ListItem(
-                    headlineContent = { Text(text = "学籍照") },
-                    trailingContent = {
-                        if(photo != null) {
-                            val byteArray = Base64.decode(photo, Base64.DEFAULT)
-                            val bitmap = BitmapFactory.decodeByteArray(byteArray , 0, byteArray.size)
-                            val imageBitmap = bitmap.asImageBitmap()
-                            Image(bitmap = imageBitmap,
-                                contentDescription = "Displayed image",
-                                modifier = Modifier
-                                    .size(130.dp)
-                                    .padding(10.dp))
-                        }
-
-                    },
-                    leadingContent = {
-                        Icon(
-                            painterResource(R.drawable.background_replace),
-                            contentDescription = "Localized description",
-                        )
-                    },
-                    modifier = Modifier.combinedClickable(
-                        onDoubleClick = null,
-                        onClick = { },
-                        onLongClick = {
-                            //保存
+                home?.let {
+                    ListItem(
+                        headlineContent = {  Text(text = it)  },
+                        overlineContent = { Text(text = "来源")},
+                        leadingContent = {
+                            Icon(
+                                painterResource(R.drawable.location_on),
+                                contentDescription = "Localized description",
+                            )
+                        },
+                        modifier = Modifier.clickable {}
+                    )
+                }
+                photo?.let {
+                    var show by remember { mutableStateOf(false) }
+                    ListItem(
+                        headlineContent = { Text(text = "学籍照") },
+                        trailingContent = {
+                            if(show) {
+                                val byteArray = Base64.decode(it, Base64.DEFAULT)
+                                val bitmap = BitmapFactory.decodeByteArray(byteArray , 0, byteArray.size)
+                                val imageBitmap = bitmap.asImageBitmap()
+                                Image(bitmap = imageBitmap,
+                                    contentDescription = "Displayed image",
+                                    modifier = Modifier
+                                        .size(130.dp)
+                                        .padding(10.dp))
+                            } else {
+                                FilledTonalButton(
+                                    onClick = { show = !show },
+                                ) {
+                                    Text("显示")
+                                }
+                            }
+                        },
+                        leadingContent = {
+                            Icon(
+                                painterResource(R.drawable.background_replace),
+                                contentDescription = "Localized description",
+                            )
+                        },
+                        modifier = Modifier.clickable {
+                            show = !show
                         }
                     )
-                )
+                }
             }
-         //   MyCard {
 
+            DividerTextExpandedWith("私人信息") {
+                getPersonInfo().gender?.let {
+                    ListItem(
+                        headlineContent = {  Text(it)  },
+                        overlineContent = { Text("性别") },
+                        leadingContent = {
+                            Icon(painterResource(
+                                when(it) {
+                                    "男" -> R.drawable.male
+                                    "女" -> R.drawable.female
+                                    else -> R.drawable.help
+                                }
+                            ),null)
+                        },
+                    )
+                }
+                getPersonInfo().politicalStatus?.let {
+                    ListItem(
+                        headlineContent = { Text(it)  },
+                        overlineContent = { Text("政治面貌") },
+                        leadingContent = {
+                            Icon(painterResource(R.drawable.groups),null)
+                        },
+                    )
+                }
+                val mobile = getPersonInfo().mobile
+                val phone = getPersonInfo().phone
+                if(mobile != null && phone != null && mobile == phone) {
+                    ListItem(
+                        headlineContent = {  Text(mobile) },
+                        overlineContent = { Text("手机号") },
+                        leadingContent = {
+                            Icon(painterResource(R.drawable.call),null)
+                        },
+                        modifier = Modifier.clickable {
+                            ClipBoard.copy(mobile)
+                        }
+                    )
+                } else {
+                    mobile?.let {
+                        ListItem(
+                            headlineContent = {  Text(it) },
+                            overlineContent = { Text("手机") },
+                            leadingContent = {
+                                Icon(painterResource(R.drawable.smartphone),null)
+                            },
+                            modifier = Modifier.clickable {
+                                ClipBoard.copy(it)
+                            }
+                        )
+                    }
+                    phone?.let {
+                        ListItem(
+                            headlineContent = { Text(it) },
+                            overlineContent = { Text("电话") },
+                            leadingContent = {
+                                Icon(painterResource(R.drawable.call),null)
+                            },
+                            modifier = Modifier.clickable {
+                                ClipBoard.copy(it)
+                            }
+                        )
+                    }
+                }
 
-        //    }
+                getPersonInfo().email?.let {
+                    ListItem(
+                        headlineContent = {  Text(it) },
+                        overlineContent = { Text("电子邮件") },
+                        leadingContent = {
+                            Icon(painterResource(R.drawable.alternate_email),null)
+                        },
+                        modifier = Modifier.clickable {
+                            ClipBoard.copy(it)
+                        }
+                    )
+                }
+                getPersonInfo().address?.let {
+                    ListItem(
+                        headlineContent = {  Text(it)  },
+                        overlineContent = { Text("地址") },
+                        leadingContent = {
+                            Icon(painterResource(R.drawable.home),null)
+                        },
+                        modifier = Modifier.clickable {
+                            ClipBoard.copy(it)
+                        }
+                    )
+                }
+
+                getPersonInfo().postalCode?.let {
+                    ListItem(
+                        headlineContent = { Text(it) } ,
+                        overlineContent = { Text("邮编") },
+                        leadingContent = {
+                            Icon(painterResource(R.drawable.mail),null)
+                        },
+                        modifier = Modifier.clickable {
+                            ClipBoard.copy(it)
+                        }
+                    )
+                }
+
+            }
         }
     }
 }
@@ -421,19 +519,17 @@ data class PersonInfo(val name : String?,
                       val majorDirection : String?,
                       val studyTime : String?,
                       val gender: String?,
-                      val politicalStatus: String?,
+                      val politicalStatus: String?, // 政治面貌
                       val email: String?,
                       val phone: String?,
                       val mobile: String?,
                       val address: String?,
-                      val postalCode: String?
+                      val postalCode: String? // 邮编
 
 )
 
 
 fun getPersonInfo() : PersonInfo {
- //   val cookie = SharePrefs.prefs.getString("redirect", "")
- //   val photo = prefs.getString("photo",null)
     try {
         val info = prefs.getString("info","")
 
@@ -453,10 +549,10 @@ fun getPersonInfo() : PersonInfo {
         }
 
         val benorsshuo =infoMap[elements?.get(8)?.text()]
-        var yuanxi =infoMap[elements?.get(10)?.text()]
-        if (yuanxi != null) {
-            if(yuanxi.contains("("))yuanxi = yuanxi.substringBefore("(")
-            if(yuanxi.contains("（"))yuanxi = yuanxi.substringBefore("（")
+        var department =infoMap[elements?.get(10)?.text()]
+        if (department != null) {
+            if(department.contains("("))department = department.substringBefore("(")
+            if(department.contains("（"))department = department.substringBefore("（")
         }
         val zhuanye =infoMap[elements?.get(12)?.text()]
         val classes =infoMap[elements?.get(16)?.text()]
@@ -477,9 +573,10 @@ fun getPersonInfo() : PersonInfo {
 
         val dataMap = mutableMapOf<String, String>()
         items.forEach { item ->
-            val key = item.select("div.col-md-3 span strong").text()
-            val value = item.select("div.col-md-6 span").text()
-            if (key.isNotEmpty()) {
+            val key = item.select("div.col-md-3 strong").text().trim() // 直接选 strong 避免干扰
+            val value = item.select("div.col-md-6 span").first()?.ownText()?.trim() ?: "" // 只取第一个 span 并用 ownText()
+
+            if (key.isNotEmpty() && value.isNotEmpty()) {
                 dataMap[key] = value
             }
         }
@@ -491,12 +588,11 @@ fun getPersonInfo() : PersonInfo {
         val address = dataMap["地址"]
         val postalCode = dataMap["邮编"]
 
-        return PersonInfo(name,studentnumber,chineseid,classes,zhuanye,yuanxi, school,benorsshuo,home,xueJiStatus,program, startDate, endDate, majorDirection, studyTime,gender, politicalStatus, email, phone, mobile, address, postalCode)
+        return PersonInfo(name,studentnumber,chineseid,classes,zhuanye,department, school,benorsshuo,home,xueJiStatus,program, startDate, endDate, majorDirection, studyTime,gender, politicalStatus, email, phone, mobile, address, postalCode)
     } catch (_:Exception) {
         return PersonInfo(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
     }
 }
-
 
 
 fun extractPassword(html: String): String? {

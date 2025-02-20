@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.beans.MyAPIResponse
+import com.hfut.schedule.logic.utils.Semseter
 import com.hfut.schedule.logic.utils.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.main.login.SuccessUI
@@ -27,15 +28,12 @@ class LoginSuccessActivity : BaseActivity() {
     //var webVpn = false
     @Composable
     override fun UI() {
-        intent.getStringExtra("Grade")?.let {
-            SuccessUI(
-                networkVms,
-                it,
-                super.loginVm,
-                super.uiVm,
-                webVpn
-            )
-        }
+        SuccessUI(
+            networkVms,
+            super.loginVm,
+            super.uiVm,
+            webVpn
+        )
     }
 
     @SuppressLint("MissingInflatedId")
@@ -50,7 +48,7 @@ class LoginSuccessActivity : BaseActivity() {
                 }
             }
             launch {
-                val semesterId = Gson().fromJson(prefs.getString("my", MyApplication.NullMy), MyAPIResponse::class.java).semesterId
+                val semesterId = Semseter.getSemseterFromCloud().toString()
                 saveString("semesterId",semesterId)
             }
         }

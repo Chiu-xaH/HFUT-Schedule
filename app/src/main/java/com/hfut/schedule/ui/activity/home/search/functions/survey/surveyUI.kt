@@ -53,8 +53,8 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.enums.PostMode
-import com.hfut.schedule.logic.utils.Semseter.getSemseter
-import com.hfut.schedule.logic.utils.Semseter.getSemseterCloud
+import com.hfut.schedule.logic.utils.Semseter.parseSemseter
+import com.hfut.schedule.logic.utils.Semseter.getSemseterFromCloud
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.utils.components.EmptyUI
@@ -83,7 +83,7 @@ fun SurveyUI(vm : NetWorkViewModel) {
         "redirect",
         ""
     ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
-    var semsters = getSemseterCloud()
+    var semsters = getSemseterFromCloud()
     var semester by remember { mutableStateOf(semsters) }
 
     LaunchedEffect(semester) {
@@ -160,7 +160,7 @@ fun SurveyUI(vm : NetWorkViewModel) {
         ) {
             ExtendedFloatingActionButton(
                 onClick = {refresh = true},
-            ) { Text(text = getSemseter(semester),) }
+            ) { Text(text = parseSemseter(semester),) }
         }
 
         AnimatedVisibility(

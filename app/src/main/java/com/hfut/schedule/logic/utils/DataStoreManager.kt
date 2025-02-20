@@ -32,6 +32,7 @@ object DataStoreManager {
             preferences[ANIMATION_TYPE] ?: NavigateAndAnimationManager.AnimationTypes.FadeAnimation.code
         }
 
+
     /* 用法
     val currentAnimationIndex by DataStoreManager.XXX.collectAsState(initial = 默认值)
      */
