@@ -100,6 +100,7 @@ import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.ANIMATION_SPEED
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.currentPage
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnToAndClear
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CustomTabRow
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
@@ -335,10 +336,10 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
                                             Icon(painter = painterResource(id =  R.drawable.login), contentDescription = "")
                                         }
                                     } else {
-                                        Text(text = "已登录",Modifier.padding(horizontal = 15.dp), color = MaterialTheme.colorScheme.primary)
+                                        Text(text = "已登录",Modifier.padding(horizontal = AppHorizontalDp()), color = MaterialTheme.colorScheme.primary)
                                     }
                                 }
-                                Spacer(modifier = Modifier.width(15.dp))
+                                Spacer(modifier = Modifier.width(AppHorizontalDp()))
                                 //null
                             }
                             SETTINGS -> null
@@ -365,7 +366,7 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
                     modifier = Modifier.bottomBarBlur(hazeState, blur)
                 ) {
                     //悬浮底栏效果
-                    //modifier = Modifier.padding(15.dp).shadow(10.dp).clip(RoundedCornerShape(14.dp))
+                    //modifier = Modifier.padding(AppHorizontalDp()).shadow(10.dp).clip(RoundedCornerShape(14.dp))
                     val items = listOf(
                         NavigationBarItemData(COURSES.name, "课程表", painterResource(R.drawable.calendar ), painterResource(R.drawable.calendar_month_filled)),
                         NavigationBarItemData(FOCUS.name,"聚焦", painterResource(R.drawable.lightbulb), painterResource(R.drawable.lightbulb_filled)),

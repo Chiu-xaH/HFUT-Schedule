@@ -29,6 +29,8 @@ import com.hfut.schedule.ui.activity.home.search.functions.lepaoYun.LePaoYun
 import com.hfut.schedule.ui.activity.home.search.functions.life.Life
 import com.hfut.schedule.ui.activity.home.search.functions.news.News
 import com.hfut.schedule.ui.activity.home.search.functions.notifications.NotificationsCenter
+import com.hfut.schedule.ui.activity.home.search.functions.program.GuestProgram
+import com.hfut.schedule.ui.activity.home.search.functions.program.Program
 import com.hfut.schedule.ui.activity.home.search.functions.repair.Repair
 import com.hfut.schedule.ui.activity.home.search.functions.schoolCalendar.SchoolCalendar
 import com.hfut.schedule.ui.activity.home.search.functions.shower.Shower
@@ -36,6 +38,7 @@ import com.hfut.schedule.ui.activity.home.search.functions.teacherSearch.Teacher
 import com.hfut.schedule.ui.activity.home.search.functions.todayCampus.ToadyCampus
 import com.hfut.schedule.ui.activity.home.search.functions.webLab.WebUI
 import com.hfut.schedule.ui.activity.home.search.functions.xueXin.XueXin
+import com.hfut.schedule.ui.utils.components.SmallCard
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
 
@@ -75,12 +78,12 @@ fun SearchScreenNoLogin(vm : NetWorkViewModel, ifSaved : Boolean, innerPaddings 
         "消息中心 通知中心 收纳" to { NotificationsCenter() },
 //        "教师评教 教师教评" to { Survey(ifSaved, vm) },
         "通知公告 新闻" to { News(vm) },
-//        "培养方案" to { Program(vm, ifSaved) },
+        "培养方案" to { GuestProgram(vm) },
         "校历" to { SchoolCalendar() },
         "校车" to { SchoolBus() },
         "洗浴 洗澡 呱呱物联 慧新易校 缴费" to { Shower(vm) },
 //        "下学期课程表 下学期课表" to { NextCourse(ifSaved, vmUI) },
-        "今日校园 学工系统 请假 助学金 奖学金 贫困 寝室 心理 日常" to { ToadyCampus(ifSaved) },
+//        "今日校园 学工系统 请假 助学金 奖学金 贫困 寝室 心理 日常" to { ToadyCampus(ifSaved) },
 //        "空教室" to { EmptyRoom(vm, ifSaved) },
         "乐跑云运动 校园跑" to { LePaoYun(vm) },
         "热水机 趣智校园" to { HotWater() },
@@ -114,7 +117,7 @@ fun SearchScreenNoLogin(vm : NetWorkViewModel, ifSaved : Boolean, innerPaddings 
                 }
             }
             items(filteredList.size) { index->
-                CardItem(modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp)) {
+                SmallCard(modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp)) {
                     filteredList[index]()
                 }
             }

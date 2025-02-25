@@ -29,9 +29,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.activity.news.departments.SchoolsUI
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.Round
 
 
@@ -43,7 +45,7 @@ fun WebUI() {
 
 
 
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "网址导航") },
         leadingContent = {
             Icon(
@@ -70,7 +72,7 @@ fun WebUI() {
                         ),
                         title = { Text("网址导航") },
                         actions = {
-                            Row(modifier = Modifier.padding(horizontal = 15.dp),) {
+                            Row(modifier = Modifier.padding(horizontal = AppHorizontalDp()),) {
                                 Schools()
                             }
                         }

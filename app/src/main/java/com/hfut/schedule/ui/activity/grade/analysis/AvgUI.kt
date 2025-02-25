@@ -33,9 +33,13 @@ import com.hfut.schedule.logic.beans.community.GradeAllResult
 import com.hfut.schedule.logic.beans.community.GradeAvgResponse
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.CardNormalColor
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.MyCustomCard
+import com.hfut.schedule.ui.utils.components.StyleCardListItem
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
@@ -56,13 +60,13 @@ fun GradeCountUI(innerPadding : PaddingValues) {
         }
 
         DividerTextExpandedWith(text = "统计图") {
-            MyCustomCard {
-                ListItem(
+//            MyCustomCard {
+            StyleCardListItem(
                     headlineContent = { Text("正在开发") },
                     leadingContent = { Icon(painterResource(R.drawable.info), contentDescription = "Localized description",) },
                     modifier = Modifier.fillMaxWidth(),
                 )
-            }
+//            }
         }
 
         Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding()))
@@ -73,35 +77,35 @@ fun GradeCountUI(innerPadding : PaddingValues) {
 fun AvgGrade() {
     val jsonAvg = SharePrefs.prefs.getString("Avg", MyApplication.NullGrades)
     val resultAvg = Gson().fromJson(jsonAvg, GradeAvgResponse::class.java).result
-    MyCustomCard {
-        Text(text = "我的水平", modifier = Modifier.padding(horizontal = 15.dp, vertical = 8.dp), color = MaterialTheme.colorScheme.primary)
+    MyCustomCard(hasElevation = false, containerColor = CardNormalColor()) {
+        Text(text = "我的水平", modifier = Modifier.padding(horizontal = AppHorizontalDp(), vertical = 8.dp), color = MaterialTheme.colorScheme.primary)
 
         Row {
-            ListItem(
+            TransplantListItem(
                 headlineContent = { Text("绩点 ${resultAvg.myAvgGpa}") },
                 supportingContent = { Text("排名 ${resultAvg.majorAvgGpaRanking}") },
                 leadingContent = { Icon(painterResource(R.drawable.award_star), contentDescription = "Localized description",) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(.5f),
-                colors = ListItemDefaults.colors(containerColor = Color.Transparent)
+//                colors = ListItemDefaults.colors(containerColor = Color.Transparent)
             )
 
-            ListItem(
+            TransplantListItem(
                 headlineContent = { Text("分数 ${resultAvg.myAvgScore}") },
                 supportingContent = { Text("排名 ${resultAvg.majorAvgScoreRanking}") },
                 leadingContent = { Icon(painterResource(R.drawable.filter_vintage), contentDescription = "Localized description",) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(.5f),
-                colors = ListItemDefaults.colors(containerColor = Color.Transparent)
+//                colors = ListItemDefaults.colors(containerColor = Color.Transparent)
             )
         }
         Divider()
-        Text(text = "专业水平", modifier = Modifier.padding(horizontal = 15.dp, vertical = 8.dp), color = MaterialTheme.colorScheme.primary)
+        Text(text = "专业水平", modifier = Modifier.padding(horizontal = AppHorizontalDp(), vertical = 8.dp), color = MaterialTheme.colorScheme.primary)
 
         Row {
-            ListItem(
+            TransplantListItem(
                 headlineContent = { Text("绩点") },
                 supportingContent = { Text("平均 ${resultAvg.majorAvgGpa}\n最高 (待开发)") },
                 leadingContent = { Icon(painterResource(R.drawable.award_star), contentDescription = "Localized description",) },
@@ -109,17 +113,17 @@ fun AvgGrade() {
 
                     .fillMaxWidth()
                     .weight(.5f),
-                colors = ListItemDefaults.colors(containerColor = Color.Transparent)
+//                colors = ListItemDefaults.colors(containerColor = Color.Transparent)
             )
 
-            ListItem(
+            TransplantListItem(
                 headlineContent = { Text("分数") },
                 supportingContent = { Text("平均 ${resultAvg.majorAvgScore}\n最高 (待开发)") },
                 leadingContent = { Icon(painterResource(R.drawable.filter_vintage), contentDescription = "Localized description",) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(.5f),
-                colors = ListItemDefaults.colors(containerColor = Color.Transparent)
+//                colors = ListItemDefaults.colors(containerColor = Color.Transparent)
             )
         }
     }
@@ -132,49 +136,49 @@ fun AllGrade() {
     for (index in list.indices) {
         val item = getAllGrade()[index]
         if(item.myAvgGpa != null || item.myAvgScore != null || item.majorAvgGpa != null || item.majorAvgScore != null)
-            MyCustomCard {
-            Text(text = chineseList[index] + "学期", modifier = Modifier.padding(horizontal = 15.dp, vertical = 8.dp), color = MaterialTheme.colorScheme.primary)
-                Text(text = "我的水平", modifier = Modifier.padding(horizontal = 15.dp, vertical = 8.dp), color = MaterialTheme.colorScheme.primary)
+            MyCustomCard(hasElevation = false, containerColor = CardNormalColor()) {
+            Text(text = chineseList[index] + "学期", modifier = Modifier.padding(horizontal = AppHorizontalDp(), vertical = 8.dp), color = MaterialTheme.colorScheme.primary)
+                Text(text = "我的水平", modifier = Modifier.padding(horizontal = AppHorizontalDp(), vertical = 8.dp), color = MaterialTheme.colorScheme.primary)
                 Row {
-                    ListItem(
+                    TransplantListItem(
                         headlineContent = { Text("绩点 ${item.myAvgGpa}") },
                         leadingContent = { Icon(painterResource(R.drawable.award_star), contentDescription = "Localized description",) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(.5f),
-                        colors = ListItemDefaults.colors(containerColor = Color.Transparent)
+//                        colors = ListItemDefaults.colors(containerColor = Color.Transparent)
                     )
 
-                    ListItem(
+                    TransplantListItem(
                         headlineContent = { Text("分数 ${item.myAvgScore}") },
                         leadingContent = { Icon(painterResource(R.drawable.filter_vintage), contentDescription = "Localized description",) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(.5f),
-                        colors = ListItemDefaults.colors(containerColor = Color.Transparent)
+//                        colors = ListItemDefaults.colors(containerColor = Color.Transparent)
                     )
                 }
                 Divider()
-                Text(text = "专业水平", modifier = Modifier.padding(horizontal = 15.dp, vertical = 8.dp), color = MaterialTheme.colorScheme.primary)
+                Text(text = "专业水平", modifier = Modifier.padding(horizontal = AppHorizontalDp(), vertical = 8.dp), color = MaterialTheme.colorScheme.primary)
                 Row {
-                    ListItem(
+                    TransplantListItem(
                         headlineContent = { Text("绩点(GPA)") },
                         supportingContent = { Text("平均 ${item.majorAvgGpa}\n最高 ${item.maxAvgGpa}") },
                         leadingContent = { Icon(painterResource(R.drawable.award_star), contentDescription = "Localized description",) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(.5f),
-                        colors = ListItemDefaults.colors(containerColor = Color.Transparent)
+//                        colors = ListItemDefaults.colors(containerColor = Color.Transparent)
                     )
 
-                    ListItem(
+                    TransplantListItem(
                         headlineContent = { Text("分数") },
                         supportingContent = { Text("平均 ${item.majorAvgScore}\n最高 ${item.maxAvgScore}") },
                         leadingContent = { Icon(painterResource(R.drawable.filter_vintage), contentDescription = "Localized description",) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(.5f),
-                        colors = ListItemDefaults.colors(containerColor = Color.Transparent)
+//                        colors = ListItemDefaults.colors(containerColor = Color.Transparent)
                     )
                 }
             }

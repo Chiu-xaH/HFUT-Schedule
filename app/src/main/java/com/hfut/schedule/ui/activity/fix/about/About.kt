@@ -52,6 +52,7 @@ import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.ui.activity.home.cube.items.main.Screen
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.VersionInfo
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.getUpdates
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.viewmodel.LoginViewModel
@@ -76,11 +77,11 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean
                 Column {
                     Row(modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 15.dp, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
+                        .padding(horizontal = AppHorizontalDp(), vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
                         val qrPainter = createQRCodeBitmap(MyApplication.UpdateURL + "releases/tag/Android",1000,1000)
                         qrPainter?.let { Image(it.asImageBitmap(), contentDescription = "") }
                     }
-                    Spacer(modifier = Modifier.height(15.dp))
+                    Spacer(modifier = Modifier.height(AppHorizontalDp()))
                 }
 
             }

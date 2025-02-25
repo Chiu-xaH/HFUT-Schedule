@@ -32,7 +32,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enums.LibraryItems
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.MyCustomCard
+import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.style.Round
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,7 +47,7 @@ fun LibraryChips() {
 
     Row(modifier = Modifier
         .fillMaxWidth()
-        .padding(horizontal = 15.dp, vertical = 0.dp), horizontalArrangement = Arrangement.Start){
+        .padding(horizontal = AppHorizontalDp(), vertical = 0.dp), horizontalArrangement = Arrangement.Start){
 
         AssistChip(
             onClick = { showBottomSheet_Borrow = true },
@@ -117,24 +119,19 @@ fun BorrowItems(PerfsJson : String) {
         items(getBorrow(PerfsJson).size){ item ->
             val Outtime = getBorrow(PerfsJson)[item].outTime
             val Returntime = getBorrow(PerfsJson)[item].returnTime
-            Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)
-            {
-                MyCustomCard {
-                    ListItem(
-                        headlineContent = { Text(text = getBorrow(PerfsJson)[item].bookName,fontWeight = FontWeight.Bold) },
-                        supportingContent = {  Text(text = getBorrow(PerfsJson)[item].author) },
-                        overlineContent = {
-                            if(Returntime == null)
-                                Text(text = "借于 $Outtime")
-                            else
-                                Text(text = "借于 $Outtime\n还于 $Returntime")
-                        },
-                        leadingContent = {
-                            Icon(painterResource(R.drawable.book), contentDescription = "Localized description",)
-                        }
-                    )
+            StyleCardListItem(
+                headlineContent = { Text(text = getBorrow(PerfsJson)[item].bookName,fontWeight = FontWeight.Bold) },
+                supportingContent = {  Text(text = getBorrow(PerfsJson)[item].author) },
+                overlineContent = {
+                    if(Returntime == null)
+                        Text(text = "借于 $Outtime")
+                    else
+                        Text(text = "借于 $Outtime\n还于 $Returntime")
+                },
+                leadingContent = {
+                    Icon(painterResource(R.drawable.book), contentDescription = "Localized description",)
                 }
-            }
+            )
         }
     }
 }

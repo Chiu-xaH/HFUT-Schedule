@@ -62,16 +62,16 @@ fun PersonPart() {
 //                modifier = Modifier
 //                    .fillMaxWidth()
 //                    .padding(
-//                        horizontal = 15.dp,
+//                        horizontal = AppHorizontalDp(),
 //                        vertical = 4.dp
 //                    ),
 //                shape = MaterialTheme.shapes.medium,
 //                colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primaryContainer)
 //            )
-            MyCustomCard(containerColor = MaterialTheme.colorScheme.primaryContainer)
+            MyCustomCard(containerColor = MaterialTheme.colorScheme.primaryContainer, hasElevation = false)
             {
 
-                
+
                 ListItem(
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.person), contentDescription = "")},
                     headlineContent = { Text(text = getPersonInfo().name ?: "游客")  },
@@ -79,12 +79,6 @@ fun PersonPart() {
                         if(startDate != null && endDate != null && startDate != "" && endDate != "") {
                             Text(text = "已陪伴 ${ReservDecimal.reservDecimal(DateTimeManager.getPercent(startDate,endDate),1)}%")
                         } else { null }
-                      //  FilledTonalIconButton(onClick = {
-                        //    expandItems = !expandItems
-                          //  SharePrefs.SaveBoolean("expandPerson",true,expandItems)
-                        //}) {
-                          //  Icon(painterResource(id = if(expandItems) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "")
-                       // }
                         },
                     colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                     modifier = Modifier.clickable {

@@ -56,12 +56,14 @@ import com.hfut.schedule.ui.activity.home.calendar.multi.getFriendsList
 import com.hfut.schedule.ui.activity.home.calendar.multi.getFriendsCourse
 import com.hfut.schedule.ui.activity.home.calendar.next.DatumUI
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotalForApi
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.LittleDialog
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.viewmodel.UIViewModel
 import java.io.File
@@ -240,7 +242,7 @@ fun MultiScheduleSettings(
             ),
             title = { Text("课程表") },
             actions = {
-                Row(modifier = Modifier.padding(horizontal = 15.dp)) {
+                Row(modifier = Modifier.padding(horizontal = AppHorizontalDp())) {
                     FilledTonalIconButton(onClick = { showBottomSheet_add = true }) {
                         Icon(painterResource(id = R.drawable.add), contentDescription = "")
                     }
@@ -511,29 +513,29 @@ fun shareTextFile(fileName: String) {
 
 @Composable
 fun InfoUI() {
-    MyCustomCard {
-        ListItem(
+//    MyCustomCard {
+    StyleCardListItem(
             headlineContent = { Text(text = "数据说明") },
             supportingContent = { Text(text = "每个课表都是独立的数据源,用户可以自行切换,也可自行导入好友分享或者自行从教务系统提取到的文件")}
         )
-    }
-    MyCustomCard{
-        ListItem(
+//    }
+//    MyCustomCard{
+    StyleCardListItem(
             headlineContent = { Text(text = "教务系统课表") },
             supportingContent = { Text(text = "此课表随用户每次登录更新,须由用户手动刷新(刷新登陆状态 选项),此课表的数据也是最权威的,选退调课后刷新教务课表会立刻变化")}
         )
-    }
-    MyCustomCard {
-        ListItem(
+//    }
+//    MyCustomCard {
+    StyleCardListItem(
             headlineContent = { Text(text = "智慧社区课表") },
             supportingContent = { Text(text = "此课表自动刷新,自动跟随学期,只要用户登陆过就会记住登陆状态,但是此课表的数据更新稍微有延迟,退选调课之后大概次日才会更新")}
         )
-    }
-    MyCustomCard {
-        ListItem(
+//    }
+//    MyCustomCard {
+    StyleCardListItem(
             headlineContent = { Text(text = "下学期课表") },
             supportingContent = { Text(text = "在每学期末尾时教务系统会排出下学期的课表,但此时学期仍未变化,可以从这里预先查看下学期安排")}
         )
-    }
+//    }
 }
 

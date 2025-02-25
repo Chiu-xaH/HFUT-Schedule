@@ -30,6 +30,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.GuaGuaViewModel
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.ScrollText
+import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -90,9 +91,9 @@ fun GuaguaBills(innerPadding: PaddingValues, vm: GuaGuaViewModel) {
                 item { Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding())) }
                 item { Spacer(modifier = Modifier.height(5.dp)) }
                 items(list.size) {item ->
-                    MyCustomCard {
+//                    MyCustomCard {
                         val info = list[item].description
-                        ListItem(
+                        StyleCardListItem(
                             headlineContent = {
                                 ScrollText(text =
                                 if(info.contains("热水表: ")) info.substringAfter(": ")
@@ -124,7 +125,7 @@ fun GuaguaBills(innerPadding: PaddingValues, vm: GuaGuaViewModel) {
                                 }
                                 ), contentDescription = "")
                             },)
-                    }
+//                    }
                 }
                 item { Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding())) }
             }

@@ -30,6 +30,7 @@ import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.Round
 
 
@@ -70,7 +71,7 @@ fun NotificationsCenter() {
         }
     }
 
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "消息中心") },
         modifier = Modifier.clickable {
             showBottomSheet = true

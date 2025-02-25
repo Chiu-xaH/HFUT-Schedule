@@ -31,6 +31,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.hfut.schedule.R
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.components.WebViewScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,7 +40,7 @@ fun SchoolBus() {
     val sheetState_Bus = rememberModalBottomSheetState()
     var showBottomSheet_Bus by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "校车") },
         leadingContent = {
             Icon(

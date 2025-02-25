@@ -41,6 +41,7 @@ class MyApplication : Application() {
         const val TeacherURL = "https://faculty.hfut.edu.cn/"
         const val GithubUserImageURL = "https://avatars.githubusercontent.com/u/"
         const val QWeatherURL = "https://devapi.qweather.com/v7/"
+        const val StuURL = "https://stu.hfut.edu.cn/"
 
         const val NullExams = "{\"result\": {\"examArrangementList\": []}}"
         const val NullTotal = "{\n" +

@@ -19,6 +19,7 @@ import com.hfut.schedule.ui.utils.components.APIIcons
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.MyCustomCard
+import com.hfut.schedule.ui.utils.components.StyleCardListItem
 
 @Composable
 fun MyAPIItem() {
@@ -47,18 +48,19 @@ fun MyAPIItem() {
 
     if(show) {
         DividerTextExpandedWith(text = "重要通知") {
-            MyCustomCard {
-                ListItem(
+//            MyCustomCard {
+                StyleCardListItem(
                     headlineContent = {
                         Text(text = title, fontWeight = FontWeight.Bold)
                     },
-                    supportingContent = { Text(text = content) },
+                    supportingContent = if(content.isNotBlank()) {
+                        { Text(text = content) }
+                    } else null,
                     leadingContent = { APIIcons(celebration = celebration) },
                     modifier = Modifier.clickable{}
                 )
             }
-        }
-
+//        }
     }
 
 

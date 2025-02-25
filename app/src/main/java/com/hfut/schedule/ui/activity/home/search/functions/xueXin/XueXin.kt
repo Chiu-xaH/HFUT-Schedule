@@ -25,6 +25,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.Starter
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.components.WebDialog
 import com.hfut.schedule.ui.utils.components.WebViewScreen
 
@@ -33,7 +34,7 @@ import com.hfut.schedule.ui.utils.components.WebViewScreen
 @Composable
 fun XueXin() {
     var showDialog by remember { mutableStateOf(false) }
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "学信网") },
         leadingContent = { Icon(painter = painterResource(id = R.drawable.school), contentDescription = "") },
         modifier = Modifier.clickable {

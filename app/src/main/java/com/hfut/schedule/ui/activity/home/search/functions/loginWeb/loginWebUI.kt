@@ -76,6 +76,8 @@ import com.hfut.schedule.ui.activity.home.search.functions.electric.PayFor
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
 import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.CampusId
 import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.getCampus
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.BottomButton
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.viewmodel.NetWorkViewModel
@@ -320,7 +322,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel) {
                 onClick = {
                     refreshFlow()
                 },
-                modifier = Modifier.padding(horizontal = 15.dp)
+                modifier = Modifier.padding(horizontal = AppHorizontalDp())
             ) {
                 Icon(painterResource(R.drawable.rotate_right),null)
             }
@@ -328,10 +330,10 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel) {
     )
     DividerTextExpandedWith(text = "数据",false) {
         Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = AppHorizontalDp()),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 15.dp, vertical = 5.dp).scale(scale2.value),
+                .padding(horizontal = AppHorizontalDp(), vertical = 5.dp).scale(scale2.value),
             shape = MaterialTheme.shapes.medium,
         ) {
             Column(modifier = Modifier.blur(blurSize).scale(scale.value)) {
@@ -363,22 +365,29 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel) {
                             modifier = Modifier.weight(.5f)
                         )
                     }
-
-                    Divider()
-                    Box(Modifier.background(MaterialTheme.colorScheme.secondaryContainer)) {
-                        FilledTonalButton(
-                            onClick = {
-                                if(!loading) {
-                                    showDialog2 = true
-                                }
-                            },
-                            shape = RoundedCornerShape(0.dp),
-                            colors = ButtonDefaults.filledTonalButtonColors(containerColor = Color.Transparent),
-                            modifier = Modifier.fillMaxSize(),
-                        ) {
-                            Text("快速充值")
-                        }
-                    }
+                    BottomButton(
+                        onClick = {
+                            if(!loading) {
+                                showDialog2 = true
+                            }
+                        },
+                        text = "快速充值"
+                    )
+//                    Divider()
+//                    Box(Modifier.background(MaterialTheme.colorScheme.secondaryContainer)) {
+//                        FilledTonalButton(
+//                            onClick = {
+//                                if(!loading) {
+//                                    showDialog2 = true
+//                                }
+//                            },
+//                            shape = RoundedCornerShape(0.dp),
+//                            colors = ButtonDefaults.filledTonalButtonColors(containerColor = Color.Transparent),
+//                            modifier = Modifier.fillMaxSize(),
+//                        ) {
+//                            Text("快速充值")
+//                        }
+//                    }
                 } else {
                     Divider()
                     Row {
@@ -415,7 +424,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel) {
 
         Spacer(Modifier.height(10.dp))
         if(isXuancheng) {
-            Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp)) {
+            Row(modifier = Modifier.fillMaxWidth().padding(horizontal = AppHorizontalDp())) {
                 Button(
                     modifier = Modifier.fillMaxWidth().weight(.5f),
                     onClick = {
@@ -438,7 +447,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel) {
         }
         if(textLogin == "已登录") {
             OutlinedButton(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = AppHorizontalDp()),
                 onClick = {
                     Starter.startWebUrl("https://cn.bing.com/")
                 }

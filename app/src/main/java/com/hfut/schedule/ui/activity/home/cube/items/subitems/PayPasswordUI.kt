@@ -34,6 +34,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.saveBoolean
 import com.hfut.schedule.logic.utils.SharePrefs.saveString
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.MyToast
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -78,7 +79,7 @@ fun LockUI() {
                 CirclePoint(text = if(!pin)"录入新密码" else "请输入密码", password = input)
                 Spacer(modifier = Modifier.height(20.dp))
                 KeyBoard(
-                    modifier = Modifier.padding(horizontal = 15.dp),
+                    modifier = Modifier.padding(horizontal = AppHorizontalDp()),
                     onKeyClick = { num ->
                         if (input.length < 6) {
                             input += num.toString()

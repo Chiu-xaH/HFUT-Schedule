@@ -45,6 +45,7 @@ import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.WebViewScreen
 import com.hfut.schedule.ui.theme.FWDTColr
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.components.WebDialog
 
 @SuppressLint("SuspiciousIndentation")
@@ -56,102 +57,28 @@ fun Electric(vm : NetWorkViewModel, card : Boolean, vmUI : UIViewModel) {
     var showBottomSheet by remember { mutableStateOf(false) }
 
 
-
-    val interactionSource = remember { MutableInteractionSource() }
-    val isPressed by interactionSource.collectIsPressedAsState()
-
-
-
     val EndNumber = prefs.getString("EndNumber", "0")
     var room by remember { mutableStateOf("寝室电费") }
     if(EndNumber == "12" || EndNumber == "22") room = "空调"
     else if(EndNumber == "11" || EndNumber == "21") room = "照明"
 
 
-    val scale = animateFloatAsState(
-        targetValue = if (isPressed) 0.9f else 1f, // 按下时为0.9，松开时为1
-        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-        label = "" // 使用弹簧动画
-    )
-
     if (showBottomSheet) {
 
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
             sheetState = sheetState
-//            , shape = Round(sheetState)
         ) {
-
             EleUI(vm = vm)
             }
         }
-    val showAdd = prefs.getBoolean("SWITCHELEADD",true)
-    val memoryEle = prefs.getString("memoryEle","0")
-    var showDialog by remember { mutableStateOf(false) }
-    val auth = SharePrefs.prefs.getString("auth","")
-    val url = MyApplication.ZJGDBillURL + "charge-app/?name=pays&appsourse=ydfwpt&id=261&name=pays&paymentUrl=http://121.251.19.62/plat&token=" + auth
 
-    WebDialog(showDialog,{ showDialog = false },url,"宣城校区 电费缴纳")
-//    val switch_startUri = SharePrefs.prefs.getBoolean("SWITCHSTARTURI",true)
-//    if (showDialog) {
-//        if(switch_startUri) {
-//            androidx.compose.ui.window.Dialog(
-//                onDismissRequest = { showDialog = false },
-//                properties = DialogProperties(usePlatformDefaultWidth = false)
-//            ) {
-//                Scaffold(
-//                    modifier = Modifier.fillMaxSize(),
-//                    topBar = {
-//                        TopAppBar(
-//                            colors = TopAppBarDefaults.mediumTopAppBarColors(
-//                                containerColor = FWDTColr,
-//                                titleContentColor = Color.White,
-//                            ),
-//                            actions = {
-//                                Row{
-//                                    IconButton(onClick = { Starter.startWebUrl( url) }) { Icon(painterResource(id = R.drawable.net), contentDescription = "", tint = Color.White) }
-//                                    IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "", tint = Color.White) }
-//                                }
-//
-//                            },
-//                            title = { Text("宣城校区 电费缴纳") }
-//                        )
-//                    },
-//                ) { innerPadding ->
-//                    Column(
-//                        modifier = Modifier
-//                            .padding(innerPadding)
-//                            .fillMaxSize()
-//                    ) {
-//                        WebViewScreen(url)
-//                    }
-//                }
-//            }
-//        } else {
-//            Starter.startWebUrl(url)
-//        }
-//    }
-    ListItem(
+    val memoryEle = prefs.getString("memoryEle","0")
+
+    TransplantListItem(
         headlineContent = { if(!card)Text(text = "寝室电费") else ScrollText(text = "￥${vmUI.electricValue.value ?: memoryEle}") },
         overlineContent = { if(!card) ScrollText(text = "￥${vmUI.electricValue.value ?: memoryEle}") else ScrollText(text = room) },
         leadingContent = { Icon(painterResource(R.drawable.flash_on), contentDescription = "Localized description",) },
-        trailingContent = {
-            if(card && showAdd)
-            FilledTonalIconButton(
-                modifier = Modifier
-                    .scale(scale.value)
-                    .size(30.dp),
-                interactionSource = interactionSource,
-                onClick = {
-                   showDialog = true
-                   // ClipBoard.copy(input)
-                  //  MyToast("已将房间号复制到剪切板")
-                          },
-              //  colors =  if(test.length <= 4) {
-              //      IconButtonDefaults.filledTonalIconButtonColors(MaterialTheme.colorScheme.error.copy(alpha = 0.1f))
-              //  } else IconButtonDefaults.filledTonalIconButtonColors()
-            ) { Icon( painterResource(R.drawable.add), contentDescription = "Localized description",) }
-         },
         modifier = Modifier.clickable { showBottomSheet  = true }
     )
 }

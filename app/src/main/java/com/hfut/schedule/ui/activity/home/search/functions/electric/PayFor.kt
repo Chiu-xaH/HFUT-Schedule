@@ -57,6 +57,7 @@ import com.hfut.schedule.ui.activity.home.cube.items.subitems.CirclePoint
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.KeyBoard
 
 import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.getIdentifyID
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.LittleDialog
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.statusUI
@@ -114,7 +115,7 @@ fun PayFor(vm : NetWorkViewModel, payNumber : Int, tipInfo : String, json : Stri
                     CirclePoint(text = passwordStatus, password = password)
                     Spacer(modifier = Modifier.height(20.dp))
                     KeyBoard(
-                        modifier = Modifier.padding(horizontal = 15.dp),
+                        modifier = Modifier.padding(horizontal = AppHorizontalDp()),
                         onKeyClick = { num ->
                             if (password.length < 6) {
                                 password += num.toString()
@@ -201,7 +202,7 @@ fun PayFor(vm : NetWorkViewModel, payNumber : Int, tipInfo : String, json : Stri
             modifier = Modifier
                 .weight(1f)
                 .scale(scale.value)
-                .padding(horizontal = 15.dp)) {
+                .padding(horizontal = AppHorizontalDp())) {
             Text(text = "支付")
         }
     }

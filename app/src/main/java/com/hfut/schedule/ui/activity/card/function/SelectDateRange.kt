@@ -30,6 +30,7 @@ import com.google.gson.Gson
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.beans.zjgd.BillRangeResponse
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.MyToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -62,7 +63,7 @@ fun SelecctDateRange(vm : NetWorkViewModel) {
                 title = { Text("范围支出") },
                 actions = {
                     FilledTonalButton(
-                        modifier = Modifier.scale(scale.value).padding(horizontal = 15.dp),
+                        modifier = Modifier.scale(scale.value).padding(horizontal = AppHorizontalDp()),
                         interactionSource = interactionSource,
                         //shape = MaterialTheme.shapes.small,
                         onClick = {

@@ -16,6 +16,7 @@ import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.DepartmentIcons
+import com.hfut.schedule.ui.utils.components.StyleCardListItem
 
 @Composable
 fun SchoolsUI(innerPdding : PaddingValues? = null) {
@@ -51,8 +52,8 @@ fun SchoolsUI(innerPdding : PaddingValues? = null) {
             val m = maps.entries.toList()[index]
             val title = m.value
             val url = m.key
-            MyCustomCard {
-                ListItem(
+//            MyCustomCard {
+            StyleCardListItem(
                     headlineContent = { ScrollText(text = title) },
                     leadingContent = { DepartmentIcons(title) },
                     overlineContent = { ScrollText(text = url) },
@@ -63,7 +64,7 @@ fun SchoolsUI(innerPdding : PaddingValues? = null) {
                         Icon(Icons.Filled.ArrowForward, contentDescription = "")
                     }
                 )
-            }
+//            }
         }
         item { if(innerPdding != null) Spacer(modifier = Modifier.height(innerPdding.calculateBottomPadding())) }
     }

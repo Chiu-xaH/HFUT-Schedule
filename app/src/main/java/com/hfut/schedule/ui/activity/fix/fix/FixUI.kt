@@ -57,9 +57,11 @@ import com.hfut.schedule.logic.utils.Starter.emailMe
 import com.hfut.schedule.ui.activity.home.cube.items.main.Clear
 import com.hfut.schedule.ui.activity.home.cube.items.main.apiCheck
 import com.hfut.schedule.ui.activity.home.focus.funictions.getTimeStamp
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.LittleDialog
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
 
@@ -127,14 +129,14 @@ fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel,vm2 : NetWorkViewMode
         .padding(innerPadding)) {
         Spacer(modifier = Modifier.height(5.dp))
 
-        MyCustomCard{
-            ListItem(
+//        MyCustomCard{
+            StyleCardListItem(
                 headlineContent = { Text(text = "版本信息") },
                 supportingContent = {Text("安卓版本 ${AndroidVersion.sdkInt} | 应用版本 ${APPVersion.getVersionName()} (${APPVersion.getVersionCode()})")},
                 leadingContent = { Icon(painterResource(R.drawable.info), contentDescription = "Localized description",) },
                 modifier = Modifier.clickable {}
             )
-        }
+//        }
         Spacer(modifier = Modifier.height(5.dp))
 
 
@@ -339,12 +341,12 @@ fun questionUI() {
 @Composable
 fun questionItem(title : String,
                  info : String) {
-    MyCustomCard {
-        ListItem(
+//    MyCustomCard {
+        StyleCardListItem(
             headlineContent = { Text(text = title) },
             supportingContent = { Text(text = info) }
         )
-    }
+//    }
 }
 
 fun sendToMe() {
@@ -371,7 +373,7 @@ fun feedBackUI(vm : NetWorkViewModel) {
                 title = { Text("反馈") },
                 actions = {
                     FilledTonalIconButton(
-                        modifier = Modifier.padding(horizontal = 15.dp),
+                        modifier = Modifier.padding(horizontal = AppHorizontalDp()),
                         onClick = {
                             if(input == "") {
                                 MyToast("请输入内容")
@@ -395,7 +397,7 @@ fun feedBackUI(vm : NetWorkViewModel) {
                 TextField(
                     modifier = Modifier
                         .weight(1f)
-                        .padding(horizontal = 15.dp),
+                        .padding(horizontal = AppHorizontalDp()),
                     value = input,
                     onValueChange = {
                         input = it
@@ -411,7 +413,7 @@ fun feedBackUI(vm : NetWorkViewModel) {
                 TextField(
                     modifier = Modifier
                         .weight(1f)
-                        .padding(horizontal = 15.dp),
+                        .padding(horizontal = AppHorizontalDp()),
                     value = inputContact,
                     onValueChange = { inputContact = it },
                     label = { Text("你的联系方式(可不填)" ) },
@@ -421,19 +423,19 @@ fun feedBackUI(vm : NetWorkViewModel) {
                 )
             }
             Spacer(modifier = Modifier.height(5.dp))
-            MyCustomCard {
-                ListItem(
+//            MyCustomCard {
+            StyleCardListItem(
                     headlineContent = { Text(text = "或者通过电子邮件联系") },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.mail), contentDescription ="" )},
                     modifier = Modifier.clickable { emailMe() }
                 )
-            }
-            MyCustomCard {
-                ListItem(
+//            }
+//            MyCustomCard {
+            StyleCardListItem(
                     headlineContent = { Text(text = "提交时会自动提交当前APP版本、日期时间等信息，以协助开发者分析反馈内容") },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.info), contentDescription ="" )},
                 )
-            }
+//            }
 
             Spacer(modifier = Modifier.height(20.dp))
         }

@@ -12,10 +12,11 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.activity.funiction.NewsActivity
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 
 @Composable
 fun News(vm : NetWorkViewModel) {
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "通知公告") },
         leadingContent = {
             Icon(

@@ -37,6 +37,7 @@ import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTot
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.ScrollText
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -88,7 +89,7 @@ fun NextCourse(ifSaved : Boolean,vmUI : UIViewModel,vm : NetWorkViewModel) {
         }
     }
 
-    ListItem(
+    TransplantListItem(
         headlineContent = { ScrollText(text = "下学期课表") },
         leadingContent = {
             Icon(

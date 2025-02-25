@@ -79,6 +79,7 @@ import com.hfut.schedule.ui.activity.home.calendar.examToCalendar
 import com.hfut.schedule.ui.activity.home.calendar.getScheduleDate
 import com.hfut.schedule.ui.activity.home.search.functions.exam.getExam
 import com.hfut.schedule.ui.activity.home.search.functions.exam.getExamJXGLSTU
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.MyToast
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -738,7 +739,7 @@ fun SaveCourse(
                     modifier = Modifier
                         .align(Alignment.BottomStart)
                         .padding(innerPaddings)
-                        .padding(horizontal = 15.dp, vertical = 15.dp)
+                        .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
                 ) {
                     if (shouldShowAddButton) {
                         FloatingActionButton(
@@ -761,7 +762,7 @@ fun SaveCourse(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .padding(innerPaddings)
-                        .padding(horizontal = 15.dp, vertical = 15.dp)
+                        .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
                 ) {
                     if (shouldShowAddButton) {
                         ExtendedFloatingActionButton(
@@ -791,7 +792,7 @@ fun SaveCourse(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .padding(innerPaddings)
-                        .padding(horizontal = 15.dp, vertical = 15.dp)
+                        .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
                 ) {
                     TextButton(onClick = {  }) {
                         Text(
@@ -812,7 +813,7 @@ fun SaveCourse(
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .padding(innerPaddings)
-                        .padding(horizontal = 15.dp, vertical = 15.dp)
+                        .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
                 ) {
                     if (shouldShowAddButton) {
                         FloatingActionButton(

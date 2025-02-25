@@ -37,6 +37,8 @@ import com.hfut.schedule.ui.activity.home.focus.funictions.getToday
 import com.hfut.schedule.ui.utils.components.EmptyUI
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.ScrollText
+import com.hfut.schedule.ui.utils.components.StyleCardListItem
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 
 
 @SuppressLint("SuspiciousIndentation")
@@ -57,7 +59,7 @@ fun SchoolCardItem(vmUI : UIViewModel,cardBool : Boolean) {
   //  val str = bd.setScale(2, RoundingMode.HALF_UP).toString()
     val test = vmUI.CardValue.value?.balance ?: card
 val showAdd = prefs.getBoolean("SWITCHCARDADD",true)
-    ListItem(
+    TransplantListItem(
         headlineContent = { if(cardBool) ScrollText(text = "￥$test") else Text(text = "一卡通 ￥$test") },
         overlineContent = { if(cardBool) {
             ScrollText(
@@ -88,9 +90,9 @@ val showAdd = prefs.getBoolean("SWITCHCARDADD",true)
         colors = (
             if (test != null) {
                 if(test.length <= 4){
-                    ListItemDefaults.colors(MaterialTheme.colorScheme.errorContainer)
-                } else ListItemDefaults.colors()
-            } else ListItemDefaults.colors()
+                    MaterialTheme.colorScheme.errorContainer
+                } else null
+            } else null
         ),
         modifier = Modifier.clickable {
             val it = Intent(MyApplication.context, CardActivity::class.java).apply { addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) }
@@ -107,43 +109,43 @@ fun TodayInfo() {
         EmptyUI()
     }
         if(getToday()?.todayExam?.courseName != null) {
-            MyCustomCard {
-                ListItem(
+//            MyCustomCard {
+                StyleCardListItem(
                     headlineContent = { Text(text = getToday()?.todayExam?.courseName.toString()) },
                     overlineContent = { Text(text = getToday()?.todayExam?.startTime + "~" + getToday()?.todayExam?.endTime) },
                     supportingContent = { Text(text = getToday()?.todayExam?.place.toString())},
                     leadingContent = { Icon(painter = painterResource(R.drawable.draw), contentDescription = "")},
                 )
-            }
+//            }
         }
         if(getToday()?.todayCourse?.courseName != null) {
-            MyCustomCard {
-                ListItem(
+//            MyCustomCard {
+                StyleCardListItem(
                     headlineContent = { Text(text = getToday()?.todayCourse?.courseName.toString()) },
                     overlineContent = { Text(text = getToday()?.todayCourse?.startTime + "~" + getToday()?.todayCourse?.endTime +  "  " +  getToday()?.todayCourse?.place)},
                     supportingContent = { getToday()?.todayCourse?.className?.let { Text(text = it) } },
                     leadingContent = { Icon(painter = painterResource(R.drawable.calendar), contentDescription = "")},
                 )
-            }
+//            }
         }
         if(getToday()?.bookLending?.bookName != null) {
-            MyCustomCard {
-                ListItem(
+//            MyCustomCard {
+                StyleCardListItem(
                     headlineContent = { Text(text = getToday()?.bookLending?.bookName.toString()) },
                     supportingContent = { Text(text = "归还时间 " + getToday()?.bookLending?.returnTime) },
                     overlineContent = { Text(text = "借阅于 " + getToday()?.bookLending?.outTime + "\n应还于 " + getToday()?.bookLending?.dueTime )},
                     leadingContent = { Icon(painter = painterResource(R.drawable.book), contentDescription = "")},
                 )
-            }
+//            }
         }
         if(getToday()?.todayActivity?.activityName != null) {
-            MyCustomCard {
-                ListItem(
+//            MyCustomCard {
+                StyleCardListItem(
                     headlineContent = { Text(text = getToday()?.todayActivity?.activityName.toString()) },
                     overlineContent = { Text(text = getToday()?.todayActivity?.startTime.toString()) },
                     leadingContent = { Icon(painter = painterResource(R.drawable.schedule), contentDescription = "")},
                 )
-            }
+//            }
         }
 }
 

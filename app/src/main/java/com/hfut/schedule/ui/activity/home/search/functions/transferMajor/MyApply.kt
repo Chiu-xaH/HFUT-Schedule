@@ -64,6 +64,7 @@ import com.hfut.schedule.ui.activity.home.calendar.multi.getApplyingList
 import com.hfut.schedule.ui.activity.home.search.functions.life.countFunc
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
 import com.hfut.schedule.ui.utils.components.APIIcons
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
 import com.hfut.schedule.ui.utils.style.CardForListColor
 import com.hfut.schedule.ui.utils.components.DividerText
@@ -74,6 +75,7 @@ import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.DepartmentIcons
 import com.hfut.schedule.ui.utils.components.EmptyUI
 import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.statusUI2
 import com.hfut.schedule.ui.utils.style.Round
 import kotlinx.coroutines.CoroutineScope
@@ -189,8 +191,8 @@ fun MyApplyListUI(vm: NetWorkViewModel,batchId : String) {
                     items(applyList.size) { index ->
                         val data = applyList.get(index)
                         val info = data.changeMajorSubmit
-                        MyCustomCard {
-                            ListItem(
+//                        MyCustomCard {
+                            StyleCardListItem(
                                 headlineContent = { Text(info.major.nameZh) },
                                 leadingContent = { DepartmentIcons(info.department.nameZh) },
                                 trailingContent = {
@@ -207,7 +209,7 @@ fun MyApplyListUI(vm: NetWorkViewModel,batchId : String) {
                                     showBottomSheet_apply = true
                                 }
                             )
-                        }
+//                        }
                     }
                 }
             } else {
@@ -307,11 +309,11 @@ fun MyApply(vm: NetWorkViewModel,batchId : String,indexs : Int) {
         Box {
 
             Card(
-                elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = AppHorizontalDp()),
                 modifier = Modifier
                     .fillMaxWidth()
                     .scale(scale2.value)
-                    .padding(horizontal = 15.dp, vertical = 5.dp),
+                    .padding(horizontal = AppHorizontalDp(), vertical = 5.dp),
                 shape = MaterialTheme.shapes.medium,
                 colors = CardForListColor()
             ) {

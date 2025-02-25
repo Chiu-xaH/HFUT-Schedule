@@ -27,6 +27,8 @@ import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotalForApi
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.Round
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,7 +37,7 @@ fun Survey(ifSaved : Boolean,vm : NetWorkViewModel){
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
 
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "评教")},
         leadingContent = { Icon(painter = painterResource(id = R.drawable.verified), contentDescription = "")},
         modifier = Modifier.clickable {
@@ -59,7 +61,7 @@ fun Survey(ifSaved : Boolean,vm : NetWorkViewModel){
                         ),
                         title = { Text("评教") },
                         actions = {
-                            CourseTotalForApi(modifier = Modifier.padding(horizontal = 15.dp),vm)
+                            CourseTotalForApi(modifier = Modifier.padding(horizontal = AppHorizontalDp()),vm)
                         }
                     )
                 },

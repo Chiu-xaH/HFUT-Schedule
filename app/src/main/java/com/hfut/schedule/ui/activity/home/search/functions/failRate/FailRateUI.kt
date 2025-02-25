@@ -34,13 +34,14 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.ui.utils.components.MyCustomCard
+import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.style.Round
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FailRateUI(vm : NetWorkViewModel) {
 
-    getFailRate(vm)
+//    getFailRate(vm)
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -50,8 +51,8 @@ fun FailRateUI(vm : NetWorkViewModel) {
         items(getFailRate(vm).size){ item ->
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 Column() {
-                    MyCustomCard{
-                        ListItem(
+//                    MyCustomCard{
+                        StyleCardListItem(
                             headlineContent = {  Text(getFailRate(vm)[item].courseName) },
                             leadingContent = { Icon(painterResource(R.drawable.monitoring), contentDescription = "Localized description",) },
                             trailingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "")},
@@ -60,7 +61,7 @@ fun FailRateUI(vm : NetWorkViewModel) {
                                 num = item },
                         )
                         getLists(item,vm)
-                    }
+//                    }
                 }
             }
         }
@@ -96,21 +97,14 @@ fun FailRateUI(vm : NetWorkViewModel) {
                         items(getLists(num,vm).size){ item ->
                             val rate = (1 - getLists(num,vm)[item].successRate) * 100
                             val formattedNumber = String.format("%.2f", rate)
-                            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                                Column() {
-                                    MyCustomCard{
-                                        ListItem(
-                                            headlineContent = {  Text("平均分 ${getLists(num,vm)[item].avgScore}") },
-                                            supportingContent = { Text("人数: 挂科 ${getLists(num,vm)[item].failCount} | 总 ${getLists(num,vm)[item].totalCount}") },
-                                            overlineContent = { Text(text = "${getLists(num,vm)[item].xn}年 第${getLists(num,vm)[item].xq}学期")},
-                                            leadingContent = { Icon(painterResource(R.drawable.article), contentDescription = "Localized description",) },
-                                            trailingContent = { Text("挂科率 $formattedNumber %") },
-                                            modifier = Modifier.clickable {},
-                                        )
-                                    }
-                                }
-                            }
-
+                            StyleCardListItem(
+                                headlineContent = {  Text("平均分 ${getLists(num,vm)[item].avgScore}") },
+                                supportingContent = { Text("人数: 挂科 ${getLists(num,vm)[item].failCount} | 总 ${getLists(num,vm)[item].totalCount}") },
+                                overlineContent = { Text(text = "${getLists(num,vm)[item].xn}年 第${getLists(num,vm)[item].xq}学期")},
+                                leadingContent = { Icon(painterResource(R.drawable.article), contentDescription = "Localized description",) },
+                                trailingContent = { Text("挂科率 $formattedNumber %") },
+                                modifier = Modifier.clickable {},
+                            )
                         }
                     }
                     Spacer(modifier = Modifier.height(30.dp))

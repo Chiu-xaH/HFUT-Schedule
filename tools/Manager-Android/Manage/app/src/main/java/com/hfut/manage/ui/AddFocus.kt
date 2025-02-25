@@ -86,7 +86,7 @@ fun BoxScope.AddButton(isVisible: Boolean, innerPaddings : PaddingValues,vm : Ne
         modifier = Modifier
             .align(Alignment.BottomEnd)
             .padding(innerPaddings)
-            .padding(horizontal = 15.dp, vertical = 15.dp)
+            .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
     ) {
         if (isVisible) {
             FloatingActionButton(
@@ -107,7 +107,7 @@ fun addFocus(vm : NetViewModel) {
         elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 15.dp, vertical = 5.dp),
+            .padding(horizontal = AppHorizontalDp(), vertical = 5.dp),
         shape = MaterialTheme.shapes.medium,
     ){
         ListItem(
@@ -203,7 +203,7 @@ fun addFocus(vm : NetViewModel) {
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 15.dp, vertical = 5.dp),
+                            .padding(horizontal = AppHorizontalDp(), vertical = 5.dp),
                         shape = MaterialTheme.shapes.medium,
                     ) {
                         androidx.compose.material3.ListItem(
@@ -230,7 +230,7 @@ fun addFocus(vm : NetViewModel) {
                         TextField(
                             modifier = Modifier
                                 .weight(1f)
-                                .padding(horizontal = 15.dp),
+                                .padding(horizontal = AppHorizontalDp()),
                             value = title,
                             onValueChange = { title = it },
                             leadingIcon = { Icon( painterResource(R.drawable.title), contentDescription = "Localized description") },
@@ -247,7 +247,7 @@ fun addFocus(vm : NetViewModel) {
                         TextField(
                             modifier = Modifier
                                 .weight(1f)
-                                .padding(horizontal = 15.dp),
+                                .padding(horizontal = AppHorizontalDp()),
                             value = info,
                             onValueChange = { info = it },
                             leadingIcon = { Icon( painterResource(R.drawable.info_i), contentDescription = "Localized description") },
@@ -263,7 +263,7 @@ fun addFocus(vm : NetViewModel) {
                         TextField(
                             modifier = Modifier
                                 .weight(1f)
-                                .padding(horizontal = 15.dp),
+                                .padding(horizontal = AppHorizontalDp()),
                             value = remark,
                             onValueChange = { remark = it },
                             leadingIcon = { Icon( painterResource(R.drawable.format_italic), contentDescription = "Localized description") },

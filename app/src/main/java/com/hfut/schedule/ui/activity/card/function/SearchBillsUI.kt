@@ -49,8 +49,10 @@ import com.hfut.schedule.logic.beans.zjgd.BillResponse
 import com.hfut.schedule.logic.beans.zjgd.records
 import com.hfut.schedule.ui.activity.card.bills.main.getBills
 import com.hfut.schedule.ui.activity.card.bills.main.processTranamt
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.BillsIcons
 import com.hfut.schedule.ui.utils.components.MyCustomCard
+import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -133,10 +135,10 @@ fun SearchBillsUI(vm : NetWorkViewModel) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
 
                 TextField(
-                    //  modifier = Modifier.size(width = 170.dp, height = 70.dp).padding(horizontal = 15.dp, vertical = 5.dp),
+                    //  modifier = Modifier.size(width = 170.dp, height = 70.dp).padding(horizontal = AppHorizontalDp(), vertical = 5.dp),
                     modifier = Modifier
                         .weight(1f)
-                        .padding(horizontal = 15.dp, vertical = 5.dp),
+                        .padding(horizontal = AppHorizontalDp(), vertical = 5.dp),
                     value = input,
                     onValueChange = {
                         input = it
@@ -185,10 +187,10 @@ fun SearchBillsUI(vm : NetWorkViewModel) {
                                 item {
                                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center){
                                         TextField(
-                                            //  modifier = Modifier.size(width = 170.dp, height = 70.dp).padding(horizontal = 15.dp, vertical = 5.dp),
+                                            //  modifier = Modifier.size(width = 170.dp, height = 70.dp).padding(horizontal = AppHorizontalDp(), vertical = 5.dp),
                                             modifier = Modifier
                                                 .weight(1f)
-                                                .padding(horizontal = 15.dp, vertical = 5.dp),
+                                                .padding(horizontal = AppHorizontalDp(), vertical = 5.dp),
                                             value = input,
                                             onValueChange = {
                                                 input = it
@@ -213,22 +215,12 @@ fun SearchBillsUI(vm : NetWorkViewModel) {
 
                                     var name = Items()[item].resume
                                     if (name.contains("有限公司")) name = name.replace("有限公司","")
-
-                                    Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)
-                                    {
-                                        MyCustomCard {
-                                            ListItem(
-                                                headlineContent = { Text(text = name) },
-                                                supportingContent = {Text(text = processTranamt(getBills(vm)[item]))},
-                                                overlineContent = {Text(text = Items()[item].effectdateStr)},
-                                                leadingContent = { BillsIcons(name) }
-                                            )
-
-
-
-                                        }
-                                    }
-
+                                    StyleCardListItem(
+                                        headlineContent = { Text(text = name) },
+                                        supportingContent = {Text(text = processTranamt(getBills(vm)[item]))},
+                                        overlineContent = {Text(text = Items()[item].effectdateStr)},
+                                        leadingContent = { BillsIcons(name) }
+                                    )
                                 }
                                 item {
                                     Spacer(modifier = Modifier.height(10.dp))
@@ -258,7 +250,7 @@ fun SearchBillsUI(vm : NetWorkViewModel) {
 
                                             }) { Text(text = "上一页") }
 
-                                        Spacer(modifier = Modifier.width(15.dp))
+                                        Spacer(modifier = Modifier.width(AppHorizontalDp()))
 
                                         OutlinedButton(
                                             onClick = {
@@ -281,7 +273,7 @@ fun SearchBillsUI(vm : NetWorkViewModel) {
                                             }
                                         ) { Text(text = "${page} / ${prefs.getInt("totalsearch",1)}") }
 
-                                        Spacer(modifier = Modifier.width(15.dp))
+                                        Spacer(modifier = Modifier.width(AppHorizontalDp()))
 
                                         OutlinedButton(
                                             onClick = {

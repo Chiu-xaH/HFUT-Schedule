@@ -54,7 +54,7 @@ package com.hfut.schedule.ui.widget
 //            modifier = GlanceModifier.fillMaxSize()
 //                .background(GlanceTheme.colors.secondaryContainer),
 //        ) {
-//            Box(contentAlignment = Alignment.TopStart, modifier = GlanceModifier.padding(15.dp)) {
+//            Box(contentAlignment = Alignment.TopStart, modifier = GlanceModifier.padding(AppHorizontalDp())) {
 //                //分布在左上角
 //                Row() {
 //                    Image(
@@ -70,7 +70,7 @@ package com.hfut.schedule.ui.widget
 //                }
 //            }
 //
-//            Box(contentAlignment = Alignment.TopEnd, modifier = GlanceModifier.padding(15.dp)) {
+//            Box(contentAlignment = Alignment.TopEnd, modifier = GlanceModifier.padding(AppHorizontalDp())) {
 //                //分布在左上角
 //                Row() {
 //                    Image(

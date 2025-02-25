@@ -44,6 +44,8 @@ import com.hfut.schedule.ui.utils.components.BillsIcons
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.ScrollText
+import com.hfut.schedule.ui.utils.components.StyleCardListItem
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import java.math.BigDecimal
 import java.math.RoundingMode
 @OptIn(ExperimentalMaterial3Api::class)
@@ -96,9 +98,9 @@ fun CardRow(vm : NetWorkViewModel, vmUI : UIViewModel) {
     Spacer(modifier = Modifier.height(5.dp))
 
 
-    MyCustomCard {
+    MyCustomCard(hasElevation = false, containerColor = MaterialTheme.colorScheme.errorContainer) {
         Row {
-            ListItem(
+            TransplantListItem(
                 headlineContent = { ScrollText(text = "余额 ￥${vmUI.CardValue.value?.now ?: now}") },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -106,13 +108,13 @@ fun CardRow(vm : NetWorkViewModel, vmUI : UIViewModel) {
                     .clickable { Starter.startAppUrl(MyApplication.AlipayCardURL) },
                 overlineContent = { ScrollText(text = "待圈存 ￥${vmUI.CardValue.value?.settle ?: settle}") },
                 leadingContent = { Icon(painterResource(R.drawable.account_balance_wallet), contentDescription = "Localized description",) },
-                colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
+//                colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
             )
-            ListItem(
+            TransplantListItem(
                 headlineContent = { ScrollText(text = "￥${str}") },
                 overlineContent = { Text(text = " 今日消费") },
                 leadingContent = { Icon(painterResource(R.drawable.send_money), contentDescription = "Localized description",) },
-                colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer),
+//                colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer),
                 modifier = Modifier
                     .clickable { showBottomSheet = true }
                     .weight(.5f)
@@ -155,16 +157,18 @@ fun TodayCount(vm  : NetWorkViewModel, item : Int) {
     val time =bills.effectdateStr
     val getTime = time.substringBefore(" ")
 
-    if(DateTimeManager.Date_yyyy_MM_dd == getTime)
-        MyCustomCard {
-            ListItem(
-                headlineContent = { Text(text = name) },
-                supportingContent = { Text(text = processTranamt(bills)) },
-                overlineContent = { Text(text = time) },
-                leadingContent = { BillsIcons(name) },
-                modifier = Modifier.clickable {
+    if(DateTimeManager.Date_yyyy_MM_dd == getTime) {
+        StyleCardListItem(
+            headlineContent = { Text(text = name) },
+            supportingContent = { Text(text = processTranamt(bills)) },
+            overlineContent = { Text(text = time) },
+            leadingContent = { BillsIcons(name) },
+            modifier = Modifier.clickable {
 
-                }
-            )
-        }
+            }
+        )
+    }
+//        MyCustomCard(hasElevation = false, containerColor = ) {
+
+//        }
 }

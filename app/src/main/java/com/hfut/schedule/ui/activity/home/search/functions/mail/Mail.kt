@@ -45,6 +45,7 @@ import com.hfut.schedule.logic.utils.reEmptyLiveDta
 import com.hfut.schedule.ui.utils.components.BottomTip
 import com.hfut.schedule.ui.utils.style.RowHorizontal
 import com.hfut.schedule.ui.utils.components.ScrollText
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.components.WebDialog
 import com.hfut.schedule.ui.utils.components.WebViewScreen
 import kotlinx.coroutines.CoroutineScope
@@ -60,7 +61,7 @@ fun Mail(ifSaved : Boolean,vm : NetWorkViewModel) {
     var showBottomSheet by remember { mutableStateOf(false) }
     val savedUsername = prefs.getString("Username", "")
     val mail = "@mail.hfut.edu.cn"
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "邮箱") },
         overlineContent = { ScrollText(text = mail) },
         leadingContent = { Icon(painter = painterResource(id = R.drawable.mail), contentDescription = "") },

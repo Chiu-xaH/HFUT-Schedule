@@ -70,6 +70,7 @@ import com.hfut.schedule.logic.beans.zjgd.FeeResponse
 import com.hfut.schedule.logic.beans.zjgd.FeeType
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.MyToast
@@ -160,7 +161,7 @@ fun EleUI(vm : NetWorkViewModel) {
             ),
             title = { Text("寝室电费-宣城校区") },
             actions = {
-                Row(modifier = Modifier.padding(horizontal = 15.dp)) {
+                Row(modifier = Modifier.padding(horizontal = AppHorizontalDp())) {
                     if(showitem4)
                         IconButton(onClick = {RoomNumber = RoomNumber.replaceFirst(".$".toRegex(), "")}) {
                             Icon(painter = painterResource(R.drawable.backspace), contentDescription = "description") }
@@ -312,7 +313,7 @@ fun EleUI(vm : NetWorkViewModel) {
             }
         Row(modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 15.dp, vertical = 0.dp), horizontalArrangement = Arrangement.Start) {
+            .padding(horizontal = AppHorizontalDp(), vertical = 0.dp), horizontalArrangement = Arrangement.Start) {
 
             AssistChip(
                 onClick = { showitem = true },
@@ -358,7 +359,7 @@ fun EleUI(vm : NetWorkViewModel) {
             ) + fadeIn(initialAlpha = 0.3f),
             exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
         ){
-            Row (modifier = Modifier.padding(horizontal = 15.dp)){
+            Row (modifier = Modifier.padding(horizontal = AppHorizontalDp())){
                 OutlinedCard{
                     LazyColumn(modifier = Modifier.padding(horizontal = 10.dp)) {
                         item {
@@ -428,11 +429,11 @@ fun EleUI(vm : NetWorkViewModel) {
             Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
                 Spacer(modifier = Modifier.height(100.dp))
                 Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = AppHorizontalDp()),
                     modifier = Modifier
                         .fillMaxWidth()
                         .scale(scale2.value)
-                        .padding(horizontal = 15.dp, vertical = 5.dp),
+                        .padding(horizontal = AppHorizontalDp(), vertical = 5.dp),
                     shape = MaterialTheme.shapes.medium,
                     colors = CardForListColor()
                 ) {

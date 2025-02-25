@@ -39,10 +39,13 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.ScrollText
+import com.hfut.schedule.ui.utils.components.StyleCardListItem
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -58,7 +61,7 @@ fun Transfer(ifSaved : Boolean,vm : NetWorkViewModel){
     val sheetState_info = rememberModalBottomSheetState()
     var showBottomSheet_info by remember { mutableStateOf(false) }
 
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "转专业") },
         leadingContent = { Icon(painter = painterResource(id = R.drawable.compare_arrows), contentDescription = "") },
         modifier = Modifier.clickable {
@@ -115,7 +118,7 @@ fun Transfer(ifSaved : Boolean,vm : NetWorkViewModel){
                         actions = {
                             FilledTonalIconButton(
                                 onClick = { showBottomSheet_info = true },
-                                modifier = Modifier.padding(horizontal = 15.dp)
+                                modifier = Modifier.padding(horizontal = AppHorizontalDp())
                             ) {
                                 Icon(painterResource(R.drawable.info),null)
                             }
@@ -204,7 +207,7 @@ fun TransferListUI(vm: NetWorkViewModel) {
                         actions = {
                             FilledTonalButton(
                                 onClick = { showBottomSheet_apply = true },
-                                modifier = Modifier.padding(horizontal = 15.dp)
+                                modifier = Modifier.padding(horizontal = AppHorizontalDp())
                             ) {
                                 Text("我的申请")
                             }
@@ -248,8 +251,8 @@ fun TransferListUI(vm: NetWorkViewModel) {
         LazyColumn {
             items(transferList.size) { index ->
                 val data = transferList[index]
-                MyCustomCard {
-                    ListItem(
+//                MyCustomCard {
+                    StyleCardListItem(
                         headlineContent = { Text(data.title) },
                         supportingContent = { Text("申请日期 " + data.applicationDate + "\n转专业时期 " + data.admissionDate) },
                         trailingContent = { Icon(Icons.Filled.ArrowForward,null) },
@@ -259,7 +262,7 @@ fun TransferListUI(vm: NetWorkViewModel) {
                             showBottomSheet = true
                         }
                     )
-                }
+//                }
             }
         }
     }
@@ -268,14 +271,14 @@ fun TransferListUI(vm: NetWorkViewModel) {
 
 @Composable
 fun TransferTips() {
-    MyCustomCard {
-        ListItem(
+//    MyCustomCard {
+    StyleCardListItem(
             headlineContent = { Text("具体要求") },
             supportingContent = { Text("请关注所在系QQ群或在 查询中心-新闻公告 检索已公示的转专业要求") },
         )
-        ListItem(
+    StyleCardListItem(
             headlineContent = { Text("录取通知") },
             supportingContent = { Text("请关注所在转专业QQ群(上条要求会公示)或在 查询中心-新闻公告 检索已公示的面试/拟录取名单") },
         )
-    }
+//    }
 }

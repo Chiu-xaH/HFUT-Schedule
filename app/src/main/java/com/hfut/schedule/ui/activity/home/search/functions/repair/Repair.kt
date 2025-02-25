@@ -9,10 +9,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.Starter
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 
 @Composable
 fun Repair() {
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "报修") },
         leadingContent = { Icon(painter = painterResource(id = R.drawable.build), contentDescription = "") },
         modifier = Modifier.clickable {

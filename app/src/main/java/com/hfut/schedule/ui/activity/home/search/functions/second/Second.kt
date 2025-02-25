@@ -27,6 +27,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.components.WebViewScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,7 +38,7 @@ fun Second() {
 
     val url = "https://wxaurl.cn/EDy2PLrcrih"
 
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "第二课堂") },
         leadingContent = {
             Icon(

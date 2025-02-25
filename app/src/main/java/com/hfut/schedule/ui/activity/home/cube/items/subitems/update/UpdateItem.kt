@@ -22,8 +22,10 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.APPVersion
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
+import com.hfut.schedule.ui.utils.components.LargeCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.ScrollText
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.components.num
 import com.hfut.schedule.ui.utils.style.CardForListColor
 
@@ -31,44 +33,32 @@ import com.hfut.schedule.ui.utils.style.CardForListColor
 @SuppressLint("SuspiciousIndentation")
 @Composable
 fun VersionInfoCard() {
-//    if(APPVersion.getVersionName().contains("Preview")) {
-//        Card(
-//            elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(horizontal = 15.dp, vertical = 5.dp),
-//            shape = MaterialTheme.shapes.medium,
-//        ) { ListItem(headlineContent = { Text(text = APPVersion.getVersionName(), fontSize = 28.sp) }) }
-//    } else
-        Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 15.dp, vertical = 5.dp),
-            shape = MaterialTheme.shapes.medium,
-            colors = CardForListColor()
-        ) {
-            ListItem(headlineContent = { Text(text = "版本 " + APPVersion.getVersionName(), fontSize = 28.sp) })
-            Row {
-                ListItem(
-                    overlineContent = { Text(text = "2025-02-20") },
-                    leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
-                    headlineContent = { Text(text = "版本号 ${APPVersion.getVersionCode()}") },
-                )
-            }
-        }
+    LargeCard(
+        title = "版本 " + APPVersion.getVersionName()
+    ) {
+        TransplantListItem(
+            overlineContent = { Text(text = "2025-02-25") },
+            leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
+            headlineContent = { Text(text = "版本号 ${APPVersion.getVersionCode()}") },
+        )
+    }
 }
 
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
 fun VersionInfo() {
+//    data class UpdateItem(val title: String,val info : String?=null,val type : UpdateType)
+//    val updates = listOf(
+//        "新增 寝室电费对合肥校区的适配",
+//    )
     Spacer(Modifier.height(3.dp))
     VersionInfoCard()
     DividerTextExpandedWith(text = "新特性") {
-        UpdateItems("新增 更多的个人信息",null,UpdateType.ADD)
-        UpdateItems("修复 除宣城校区23届在校生以外可能无法获取教务课表、课程汇总等信息的Bug",null,UpdateType.FIX)
-        UpdateItems("修复 初次使用时初始化学期信息的Bug",null,UpdateType.FIX)
+        UpdateItems("重构 卡片的UI","去掉普通卡片的低阴影，使用扁平化设计",UpdateType.RENEW)
+        UpdateItems("修复 新闻公告不显示项目的Bug",null,UpdateType.FIX)
+        UpdateItems("修复 教务登录界面由于网络问题偶发崩溃的Bug",null,UpdateType.FIX)
+        UpdateItems("优化 部分界面的布局",null,UpdateType.OPTIMIZE)
     }
 }
 

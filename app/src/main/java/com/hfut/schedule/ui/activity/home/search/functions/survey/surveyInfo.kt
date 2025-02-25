@@ -138,7 +138,7 @@ fun SurveyList(vm : NetWorkViewModel) {
 //                    elevation = CardDefaults.cardElevation(defaultElevation = 1.75.dp),
 //                    modifier = Modifier
 //                        .fillMaxWidth()
-//                        .padding(horizontal = 15.dp, vertical = 5.dp),
+//                        .padding(horizontal = AppHorizontalDp(), vertical = 5.dp),
 //                    shape = MaterialTheme.shapes.medium,
 //                ) {
 //                    inputNewList.add(blankQuestionAnswer(inputList[item].id,input))
@@ -150,7 +150,7 @@ fun SurveyList(vm : NetWorkViewModel) {
 //                            TextField(
 //                                modifier = Modifier
 //                                    .weight(1f)
-//                                    .padding(horizontal = 15.dp),
+//                                    .padding(horizontal = AppHorizontalDp()),
 //                                value = input,
 //                                onValueChange = {
 //                                    input = it
@@ -198,7 +198,7 @@ fun SurveyList(vm : NetWorkViewModel) {
 //                                                          },
 //                                                role = Role.RadioButton
 //                                            )
-//                                            .padding(horizontal = 15.dp),
+//                                            .padding(horizontal = AppHorizontalDp()),
 //                                        verticalAlignment = Alignment.CenterVertically
 //                                    ) {
 //                                        RadioButton(
@@ -228,7 +228,7 @@ fun SurveyList(vm : NetWorkViewModel) {
 //            modifier = Modifier
 //                .align(Alignment.BottomEnd)
 //                // .padding(innerPaddings)
-//                .padding(horizontal = 15.dp, vertical = 15.dp)
+//                .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
 //        ) {
 //            if (shouldShowAddButton) {  */
 //                FloatingActionButton(
@@ -236,7 +236,7 @@ fun SurveyList(vm : NetWorkViewModel) {
 //                    modifier = Modifier
 //                        .align(Alignment.BottomEnd)
 //                        // .padding(innerPaddings)
-//                        .padding(horizontal = 15.dp, vertical = 15.dp)
+//                        .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
 //                ) { Icon(painterResource(id = R.drawable.arrow_upward), "Add Button") }
 //         //   }
 //     //   }

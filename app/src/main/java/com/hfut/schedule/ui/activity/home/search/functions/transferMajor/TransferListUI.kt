@@ -67,10 +67,14 @@ import com.hfut.schedule.ui.activity.home.search.functions.life.countFunc
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
 import com.hfut.schedule.ui.activity.shower.home.function.ShowerStatusUI
 import com.hfut.schedule.ui.activity.shower.home.function.StatusMsgResponse
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.CardNormalDp
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.DepartmentIcons
+import com.hfut.schedule.ui.utils.components.StyleCardListItem
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.components.statusUI2
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
@@ -189,7 +193,7 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String) {
                         TextField(
                             modifier = Modifier
                                 .weight(1f)
-                                .padding(horizontal = 15.dp),
+                                .padding(horizontal = AppHorizontalDp()),
                             value = telephone,
                             onValueChange = {
                                 telephone = it
@@ -213,8 +217,8 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String) {
                     Spacer(Modifier.height(5.dp))
                     personInfo.mobile?.let {
                         if(it.isNotEmpty()) {
-                            MyCustomCard {
-                                ListItem(
+//                            MyCustomCard {
+                            StyleCardListItem(
                                     headlineContent = { Text(it) },
                                     overlineContent = { Text("教务系统预留手机号") },
                                     modifier = Modifier.clickable {
@@ -223,13 +227,13 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String) {
                                         showBottomSheet = true
                                     }
                                 )
-                            }
+//                            }
                         }
                     }
                     personInfo.phone?.let {
                         if(it.isNotEmpty()) {
-                            MyCustomCard {
-                                ListItem(
+//                            MyCustomCard {
+                                StyleCardListItem(
                                     headlineContent = { Text(it) },
                                     overlineContent = { Text("教务系统预留电话号") },
                                     modifier = Modifier.clickable {
@@ -238,14 +242,14 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String) {
                                         showBottomSheet = true
                                     }
                                 )
-                            }
+//                            }
 
                         }
                     }
                     prefs.getString("PHONENUM","")?.let {
                         if(it.isNotEmpty()) {
-                            MyCustomCard  {
-                                ListItem(
+//                            MyCustomCard  {
+                                StyleCardListItem(
                                     headlineContent = { Text(it) },
                                     overlineContent = { Text("呱呱物联登录手机号") },
                                     modifier = Modifier.clickable {
@@ -254,7 +258,7 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String) {
                                         showBottomSheet = true
                                     }
                                 )
-                            }
+//                            }
                         }
                     }
                     Spacer(modifier = Modifier.height(20.dp))
@@ -294,7 +298,7 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String) {
                     TextField(
                         modifier = Modifier
                             .weight(1f)
-                            .padding(horizontal = 15.dp),
+                            .padding(horizontal = AppHorizontalDp()),
                         value = input,
                         onValueChange = {
                             input = it
@@ -318,36 +322,34 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String) {
                         searchList.add(item)
                     }
                 }
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(CardNormalDp()))
 
                 LazyColumn {
                     items(searchList.size) {item ->
                         val dataItem = searchList[item]
-                        MyCustomCard {
-                            var department = dataItem.department.nameZh
-                            if(department.contains("（")) department = department.substringBefore("（")
-                            if(department.contains("(")) department = department.substringBefore("(")
-                            val count = dataItem.applyStdCount
-                            val limit = dataItem.preparedStdCount
-                            val isFull = count > limit
-                            ListItem(
-                                headlineContent = { Text(text = dataItem.major.nameZh, fontWeight = FontWeight.Bold) },
-                                supportingContent = { dataItem.registrationConditions?.let { Text(text = it) } },
-                                overlineContent = { ScrollText(text = "已申请 $count / $limit $department") },
-                                leadingContent = { DepartmentIcons(dataItem.department.nameZh) },
-                                trailingContent = {  FilledTonalIconButton(onClick = {
-                                    id = dataItem.id
-                                    showBottomSheet_select = true
-                                },
-                                    colors = if(!isFull) IconButtonDefaults.filledTonalIconButtonColors() else IconButtonDefaults.filledTonalIconButtonColors(MaterialTheme.colorScheme.error.copy(alpha = 0.1f))
-                                ) { Icon(painter = painterResource(id = R.drawable.add_2), contentDescription = "") } },
-                                colors = if(isFull) {
-                                    ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
-                                } else {
-                                    ListItemDefaults.colors()
-                                }
-                            )
-                        }
+                        var department = dataItem.department.nameZh
+                        if(department.contains("（")) department = department.substringBefore("（")
+                        if(department.contains("(")) department = department.substringBefore("(")
+                        val count = dataItem.applyStdCount
+                        val limit = dataItem.preparedStdCount
+                        val isFull = count > limit
+                        StyleCardListItem(
+                            headlineContent = { Text(text = dataItem.major.nameZh, fontWeight = FontWeight.Bold) },
+                            supportingContent = { dataItem.registrationConditions?.let { Text(text = it) } },
+                            overlineContent = { ScrollText(text = "已申请 $count / $limit $department") },
+                            leadingContent = { DepartmentIcons(dataItem.department.nameZh) },
+                            trailingContent = {  FilledTonalIconButton(onClick = {
+                                id = dataItem.id
+                                showBottomSheet_select = true
+                            },
+                                colors = if(!isFull) IconButtonDefaults.filledTonalIconButtonColors() else IconButtonDefaults.filledTonalIconButtonColors(MaterialTheme.colorScheme.error.copy(alpha = 0.1f))
+                            ) { Icon(painter = painterResource(id = R.drawable.add_2), contentDescription = "") } },
+                            color = if(isFull) {
+                                MaterialTheme.colorScheme.errorContainer
+                            } else {
+                                null
+                            }
+                        )
                     }
                 }
             }

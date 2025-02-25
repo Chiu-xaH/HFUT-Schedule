@@ -32,6 +32,7 @@ import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.ui.utils.components.WebViewScreen
 import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.components.WebDialog
 import java.io.File
 import java.io.FileOutputStream
@@ -46,7 +47,7 @@ fun SchoolCalendar() {
         null
     }
 
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "校历") },
         leadingContent = { Icon(painter = painterResource(id = R.drawable.calendar_view_day), contentDescription = "")},
         modifier = Modifier.clickable {

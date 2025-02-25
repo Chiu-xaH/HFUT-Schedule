@@ -10,10 +10,11 @@ import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.Starter
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 
 @Composable
 fun HotWater() {
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "热水") },
         leadingContent = { Icon(painterResource(R.drawable.water_voc), contentDescription = "")},
         modifier = Modifier.clickable { Starter.startAppUrl(MyApplication.AlipayHotWaterURL) }

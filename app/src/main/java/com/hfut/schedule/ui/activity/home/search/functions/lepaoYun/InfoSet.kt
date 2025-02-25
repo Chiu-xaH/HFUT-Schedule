@@ -40,7 +40,9 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.MyCustomCard
+import com.hfut.schedule.ui.utils.components.StyleCardListItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -84,12 +86,12 @@ fun InfoSet() {
             ) { innerPadding ->
                 Column(modifier = Modifier.padding(innerPadding).fillMaxSize()
                 ) {
-                    MyCustomCard{
-                        ListItem(
+//                    MyCustomCard{
+                        StyleCardListItem(
                             headlineContent = { Text(text = "请通过抓包获取常用设备的token,多设备登录会带来风险,所以要手动填写")},
                             leadingContent = { Icon(painterResource(id = R.drawable.info), contentDescription = "")}
                         )
-                    }
+//                    }
 
                     Spacer(modifier = Modifier.height(10.dp))
 
@@ -97,7 +99,7 @@ fun InfoSet() {
                         TextField(
                             modifier = Modifier
                                 .weight(1f)
-                                .padding(horizontal = 15.dp),
+                                .padding(horizontal = AppHorizontalDp()),
                             value = inputToken,
                             onValueChange = { inputToken = it },
                             label = { Text("token") },

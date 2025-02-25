@@ -71,6 +71,7 @@ import com.hfut.schedule.logic.utils.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.Starter.loginGuaGua
 import com.hfut.schedule.logic.utils.Starter.startGuagua
 import com.hfut.schedule.ui.activity.home.search.functions.electric.PayFor
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.MyToast
@@ -257,7 +258,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false) {
             ),
             title = { ScrollText("洗浴-宣城校区") },
             actions = {
-                Row(modifier = Modifier.padding(horizontal = 15.dp)) {
+                Row(modifier = Modifier.padding(horizontal = AppHorizontalDp())) {
                     if(showitem4)
                         IconButton(onClick = {phoneNumber = phoneNumber.replaceFirst(".$".toRegex(), "")}) {
                             Icon(painter = painterResource(R.drawable.backspace), contentDescription = "description") }
@@ -311,7 +312,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false) {
 
         Row(modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 15.dp, vertical = 0.dp), horizontalArrangement = Arrangement.Start) {
+            .padding(horizontal = AppHorizontalDp(), vertical = 0.dp), horizontalArrangement = Arrangement.Start) {
             AssistChip(
                 onClick = { showitem4 = !showitem4 },
                 label = { Text(text = "手机号 ${phoneNumber}") },
@@ -331,7 +332,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false) {
             ) + fadeIn(initialAlpha = 0.3f),
             exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
         ) {
-            Row (modifier = Modifier.padding(horizontal = 15.dp)){
+            Row (modifier = Modifier.padding(horizontal = AppHorizontalDp())){
                 OutlinedCard{
                     LazyColumn(modifier = Modifier.padding(horizontal = 10.dp)) {
                         item {
@@ -377,11 +378,11 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false) {
             Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
                 Spacer(modifier = Modifier.height(100.dp))
                 Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = AppHorizontalDp()),
                     modifier = Modifier
                         .fillMaxWidth()
                         .scale(scale2.value)
-                        .padding(horizontal = 15.dp, vertical = 5.dp),
+                        .padding(horizontal = AppHorizontalDp(), vertical = 5.dp),
                     shape = MaterialTheme.shapes.medium,
                     colors = CardForListColor()
                 ) {
@@ -410,7 +411,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false) {
             BottomTip(str = "首次使用前需在微信小程序-呱呱物联绑定手机号")
         }
 
-        Spacer(modifier = Modifier.height(15.dp))
+        Spacer(modifier = Modifier.height(AppHorizontalDp()))
     }
 }
 //适配

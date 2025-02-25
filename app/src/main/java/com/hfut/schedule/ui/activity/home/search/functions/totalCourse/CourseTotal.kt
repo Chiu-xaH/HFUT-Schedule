@@ -36,9 +36,12 @@ import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.main.saved.isNextOpen
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.ScrollText
+import com.hfut.schedule.ui.utils.components.StyleCardListItem
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,7 +52,7 @@ fun CourseTotal(vm :NetWorkViewModel) {
     val json = prefs.getString("courses","")
     val jsonNext = prefs.getString("coursesNext","")
 
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "课程汇总") },
         leadingContent = {
             Icon(
@@ -93,7 +96,7 @@ fun CourseTotal(vm :NetWorkViewModel) {
                                 }
                                 FilledTonalButton(
                                     onClick = { sortType = !sortType },
-                                    modifier = Modifier.padding(horizontal = 15.dp
+                                    modifier = Modifier.padding(horizontal = AppHorizontalDp()
                                     )) {
                                     Text(text = if(sortType) "开课时间" else "学分高低")
                                 }
@@ -141,24 +144,18 @@ fun periodsSum(json: String) : Double {
 fun SemsterInfo(json : String?) {
 
     val semsterInfo = getTotalCourse(json)[0].semester
+    StyleCardListItem(
+        overlineContent = { Text(text = semsterInfo.startDate + " ~ " + semsterInfo.endDate)},
+        headlineContent = {  ScrollText(semsterInfo.nameZh) },
+        leadingContent = { Icon(
+            painterResource(R.drawable.category),
+            contentDescription = "Localized description",
+        ) },
+        modifier = Modifier.clickable {},
+        color = MaterialTheme.colorScheme.primaryContainer,
+        trailingContent = { if (json != null) { if(json.contains("lessonIds"))Text(text = "学分 ${periodsSum(json)}") } }
+    )
 
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-        Column() {
-            MyCustomCard{
-                ListItem(
-                     overlineContent = { Text(text = semsterInfo.startDate + " ~ " + semsterInfo.endDate)},
-                    headlineContent = {  ScrollText(semsterInfo.nameZh) },
-                    leadingContent = { Icon(
-                        painterResource(R.drawable.category),
-                        contentDescription = "Localized description",
-                    ) },
-                    modifier = Modifier.clickable {},
-                    colors = ListItemDefaults.colors(MaterialTheme.colorScheme.primaryContainer),
-                    trailingContent = { if (json != null) { if(json.contains("lessonIds"))Text(text = "学分 ${periodsSum(json)}") } }
-                )
-            }
-        }
-    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -225,7 +222,7 @@ fun CourseTotalForApi(modifier: Modifier = Modifier, vm: NetWorkViewModel, isIco
 
                             FilledTonalButton(
                                 onClick = { sortType = !sortType },
-                                modifier = Modifier.padding(horizontal = 15.dp
+                                modifier = Modifier.padding(horizontal = AppHorizontalDp()
                                 )) {
                                 Text(text = if(sortType) "开课时间" else "学分高低")
                             }

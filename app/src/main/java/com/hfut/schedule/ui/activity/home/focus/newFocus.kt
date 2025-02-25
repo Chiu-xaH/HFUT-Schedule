@@ -225,7 +225,7 @@ fun getURL() : String {
 //                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
 //                    modifier = Modifier
 //                        .fillMaxWidth()
-//                        .padding(horizontal = 15.dp, vertical = 5.dp),
+//                        .padding(horizontal = AppHorizontalDp(), vertical = 5.dp),
 //                    shape = MaterialTheme.shapes.medium,
 //                ) {
 //

@@ -8,6 +8,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.POST
+import retrofit2.http.Query
 
 interface LoginService {
     //获取AES加密的Key
@@ -43,7 +44,24 @@ interface LoginService {
         @Header("Cookie") Cookie : String
     ) : Call<ResponseBody>
 
+//    @GET("cas/login")
+//    fun loginStu(
+//        @Query("service") platform : String = "https://stu.hfut.edu.cn/xsfw/sys/swmzhcptybbapp/*default/index.do",
+//        @Header("Cookie") cookie : String
+//    ) : Call<ResponseBody>
 
+    // 待重构 这个接口可以供教务、信息门户、学工系统等登录，传入不同的serviceURL，但是早期不会这些，写的时候没解耦合，懒得重构了，等有空的
+    @GET("cas/login")
+    fun loginGoTo(
+        @Query("service") service : String,
+        @Header("Cookie") cookie : String
+    ) : Call<ResponseBody>
+    // https://community.hfut.edu.cn/
+    // https://stu.hfut.edu.cn/xsfw/sys/swmzhcptybbapp/*default/index.do
+    // http://jxglstu.hfut.edu.cn/eams5-student/neusoft-sso/login
 
-
+    //社区登录
+//    @GET("cas/login?service=https%3A%2F%2Fcommunity.hfut.edu.cn%2F")
+//    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.17")
+//    fun loginCommunity(@Header("Cookie") Cookie : String) : Call<ResponseBody>
 }

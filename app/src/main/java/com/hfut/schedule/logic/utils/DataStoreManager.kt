@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.hfut.schedule.App.MyApplication
@@ -19,10 +20,16 @@ object DataStoreManager {
     private val dataStore = MyApplication.context.dataStore
 
     private val ANIMATION_TYPE = intPreferencesKey("animation_types")
+    private val STU_COOKIE = stringPreferencesKey("stu_cookie")
 
     suspend fun saveAnimationType(type: Int) {
         dataStore.edit { preferences ->
             preferences[ANIMATION_TYPE] = type
+        }
+    }
+    suspend fun saveStuCookie(cookie: String) {
+        dataStore.edit { preferences ->
+            preferences[STU_COOKIE] = cookie
         }
     }
 
@@ -30,6 +37,11 @@ object DataStoreManager {
     val animationTypeFlow: Flow<Int> = dataStore.data
         .map { preferences ->
             preferences[ANIMATION_TYPE] ?: NavigateAndAnimationManager.AnimationTypes.FadeAnimation.code
+        }
+
+    val stuCookieFlow: Flow<String> = dataStore.data
+        .map { preferences ->
+            preferences[STU_COOKIE] ?: ""
         }
 
 

@@ -47,12 +47,14 @@ import com.hfut.schedule.logic.beans.PayData
 import com.hfut.schedule.logic.beans.PayResponse
 import com.hfut.schedule.logic.utils.ClipBoard
 import com.hfut.schedule.logic.utils.Starter
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.style.CardForListColor
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.ScrollText
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -66,7 +68,7 @@ fun Pay(ifSaved : Boolean,vm : NetWorkViewModel) {
  //   var showDialog by remember { mutableStateOf(false) }
 
     val url = "http://pay.hfut.edu.cn/payment/mobileOnlinePay"
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "学费") },
         leadingContent = { Icon(painter = painterResource(id = R.drawable.paid), contentDescription = "") },
         modifier = Modifier.clickable {
@@ -149,10 +151,10 @@ fun PayUI(url : String,vm: NetWorkViewModel) {
     val data = getPay(vm)
     DividerTextExpandedWith(text = "欠缴费用",false) {
         Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = AppHorizontalDp()),
             modifier = Modifier
                 .fillMaxWidth().scale(scale2.value)
-                .padding(horizontal = 15.dp, vertical = 5.dp),
+                .padding(horizontal = AppHorizontalDp(), vertical = 5.dp),
             shape = MaterialTheme.shapes.medium,
             colors = CardForListColor()
         ) {
@@ -162,7 +164,7 @@ fun PayUI(url : String,vm: NetWorkViewModel) {
                     trailingContent = {
                         FilledTonalButton(
                             onClick = { Starter.startWebUrl(url) },
-                            modifier = Modifier.padding(horizontal = 15.dp)
+                            modifier = Modifier.padding(horizontal = AppHorizontalDp())
                         ) {
                             Text(text = "缴费")
                         }

@@ -171,10 +171,10 @@ fun TEST(innerPaddings : PaddingValues) {
 //                    if(!inDetails) {
 //                        Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
 //                            Card(
-//                                elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
+//                                elevation = CardDefaults.cardElevation(defaultElevation = AppHorizontalDp()),
 //                                modifier = Modifier
 //                                    .width(200.dp)
-//                                    .padding(horizontal = 15.dp, vertical = 5.dp)
+//                                    .padding(horizontal = AppHorizontalDp(), vertical = 5.dp)
 //                                    .sharedBounds(
 //                                        sharedContentState = rememberSharedContentState(key = "bounds"),
 //                                        animatedVisibilityScope = this@AnimatedContent,
@@ -193,10 +193,10 @@ fun TEST(innerPaddings : PaddingValues) {
 //                    } else  {
 //                        //  Dialog(onDismissRequest = { showDetails = false }) {
 //                        Card(
-//                            elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
+//                            elevation = CardDefaults.cardElevation(defaultElevation = AppHorizontalDp()),
 //                            modifier = Modifier
 //                                .fillMaxWidth()
-//                                .padding(horizontal = 15.dp, vertical = 5.dp)
+//                                .padding(horizontal = AppHorizontalDp(), vertical = 5.dp)
 //                                .sharedBounds(
 //                                    sharedContentState = rememberSharedContentState(key = "bounds"),
 //                                    animatedVisibilityScope = this@AnimatedContent,

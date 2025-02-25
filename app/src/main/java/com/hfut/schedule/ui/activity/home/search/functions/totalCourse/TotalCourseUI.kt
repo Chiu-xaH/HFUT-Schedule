@@ -72,6 +72,8 @@ import com.hfut.schedule.ui.utils.components.RotatingIcon
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.DepartmentIcons
+import com.hfut.schedule.ui.utils.components.StyleCardListItem
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.ColumnVertical
 
 @SuppressLint("SuspiciousIndentation")
@@ -149,32 +151,28 @@ fun CourseTotalUI(json : String?,isSearch : Boolean,sortType: Boolean,vm : NetWo
                     ), label = ""
                 )
                 val code = list[item].code
+                StyleCardListItem(
+                    headlineContent = {  Text(list[item].course.nameZh) },
+                    overlineContent = { ScrollText(text =
+                    "学分 ${list[item].course.credits}" +
+                            (if(list[item].scheduleWeeksInfo != null) " | $weeksInfo" else "") +
+                            (if(isSearch && code.contains("--")) " | " + code.substringAfter("--") + "班" else "")
+                    ) },
+                    trailingContent = {
+                        val type = list[item].courseType.nameZh
 
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                    Column() {
-                        MyCustomCard {
-                            ListItem(
-                                headlineContent = {  Text(list[item].course.nameZh) },
-                                overlineContent = { ScrollText(text =
-                                        "学分 ${list[item].course.credits}" +
-                                        (if(list[item].scheduleWeeksInfo != null) " | $weeksInfo" else "") +
-                                        (if(isSearch && code.contains("--")) " | " + code.substringAfter("--") + "班" else "")
-                                ) },
-                                trailingContent = {
-                                    val type = list[item].courseType.nameZh
-
-                                    ColumnVertical() {
-                                        if(type.contains("选修") || type.contains("慕课") || type.contains("公选")) {
-                                            Text("选修")
-                                        } else if(type.contains("实践")) {
-                                            Text("实践")
-                                        }
-                                        if(!type.contains("实践")) {
-                                            if(list[item].scheduleWeeksInfo == null && list[item].scheduleText.dateTimePlacePersonText.textZh == null) {
-                                                Text("非教室")
-                                            }
-                                        }
-                                    }
+                        ColumnVertical() {
+                            if(type.contains("选修") || type.contains("慕课") || type.contains("公选")) {
+                                Text("选修")
+                            } else if(type.contains("实践")) {
+                                Text("实践")
+                            }
+                            if(!type.contains("实践")) {
+                                if(list[item].scheduleWeeksInfo == null && list[item].scheduleText.dateTimePlacePersonText.textZh == null) {
+                                    Text("非教室")
+                                }
+                            }
+                        }
 
 //                                    when(state) {
 //                                        ONGOING -> Text("开课中", modifier = Modifier.alpha(alpha))
@@ -182,19 +180,23 @@ fun CourseTotalUI(json : String?,isSearch : Boolean,sortType: Boolean,vm : NetWo
 //                                        ENDED -> Icon(Icons.Filled.Check,null)
 //                                        null -> Icon(Icons.Filled.ArrowForward,null)
 //                                    }
-                                },
-                                //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
-                                leadingContent = {
-                                    list[item].openDepartment.nameZh.let { DepartmentIcons(name = it) }
-                                                 },
-                                modifier = Modifier.clickable {
-                                    showBottomSheet = true
-                                    numItem = item
-                                },
-                            )
-                        }
-                    }
-                }
+                    },
+                    //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
+                    leadingContent = {
+                        list[item].openDepartment.nameZh.let { DepartmentIcons(name = it) }
+                    },
+                    modifier = Modifier.clickable {
+                        showBottomSheet = true
+                        numItem = item
+                    },
+                )
+//                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+//                    Column() {
+//                        MyCustomCard {
+//
+//                        }
+//                    }
+//                }
             }
             if(isSearch)
             item { Spacer(modifier = Modifier.height(85.dp)) }

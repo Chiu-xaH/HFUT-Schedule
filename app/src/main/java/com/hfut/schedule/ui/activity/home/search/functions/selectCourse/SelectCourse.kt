@@ -74,11 +74,16 @@ import com.hfut.schedule.ui.activity.home.main.saved.UpdateCourses
 import com.hfut.schedule.ui.activity.home.search.functions.failRate.ApiToFailRate
 import com.hfut.schedule.ui.activity.home.search.functions.failRate.permit
 import com.hfut.schedule.ui.activity.home.search.functions.teacherSearch.ApiToTeacherSearch
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.CardNormalColor
+import com.hfut.schedule.ui.utils.components.CardNormalDp
 import com.hfut.schedule.ui.utils.components.LittleDialog
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.ScrollText
+import com.hfut.schedule.ui.utils.components.StyleCardListItem
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -111,7 +116,7 @@ fun SelectCourse(ifSaved : Boolean, vm : NetWorkViewModel) {
                         ),
                         title = { Text("选课") },
                         actions = {
-                            Row(modifier = Modifier.padding(horizontal = 15.dp)) {
+                            Row(modifier = Modifier.padding(horizontal = AppHorizontalDp())) {
                                 FilledTonalIconButton(onClick = { showBottomSheet_info = true }, ) {
                                     Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")
                                 }
@@ -167,7 +172,7 @@ fun SelectCourse(ifSaved : Boolean, vm : NetWorkViewModel) {
         }
     }
 
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "选课") },
         leadingContent = {
             Icon(painter = painterResource(id = R.drawable.ads_click), contentDescription = "")
@@ -180,18 +185,18 @@ fun SelectCourse(ifSaved : Boolean, vm : NetWorkViewModel) {
 }
 @Composable
 fun SelectShuoming() {
-    MyCustomCard {
-        ListItem(
+//    MyCustomCard {
+        StyleCardListItem(
             headlineContent = { Text(text = "免责声明") },
             supportingContent = { Text(text = "本应用不承担选课失败造成的后果\n请登录官方系统,确保一定选课成功")}
         )
-    }
-    MyCustomCard {
-        ListItem(
+//    }
+//    MyCustomCard {
+        StyleCardListItem(
             headlineContent = { Text(text = "功能说明") },
             supportingContent = { Text(text = "点击右侧按钮选退课\n点击卡片查看详细课程信息\n退课后列表并不会更新,请手动刷新\n选退课时请核对课程代码\n若持续加载可能为教务服务器问题\n选退课完成后前往课表与课程汇总,会显示出新课程(也可在右上角手动刷新)")}
         )
-    }
+//    }
 }
 
 @Composable
@@ -305,7 +310,7 @@ fun SelectCourseList(vm: NetWorkViewModel) {
                         actions = {
                             FilledTonalButton(onClick = {
                                 showBottomSheet_selected = true
-                            }, modifier = Modifier.padding(horizontal = 15.dp)) {
+                            }, modifier = Modifier.padding(horizontal = AppHorizontalDp())) {
                                 Text(text = "退课")
                             }
                         }
@@ -329,7 +334,7 @@ fun SelectCourseList(vm: NetWorkViewModel) {
 //                elevation = CardDefaults.cardElevation(defaultElevation = 1.75.dp),
 //                modifier = Modifier
 //                    .fillMaxWidth()
-//                    .padding(horizontal = 15.dp, vertical = 5.dp)
+//                    .padding(horizontal = AppHorizontalDp(), vertical = 5.dp)
 //                    .clickable {
 //                        courseId = list[item].id
 //                        SharePrefs.Save("courseIDS", list[item].id.toString())
@@ -339,14 +344,17 @@ fun SelectCourseList(vm: NetWorkViewModel) {
 //                shape = MaterialTheme.shapes.medium,
 //            )
             MyCustomCard(Modifier.fillMaxWidth()
-                .padding(horizontal = 15.dp, vertical = 5.dp)
+                .padding(horizontal = AppHorizontalDp(), vertical = CardNormalDp())
                 .clickable {
                     courseId = list[item].id
                     SharePrefs.saveString("courseIDS", list[item].id.toString())
                     name = list[item].name
                     showBottomSheet = true
-                }) {
-                ListItem(
+                },
+                hasElevation = false,
+                containerColor = CardNormalColor()
+            ) {
+                TransplantListItem(
                     headlineContent = { Text(text = list[item].name) },
                     overlineContent = { Text(text = list[item].selectDateTimeText)},
                     trailingContent = { FilledTonalIconButton(onClick = { expand = !expand }) {
@@ -365,13 +373,13 @@ fun SelectCourseList(vm: NetWorkViewModel) {
                     exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
                 ) {
                     Column {
-                        ListItem(
+                        TransplantListItem(
                             headlineContent = { Text(text = "选课公告") },
                             supportingContent = {
                                 Text(text = list[item].bulletin)
                             }
                         )
-                        ListItem(
+                        TransplantListItem(
                             headlineContent = { Text(text = "选课规则") },
                             supportingContent = {
                                 for (i in list[item].addRulesText) {
@@ -431,7 +439,7 @@ fun SelectCourseInfoLoad(courseId : Int, vm: NetWorkViewModel) {
                 TextField(
                     modifier = Modifier
                         .weight(1f)
-                        .padding(horizontal = 15.dp),
+                        .padding(horizontal = AppHorizontalDp()),
                     value = input,
                     onValueChange = {
                         input = it
@@ -450,7 +458,7 @@ fun SelectCourseInfoLoad(courseId : Int, vm: NetWorkViewModel) {
                     colors = textFiledTransplant(),
                 )
             }
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(CardNormalDp()))
             SelectCourseInfo(vm,courseId,input)
         }
     } else {
@@ -526,7 +534,7 @@ fun SelectCourseInfo(vm: NetWorkViewModel, courseId : Int, search : String = "")
                     actions = {
                         FilledTonalButton(onClick = {
                             showBottomSheet = true
-                        }, modifier = Modifier.padding(horizontal = 15.dp)) {
+                        }, modifier = Modifier.padding(horizontal = AppHorizontalDp())) {
                             Text(text = "选课")
                         }
                     }
@@ -556,11 +564,11 @@ fun SelectCourseInfo(vm: NetWorkViewModel, courseId : Int, search : String = "")
                     }
                 }
             }
-            MyCustomCard {
+//            MyCustomCard {
                 val limit = lists.limitCount
                 val isFull = stdCount.toInt() >= lists.limitCount
                 val remark = lists.remark
-                ListItem(
+                StyleCardListItem(
                     headlineContent = { Text(text = lists.course.nameZh, fontWeight = FontWeight.Bold) },
                     overlineContent = { Text(text =   "已选 " + stdCount + " / " + limit + " | ${lists.code}")},
                     supportingContent = { Text(text = lists.nameZh  + if(remark != null && remark != "") "\n${remark}" else "")},
@@ -585,13 +593,13 @@ fun SelectCourseInfo(vm: NetWorkViewModel, courseId : Int, search : String = "")
                         num = item
                         lessonId = lists.id
                     },
-                    colors = if(isFull) {
-                        ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
+                    color = if(isFull) {
+                         MaterialTheme.colorScheme.errorContainer
                     } else {
-                        ListItemDefaults.colors()
+                        null
                     }
                 )
-            }
+//            }
         }
     }
 }
@@ -889,7 +897,7 @@ fun haveSelectedCourse(vm: NetWorkViewModel, courseId : Int) {
                     ),
                     title = { ScrollText(text = name) },
                     actions = {
-                        FilledTonalButton(onClick = { showDialog = true }, modifier = Modifier.padding(horizontal = 15.dp)) {
+                        FilledTonalButton(onClick = { showDialog = true }, modifier = Modifier.padding(horizontal = AppHorizontalDp())) {
                             Text(text = "退课")
                         }
                     }
@@ -945,8 +953,8 @@ fun haveSelectedCourse(vm: NetWorkViewModel, courseId : Int) {
     LazyColumn {
         items(lists.size) {item ->
             val names =  lists[item].course.nameZh
-            MyCustomCard {
-                ListItem(
+//            MyCustomCard {
+            StyleCardListItem(
                     headlineContent = { Text(text = names)  },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.category), contentDescription = "")},
                     trailingContent = { FilledTonalIconButton(onClick = {
@@ -963,7 +971,7 @@ fun haveSelectedCourse(vm: NetWorkViewModel, courseId : Int) {
                         lessonId = lists[item].id
                     }
                 )
-            }
+//            }
         }
     }
 }

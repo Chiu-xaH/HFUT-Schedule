@@ -38,6 +38,7 @@ import com.hfut.schedule.logic.utils.WebVpn
 import com.hfut.schedule.ui.activity.grade.getGrade
 import com.hfut.schedule.ui.activity.grade.grade.community.GradeItemUI
 import com.hfut.schedule.ui.activity.grade.grade.jxglstu.GradeItemUIJXGLSTU
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.Round
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -72,7 +73,7 @@ fun Grade(vm : NetWorkViewModel, ifSaved : Boolean)  {
 
 //    val webVpn = vm.webVpn
 
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "成绩") },
         leadingContent = {
             BadgedBox(badge = {

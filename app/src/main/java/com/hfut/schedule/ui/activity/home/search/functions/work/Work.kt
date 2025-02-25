@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,7 +32,7 @@ fun Work(ifSaved : Boolean){
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
 
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "实习") },
         leadingContent = { Icon(painter = painterResource(id = R.drawable.work), contentDescription = "") },
         modifier = Modifier.clickable {

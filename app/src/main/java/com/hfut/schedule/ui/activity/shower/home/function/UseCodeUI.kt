@@ -56,6 +56,7 @@ import com.hfut.schedule.logic.utils.reEmptyLiveDta
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.CirclePoint
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.KeyBoard
 import com.hfut.schedule.ui.utils.components.ActiveTopBar
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
 import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.statusUI
@@ -113,7 +114,7 @@ fun UseCodeUI(vm: GuaGuaViewModel) {
                     CirclePoint(text = passwordStatus, password = password, num = 5)
                     Spacer(modifier = Modifier.height(20.dp))
                     KeyBoard(
-                        modifier = Modifier.padding(horizontal = 15.dp),
+                        modifier = Modifier.padding(horizontal = AppHorizontalDp()),
                         onKeyClick = { num ->
                             if (password.length < len) {
                                 password += num.toString()
@@ -202,10 +203,10 @@ fun UseCodeUI(vm: GuaGuaViewModel) {
     if(switchAutoRefresh && refresh) { refresh() }
 
     Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = AppHorizontalDp()),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 15.dp, vertical = 5.dp).scale(scale2.value),
+            .padding(horizontal = AppHorizontalDp(), vertical = 5.dp).scale(scale2.value),
         shape = MaterialTheme.shapes.medium,
         colors = CardForListColor()
     ) {

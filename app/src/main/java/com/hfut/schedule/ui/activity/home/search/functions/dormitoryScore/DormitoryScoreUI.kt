@@ -63,6 +63,10 @@ import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.CardNormalDp
+import com.hfut.schedule.ui.utils.components.SmallCard
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -99,7 +103,7 @@ fun DormitoryScoreUI(vm : NetWorkViewModel) {
     else NS = "N"
 
 
-    DropdownMenu(expanded = showitem, onDismissRequest = { showitem = false }, offset = DpOffset(15.dp,0.dp)) {
+    DropdownMenu(expanded = showitem, onDismissRequest = { showitem = false }, offset = DpOffset(AppHorizontalDp(),0.dp)) {
         DropdownMenuItem(text = { Text(text = "北一号楼") }, onClick = { BuildingsNumber =  "1"
             showitem = false})
         DropdownMenuItem(text = { Text(text = "北二号楼") }, onClick = {  BuildingsNumber =  "2"
@@ -134,7 +138,7 @@ fun DormitoryScoreUI(vm : NetWorkViewModel) {
                 ),
                 title = { Text("寝室评分-宣城校区") },
                 actions = {
-                    Row(modifier = Modifier.padding(horizontal = 15.dp)) {
+                    Row(modifier = Modifier.padding(horizontal = AppHorizontalDp())) {
                         if(showitem4)
                         IconButton(onClick = {RoomNumber = RoomNumber.replaceFirst(".$".toRegex(), "")}) {
                             Icon(painter = painterResource(R.drawable.backspace), contentDescription = "description") }
@@ -184,7 +188,7 @@ fun DormitoryScoreUI(vm : NetWorkViewModel) {
 
                 Row(modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 0.dp), horizontalArrangement = Arrangement.Start){
+                    .padding(horizontal = AppHorizontalDp(), vertical = 0.dp), horizontalArrangement = Arrangement.Start){
 
                     AssistChip(
                         onClick = { showitem = true },
@@ -224,7 +228,7 @@ fun DormitoryScoreUI(vm : NetWorkViewModel) {
                     ) + fadeIn(initialAlpha = 0.3f),
                     exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
                 ){
-                    Row (modifier = Modifier.padding(horizontal = 15.dp)){
+                    Row (modifier = Modifier.padding(horizontal = AppHorizontalDp())){
                         OutlinedCard{
                             LazyColumn(modifier = Modifier.padding(horizontal = 10.dp)) {
                                 item {
@@ -290,17 +294,11 @@ fun DormitoryScoreUI(vm : NetWorkViewModel) {
                             enter = fadeIn(),
                             exit = fadeOut()
                         ){
-                            LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.padding(horizontal = 5.dp)) {
+                            LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.padding(horizontal = AppHorizontalDp()- CardNormalDp())) {
                                 getDormitoryScore(vm)?.let {
                                     items(it.size) { item ->
-                                        Card(
-                                            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(horizontal = 5.dp, vertical = 5.dp),
-                                            shape = MaterialTheme.shapes.small
-                                        ) {
-                                            ListItem(
+                                        SmallCard(modifier = Modifier.padding(horizontal = CardNormalDp(), vertical = CardNormalDp())) {
+                                            TransplantListItem(
                                                 headlineContent = { getDormitoryScore(vm)?.get(item)?.let { it1 -> Text(text = it1.date) } },
                                                 supportingContent = { Text(text =  "${getDormitoryScore(vm)?.get(item)?.score} 分")}
                                             )

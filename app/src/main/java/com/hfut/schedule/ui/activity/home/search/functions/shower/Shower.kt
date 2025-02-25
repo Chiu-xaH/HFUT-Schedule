@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -36,7 +37,7 @@ fun Shower(vm: NetWorkViewModel) {
     }
 
 
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "洗浴") },
         leadingContent = {
             Icon(painterResource(id = R.drawable.bathtub), contentDescription = "")

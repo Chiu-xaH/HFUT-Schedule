@@ -49,8 +49,10 @@ import com.hfut.schedule.logic.utils.DateTimeManager
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.grade.getGrade
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.EmptyUI
 import com.hfut.schedule.ui.utils.components.MyCustomCard
+import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -66,21 +68,21 @@ fun TotalGrade() {
     val Major = result.majorRanking
     val TotalGPA = result.gpa
 
+    StyleCardListItem(
+        headlineContent = {  Text("绩点(GPA)  $TotalGPA") },
+        supportingContent = { Text("班级排名: $Class   专业排名: $Major") },
+        leadingContent = { Icon(painterResource(R.drawable.flag), contentDescription = "Localized description",) },
+        modifier = Modifier.clickable {},
+        color = MaterialTheme.colorScheme.primaryContainer
+    )
 
-
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-        Column() {
-            MyCustomCard{
-                ListItem(
-                    headlineContent = {  Text("绩点(GPA)  $TotalGPA") },
-                    supportingContent = { Text("班级排名: $Class   专业排名: $Major") },
-                    leadingContent = { Icon(painterResource(R.drawable.flag), contentDescription = "Localized description",) },
-                    modifier = Modifier.clickable {},
-                    colors = ListItemDefaults.colors(MaterialTheme.colorScheme.primaryContainer)
-                )
-            }
-        }
-    }
+//    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+//        Column() {
+//            MyCustomCard{
+//
+//            }
+//        }
+//    }
 }
 
 @Composable
@@ -105,7 +107,7 @@ fun GradeItemUI(vm :NetWorkViewModel, innerPadding : PaddingValues) {
     else term = "2"
 
     var showitem_year by remember { mutableStateOf(false) }
-    DropdownMenu(expanded = showitem_year, onDismissRequest = { showitem_year = false }, offset = DpOffset(15.dp,0.dp)) {
+    DropdownMenu(expanded = showitem_year, onDismissRequest = { showitem_year = false }, offset = DpOffset(AppHorizontalDp(),0.dp)) {
         DropdownMenuItem(text = { Text(text = "${(DateTimeManager.Date_yyyy.toInt() - 3).toString()} - ${(DateTimeManager.Date_yyyy.toInt() - 2).toString()}" )}, onClick = {
             Years = (DateTimeManager.Date_yyyy.toInt() - 3)
             showitem_year = false})
@@ -136,7 +138,7 @@ fun GradeItemUI(vm :NetWorkViewModel, innerPadding : PaddingValues) {
             Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
             Row(modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 15.dp, vertical = 0.dp), horizontalArrangement = Arrangement.Start){
+                .padding(horizontal = AppHorizontalDp(), vertical = 0.dp), horizontalArrangement = Arrangement.Start){
 
                 AssistChip(
                     onClick = { showitem_year = true },
@@ -185,7 +187,7 @@ fun GradeItemUI(vm :NetWorkViewModel, innerPadding : PaddingValues) {
                 )
             }
 
-            if(getGrade().size == 0) EmptyUI()
+            if(getGrade().isEmpty()) EmptyUI()
             else
                 LazyColumn {
                     item { TotalGrade() }
@@ -194,50 +196,32 @@ fun GradeItemUI(vm :NetWorkViewModel, innerPadding : PaddingValues) {
                         var passs = ""
                         if (pass == true) passs = "通过"
                         else passs = "挂科"
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            Column() {
-                                MyCustomCard {
-                                    ListItem(
-                                        headlineContent = { Text(getGrade()[item].courseName) },
-                                        supportingContent = { Text("学分: " + getGrade()[item].credit + "   绩点: " + getGrade()[item].gpa + "   分数: ${getGrade()[item].score}") },
-                                        leadingContent = {
-                                            Icon(
-                                                painterResource(R.drawable.article),
-                                                contentDescription = "Localized description",
-                                            )
-                                        },
-                                        trailingContent = { Text(passs) },
-                                        modifier = Modifier.clickable {},
-                                    )
-                                }
-                            }
-                        }
+                        StyleCardListItem(
+                            headlineContent = { Text(getGrade()[item].courseName) },
+                            supportingContent = { Text("学分: " + getGrade()[item].credit + "   绩点: " + getGrade()[item].gpa + "   分数: ${getGrade()[item].score}") },
+                            leadingContent = {
+                                Icon(
+                                    painterResource(R.drawable.article),
+                                    contentDescription = "Localized description",
+                                )
+                            },
+                            trailingContent = { Text(passs) },
+                            modifier = Modifier.clickable {},
+                        )
                     }
                     item {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            Column() {
-                                MyCustomCard {
-                                    ListItem(
-                                        headlineContent = { Text("查看分数详细请点击此处进入教务数据") },
-                                        supportingContent = { Text(text = "您现在使用的是智慧社区接口,使用教务系统数据可查看详细成绩") },
-                                        trailingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "") },
-                                        modifier = Modifier.clickable {
-                                            val it = Intent(MyApplication.context, LoginActivity::class.java).apply {
-                                                putExtra("nologin",false)
-                                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                            }
-                                            MyApplication.context.startActivity(it)
-                                        },
-                                    )
+                        StyleCardListItem(
+                            headlineContent = { Text("查看分数详细请点击此处进入教务数据") },
+                            supportingContent = { Text(text = "您现在使用的是智慧社区接口,使用教务系统数据可查看详细成绩") },
+                            trailingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "") },
+                            modifier = Modifier.clickable {
+                                val it = Intent(MyApplication.context, LoginActivity::class.java).apply {
+                                    putExtra("nologin",false)
+                                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                                 }
-                            }
-                        }
+                                MyApplication.context.startActivity(it)
+                            },
+                        )
                     }
                     item { Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding())) }
                 }

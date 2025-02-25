@@ -77,10 +77,12 @@ import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.LoginWebUI
 import com.hfut.schedule.ui.activity.home.search.functions.shower.ShowerUI
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnToAndClear
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.style.CardForListColor
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.WebDialog
 import com.hfut.schedule.ui.utils.style.Round
 import kotlinx.coroutines.async
@@ -303,33 +305,33 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    MyCustomCard {
-                        ListItem(
+//                    MyCustomCard {
+                        StyleCardListItem(
                             headlineContent = { Text(text = "电费") },
                             leadingContent = {
                                 Icon(painterResource(id = R.drawable.flash_on), contentDescription = "")
                             },
                             modifier = Modifier.clickable { showBottomSheet_ELectric = true }
                         )
-                    }
-                    MyCustomCard{
-                        ListItem(
+//                    }
+//                    MyCustomCard{
+                        StyleCardListItem(
                             headlineContent = { Text(text = "网费") },
                             leadingContent = {
                                 Icon(painterResource(id = R.drawable.net), contentDescription = "")
                             },
                             modifier = Modifier.clickable { showBottomSheet_Web= true }
                         )
-                    }
-                    MyCustomCard {
-                        ListItem(
+//                    }
+//                    MyCustomCard {
+                        StyleCardListItem(
                             headlineContent = { Text(text = "洗浴") },
                             leadingContent = {
                                 Icon(painterResource(id = R.drawable.bathtub), contentDescription = "")
                             },
                             modifier = Modifier.clickable { showBottomSheet_Shower = true }
                         )
-                    }
+//                    }
                 }
             }
         }
@@ -470,11 +472,11 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
 
                 DividerTextExpandedWith(text = "校园卡",false) {
                     Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
+                        elevation = CardDefaults.cardElevation(defaultElevation = AppHorizontalDp()),
                         modifier = Modifier
                             .fillMaxWidth()
                             .scale(scale2.value)
-                            .padding(horizontal = 15.dp, vertical = 5.dp),
+                            .padding(horizontal = AppHorizontalDp(), vertical = 5.dp),
                         shape = MaterialTheme.shapes.medium,
                         colors = CardForListColor()
                     ) {

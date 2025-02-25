@@ -26,6 +26,7 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.Round
 
 
@@ -35,7 +36,7 @@ fun EmptyRoom(vm : NetWorkViewModel, ifSaved : Boolean){
     val sheetState_EmptyRoom = rememberModalBottomSheetState()
     var showBottomSheet_EmptyRoom by remember { mutableStateOf(false) }
 
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "空教室") },
         leadingContent = {
             Icon(

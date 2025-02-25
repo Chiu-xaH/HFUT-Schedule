@@ -54,6 +54,7 @@ import com.hfut.schedule.logic.beans.community.FriendsList
 import com.hfut.schedule.logic.beans.community.FriendsResopnse
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
@@ -61,6 +62,7 @@ import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.ScrollText
+import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -115,8 +117,8 @@ fun AddCourseUI(vm: NetWorkViewModel) {
             }
         }
     }
-    MyCustomCard {
-        ListItem(
+//    MyCustomCard {
+        StyleCardListItem(
             headlineContent = { Text(text = "从文件导入") },
             supportingContent = {
                 Text(text = "通过本应用分享课表会生成文本文件，他人接收文件并以本应用打开方式即可导入")
@@ -128,10 +130,10 @@ fun AddCourseUI(vm: NetWorkViewModel) {
                 MyToast("请在外部应用选择文件以本应用打开")
             }
         )
-    }
+//    }
 
-    MyCustomCard {
-        ListItem(
+//    MyCustomCard {
+        StyleCardListItem(
             headlineContent = { Text(text = "向他人申请好友课表") },
             supportingContent = {
                 Text(text = "输入学号,发送申请,对方同意后即可查看对方课表")
@@ -143,7 +145,7 @@ fun AddCourseUI(vm: NetWorkViewModel) {
                 showBottomSheet = true
             }
         )
-    }
+//    }
 }
 
 @SuppressLint("SuspiciousIndentation")
@@ -192,7 +194,7 @@ fun FriendsSetting(vm : NetWorkViewModel) {
             TextField(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(horizontal = 15.dp),
+                    .padding(horizontal = AppHorizontalDp()),
                 value = input,
                 onValueChange = {
                     input = it
@@ -226,9 +228,9 @@ fun FriendsSetting(vm : NetWorkViewModel) {
             BottomTip(str = msg)
     }
     DividerTextExpandedWith(text = "好友列表(您目前可以查看的课表)") {
-        MyCustomCard {
+//        MyCustomCard {
             for(i in friendList.indices) {
-                ListItem(
+                StyleCardListItem(
                     headlineContent = { friendList[i]?.let { Text(text = it.realname) } },
                     leadingContent = { Icon(painterResource(id = R.drawable.person), contentDescription = "")},
                     overlineContent = { friendList[i]?.let { Text(text = it.userId) }},
@@ -241,7 +243,7 @@ fun FriendsSetting(vm : NetWorkViewModel) {
                     }
                 )
             }
-        }
+//        }
     }
 
     DividerTextExpandedWith(text = "申请列表(同意后对方可查看你的课表)") {
@@ -266,15 +268,15 @@ fun FriendsSetting(vm : NetWorkViewModel) {
                 enter = fadeIn(),
                 exit = fadeOut()
             ) {
-                MyCustomCard {
+//                MyCustomCard {
                     val applyList = getApplyingList(vm)
                     for(i in applyList.indices) {
-                        ListItem(
+                        StyleCardListItem(
                             headlineContent = { applyList[i]?.let { ScrollText(text = it.applyUsername) } },
                             leadingContent = { Icon(painterResource(id = R.drawable.person_add), contentDescription = "")},
                             overlineContent = { applyList[i]?.let { Text(text = it.applyUserId) } },
                             trailingContent = {
-                                Row(modifier = Modifier.padding(horizontal = 15.dp)) {
+                                Row(modifier = Modifier.padding(horizontal = AppHorizontalDp())) {
                                     FilledTonalButton(onClick = {
                                         val id = applyList[i]?.id
                                         id?.let { CommuityTOKEN?.let { it1 -> vm.checkApplying(it1, it,true) } }
@@ -283,7 +285,7 @@ fun FriendsSetting(vm : NetWorkViewModel) {
                                     }) {
                                         Text(text = "同意")
                                     }
-                                    Spacer(modifier = Modifier.width(15.dp))
+                                    Spacer(modifier = Modifier.width(AppHorizontalDp()))
                                     FilledTonalButton(onClick = {
                                         val id = applyList[i]?.id
                                         CommuityTOKEN?.let { id?.let { it1 -> vm.checkApplying(it, it1,false) } }
@@ -297,7 +299,7 @@ fun FriendsSetting(vm : NetWorkViewModel) {
                             }
                         )
                     }
-                }
+//                }
             }
         }
     }

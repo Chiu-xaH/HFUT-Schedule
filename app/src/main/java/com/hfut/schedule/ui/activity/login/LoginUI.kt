@@ -98,6 +98,7 @@ import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter.noLogin
 import com.hfut.schedule.ui.activity.home.cube.items.main.FirstCube
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.ANIMATION_SPEED
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
@@ -442,7 +443,7 @@ fun TwoTextField(vm : LoginViewModel) {
 
             ) { Text("登录") }
 
-            Spacer(modifier = Modifier.width(15.dp))
+            Spacer(modifier = Modifier.width(AppHorizontalDp()))
 
             FilledTonalButton(
                 onClick = { SavedClick() },

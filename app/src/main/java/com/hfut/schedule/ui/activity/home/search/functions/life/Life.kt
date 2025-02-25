@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.ScrollText
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -38,7 +39,7 @@ fun Life(vm : NetWorkViewModel) {
     var showBottomSheet by remember { mutableStateOf(false) }
 
 
-    ListItem(
+    TransplantListItem(
         headlineContent = { ScrollText(text = "生活服务") },
         leadingContent = { Icon(painter = painterResource(id = R.drawable.near_me), contentDescription = null) },
      //       overlineContent = { ScrollText(text = "高德地图SDK测试") },

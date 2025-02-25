@@ -43,7 +43,10 @@ import com.hfut.schedule.logic.beans.community.courseDetailDTOList
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.DetailItems
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.getTotalCourse
+import com.hfut.schedule.ui.utils.components.CardNormalColor
 import com.hfut.schedule.ui.utils.components.MyCustomCard
+import com.hfut.schedule.ui.utils.components.StyleCardListItem
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.Round
 
 
@@ -114,8 +117,8 @@ fun DetailInfos(sheet : courseDetailDTOList,isFriend : Boolean = false,vm: NetWo
         item{
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 Column {
-                    MyCustomCard {
-                        ListItem(
+                    MyCustomCard(hasElevation = false, containerColor = CardNormalColor()) {
+                        TransplantListItem(
                             headlineContent = { sheet.place?.let { Text(it) } },
                             leadingContent = {
                                 Icon(
@@ -124,7 +127,7 @@ fun DetailInfos(sheet : courseDetailDTOList,isFriend : Boolean = false,vm: NetWo
                                 )
                             }
                         )
-                        ListItem(
+                        TransplantListItem(
                             headlineContent = { Text(sheet.classTime ) },
                             leadingContent = {
                                 Icon(
@@ -133,7 +136,7 @@ fun DetailInfos(sheet : courseDetailDTOList,isFriend : Boolean = false,vm: NetWo
                                 )
                             }
                         )
-                        ListItem(
+                        TransplantListItem(
                                 headlineContent = { Text(sheet.teacher ) },
                         leadingContent = {
                             Icon(
@@ -142,7 +145,7 @@ fun DetailInfos(sheet : courseDetailDTOList,isFriend : Boolean = false,vm: NetWo
                             )
                         }
                         )
-                        ListItem(
+                        TransplantListItem(
                             headlineContent = { Text("周 ${sheet.week} 第 ${sheet.section.toString()} 节" ) },
                             supportingContent = { Text(text = "周数 ${sheet.weekCount.toString().replace("[","").replace("]","")} ")},
                             leadingContent = {
@@ -154,8 +157,8 @@ fun DetailInfos(sheet : courseDetailDTOList,isFriend : Boolean = false,vm: NetWo
                         )
                     }
                     if(!isFriend)
-                    MyCustomCard{
-                        ListItem(
+//                    MyCustomCard{
+                        StyleCardListItem(
                             headlineContent = { Text( "更多信息") },
                             leadingContent = {
                                 Icon(
@@ -168,7 +171,7 @@ fun DetailInfos(sheet : courseDetailDTOList,isFriend : Boolean = false,vm: NetWo
                                 showBottomSheet_totalCourse = true
                             }
                         )
-                    }
+//                    }
                     Spacer(modifier = Modifier.height(10.dp))
                 }
             }

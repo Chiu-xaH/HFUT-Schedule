@@ -47,9 +47,11 @@ import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.logic.utils.reEmptyLiveDta
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.WebDialog
 import com.hfut.schedule.ui.utils.components.WebViewScreen
 import com.hfut.schedule.ui.utils.style.topBarBlur
@@ -148,8 +150,8 @@ fun XuanquNewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                 item { Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding())) }
                 items(list.size) { index ->
                     val item = list[index]
-                    MyCustomCard {
-                        ListItem(
+//                    MyCustomCard {
+                        StyleCardListItem(
                             headlineContent = { Text(item.title) },
                             overlineContent = { Text(item.date) },
                             leadingContent = { Text((index+1).toString()) },
@@ -158,7 +160,7 @@ fun XuanquNewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                                 showDialog = true
                             }
                         )
-                    }
+//                    }
                 }
                 item { Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding())) }
                 item { Spacer(modifier = Modifier.height(85.dp)) }
@@ -172,7 +174,7 @@ fun XuanquNewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
             modifier = Modifier
                 .padding(innerPadding)
                 .align(Alignment.BottomStart)
-                .padding(horizontal = 15.dp, vertical = 15.dp)
+                .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
         ) {
             FloatingActionButton(
                 onClick = {
@@ -194,7 +196,7 @@ fun XuanquNewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
             modifier = Modifier
                 .padding(innerPadding)
                 .align(Alignment.BottomCenter)
-                .padding(horizontal = 15.dp, vertical = 15.dp)
+                .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
         ) {
             ExtendedFloatingActionButton(
                 onClick = {
@@ -211,7 +213,7 @@ fun XuanquNewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(innerPadding)
-                .padding(horizontal = 15.dp, vertical = 15.dp)
+                .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
         ) {
             FloatingActionButton(
                 onClick = {

@@ -20,6 +20,7 @@ import com.hfut.schedule.logic.beans.one.SubBooksResponse
 import com.hfut.schedule.logic.beans.one.getTokenResponse
 import com.hfut.schedule.logic.beans.zjgd.FeeType
 import com.hfut.schedule.logic.beans.zjgd.FeeType.*
+import com.hfut.schedule.logic.enums.LoginType
 import com.hfut.schedule.logic.network.NetWork
 import com.hfut.schedule.logic.network.servicecreator.CommunitySreviceCreator
 import com.hfut.schedule.logic.network.servicecreator.GuaGuaServiceCreator
@@ -50,12 +51,14 @@ import com.hfut.schedule.logic.network.api.DormitoryScore
 import com.hfut.schedule.logic.network.api.GithubService
 import com.hfut.schedule.logic.network.api.MyService
 import com.hfut.schedule.logic.network.api.QWeatherService
+import com.hfut.schedule.logic.network.api.StuService
 import com.hfut.schedule.logic.network.api.TeachersService
 import com.hfut.schedule.logic.network.api.XuanChengService
 import com.hfut.schedule.logic.network.api.ZJGDBillService
 import com.hfut.schedule.logic.network.servicecreator.GithubServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.MyServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.QWeatherServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.StuServiceCreator
 import com.hfut.schedule.logic.utils.Encrypt
 import com.hfut.schedule.logic.utils.Semseter
 import com.hfut.schedule.logic.utils.SharePrefs.saveString
@@ -84,7 +87,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     private val Xuanqu = DormitoryScoreServiceCreator.create(DormitoryScore::class.java)
     private val LePaoYun = LePaoYunServiceCreator.create(LePaoYunService::class.java)
     private val searchEle = SearchEleServiceCreator.create(FWDTService::class.java)
-    private val CommunityLogin = LoginServiceCreator.create(CommunityService::class.java)
+    private val login = LoginServiceCreator.create(LoginService::class.java)
    /// private val JwglappLogin = JwglappServiceCreator.create(JwglappService::class.java)
     private val Community = CommunitySreviceCreator.create(CommunityService::class.java)
   //  private val Jwglapp = JwglappServiceCreator.create(JwglappService::class.java)
@@ -95,6 +98,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     private val guagua = GuaGuaServiceCreator.create(GuaGuaService::class.java)
     private val teacher = TeacherServiceCreator.create(TeachersService::class.java)
     private val MyAPI = MyServiceCreator.create(MyService::class.java)
+    private val stu = StuServiceCreator.create(StuService::class.java)
     private val qWeather = QWeatherServiceCreator.create(QWeatherService::class.java)
 
 
@@ -458,7 +462,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
     fun GotoCommunity(cookie : String) {
 
-        val call = CommunityLogin.LoginCommunity(cookie)
+        val call = login.loginGoTo(service = LoginType.COMMUNITY.service,cookie = cookie)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {}
@@ -1499,5 +1503,46 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         val call = qWeather.getWeather()
         NetWork.makeRequest(call,weatherData)
     }
+
+    val goToStuResponse = MutableLiveData<String?>()
+    val stuTicket = MutableLiveData<String?>(null)
+    fun loginToStu(cookie : String) {
+        val call = login.loginGoTo(service = LoginType.STU.service, cookie = cookie)
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                val statusCode = response.code()
+                if(statusCode == 302) {
+                    goToStuResponse.value = response.headers()["Location"]
+                } else {
+                    Log.d(statusCode.toString(),"登陆失败")
+                }
+            }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
+    val loginStuResponse = MutableLiveData<String?>()
+    fun loginRefreshStu(ticket : String?,cookie: String?) {
+        val call = stu.login(cookie,ticket)
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                val statusCode = response.code()
+                if(statusCode == 200) {
+                    Log.d("成功",response.headers()["Set-Cookie"].toString())
+                    loginStuResponse.value = response.headers()["Set-Cookie"]
+                } else {
+                    Log.d("登失败",response.headers().toString())
+                }
+            }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
+
+    val stuInfoResponse = MutableLiveData<String?>()
+    fun getStuInfo(cookie: String) = NetWork.makeRequest(
+        call = stu.getStudentInfo(cookie),
+        liveData = stuInfoResponse
+    )
 }
 

@@ -53,12 +53,15 @@ import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.CampusI
 import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.CampusId.HEFEI
 import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.CampusId.XUANCHENG
 import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.getCampus
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
+import com.hfut.schedule.ui.utils.components.CardNormalDp
 import com.hfut.schedule.ui.utils.components.DepartmentIcons
 import com.hfut.schedule.ui.utils.components.EmptyUI
 import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.ScrollText
+import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.statusUI
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.style.RowHorizontal
@@ -170,7 +173,7 @@ fun ProgramSearch(vm : NetWorkViewModel) {
                             }
                             refresh()
                         },
-                        modifier = Modifier.padding(horizontal = 15.dp)
+                        modifier = Modifier.padding(horizontal = AppHorizontalDp())
                     ) {
                         Text(
                             when(campus) {
@@ -200,7 +203,7 @@ fun ProgramSearch(vm : NetWorkViewModel) {
                     TextField(
                         modifier = Modifier
                             .weight(1f)
-                            .padding(horizontal = 15.dp),
+                            .padding(horizontal = AppHorizontalDp()),
                         value = input,
                         onValueChange = {
                             input = it
@@ -220,7 +223,7 @@ fun ProgramSearch(vm : NetWorkViewModel) {
                         colors = textFiledTransplant()
                     )
                 }
-                Spacer(modifier = Modifier.height(5.dp))
+                Spacer(modifier = Modifier.height(CardNormalDp()))
 
                 val searchList = programList.filter {
                     it.name.contains(input) || it.department.contains(input) || it.major.contains(input) || it.grade.contains(input)
@@ -232,8 +235,8 @@ fun ProgramSearch(vm : NetWorkViewModel) {
                             var department = data.department
                             val name = data.name
                             department = department.substringBefore("（")
-                            MyCustomCard {
-                                ListItem(
+//                            MyCustomCard {
+                            StyleCardListItem(
                                     headlineContent = { Text(name) },
                                     overlineContent = { Text(data.grade + "级 " + department + " " + data.major) },
                                     leadingContent = { DepartmentIcons(department) },
@@ -242,7 +245,7 @@ fun ProgramSearch(vm : NetWorkViewModel) {
                                         showBottomSheet = true
                                     }
                                 )
-                            }
+//                            }
                         }
                     }
                 } else {
@@ -313,8 +316,8 @@ fun SearchProgramUI(vm: NetWorkViewModel) {
     LazyColumn {
         items(listOne.size) {item ->
             total += listOne[item].requiedCredits ?: 0.0
-            MyCustomCard {
-                ListItem(
+//            MyCustomCard {
+            StyleCardListItem(
                     headlineContent = { Text(text = listOne[item].type + " | 学分要求 " + listOne[item].requiedCredits) },
                     trailingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "")},
                     //   leadingContent = { Icon(painterResource(id = R.drawable.calendar), contentDescription = "Localized description") },
@@ -324,7 +327,7 @@ fun SearchProgramUI(vm: NetWorkViewModel) {
                         title = listOne[item].type.toString()
                     },
                 )
-            }
+//            }
         }
 
         item { BottomTip(str = "总修 $total 学分") }
@@ -407,8 +410,8 @@ fun SearchProgramUIInfo(num : Int, vm : NetWorkViewModel) {
     if(show) {
         LazyColumn {
             items(listTwo.size) {item ->
-                MyCustomCard{
-                    ListItem(
+//                MyCustomCard{
+                StyleCardListItem(
                         headlineContent = { Text(text = listTwo[item].type + " | 学分要求 " + listTwo[item].requiedCredits) },
                         trailingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "")},
                         //   leadingContent = { Icon(painterResource(id = R.drawable.calendar), contentDescription = "Localized description") },
@@ -418,7 +421,7 @@ fun SearchProgramUIInfo(num : Int, vm : NetWorkViewModel) {
                             title = listTwo[item].type + " | 学分要求 " + listTwo[item].requiedCredits
                         },
                     )
-                }
+//                }
             }
         }
     } else {
@@ -443,7 +446,7 @@ fun SearchProgramUIInfo2(num1 : Int, num2 : Int, vm : NetWorkViewModel) {
             TextField(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(horizontal = 15.dp),
+                    .padding(horizontal = AppHorizontalDp()),
                 value = input,
                 onValueChange = {
                     input = it
@@ -466,13 +469,13 @@ fun SearchProgramUIInfo2(num1 : Int, num2 : Int, vm : NetWorkViewModel) {
                 searchList.add(item)
             }
         }
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(CardNormalDp()))
         LazyColumn {
             items(searchList.size) {item ->
-                MyCustomCard{
+//                MyCustomCard{
                     var department = searchList[item].depart
                     if(department.contains("（")) department = department.substringBefore("（")
-                    ListItem(
+                StyleCardListItem(
                         headlineContent = { Text(text = searchList[item].name) },
                         supportingContent = { Text(text = department) },
                         overlineContent = { Text(text = "第" + searchList[item].term + "学期 | 学分 ${searchList[item].credit}")},
@@ -480,7 +483,7 @@ fun SearchProgramUIInfo2(num1 : Int, num2 : Int, vm : NetWorkViewModel) {
                         modifier = Modifier.clickable {
                         },
                     )
-                }
+//                }
             }
         }
     } else {

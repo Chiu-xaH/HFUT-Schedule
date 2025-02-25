@@ -55,10 +55,14 @@ import com.hfut.schedule.logic.utils.DateTimeManager
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.card.bills.CardRow
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.BillsIcons
+import com.hfut.schedule.ui.utils.components.CardNormalColor
 import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.StyleCardListItem
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.Round
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -205,22 +209,22 @@ fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVie
                     val getTime = time.substringBefore(" ")
 
 
-                    MyCustomCard{
-                        ListItem(
+//                    MyCustomCard{
+                        StyleCardListItem(
                             headlineContent = { Text(text = name) },
                             supportingContent = { Text(text = processTranamt(bills)) },
                             overlineContent = { Text(text = time) },
                             leadingContent = { BillsIcons(name) },
-                            colors =
+                            color =
                             if(DateTimeManager.Date_yyyy_MM_dd == getTime)
-                                ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.primaryContainer)
-                            else ListItemDefaults.colors(),
+                                MaterialTheme.colorScheme.primaryContainer
+                            else null,
                             modifier = Modifier.clickable {
                                 Infonum = item
                                 showBottomSheet = true
                             }
                         )
-                    }
+//                    }
                 }
                 item {
                     val totalpage = prefs.getString("totalpage","1")
@@ -250,13 +254,13 @@ fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVie
                                 }
                             }) { Text(text = "上一页") }
 
-                        Spacer(modifier = Modifier.width(15.dp))
+                        Spacer(modifier = Modifier.width(AppHorizontalDp()))
 
                         OutlinedButton(
                             onClick = { Updade()}
                         ) { Text(text = "${page} / ${totalpage}") }
 
-                        Spacer(modifier = Modifier.width(15.dp))
+                        Spacer(modifier = Modifier.width(AppHorizontalDp()))
 
                         OutlinedButton(
                             onClick = {
@@ -303,15 +307,15 @@ fun BillsInfo(vm : NetWorkViewModel, Infonum : Int) {
             ),
             title = { Text("详情") },
         )
-        MyCustomCard{
-            ListItem(
+        MyCustomCard(hasElevation = false, containerColor = CardNormalColor()){
+            TransplantListItem(
                 headlineContent = { Text( bills.resume.substringBefore("-") ) },
                 leadingContent = {
                     BillsIcons(bills.resume)
                 },
                 overlineContent = { Text(text = "商家")}
             )
-            ListItem(
+            TransplantListItem(
                 headlineContent = { Text( bills.resume.substringAfter("-")) },
                 leadingContent = {
                     Icon(
@@ -321,7 +325,7 @@ fun BillsInfo(vm : NetWorkViewModel, Infonum : Int) {
                 },
                 overlineContent = { Text(text = "类型 ${Text( bills.turnoverType)}")}
             )
-            ListItem(
+            TransplantListItem(
                 headlineContent = { Text(  "出账 "+ bills.jndatetimeStr+ "\n入账 " + bills.effectdateStr ) },
                 leadingContent = {
                     Icon(
@@ -332,7 +336,7 @@ fun BillsInfo(vm : NetWorkViewModel, Infonum : Int) {
                 overlineContent = { Text(text = "时间")}
             )
 
-            ListItem(
+            TransplantListItem(
                 headlineContent = { Text( processTranamt(bills)) },
                 leadingContent = {
                     Icon(

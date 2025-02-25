@@ -36,6 +36,7 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.SharePrefs.saveBoolean
 import com.hfut.schedule.logic.utils.Starter.loginGuaGua
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
@@ -94,7 +95,7 @@ fun EditLoginCode(isOnLogin: Boolean = false, onClickLogin: (() -> Unit)? = null
         TextField(
             modifier = Modifier
                 .weight(1f)
-                .padding(horizontal = 15.dp),
+                .padding(horizontal = AppHorizontalDp()),
             value = input,
             onValueChange = {
                 input = it

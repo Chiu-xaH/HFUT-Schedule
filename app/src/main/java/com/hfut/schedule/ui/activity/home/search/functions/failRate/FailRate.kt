@@ -41,6 +41,8 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import kotlinx.coroutines.CoroutineScope
@@ -61,7 +63,7 @@ fun FailRate(vm: NetWorkViewModel) {
     var showBottomSheet by remember { mutableStateOf(false) }
 
 
-    androidx.compose.material3.ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "挂科率") },
         leadingContent = { Icon(painter = painterResource(id = R.drawable.monitoring), contentDescription = "")},
         modifier = Modifier.clickable { showBottomSheet = true }
@@ -115,7 +117,7 @@ fun FailRateSearch(vm: NetWorkViewModel) {
         TextField(
             modifier = Modifier
                 .weight(1f)
-                .padding(horizontal = 15.dp),
+                .padding(horizontal = AppHorizontalDp()),
             value = input,
             onValueChange = {
                 input = it
@@ -152,7 +154,7 @@ fun FailRateSearch(vm: NetWorkViewModel) {
             colors = textFiledTransplant(),
         )
     }
-    Spacer(modifier = Modifier.height(10.dp))
+    Spacer(modifier = Modifier.height(3.dp))
 
 
     if(onclick){

@@ -54,7 +54,10 @@ import com.hfut.schedule.logic.beans.community.LibraryResponse
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.CardNormalColor
 import com.hfut.schedule.ui.utils.components.MyCustomCard
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import kotlinx.coroutines.CoroutineScope
@@ -74,7 +77,7 @@ fun LibraryItem(vm : NetWorkViewModel) {
     CommuityTOKEN?.let { vm.GetBorrowed(it,"1") }
     CommuityTOKEN?.let { vm.GetHistory(it,"1") }
 
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "图书") },
         overlineContent = { Text(text = "已借 ${getBorrow(LibraryItems.BORROWED.name).size} 本")},
         leadingContent = {
@@ -126,7 +129,7 @@ fun LibraryItem(vm : NetWorkViewModel) {
                                 onClick = {
                                 Starter.startWebUrl("http://210.45.242.5:8080/")
                             },
-                                modifier = Modifier.padding(horizontal = 15.dp)
+                                modifier = Modifier.padding(horizontal = AppHorizontalDp())
                             ) {
                                 Text(text = "更多(官网)")
                             }
@@ -151,7 +154,7 @@ fun LibraryItem(vm : NetWorkViewModel) {
                             TextField(
                                 modifier = Modifier
                                     .weight(1f)
-                                    .padding(horizontal = 15.dp),
+                                    .padding(horizontal = AppHorizontalDp()),
                                 value = input,
                                 onValueChange = {
                                     input = it
@@ -196,35 +199,19 @@ fun LibraryItem(vm : NetWorkViewModel) {
 
                         }
 
-                        Spacer(modifier = Modifier.height(10.dp))
+                        Spacer(modifier = Modifier.height(3.dp))
 
                         if (onclick) {
 
-                            AnimatedVisibility(
-                                visible = loading,
-                                enter = fadeIn(),
-                                exit = fadeOut()
-                            ) {
-                                Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)  {
-                                    //  Column() {
-                                    Spacer(modifier = Modifier.height(5.dp))
-                                    LoadingUI()
-                                    //  }
-
-                                }
-                            }////加载动画居中，3s后消失
-
-                            AnimatedVisibility(
-                                visible = !loading,
-                                enter = fadeIn(),
-                                exit = fadeOut()
-                            ) {
+                            if(loading) {
+                                LoadingUI()
+                            } else {
                                 LazyColumn {
                                     items (LibItem().size){ item ->
                                         Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)
                                         {
-                                            MyCustomCard{
-                                                ListItem(
+                                            MyCustomCard(hasElevation = false, containerColor = CardNormalColor()){
+                                                TransplantListItem(
                                                     headlineContent = { LibItem()[item].name?.let { Text(text = it,fontWeight = FontWeight.Bold) } },
                                                     supportingContent = { LibItem()[item].callNumber?.let { Text(text = it) } },
                                                     overlineContent = { LibItem()[item].place?.let { Text(text = it) } },
@@ -237,7 +224,7 @@ fun LibraryItem(vm : NetWorkViewModel) {
                                                     }
                                                 )
                                                 Divider()
-                                                ListItem(
+                                                TransplantListItem(
                                                     headlineContent = { LibItem()[item].author?.let { Text(text = it) } },
                                                     supportingContent = {Text(text = LibItem()[item].year +  "  " + LibItem()[item].publisher) },
                                                     leadingContent = {

@@ -77,6 +77,7 @@ import com.hfut.schedule.ui.activity.home.cube.items.main.apiCheck
 import com.hfut.schedule.ui.activity.home.focus.funictions.FocusDataBaseManager.addItems
 import com.hfut.schedule.ui.activity.home.focus.funictions.FocusDataBaseManager.removeItems
 import com.hfut.schedule.ui.activity.home.search.functions.card.TodayInfo
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
@@ -84,6 +85,8 @@ import com.hfut.schedule.ui.utils.components.RotatingIcon
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.ScheduleIcons
 import com.hfut.schedule.ui.utils.components.ScrollText
+import com.hfut.schedule.ui.utils.components.StyleCardListItem
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
 
 @Composable
@@ -143,8 +146,8 @@ fun ScheduleItems(MySchedule: MutableList<Schedule>, item : Int,Future : Boolean
 
     @Composable
     fun Item() {
-        MyCustomCard {
-            ListItem(
+//        MyCustomCard {
+            StyleCardListItem(
                 headlineContent = {  Text(text = title) },
                 overlineContent = {Text(text = time)},
                 supportingContent = { Text(text = info)},
@@ -170,7 +173,7 @@ fun ScheduleItems(MySchedule: MutableList<Schedule>, item : Int,Future : Boolean
                         }
                 }
             )
-        }
+//        }
     }
 
     if(switch_api) {
@@ -225,8 +228,8 @@ fun WangkeItem(item : Int, MyWangKe: MutableList<Schedule>,Future: Boolean,activ
 
             if(Future) {
                 if(nowTime < getEndTime) {
-                    MyCustomCard {
-                        ListItem(
+//                    MyCustomCard {
+                        StyleCardListItem(
                             headlineContent = {  Text(text = title) },
                             overlineContent = { Text(text = time) },
                             supportingContent = { Text(text = info)},
@@ -249,12 +252,12 @@ fun WangkeItem(item : Int, MyWangKe: MutableList<Schedule>,Future: Boolean,activ
                             },
                             modifier = Modifier.clickable { openOperation(info) }
                         )
-                    }
+//                    }
                 }
             } else {
                 if(nowTime == getEndTime) {
-                    MyCustomCard {
-                        ListItem(
+//                    MyCustomCard {
+                        StyleCardListItem(
                             headlineContent = {  Text(text = title) },
                             overlineContent = { Text(text = time) },
                             supportingContent = { Text(text = info)},
@@ -269,7 +272,7 @@ fun WangkeItem(item : Int, MyWangKe: MutableList<Schedule>,Future: Boolean,activ
                             },
                             modifier = Modifier.clickable { openOperation(info) }
                         )
-                    }
+//                    }
                 }
             }
         }
@@ -332,57 +335,52 @@ fun TodayCourseItem(item : Int,vm : NetWorkViewModel) {
     }
     @Composable
     fun Item() {
-        Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
-            //Spacer(modifier = Modifier.height(100.dp))
-            MyCustomCard {
-                ListItem(
-                    headlineContent = { Text(text = list.name) },
-                    overlineContent = { Text(text = time)},
-                    supportingContent = { list.place?.let { Text(text = it) } },
-                    leadingContent = {
-                        when(state) {
-                            NOT_STARTED -> {
-                                Icon(
-                                    painterResource(R.drawable.schedule),
-                                    contentDescription = "Localized description",
-                                )
-                            }
-                            ONGOING -> {
+        StyleCardListItem(
+            headlineContent = { Text(text = list.name) },
+            overlineContent = { Text(text = time)},
+            supportingContent = { list.place?.let { Text(text = it) } },
+            leadingContent = {
+                when(state) {
+                    NOT_STARTED -> {
+                        Icon(
+                            painterResource(R.drawable.schedule),
+                            contentDescription = "Localized description",
+                        )
+                    }
+                    ONGOING -> {
 //                                Icon(
 //                                    painterResource(R.drawable.progress_activity),
 //                                    contentDescription = "Localized description",
 //                                )
-                                RotatingIcon(R.drawable.progress_activity)
-                            }
-                            ENDED -> {
-                                Icon(
-                                    Icons.Filled.Check,
-                                    contentDescription = "Localized description",
-                                )
-                            }
-                        }
-
-                    },
-                    modifier = Modifier.clickable {
-                        showBottomSheet = true
-                    },
-                    trailingContent = {
-                        Text(
-                            when(state) {
-                                NOT_STARTED -> "未开始"
-                                ONGOING -> "上课中"
-                                ENDED -> "已下课"
-                            }
+                        RotatingIcon(R.drawable.progress_activity)
+                    }
+                    ENDED -> {
+                        Icon(
+                            Icons.Filled.Check,
+                            contentDescription = "Localized description",
                         )
-                    },
+                    }
+                }
+
+            },
+            modifier = Modifier.clickable {
+                showBottomSheet = true
+            },
+            trailingContent = {
+                Text(
+                    when(state) {
+                        NOT_STARTED -> "未开始"
+                        ONGOING -> "上课中"
+                        ENDED -> "已下课"
+                    }
+                )
+            },
 //                colors = when(state) {
 //                    ONGOING -> ListItemDefaults.colors()
 //                    NOT_STARTED -> ListItemDefaults.colors(MaterialTheme.colorScheme.primaryContainer)
 //                    ENDED -> ListItemDefaults.colors(MaterialTheme.colorScheme.surfaceVariant.copy(.5f))
 //                }
-                )
-            }
-        }
+        )
     }
 
     if(switch_show_ended) {
@@ -427,22 +425,16 @@ fun TomorrowCourseItem(item : Int,vm: NetWorkViewModel) {
         }
     }
 
-
-    Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
-        //Spacer(modifier = Modifier.height(100.dp))
-        MyCustomCard {
-            ListItem(
-                headlineContent = { list.name?.let { Text(text = it) } },
-                overlineContent = {Text(text = list.classTime)},
-                supportingContent = { list.place?.let { Text(text = it) } },
-                leadingContent = { Icon(painterResource(R.drawable.exposure_plus_1), contentDescription = "Localized description",) },
-                modifier = Modifier.clickable {
-                    showBottomSheet = true
-                },
-                trailingContent = { Text(text = "明日")}
-            )
-        }
-    }
+    StyleCardListItem(
+        headlineContent = { Text(text = list.name) },
+        overlineContent = {Text(text = list.classTime)},
+        supportingContent = { list.place?.let { Text(text = it) } },
+        leadingContent = { Icon(painterResource(R.drawable.exposure_plus_1), contentDescription = "Localized description",) },
+        modifier = Modifier.clickable {
+            showBottomSheet = true
+        },
+        trailingContent = { Text(text = "明日")}
+    )
 }
 
 
@@ -451,40 +443,35 @@ fun TomorrowCourseItem(item : Int,vm: NetWorkViewModel) {
 @Composable
 fun AddItem(item : Int, AddedItems : MutableList<AddFocus>) {
     var isClicked by remember { mutableStateOf(false) }
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-            //Spacer(modifier = Modifier.height(100.dp))
-            MyCustomCard {
-                ListItem(
-                    headlineContent = { Text(text = AddedItems[item].title) },
-                    overlineContent = { Text(text = AddedItems[item].remark) },
-                    supportingContent = { Text(text = AddedItems[item].info) },
-                    leadingContent = {
-                        Icon(
-                            painterResource(R.drawable.lightbulb),
-                            contentDescription = "Localized description",
-                        )
-                    },
-                    colors = if (isClicked) ListItemDefaults.colors(MaterialTheme.colorScheme.errorContainer) else ListItemDefaults.colors(),
-                    modifier = Modifier.combinedClickable(
-                        onClick = { MyToast("长按删除") },
-                        onDoubleClick = {
-                                        //双击操作
-                        },
-                        onLongClick = {
-                            //长按操作
-                            isClicked = true
+    StyleCardListItem(
+        headlineContent = { Text(text = AddedItems[item].title) },
+        overlineContent = { Text(text = AddedItems[item].remark) },
+        supportingContent = { Text(text = AddedItems[item].info) },
+        leadingContent = {
+            Icon(
+                painterResource(R.drawable.lightbulb),
+                contentDescription = "Localized description",
+            )
+        },
+        color = if (isClicked) MaterialTheme.colorScheme.errorContainer else null,
+        modifier = Modifier.combinedClickable(
+            onClick = { MyToast("长按删除") },
+            onDoubleClick = {
+                //双击操作
+            },
+            onLongClick = {
+                //长按操作
+                isClicked = true
 
-                            removeItems(AddedItems[item].id)
+                removeItems(AddedItems[item].id)
 
-                            // AddedItems().removeAt(item)
-                            MyToast("下次数据刷新时将删除")
-                            //EditItems(AddedItems[item].id,AddedItems[item].title,AddedItems[item].info,AddedItems[item].remark)
-                            // MyToast("就那几个字删了重新添加吧")
+                // AddedItems().removeAt(item)
+                MyToast("下次数据刷新时将删除")
+                //EditItems(AddedItems[item].id,AddedItems[item].title,AddedItems[item].info,AddedItems[item].remark)
+                // MyToast("就那几个字删了重新添加吧")
 
-                        })
-                )
-            }
-        }
+            })
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -546,15 +533,15 @@ fun BoxScope.AddButton(isVisible: Boolean,innerPaddings : PaddingValues) {
                 ) {
 
                     Spacer(modifier = Modifier.height(10.dp))
-                    MyCustomCard {
-                        ListItem(
+//                    MyCustomCard {
+                        StyleCardListItem(
                             headlineContent = {  Text(text = title) },
                             overlineContent = {Text(text = remark)},
                             supportingContent = { Text(text = info)},
                             leadingContent = { Icon(painterResource(R.drawable.lightbulb), contentDescription = "Localized description",) },
                             modifier = Modifier.clickable {}
                         )
-                    }
+//                    }
 
                     Spacer(modifier = Modifier.height(10.dp))
 
@@ -563,7 +550,7 @@ fun BoxScope.AddButton(isVisible: Boolean,innerPaddings : PaddingValues) {
                         TextField(
                             modifier = Modifier
                                 .weight(1f)
-                                .padding(horizontal = 15.dp),
+                                .padding(horizontal = AppHorizontalDp()),
                             value = title,
                             onValueChange = { title = it },
                             leadingIcon = { Icon( painterResource(R.drawable.title), contentDescription = "Localized description") },
@@ -580,7 +567,7 @@ fun BoxScope.AddButton(isVisible: Boolean,innerPaddings : PaddingValues) {
                         TextField(
                             modifier = Modifier
                                 .weight(1f)
-                                .padding(horizontal = 15.dp),
+                                .padding(horizontal = AppHorizontalDp()),
                             value = info,
                             onValueChange = { info = it },
                             leadingIcon = { Icon( painterResource(R.drawable.info_i), contentDescription = "Localized description") },
@@ -596,7 +583,7 @@ fun BoxScope.AddButton(isVisible: Boolean,innerPaddings : PaddingValues) {
                         TextField(
                             modifier = Modifier
                                 .weight(1f)
-                                .padding(horizontal = 15.dp),
+                                .padding(horizontal = AppHorizontalDp()),
                             value = remark,
                             onValueChange = { remark = it },
                             leadingIcon = { Icon( painterResource(R.drawable.format_italic), contentDescription = "Localized description") },
@@ -620,7 +607,7 @@ fun BoxScope.AddButton(isVisible: Boolean,innerPaddings : PaddingValues) {
         modifier = Modifier
             .align(Alignment.BottomEnd)
             .padding(innerPaddings)
-            .padding(horizontal = 15.dp, vertical = 15.dp)
+            .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
     ) {
         if (isVisible) {
             FloatingActionButton(
@@ -642,7 +629,6 @@ fun SemsterTip() {
 
 
 @OptIn(ExperimentalMaterial3Api::class)
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TodayUI() {
     ////////////////////////////////////////////////////////////
@@ -711,35 +697,35 @@ fun TodayUI() {
             getToday()?.todayActivity?.activityName == null &&
             getToday()?.bookLending?.bookName == null) {
 
-            ListItem(
+            TransplantListItem(
                 headlineContent = { ScrollText(text = if(tiaoXiu) "有调休安排" else if( time == "08")"明天有早八" else if(time == "10") "明天有早十"  else if(time == "14" || time == "16" || time == "19" )  "明天睡懒觉" else "明天没有课") },
                 overlineContent = { ScrollText(text = "明天") },
                 leadingContent = { Icon(painter = painterResource(  if(tiaoXiu) R.drawable.error else if( time == "08") R.drawable.sentiment_sad else if (time == "10") R.drawable.sentiment_dissatisfied else R.drawable.sentiment_very_satisfied) , contentDescription = "")},
             )
         } else {
             if(getToday()?.todayExam?.courseName != null) {
-                ListItem(
+                TransplantListItem(
                     headlineContent = { ScrollText(text = getToday()?.todayExam?.courseName.toString()) },
                     overlineContent = { ScrollText(text = getToday()?.todayExam?.place + "  " + getToday()?.todayExam?.startTime) },
                     leadingContent = { Icon(painter = painterResource(R.drawable.draw), contentDescription = "")},
                 )
             }
             if(getToday()?.todayCourse?.courseName != null) {
-                ListItem(
+                TransplantListItem(
                     headlineContent = { ScrollText(text = getToday()?.todayCourse?.courseName.toString()) },
                     overlineContent = { ScrollText(text = getToday()?.todayCourse?.place + "  " + getToday()?.todayCourse?.startTime) },
                     leadingContent = { Icon(painter = painterResource(R.drawable.calendar), contentDescription = "")},
                 )
             }
             if(getToday()?.bookLending?.bookName != null) {
-                ListItem(
+                TransplantListItem(
                     headlineContent = { ScrollText(text = getToday()?.bookLending?.bookName.toString()) },
                     overlineContent = { ScrollText(text = getToday()?.bookLending?.returnTime.toString()) },
                     leadingContent = { Icon(painter = painterResource(R.drawable.book), contentDescription = "")},
                 )
             }
             if(getToday()?.todayActivity?.activityName != null) {
-                ListItem(
+                TransplantListItem(
                     headlineContent = { ScrollText(text = getToday()?.todayActivity?.activityName.toString()) },
                     overlineContent = { ScrollText(text = getToday()?.todayActivity?.startTime.toString()) },
                     leadingContent = { Icon(painter = painterResource(R.drawable.schedule), contentDescription = "")},

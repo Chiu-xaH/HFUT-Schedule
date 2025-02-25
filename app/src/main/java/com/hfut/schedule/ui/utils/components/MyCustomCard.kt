@@ -1,13 +1,9 @@
 package com.hfut.schedule.ui.utils.components
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleOut
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,12 +14,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
@@ -35,7 +28,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.scale
@@ -43,9 +35,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.zIndex
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 
@@ -53,7 +45,7 @@ import com.hfut.schedule.R
 fun MyCustomCard(
     modifier: Modifier = Modifier
         .fillMaxWidth()
-        .padding(horizontal = 15.dp, vertical = 4.dp),
+        .padding(horizontal = AppHorizontalDp(), vertical = CardNormalDp()),
     containerColor : Color? = null,
     hasElevation : Boolean = true,
     content: @Composable () -> Unit) {
@@ -61,7 +53,18 @@ fun MyCustomCard(
         elevation = CardDefaults.cardElevation(defaultElevation = if(hasElevation) 1.75.dp else 0.dp),
         modifier = modifier,
         shape = MaterialTheme.shapes.medium,
-        colors = if(containerColor == null) CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer) else CardDefaults.cardColors(containerColor = containerColor)
+        colors = if(containerColor == null) CardDefaults.cardColors() else CardDefaults.cardColors(containerColor = containerColor)
+    ) {
+        content()
+    }
+}
+// 小卡片
+@Composable
+fun SmallCard(modifier: Modifier = Modifier.fillMaxSize(), content: @Composable () -> Unit) {
+    Card(
+        modifier = modifier,
+        shape = MaterialTheme.shapes.small,
+        colors = CardDefaults.cardColors(containerColor = CardNormalColor())
     ) {
         content()
     }
@@ -74,13 +77,14 @@ fun TransplantListItem(
     supportingContent : @Composable() (() -> Unit)? = null,
     trailingContent : @Composable() (() -> Unit)? = null,
     leadingContent : @Composable() (() -> Unit)? = null,
+    colors : Color? = null,
     modifier: Modifier = Modifier
 ) {
     ListItem(
         headlineContent = headlineContent,
         overlineContent = overlineContent,
         supportingContent = supportingContent,
-        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+        colors = ListItemDefaults.colors(containerColor = colors ?: Color.Transparent) ,
         trailingContent = trailingContent,
         leadingContent = leadingContent,
         modifier = modifier
@@ -109,6 +113,42 @@ fun CardListItem(
         )
     }
 }
+
+enum class CardListColorType {
+    NORMAL,
+    ORIGIN
+}
+
+@Composable
+fun StyleCardListItem(
+    headlineContent :  @Composable () -> Unit,
+    overlineContent  : @Composable() (() -> Unit)? = null,
+    supportingContent : @Composable() (() -> Unit)? = null,
+    trailingContent : @Composable() (() -> Unit)? = null,
+    leadingContent : @Composable() (() -> Unit)? = null,
+    style : CardListColorType = CardListColorType.NORMAL,
+    color : Color? = null,
+    modifier: Modifier = Modifier
+) {
+    CardListItem(
+        headlineContent, overlineContent, supportingContent, trailingContent,leadingContent, modifier = modifier,
+        hasElevation = style == CardListColorType.ORIGIN,
+        containerColor = color
+            ?: when(style) {
+                CardListColorType.NORMAL ->  CardNormalColor()
+                CardListColorType.ORIGIN -> ListItemDefaults.containerColor
+            }
+    )
+}
+
+@Composable
+fun CardNormalColor() : Color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = .6f)
+
+//@Composable
+fun CardNormalDp() : Dp = 2.5.dp
+
+//@Composable
+fun AppHorizontalDp() : Dp = 15.dp
 
 @Composable
 fun MultiListItem(
@@ -154,8 +194,8 @@ fun LargeCard(
     content: @Composable () -> Unit
 ) {
     Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
-        modifier = modifier.fillMaxWidth().padding(horizontal = 15.dp, vertical = 5.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = AppHorizontalDp()),
+        modifier = modifier.fillMaxWidth().padding(horizontal = AppHorizontalDp(), vertical = 5.dp),
         shape = MaterialTheme.shapes.medium,
         colors = color
     ) {
@@ -207,8 +247,8 @@ fun LoadingLargeCard(
     )
 
     Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp, vertical = 5.dp).scale(scale2.value),
+        elevation = CardDefaults.cardElevation(defaultElevation = AppHorizontalDp()),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = AppHorizontalDp(), vertical = 5.dp).scale(scale2.value),
         shape = MaterialTheme.shapes.medium,
         colors = color
     ) {

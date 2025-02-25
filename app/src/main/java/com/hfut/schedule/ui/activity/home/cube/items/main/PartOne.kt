@@ -156,7 +156,7 @@ fun HomeSettingScreen(navController: NavController,
             if(!APPVersion.getVersionName().contains("Preview")) {
                 DividerTextExpandedWith(text = "更新版本") {
                     UpdateUI()
-                    downloadUI()
+//                    downloadUI()
                 }
 
             }

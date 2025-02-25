@@ -53,6 +53,7 @@ import com.hfut.schedule.logic.beans.jxglstu.datumResponse
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.ui.activity.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.activity.home.calendar.next.DatumMode.*
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.viewmodel.NetWorkViewModel
@@ -763,7 +764,7 @@ fun DatumUI(showAll : Boolean,
                 modifier = Modifier
                     .align(Alignment.BottomStart)
                     .padding(innerPadding)
-                    .padding(horizontal = 15.dp, vertical = 15.dp)
+                    .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
             ) {
                 if (shouldShowAddButton) {
                     FloatingActionButton(
@@ -786,7 +787,7 @@ fun DatumUI(showAll : Boolean,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(innerPadding)
-                    .padding(horizontal = 15.dp, vertical = 15.dp)
+                    .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
             ) {
                 if (shouldShowAddButton) {
                     ExtendedFloatingActionButton(
@@ -815,7 +816,7 @@ fun DatumUI(showAll : Boolean,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(innerPadding)
-                    .padding(horizontal = 15.dp, vertical = 15.dp)
+                    .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
             ) {
                 if (shouldShowAddButton) {
                     FloatingActionButton(

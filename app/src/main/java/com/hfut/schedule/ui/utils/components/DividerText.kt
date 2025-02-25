@@ -6,10 +6,12 @@ import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandIn
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -37,8 +39,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
@@ -114,11 +118,11 @@ fun DividerTextExpandedWith(
     AnimatedVisibility(
         enter =
         scaleIn(animationSpec = tween(durationMillis = speed)) +
-                expandVertically(expandFrom = Alignment.Bottom,animationSpec = tween(durationMillis = speed))
+                expandIn(expandFrom = Alignment.BottomCenter,animationSpec = tween(durationMillis = speed))
         ,
         exit =
         scaleOut(animationSpec = tween(durationMillis = speed)) +
-                shrinkVertically(shrinkTowards = Alignment.Bottom,animationSpec = tween(durationMillis = speed))
+                shrinkOut(shrinkTowards = Alignment.BottomCenter,animationSpec = tween(durationMillis = speed))
         ,
         visible = expanded,
         modifier = if (openBlurAnimation && canBlur) Modifier.blur(blurSize) else Modifier

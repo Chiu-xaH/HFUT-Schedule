@@ -15,6 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.Round
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -23,7 +24,7 @@ fun PersonUI(ifSaved : Boolean) {
     val sheetState_Person = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_Person by remember { mutableStateOf(false) }
 
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "个人信息") },
         leadingContent = { Icon(painterResource(R.drawable.person), contentDescription = "Localized description",) },
         modifier = Modifier.clickable { showBottomSheet_Person = true }

@@ -42,8 +42,12 @@ import com.hfut.schedule.logic.utils.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.beans.lepaoyun.LePaoYunHomeResponse
 import com.hfut.schedule.logic.utils.Starter
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.CardNormalColor
 import com.hfut.schedule.ui.utils.components.LittleDialog
 import com.hfut.schedule.ui.utils.components.MyCustomCard
+import com.hfut.schedule.ui.utils.components.StyleCardListItem
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -85,7 +89,7 @@ fun LePaoYun(vm : NetWorkViewModel) {
     val distance = prefs.getString("distance","")
     val msg = prefs.getString("msg","")
 
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "云运动") },
         overlineContent = {
             if (msg != null) {
@@ -168,7 +172,7 @@ fun LePaoYunUI() {
 
                     Row(modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 15.dp, vertical = 0.dp), horizontalArrangement = Arrangement.Start){
+                        .padding(horizontal = AppHorizontalDp(), vertical = 0.dp), horizontalArrangement = Arrangement.Start){
 
                         AssistChip(
                             onClick = { OpenLePao() },
@@ -177,34 +181,34 @@ fun LePaoYunUI() {
                         )
                     }
 
-                    MyCustomCard{
-                        ListItem(
+//                    MyCustomCard{
+                        StyleCardListItem(
                             headlineContent = { Text(text = "已跑 ${distance} 公里")},
                             leadingContent = { Icon(painterResource(id = R.drawable.directions_run), contentDescription = "")},
-                            colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
+                            color = MaterialTheme.colorScheme.errorContainer
                         )
-                    }
+//                    }
 
-                    MyCustomCard{
+                    MyCustomCard(hasElevation = false, containerColor = CardNormalColor()){
 
-                        ListItem(
+                        TransplantListItem(
                             headlineContent = { Text(text = "单次要求")},
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.flag), contentDescription = "")},
                         )
 
                         Row {
-                            ListItem(
+                            TransplantListItem(
                                 modifier = Modifier.width(100.dp),
                                 headlineContent = { Text(text = "配速")},
                                 supportingContent = { Text(text = "${cralist.raPaceMin} - ${cralist.raPaceMax}")},
                             )
-                            ListItem(
+                            TransplantListItem(
                                 modifier = Modifier.width(100.dp),
                                 headlineContent = { Text(text = "公里")},
                                 supportingContent = { Text(text = "${cralist.raSingleMileageMin} - ${cralist.raSingleMileageMax}")},
                             )
 
-                            ListItem(
+                            TransplantListItem(
                                 headlineContent = { Text(text = "步频")},
                                 supportingContent = { Text(text = "${cralist.raCadenceMin} - ${cralist.raCadenceMax}")},
                             )
@@ -212,39 +216,39 @@ fun LePaoYunUI() {
                         }
                     }
 
-                    MyCustomCard{
-                        ListItem(
+                    MyCustomCard(hasElevation = false, containerColor = CardNormalColor()){
+                        TransplantListItem(
                             headlineContent = { Text(text = "日期")},
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.calendar), contentDescription = "")},
                             supportingContent = { Text(text = "${cralist.raStartTime} - ${cralist.raEndTime}")},
                         )
-                        ListItem(
+                        TransplantListItem(
                             headlineContent = { Text(text = "时间")},
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.schedule), contentDescription = "")},
                             supportingContent = { Text(text = "${cralist.dayStartTime} - ${cralist.dayEndTime}")},
                         )
                     }
-                    MyCustomCard{
+                    MyCustomCard(hasElevation = false, containerColor = CardNormalColor()){
                         LazyColumn{
                             item {
-                                ListItem(
+                                TransplantListItem(
                                     headlineContent = { Text(text = "跑步点  ${points.size}个")},
                                     leadingContent = { Icon(painter = painterResource(id = R.drawable.near_me), contentDescription = "")},
                                 )
                             }
                             items(points.size) { item ->
-                                ListItem(headlineContent = { Text(text = points[item])}, modifier = Modifier.clickable {
+                                TransplantListItem(headlineContent = { Text(text = points[item])}, modifier = Modifier.clickable {
                                 })
                             }
                             item {
                                 Divider()
-                                ListItem(
+                                TransplantListItem(
                                     headlineContent = { Text(text = "边缘点  ${fences.size}个")},
                                     leadingContent = { Icon(painter = painterResource(id = R.drawable.near_me), contentDescription = "")},
                                 )
                             }
                             items(fences.size) { item ->
-                                ListItem(headlineContent = { Text(text = points[item])}, modifier = Modifier.clickable {
+                                TransplantListItem(headlineContent = { Text(text = points[item])}, modifier = Modifier.clickable {
                                 })
                             }
                         }
@@ -255,7 +259,7 @@ fun LePaoYunUI() {
     } else {
         Row(modifier = Modifier
             .fillMaxWidth()
-            .padding(15.dp), horizontalArrangement = Arrangement.Center){ Text(text = msg)
+            .padding(AppHorizontalDp()), horizontalArrangement = Arrangement.Center){ Text(text = msg)
         }
         Spacer(modifier = Modifier.height(100.dp))
     }

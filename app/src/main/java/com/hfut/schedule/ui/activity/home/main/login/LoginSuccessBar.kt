@@ -90,6 +90,7 @@ import com.hfut.schedule.ui.activity.home.search.main.SearchFuncs
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.currentPage
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnToAndClear
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CustomTabRow
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
@@ -298,10 +299,10 @@ fun SuccessUI(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel, w
 //                                            Icon(painter = painterResource(id =  R.drawable.login), contentDescription = "")
 //                                        }
 //                                    } else {
-                                        Text(text =if(webVpn) "WEBVPN" else "已登录",Modifier.padding(horizontal = 15.dp), color = MaterialTheme.colorScheme.primary)
+                                        Text(text =if(webVpn) "WEBVPN" else "已登录",Modifier.padding(horizontal = AppHorizontalDp()), color = MaterialTheme.colorScheme.primary)
 //                                    }
                                 }
-                                Spacer(modifier = Modifier.width(15.dp))
+                                Spacer(modifier = Modifier.width(AppHorizontalDp()))
                                 //null
                             }
                             SETTINGS -> null

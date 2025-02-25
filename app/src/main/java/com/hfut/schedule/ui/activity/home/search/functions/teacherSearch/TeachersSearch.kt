@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CircularProgressIndicator
 import com.hfut.schedule.ui.utils.components.LoadingUI
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -42,6 +43,8 @@ import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.reEmptyLiveDta
 import com.hfut.schedule.ui.activity.home.search.functions.failRate.permit
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import kotlinx.coroutines.CoroutineScope
@@ -55,7 +58,7 @@ fun TeacherSearch(vm: NetWorkViewModel) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
 
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "教师检索") },
         leadingContent = { Icon(painter = painterResource(id = R.drawable.group), contentDescription = "") },
         modifier = Modifier.clickable { showBottomSheet = true }
@@ -111,7 +114,7 @@ fun SearchTeachersUI(vm : NetWorkViewModel) {
                 actions = {
                     FilledTonalIconButton(
                         onClick = { onClick() },
-                        modifier = Modifier.padding(horizontal = 15.dp)
+                        modifier = Modifier.padding(horizontal = AppHorizontalDp())
                     ) {
                         Icon(painterResource(R.drawable.search), contentDescription = "")
                     }
@@ -128,13 +131,13 @@ fun SearchTeachersUI(vm : NetWorkViewModel) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
+                        .padding(horizontal = AppHorizontalDp()),
                     horizontalArrangement = Arrangement.Center
                 ) {
                     TextField(
                         modifier = Modifier
-                            .weight(.5f)
-                            .padding(horizontal = 7.dp),
+                            .weight(.5f),
+//                            .padding(horizontal = 7.dp),
                         value = name,
                         onValueChange = {
                             name = it
@@ -144,10 +147,11 @@ fun SearchTeachersUI(vm : NetWorkViewModel) {
                         shape = MaterialTheme.shapes.medium,
                         colors = textFiledTransplant(),
                     )
+                    Spacer(modifier = Modifier.width(8.dp))
                     TextField(
                         modifier = Modifier
-                            .weight(.5f)
-                            .padding(horizontal = 7.dp),
+                            .weight(.5f),
+//                            .padding(horizontal = 7.dp),
                         value = direction,
                         onValueChange = {
                             direction = it
@@ -158,7 +162,7 @@ fun SearchTeachersUI(vm : NetWorkViewModel) {
                         colors = textFiledTransplant(),
                     )
                 }
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(4.dp))
                 Box {
                     androidx.compose.animation.AnimatedVisibility(
                         visible = loading,

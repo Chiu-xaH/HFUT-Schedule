@@ -72,6 +72,7 @@ import com.hfut.schedule.ui.activity.home.search.main.SearchFuncs
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.currentPage
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnToAndClear
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CustomTabRow
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
@@ -227,7 +228,7 @@ fun NoLoginUI(vm : NetWorkViewModel,vm2 : LoginViewModel,vmUI : UIViewModel) {
                                         Icon(painter = painterResource(id =  R.drawable.login), contentDescription = "")
                                     }
                                 }
-                                Spacer(modifier = Modifier.width(15.dp))
+                                Spacer(modifier = Modifier.width(AppHorizontalDp()))
                                 //null
                             }
                             else -> null
@@ -252,7 +253,7 @@ fun NoLoginUI(vm : NetWorkViewModel,vm2 : LoginViewModel,vmUI : UIViewModel) {
                     modifier = Modifier.bottomBarBlur(hazeState, blur)
                 ) {
                     //悬浮底栏效果
-                    //modifier = Modifier.padding(15.dp).shadow(10.dp).clip(RoundedCornerShape(14.dp))
+                    //modifier = Modifier.padding(AppHorizontalDp()).shadow(10.dp).clip(RoundedCornerShape(14.dp))
                     val items = listOf(
                         NavigationBarItemData(
                             BottomBarItems.FOCUS.name,"聚焦", painterResource(R.drawable.lightbulb), painterResource(

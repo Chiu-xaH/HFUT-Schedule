@@ -19,6 +19,7 @@ import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.ScrollText
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 
 
 @SuppressLint("SuspiciousIndentation")
@@ -28,7 +29,7 @@ fun CoursesSearch(ifSaved :  Boolean, vm : NetWorkViewModel) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
 
-    ListItem(
+    TransplantListItem(
         headlineContent = { ScrollText(text = "开课查询") },
        // overlineContent = { Text(text = "查询下学期")},
         leadingContent = {

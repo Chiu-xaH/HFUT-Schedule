@@ -64,7 +64,12 @@ import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.getWebInfoOl
 import com.hfut.schedule.ui.activity.home.search.functions.card.SchoolCardItem
 import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.getWebInfo
 import com.hfut.schedule.ui.activity.home.search.functions.shower.getInGuaGua
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.CardNormalColor
+import com.hfut.schedule.ui.utils.components.CardNormalDp
 import com.hfut.schedule.ui.utils.components.MyCustomCard
+import com.hfut.schedule.ui.utils.components.StyleCardListItem
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.Round
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -102,11 +107,6 @@ fun FocusCardSettings() {
     var showCardAdd by remember { mutableStateOf(switch_card_add) }
     SharePrefs.saveBoolean("SWITCHCARDADD", true, showCardAdd)
 
-
-    val switch_ele_add = SharePrefs.prefs.getBoolean("SWITCHELEADD", true)
-    var showEleAdd by remember { mutableStateOf(switch_ele_add) }
-    SharePrefs.saveBoolean("SWITCHELEADD", true, showEleAdd)
-
     val switch_countDown = SharePrefs.prefs.getBoolean("SWITCHCOUNTDOWN", false)
     var showCountDown by remember { mutableStateOf(switch_countDown) }
     SharePrefs.saveBoolean("SWITCHCOUNTDOWN", false, showCountDown)
@@ -116,12 +116,12 @@ fun FocusCardSettings() {
     SharePrefs.saveBoolean("SWITCHSHORTCUT", false, showShortCut)
 
 
-    MyCustomCard{
-        ListItem(headlineContent = { Text(text = "打开开关则会在APP启动时自动获取信息,并显示在聚焦即时卡片内，如需减少性能开销可按需开启或关闭") }, leadingContent = { Icon(
+//    MyCustomCard{
+    StyleCardListItem(headlineContent = { Text(text = "打开开关则会在APP启动时自动获取信息,并显示在聚焦即时卡片内，如需减少性能开销可按需开启或关闭") }, leadingContent = { Icon(
             painter = painterResource(id = R.drawable.info),
             contentDescription = ""
         )})
-    }
+//    }
 
 
     Spacer(modifier = Modifier.height(5.dp))
@@ -141,11 +141,7 @@ fun FocusCardSettings() {
         headlineContent = { Text(text = "寝室电费")} ,
         leadingContent = { Icon(painter = painterResource(id = R.drawable.flash_on), contentDescription = "")},
         trailingContent = {
-            Row {
-                Switch(checked = showEleAdd, onCheckedChange = {showch -> showEleAdd = showch },thumbContent = { Icon(painter = painterResource(id = R.drawable.add), contentDescription = "")})
-                Spacer(modifier = Modifier.width(10.dp))
-                Switch(checked = showEle, onCheckedChange = {showch -> showEle = showch })
-            }
+            Switch(checked = showEle, onCheckedChange = {showch -> showEle = showch })
         }
     )
     ListItem(
@@ -253,19 +249,14 @@ fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel, refreshing : Boolean) {
     if(showCard || showEle || showToday || showWeb)
     Row(modifier = Modifier
         .fillMaxWidth()
-        .padding(horizontal = 15.dp, vertical = 4.dp), horizontalArrangement = Arrangement.Center) {
+        .padding(horizontal = AppHorizontalDp(), vertical = CardNormalDp()), horizontalArrangement = Arrangement.Center) {
 
-//        Card(
-//            elevation = CardDefaults.cardElevation(defaultElevation = 1.75.dp),
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .scale(scale.value),
-//            shape = MaterialTheme.shapes.medium,
-//        )
         MyCustomCard(modifier = Modifier
             .fillMaxWidth()
-            .scale(scale.value))
-        {
+            .scale(scale.value),
+            containerColor = CardNormalColor(),
+            hasElevation = false
+        ) {
             Column(modifier = Modifier.blur(blurSize)) {
                 if(showCard || showToday)
                     Row {
@@ -310,7 +301,7 @@ fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel, refreshing : Boolean) {
                         }
                     ) {
                         Box(modifier = Modifier.weight(.5f)) {
-                            ListItem(
+                            TransplantListItem(
                                 headlineContent = { Text(text = "晚上好") },
                                 overlineContent = { Text(text = "洗去一身疲惫吧") },
                                 leadingContent = {
@@ -319,7 +310,7 @@ fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel, refreshing : Boolean) {
                             )
                         }
                         Box(modifier = Modifier.weight(.5f)) {
-                            ListItem(headlineContent = { Text(text = "洗浴") }, leadingContent = {
+                            TransplantListItem(headlineContent = { Text(text = "洗浴") }, leadingContent = {
                                 Icon(painterResource(id = R.drawable.bathtub), contentDescription = "")
                             }, overlineContent = { Text(text = "推荐") }
                             )

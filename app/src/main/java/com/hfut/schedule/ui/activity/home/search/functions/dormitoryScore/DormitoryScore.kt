@@ -24,6 +24,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.ScrollText
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,7 +34,7 @@ fun DormitoryScoreXuanCheng(vm : NetWorkViewModel) {
     var showBottomSheet_Xuanqu by remember { mutableStateOf(false) }
 
 
-    ListItem(
+    TransplantListItem(
         headlineContent = { ScrollText(text = "寝室评分") },
         leadingContent = { Icon(painter = painterResource(R.drawable.psychiatry),"" ) },
         modifier = Modifier.clickable { showBottomSheet_Xuanqu = true }

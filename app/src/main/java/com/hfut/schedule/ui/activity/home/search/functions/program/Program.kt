@@ -87,7 +87,9 @@ import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
 import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.CampusId
 import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.CampusId.*
 import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.getCampus
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
+import com.hfut.schedule.ui.utils.components.CardNormalDp
 import com.hfut.schedule.ui.utils.style.CardForListColor
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
@@ -95,6 +97,8 @@ import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.DepartmentIcons
 import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.StyleCardListItem
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.components.statusUI
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import kotlinx.coroutines.CoroutineScope
@@ -109,7 +113,7 @@ fun Program(vm : NetWorkViewModel, ifSaved : Boolean) {
     val sheetState_Program = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_Program by remember { mutableStateOf(false) }
 
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "培养方案") },
         leadingContent = {
             Icon(
@@ -124,38 +128,6 @@ fun Program(vm : NetWorkViewModel, ifSaved : Boolean) {
             else refreshLogin()
         }
     )
-    val sheetState_info = rememberModalBottomSheetState()
-    var showBottomSheet_info by remember { mutableStateOf(false) }
-
-
-    if (showBottomSheet_info) {
-        ModalBottomSheet(
-            onDismissRequest = { showBottomSheet_info = false },
-            sheetState = sheetState_info,
-            shape = Round(sheetState_info)
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("说明") },
-                    )
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    ProgramTips()
-                }
-            }
-        }
-    }
 
     val sheetState_search = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_search by remember { mutableStateOf(false) }
@@ -189,7 +161,7 @@ fun Program(vm : NetWorkViewModel, ifSaved : Boolean) {
                         ),
                         title = { Text("培养方案") },
                         actions = {
-                            Row (modifier = Modifier.padding(horizontal = 15.dp)){
+                            Row (modifier = Modifier.padding(horizontal = AppHorizontalDp())){
 //                                FilledTonalIconButton(
 //                                    onClick = { showBottomSheet_info = true },
 //                                ) {
@@ -242,22 +214,22 @@ fun ProgramUI(vm: NetWorkViewModel,ifSaved: Boolean) {
     }
     LazyColumn {
         item {
-            MyCustomCard{
-                ListItem(
+//            MyCustomCard{
+                StyleCardListItem(
                     headlineContent = { Text(text = "合计 ${list.size} 门 $sum 学分") },
                     supportingContent = { Text(text = "不含选修课!")},
                  //   overlineContent = { },
                  //   trailingContent = { Text(text = "学分 " +  list[item].credit)},
-                    colors = ListItemDefaults.colors(MaterialTheme.colorScheme.primaryContainer),
+                    color = MaterialTheme.colorScheme.primaryContainer,
                     leadingContent = { Icon(painterResource(id = R.drawable.conversion_path), contentDescription = "Localized description") },
                     modifier = Modifier.clickable {},
                 )
-            }
+//            }
         }
         items(list.size) { item ->
             val name = list[item].name
-            MyCustomCard{
-                ListItem(
+//            MyCustomCard{
+                StyleCardListItem(
                     headlineContent = { Text(text = name) },
                     supportingContent = { Text(text = list[item].school + "  第" + list[item].term[0] + "学期")},
                     overlineContent = { list[item].type?.let { Text(text = it) } },
@@ -268,7 +240,7 @@ fun ProgramUI(vm: NetWorkViewModel,ifSaved: Boolean) {
                         showBottomSheet_Search = true
                     },
                 )
-            }
+//            }
         }
     }
 }
@@ -389,11 +361,11 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean) {
 
     DividerTextExpandedWith(text = if(ifSaved)"完成情况(登录后可查看)" else "完成情况",openBlurAnimation = false) {
         Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = AppHorizontalDp()),
             modifier = Modifier
                 .fillMaxWidth()
                 .scale(scale2.value)
-                .padding(horizontal = 15.dp, vertical = 5.dp),
+                .padding(horizontal = AppHorizontalDp(), vertical = 5.dp),
             shape = MaterialTheme.shapes.medium,
             colors = CardForListColor()
         ) {
@@ -431,7 +403,7 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean) {
             },
             modifier = Modifier
                 .fillMaxWidth().scale(scale2.value)
-                .padding(horizontal = 15.dp),
+                .padding(horizontal = AppHorizontalDp()),
         ) {
             Text(text = "培养方案进度")
         }
@@ -463,8 +435,8 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean) {
                 LazyColumn {
                     items(listOne.size) {item ->
                         total += listOne[item].requiedCredits ?: 0.0
-                        MyCustomCard {
-                            ListItem(
+//                        MyCustomCard {
+                            StyleCardListItem(
                                 headlineContent = { Text(text = listOne[item].type + " | 学分要求 " + listOne[item].requiedCredits) },
                                 trailingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "")},
                                 //   leadingContent = { Icon(painterResource(id = R.drawable.calendar), contentDescription = "Localized description") },
@@ -474,7 +446,7 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean) {
                                     title = listOne[item].type.toString()
                                 },
                             )
-                        }
+//                        }
                     }
 
                     item {
@@ -584,8 +556,8 @@ fun ProgramUIInfo(num : Int, vm : NetWorkViewModel, ifSaved : Boolean) {
     if(show) {
         LazyColumn {
             items(listTwo.size) {item ->
-                MyCustomCard{
-                    ListItem(
+//                MyCustomCard{
+                    StyleCardListItem(
                         headlineContent = { Text(text = listTwo[item].type + " | 学分要求 " + listTwo[item].requiedCredits) },
                         trailingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "")},
                         //   leadingContent = { Icon(painterResource(id = R.drawable.calendar), contentDescription = "Localized description") },
@@ -595,7 +567,7 @@ fun ProgramUIInfo(num : Int, vm : NetWorkViewModel, ifSaved : Boolean) {
                             title = listTwo[item].type + " | 学分要求 " + listTwo[item].requiedCredits
                         },
                     )
-                }
+//                }
             }
         }
     } else {
@@ -624,7 +596,7 @@ fun ProgramUIInfo2(num1 : Int, num2 : Int, vm : NetWorkViewModel, ifSaved : Bool
             TextField(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(horizontal = 15.dp),
+                    .padding(horizontal = AppHorizontalDp()),
                 value = input,
                 onValueChange = {
                     input = it
@@ -647,15 +619,15 @@ fun ProgramUIInfo2(num1 : Int, num2 : Int, vm : NetWorkViewModel, ifSaved : Bool
                 searchList.add(item)
             }
         }
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(CardNormalDp()))
         LazyColumn {
             items(searchList.size) {item ->
                 val listItem = searchList[item]
                 val name = listItem.name
-                MyCustomCard{
+//                MyCustomCard{
                     var department = listItem.depart
                     if(department.contains("（")) department = department.substringBefore("（")
-                    ListItem(
+                    StyleCardListItem(
                         headlineContent = { Text(text = name) },
                         supportingContent = { Text(text = department) },
                         overlineContent = { Text(text = "第" + listItem.term + "学期 | 学分 ${listItem.credit}")},
@@ -670,7 +642,7 @@ fun ProgramUIInfo2(num1 : Int, num2 : Int, vm : NetWorkViewModel, ifSaved : Bool
                             }
                         },
                     )
-                }
+//                }
             }
         }
     } else {
@@ -684,16 +656,47 @@ fun ProgramUIInfo2(num1 : Int, num2 : Int, vm : NetWorkViewModel, ifSaved : Bool
 
 @Composable
 fun ProgramTips() {
-    MyCustomCard {
-        ListItem(
+//    MyCustomCard {
+        StyleCardListItem(
             headlineContent = { Text("选修课不显示") },
             supportingContent = { Text("选修课多而杂,没必要都显示在培养方案里,按时按通知选课即可") },
         )
-    }
-    MyCustomCard {
-        ListItem(
+//    }
+//    MyCustomCard {
+        StyleCardListItem(
             headlineContent = { Text("查询全校其他专业培养方案") },
             supportingContent = { Text("请前往 合工大教务 公众号") },
         )
+//    }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun GuestProgram(vm: NetWorkViewModel) {
+    val sheetState_search = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showBottomSheet_search by remember { mutableStateOf(false) }
+
+
+    if (showBottomSheet_search) {
+        ModalBottomSheet(
+            onDismissRequest = { showBottomSheet_search = false },
+            sheetState = sheetState_search,
+            shape = Round(sheetState_search)
+        ) {
+            ProgramSearch(vm)
+        }
     }
+    ListItem(
+        headlineContent = { Text(text = "全校培养方案") },
+        leadingContent = {
+            Icon(
+                painterResource(R.drawable.conversion_path),
+                contentDescription = "Localized description",
+            )
+        },
+        modifier = Modifier.clickable {
+            showBottomSheet_search = true
+        }
+    )
 }

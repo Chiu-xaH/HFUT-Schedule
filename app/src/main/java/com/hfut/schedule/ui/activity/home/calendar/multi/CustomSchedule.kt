@@ -62,6 +62,7 @@ import com.hfut.schedule.logic.utils.Semseter.parseSemseter
 import com.hfut.schedule.logic.utils.Semseter.getSemseterFromCloud
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.ui.activity.home.calendar.jxglstu.getNewWeek
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.MyToast
 import java.time.LocalDate
 
@@ -767,7 +768,7 @@ fun CustomSchedules(showAll : Boolean,
                         modifier = Modifier
                             .align(Alignment.BottomStart)
                             .padding(innerPadding)
-                            .padding(horizontal = 15.dp, vertical = 15.dp)
+                            .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
                     ) {
                         if (shouldShowAddButton) {
                             FloatingActionButton(
@@ -790,7 +791,7 @@ fun CustomSchedules(showAll : Boolean,
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
                             .padding(innerPadding)
-                            .padding(horizontal = 15.dp, vertical = 15.dp)
+                            .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
                     ) {
                         if (shouldShowAddButton) {
                             ExtendedFloatingActionButton(
@@ -818,7 +819,7 @@ fun CustomSchedules(showAll : Boolean,
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
                             .padding(innerPadding)
-                            .padding(horizontal = 15.dp, vertical = 15.dp)
+                            .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
                     ) {
                         TextButton(onClick = {  }) {
                             Text(
@@ -839,7 +840,7 @@ fun CustomSchedules(showAll : Boolean,
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
                             .padding(innerPadding)
-                            .padding(horizontal = 15.dp, vertical = 15.dp)
+                            .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
                     ) {
                         if (shouldShowAddButton) {
                             FloatingActionButton(

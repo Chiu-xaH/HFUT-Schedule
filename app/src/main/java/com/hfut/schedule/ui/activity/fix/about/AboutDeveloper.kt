@@ -39,6 +39,7 @@ import com.hfut.schedule.logic.beans.GithubBean
 import com.hfut.schedule.logic.utils.GithubConsts
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.logic.utils.reEmptyLiveDta
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.Party
 import com.hfut.schedule.ui.utils.components.ScrollText
@@ -114,7 +115,7 @@ fun About(vm : LoginViewModel) {
                 )
             },
             bottomBar = {
-                Row(modifier = Modifier.padding(15.dp),horizontalArrangement = Arrangement.Center) {
+                Row(modifier = Modifier.padding(AppHorizontalDp()),horizontalArrangement = Arrangement.Center) {
                     Button(
                         onClick = { Starter.startWebUrl("https://github.com/${GithubConsts.DEVELOPER_NAME}/${GithubConsts.REPO_NAME}") },
                         modifier = Modifier
@@ -124,7 +125,7 @@ fun About(vm : LoginViewModel) {
                         Text("Stars ⭐ $starsNum")
                     }
 
-                    Spacer(modifier = Modifier.width(15.dp))
+                    Spacer(modifier = Modifier.width(AppHorizontalDp()))
                     FilledTonalButton(
                         onClick = { Starter.startWebUrl("https://github.com/${GithubConsts.DEVELOPER_NAME}/${GithubConsts.REPO_NAME}/releases/latest") },
                         modifier = Modifier

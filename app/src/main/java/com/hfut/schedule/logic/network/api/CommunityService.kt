@@ -12,12 +12,6 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface CommunityService {
-
-    //社区登录
-    @GET("cas/login?service=https%3A%2F%2Fcommunity.hfut.edu.cn%2F")
-    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.17")
-    fun LoginCommunity(@Header("Cookie") Cookie : String) : Call<ResponseBody>
-
     @GET("api/sys/cas/client/validateLogin?service=https:%2F%2Fcommunity.hfut.edu.cn%2F")
     fun Login(@Query("ticket") ticket : String) : Call<ResponseBody>
     //平均成绩

@@ -48,6 +48,8 @@ import com.hfut.schedule.logic.utils.Starter.refreshLogin
 import com.hfut.schedule.ui.utils.components.EmptyUI
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.StyleCardListItem
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.style.RowHorizontal
 
@@ -67,7 +69,7 @@ fun Exam(vm : NetWorkViewModel, ifSaved : Boolean) {
     if(ifSaved) CommuityTOKEN?.let { vm.Exam(it) }
     else vm.getExamJXGLSTU(cookie.toString())
 
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "考试") },
         overlineContent = { Text(text = "${if(ifSaved) getNewExam().size else getExamJXGLSTU().size} 门")},
         leadingContent = {
@@ -151,8 +153,8 @@ fun ExamItems(item : Int,status : Boolean) {
     fun Item() {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
             Column() {
-                MyCustomCard {
-                    ListItem(
+//                MyCustomCard {
+                    StyleCardListItem(
                         headlineContent = { getExam()[item].courseName?.let { Text(text = it) } },
                         overlineContent = { Text(text = st?.substring(5,st.length - 3) + "~" + get?.substring(11,get.length-3)) },
                         supportingContent = { getExam()[item].place?.let { Text(text = it) } },
@@ -166,12 +168,12 @@ fun ExamItems(item : Int,status : Boolean) {
                             else if(examdate.toInt() == todaydate.toInt()) Text(text = "今日")
                             else if(examdate.toInt() > todaydate.toInt()) Text(text = "待考")
                                           },
-                        colors =  if(examdate.toInt() >= todaydate.toInt())
-                            ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
-                        else ListItemDefaults.colors(),
+                        color =  if(examdate.toInt() >= todaydate.toInt())
+                            MaterialTheme.colorScheme.errorContainer
+                        else null,
                         modifier = Modifier.clickable {},
                     )
-                }
+//                }
             }
         }
     }
@@ -204,8 +206,8 @@ fun JxglstuExamUI(item : Map<String,String>,status : Boolean) {
     if(status) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
             Column() {
-                MyCustomCard{
-                    ListItem(
+//                MyCustomCard{
+                    StyleCardListItem(
                         headlineContent = {  Text(text = "${item["课程名称"]}") },
                         overlineContent = { examDate?.let { Text(text = it) } },
                         supportingContent = { Text(text = "${item["考场"]}") },
@@ -220,7 +222,7 @@ fun JxglstuExamUI(item : Map<String,String>,status : Boolean) {
                         },
                         modifier = Modifier.clickable {},
                     )
-                }
+//                }
             }
         }
     } else {
@@ -250,8 +252,8 @@ fun JxglstuExamUI(item : Map<String,String>,status : Boolean) {
             } else {
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                     Column() {
-                        MyCustomCard {
-                            ListItem(
+//                        MyCustomCard {
+                            StyleCardListItem(
                                 headlineContent = {  Text(text = "$course") },
                                 overlineContent = { Text(text = "${time?.substringAfter("-")}") },
                                 supportingContent = { Text(text = "$place") },
@@ -311,9 +313,9 @@ fun JxglstuExamUI(item : Map<String,String>,status : Boolean) {
                                         }
                                     }
                                 },
-                                colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
+                                color = MaterialTheme.colorScheme.errorContainer
                             )
-                        }
+//                        }
                     }
                 }
             }

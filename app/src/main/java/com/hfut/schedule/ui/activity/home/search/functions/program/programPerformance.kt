@@ -53,6 +53,8 @@ import com.hfut.schedule.logic.beans.jxglstu.CourseItem
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.search.functions.life.countFunc
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.CardNormalColor
 import com.hfut.schedule.ui.utils.style.CardForListColor
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
@@ -61,6 +63,8 @@ import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.style.RowHorizontal
 import com.hfut.schedule.ui.utils.components.ScrollText
+import com.hfut.schedule.ui.utils.components.StyleCardListItem
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -167,17 +171,17 @@ fun ProgramPerformance(vm : NetWorkViewModel) {
                         val requireInfo = item.requireInfo
                         val summary = item.completionSummary
                         DividerTextExpandedWith(text = item.nameZh + " 要求 ${requireInfo.courseNum} 门 ${requireInfo.credits} 学分") {
-                            MyCustomCard {
+                            MyCustomCard(hasElevation = false, containerColor = CardNormalColor()) {
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.Center
                                 ) {
-                                    ListItem(
+                                    TransplantListItem(
                                         headlineContent = { Text(text = "${summary.passedCourseNum} 门 ${summary.passedCredits} 学分") },
                                         overlineContent = { Text(text = "已通过") },
                                         modifier = Modifier.weight(.5f)
                                     )
-                                    ListItem(
+                                    TransplantListItem(
                                         headlineContent = { Text(text = "${summary.failedCourseNum} 门 ${summary.failedCredits} 学分") },
                                         overlineContent = { Text(text = "未通过") },
                                         modifier = Modifier.weight(.5f)
@@ -187,7 +191,7 @@ fun ProgramPerformance(vm : NetWorkViewModel) {
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.Center
                                 ) {
-                                    ListItem(
+                                    TransplantListItem(
                                         headlineContent = { Text(text = "${summary.takingCourseNum} 门 ${summary.takingCredits} 学分") },
                                         overlineContent = { Text(text = "本学期在修") },
                                         modifier = Modifier.weight(1f),
@@ -215,17 +219,17 @@ fun ProgramPerformance(vm : NetWorkViewModel) {
                         item { DividerText(text = "培养方案外课程 (包含转专业废弃课程)") }
                         item {
                             if(summary != null) {
-                                MyCustomCard {
+                                MyCustomCard(hasElevation = false, containerColor = CardNormalColor()) {
                                     Row(
                                         modifier = Modifier.fillMaxWidth(),
                                         horizontalArrangement = Arrangement.Center
                                     ) {
-                                        ListItem(
+                                        TransplantListItem(
                                             headlineContent = { Text(text = "${summary.passedCourseNum} 门 ${summary.passedCredits} 学分") },
                                             overlineContent = { Text(text = "已通过") },
                                             modifier = Modifier.weight(.5f)
                                         )
-                                        ListItem(
+                                        TransplantListItem(
                                             headlineContent = { Text(text = "${summary.failedCourseNum} 门 ${summary.failedCredits} 学分") },
                                             overlineContent = { Text(text = "未通过") },
                                             modifier = Modifier.weight(.5f)
@@ -235,7 +239,7 @@ fun ProgramPerformance(vm : NetWorkViewModel) {
                                         modifier = Modifier.fillMaxWidth(),
                                         horizontalArrangement = Arrangement.Center
                                     ) {
-                                        ListItem(
+                                        TransplantListItem(
                                             headlineContent = { Text(text = "${summary.takingCourseNum} 门 ${summary.takingCredits} 学分") },
                                             overlineContent = { Text(text = "本学期在修") },
                                             modifier = Modifier.weight(1f),
@@ -299,7 +303,7 @@ fun PerformanceInfo(vm: NetWorkViewModel,moduleIndex : Int) {
         TextField(
             modifier = Modifier
                 .weight(1f)
-                .padding(horizontal = 15.dp),
+                .padding(horizontal = AppHorizontalDp()),
             value = input,
             onValueChange = {
                 input = it
@@ -328,7 +332,7 @@ fun PerformanceInfo(vm: NetWorkViewModel,moduleIndex : Int) {
 //    Row(
 //        modifier = Modifier
 //            .fillMaxWidth()
-//            .padding(horizontal = 15.dp),
+//            .padding(horizontal = AppHorizontalDp()),
 //        horizontalArrangement = Arrangement.Start
 //    ) {
 //        AssistChip(onClick = { MyToast("正在开发") }, label = { Text(text = "学期") })
@@ -360,8 +364,8 @@ fun PerformanceInfo(vm: NetWorkViewModel,moduleIndex : Int) {
                         "UNREPAIRED" -> "待修"
                         else -> item.resultType
                     }
-                    MyCustomCard {
-                        ListItem(
+//                    MyCustomCard {
+                        StyleCardListItem(
                             headlineContent = { Text(text = item.nameZh) },
                             supportingContent = {
                                 if(type == "通过") {
@@ -389,7 +393,7 @@ fun PerformanceInfo(vm: NetWorkViewModel,moduleIndex : Int) {
                                 showBottomSheet = true
                             }
                         )
-                    }
+//                    }
                 }
             }
         }
@@ -412,8 +416,8 @@ fun PerformanceInfo(vm: NetWorkViewModel,moduleIndex : Int) {
                         "UNREPAIRED" -> "待修"
                         else -> item.resultType
                     }
-                    MyCustomCard {
-                        ListItem(
+//                    MyCustomCard {
+                        StyleCardListItem(
                             headlineContent = { Text(text = item.nameZh) },
                             supportingContent = {
                                 if(type == "通过") {
@@ -435,7 +439,7 @@ fun PerformanceInfo(vm: NetWorkViewModel,moduleIndex : Int) {
                                 showBottomSheet = true
                             }
                         )
-                    }
+//                    }
                 }
             }
         }
@@ -480,10 +484,10 @@ fun ProgramInfoItem(item : CourseItem) {
         }
     }
     Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = AppHorizontalDp()),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 15.dp, vertical = 5.dp),
+            .padding(horizontal = AppHorizontalDp(), vertical = 5.dp),
         shape = MaterialTheme.shapes.medium,
         colors = CardForListColor()
     ) {

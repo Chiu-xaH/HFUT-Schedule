@@ -31,6 +31,7 @@ import com.hfut.schedule.logic.network.NetWork
 import com.hfut.schedule.ui.activity.home.search.functions.shower.ShowerUI
 import com.hfut.schedule.ui.activity.home.search.functions.shower.tranamt
 import com.hfut.schedule.ui.activity.shower.login.getGuaGuaPersonInfo
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.style.CardForListColor
 import com.hfut.schedule.ui.utils.style.Round
@@ -55,10 +56,10 @@ fun GuaGuaPersonInfoUI(vm: NetWorkViewModel) {
 
     val personInfo = getGuaGuaPersonInfo()
     Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = AppHorizontalDp()),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 15.dp, vertical = 5.dp),
+            .padding(horizontal = AppHorizontalDp(), vertical = 5.dp),
         shape = MaterialTheme.shapes.medium,
         colors = CardForListColor()
     ) {

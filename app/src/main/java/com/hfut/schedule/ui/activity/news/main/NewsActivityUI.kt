@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.activity.news.main
 
+//import com.hfut.schedule.ui.activity.card.function.main.turnToBottomBar
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Build
@@ -10,13 +11,8 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -38,7 +34,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.BadgedBox
-import com.hfut.schedule.ui.utils.components.LoadingUI
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
@@ -50,7 +45,6 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -73,25 +67,27 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.viewmodel.NetWorkViewModel
-import com.hfut.schedule.logic.enums.NewsBarItems
 import com.hfut.schedule.logic.beans.NavigationBarItemData
+import com.hfut.schedule.logic.enums.NewsBarItems
 import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.DataStoreManager
 import com.hfut.schedule.logic.utils.Encrypt
 import com.hfut.schedule.logic.utils.SharePrefs
-//import com.hfut.schedule.ui.activity.card.function.main.turnToBottomBar
-import com.hfut.schedule.ui.activity.news.home.NewsItem
+import com.hfut.schedule.logic.utils.reEmptyLiveDta
 import com.hfut.schedule.ui.activity.news.departments.SchoolsUI
+import com.hfut.schedule.ui.activity.news.home.NewsItem
 import com.hfut.schedule.ui.activity.news.xuancheng.XuanquNewsUI
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.currentPage
-import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnToAndClear
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.CardNormalDp
+import com.hfut.schedule.ui.utils.components.CenterLoadingUI
 import com.hfut.schedule.ui.utils.components.MyToast
-import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import com.hfut.schedule.ui.utils.style.bottomBarBlur
+import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import com.hfut.schedule.ui.utils.style.topBarBlur
+import com.hfut.schedule.viewmodel.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 import kotlinx.coroutines.CoroutineScope
@@ -247,26 +243,47 @@ fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
         "放假","转专业","推免","奖学金"
     )
     var input by remember { mutableStateOf( words[0]) }
-    var onclick by remember { mutableStateOf(true) }
+//    var onclick by remember { mutableStateOf(true) }
     var loading by remember { mutableStateOf(true) }
     var page by remember { mutableStateOf(1) }
+    var refresh by remember { mutableStateOf(true) }
 
-
+    fun refresh() {
+//        onclick = true
+        loading = true
+        CoroutineScope(Job()).launch {
+            async { reEmptyLiveDta(vm.NewsData) }.await()
+            async { vm.searchNews(Encrypt.encodeToBase64(input), page) }.await()
+            async {
+                Handler(Looper.getMainLooper()).post {
+                    vm.NewsData.observeForever { result ->
+                        if (result != null) {
+                            if (result.contains("<!DOCTYPE html>")) {
+                                loading = false
+                                refresh = false
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if(refresh) {
+        refresh()
+    }
 
     Box(
         modifier = Modifier
-           // .padding(innerPadding)
             .fillMaxSize()
     ) {
         Column {
             Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
-            LazyRow(modifier = Modifier.padding(horizontal = 15.dp)) {
+            LazyRow(modifier = Modifier.padding(horizontal = AppHorizontalDp())) {
                 items(words.size) { index ->
                     val word = words[index]
                     AssistChip(onClick = {
                         input = word
-                        loading = true
-                        onclick = true
+                        refresh()
                     }, label = { Text(text = word) })
                     Spacer(modifier = Modifier.width(10.dp))
                 }
@@ -279,7 +296,7 @@ fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                 TextField(
                     modifier = Modifier
                         .weight(1f)
-                        .padding(horizontal = 15.dp),
+                        .padding(horizontal = AppHorizontalDp()),
                     value = input,
                     onValueChange = {
                         input = it
@@ -290,8 +307,7 @@ fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                         IconButton(
                             // shape = RoundedCornerShape(5.dp),
                             onClick = {
-                                loading = true
-                                onclick = true
+                                refresh()
                             }) {
                             Icon(
                                 painter = painterResource(R.drawable.search),
@@ -303,51 +319,14 @@ fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                     colors = textFiledTransplant(),
                 )
             }
-            Spacer(modifier = Modifier.height(10.dp))
-            if (onclick) {
-                CoroutineScope(Job()).launch {
-                    async {
-                        Handler(Looper.getMainLooper()).post {
-                            vm.NewsData.value = "{}"
-                        }
-                    }.await()
-                    async { vm.searchNews(Encrypt.encodeToBase64(input), page) }.await()
-                    async {
-                        Handler(Looper.getMainLooper()).post {
-                            vm.NewsData.observeForever { result ->
-                                if (result != null) {
-                                    if (result.contains("<!DOCTYPE html>")) {
-                                        loading = false
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                AnimatedVisibility(
-                    visible = loading,
-                    enter = fadeIn(),
-                    exit = fadeOut()
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Spacer(modifier = Modifier.height(5.dp))
-                        Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
-                        LoadingUI()
-                    }
-                }////加载动画居中，3s后消失
+            Spacer(modifier = Modifier.height(CardNormalDp()))
 
-                AnimatedVisibility(
-                    visible = !loading,
-                    enter = fadeIn(),
-                    exit = fadeOut()
-                ) {
-                    //写布局
-                    NewsItem(vm,innerPadding)
-                }
+            if(loading) {
+                CenterLoadingUI()
+            } else {
+                NewsItem(vm,innerPadding)
             }
+
             Spacer(modifier = Modifier.height(30.dp))
         }
         AnimatedVisibility(
@@ -357,14 +336,13 @@ fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
             modifier = Modifier
                 .padding(innerPadding)
                 .align(Alignment.BottomStart)
-                .padding(horizontal = 15.dp, vertical = 15.dp)
+                .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
         ) {
             FloatingActionButton(
                 onClick = {
                     if (page > 1) {
                         page--
-                        onclick = true
-                        loading = true
+                        refresh()
                     } else {
                         MyToast("第一页")
                     }
@@ -380,13 +358,12 @@ fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
             modifier = Modifier
                 .padding(innerPadding)
                 .align(Alignment.BottomCenter)
-                .padding(horizontal = 15.dp, vertical = 15.dp)
+                .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
         ) {
             ExtendedFloatingActionButton(
                 onClick = {
                     page = 1
-                    onclick = true
-                    loading = true
+                    refresh()
                 },
             ) { Text(text = "第${page}页") }
         }
@@ -398,13 +375,12 @@ fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(innerPadding)
-                .padding(horizontal = 15.dp, vertical = 15.dp)
+                .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
         ) {
             FloatingActionButton(
                 onClick = {
                     page++
-                    onclick = true
-                    loading = true
+                    refresh()
                 },
             ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
         }
@@ -412,7 +388,6 @@ fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
 }
 
 
-@RequiresApi(Build.VERSION_CODES.O)
 fun transferToPostData(text : String, page : Int = 1)  : String {
     val jsonArray = JSONArray(
         """

@@ -33,6 +33,8 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.ScrollText
+import com.hfut.schedule.ui.utils.components.StyleCardListItem
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.components.WebDialog
 import com.hfut.schedule.ui.utils.components.WebViewScreen
 
@@ -43,53 +45,16 @@ fun LabUI() {
     var num by remember { mutableStateOf(0) }
 
     WebDialog(showDialog,{ showDialog = false },getLab()[num].info,getLab()[num].title)
-//    val switch_startUri = SharePrefs.prefs.getBoolean("SWITCHSTARTURI",true)
-//
-//    if (showDialog) {
-//        if(switch_startUri) {
-//            androidx.compose.ui.window.Dialog(
-//                onDismissRequest = { showDialog = false },
-//                properties = DialogProperties(usePlatformDefaultWidth = false)
-//            ) {
-//                Scaffold(
-//                    modifier = Modifier.fillMaxSize(),
-//                    topBar = {
-//                        TopAppBar(
-//                            colors = TopAppBarDefaults.mediumTopAppBarColors(
-//                                containerColor = Color.Transparent,
-//                                titleContentColor = MaterialTheme.colorScheme.primary,
-//                            ),
-//                            actions = {
-//                                Row{
-//                                    IconButton(onClick = { Starter.startWebUrl(getLab()[num].info) }) { Icon(painterResource(id = R.drawable.net), contentDescription = "") }
-//                                    IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "") }
-//                                }
-//                            },
-//                            title = { ScrollText(getLab()[num].title) }
-//                        )
-//                    },
-//                ) { innerPadding ->
-//                    Column(
-//                        modifier = Modifier
-//                            .padding(innerPadding)
-//                            .fillMaxSize()
-//                    ) {
-//                        WebViewScreen(getLab()[num].info)
-//                    }
-//                }
-//            }
-//        } else {
-//            Starter.startWebUrl(getLab()[num].info)
-//        }
-//    }
-    ListItem(
+
+
+    StyleCardListItem(
         headlineContent = { Text(text = "选项会随云端发生变动,即使不更新软件") },
         leadingContent = { Icon(painterResource(R.drawable.cloud_download), contentDescription = "Localized description",) },
-        modifier = Modifier.clickable {}
+        color = Color.Transparent
     )
     for(item in 0 until getLab().size) {
-        MyCustomCard {
-            ListItem(
+//        MyCustomCard {
+            StyleCardListItem(
                 headlineContent = { Text(text = getLab()[item].title) },
                 leadingContent = { Icon(painterResource(R.drawable.net), contentDescription = "Localized description",) },
                 trailingContent = { Icon( Icons.Filled.ArrowForward, contentDescription = "") },
@@ -98,7 +63,7 @@ fun LabUI() {
                     showDialog = true
                 }
             )
-        }
+//        }
     }
     Spacer(modifier = Modifier.height(10.dp))
 }

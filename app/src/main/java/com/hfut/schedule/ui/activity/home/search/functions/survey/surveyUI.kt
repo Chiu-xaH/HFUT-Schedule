@@ -57,10 +57,12 @@ import com.hfut.schedule.logic.utils.Semseter.parseSemseter
 import com.hfut.schedule.logic.utils.Semseter.getSemseterFromCloud
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.EmptyUI
 import com.hfut.schedule.ui.utils.components.LittleDialog
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.style.Round
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -139,7 +141,7 @@ fun SurveyUI(vm : NetWorkViewModel) {
             exit = scaleOut(),
             modifier = Modifier
                 .align(Alignment.BottomStart)
-                .padding(horizontal = 15.dp, vertical = 15.dp)
+                .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
         ) {
             FloatingActionButton(
                 onClick = {
@@ -156,7 +158,7 @@ fun SurveyUI(vm : NetWorkViewModel) {
             exit = scaleOut(),
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(horizontal = 15.dp, vertical = 15.dp)
+                .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
         ) {
             ExtendedFloatingActionButton(
                 onClick = {refresh = true},
@@ -169,7 +171,7 @@ fun SurveyUI(vm : NetWorkViewModel) {
             exit = scaleOut(),
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(horizontal = 15.dp, vertical = 15.dp)
+                .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
         ) {
             FloatingActionButton(
                 onClick = {
@@ -228,7 +230,7 @@ fun teacherList(vm : NetWorkViewModel, refresh : (Boolean) -> Unit) {
                         ),
                         title = { Text("发送教评") },
                         actions = {
-                            Row(modifier = Modifier.padding(horizontal = 15.dp)) {
+                            Row(modifier = Modifier.padding(horizontal = AppHorizontalDp())) {
                                 FilledTonalIconButton(
                                     onClick = {
                                         showDialog = true
@@ -269,8 +271,8 @@ fun teacherList(vm : NetWorkViewModel, refresh : (Boolean) -> Unit) {
     if(list.size != 0)
         LazyColumn {
             items(list.size) { item ->
-                MyCustomCard{
-                    ListItem(
+//                MyCustomCard{
+                    StyleCardListItem(
                         headlineContent = { list[item].teacher.person?.let { Text(text = it.nameZh) } },
                         leadingContent = { Icon(painterResource(R.drawable.person), contentDescription = "Localized description",) },
                         trailingContent = { if(!list[item].submitted) Icon(Icons.Filled.ArrowForward, contentDescription = "") else Text(text = "已评") },
@@ -282,7 +284,7 @@ fun teacherList(vm : NetWorkViewModel, refresh : (Boolean) -> Unit) {
                             } else MyToast("已评教")
                         },
                     )
-                }
+//                }
             }
             item {
                 Spacer(modifier = Modifier.height(85.dp))

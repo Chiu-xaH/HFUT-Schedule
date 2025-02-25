@@ -49,6 +49,7 @@ import com.hfut.schedule.logic.beans.QWeatherResponse
 import com.hfut.schedule.logic.utils.reEmptyLiveDta
 import com.hfut.schedule.ui.activity.home.search.functions.life.QWeatherLevel.*
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
 import com.hfut.schedule.ui.utils.style.CardForListColor
 import com.hfut.schedule.ui.utils.components.DevelopingUI
@@ -148,11 +149,11 @@ fun LifeUIS(vm : NetWorkViewModel) {
     val data = getWeather(vm)
     DividerTextExpandedWith(text = "天气预警",false) {
         Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = AppHorizontalDp()),
             modifier = Modifier
                 .fillMaxWidth()
                 .scale(scale2.value)
-                .padding(horizontal = 15.dp, vertical = 5.dp),
+                .padding(horizontal = AppHorizontalDp(), vertical = 5.dp),
             shape = MaterialTheme.shapes.medium,
             colors = CardForListColor()
         ) {

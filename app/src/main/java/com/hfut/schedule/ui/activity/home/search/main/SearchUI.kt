@@ -66,7 +66,12 @@ import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.Transfe
 import com.hfut.schedule.ui.activity.home.search.functions.webLab.WebUI
 import com.hfut.schedule.ui.activity.home.search.functions.work.Work
 import com.hfut.schedule.ui.activity.home.search.functions.xueXin.XueXin
+import com.hfut.schedule.ui.utils.components.CardListColorType
+import com.hfut.schedule.ui.utils.components.CardNormalColor
+import com.hfut.schedule.ui.utils.components.CardNormalDp
 import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.SmallCard
+import com.hfut.schedule.ui.utils.style.CardForListColor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -92,17 +97,17 @@ fun getName(vm : NetWorkViewModel) : String? {
     return name
 }
 
+
 @SuppressLint("CoroutineCreationDuringComposition", "SuspiciousIndentation")
 @Composable
 fun SearchScreen(vm : NetWorkViewModel, ifSaved : Boolean, innerPaddings : PaddingValues, vmUI : UIViewModel,input : String) {
 
-
     @Composable
-    fun CardItem(modifier: Modifier = Modifier.fillMaxSize(),content: @Composable () -> Unit) {
+    fun CardItem(modifier: Modifier = Modifier.fillMaxSize(), content: @Composable () -> Unit) {
         Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = 1.75.dp),
             modifier = modifier,
             shape = MaterialTheme.shapes.small,
+            colors = CardDefaults.cardColors(containerColor = CardNormalColor())
         ) {
             content()
         }
@@ -136,7 +141,7 @@ fun SearchScreen(vm : NetWorkViewModel, ifSaved : Boolean, innerPaddings : Paddi
         "热水机 趣智校园" to { HotWater() },
         "空教室" to { EmptyRoom(vm, ifSaved) },
         "乐跑云运动 校园跑" to { LePaoYun(vm) },
-        "今日校园 学工系统 请假 助学金 奖学金 贫困 寝室 心理 日常" to { ToadyCampus(ifSaved) },
+        "今日校园 学工系统 请假 助学金 奖学金 贫困 寝室 心理 日常" to { ToadyCampus(ifSaved,vm) },
         "学信网" to { XueXin() },
         "生活服务 校园 校园 天气 教学楼 建筑 学堂" to { Life(vm) },
         "转专业" to { Transfer(ifSaved, vm) },
@@ -167,7 +172,7 @@ fun SearchScreen(vm : NetWorkViewModel, ifSaved : Boolean, innerPaddings : Paddi
             }
         }
         items(filteredList.size) { index->
-            CardItem(modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp)) {
+            SmallCard(modifier = Modifier.padding(horizontal = CardNormalDp(), vertical = CardNormalDp())) {
                 filteredList[index]()
             }
         }
@@ -192,7 +197,7 @@ fun SearchFuncs(ifSaved: Boolean,blur : Boolean,input: String,webVpn: Boolean = 
         TextField(
             modifier = Modifier
                 .weight(1f),
-                //.padding(horizontal = 15.dp),
+                //.padding(horizontal = AppHorizontalDp()),
             value = input,
             onValueChange = onInputChanged,
             label = { Text("搜索功能" ) },

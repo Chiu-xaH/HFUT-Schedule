@@ -64,6 +64,7 @@ import com.hfut.schedule.logic.utils.reEmptyLiveDta
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotalUI
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
@@ -127,7 +128,7 @@ fun CourseSearchUI(vm : NetWorkViewModel) {
                 title = { Text("开课查询") },
                 actions = {
 
-                    Row(modifier = Modifier.padding(horizontal = 15.dp)) {
+                    Row(modifier = Modifier.padding(horizontal = AppHorizontalDp())) {
                         androidx.compose.animation.AnimatedVisibility(
                             visible = !showSearch,
                             enter = NavigateAndAnimationManager.upDownAnimation.enter,
@@ -295,7 +296,7 @@ fun CourseSearchUI(vm : NetWorkViewModel) {
                 exit = scaleOut(),
                 modifier = Modifier
                     .align(Alignment.BottomStart)
-                    .padding(horizontal = 15.dp, vertical = 15.dp)
+                    .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
             ) {
                 FloatingActionButton(
                     onClick = {
@@ -312,7 +313,7 @@ fun CourseSearchUI(vm : NetWorkViewModel) {
                 exit = scaleOut(),
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(horizontal = 15.dp, vertical = 15.dp)
+                    .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
             ) {
                 ExtendedFloatingActionButton(
                     onClick = {
@@ -327,7 +328,7 @@ fun CourseSearchUI(vm : NetWorkViewModel) {
                 exit = scaleOut(),
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(horizontal = 15.dp, vertical = 15.dp)
+                    .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
             ) {
                 FloatingActionButton(
                     onClick = {
@@ -434,7 +435,7 @@ fun ApiForCourseSearch(vm: NetWorkViewModel,courseName : String?,courseId : Stri
                         exit = scaleOut(),
                         modifier = Modifier
                             .align(Alignment.BottomStart)
-                            .padding(horizontal = 15.dp, vertical = 15.dp)
+                            .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
                     ) {
                         FloatingActionButton(
                             onClick = {
@@ -451,7 +452,7 @@ fun ApiForCourseSearch(vm: NetWorkViewModel,courseName : String?,courseId : Stri
                         exit = scaleOut(),
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
-                            .padding(horizontal = 15.dp, vertical = 15.dp)
+                            .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
                     ) {
                         ExtendedFloatingActionButton(
                             onClick = {
@@ -466,7 +467,7 @@ fun ApiForCourseSearch(vm: NetWorkViewModel,courseName : String?,courseId : Stri
                         exit = scaleOut(),
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
-                            .padding(horizontal = 15.dp, vertical = 15.dp)
+                            .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
                     ) {
                         FloatingActionButton(
                             onClick = {

@@ -39,6 +39,7 @@ import com.hfut.schedule.logic.utils.AndroidVersion.canBlur
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.style.bottomBarBlur
 import com.hfut.schedule.ui.utils.style.topBarBlur
@@ -111,7 +112,7 @@ fun UseAgreementUI(navController : NavHostController) {
         },
         bottomBar = {
             Box(modifier = Modifier.bottomBarBlur(hazeState, blur)) {
-                Row(modifier = Modifier.padding(15.dp),horizontalArrangement = Arrangement.Center) {
+                Row(modifier = Modifier.padding(AppHorizontalDp()),horizontalArrangement = Arrangement.Center) {
                     Button(
                         onClick = {
                             SharePrefs.saveBoolean("canUse", default = false, save = true)
@@ -123,7 +124,7 @@ fun UseAgreementUI(navController : NavHostController) {
                     ) {
                         Text("同意")
                     }
-                    Spacer(modifier = Modifier.width(15.dp))
+                    Spacer(modifier = Modifier.width(AppHorizontalDp()))
                     FilledTonalButton(
                         onClick = {
                             MyToast("已关闭APP")

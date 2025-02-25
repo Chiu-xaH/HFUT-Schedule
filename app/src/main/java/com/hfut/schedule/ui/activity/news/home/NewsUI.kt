@@ -38,6 +38,7 @@ import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.ui.activity.news.getNews
 import com.hfut.schedule.ui.utils.components.MyCustomCard
+import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.WebDialog
 import com.hfut.schedule.ui.utils.components.WebViewScreen
 
@@ -48,48 +49,15 @@ fun NewsItem(vm : NetWorkViewModel, innerPadding : PaddingValues? = null) {
 
     var links by remember { mutableStateOf("") }
     WebDialog(showDialog,{ showDialog = false },links,"新闻详情")
-//    if (showDialog) {
-//        androidx.compose.ui.window.Dialog(
-//            onDismissRequest = { showDialog = false },
-//            properties = DialogProperties(usePlatformDefaultWidth = false)
-//        ) {
-//            Scaffold(
-//                modifier = Modifier.fillMaxSize(),
-//                topBar = {
-//                    TopAppBar(
-//                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-//                            containerColor = Color.Transparent,
-//                            titleContentColor = MaterialTheme.colorScheme.primary,
-//                        ),
-//                        actions = {
-//                            Row{
-//                                IconButton(onClick = { Starter.startWebUrl(links) }) { Icon(
-//                                    painterResource(id = R.drawable.net), contentDescription = "") }
-//                                IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "") }
-//                            }
-//                        },
-//                        title = { Text("新闻详情") }
-//                    )
-//                },
-//            ) { innerPadding ->
-//                Column(
-//                    modifier = Modifier
-//                        .padding(innerPadding)
-//                        .fillMaxSize()
-//                ) {
-//                    WebViewScreen(url = links)
-//                }
-//            }
-//        }
-//    }
+
 
     LazyColumn {
         //item { if (innerPadding != null) Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding())) }
         items(getNews(vm).size){ item ->
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 Column() {
-                    MyCustomCard {
-                        ListItem(
+//                    MyCustomCard {
+                        StyleCardListItem(
                             overlineContent = { getNews(vm)[item].date?.let { Text(text = it) } },
                             headlineContent = { getNews(vm)[item].title?.let { Text(it) } },
                             leadingContent = { Text(text = (item + 1).toString()) },
@@ -103,7 +71,7 @@ fun NewsItem(vm : NetWorkViewModel, innerPadding : PaddingValues? = null) {
                                 showDialog = true
                             },
                         )
-                    }
+//                    }
                 }
             }
         }

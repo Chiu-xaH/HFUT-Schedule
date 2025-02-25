@@ -178,12 +178,11 @@ class LoginViewModel : ViewModel() {
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-
-
-                val doc = Jsoup.parse( response.body()?.string())
-                execution.value = doc.select("input[name=execution]").first()?.attr("value")
-
-                if(response.isSuccessful()) { sessionLiveData.value  = response.headers()["Set-Cookie"].toString().substringBefore(";").plus(";") }
+                val doc = response.body()?.string()?.let { Jsoup.parse(it) }
+                if (doc != null) {
+                    execution.value = doc.select("input[name=execution]").first()?.attr("value")
+                }
+                if(response.isSuccessful) { sessionLiveData.value  = response.headers()["Set-Cookie"].toString().substringBefore(";").plus(";") }
                // else Log.d("失败","getKey，${response.code()},${response.message()}")
             }
 

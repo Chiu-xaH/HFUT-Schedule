@@ -62,6 +62,8 @@ import com.hfut.schedule.ui.activity.card.counts.RadarData
 import com.hfut.schedule.ui.activity.grade.getGradeJXGLSTU
 import com.hfut.schedule.ui.activity.home.search.functions.survey.SurveyUI
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotalForApi
+import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.CardNormalDp
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.EmptyUI
@@ -71,6 +73,7 @@ import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.ScrollText
+import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -118,7 +121,7 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel,showSea
                         ),
                         title = { Text("评教") },
                         actions = {
-                            CourseTotalForApi(modifier = Modifier.padding(horizontal = 15.dp),vm)
+                            CourseTotalForApi(modifier = Modifier.padding(horizontal = AppHorizontalDp()),vm)
                         }
                     )
                 },
@@ -216,12 +219,12 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel,showSea
                         TextField(
                             modifier = Modifier
                                 .weight(1f)
-                                .padding(horizontal = 15.dp),
+                                .padding(horizontal = AppHorizontalDp()),
                             value = input,
                             onValueChange = {
                                 input = it
                             },
-                            label = { Text("搜索课程") },
+                            label = { Text("搜索课程名") },
                             singleLine = true,
                             trailingIcon = {
                                 IconButton(
@@ -242,7 +245,7 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel,showSea
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(5.dp))
+                    Spacer(modifier = Modifier.height(CardNormalDp()))
                 } else {
                     searchList = gradeList
                 }
@@ -259,8 +262,8 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel,showSea
                             val grade = searchList[item]
                             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                                 Column() {
-                                    MyCustomCard{
-                                        ListItem(
+//                                    MyCustomCard{
+                                        StyleCardListItem(
                                             headlineContent = {  Text(grade.title) },
                                             overlineContent = { Text( "成绩  "+ grade.totalGrade + "  |  绩点  " + grade.GPA +  "  |  学分  " + grade.score) },
                                             leadingContent = { Icon(painterResource(R.drawable.article), contentDescription = "Localized description",) },
@@ -276,7 +279,7 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel,showSea
                                                 }
                                             },
                                         )
-                                    }
+//                                    }
                                 }
                             }
                         }
@@ -387,10 +390,10 @@ fun GradeInfo(num : GradeResponseJXGLSTU,vm: NetWorkViewModel) {
 
     DividerTextExpandedWith(text = "成绩详情",false) {
         Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = 15.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = AppHorizontalDp()),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 15.dp, vertical = 5.dp),
+                .padding(horizontal = AppHorizontalDp(), vertical = 5.dp),
             shape = MaterialTheme.shapes.medium,
         ) {
             ListItem(
