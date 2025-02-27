@@ -172,50 +172,6 @@ fun CalendarScreen(
     var table_6_7 by rememberSaveable { mutableStateOf("") }
 
 
-//    var sheet_1_1 by rememberSaveable { mutableStateOf("") }
-//    var sheet_1_2 by rememberSaveable { mutableStateOf("") }
-//    var sheet_1_3 by rememberSaveable { mutableStateOf("") }
-//    var sheet_1_4 by rememberSaveable { mutableStateOf("") }
-//    var sheet_1_5 by rememberSaveable { mutableStateOf("") }
-//    var sheet_2_1 by rememberSaveable { mutableStateOf("") }
-//    var sheet_2_2 by rememberSaveable { mutableStateOf("") }
-//    var sheet_2_3 by rememberSaveable { mutableStateOf("") }
-//    var sheet_2_4 by rememberSaveable { mutableStateOf("") }
-//    var sheet_2_5 by rememberSaveable { mutableStateOf("") }
-//    var sheet_3_1 by rememberSaveable { mutableStateOf("") }
-//    var sheet_3_2 by rememberSaveable { mutableStateOf("") }
-//    var sheet_3_3 by rememberSaveable { mutableStateOf("") }
-//    var sheet_3_4 by rememberSaveable { mutableStateOf("") }
-//    var sheet_3_5 by rememberSaveable { mutableStateOf("") }
-//    var sheet_4_1 by rememberSaveable { mutableStateOf("") }
-//    var sheet_4_2 by rememberSaveable { mutableStateOf("") }
-//    var sheet_4_3 by rememberSaveable { mutableStateOf("") }
-//    var sheet_4_4 by rememberSaveable { mutableStateOf("") }
-//    var sheet_4_5 by rememberSaveable { mutableStateOf("") }
-//    var sheet_5_1 by rememberSaveable { mutableStateOf("") }
-//    var sheet_5_2 by rememberSaveable { mutableStateOf("") }
-//    var sheet_5_3 by rememberSaveable { mutableStateOf("") }
-//    var sheet_5_4 by rememberSaveable { mutableStateOf("") }
-//    var sheet_5_5 by rememberSaveable { mutableStateOf("") }
-//    var sheet_6_1 by rememberSaveable { mutableStateOf("") }
-//    var sheet_6_2 by rememberSaveable { mutableStateOf("") }
-//    var sheet_6_3 by rememberSaveable { mutableStateOf("") }
-//    var sheet_6_4 by rememberSaveable { mutableStateOf("") }
-//    var sheet_6_5 by rememberSaveable { mutableStateOf("") }
-//    var sheet_1_6 by rememberSaveable { mutableStateOf("") }
-//    var sheet_1_7 by rememberSaveable { mutableStateOf("") }
-//    var sheet_2_6 by rememberSaveable { mutableStateOf("") }
-//    var sheet_2_7 by rememberSaveable { mutableStateOf("") }
-//    var sheet_3_6 by rememberSaveable { mutableStateOf("") }
-//    var sheet_3_7 by rememberSaveable { mutableStateOf("") }
-//    var sheet_4_6 by rememberSaveable { mutableStateOf("") }
-//    var sheet_4_7 by rememberSaveable { mutableStateOf("") }
-//    var sheet_5_6 by rememberSaveable { mutableStateOf("") }
-//    var sheet_5_7 by rememberSaveable { mutableStateOf("") }
-//    var sheet_6_6 by rememberSaveable { mutableStateOf("") }
-//    var sheet_6_7 by rememberSaveable { mutableStateOf("") }
-
-
     val tableall = arrayOf(
         table_1_1, table_1_2, table_1_3, table_1_4, table_1_5,table_1_6,table_1_7,
         table_2_1, table_2_2, table_2_3, table_2_4, table_2_5,table_2_6,table_2_7,
@@ -224,15 +180,6 @@ fun CalendarScreen(
         table_5_1, table_5_2, table_5_3, table_5_4, table_5_5,table_5_6,table_5_7,
         table_6_1, table_6_2, table_6_3, table_6_4, table_6_5,table_6_6,table_6_7,
     )
-//
-//    val sheetall = arrayOf(
-//        sheet_1_1, sheet_1_2, sheet_1_3, sheet_1_4, sheet_1_5,sheet_1_6,sheet_1_7,
-//        sheet_2_1, sheet_2_2, sheet_2_3, sheet_2_4, sheet_2_5,sheet_2_6,sheet_2_7,
-//        sheet_3_1, sheet_3_2, sheet_3_3, sheet_3_4, sheet_3_5,sheet_3_6,sheet_3_7,
-//        sheet_4_1, sheet_4_2, sheet_4_3, sheet_4_4, sheet_4_5,sheet_4_6,sheet_4_7,
-//        sheet_5_1, sheet_5_2, sheet_5_3, sheet_5_4, sheet_5_5,sheet_5_6,sheet_5_7,
-//        sheet_6_1, sheet_6_2, sheet_6_3, sheet_6_4, sheet_6_5,sheet_6_6,sheet_6_7,
-//    )
 
     val table = arrayOf(
         table_1_1, table_1_2, table_1_3, table_1_4, table_1_5,
@@ -242,17 +189,6 @@ fun CalendarScreen(
         table_5_1, table_5_2, table_5_3, table_5_4, table_5_5,
         table_6_1, table_6_2, table_6_3, table_6_4, table_6_5,
     )
-
-//    val sheet = arrayOf(
-//        sheet_1_1, sheet_1_2, sheet_1_3, sheet_1_4, sheet_1_5,
-//        sheet_2_1, sheet_2_2, sheet_2_3, sheet_2_4, sheet_2_5,
-//        sheet_3_1, sheet_3_2, sheet_3_3, sheet_3_4, sheet_3_5,
-//        sheet_4_1, sheet_4_2, sheet_4_3, sheet_4_4, sheet_4_5,
-//        sheet_5_1, sheet_5_2, sheet_5_3, sheet_5_4, sheet_5_5,
-//        sheet_6_1, sheet_6_2, sheet_6_3, sheet_6_4, sheet_6_5
-//    )
-  //  var showAlls by remember { mutableStateOf(false) }
-    //showAlls = showAll
 
 
     var Bianhuaweeks by rememberSaveable { mutableStateOf(
@@ -940,20 +876,12 @@ fun CalendarScreen(
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-    //var today by rememberSaveable { mutableStateOf(LocalDate.now()) }
-    //val mondayOfCurrentWeek = today.minusDays(today.dayOfWeek.value - 1L)
-
     val dateList  = getScheduleDate(showAll,today)
     val examList  = examToCalendar()
 
         Column(
-            modifier = Modifier
-               // .padding(innerPadding)
-                .fillMaxSize()
+            modifier = Modifier.fillMaxSize()
         ) {
-       //     Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
-         //   Spacer(modifier = Modifier.height(5.dp))
-
             AnimatedVisibility(
                 visible = loading,
                 enter = fadeIn(),
@@ -992,9 +920,6 @@ fun CalendarScreen(
                                         .height(125.dp)
                                         .padding(if (showAll) 1.dp else 2.dp)
                                         .clickable {
-//                                            if ((if (showAll) sheetall[cell] else sheet[cell]) != "")
-//                                                MyToast(if (showAll) sheetall[cell] else sheet[cell])
-//                                            else MyToast("空数据")
                                             val name = parseCourseName(if(showAll)tableall[cell] else table[cell])
                                             if(name != null) {
                                                 courseName = name
@@ -1140,7 +1065,6 @@ fun CalendarScreen(
 
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 fun getNewWeek() : Long {
     return try {
         val jxglstuJson = prefs.getString("courses","")
