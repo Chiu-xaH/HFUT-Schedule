@@ -58,6 +58,7 @@ fun VersionInfo() {
         UpdateItems("新增 教务课程表对冲突课程的适配","当出现撞课时会标注在格子中",UpdateType.ADD)
         UpdateItems("新增 默认课程表","位于 选项-应用行为",UpdateType.ADD)
         UpdateItems("修复 第一次切换到教务课程时空白的Bug",null,UpdateType.FIX)
+        UpdateItems("修复 登录教务时加载课程表闪烁的Bug",null,UpdateType.FIX)
     }
 }
 

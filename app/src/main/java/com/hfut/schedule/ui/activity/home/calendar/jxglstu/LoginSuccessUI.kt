@@ -213,9 +213,7 @@ fun CalendarScreen(
                 if (scheduleList[i].weekIndex == Bianhuaweeks.toInt()) {
                     if (scheduleList[i].weekday == 1) {
                         if (scheduleList[i].startTime == 800) {
-                            Log.d("新增前",table[0].toMutableList().toString())
                             table[0].add(text)
-                            Log.d("新增后",table[0].toMutableList().toString())
                         }
                         if (scheduleList[i].startTime == 1010) {
                             table[5].add(text)
@@ -493,7 +491,7 @@ fun CalendarScreen(
 
     }
 
-    LaunchedEffect(showAll) {
+    LaunchedEffect(showAll,loading) {
         async { if(showAll) updateAll() else update() }.await()
 //        async { refreshUI = false }
     }
@@ -671,7 +669,7 @@ fun CalendarScreen(
                     if (result != null) {
                         if (result.contains("result")) {
                             CoroutineScope(Job()).launch {
-                                async { if (showAll) updateAll() else update() }.await()
+//                                async { if (showAll) updateAll() else update() }.await()
                                 async {
                                     Handler(Looper.getMainLooper()).post {
                                         vm.lessonIds.removeObserver(
