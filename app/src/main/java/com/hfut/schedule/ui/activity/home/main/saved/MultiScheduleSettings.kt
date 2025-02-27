@@ -149,7 +149,7 @@ fun MultiScheduleSettings(
         ) {
             Scaffold(
                 topBar = {
-                    androidx.compose.material3.TopAppBar(
+                    TopAppBar(
                         colors = TopAppBarDefaults.mediumTopAppBarColors(
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
@@ -172,7 +172,7 @@ fun MultiScheduleSettings(
         ) {
             Scaffold(
                 topBar = {
-                    androidx.compose.material3.TopAppBar(
+                    TopAppBar(
                         colors = TopAppBarDefaults.mediumTopAppBarColors(
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary,
@@ -235,7 +235,7 @@ fun MultiScheduleSettings(
         }
     }
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-        androidx.compose.material3.TopAppBar(
+        TopAppBar(
             colors = TopAppBarDefaults.mediumTopAppBarColors(
                 containerColor = Color.Transparent,
                 titleContentColor = MaterialTheme.colorScheme.primary,

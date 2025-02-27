@@ -34,7 +34,6 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import com.hfut.schedule.ui.utils.components.LoadingUI
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -46,8 +45,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -84,8 +85,11 @@ import com.hfut.schedule.ui.activity.home.calendar.getScheduleDate
 import com.hfut.schedule.ui.activity.home.calendar.next.parseCourseName
 import com.hfut.schedule.ui.activity.home.main.saved.isNextOpen
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.getTotalCourse
+import com.hfut.schedule.ui.utils.components.ActiveTopBar
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.LargeCard
 import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.Round
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -95,7 +99,6 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
-@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class, ExperimentalAnimationApi::class)
 @SuppressLint("SuspiciousIndentation", "CoroutineCreationDuringComposition")
 @Composable
@@ -109,11 +112,16 @@ fun CalendarScreen(
     load: Boolean,
     onDateChange: (LocalDate) ->Unit,
     today: LocalDate) {
-
-
     val sheetState_totalCourse = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_totalCourse by remember { mutableStateOf(false) }
+    val sheetState_multiCourse = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showBottomSheet_multiCourse by remember { mutableStateOf(false) }
     var courseName by remember { mutableStateOf("") }
+
+
+    var courses by remember { mutableStateOf(listOf<String>()) }
+    var multiWeekday by remember { mutableStateOf(0) }
+    var multiWeek by remember { mutableStateOf(0) }
     if (showBottomSheet_totalCourse) {
         ModalBottomSheet(
             onDismissRequest = {
@@ -125,70 +133,22 @@ fun CalendarScreen(
             CourseDetailApi(courseName = courseName, vm = vm)
         }
     }
+    if (showBottomSheet_multiCourse) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                showBottomSheet_multiCourse = false
+            },
+            sheetState = sheetState_multiCourse,
+        ) {
+            MultiCourseSheetUI(courses = courses ,weekday = multiWeekday,week = multiWeek,vm = vm)
+        }
+    }
 
     var loading by remember { mutableStateOf(load) }
 
-    var table_1_1 by rememberSaveable { mutableStateOf("") }
-    var table_1_2 by rememberSaveable { mutableStateOf("") }
-    var table_1_3 by rememberSaveable { mutableStateOf("") }
-    var table_1_4 by rememberSaveable { mutableStateOf("") }
-    var table_1_5 by rememberSaveable { mutableStateOf("") }
-    var table_2_1 by rememberSaveable { mutableStateOf("") }
-    var table_2_2 by rememberSaveable { mutableStateOf("") }
-    var table_2_3 by rememberSaveable { mutableStateOf("") }
-    var table_2_4 by rememberSaveable { mutableStateOf("") }
-    var table_2_5 by rememberSaveable { mutableStateOf("") }
-    var table_3_1 by rememberSaveable { mutableStateOf("") }
-    var table_3_2 by rememberSaveable { mutableStateOf("") }
-    var table_3_3 by rememberSaveable { mutableStateOf("") }
-    var table_3_4 by rememberSaveable { mutableStateOf("") }
-    var table_3_5 by rememberSaveable { mutableStateOf("") }
-    var table_4_1 by rememberSaveable { mutableStateOf("") }
-    var table_4_2 by rememberSaveable { mutableStateOf("") }
-    var table_4_3 by rememberSaveable { mutableStateOf("") }
-    var table_4_4 by rememberSaveable { mutableStateOf("") }
-    var table_4_5 by rememberSaveable { mutableStateOf("") }
-    var table_5_1 by rememberSaveable { mutableStateOf("") }
-    var table_5_2 by rememberSaveable { mutableStateOf("") }
-    var table_5_3 by rememberSaveable { mutableStateOf("") }
-    var table_5_4 by rememberSaveable { mutableStateOf("") }
-    var table_5_5 by rememberSaveable { mutableStateOf("") }
-    var table_6_1 by rememberSaveable { mutableStateOf("") }
-    var table_6_2 by rememberSaveable { mutableStateOf("") }
-    var table_6_3 by rememberSaveable { mutableStateOf("") }
-    var table_6_4 by rememberSaveable { mutableStateOf("") }
-    var table_6_5 by rememberSaveable { mutableStateOf("") }
-    var table_1_6 by rememberSaveable { mutableStateOf("") }
-    var table_1_7 by rememberSaveable { mutableStateOf("") }
-    var table_2_6 by rememberSaveable { mutableStateOf("") }
-    var table_2_7 by rememberSaveable { mutableStateOf("") }
-    var table_3_6 by rememberSaveable { mutableStateOf("") }
-    var table_3_7 by rememberSaveable { mutableStateOf("") }
-    var table_4_6 by rememberSaveable { mutableStateOf("") }
-    var table_4_7 by rememberSaveable { mutableStateOf("") }
-    var table_5_6 by rememberSaveable { mutableStateOf("") }
-    var table_5_7 by rememberSaveable { mutableStateOf("") }
-    var table_6_6 by rememberSaveable { mutableStateOf("") }
-    var table_6_7 by rememberSaveable { mutableStateOf("") }
+    val table = remember { List(30) { mutableStateListOf<String>() } }
+    val tableAll = remember { List(42) { mutableStateListOf<String>() } }
 
-
-    val tableall = arrayOf(
-        table_1_1, table_1_2, table_1_3, table_1_4, table_1_5,table_1_6,table_1_7,
-        table_2_1, table_2_2, table_2_3, table_2_4, table_2_5,table_2_6,table_2_7,
-        table_3_1, table_3_2, table_3_3, table_3_4, table_3_5,table_3_6,table_3_7,
-        table_4_1, table_4_2, table_4_3, table_4_4, table_4_5,table_4_6,table_4_7,
-        table_5_1, table_5_2, table_5_3, table_5_4, table_5_5,table_5_6,table_5_7,
-        table_6_1, table_6_2, table_6_3, table_6_4, table_6_5,table_6_6,table_6_7,
-    )
-
-    val table = arrayOf(
-        table_1_1, table_1_2, table_1_3, table_1_4, table_1_5,
-        table_2_1, table_2_2, table_2_3, table_2_4, table_2_5,
-        table_3_1, table_3_2, table_3_3, table_3_4, table_3_5,
-        table_4_1, table_4_2, table_4_3, table_4_4, table_4_5,
-        table_5_1, table_5_2, table_5_3, table_5_4, table_5_5,
-        table_6_1, table_6_2, table_6_3, table_6_4, table_6_5,
-    )
 
 
     var Bianhuaweeks by rememberSaveable { mutableStateOf(
@@ -197,35 +157,11 @@ fun CalendarScreen(
         } else DateTimeManager.weeksBetween
     ) }
 
-
     //填充UI与更新
-    fun Update() {
-
-        table_1_1 = ""
-        table_1_2 = ""
-        table_1_3 = ""
-        table_1_4 = ""
-        table_1_5 = ""
-        table_2_1 = ""
-        table_2_2 = ""
-        table_2_3 = ""
-        table_2_4 = ""
-        table_2_5 = ""
-        table_3_1 = ""
-        table_3_2 = ""
-        table_3_3 = ""
-        table_3_4 = ""
-        table_3_5 = ""
-        table_4_1 = ""
-        table_4_2 = ""
-        table_4_3 = ""
-        table_4_4 = ""
-        table_4_5 = ""
-        table_5_1 = ""
-        table_5_2 = ""
-        table_5_3 = ""
-        table_5_4 = ""
-        table_5_5 = ""
+    fun update() {
+        for(t in table) {
+            t.clear()
+        }
         //////////////////////////////////////////////////////////////////////////////////
         try {
             val json = prefs.getString("json", "")
@@ -273,124 +209,93 @@ fun CalendarScreen(
 
 
                 val text = starttime + "\n" + scheduleid + "\n" + room
-                val info =
-                    "教师:${person}"+ "  "+
-                            "周数:${endtime}"+ "  "+
-                            "人数:${periods}"+ "  "+
-                            "类型:${lessonType}"
-
-
-                //  Log.d("变化",Bianhuaweeks.toString())
 
                 if (scheduleList[i].weekIndex == Bianhuaweeks.toInt()) {
                     if (scheduleList[i].weekday == 1) {
                         if (scheduleList[i].startTime == 800) {
-                            table_1_1 = text
-//                            sheet_1_1 = info
+                            Log.d("新增前",table[0].toMutableList().toString())
+                            table[0].add(text)
+                            Log.d("新增后",table[0].toMutableList().toString())
                         }
                         if (scheduleList[i].startTime == 1010) {
-                            table_2_1 = text
-//                            sheet_2_1 = info
+                            table[5].add(text)
                         }
                         if (scheduleList[i].startTime == 1400) {
-                            table_3_1 = text
-//                            sheet_3_1 = info
+                            table[10].add(text)
                         }
                         if (scheduleList[i].startTime == 1600) {
-                            table_4_1 = text
-//                            sheet_4_1 = info
+                            table[15].add(text)
                         }
                         if (scheduleList[i].startTime == 1900) {
-                            table_5_1 = text
-//                            sheet_5_1 = info
+                            table[20].add(text)
                         }
                     }
                     if (scheduleList[i].weekday == 2) {
                         if (scheduleList[i].startTime == 800) {
-                            table_1_2 = text
-//                            sheet_1_2 = info
+                            table[1].add(text)
                         }
                         if (scheduleList[i].startTime == 1010) {
-                            table_2_2 = text
-//                            sheet_2_2 = info
+                            table[6].add(text)
                         }
                         if (scheduleList[i].startTime == 1400) {
-                            table_3_2 = text
-//                            sheet_3_2 = info
+                            table[11].add(text)
                         }
                         if (scheduleList[i].startTime == 1600) {
-                            table_4_2 = text
-//                            sheet_4_2 = info
+                            table[16].add(text)
                         }
                         if (scheduleList[i].startTime == 1900) {
-                            table_5_2 = text
-//                            sheet_5_2 = info
+                            table[21].add(text)
                         }
                     }
                     if (scheduleList[i].weekday == 3) {
                         if (scheduleList[i].startTime == 800) {
-                            table_1_3 = text
-//                            sheet_1_3 = info
+                            table[2].add(text)
                         }
                         if (scheduleList[i].startTime == 1010) {
-                            table_2_3 = text
-//                            sheet_2_3 = info
+                            table[7].add(text)
                         }
                         if (scheduleList[i].startTime == 1400) {
-                            table_3_3 = text
-//                            sheet_3_3 = info
+                            table[12].add(text)
                         }
                         if (scheduleList[i].startTime == 1600) {
-                            table_4_3 = text
-//                            sheet_4_3 = info
+                            table[17].add(text)
                         }
                         if (scheduleList[i].startTime == 1900) {
-                            table_5_3 = text
-//                            sheet_5_3 = info
+                            table[22].add(text)
                         }
                     }
                     if (scheduleList[i].weekday == 4) {
                         if (scheduleList[i].startTime == 800) {
-                            table_1_4 = text
-//                            sheet_1_4 = info
+                            table[3].add(text)
                         }
                         if (scheduleList[i].startTime == 1010) {
-                            table_2_4 = text
-//                            sheet_2_4 = info
+                            table[8].add(text)
                         }
                         if (scheduleList[i].startTime == 1400) {
-                            table_3_4 = text
-//                            sheet_3_4 = info
+                            table[13].add(text)
                         }
                         if (scheduleList[i].startTime == 1600) {
-                            table_4_4 = text
-//                            sheet_4_4 = info
+                            table[17].add(text)
                         }
                         if (scheduleList[i].startTime == 1900) {
-                            table_5_4 = text
-//                            sheet_5_4 = info
+                            table[23].add(text)
                         }
                     }
                     if (scheduleList[i].weekday == 5) {
                         if (scheduleList[i].startTime == 800) {
-                            table_1_5 = text
-//                            sheet_1_5 = info
+                            table[4].add(text)
                         }
                         if (scheduleList[i].startTime == 1010) {
-                            table_2_5 = text
-//                            sheet_2_5 = info
+                            table[9].add(text)
                         }
                         if (scheduleList[i].startTime == 1400) {
-                            table_3_5 = text
-//                            sheet_3_5 = info
+                            table[14].add(text)
                         }
                         if (scheduleList[i].startTime == 1600) {
-                            table_4_5 = text
-//                            sheet_4_5 = info
+                            table[19].add(text)
                         }
                         if (scheduleList[i].startTime == 1900) {
-                            table_5_5 = text
-//                            sheet_5_5 = info
+                            table[24].add(text)
                         }
                     }
                 }
@@ -401,47 +306,16 @@ fun CalendarScreen(
         }
 
     }
-    fun UpdateAll() {
-        table_1_1 = ""
-        table_1_2 = ""
-        table_1_3 = ""
-        table_1_4 = ""
-        table_1_5 = ""
-        table_2_1 = ""
-        table_2_2 = ""
-        table_2_3 = ""
-        table_2_4 = ""
-        table_2_5 = ""
-        table_3_1 = ""
-        table_3_2 = ""
-        table_3_3 = ""
-        table_3_4 = ""
-        table_3_5 = ""
-        table_4_1 = ""
-        table_4_2 = ""
-        table_4_3 = ""
-        table_4_4 = ""
-        table_4_5 = ""
-        table_5_1 = ""
-        table_5_2 = ""
-        table_5_3 = ""
-        table_5_4 = ""
-        table_5_5 = ""
-        table_1_6 = ""
-        table_1_7 = ""
-        table_2_6 = ""
-        table_2_7 = ""
-        table_3_6 = ""
-        table_3_7 = ""
-        table_4_6 = ""
-        table_4_7 = ""
-        table_5_6 = ""
-        table_5_7 = ""
+
+    fun updateAll() {
+        for(t in tableAll) {
+            t.clear()
+        }
         //////////////////////////////////////////////////////////////////////////////////
 
         try {
             val json =  prefs.getString("json", "")
-            // Log.d("测试",json!!)
+
             val datumResponse = Gson().fromJson(json, datumResponse::class.java)
             val scheduleList = datumResponse.result.scheduleList
             val lessonList = datumResponse.result.lessonList
@@ -484,20 +358,7 @@ fun CalendarScreen(
                     }
                 }
 
-
-
-                //适配长文字布局
-                scheduleid = scheduleid.replace("语言程序设计","程序设计")
-
                 val text = starttime + "\n" + scheduleid + "\n" + room
-                val info =
-                    "教师:${person}"+ "  "+
-                            "周数:${endtime}"+ "  "+
-                            "人数:${periods}"+ "  "+
-                            "类型:${lessonType}"
-
-
-                //  Log.d("变化",Bianhuaweeks.toString())
 
                 if (scheduleList[i].weekIndex == Bianhuaweeks.toInt()) {
                     when(scheduleList[i].weekday) {
@@ -506,156 +367,121 @@ fun CalendarScreen(
                     }
                     if (scheduleList[i].weekday == 1) {
                         if (scheduleList[i].startTime == 800) {
-                            table_1_1 = text
-//                            sheet_1_1 = info
+                            tableAll[0].add(text)
                         }
                         if (scheduleList[i].startTime == 1010) {
-                            table_2_1 = text
-//                            sheet_2_1 = info
+                            tableAll[7].add(text)
                         }
                         if (scheduleList[i].startTime == 1400) {
-                            table_3_1 = text
-//                            sheet_3_1 = info
+                            tableAll[14].add(text)
                         }
                         if (scheduleList[i].startTime == 1600) {
-                            table_4_1 = text
-//                            sheet_4_1 = info
+                            tableAll[21].add(text)
                         }
                         if (scheduleList[i].startTime == 1900) {
-                            table_5_1 = text
-//                            sheet_5_1 = info
+                            tableAll[28].add(text)
                         }
                     }
                     if (scheduleList[i].weekday == 2) {
                         if (scheduleList[i].startTime == 800) {
-                            table_1_2 = text
-//                            sheet_1_2 = info
+                            tableAll[1].add(text)
                         }
                         if (scheduleList[i].startTime == 1010) {
-                            table_2_2 = text
-//                            sheet_2_2 = info
+                            tableAll[8].add(text)
                         }
                         if (scheduleList[i].startTime == 1400) {
-                            table_3_2 = text
-//                            sheet_3_2 = info
+                            tableAll[15].add(text)
                         }
                         if (scheduleList[i].startTime == 1600) {
-                            table_4_2 = text
-//                            sheet_4_2 = info
+                            tableAll[22].add(text)
                         }
                         if (scheduleList[i].startTime == 1900) {
-                            table_5_2 = text
-//                            sheet_5_2 = info
+                            tableAll[29].add(text)
                         }
                     }
                     if (scheduleList[i].weekday == 3) {
                         if (scheduleList[i].startTime == 800) {
-                            table_1_3 = text
-//                            sheet_1_3 = info
+                            tableAll[2].add(text)
                         }
                         if (scheduleList[i].startTime == 1010) {
-                            table_2_3 = text
-//                            sheet_2_3 = info
+                            tableAll[9].add(text)
                         }
                         if (scheduleList[i].startTime == 1400) {
-                            table_3_3 = text
-//                            sheet_3_3 = info
+                            tableAll[16].add(text)
                         }
                         if (scheduleList[i].startTime == 1600) {
-                            table_4_3 = text
-//                            sheet_4_3 = info
+                            tableAll[23].add(text)
                         }
                         if (scheduleList[i].startTime == 1900) {
-                            table_5_3 = text
-//                            sheet_5_3 = info
+                            tableAll[30].add(text)
                         }
                     }
                     if (scheduleList[i].weekday == 4) {
                         if (scheduleList[i].startTime == 800) {
-                            table_1_4 = text
-//                            sheet_1_4 = info
+                            tableAll[3].add(text)
                         }
                         if (scheduleList[i].startTime == 1010) {
-                            table_2_4 = text
-//                            sheet_2_4 = info
+                            tableAll[10].add(text)
                         }
                         if (scheduleList[i].startTime == 1400) {
-                            table_3_4 = text
-//                            sheet_3_4 = info
+                            tableAll[17].add(text)
                         }
                         if (scheduleList[i].startTime == 1600) {
-                            table_4_4 = text
-//                            sheet_4_4 = info
+                            tableAll[24].add(text)
                         }
                         if (scheduleList[i].startTime == 1900) {
-                            table_5_4 = text
-//                            sheet_5_4 = info
+                            tableAll[31].add(text)
                         }
                     }
                     if (scheduleList[i].weekday == 5) {
                         if (scheduleList[i].startTime == 800) {
-                            table_1_5 = text
-//                            sheet_1_5 = info
+                            tableAll[4].add(text)
                         }
                         if (scheduleList[i].startTime == 1010) {
-                            table_2_5 = text
-//                            sheet_2_5 = info
+                            tableAll[11].add(text)
                         }
                         if (scheduleList[i].startTime == 1400) {
-                            table_3_5 = text
-//                            sheet_3_5 = info
+                            tableAll[18].add(text)
                         }
                         if (scheduleList[i].startTime == 1600) {
-                            table_4_5 = text
-//                            sheet_4_5 = info
+                            tableAll[25].add(text)
                         }
                         if (scheduleList[i].startTime == 1900) {
-                            table_5_5 = text
-//                            sheet_5_5 = info
+                            tableAll[32].add(text)
                         }
                     }
                     if (scheduleList[i].weekday == 6) {
                         if (scheduleList[i].startTime == 800) {
-                            table_1_6 = text
-//                            sheet_1_6 = info
+                            tableAll[5].add(text)
                         }
                         if (scheduleList[i].startTime == 1010) {
-                            table_2_6 = text
-//                            sheet_2_6 = info
+                            tableAll[12].add(text)
                         }
                         if (scheduleList[i].startTime == 1400) {
-                            table_3_6 = text
-//                            sheet_3_6 = info
+                            tableAll[19].add(text)
                         }
                         if (scheduleList[i].startTime == 1600) {
-                            table_4_6 = text
-//                            sheet_4_6 = info
+                            tableAll[26].add(text)
                         }
                         if (scheduleList[i].startTime == 1900) {
-                            table_5_6 = text
-//                            sheet_5_6 = info
+                            tableAll[33].add(text)
                         }
                     }
                     if (scheduleList[i].weekday == 7) {
                         if (scheduleList[i].startTime == 800) {
-                            table_1_7 = text
-//                            sheet_1_7 = info
+                            tableAll[6].add(text)
                         }
                         if (scheduleList[i].startTime == 1010) {
-                            table_2_7 = text
-//                            sheet_2_7 = info
+                            tableAll[13].add(text)
                         }
                         if (scheduleList[i].startTime == 1400) {
-                            table_3_7 = text
-//                            sheet_3_7 = info
+                            tableAll[20].add(text)
                         }
                         if (scheduleList[i].startTime == 1600) {
-                            table_4_7 = text
-//                            sheet_4_7 = info
+                            tableAll[27].add(text)
                         }
                         if (scheduleList[i].startTime == 1900) {
-                            table_5_7 = text
-//                            sheet_5_7 = info
+                            tableAll[34].add(text)
                         }
                     }
                 }
@@ -666,6 +492,12 @@ fun CalendarScreen(
         }
 
     }
+
+    LaunchedEffect(showAll) {
+        async { if(showAll) updateAll() else update() }.await()
+//        async { refreshUI = false }
+    }
+
 //////////////////////////////////////////////////////////////////////////////////
 
    if(load) {
@@ -839,7 +671,7 @@ fun CalendarScreen(
                     if (result != null) {
                         if (result.contains("result")) {
                             CoroutineScope(Job()).launch {
-                                async { if (showAll) UpdateAll() else Update() }.await()
+                                async { if (showAll) updateAll() else update() }.await()
                                 async {
                                     Handler(Looper.getMainLooper()).post {
                                         vm.lessonIds.removeObserver(
@@ -912,7 +744,7 @@ fun CalendarScreen(
                         ) {
                             items(if(showAll)7 else 5) { Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding())) }
                             items(if(showAll)42 else 30) { cell ->
-                                var texts = if(showAll)tableall[cell] else table[cell]
+                                val texts = if(showAll)tableAll[cell].toMutableList() else table[cell].toMutableList()
                                 Card(
                                     shape = MaterialTheme.shapes.extraSmall,
                                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
@@ -920,12 +752,20 @@ fun CalendarScreen(
                                         .height(125.dp)
                                         .padding(if (showAll) 1.dp else 2.dp)
                                         .clickable {
-                                            val name = parseCourseName(if(showAll)tableall[cell] else table[cell])
-                                            if(name != null) {
-                                                courseName = name
-//                                                Log.d("课程",courseName)
-                                                showBottomSheet_totalCourse = true
+                                            // 只有一节课
+                                            if(texts.size == 1) {
+                                                val name = parseCourseName(if(showAll)tableAll[cell][0] else table[cell][0])
+                                                if(name != null) {
+                                                    courseName = name
+                                                    showBottomSheet_totalCourse = true
+                                                }
+                                            } else if(texts.size > 1) {
+                                                multiWeekday = if(showAll) (cell+1)%7 else (cell+1)%5
+                                                multiWeek = Bianhuaweeks.toInt()
+                                                courses = texts
+                                                showBottomSheet_multiCourse = true
                                             }
+                                                // 空数据
                                         }
                                 ) {
                                     //存在待考时
@@ -939,26 +779,28 @@ fun CalendarScreen(
                                                 val hour = it.startTime?.substringBefore(":")?.toIntOrNull() ?: 99
 
                                                 if(hour in 7..9 && j == 0) {
-                                                    texts = it.startTime + "\n" + it.course + "\n" + it.place
+                                                    texts.add(it.startTime + "\n" + it.course + "\n" + it.place)
                                                 } else if(hour in 10..12 && j == 1) {
-                                                    texts = it.startTime + "\n" + it.course + "\n" + it.place
+                                                    texts.add(it.startTime + "\n" + it.course + "\n" + it.place)
                                                 } else if(hour in 14..15  && j == 2) {
-                                                    texts = it.startTime + "\n" + it.course + "\n" + it.place
+                                                    texts.add(it.startTime + "\n" + it.course + "\n" + it.place)
                                                 } else if(hour in 16..17  && j == 3) {
-                                                    texts = it.startTime + "\n" + it.course + "\n" + it.place
+                                                    texts.add(it.startTime + "\n" + it.course + "\n" + it.place)
                                                 } else if(hour >= 18  && j == 4) {
-                                                    texts = it.startTime + "\n" + it.course + "\n" + it.place
+                                                    texts.add(it.startTime + "\n" + it.course + "\n" + it.place)
                                                 }
                                             }
                                         }
                                     }
                                     Column(
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .verticalScroll(rememberScrollState())
-                                        //.padding(8.dp)
+                                        modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
                                     ) {
-                                        Text(text = texts,fontSize = if(showAll)12.sp else 14.sp, textAlign = TextAlign.Center)
+                                        Text(
+                                            text =
+                                                if(texts.size == 1) texts[0]
+                                                else if(texts.size > 1) "${texts[0].substringBefore("\n")}\n" + "${texts.size}节课冲突\n点击查看"
+                                                else "",
+                                            fontSize = if(showAll)12.sp else 14.sp, textAlign = TextAlign.Center)
                                     }
                                 }
                             }
@@ -978,7 +820,7 @@ fun CalendarScreen(
                                     onClick = {
                                         if (Bianhuaweeks > 1) {
                                             Bianhuaweeks-- - 1
-                                            if(showAll) UpdateAll() else Update()
+                                            if(showAll) updateAll() else update()
                                             onDateChange(today.minusDays(7))
                                         }
                                     },
@@ -1000,7 +842,7 @@ fun CalendarScreen(
                                 ExtendedFloatingActionButton(
                                     onClick = {
                                         Bianhuaweeks = DateTimeManager.Benweeks
-                                        if(showAll) UpdateAll() else Update()
+                                        if(showAll) updateAll() else update()
                                         onDateChange(LocalDate.now())
                                     },
                                 ) {
@@ -1050,7 +892,7 @@ fun CalendarScreen(
                                     onClick = {
                                         if (Bianhuaweeks < 20) {
                                             Bianhuaweeks++ + 1
-                                            if(showAll) UpdateAll() else Update()
+                                            if(showAll) updateAll() else update()
                                             onDateChange(today.plusDays(7))
                                         }
                                     },
@@ -1077,3 +919,68 @@ fun getNewWeek() : Long {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MultiCourseSheetUI(week : Int,weekday : Int,courses : List<String>,vm: NetWorkViewModel) {
+    var courseName by remember { mutableStateOf("") }
+    val sheetState_totalCourse = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showBottomSheet_totalCourse by remember { mutableStateOf(false) }
+    if (showBottomSheet_totalCourse) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                showBottomSheet_totalCourse = false
+            },
+            sheetState = sheetState_totalCourse,
+            shape = Round(sheetState_totalCourse)
+        ) {
+            CourseDetailApi(courseName = courseName, vm = vm)
+        }
+    }
+    Column {
+        ActiveTopBar("第${week}周 周${numToChinese(weekday)}")
+        LargeCard(
+            title = "${courses.size}节课冲突"
+        ) {
+            for(index in courses.indices) {
+                val course = courses[index]
+                val list = course.split("\n")
+                val startTime = list[0]
+                val name = list[1]
+                val place =
+                    if(list.size > 2) {
+                        list[2]
+                    } else null
+                TransplantListItem(
+                    headlineContent = {
+                        Text(name)
+                    },
+                    supportingContent = {
+                        Text("$place $startTime")
+                    },
+                    leadingContent = {
+                        Text((index+1).toString())
+                    },
+                    modifier = Modifier.clickable {
+                        courseName = name
+                        showBottomSheet_totalCourse = true
+                    }
+                )
+            }
+        }
+        Spacer(Modifier.height(30.dp))
+    }
+
+}
+
+fun numToChinese(num : Int) : String {
+    return when(num) {
+        1 -> "一"
+        2 -> "二"
+        3 -> "三"
+        4 -> "四"
+        5 -> "五"
+        6 -> "六"
+        7 -> "日"
+        else -> ""
+    }
+}

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
@@ -45,6 +46,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -163,7 +165,8 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
     var showBottomSheet by remember { mutableStateOf(false) }
 
     var ifSaved by remember { mutableStateOf(true) }
-    var swapUI by remember { mutableStateOf(if(ifSaved) COMMUNITY else JXGLSTU) }
+    val defaultCalendar = prefs.getInt("SWITCH_DEFAULT_CALENDAR", COMMUNITY)
+    var swapUI by remember { mutableIntStateOf(if(ifSaved) defaultCalendar else JXGLSTU) }
     var isFriend by remember { mutableStateOf(false) }
 
     val sheetState_multi = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -439,12 +442,6 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
                     when (swapUI) {
                         COMMUNITY -> SaveCourse(showAll, innerPadding,vmUI, onDateChange = { new -> today = new}, today = today, vm = vm)
                         JXGLSTU -> CalendarScreen(showAll,vm,innerPadding,vmUI,false,vm2,false,{newDate -> today = newDate},today)
-                            ///CustomSchedules(showAll,innerPadding,vmUI,-1)
-//                        NEXT -> {
-//                            Column(modifier = Modifier.padding(innerPadding)) {
-//                                prefs.getString("gradeNext","23")?.let { DatumUI(showAll, it, innerPadding, vmUI,)}
-//                            }
-//                        }
                         else -> {
                             CustomSchedules(showAll,innerPadding,vmUI,swapUI-2,{newDate-> today = newDate}, today)
                         }
@@ -479,7 +476,6 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
 }
 
 
-@RequiresApi(Build.VERSION_CODES.O)
 fun texts(num : BottomBarItems) : String {
     when(num){
         COURSES -> {

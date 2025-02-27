@@ -24,6 +24,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,15 +36,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.utils.DataStoreManager
 import com.hfut.schedule.logic.utils.Semseter.parseSemseter
 import com.hfut.schedule.logic.utils.Semseter.getSemseterFromCloud
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.SharePrefs.saveBoolean
+import com.hfut.schedule.logic.utils.SharePrefs.saveInt
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.FocusCardSettings
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.LockUI
+import com.hfut.schedule.ui.activity.home.main.saved.COMMUNITY
+import com.hfut.schedule.ui.activity.home.main.saved.JXGLSTU
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.style.Round
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,6 +87,12 @@ fun APPScreen(navController: NavController,
         saveBoolean("SWITCHFOCUS",true,showfocus)
         var showBottomSheet_card by remember { mutableStateOf(false) }
         var sheetState_card = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+        val switch_default = prefs.getInt("SWITCH_DEFAULT_CALENDAR", COMMUNITY)
+        var currentDefaultCalendar by remember { mutableStateOf(switch_default) }
+        saveInt("SWITCH_DEFAULT_CALENDAR",currentDefaultCalendar)
+
+
         if (showBottomSheet_card) {
             ModalBottomSheet(
                 onDismissRequest = { showBottomSheet_card = false },
@@ -242,6 +256,39 @@ fun APPScreen(navController: NavController,
         )
 
         ListItem(
+            headlineContent = { Text(text = "默认课程表") },
+            supportingContent = {
+                Column {
+                    Text(text = "您希望打开APP后课程表首先展示的是")
+                    Row {
+                        FilterChip(
+                            onClick = {
+                                currentDefaultCalendar = COMMUNITY
+                                saveInt("SWITCH_DEFAULT_CALENDAR", COMMUNITY)
+                            },
+                            label = { Text(text = "智慧社区") }, selected = currentDefaultCalendar == COMMUNITY)
+                        Spacer(modifier = Modifier.width(10.dp))
+                        FilterChip(
+                            onClick = {
+                                currentDefaultCalendar = JXGLSTU
+                                saveInt("SWITCH_DEFAULT_CALENDAR", JXGLSTU)
+                            },
+                            label = { Text(text = "教务(缓存)") }, selected = currentDefaultCalendar == JXGLSTU)
+                    }
+                    Text(text = if(currentDefaultCalendar == COMMUNITY)"(荐)智慧社区课程表随时更新,若发生调选退课会有一定延迟,但会自动更新" else "教务课表跟随每次刷新登陆状态而更新,在登陆教务后,发生调选退课立即发生变动,登录过期后缓存在本地,并支持冲突课程的显示" )
+                }
+            },
+            leadingContent = { Icon(painterResource(R.drawable.calendar), contentDescription = "Localized description",) },
+            modifier = Modifier.clickable {
+                currentDefaultCalendar = when(currentDefaultCalendar) {
+                    JXGLSTU -> COMMUNITY
+                    COMMUNITY -> JXGLSTU
+                    else -> COMMUNITY
+                }
+                saveInt("SWITCH_DEFAULT_CALENDAR",currentDefaultCalendar)
+            }
+        )
+        ListItem(
             headlineContent = { Text(text = "支付设置") },
             supportingContent = {
                 Text(text = "调用校园卡进行网电缴费时,启用生物识别快速验证")
@@ -249,5 +296,6 @@ fun APPScreen(navController: NavController,
             leadingContent = { Icon(painterResource(R.drawable.lock), contentDescription = "Localized description",) },
             modifier = Modifier.clickable { showBottomSheet_lock = true }
         )
+
     }
 }

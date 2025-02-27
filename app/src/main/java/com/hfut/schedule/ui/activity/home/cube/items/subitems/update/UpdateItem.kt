@@ -55,10 +55,9 @@ fun VersionInfo() {
     Spacer(Modifier.height(3.dp))
     VersionInfoCard()
     DividerTextExpandedWith(text = "新特性") {
-        UpdateItems("新增 选课可查看教务系统冲突预览",null,UpdateType.ADD)
-        UpdateItems("新增 应用内网页查看可刷新、返回功能",null,UpdateType.ADD)
-        UpdateItems("新增 查询中心中慧新易校的快捷方式","这个应该可以暂时缓解合肥校区缴费功能吧",UpdateType.ADD)
-        UpdateItems("修复 选课后不刷新课程表与课程汇总的Bug",null,UpdateType.FIX)
+        UpdateItems("新增 教务课程表对冲突课程的适配","当出现撞课时会标注在格子中",UpdateType.ADD)
+        UpdateItems("新增 默认课程表","位于 选项-应用行为",UpdateType.ADD)
+        UpdateItems("修复 第一次切换到教务课程时空白的Bug",null,UpdateType.FIX)
     }
 }
 
