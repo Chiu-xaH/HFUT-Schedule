@@ -37,7 +37,7 @@ fun VersionInfoCard() {
         title = "版本 " + APPVersion.getVersionName()
     ) {
         TransplantListItem(
-            overlineContent = { Text(text = "2025-02-25") },
+            overlineContent = { Text(text = "2025-02-27") },
             leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
             headlineContent = { Text(text = "版本号 ${APPVersion.getVersionCode()}") },
         )
@@ -55,10 +55,10 @@ fun VersionInfo() {
     Spacer(Modifier.height(3.dp))
     VersionInfoCard()
     DividerTextExpandedWith(text = "新特性") {
-        UpdateItems("重构 卡片的UI","去掉普通卡片的低阴影，使用扁平化设计",UpdateType.RENEW)
-        UpdateItems("修复 新闻公告不显示项目的Bug",null,UpdateType.FIX)
-        UpdateItems("修复 教务登录界面由于网络问题偶发崩溃的Bug",null,UpdateType.FIX)
-        UpdateItems("优化 部分界面的布局",null,UpdateType.OPTIMIZE)
+        UpdateItems("新增 选课可查看教务系统冲突预览",null,UpdateType.ADD)
+        UpdateItems("新增 应用内网页查看可刷新、返回功能",null,UpdateType.ADD)
+        UpdateItems("新增 查询中心中慧新易校的快捷方式","这个应该可以暂时缓解合肥校区缴费功能吧",UpdateType.ADD)
+        UpdateItems("修复 选课后不刷新课程表与课程汇总的Bug",null,UpdateType.FIX)
     }
 }
 

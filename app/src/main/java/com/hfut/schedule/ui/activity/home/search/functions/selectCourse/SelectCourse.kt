@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -62,6 +63,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.enums.SelectType
@@ -84,6 +86,7 @@ import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.TransplantListItem
+import com.hfut.schedule.ui.utils.components.WebDialog
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -99,6 +102,18 @@ fun SelectCourse(ifSaved : Boolean, vm : NetWorkViewModel) {
     var showBottomSheet_info by remember { mutableStateOf(false) }
     val sheetState_info = rememberModalBottomSheetState()
 
+    var showDialog by remember { mutableStateOf(false) }
+    val cookie = if (!vm.webVpn) prefs.getString(
+        "redirect",
+        ""
+    ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
+    WebDialog(
+        showDialog,
+        { showDialog = false },
+        url = if(vm.webVpn) MyApplication.JxglstuWebVpnURL else MyApplication.JxglstuURL + "for-std/course-table",
+        title = "教务系统",
+        cookie = cookie
+    )
 
     if (showBottomSheet) {
         ModalBottomSheet(
@@ -120,6 +135,12 @@ fun SelectCourse(ifSaved : Boolean, vm : NetWorkViewModel) {
                                 FilledTonalIconButton(onClick = { showBottomSheet_info = true }, ) {
                                     Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")
                                 }
+                                FilledTonalButton(onClick = {
+                                    showDialog = true
+                                }) {
+                                    Text(text = "冲突预览")
+                                }
+                                Spacer(modifier = Modifier.width(5.dp))
                                 FilledTonalButton(onClick = {
                                     UpdateCourses(vm)
                                     MyToast("已刷新课表与课程汇总")

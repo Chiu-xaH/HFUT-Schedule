@@ -881,6 +881,7 @@ fun CalendarScreen(
                             addProperty("weekIndex", "")
                         }
                         vm.getDatum(cookie!!, jsonObject)
+                        vm.bizTypeIdResponse.removeObserver(getBizTypeIdObserver)
                         vm.studentId.removeObserver(studentIdObserver)
                     }
                 }

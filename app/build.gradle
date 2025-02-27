@@ -24,7 +24,7 @@ android {
         minSdk 26
         targetSdk 33
         versionCode 161
-        versionName "4.13.6"
+        versionName "4.13.6.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
@@ -149,4 +149,6 @@ dependencies {
     implementation 'nl.dionsegijn:konfetti-compose:2.0.5'
     //Fragment
 //    implementation "androidx.fragment:fragment-ktx:1.8.5"
+    // 内存泄漏
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.14'
 }

@@ -21,6 +21,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -332,6 +334,14 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                             modifier = Modifier.clickable { showBottomSheet_Shower = true }
                         )
 //                    }
+                    StyleCardListItem(
+                        headlineContent = { Text(text = "合肥校区缴费") },
+                        overlineContent = { Text("慧新易校平台") },
+                        leadingContent = {
+                            Icon(Icons.Default.ArrowForward, contentDescription = "")
+                        },
+                        modifier = Modifier.clickable { showDialog_Huixin = true }
+                    )
                 }
             }
         }

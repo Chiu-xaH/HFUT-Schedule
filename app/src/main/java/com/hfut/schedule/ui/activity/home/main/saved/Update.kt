@@ -21,61 +21,24 @@ import kotlinx.coroutines.launch
 suspend fun NetWorkUpdate(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel, ifSaved : Boolean){
     val CommuityTOKEN = SharePrefs.prefs.getString("TOKEN","")
     val auth = prefs.getString("auth","")
-    val grade = prefs.getString("Username","")?.substring(2,4)
 
     val cookie = if(!vm.webVpn) prefs.getString("redirect", "")  else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket","")
     CoroutineScope(Job()).apply {
         //async { MyWangKe() }
-        async { vm2.My() }
+        launch { vm2.My() }
         //async { MySchedule() }
         //async { AddedItems() }
         //async { getNotifications() }
-        async { vm.getExamJXGLSTU(cookie!!) } //用于更新ifSaved
-        if(!ifSaved) {
-            async {
-                val studentIdObserver = Observer<Int> { result ->
-                    if (result != 0) {
-                        SharePrefs.saveString("studentId", result.toString())
-                        CoroutineScope(Job()).launch {
-                            JxglstuParseUtils.bizTypeId?.let {
-                                vm.getLessonIds(cookie!!,it,result.toString())
-                            }
-                        }
-                    }
-                }
-                val lessonIdObserver = Observer<List<Int>> { result ->
-                    if (result.toString() != "") {
-                        val lessonIdsArray = JsonArray()
-                        result.forEach { lessonIdsArray.add(JsonPrimitive(it)) }
-                        val jsonObject = JsonObject().apply {
-                            add("lessonIds", lessonIdsArray)//课程ID
-                            addProperty("studentId", vm.studentId.value)//学生ID
-                            addProperty("weekIndex", "")
-                        }
-                        vm.getDatum(cookie!!, jsonObject)
-                        vm.studentId.removeObserver(studentIdObserver)
-                    }
-                }
-                val datumObserver = Observer<String?> { result ->
-                    if (result != null) {
-                        if (result.contains("result")) {
-                            CoroutineScope(Job()).launch {
-                                async { Handler(Looper.getMainLooper()).post { vm.lessonIds.removeObserver(lessonIdObserver) } }
-                            }
-                        }
-                    }
-                }
-                async { vm.getStudentId(cookie!!) }.await()
-                Handler(Looper.getMainLooper()).post {
-                    vm.studentId.observeForever(studentIdObserver)
-                    vm.lessonIds.observeForever(lessonIdObserver)
-                    vm.datumData.observeForever(datumObserver)
-                }
+        launch { vm.getExamJXGLSTU(cookie!!) } //用于更新ifSaved
+        launch {
+            if(!ifSaved) {
+                UpdateCourses(vm)
             }
         }
-        async { CommuityTOKEN?.let { vm.GetCourse(it) } }
+
+        launch { CommuityTOKEN?.let { vm.GetCourse(it) } }
         async { GetZjgdCard(vm,vmUI) }.await()
-        async { CommuityTOKEN?.let { vm.getFriends(it) } }
+        launch { CommuityTOKEN?.let { vm.getFriends(it) } }
     }
 }
 //更新教务课表与课程汇总
@@ -86,13 +49,20 @@ fun UpdateCourses(vm: NetWorkViewModel) {
     ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
 
     CoroutineScope(Job()).async {
+        val getBizTypeIdObserver = Observer<String?> { result ->
+            if(result != null) {
+                // 开始解析
+                val bizTypeId = JxglstuParseUtils.bizTypeId ?: JxglstuParseUtils.getBizTypeId(result)
+                if(bizTypeId != null) {
+                    vm.getLessonIds(cookie!!,bizTypeId,vm.studentId.value.toString())
+                }
+            }
+        }
         val studentIdObserver = Observer<Int> { result ->
             if (result != 0) {
                 SharePrefs.saveString("studentId", result.toString())
                 CoroutineScope(Job()).launch {
-                    JxglstuParseUtils.bizTypeId?.let {
-                        vm.getLessonIds(cookie!!,it,result.toString())
-                    }
+                    async { vm.getBizTypeId(cookie!!) }.await()
                 }
             }
         }
@@ -106,6 +76,7 @@ fun UpdateCourses(vm: NetWorkViewModel) {
                     addProperty("weekIndex", "")
                 }
                 vm.getDatum(cookie!!, jsonObject)
+                vm.bizTypeIdResponse.removeObserver(getBizTypeIdObserver)
                 vm.studentId.removeObserver(studentIdObserver)
             }
         }
@@ -121,6 +92,7 @@ fun UpdateCourses(vm: NetWorkViewModel) {
         async { vm.getStudentId(cookie!!) }.await()
         Handler(Looper.getMainLooper()).post {
             vm.studentId.observeForever(studentIdObserver)
+            vm.bizTypeIdResponse.observeForever(getBizTypeIdObserver)
             vm.lessonIds.observeForever(lessonIdObserver)
             vm.datumData.observeForever(datumObserver)
         }

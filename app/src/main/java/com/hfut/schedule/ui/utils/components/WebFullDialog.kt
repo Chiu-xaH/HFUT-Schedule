@@ -24,7 +24,7 @@ import com.hfut.schedule.logic.utils.Starter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WebDialog(showDialog : Boolean,showChanged : () -> Unit,url : String,title : String = "网页") {
+fun WebDialog(showDialog : Boolean,showChanged : () -> Unit,url : String,title : String = "网页",cookie :String? = null) {
 
     val switch_startUri = prefs.getBoolean("SWITCHSTARTURI",true)
 
@@ -34,33 +34,7 @@ fun WebDialog(showDialog : Boolean,showChanged : () -> Unit,url : String,title :
                 onDismissRequest = showChanged,
                 properties = DialogProperties(usePlatformDefaultWidth = false)
             ) {
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    topBar = {
-                        TopAppBar(
-                            colors = TopAppBarDefaults.mediumTopAppBarColors(
-                                containerColor = Color.Transparent,
-                                titleContentColor = MaterialTheme.colorScheme.primary,
-                            ),
-                            actions = {
-                                Row{
-                                    IconButton(onClick = { Starter.startWebUrl(url) }) { Icon(
-                                        painterResource(id = R.drawable.net), contentDescription = "") }
-                                    IconButton(onClick = showChanged) { Icon(painterResource(id = R.drawable.close), contentDescription = "") }
-                                }
-                            },
-                            title = { Text(title) }
-                        )
-                    },
-                ) { innerPadding ->
-                    Column(
-                        modifier = Modifier
-                            .padding(innerPadding)
-                            .fillMaxSize()
-                    ) {
-                        WebViewScreen(url)
-                    }
-                }
+                WebViewScreen(url,cookie,showDialog, showChanged,title)
             }
         } else {
             Starter.startWebUrl(url)

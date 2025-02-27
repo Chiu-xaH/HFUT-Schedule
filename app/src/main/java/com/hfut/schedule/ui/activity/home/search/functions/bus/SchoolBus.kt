@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.utils.components.TransplantListItem
+import com.hfut.schedule.ui.utils.components.WebDialog
 import com.hfut.schedule.ui.utils.components.WebViewScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -71,38 +72,36 @@ fun SchoolBus() {
             }
         }
     }
-
-
-
-    if (showDialog) {
-        androidx.compose.ui.window.Dialog(
-            onDismissRequest = { showDialog = false },
-            properties = DialogProperties(usePlatformDefaultWidth = false)
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        actions = { IconButton(onClick = { showDialog = false }) {
-                            Icon(painterResource(id = R.drawable.close), contentDescription = "")
-                        }
-                        },
-                        title = { Text("校车") }
-                    )
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    WebViewScreen("file:///android_asset/BusInfos.html")
-                }
-            }
-        }
-    }
+    WebDialog(showDialog,{showDialog = false},"file:///android_asset/BusInfos.html","校车")
+//    if (showDialog) {
+//        androidx.compose.ui.window.Dialog(
+//            onDismissRequest = { showDialog = false },
+//            properties = DialogProperties(usePlatformDefaultWidth = false)
+//        ) {
+//            Scaffold(
+//                modifier = Modifier.fillMaxSize(),
+//                topBar = {
+//                    TopAppBar(
+//                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+//                            containerColor = Color.Transparent,
+//                            titleContentColor = MaterialTheme.colorScheme.primary,
+//                        ),
+//                        actions = { IconButton(onClick = { showDialog = false }) {
+//                            Icon(painterResource(id = R.drawable.close), contentDescription = "")
+//                        }
+//                        },
+//                        title = { Text("校车") }
+//                    )
+//                },
+//            ) { innerPadding ->
+//                Column(
+//                    modifier = Modifier
+//                        .padding(innerPadding)
+//                        .fillMaxSize()
+//                ) {
+//                    WebViewScreen("file:///android_asset/BusInfos.html")
+//                }
+//            }
+//        }
+//    }
 }

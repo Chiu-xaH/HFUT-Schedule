@@ -50,43 +50,4 @@ fun Second() {
             MyToast("请前往 第二课堂 微信小程序")
         }
     )
-//    val switch_startUri = SharePrefs.prefs.getBoolean("SWITCHSTARTURI",true)
-//
-//    if (showDialog) {
-//        if(switch_startUri) {
-//            androidx.compose.ui.window.Dialog(
-//                onDismissRequest = { showDialog = false },
-//                properties = DialogProperties(usePlatformDefaultWidth = false)
-//            ) {
-//                Scaffold(
-//                    modifier = Modifier.fillMaxSize(),
-//                    topBar = {
-//                        TopAppBar(
-//                            colors = TopAppBarDefaults.mediumTopAppBarColors(
-//                                containerColor = Color.Transparent,
-//                                titleContentColor = MaterialTheme.colorScheme.primary,
-//                            ),
-//                            actions = {
-//                                Row{
-//                                    IconButton(onClick = { Starter.startWebUrl(url) }) { Icon(painterResource(id = R.drawable.net), contentDescription = "") }
-//                                    IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "") }
-//                                }
-//                            },
-//                            title = { Text("跳转至 第二课堂 微信小程序") }
-//                        )
-//                    },
-//                ) { innerPadding ->
-//                    Column(
-//                        modifier = Modifier
-//                            .padding(innerPadding)
-//                            .fillMaxSize()
-//                    ) {
-//                        WebViewScreen(url)
-//                    }
-//                }
-//            }
-//        } else {
-//            Starter.startWebUrl(url)
-//        }
-//    }
 }

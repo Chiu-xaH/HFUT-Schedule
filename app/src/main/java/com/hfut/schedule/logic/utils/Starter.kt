@@ -3,6 +3,8 @@ package com.hfut.schedule.logic.utils
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
+import android.webkit.CookieManager
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.activity.main.AnonymityActivity
 import com.hfut.schedule.activity.main.LoginActivity
@@ -34,10 +36,16 @@ object Starter {
         }
     }
     //传入网页URL打开
-    fun startWebUrl(url : String) {
+    fun startWebUrl(url : String,cookies : String? = null) {
         try {
             val it = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+            if(cookies != null) {
+                CookieManager.getInstance().setCookie(url, cookies)
+                CookieManager.getInstance().flush() // 确保 Cookie 立即生效
+            }
+
             MyApplication.context.startActivity(it)
         } catch (e : Exception) {
             MyToast("启动浏览器失败")

@@ -58,7 +58,7 @@ fun ToadyCampus(ifSaved : Boolean,vm: NetWorkViewModel){
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
     TransplantListItem(
-        overlineContent = { Text(text = "今日校园") },
+//        overlineContent = { Text(text = "今日校园") },
         headlineContent = { Text(text = "学工系统") },
         leadingContent = { Icon(painter = painterResource(id = R.drawable.handshake), contentDescription = "") },
         modifier = Modifier.clickable {

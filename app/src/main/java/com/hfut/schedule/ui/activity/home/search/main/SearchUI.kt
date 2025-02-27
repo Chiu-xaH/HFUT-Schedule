@@ -32,6 +32,7 @@ import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
+import com.hfut.schedule.ui.activity.home.search.functions.Huixin
 import com.hfut.schedule.ui.activity.home.search.functions.nextCourse.NextCourse
 import com.hfut.schedule.ui.activity.home.search.functions.bus.SchoolBus
 import com.hfut.schedule.ui.activity.home.search.functions.courseSearch.CoursesSearch
@@ -141,7 +142,7 @@ fun SearchScreen(vm : NetWorkViewModel, ifSaved : Boolean, innerPaddings : Paddi
         "热水机 趣智校园" to { HotWater() },
         "空教室" to { EmptyRoom(vm, ifSaved) },
         "乐跑云运动 校园跑" to { LePaoYun(vm) },
-        "今日校园 学工系统 请假 助学金 奖学金 贫困 寝室 心理 日常" to { ToadyCampus(ifSaved,vm) },
+        "一卡通 校园卡 账单 充值 缴费 慧新易校 合肥" to { Huixin() },
         "学信网" to { XueXin() },
         "生活服务 校园 校园 天气 教学楼 建筑 学堂" to { Life(vm) },
         "转专业" to { Transfer(ifSaved, vm) },
@@ -149,7 +150,8 @@ fun SearchScreen(vm : NetWorkViewModel, ifSaved : Boolean, innerPaddings : Paddi
         "教师 老师" to { TeacherSearch(vm) },
         "学费 费用 欠缴学费" to { Pay(ifSaved, vm) },
         "实习" to { Work(ifSaved) },
-        "第二课堂" to { Second() }
+        "第二课堂" to { Second() },
+        "今日校园 学工系统 请假 助学金 奖学金 贫困 寝室 心理 日常" to { ToadyCampus(ifSaved,vm) },
     )
 
     val funcList = funcMaps.values.toList()
