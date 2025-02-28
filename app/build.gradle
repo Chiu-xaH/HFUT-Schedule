@@ -23,8 +23,8 @@ android {
         applicationId "com.hfut.schedule"
         minSdk 26
         targetSdk 33
-        versionCode 164
-        versionName "4.13.6.3"
+        versionCode 165
+        versionName "4.13.7"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
@@ -147,10 +147,7 @@ dependencies {
     implementation 'net.i2p.crypto:eddsa:0.3.0'
     //礼花
     implementation 'nl.dionsegijn:konfetti-compose:2.0.5'
-    //Fragment
-//    implementation "androidx.fragment:fragment-ktx:1.8.5"
-    // 内存泄漏
-//    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.14'
     // 图片验证码识别
-    implementation 'com.google.mlkit:text-recognition:16.0.1'
+//    implementation 'com.google.mlkit:text-recognition:16.0.1'
+    implementation 'com.rmtheis:tess-two:9.1.0'
 }

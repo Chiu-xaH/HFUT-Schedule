@@ -4,11 +4,11 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.Spring
@@ -77,26 +77,21 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.text.TextRecognition
-import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.activity.funiction.FixActivity
 import com.hfut.schedule.activity.main.LoginSuccessActivity
 import com.hfut.schedule.activity.main.SavedActivity
 import com.hfut.schedule.logic.utils.APPVersion
-import com.hfut.schedule.logic.utils.CaptchaRecognizer
 import com.hfut.schedule.logic.utils.Encrypt
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.Starter.noLogin
 import com.hfut.schedule.ui.activity.home.cube.items.main.FirstCube
+import com.hfut.schedule.ui.activity.home.cube.items.subitems.DownloadMLUI
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
-import com.hfut.schedule.ui.utils.components.BottomTip
 import com.hfut.schedule.ui.utils.components.MyToast
-import com.hfut.schedule.ui.utils.components.URLImage
 import com.hfut.schedule.ui.utils.components.URLImageWithOCR
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
@@ -107,7 +102,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 //登录方法，auto代表前台调用
-fun LoginClick(vm : LoginViewModel,username : String,inputAES : String,code : String,webVpn : Boolean) {
+fun LoginClick(vm : LoginViewModel,username : String,inputAES : String,code : String,webVpn : Boolean,onRefresh : () -> Unit) {
     val cookie = prefs.getString(if(!webVpn)"cookie" else "webVpnKey", "")
     val outputAES = cookie?.let { it1 -> Encrypt.encryptAES(inputAES, it1) }
     val ONE = "LOGIN_FLAVORING=$cookie"
@@ -127,7 +122,8 @@ fun LoginClick(vm : LoginViewModel,username : String,inputAES : String,code : St
                         vm.getCookie()
                     }
                     "401" -> {
-                        MyToast("账号或密码错误")
+                        MyToast("密码或验证码错误")
+                        onRefresh()
                         vm.getCookie()
                     }
                     "200" -> {
@@ -183,7 +179,7 @@ fun LoginClick(vm : LoginViewModel,username : String,inputAES : String,code : St
 }
 
 @Composable
-fun ImageCodeUI(webVpn : Boolean,vm: LoginViewModel,onResult : (String) -> Unit) {
+fun ImageCodeUI(webVpn : Boolean,vm: LoginViewModel,onRefresh: Int = 1,onResult : (String) -> Unit) {
     // refresh当webVpn关闭才起效，开启时不需要refresh，直接重载图片
     var refresh by remember { mutableStateOf(true) }
     if(webVpn) {
@@ -216,7 +212,7 @@ fun ImageCodeUI(webVpn : Boolean,vm: LoginViewModel,onResult : (String) -> Unit)
         var imageUrl by remember { mutableStateOf("$url?timestamp=${System.currentTimeMillis()}") }
         val cookies = if(webVpn) "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "") else vm.jsessionid.value
         // webVpn开关变化时重载
-        LaunchedEffect(webVpn) {
+        LaunchedEffect(webVpn,onRefresh) {
             imageUrl = "$url?timestamp=${System.currentTimeMillis()}"
         }
         // 请求图片
@@ -246,6 +242,7 @@ enum class First {
 }
 
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -379,6 +376,7 @@ fun AnimatedWelcomeScreen() {
 
 }
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TwoTextField(vm : LoginViewModel) {
@@ -393,8 +391,36 @@ fun TwoTextField(vm : LoginViewModel) {
     var inputAES by remember { mutableStateOf(Savedpassword ?: "") }
     var inputCode by remember { mutableStateOf( "") }
     var webVpn by remember { mutableStateOf(false) }
-
+    val switch_open = SharePrefs.prefs.getBoolean("SWITCH_ML",false)
     // 创建一个动画值，根据按钮的按下状态来改变阴影的大小
+    val sheetState = rememberModalBottomSheetState()
+    var showBottomSheet by remember { mutableStateOf(false) }
+    if (showBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                showBottomSheet = false
+            },
+            sheetState = sheetState,
+            shape = Round(sheetState)
+        ) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        title = { Text("图片验证码自动填充") }
+                    )
+                },) {innerPadding ->
+                DownloadMLUI(innerPadding)
+                Spacer(modifier = Modifier.height(20.dp))
+            }
+        }
+    }
+    var onRefresh by remember { mutableStateOf(1) }
+
 
     Column(modifier = Modifier.fillMaxWidth()) {
         val interactionSource = remember { MutableInteractionSource() }
@@ -486,13 +512,17 @@ fun TwoTextField(vm : LoginViewModel) {
                 leadingIcon = { Icon( painterResource(R.drawable.password), contentDescription = "Localized description") },
                 trailingIcon = {
                     Box(modifier = Modifier.padding(5.dp)) {
-                        ImageCodeUI(webVpn,vm) {
+                        ImageCodeUI(webVpn,vm, onRefresh =onRefresh ) {
                             inputCode = it
                         }
                     }
                 },
                 supportingText = {
-                    Text("自动填充来自 Google ML Kit 机器学习")
+                    if(!switch_open) {
+                        Text("点击下载模型文件以启用自动填充", modifier = Modifier.clickable {
+                            showBottomSheet = true
+                        })
+                    }
                 }
             )
         }
@@ -504,7 +534,7 @@ fun TwoTextField(vm : LoginViewModel) {
             Button(
                 onClick = {
                     val cookie = SharePrefs.prefs.getString("cookie", "")
-                    if (cookie != null) LoginClick(vm,username,inputAES,inputCode,webVpn)
+                    if (cookie != null) LoginClick(vm,username,inputAES,inputCode,webVpn, onRefresh = { onRefresh++ })
                     }, modifier = Modifier.scale(scale.value),
                 interactionSource = interactionSource
 

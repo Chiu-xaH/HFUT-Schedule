@@ -48,14 +48,13 @@ fun VersionInfoCard() {
 @SuppressLint("SuspiciousIndentation")
 @Composable
 fun VersionInfo() {
-//    data class UpdateItem(val title: String,val info : String?=null,val type : UpdateType)
-//    val updates = listOf(
-//        "新增 寝室电费对合肥校区的适配",
-//    )
     Spacer(Modifier.height(3.dp))
     VersionInfoCard()
     DividerTextExpandedWith(text = "新特性") {
-        UpdateItems("修复 由于CAS统一认证登录启用图片验证码导致APP无法登录的问题",null,UpdateType.FIX)
+        UpdateItems("重构 图片验证码OCR模型为新的Tesseract,并不再附加于包体中,用户可自行在APP内下载启用,使包体相对于上版本减少29.4%","位于 选项-应用行为",UpdateType.RENEW)
+        UpdateItems("修复 初次初始化学期错误导致的无法加载课表Bug",null,UpdateType.FIX)
+        UpdateItems("修复 关于界面组件异常大小Bug",null,UpdateType.FIX)
+        UpdateItems("优化 验证码错误后自动重新刷新",null,UpdateType.OPTIMIZE)
     }
 }
 

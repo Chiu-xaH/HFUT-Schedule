@@ -3,10 +3,12 @@ package com.hfut.schedule.activity.main
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.scaleIn
@@ -64,6 +66,7 @@ class LoginActivity : BaseActivity() {
             }
         ) {
             composable(First.HOME.name) {
+                @RequiresApi(Build.VERSION_CODES.TIRAMISU)
                 @Composable
                 fun MainUI() {
                     if(startAcitivity && intent.getBooleanExtra("nologin",true)) {

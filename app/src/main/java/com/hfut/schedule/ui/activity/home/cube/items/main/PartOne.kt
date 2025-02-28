@@ -122,6 +122,7 @@ sealed class Screen(val route: String) {
 
     object CardCountScreen : Screen(CardBarItems.COUNT.name)
     object CardHomeScreen : Screen(CardBarItems.HOME.name)
+    object DownloadScreen : Screen("Download")
 
 }
 

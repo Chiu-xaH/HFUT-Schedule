@@ -1,6 +1,8 @@
 package com.hfut.schedule.ui.activity.home.cube.main
 
 import android.annotation.SuppressLint
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.scaleIn
@@ -38,9 +40,11 @@ import com.hfut.schedule.ui.activity.home.cube.items.main.HomeSettingScreen
 import com.hfut.schedule.ui.activity.home.cube.items.NavUIs.NetWorkScreen
 import com.hfut.schedule.ui.activity.home.cube.items.main.Screen
 import com.hfut.schedule.ui.activity.home.cube.items.NavUIs.UIScreen
+import com.hfut.schedule.ui.activity.home.cube.items.subitems.DownloadMLUI
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.TEST
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @SuppressLint("SuspiciousIndentation", "UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -119,6 +123,11 @@ fun SettingsScreen(vm : NetWorkViewModel
                 composable("DEBUG") {
                     Scaffold {
                         TEST(innerPadding)
+                    }
+                }
+                composable(Screen.DownloadScreen.route) {
+                    Scaffold {
+                        DownloadMLUI(innerPaddings)
                     }
                 }
             }

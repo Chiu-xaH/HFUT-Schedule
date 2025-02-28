@@ -1,5 +1,6 @@
 package com.hfut.schedule.logic.utils
 
+import android.util.Log
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.beans.MyAPIResponse
@@ -11,6 +12,7 @@ object Semseter {
         DEFAULT,UP,DOWN
     }
     fun parseSemseter(semster : Int) : String {
+        Log.d("seme",semster.toString())
         val codes = (semster - 4) / 10
         val year = 2017
         val code = 3
@@ -60,14 +62,14 @@ object Semseter {
         } catch (e : Exception) {
             return null
         }
-
     }
 
     fun getSemseterFromCloud() : Int {
         return try {
+            Log.d("seme2",Gson().fromJson(SharePrefs.prefs.getString("my",""), MyAPIResponse::class.java).semesterId)
             Gson().fromJson(SharePrefs.prefs.getString("my",""), MyAPIResponse::class.java).semesterId.toInt()
         } catch (e:Exception) {
-            reverseGetSemester(DateTimeManager.Date_MM_dd) ?: 0
+            reverseGetSemester(DateTimeManager.Date_yyyy_MM) ?: 0
         }
     }
 }

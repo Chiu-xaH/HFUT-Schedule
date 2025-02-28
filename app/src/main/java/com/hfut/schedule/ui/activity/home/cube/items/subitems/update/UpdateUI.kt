@@ -2,8 +2,10 @@ package com.hfut.schedule.ui.activity.home.cube.items.subitems.update
 
 import android.app.DownloadManager
 import android.content.Context
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -46,6 +48,9 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.APPVersion
+import com.hfut.schedule.logic.utils.MyDownloadManager
+import com.hfut.schedule.logic.utils.MyDownloadManager.downloadManage
+import com.hfut.schedule.logic.utils.MyDownloadManager.getDownloadProgress
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
@@ -54,6 +59,7 @@ import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun UpdateUI() {
     val handler = Handler(Looper.getMainLooper())
@@ -61,7 +67,7 @@ fun UpdateUI() {
     var able by remember { mutableStateOf(true) }
     val runnable = object : Runnable {
         override fun run() {
-            val id = SharePrefs.prefs.getLong("download",-1)
+            val id = MyDownloadManager.getDownloadId(MyDownloadManager.DownloadIds.UPDATE)
             val progress = getDownloadProgress(id)
             // 更新 UI，例如进度条
             pro = progress / 100f
@@ -117,7 +123,7 @@ fun UpdateUI() {
         ) {
             BottomButton(
                 onClick = {
-                    getUpdates().version?.let { downloadManage(it) }
+                    getUpdates().version?.let { MyDownloadManager.update(it) }
                     able = false
 //                    expandItems = true
                 },
@@ -135,7 +141,7 @@ fun UpdateUI() {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center)  {
                 Button(
                     onClick = {
-                        getUpdates().version?.let { downloadManage(it) }
+                        getUpdates().version?.let { MyDownloadManager.update(it) }
                         able = false
                     },
                     modifier = Modifier
@@ -161,7 +167,7 @@ fun UpdateUI() {
                         //获取下载ID
                         val downloadManager = MyApplication.context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
                         if (pro == 1f) {
-                            val id = SharePrefs.prefs.getLong("download",-1)
+                            val id = MyDownloadManager.getDownloadId(MyDownloadManager.DownloadIds.UPDATE)
                             val uri = downloadManager.getUriForDownloadedFile(id)
                             installApk(uri)
                         } else MyToast("正在下载")

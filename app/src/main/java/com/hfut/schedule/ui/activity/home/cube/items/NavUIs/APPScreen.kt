@@ -43,6 +43,7 @@ import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.SharePrefs.saveBoolean
 import com.hfut.schedule.logic.utils.SharePrefs.saveInt
+import com.hfut.schedule.ui.activity.home.cube.items.main.Screen
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.FocusCardSettings
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.LockUI
 import com.hfut.schedule.ui.activity.home.main.saved.COMMUNITY
@@ -124,6 +125,7 @@ fun APPScreen(navController: NavController,
         }
         var showBottomSheet_lock by remember { mutableStateOf(false) }
         var sheetState_lock = rememberModalBottomSheetState()
+
         if (showBottomSheet_lock) {
             ModalBottomSheet(
                 onDismissRequest = { showBottomSheet_lock = false },
@@ -297,5 +299,13 @@ fun APPScreen(navController: NavController,
             modifier = Modifier.clickable { showBottomSheet_lock = true }
         )
 
+        ListItem(
+            headlineContent = { Text(text = "图片验证码自动填充") },
+            supportingContent = {
+                Text(text = "登录教务时,使用Tesseract库提供的机器学习OCR能力,填充验证码")
+            },
+            leadingContent = { Icon(painterResource(R.drawable.center_focus_strong), contentDescription = "Localized description",) },
+            modifier = Modifier.clickable { navController.navigate(Screen.DownloadScreen.route) }
+        )
     }
 }

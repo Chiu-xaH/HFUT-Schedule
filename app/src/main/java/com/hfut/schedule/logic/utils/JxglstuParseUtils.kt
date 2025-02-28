@@ -1,5 +1,6 @@
 package com.hfut.schedule.logic.utils
 
+import android.util.Log
 import org.jsoup.Jsoup
 
 object JxglstuParseUtils {
@@ -18,7 +19,7 @@ object JxglstuParseUtils {
                     if(id != null) {
                         bizTypeId = id
                     }
-//                    Log.d("bizTypeId", id.toString())
+                    Log.d("bizTypeId", id.toString())
                     return id
                 }
             }
