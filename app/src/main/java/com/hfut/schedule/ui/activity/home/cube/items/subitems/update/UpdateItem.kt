@@ -37,7 +37,7 @@ fun VersionInfoCard() {
         title = "版本 " + APPVersion.getVersionName()
     ) {
         TransplantListItem(
-            overlineContent = { Text(text = "2025-02-27") },
+            overlineContent = { Text(text = "2025-02-28") },
             leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
             headlineContent = { Text(text = "版本号 ${APPVersion.getVersionCode()}") },
         )
@@ -55,10 +55,7 @@ fun VersionInfo() {
     Spacer(Modifier.height(3.dp))
     VersionInfoCard()
     DividerTextExpandedWith(text = "新特性") {
-        UpdateItems("新增 教务课程表对冲突课程的适配","当出现撞课时会标注在格子中",UpdateType.ADD)
-        UpdateItems("新增 默认课程表","位于 选项-应用行为",UpdateType.ADD)
-        UpdateItems("修复 第一次切换到教务课程时空白的Bug",null,UpdateType.FIX)
-        UpdateItems("修复 登录教务时加载课程表闪烁的Bug",null,UpdateType.FIX)
+        UpdateItems("修复 由于CAS统一认证登录启用图片验证码导致APP无法登录的问题",null,UpdateType.FIX)
     }
 }
 

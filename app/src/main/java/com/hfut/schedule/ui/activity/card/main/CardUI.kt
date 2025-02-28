@@ -61,6 +61,7 @@ import com.hfut.schedule.logic.beans.zjgd.BillResponse
 import com.hfut.schedule.logic.beans.zjgd.records
 import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.DataStoreManager
+import com.hfut.schedule.logic.utils.JxglstuParseUtils
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.card.function.main.HomeScreen
@@ -147,7 +148,7 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
                                     loading = false
                                     if (result.contains("操作成功")) BillItem()
                                     else {
-                                        val ONE = prefs.getString("ONE","")
+                                        val ONE = JxglstuParseUtils.casCookies
                                         val TGC = prefs.getString("TGC","")
                                         vm.OneGotoCard(ONE + ";" + TGC)
                                         MyToast("空数据,请再次尝试或登录")

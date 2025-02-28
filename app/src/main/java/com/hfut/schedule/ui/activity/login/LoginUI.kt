@@ -4,25 +4,21 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.os.Build
+import android.graphics.Bitmap
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.with
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -43,6 +39,7 @@ import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -54,7 +51,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -81,34 +77,37 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.text.TextRecognition
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.viewmodel.LoginViewModel
 import com.hfut.schedule.activity.funiction.FixActivity
 import com.hfut.schedule.activity.main.LoginSuccessActivity
 import com.hfut.schedule.activity.main.SavedActivity
 import com.hfut.schedule.logic.utils.APPVersion
+import com.hfut.schedule.logic.utils.CaptchaRecognizer
 import com.hfut.schedule.logic.utils.Encrypt
 import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.Starter.noLogin
 import com.hfut.schedule.ui.activity.home.cube.items.main.FirstCube
-import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.ANIMATION_SPEED
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.BottomTip
 import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.URLImage
+import com.hfut.schedule.ui.utils.components.URLImageWithOCR
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
+import com.hfut.schedule.viewmodel.LoginViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 //登录方法，auto代表前台调用
-fun LoginClick(vm : LoginViewModel,username : String,inputAES : String,webVpn : Boolean) {
+fun LoginClick(vm : LoginViewModel,username : String,inputAES : String,code : String,webVpn : Boolean) {
     val cookie = prefs.getString(if(!webVpn)"cookie" else "webVpnKey", "")
     val outputAES = cookie?.let { it1 -> Encrypt.encryptAES(inputAES, it1) }
     val ONE = "LOGIN_FLAVORING=$cookie"
@@ -117,14 +116,11 @@ fun LoginClick(vm : LoginViewModel,username : String,inputAES : String,webVpn : 
     saveString("Password",inputAES)
     //登录
     if (username.length != 10) MyToast("请输入正确的账号")
-    else outputAES?.let { it1 -> vm.login(username, it1,ONE,webVpn) }
+    else outputAES?.let { it1 -> vm.login(username, it1,ONE,code,webVpn) }
     //登陆判定机制
     CoroutineScope(Job()).launch {
         Handler(Looper.getMainLooper()).post{
             vm.code.observeForever { result ->
-                if(result.contains("XXX")) {
-                    Log.d("代码",result)
-                }
                 when(result) {
                     "XXX" -> {
                         MyToast("连接Host失败,请再次尝试登录")
@@ -186,6 +182,54 @@ fun LoginClick(vm : LoginViewModel,username : String,inputAES : String,webVpn : 
     }
 }
 
+@Composable
+fun ImageCodeUI(webVpn : Boolean,vm: LoginViewModel,onResult : (String) -> Unit) {
+    // refresh当webVpn关闭才起效，开启时不需要refresh，直接重载图片
+    var refresh by remember { mutableStateOf(true) }
+    if(webVpn) {
+        refresh = false
+    } else {
+        if(refresh) {
+            LaunchedEffect(Unit) {
+                launch {
+                    Handler(Looper.getMainLooper()).post{
+                        vm.jsessionid.observeForever { result ->
+                            if(result != null) {
+                                refresh = false
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    if(refresh) {
+        CircularProgressIndicator()
+    } else  {
+        val url = (
+                if(!webVpn) MyApplication.LoginURL
+                else MyApplication.WebVpnURL + "http/77726476706e69737468656265737421f3f652d22f367d44300d8db9d6562d/"
+                ) + "cas/vercode"
+        // 让 URL 可变，每次点击时更新
+        var imageUrl by remember { mutableStateOf("$url?timestamp=${System.currentTimeMillis()}") }
+        val cookies = if(webVpn) "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "") else vm.jsessionid.value
+        // webVpn开关变化时重载
+        LaunchedEffect(webVpn) {
+            imageUrl = "$url?timestamp=${System.currentTimeMillis()}"
+        }
+        // 请求图片
+        Box(modifier = Modifier.clickable {
+            // 点击重载
+            imageUrl = "$url?timestamp=${System.currentTimeMillis()}"
+        }) {
+            URLImageWithOCR(url = imageUrl,cookie = cookies, width = 100.dp, height = 45.dp, onResult = onResult)
+        }
+    }
+}
+
+
 
 fun SavedClick() {
     val json = prefs.getString("json", "")
@@ -196,11 +240,6 @@ fun SavedClick() {
     } else noLogin()
 }
 
-//
-//@Composable
-//fun FirstUI(vm: LoginViewModel) {
-//
-//}
 
 enum class First {
     HOME,USE_AGREEMENT
@@ -261,12 +300,13 @@ fun LoginUI(vm : LoginViewModel) {
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
                 title = {
+
+
                     Box(modifier = Modifier.fillMaxWidth()) {
                         Text(
-                            text = "教务登录",
-                            modifier = Modifier.fillMaxWidth(),
+                            text = "教务登录  ",
+                            modifier = Modifier.fillMaxWidth().align(Alignment.Center),
                             textAlign = TextAlign.Center,
-                            //style = MaterialTheme.typography.titleLarge
                         )
                     }
                         },
@@ -351,6 +391,7 @@ fun TwoTextField(vm : LoginViewModel) {
 
     var username by remember { mutableStateOf(Savedusername ?: "") }
     var inputAES by remember { mutableStateOf(Savedpassword ?: "") }
+    var inputCode by remember { mutableStateOf( "") }
     var webVpn by remember { mutableStateOf(false) }
 
     // 创建一个动画值，根据按钮的按下状态来改变阴影的大小
@@ -373,7 +414,7 @@ fun TwoTextField(vm : LoginViewModel) {
             label = "" // 使用弹簧动画
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
             TextField(
@@ -398,7 +439,7 @@ fun TwoTextField(vm : LoginViewModel) {
             )
         }
 
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(20.dp))
         Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
             TextField(
                 modifier = Modifier
@@ -429,15 +470,41 @@ fun TwoTextField(vm : LoginViewModel) {
             )
         }
 
+        Spacer(modifier = Modifier.height(20.dp))
+        Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
+            TextField(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 25.dp),
+                value = inputCode,
+                onValueChange = { inputCode = it },
+                label = { Text("图片验证码" ) },
+                singleLine = true,
+                // placeholder = { Text("请输入正确格式")},
+                shape = MaterialTheme.shapes.medium,
+                colors = textFiledTransplant(),
+                leadingIcon = { Icon( painterResource(R.drawable.password), contentDescription = "Localized description") },
+                trailingIcon = {
+                    Box(modifier = Modifier.padding(5.dp)) {
+                        ImageCodeUI(webVpn,vm) {
+                            inputCode = it
+                        }
+                    }
+                },
+                supportingText = {
+                    Text("自动填充来自 Google ML Kit 机器学习")
+                }
+            )
+        }
 
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         Row (modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center){
 
             Button(
                 onClick = {
                     val cookie = SharePrefs.prefs.getString("cookie", "")
-                    if (cookie != null) LoginClick(vm,username,inputAES,webVpn)
+                    if (cookie != null) LoginClick(vm,username,inputAES,inputCode,webVpn)
                     }, modifier = Modifier.scale(scale.value),
                 interactionSource = interactionSource
 

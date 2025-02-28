@@ -505,7 +505,7 @@ fun CalendarScreen(
         ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
         var num2 = 1
         // val grade = intent.getStringExtra("Grade")
-        val ONE = prefs.getString("ONE", "")
+        val ONE = JxglstuParseUtils.casCookies
         val TGC = prefs.getString("TGC", "")
         val cardvalue = prefs.getString("borrow", "")
         val cookies = "$ONE;$TGC"

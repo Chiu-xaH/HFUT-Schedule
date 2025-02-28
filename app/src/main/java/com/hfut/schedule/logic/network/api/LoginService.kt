@@ -24,11 +24,12 @@ interface LoginService {
     @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.17")
     @POST("cas/login?service=http%3A%2F%2Fjxglstu.hfut.edu.cn%2Feams5-student%2Fneusoft-sso%2Flogin")
     fun login(
-        @Header("Cookie") Cookie : String,
+        @Header("Cookie") cookie : String,
         @Field("username") username: String,
         @Field("password") password: String,
         @Field("execution") execution: String,
-        @Field("_eventId") eventId: String
+        @Field("_eventId") eventId: String = "submit",
+        @Field("capcha") code : String
     ) : Call<ResponseBody>
 
    //信息门户登录

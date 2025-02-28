@@ -95,7 +95,7 @@ fun TeacherListUI(vm: NetWorkViewModel) {
                         supportingContent = {
                             Column {
                                 Spacer(modifier = Modifier.height(2.dp))
-                                URLImage(url = MyApplication.TeacherURL + it.picUrl, size = 120.dp)
+                                URLImage(url = MyApplication.TeacherURL + it.picUrl, width = 120.dp, height = 120.dp)
                             }
                         },
 //                        trailingContent = {

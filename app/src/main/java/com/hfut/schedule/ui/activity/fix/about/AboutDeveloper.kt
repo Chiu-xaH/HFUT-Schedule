@@ -69,6 +69,7 @@ fun About(vm : LoginViewModel) {
         "Glide" to "网络图片",
         "EdDSA Java" to "加密(供和风天气API使用)",
         "Konfetti" to "礼花动画",
+        "ML Kit" to "机器学习(图片验证码识别)"
     )
     val dependencies = Build(
         jetpack = "Jetpack Compose",
@@ -147,7 +148,7 @@ fun About(vm : LoginViewModel) {
                         },
                         headlineContent = { ScrollText(GithubConsts.DEVELOPER_NAME) },
                         leadingContent = {
-                            URLImage(url = MyApplication.GithubUserImageURL + GithubConsts.USER_ID, size = 50.dp)
+                            URLImage(url = MyApplication.GithubUserImageURL + GithubConsts.USER_ID, width = 50.dp, height = 50.dp)
                         },
                         supportingContent = {
                             Text("一名热爱安卓的开发者,宣城校区23级计算机科学与技术专业(转)本科生")

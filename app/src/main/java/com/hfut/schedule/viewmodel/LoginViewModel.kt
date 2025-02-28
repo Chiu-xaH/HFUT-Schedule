@@ -1,12 +1,9 @@
 package com.hfut.schedule.viewmodel
 
-import android.preference.PreferenceManager
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.network.NetWork
 import com.hfut.schedule.logic.network.api.GithubService
-import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.network.api.LoginService
 import com.hfut.schedule.logic.network.servicecreator.Login.GetAESKeyServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.Login.GetCookieServiceCreator
@@ -16,6 +13,7 @@ import com.hfut.schedule.logic.network.servicecreator.MyServiceCreator
 import com.hfut.schedule.logic.network.api.MyService
 import com.hfut.schedule.logic.network.api.WebVpnService
 import com.hfut.schedule.logic.network.servicecreator.GithubServiceCreator
+import com.hfut.schedule.logic.utils.JxglstuParseUtils
 import com.hfut.schedule.logic.utils.SharePrefs.saveString
 import okhttp3.ResponseBody
 import org.jsoup.Jsoup
@@ -24,8 +22,8 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class LoginViewModel : ViewModel() {
-    var sessionLiveData = MutableLiveData<String>()
-    var cookie2 = MutableLiveData<String>()
+    var sessionLiveData = MutableLiveData<String>() //SESSIONID
+    var jsessionid = MutableLiveData<String>() // JESSIONID
     var code = MutableLiveData<String>()
     var location = MutableLiveData<String>()
     var execution = MutableLiveData<String>()
@@ -42,19 +40,20 @@ class LoginViewModel : ViewModel() {
     var githubData = MutableLiveData<String?>()
     fun getStarsNum() = NetWork.makeRequest(github.getRepoInfo(),githubData)
 
-    var TICKET = MutableLiveData<String?>()
-    fun login(username : String,password : String,keys : String,webVpn : Boolean)  {
 
-        val cookies : String = sessionLiveData.value  + cookie2.value +";" + keys
-        saveString("ONE", cookies)
+    var TICKET = MutableLiveData<String?>()
+    fun login(username : String,password : String,keys : String,imageCode : String,webVpn : Boolean)  {
+
+        val cookies : String = sessionLiveData.value  + jsessionid.value +";" + keys
+        JxglstuParseUtils.casCookies = cookies
 
       //  val ticketWebVpn = prefs.getString("WebVpn","")
         val ticket = webVpnTicket.value?.substringAfter("wengine_vpn_ticketwebvpn_hfut_edu_cn=")
             ?.substringBefore(";")
        // Log.d("i",webVpnTicket.value.toString())
         val call =
-            if(!webVpn) execution.value?.let { Login.login(cookies,username, password, it,"submit") }
-            else execution.value?.let { LoginWebVpn.loginWebVpn("wengine_vpn_ticketwebvpn_hfut_edu_cn=${ticket}",username, password, it,"submit") }
+            if(!webVpn) execution.value?.let { Login.login(cookie = cookies,username = username, password = password,execution = it,code = imageCode) }
+            else execution.value?.let { LoginWebVpn.loginWebVpn(cookie ="wengine_vpn_ticketwebvpn_hfut_edu_cn=${ticket}",username =username, password =password,execution= it, code = imageCode) }
 
         if (call != null) {
             call.enqueue(object : Callback<ResponseBody> {
@@ -82,7 +81,7 @@ class LoginViewModel : ViewModel() {
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
 
-                if(response.isSuccessful()){ cookie2.value  = response.headers()["Set-Cookie"].toString() }
+                if(response.isSuccessful()){ jsessionid.value  = response.headers()["Set-Cookie"].toString() }
                 //else Log.d("测试","失败，${response.code()},${response.message()}")
             }
 
@@ -141,10 +140,10 @@ class LoginViewModel : ViewModel() {
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
 
-                if(response.isSuccessful()){
+                if(response.isSuccessful){
                     webVpnTicket.value = response.headers().toString()
-                    val ticket =response.headers().toString().substringAfter("wengine_vpn_ticketwebvpn_hfut_edu_cn=")
-                        ?.substringBefore(";")
+                    val ticket = response.headers().toString().substringAfter("wengine_vpn_ticketwebvpn_hfut_edu_cn=")
+                        .substringBefore(";")
                     saveString("webVpnTicket",ticket)
                 }
                 //else Log.d("测试","失败，${response.code()},${response.message()}")

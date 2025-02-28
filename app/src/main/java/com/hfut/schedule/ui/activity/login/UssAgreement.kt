@@ -82,7 +82,7 @@ fun UseAgreementUI(navController : NavHostController) {
                 title = {
                     Box(modifier = Modifier.fillMaxWidth()) {
                         Text(
-                            text = "用户协议",
+                            text = "用户协议  ",
                             modifier = Modifier.fillMaxWidth(),
                             textAlign = TextAlign.Center,
                             //style = MaterialTheme.typography.titleLarge

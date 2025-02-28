@@ -1,6 +1,5 @@
 package com.hfut.schedule.logic.utils
 
-import android.util.Log
 import org.jsoup.Jsoup
 
 object JxglstuParseUtils {
@@ -28,4 +27,6 @@ object JxglstuParseUtils {
         }
         return null
     }
+
+    var casCookies : String? = null
 }

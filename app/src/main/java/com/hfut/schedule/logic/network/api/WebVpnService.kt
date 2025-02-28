@@ -25,7 +25,9 @@ interface WebVpnService {
                     @Field("username") username: String,
                     @Field("password") password: String,
                     @Field("execution") execution: String,
-                    @Field("_eventId") eventId: String): Call<ResponseBody>
+                    @Field("_eventId") eventId: String = "submit",
+                    @Field("capcha") code : String
+    ): Call<ResponseBody>
     //登录WEBVPN
     @GET("http/77726476706e69737468656265737421faef469034247d1e760e9cb8d6502720ede479/eams5-student/neusoft-sso/login")
     @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.17")

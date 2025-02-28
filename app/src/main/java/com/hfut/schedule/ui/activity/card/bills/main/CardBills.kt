@@ -52,6 +52,7 @@ import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.beans.zjgd.BillResponse
 import com.hfut.schedule.logic.beans.zjgd.records
 import com.hfut.schedule.logic.utils.DateTimeManager
+import com.hfut.schedule.logic.utils.JxglstuParseUtils
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.card.bills.CardRow
@@ -126,7 +127,7 @@ fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVie
                                     loading = false
                                     if (result.contains("操作成功")) getBills(vm)
                                     else {
-                                        val ONE = prefs.getString("ONE", "")
+                                        val ONE = JxglstuParseUtils.casCookies
                                         val TGC = prefs.getString("TGC", "")
                                         vm.OneGotoCard("$ONE;$TGC")
                                         MyToast("空数据,请再次尝试或登录")

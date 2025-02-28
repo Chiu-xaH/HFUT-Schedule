@@ -89,7 +89,7 @@ fun ShowerLogin(vm : GuaGuaViewModel,netVm : NetWorkViewModel) {
                 title = {
                     Box(modifier = Modifier.fillMaxWidth()) {
                         Text(
-                            text = "登录",
+                            text = "登录  ",
                             modifier = Modifier.fillMaxWidth(),
                             textAlign = TextAlign.Center,
                             //style = MaterialTheme.typography.titleLarge

@@ -15,15 +15,23 @@ import com.bumptech.glide.request.transition.Transition
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 
+
 fun loadImage(
     url: String,
-    @DrawableRes defaultImageId: Int = R.drawable.ic_launcher_background
+    @DrawableRes defaultImageId: Int = R.drawable.ic_launcher_background,
+    cookie: String? = null
 ): MutableState<Bitmap?> {
     val TAG = "LoadImage"
     val bitmapState: MutableState<Bitmap?> = mutableStateOf(null)
 
     //为请求加上 Headers ，提高访问成功率
-    val glideUrl = GlideUrl(url, LazyHeaders.Builder().build())
+    // 构造 GlideUrl，可选地添加 Cookie
+    val headers = LazyHeaders.Builder().apply {
+        if (!cookie.isNullOrEmpty()) {
+            addHeader("Cookie", cookie)
+        }
+    }.build()
+    val glideUrl = GlideUrl(url, headers)
 
     //先加载本地图片
     Glide.with(MyApplication.context)

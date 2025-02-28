@@ -34,6 +34,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.window.DialogProperties
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.DataStoreManager
+import com.hfut.schedule.logic.utils.JxglstuParseUtils
 import com.hfut.schedule.logic.utils.SharePrefs
 import com.hfut.schedule.logic.utils.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter
@@ -62,8 +63,8 @@ fun ToadyCampus(ifSaved : Boolean,vm: NetWorkViewModel){
         headlineContent = { Text(text = "学工系统") },
         leadingContent = { Icon(painter = painterResource(id = R.drawable.handshake), contentDescription = "") },
         modifier = Modifier.clickable {
-            showBottomSheet = true
-//            Starter.startLaunchAPK("com.wisedu.cpdaily","今日校园")
+//            showBottomSheet = true
+            Starter.startLaunchAPK("com.wisedu.cpdaily","今日校园")
 
         }
     )
@@ -147,7 +148,7 @@ fun LoginStu(vm : NetWorkViewModel) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginStuUI(vm : NetWorkViewModel) {
-    val ONE = prefs.getString("ONE", "")
+    val ONE = JxglstuParseUtils.casCookies
     val TGC = prefs.getString("TGC", "")
     val cookies = "$ONE;$TGC"
 

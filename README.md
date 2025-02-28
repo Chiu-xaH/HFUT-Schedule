@@ -74,6 +74,8 @@ UI: Material You (Material Design 3)
 
 [Konfetti](https://github.com/DanielMartinus/Konfetti) 礼花🎉动画
 
+[ML Kit](https://github.com/googlesamples/mlkit) 机器学习(供识别图片验证码)
+
 ## [更新日志](markdown/UPDATE.md)
 
 ## 统计
