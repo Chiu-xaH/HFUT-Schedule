@@ -5,7 +5,7 @@
 
 ## CAS统一认证 https://cas.hfut.edu.cn/
 
-### execution的获取 & Cookie中JESSIONID、SESSIONID 获取
+### Step1 execution的获取 & Cookie中JESSIONID、SESSIONID 获取
 @GET cas/login
 #### 请求
 Query["service"] 这里看你要登录那个平台，例如 
@@ -18,7 +18,12 @@ Query["service"] 这里看你要登录那个平台，例如
 Body(HTML) 检索execution，拿到所需参数
 Header["Set-Cookie"] 拿到JESSIONID、SESSIONID
 
-### LOGIN_FLAVORING的获取
+### Step2 图片验证码的获取
+@GET cas/vercode
+#### 请求
+Header["Cookie"] JSESSION=XXX 获取方式见上面
+
+### Step1 LOGIN_FLAVORING的获取
 @GET cas/checkInitParams
 #### 请求
 无
@@ -45,7 +50,7 @@ Query["service"] 这里看你要登录那个平台，例如
 ##### 响应
 Header["Location"] 若末尾存在ticket=XXX 拿到ticket保存，后面会用，不存在说明Cookie过期或无效
 
-#### 密码账号登录
+#### Step3 密码账号登录
 @POST cas/login
 ##### 请求
 Header["Cookie"] Cookie分为三个，JESSIONID、SESSIONID、LOGIN_FLAVORING，都在上面操作获取到了
@@ -72,6 +77,8 @@ Form(表单)
 "execution"="e1s1" eXSY X与Y只能为Int整数，代表第X次尝试刷新Y次，获取方式见上面
 
 "_eventId"="submit" 固定字符串 不用动
+
+"capcha"="XXXX" 四位图片验证码
 ```
 ##### 响应
 Header["Location"] 若末尾存在ticket=XXX 拿到ticket保存，后面会用，不存在说明Cookie过期或无效
