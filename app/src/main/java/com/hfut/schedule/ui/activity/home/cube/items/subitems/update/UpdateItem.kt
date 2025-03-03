@@ -52,6 +52,7 @@ fun VersionInfo() {
     DividerTextExpandedWith(text = "新特性") {
         UpdateItems("修复 教务课程表部分方块课程错误显示的Bug",null,UpdateType.FIX)
         UpdateItems("适配 部分操作的预测式返回动画",null,UpdateType.UPDATE)
+        UpdateItems("升级 目标版本为安卓15",null,UpdateType.UPDATE)
         UpdateItems("升级 Material3组件库",null,UpdateType.UPDATE)
     }
 }
