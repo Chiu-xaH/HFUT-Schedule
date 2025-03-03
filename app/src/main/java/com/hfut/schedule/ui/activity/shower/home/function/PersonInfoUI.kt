@@ -32,7 +32,9 @@ import com.hfut.schedule.ui.activity.home.search.functions.shower.ShowerUI
 import com.hfut.schedule.ui.activity.home.search.functions.shower.tranamt
 import com.hfut.schedule.ui.activity.shower.login.getGuaGuaPersonInfo
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.LargeCard
 import com.hfut.schedule.ui.utils.components.ScrollText
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.CardForListColor
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.viewmodel.NetWorkViewModel
@@ -55,43 +57,34 @@ fun GuaGuaPersonInfoUI(vm: NetWorkViewModel) {
     }
 
     val personInfo = getGuaGuaPersonInfo()
-    Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = AppHorizontalDp()),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = AppHorizontalDp(), vertical = 5.dp),
-        shape = MaterialTheme.shapes.medium,
-        colors = CardForListColor()
-    ) {
-        ListItem(
-            headlineContent = { personInfo?.let { Text(text = "￥${tranamt(it.accountMoney)}",fontSize = 28.sp) } },
-            trailingContent = {
-                FilledTonalIconButton(
-                    onClick = {
-                        showBottomSheet = true
-                    },
-                ) {
-                    Icon(painterResource(R.drawable.add),null)
-                }
+    personInfo?.let {
+        LargeCard("￥${tranamt(it.accountMoney)}", rightTop = {
+            FilledTonalIconButton(
+                onClick = {
+                    showBottomSheet = true
+                },
+            ) {
+                Icon(painterResource(R.drawable.add),null)
             }
-        )
-        Row {
-            ListItem(
-                headlineContent = { personInfo?.let { Text(text = it.name) } },
-                leadingContent = {
-                    Icon(painterResource(id = R.drawable.person), contentDescription = "")
-                },
-                overlineContent = { Text(text = "姓名") },
-                modifier = Modifier.weight(.4f)
-            )
-            ListItem(
-                headlineContent = { personInfo?.let { ScrollText(text = it.telPhone) } },
-                leadingContent = {
-                    Icon(painterResource(id = R.drawable.call), contentDescription = "")
-                },
-                overlineContent = { Text(text = "手机号") },
-                modifier = Modifier.weight(.6f)
-            )
+        }) {
+            Row {
+                TransplantListItem(
+                    headlineContent = { Text(text = personInfo.name) },
+                    leadingContent = {
+                        Icon(painterResource(id = R.drawable.person), contentDescription = "")
+                    },
+                    overlineContent = { Text(text = "姓名") },
+                    modifier = Modifier.weight(.4f)
+                )
+                TransplantListItem(
+                    headlineContent = { ScrollText(text = personInfo.telPhone) },
+                    leadingContent = {
+                        Icon(painterResource(id = R.drawable.call), contentDescription = "")
+                    },
+                    overlineContent = { Text(text = "手机号") },
+                    modifier = Modifier.weight(.6f)
+                )
+            }
         }
     }
 }

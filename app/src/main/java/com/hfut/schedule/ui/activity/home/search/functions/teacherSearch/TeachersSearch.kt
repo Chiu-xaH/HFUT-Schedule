@@ -41,9 +41,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
-import com.hfut.schedule.logic.utils.reEmptyLiveDta
+import com.hfut.schedule.logic.utils.data.reEmptyLiveDta
 import com.hfut.schedule.ui.activity.home.search.functions.failRate.permit
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
@@ -104,22 +105,16 @@ fun SearchTeachersUI(vm : NetWorkViewModel) {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        containerColor = Color.Transparent,
         topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = Color.Transparent,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                title = { Text("教师") },
-                actions = {
-                    FilledTonalIconButton(
-                        onClick = { onClick() },
-                        modifier = Modifier.padding(horizontal = AppHorizontalDp())
-                    ) {
-                        Icon(painterResource(R.drawable.search), contentDescription = "")
-                    }
+            CustomTopBar("教师") {
+                FilledTonalIconButton(
+                    onClick = { onClick() },
+//                    modifier = Modifier.padding(horizontal = AppHorizontalDp())
+                ) {
+                    Icon(painterResource(R.drawable.search), contentDescription = "")
                 }
-            )
+            }
         },
     ) { innerPadding ->
         Column(

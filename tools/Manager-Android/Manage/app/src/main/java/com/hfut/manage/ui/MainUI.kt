@@ -202,7 +202,7 @@ fun Home(innerPadding: PaddingValues,vm : NetViewModel) {
                             .padding(horizontal = AppHorizontalDp(), vertical = 5.dp),
                         shape = MaterialTheme.shapes.medium,
                     ){
-                        ListItem(
+                        TransplantListItem(
                             headlineContent = {  Text(text = "添加通知") },
                             leadingContent = { Icon(painterResource(id = R.drawable.notifications), contentDescription = "Localized description") },
                             trailingContent = {Icon(Icons.Filled.Add, contentDescription = "Localized description",)},

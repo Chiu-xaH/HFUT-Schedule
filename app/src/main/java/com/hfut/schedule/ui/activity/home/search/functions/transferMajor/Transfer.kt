@@ -36,10 +36,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.style.Round
@@ -78,14 +79,9 @@ fun Transfer(ifSaved : Boolean,vm : NetWorkViewModel){
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("说明") },
-                    )
+                    CustomTopBar("说明")
                 },
             ) { innerPadding ->
                 Column(
@@ -108,22 +104,16 @@ fun Transfer(ifSaved : Boolean,vm : NetWorkViewModel){
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { ScrollText("转专业") },
-                        actions = {
-                            FilledTonalIconButton(
-                                onClick = { showBottomSheet_info = true },
-                                modifier = Modifier.padding(horizontal = AppHorizontalDp())
-                            ) {
-                                Icon(painterResource(R.drawable.info),null)
-                            }
+                    CustomTopBar("转专业") {
+                        FilledTonalIconButton(
+                            onClick = { showBottomSheet_info = true },
+//                            modifier = Modifier.padding(horizontal = AppHorizontalDp())
+                        ) {
+                            Icon(painterResource(R.drawable.info),null)
                         }
-                    )
+                    }
                 },
             ) { innerPadding ->
                 Column(
@@ -166,14 +156,9 @@ fun TransferListUI(vm: NetWorkViewModel) {
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("我的申请") },
-                    )
+                    CustomTopBar("我的申请")
                 },
             ) { innerPadding ->
                 Column(
@@ -197,22 +182,15 @@ fun TransferListUI(vm: NetWorkViewModel) {
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { ScrollText(title) },
-                        actions = {
-                            FilledTonalButton(
-                                onClick = { showBottomSheet_apply = true },
-                                modifier = Modifier.padding(horizontal = AppHorizontalDp())
-                            ) {
-                                Text("我的申请")
-                            }
+                    CustomTopBar(title) {
+                        FilledTonalButton(
+                            onClick = { showBottomSheet_apply = true },
+                        ) {
+                            Text("我的申请")
                         }
-                    )
+                    }
                 },
             ) { innerPadding ->
                 Column(

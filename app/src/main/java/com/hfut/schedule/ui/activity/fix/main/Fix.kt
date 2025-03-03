@@ -54,13 +54,13 @@ import com.hfut.schedule.logic.enums.FixBarItems
 import com.hfut.schedule.logic.beans.NavigationBarItemData
 import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.DataStoreManager
-import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.fix.about.AboutUI
 import com.hfut.schedule.ui.activity.fix.fix.FixUI
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.currentPage
-import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnToAndClear
+import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
 import com.hfut.schedule.ui.utils.style.bottomBarBlur
 import com.hfut.schedule.ui.utils.style.topBarBlur
 import dev.chrisbanes.haze.HazeState
@@ -149,7 +149,7 @@ fun Fix(vm : LoginViewModel,vm2 : NetWorkViewModel) {
                                 }
 
                                 if (!selected) {
-                                    turnToAndClear(navController,route)
+                                    turnTo(navController,route)
                                 }
                             },
                             label = { Text(text = item.label) },

@@ -32,13 +32,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.ClipBoard
-import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.logic.utils.SharePrefs.saveBoolean
+import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.saveBoolean
 import com.hfut.schedule.logic.utils.Starter.loginGuaGua
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 
 import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,7 +52,7 @@ fun GuaGuaSettings(innerPadding: PaddingValues) {
            .fillMaxSize()
            .verticalScroll(rememberScrollState())) {
         Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
-        ListItem(
+           TransplantListItem(
             headlineContent = { Text(text = "刷新登录状态") },
             supportingContent = { Text(text = "呱呱物联只允许登录一端，在使用小程序后需要重新登录") },
             leadingContent = {
@@ -59,7 +60,7 @@ fun GuaGuaSettings(innerPadding: PaddingValues) {
             },
             modifier = Modifier.clickable { loginGuaGua() }
         )
-           ListItem(
+           TransplantListItem(
                headlineContent = { Text(text = "预加载使用码") },
                supportingContent = { Text(text = "打开后将主动加载使用码，即使您不需要使用时") },
                leadingContent = {
@@ -70,7 +71,7 @@ fun GuaGuaSettings(innerPadding: PaddingValues) {
                },
                modifier = Modifier.clickable { autoUseCode = !autoUseCode }
            )
-           ListItem(
+           TransplantListItem(
                headlineContent = { Text(text = "修改loginCode") },
                supportingContent = { Text(text = "保持多端loginCode一致可实现多端登录") },
                leadingContent = {

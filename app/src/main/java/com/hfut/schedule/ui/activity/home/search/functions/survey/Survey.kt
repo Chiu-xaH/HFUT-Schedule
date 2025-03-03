@@ -28,6 +28,7 @@ import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotalForApi
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.Round
 
@@ -53,17 +54,11 @@ fun Survey(ifSaved : Boolean,vm : NetWorkViewModel){
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("评教") },
-                        actions = {
-                            CourseTotalForApi(modifier = Modifier.padding(horizontal = AppHorizontalDp()),vm)
-                        }
-                    )
+                    CustomTopBar("评教") {
+                        CourseTotalForApi(vm=vm)
+                    }
                 },
             ) { innerPadding ->
                 Column(

@@ -2,7 +2,7 @@ package com.hfut.schedule.ui.activity.home.search.functions.loginWeb
 
 import com.google.gson.Gson
 import com.hfut.schedule.logic.beans.zjgd.FeeResponse
-import com.hfut.schedule.logic.utils.SharePrefs.saveString
+import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import org.json.JSONObject

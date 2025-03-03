@@ -72,13 +72,13 @@ import com.hfut.schedule.viewmodel.LoginViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.beans.community.LoginCommunityResponse
 import com.hfut.schedule.logic.beans.jxglstu.datumResponse
-import com.hfut.schedule.logic.utils.DateTimeManager
-import com.hfut.schedule.logic.utils.JxglstuParseUtils
-import com.hfut.schedule.logic.utils.Semseter.parseSemseter
-import com.hfut.schedule.logic.utils.Semseter.getSemseterFromCloud
-import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.saveInt
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.DateTimeUtils
+import com.hfut.schedule.logic.utils.data.JxglstuParseUtils
+import com.hfut.schedule.logic.utils.parse.Semseter.parseSemseter
+import com.hfut.schedule.logic.utils.parse.Semseter.getSemseterFromCloud
+import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.saveInt
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.activity.home.calendar.examToCalendar
 import com.hfut.schedule.ui.activity.home.calendar.getScheduleDate
@@ -87,6 +87,7 @@ import com.hfut.schedule.ui.activity.home.main.saved.isNextOpen
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.getTotalCourse
 import com.hfut.schedule.ui.utils.components.ActiveTopBar
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.LargeCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.TransplantListItem
@@ -152,9 +153,9 @@ fun CalendarScreen(
 
 
     var Bianhuaweeks by rememberSaveable { mutableStateOf(
-        if(DateTimeManager.weeksBetween > 20) {
+        if(DateTimeUtils.weeksBetween > 20) {
             getNewWeek()
-        } else DateTimeManager.weeksBetween
+        } else DateTimeUtils.weeksBetween
     ) }
 
     //填充UI与更新
@@ -276,7 +277,7 @@ fun CalendarScreen(
                             table[17].add(text)
                         }
                         if (scheduleList[i].startTime == 1900) {
-                            table[23].add(text)
+                            table[22].add(text)
                         }
                     }
                     if (scheduleList[i].weekday == 5) {
@@ -293,7 +294,7 @@ fun CalendarScreen(
                             table[19].add(text)
                         }
                         if (scheduleList[i].startTime == 1900) {
-                            table[24].add(text)
+                            table[23].add(text)
                         }
                     }
                 }
@@ -839,7 +840,7 @@ fun CalendarScreen(
                             if (shouldShowAddButton) {
                                 ExtendedFloatingActionButton(
                                     onClick = {
-                                        Bianhuaweeks = DateTimeManager.Benweeks
+                                        Bianhuaweeks = DateTimeUtils.Benweeks
                                         if(showAll) updateAll() else update()
                                         onDateChange(LocalDate.now())
                                     },
@@ -910,10 +911,10 @@ fun getNewWeek() : Long {
         val jxglstuJson = prefs.getString("courses","")
         val resultJxglstu = getTotalCourse(jxglstuJson)[0].semester.startDate
         val firstWeekStartJxglstu: LocalDate = LocalDate.parse(resultJxglstu)
-        val weeksBetweenJxglstu = ChronoUnit.WEEKS.between(firstWeekStartJxglstu, DateTimeManager.today) + 1
+        val weeksBetweenJxglstu = ChronoUnit.WEEKS.between(firstWeekStartJxglstu, DateTimeUtils.today) + 1
         weeksBetweenJxglstu  //固定本周
     } catch (e : Exception) {
-        DateTimeManager.Benweeks
+        DateTimeUtils.Benweeks
     }
 }
 
@@ -935,7 +936,7 @@ fun MultiCourseSheetUI(week : Int,weekday : Int,courses : List<String>,vm: NetWo
         }
     }
     Column {
-        ActiveTopBar("第${week}周 周${numToChinese(weekday)}")
+        CustomTopBar("第${week}周 周${numToChinese(weekday)}")
         LargeCard(
             title = "${courses.size}节课冲突"
         ) {

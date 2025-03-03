@@ -36,11 +36,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.AndroidVersion.canBlur
-import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.bottomBarBlur
 import com.hfut.schedule.ui.utils.style.topBarBlur
 import dev.chrisbanes.haze.HazeState
@@ -116,7 +117,7 @@ fun UseAgreementUI(navController : NavHostController) {
                     Button(
                         onClick = {
                             SharePrefs.saveBoolean("canUse", default = false, save = true)
-                            NavigateAndAnimationManager.turnToAndClear(navController, First.HOME.name)
+                            NavigateAndAnimationManager.turnTo(navController, First.HOME.name)
                         },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -149,7 +150,7 @@ fun UseAgreementUI(navController : NavHostController) {
                 item { Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding())) }
                 items(argeements.size) { index ->
                     val item = argeements[index]
-                    ListItem(
+                    TransplantListItem(
                         headlineContent = { Text(item) },
                         leadingContent = { Text((index+1).toString()) }
                     )

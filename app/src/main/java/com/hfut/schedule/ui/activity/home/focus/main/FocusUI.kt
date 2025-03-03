@@ -36,7 +36,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.LoginViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
-import com.hfut.schedule.logic.utils.DateTimeManager
+import com.hfut.schedule.logic.utils.DateTimeUtils
 import com.hfut.schedule.ui.activity.home.calendar.communtiy.getCourseINFO
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.FocusCard
 import com.hfut.schedule.ui.activity.home.focus.funictions.AddButton
@@ -110,13 +110,13 @@ fun TodayScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding : Padd
                 .pullRefresh(states)){
                 val scrollstate = rememberLazyListState()
                 val shouldShowAddButton by remember { derivedStateOf { scrollstate.firstVisibleItemScrollOffset == 0 } }
-                var date = DateTimeManager.Date_MM_dd
+                var date = DateTimeUtils.Date_MM_dd
                 val todaydate = (date?.substring(0, 2) ) + date?.substring(3, 5)
-                var week = DateTimeManager.Benweeks.toInt()
+                var week = DateTimeUtils.Benweeks.toInt()
               //  val switch_api = SharePrefs.prefs.getBoolean("SWITCHMYAPI", apiCheck())
-                var weekdaytomorrow = DateTimeManager.dayweek + 1
-                var weekdayToday = DateTimeManager.dayweek
-                var Nextweek = DateTimeManager.Benweeks.toInt()
+                var weekdaytomorrow = DateTimeUtils.dayweek + 1
+                var weekdayToday = DateTimeUtils.dayweek
+                var Nextweek = DateTimeUtils.Benweeks.toInt()
                 //当今天为周日时，变0为7
                 //当第二天为下一周的周一时，周数+1
                 when(weekdaytomorrow) { 1 -> Nextweek += 1 }
@@ -139,7 +139,7 @@ fun TodayScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding : Padd
                                 TAB_LEFT -> {
                                     item { FocusCard(vmUI,vm,refreshing) }
                                     //课表
-                                    if (DateTimeManager.compareTimes(lastTime) != DateTimeManager.TimeState.NOT_STARTED)
+                                    if (DateTimeUtils.compareTimes(lastTime) != DateTimeUtils.TimeState.NOT_STARTED)
                                         items(getCourseINFO(weekdaytomorrow,Nextweek).size) { item -> TomorrowCourseItem(item = item,vm) }
                                     else
                                         items(todayCourseList.size) { item -> TodayCourseItem(item = item,vm) }
@@ -156,7 +156,7 @@ fun TodayScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding : Padd
                                     //网课
                                     items(MyWangKe().size) { item -> WangkeItem(item = item, MyWangKe = MyWangKe(),true,activity) }
                                     //第二天课表
-                                    if (DateTimeManager.compareTimes(lastTime) == DateTimeManager.TimeState.NOT_STARTED)
+                                    if (DateTimeUtils.compareTimes(lastTime) == DateTimeUtils.TimeState.NOT_STARTED)
                                         items(getCourseINFO(weekdaytomorrow,Nextweek).size) { item -> TomorrowCourseItem(item = item,vm) }
 
                                     items(AddedItems().size){ item -> AddItem(item = item, AddedItems = AddedItems()) }
@@ -178,13 +178,13 @@ fun TodayScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding : Padd
 
 
 fun isTodayCoursesOvered() : Boolean {
-    var date = DateTimeManager.Date_MM_dd
+    var date = DateTimeUtils.Date_MM_dd
     val todaydate = (date?.substring(0, 2) ) + date?.substring(3, 5)
-    var week = DateTimeManager.Benweeks.toInt()
+    var week = DateTimeUtils.Benweeks.toInt()
     //  val switch_api = SharePrefs.prefs.getBoolean("SWITCHMYAPI", apiCheck())
-    var weekdaytomorrow = DateTimeManager.dayweek + 1
-    var weekdayToday = DateTimeManager.dayweek
-    var Nextweek = DateTimeManager.Benweeks.toInt()
+    var weekdaytomorrow = DateTimeUtils.dayweek + 1
+    var weekdayToday = DateTimeUtils.dayweek
+    var Nextweek = DateTimeUtils.Benweeks.toInt()
     //当今天为周日时，变0为7
     //当第二天为下一周的周一时，周数+1
     when(weekdaytomorrow) { 1 -> Nextweek += 1 }
@@ -200,7 +200,7 @@ fun isTodayCoursesOvered() : Boolean {
         "00:00"
     }
 
-    val isTodayCoursesOvered = DateTimeManager.compareTimes(lastTime) != DateTimeManager.TimeState.NOT_STARTED
+    val isTodayCoursesOvered = DateTimeUtils.compareTimes(lastTime) != DateTimeUtils.TimeState.NOT_STARTED
     val todayCoursesNum = todayCourseList.size
     val tomorrowCoursesNum = tomorrowCourseList.size
     //val isNeedGetUp =

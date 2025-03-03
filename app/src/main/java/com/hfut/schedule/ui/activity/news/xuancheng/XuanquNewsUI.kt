@@ -44,9 +44,9 @@ import androidx.compose.ui.window.DialogProperties
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.AndroidVersion
-import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.Starter
-import com.hfut.schedule.logic.utils.reEmptyLiveDta
+import com.hfut.schedule.logic.utils.data.reEmptyLiveDta
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.MyCustomCard

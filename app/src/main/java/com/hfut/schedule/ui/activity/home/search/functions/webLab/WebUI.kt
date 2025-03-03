@@ -31,6 +31,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.ui.activity.news.departments.SchoolsUI
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.TransplantListItem
@@ -64,19 +65,11 @@ fun WebUI() {
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("网址导航") },
-                        actions = {
-                            Row(modifier = Modifier.padding(horizontal = AppHorizontalDp()),) {
-                                Schools()
-                            }
-                        }
-                    )
+                    CustomTopBar("网址导航") {
+                        Schools()
+                    }
                 },
             ) { innerPadding ->
                 Column(
@@ -113,14 +106,9 @@ fun Schools() {
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("学院") },
-                    )
+                    CustomTopBar("学院")
                 },
             ) { innerPadding ->
                 Column(

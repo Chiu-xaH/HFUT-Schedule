@@ -50,15 +50,17 @@ import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.beans.guagua.UseCodeResponse
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter
-import com.hfut.schedule.logic.utils.reEmptyLiveDta
+import com.hfut.schedule.logic.utils.data.reEmptyLiveDta
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.CirclePoint
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.KeyBoard
 import com.hfut.schedule.ui.utils.components.ActiveTopBar
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
+import com.hfut.schedule.ui.utils.components.LargeCardColor
 import com.hfut.schedule.ui.utils.components.LoadingUI
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.components.statusUI
 import com.hfut.schedule.ui.utils.components.statusUI2
 import com.hfut.schedule.ui.utils.style.CardForListColor
@@ -208,7 +210,7 @@ fun UseCodeUI(vm: GuaGuaViewModel) {
             .fillMaxWidth()
             .padding(horizontal = AppHorizontalDp(), vertical = 5.dp).scale(scale2.value),
         shape = MaterialTheme.shapes.medium,
-        colors = CardForListColor()
+        colors = CardDefaults.cardColors(containerColor = LargeCardColor())
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             if(!switchAutoRefresh) {
@@ -232,7 +234,7 @@ fun UseCodeUI(vm: GuaGuaViewModel) {
             }
 
             Column(modifier = Modifier.blur(blurSize).scale(scale.value)){
-                ListItem(
+                TransplantListItem(
                     headlineContent = {
                         Text(
                             text = "*****$useCode",
@@ -249,7 +251,7 @@ fun UseCodeUI(vm: GuaGuaViewModel) {
                     }
                 )
                 Row {
-                    ListItem(
+                    TransplantListItem(
                         headlineContent = { Text("花洒输入预设5位+3位") },
                         trailingContent = {
                             Button(

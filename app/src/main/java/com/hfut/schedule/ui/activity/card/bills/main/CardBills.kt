@@ -51,14 +51,15 @@ import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.beans.zjgd.BillResponse
 import com.hfut.schedule.logic.beans.zjgd.records
-import com.hfut.schedule.logic.utils.DateTimeManager
-import com.hfut.schedule.logic.utils.JxglstuParseUtils
-import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.DateTimeUtils
+import com.hfut.schedule.logic.utils.data.JxglstuParseUtils
+import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.card.bills.CardRow
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.BillsIcons
 import com.hfut.schedule.ui.utils.components.CardNormalColor
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
@@ -217,7 +218,7 @@ fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVie
                             overlineContent = { Text(text = time) },
                             leadingContent = { BillsIcons(name) },
                             color =
-                            if(DateTimeManager.Date_yyyy_MM_dd == getTime)
+                            if(DateTimeUtils.Date_yyyy_MM_dd == getTime)
                                 MaterialTheme.colorScheme.primaryContainer
                             else null,
                             modifier = Modifier.clickable {
@@ -301,13 +302,7 @@ fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVie
 fun BillsInfo(vm : NetWorkViewModel, Infonum : Int) {
     val bills = getBills(vm)[Infonum]
     Column {
-        TopAppBar(
-            colors = TopAppBarDefaults.mediumTopAppBarColors(
-                containerColor = Color.Transparent,
-                titleContentColor = MaterialTheme.colorScheme.primary,
-            ),
-            title = { Text("详情") },
-        )
+        CustomTopBar("详情")
         MyCustomCard(hasElevation = false, containerColor = CardNormalColor()){
             TransplantListItem(
                 headlineContent = { Text( bills.resume.substringBefore("-") ) },

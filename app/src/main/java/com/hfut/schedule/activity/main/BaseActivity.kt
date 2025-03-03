@@ -4,6 +4,7 @@ import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -22,7 +23,7 @@ import com.hfut.schedule.viewmodel.LoginViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.activity.ui.theme.肥工课程表Theme
 import com.hfut.schedule.logic.utils.AndroidVersion
-import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.ui.utils.monet.LocalCurrentStickerUuid
 import com.hfut.schedule.ui.utils.monet.MainIntent
 import com.hfut.schedule.ui.utils.monet.MainViewModel
@@ -56,6 +57,7 @@ open class BaseActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         //竖屏
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+//        enableEdgeToEdge()
         setContent {
             if(!switchColor) {
                 肥工课程表Theme {

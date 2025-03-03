@@ -37,18 +37,20 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.DataStoreManager
-import com.hfut.schedule.logic.utils.Semseter.parseSemseter
-import com.hfut.schedule.logic.utils.Semseter.getSemseterFromCloud
-import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.logic.utils.SharePrefs.saveBoolean
-import com.hfut.schedule.logic.utils.SharePrefs.saveInt
+import com.hfut.schedule.logic.utils.parse.Semseter.parseSemseter
+import com.hfut.schedule.logic.utils.parse.Semseter.getSemseterFromCloud
+import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.saveBoolean
+import com.hfut.schedule.logic.utils.data.SharePrefs.saveInt
 import com.hfut.schedule.ui.activity.home.cube.items.main.Screen
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.FocusCardSettings
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.LockUI
 import com.hfut.schedule.ui.activity.home.main.saved.COMMUNITY
 import com.hfut.schedule.ui.activity.home.main.saved.JXGLSTU
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.Round
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -102,14 +104,9 @@ fun APPScreen(navController: NavController,
             ) {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
+                    containerColor = Color.Transparent,
                     topBar = {
-                        TopAppBar(
-                            colors = TopAppBarDefaults.mediumTopAppBarColors(
-                                containerColor = Color.Transparent,
-                                titleContentColor = MaterialTheme.colorScheme.primary,
-                            ),
-                            title = { Text("即时卡片") },
-                        )
+                        CustomTopBar("即时卡片")
                     },
                 ) { innerPadding ->
                     Column(
@@ -134,14 +131,9 @@ fun APPScreen(navController: NavController,
             ) {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
+                    containerColor = Color.Transparent,
                     topBar = {
-                        TopAppBar(
-                            colors = TopAppBarDefaults.mediumTopAppBarColors(
-                                containerColor = Color.Transparent,
-                                titleContentColor = MaterialTheme.colorScheme.primary,
-                            ),
-                            title = { Text("支付设置") },
-                        )
+                        CustomTopBar("支付设置")
                     },
                 ) { innerPadding ->
                     Column(
@@ -159,7 +151,7 @@ fun APPScreen(navController: NavController,
 
 
 
-        ListItem(
+        TransplantListItem(
             headlineContent = { Text(text = "快速启动") },
             supportingContent = { Text(text = "打开后,再次打开应用时将默认打开免登录二级界面,而不是登陆教务页面,但您仍可通过查询中心中的选项以登录") },
             leadingContent = { Icon(painterResource(R.drawable.speed), contentDescription = "Localized description",) },
@@ -169,7 +161,7 @@ fun APPScreen(navController: NavController,
 
 
         if(ifSaved)
-            ListItem(
+            TransplantListItem(
                 headlineContent = { Text(text = "主页面") },
                 supportingContent = {
                     Column {
@@ -199,7 +191,7 @@ fun APPScreen(navController: NavController,
                 }
             )
 
-        ListItem(
+        TransplantListItem(
             headlineContent = { Text(text = "学期") },
             leadingContent = {
                 Icon(painter = painterResource(id = R.drawable.approval), contentDescription = "")
@@ -213,14 +205,14 @@ fun APPScreen(navController: NavController,
             modifier = Modifier.clickable {  MyToast("全局学期不可修改,受服务器云控") }
         )
 
-        ListItem(
+        TransplantListItem(
             headlineContent = { Text(text = "即时卡片") },
             supportingContent = { Text(text = "启动APP时会自动加载或更新一些即时数据,您可按需调整") },
             leadingContent = { Icon(painterResource(R.drawable.reset_iso), contentDescription = "Localized description",) },
             modifier = Modifier.clickable { showBottomSheet_card = true }
         )
 
-        ListItem(
+        TransplantListItem(
             headlineContent = { Text(text = "聚焦展示今天已上完的课程") },
             supportingContent = { Text(text = "屏幕底部的Tab栏底栏标签") },
             leadingContent = { Icon(painterResource(R.drawable.search_activity), contentDescription = "Localized description",) },
@@ -228,7 +220,7 @@ fun APPScreen(navController: NavController,
             modifier = Modifier.clickable { showEnded = !showEnded }
         )
 
-        ListItem(
+        TransplantListItem(
             headlineContent = { Text(text = "打开外部链接") },
             supportingContent = {
                 Column {
@@ -257,7 +249,7 @@ fun APPScreen(navController: NavController,
             }
         )
 
-        ListItem(
+        TransplantListItem(
             headlineContent = { Text(text = "默认课程表") },
             supportingContent = {
                 Column {
@@ -290,7 +282,7 @@ fun APPScreen(navController: NavController,
                 saveInt("SWITCH_DEFAULT_CALENDAR",currentDefaultCalendar)
             }
         )
-        ListItem(
+        TransplantListItem(
             headlineContent = { Text(text = "支付设置") },
             supportingContent = {
                 Text(text = "调用校园卡进行网电缴费时,启用生物识别快速验证")
@@ -299,7 +291,7 @@ fun APPScreen(navController: NavController,
             modifier = Modifier.clickable { showBottomSheet_lock = true }
         )
 
-        ListItem(
+        TransplantListItem(
             headlineContent = { Text(text = "图片验证码自动填充") },
             supportingContent = {
                 Text(text = "登录教务时,使用Tesseract库提供的机器学习OCR能力,填充验证码")

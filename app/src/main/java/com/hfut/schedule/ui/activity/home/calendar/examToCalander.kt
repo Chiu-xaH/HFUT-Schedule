@@ -1,6 +1,6 @@
 package com.hfut.schedule.ui.activity.home.calendar
 
-import com.hfut.schedule.logic.utils.DateTimeManager
+import com.hfut.schedule.logic.utils.DateTimeUtils
 import com.hfut.schedule.ui.activity.home.search.functions.exam.getExamJXGLSTU
 import java.time.LocalDate
 
@@ -20,7 +20,7 @@ fun examToCalendar() : List<ExamToCalanderBean> {
         for (examMap in examMaps) {
             val day = examMap["日期时间"]?.substringBefore(" ")
             val dayLong = day?.replace("-","")?.toLong() ?: 0L
-            val todayLong = DateTimeManager.Date_yyyy_MM_dd.replace("-","").toLong()
+            val todayLong = DateTimeUtils.Date_yyyy_MM_dd.replace("-","").toLong()
 
 //            if(todayLong <= dayLong) {
                 val startTime = examMap["日期时间"]?.substringAfter(" ")?.substringBefore("~")

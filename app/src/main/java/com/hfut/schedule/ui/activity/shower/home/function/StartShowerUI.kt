@@ -62,11 +62,12 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.PermissionManager.checkAndRequestCameraPermission
 import com.hfut.schedule.logic.utils.QRCodeAnalyzer
-import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.ui.activity.shower.home.ShowerDataBaseManager
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
 import com.hfut.schedule.ui.utils.components.CameraScan
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.LittleDialog
@@ -318,14 +319,9 @@ fun StartShowerUI(vm: GuaGuaViewModel) {
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("结果") },
-                    )
+                    CustomTopBar("结果")
                 },
             ) { innerPadding ->
                 Column(

@@ -45,7 +45,7 @@ import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.utils.APPVersion
+import com.hfut.schedule.logic.utils.VersionUtils
 import com.hfut.schedule.logic.utils.ClipBoard
 import com.hfut.schedule.logic.utils.ShareAPK
 import com.hfut.schedule.logic.utils.Starter
@@ -53,7 +53,9 @@ import com.hfut.schedule.ui.activity.home.cube.items.main.Screen
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.VersionInfo
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.getUpdates
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.viewmodel.LoginViewModel
 import java.util.Hashtable
@@ -83,7 +85,6 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean
                     }
                     Spacer(modifier = Modifier.height(AppHorizontalDp()))
                 }
-
             }
         }
         val sheetState_version = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -96,14 +97,9 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean
             ) {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
+                    containerColor = androidx.compose.ui.graphics.Color.Transparent,
                     topBar = {
-                        TopAppBar(
-                            colors = TopAppBarDefaults.mediumTopAppBarColors(
-                                containerColor = androidx.compose.ui.graphics.Color.Transparent,
-                                titleContentColor = MaterialTheme.colorScheme.primary,
-                            ),
-                            title = { Text("本版本新特性") },
-                        )
+                        CustomTopBar("本版本新特性")
                     },
                 ) { innerPadding ->
                     Column(
@@ -149,7 +145,7 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean
 //            }
 //        )
 
-        ListItem(
+        TransplantListItem(
             headlineContent = { Text(text = "推广本应用") },
             supportingContent = { Text(text = "如果你觉得好用的话,可以替开发者多多推广\n长按分享APK安装包,点击展示下载链接,双击复制链接")},
             leadingContent = {
@@ -173,16 +169,16 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean
 
         var version by remember { mutableStateOf(getUpdates()) }
         var showBadge by remember { mutableStateOf(false) }
-        if (version.version != APPVersion.getVersionName()) showBadge = true
+        if (version.version != VersionUtils.getVersionName()) showBadge = true
 
-        ListItem(
+        TransplantListItem(
             headlineContent = { Text(text = "本版本新特性") },
             supportingContent = { Text(text = "查看此版本的更新内容")},
             modifier = Modifier.clickable { showBottomSheet_version = true },
             leadingContent = { Icon(painter = painterResource(id = R.drawable.sdk), contentDescription = "")}
         )
 
-        ListItem(
+        TransplantListItem(
             headlineContent = { Text(text = "关于") },
             supportingContent = { Text(text = "开源 构建 开发者")},
             modifier = Modifier.clickable { showBottomSheet_info = true },
@@ -192,7 +188,7 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean
 
         if(cubeShow) {
 
-            ListItem(
+            TransplantListItem(
                 headlineContent = { Text(text = "疑难解答 修复") },
                 supportingContent = { Text(text = "当出现问题时,可从此处进入或长按桌面图标选择修复")},
                 leadingContent = { Icon(painterResource(R.drawable.build), contentDescription = "Localized description",) },
@@ -201,8 +197,8 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean
 
             ///////////////////////////////
 
-            if(APPVersion.getVersionName().contains("Preview"))
-                ListItem(
+            if(VersionUtils.getVersionName().contains("Preview"))
+                TransplantListItem(
                     headlineContent = { Text(text = "测试 调试") },
                     supportingContent = { Text(text = "用户禁入!")},
                     leadingContent = { Icon(painterResource(R.drawable.error), contentDescription = "Localized description",) },

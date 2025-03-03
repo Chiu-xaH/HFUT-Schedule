@@ -13,9 +13,11 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.ocr.TesseractUtils.recognizeCaptcha
 import com.hfut.schedule.logic.utils.loadImage
+import com.hfut.schedule.logic.utils.ocr.OpenCVUtils
+
 //import com.hfut.schedule.logic.utils.recognizeCaptcha
 
 @Composable
@@ -78,8 +80,10 @@ fun URLImageWithOCR(
             )
             val switch_open = prefs.getBoolean("SWITCH_ML",false)
             if(switch_open) {
-                val result = recognizeCaptcha(bitmap)
-                onResult(result)
+//                OpenCVUtils.processBitmap(bitmap)?.let {
+                    val result = recognizeCaptcha(bitmap)
+                    onResult(result)
+//                }
             }
 //            CaptchaRecognizer().recognizeCaptcha(bitmap = bitmap, onError = { } , onResult = onResult )
         }

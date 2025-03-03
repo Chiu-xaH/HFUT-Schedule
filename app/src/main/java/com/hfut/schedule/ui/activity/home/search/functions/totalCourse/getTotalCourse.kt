@@ -5,7 +5,7 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.beans.community.CourseTotalResponse
 import com.hfut.schedule.logic.beans.community.courseBasicInfoDTOList
 import com.hfut.schedule.logic.beans.community.courseDetailDTOList
-import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs
 
 fun getCourse(): List<courseBasicInfoDTOList>  {
     val json = SharePrefs.prefs.getString("Course", MyApplication.NullTotal)

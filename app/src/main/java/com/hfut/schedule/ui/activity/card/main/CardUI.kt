@@ -61,9 +61,9 @@ import com.hfut.schedule.logic.beans.zjgd.BillResponse
 import com.hfut.schedule.logic.beans.zjgd.records
 import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.DataStoreManager
-import com.hfut.schedule.logic.utils.JxglstuParseUtils
-import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.JxglstuParseUtils
+import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.card.function.main.HomeScreen
 import com.hfut.schedule.ui.activity.card.bills.main.CardBills
 import com.hfut.schedule.ui.activity.card.counts.CardHome
@@ -71,8 +71,8 @@ import com.hfut.schedule.ui.activity.card.counts.CardHome
 import com.hfut.schedule.ui.activity.home.focus.funictions.GetZjgdCard
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.currentPage
+//import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
-import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnToAndClear
 import com.hfut.schedule.ui.utils.components.CustomTabRow
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.style.bottomBarBlur
@@ -245,7 +245,7 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
                                 }
                                 //     atEnd = !atEnd
                                 if (!selected) {
-                                    turnToAndClear(navController, route)
+                                    turnTo(navController, route)
                                 }
                             },
                             label = { Text(text = item.label) },

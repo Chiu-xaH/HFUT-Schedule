@@ -54,9 +54,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.beans.community.GradeResponseJXGLSTU
-import com.hfut.schedule.logic.utils.ReservDecimal
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.logic.utils.reEmptyLiveDta
+import com.hfut.schedule.logic.utils.parse.ReservDecimal
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.reEmptyLiveDta
 import com.hfut.schedule.ui.activity.card.counts.RadarChart
 import com.hfut.schedule.ui.activity.card.counts.RadarData
 import com.hfut.schedule.ui.activity.grade.getGradeJXGLSTU
@@ -64,9 +64,11 @@ import com.hfut.schedule.ui.activity.home.search.functions.survey.SurveyUI
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotalForApi
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CardNormalDp
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.EmptyUI
+import com.hfut.schedule.ui.utils.components.LargeCard
 import com.hfut.schedule.ui.utils.components.LittleDialog
 import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.MyCustomCard
@@ -74,6 +76,7 @@ import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -113,17 +116,11 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel,showSea
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("评教") },
-                        actions = {
-                            CourseTotalForApi(modifier = Modifier.padding(horizontal = AppHorizontalDp()),vm)
-                        }
-                    )
+                    CustomTopBar("评教") {
+                        CourseTotalForApi(vm=vm)
+                    }
                 },
             ) { innerPadding ->
                 Column(
@@ -143,16 +140,12 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel,showSea
             sheetState = sheetState,
             shape = Round(sheetState)
         ) {
+
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text(title) }
-                    )
+                    CustomTopBar(title)
                 },) {innerPadding ->
                 Column(
                     modifier = Modifier
@@ -389,31 +382,14 @@ fun GradeInfo(num : GradeResponseJXGLSTU,vm: NetWorkViewModel) {
     }
 
     DividerTextExpandedWith(text = "成绩详情",false) {
-        Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = AppHorizontalDp()),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = AppHorizontalDp(), vertical = 5.dp),
-            shape = MaterialTheme.shapes.medium,
-        ) {
-            ListItem(
-                headlineContent = {
-                    Text(
-                        text = title,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.horizontalScroll(scrollState),
-                        fontSize = 28.sp
-                    )
-                },
-            )
+        LargeCard(title) {
             for (i in list.indices step 2)
                 Row {
                     val l1 = list[i]
                     val t1 = l1.substringBefore(":")
                     val score1 = l1.substringAfter(":")
 
-                    ListItem(
+                    TransplantListItem(
                         headlineContent = {
                             Text(
                                 text = score1,
@@ -428,7 +404,7 @@ fun GradeInfo(num : GradeResponseJXGLSTU,vm: NetWorkViewModel) {
                         val l2 = list[i+1]
                         val t2 = l2.substringBefore(":")
                         val score2 = l2.substringAfter(":")
-                        ListItem(
+                        TransplantListItem(
                             headlineContent = {
                                 Text(
                                     text = score2,
@@ -456,7 +432,7 @@ fun GradeInfo(num : GradeResponseJXGLSTU,vm: NetWorkViewModel) {
 //                    },
 //                    modifier = Modifier.weight(.4f)
 //                )
-                ListItem(
+                TransplantListItem(
                     leadingContent = {
                         Icon(
                             painter = painterResource(id = R.drawable.filter_vintage),
@@ -473,7 +449,7 @@ fun GradeInfo(num : GradeResponseJXGLSTU,vm: NetWorkViewModel) {
                     },
                     modifier = Modifier.weight(.5f)
                 )
-                ListItem(
+                TransplantListItem(
                     leadingContent = {
                         Icon(painter = painterResource(R.drawable.percent), contentDescription = "")
                     },
@@ -497,7 +473,6 @@ fun GradeInfo(num : GradeResponseJXGLSTU,vm: NetWorkViewModel) {
             }
         }
     }
-
 }
 
 

@@ -34,9 +34,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.main.saved.isNextOpen
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.ScrollText
@@ -76,33 +77,25 @@ fun CourseTotal(vm :NetWorkViewModel) {
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("课程汇总") },
-                        actions = {
-                            Row {
-                                if (isNextOpen()) {
-                                    FilledTonalButton(
-                                        onClick = {
-                                            next = !next
-                                        }
-                                        ,) {
-                                        Text(text = if(next) "下学期" else "本学期")
-                                    }
-                                }
+                    CustomTopBar("课程汇总") {
+                        Row {
+                            if (isNextOpen()) {
                                 FilledTonalButton(
-                                    onClick = { sortType = !sortType },
-                                    modifier = Modifier.padding(horizontal = AppHorizontalDp()
-                                    )) {
-                                    Text(text = if(sortType) "开课时间" else "学分高低")
+                                    onClick = {
+                                        next = !next
+                                    }
+                                    ,) {
+                                    Text(text = if(next) "下学期" else "本学期")
                                 }
                             }
+                            FilledTonalButton(
+                                onClick = { sortType = !sortType },) {
+                                Text(text = if(sortType) "开课时间" else "学分高低")
+                            }
                         }
-                    )
+                    }
                 },
 
             ) { innerPadding ->
@@ -192,42 +185,34 @@ fun CourseTotalForApi(modifier: Modifier = Modifier, vm: NetWorkViewModel, isIco
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("课程汇总") },
-                        actions = {
-                            if(onNextChange == null) {
-                                if(isNextOpen()) {
-                                    FilledTonalButton(
-                                        onClick = {
-                                            next2 = !next2
-                                        }
-                                        ,) {
-                                        Text(text = if(next) "下学期" else "本学期")
+                    CustomTopBar("课程汇总") {
+                        if(onNextChange == null) {
+                            if(isNextOpen()) {
+                                FilledTonalButton(
+                                    onClick = {
+                                        next2 = !next2
                                     }
-                                }
-                            } else {
-                                if (isNextOpen()) {
-                                    FilledTonalButton(
-                                        onClick = onNextChange
-                                        ,) {
-                                        Text(text = if(next) "下学期" else "本学期")
-                                    }
+                                    ,) {
+                                    Text(text = if(next) "下学期" else "本学期")
                                 }
                             }
-
-                            FilledTonalButton(
-                                onClick = { sortType = !sortType },
-                                modifier = Modifier.padding(horizontal = AppHorizontalDp()
-                                )) {
-                                Text(text = if(sortType) "开课时间" else "学分高低")
+                        } else {
+                            if (isNextOpen()) {
+                                FilledTonalButton(
+                                    onClick = onNextChange
+                                    ,) {
+                                    Text(text = if(next) "下学期" else "本学期")
+                                }
                             }
                         }
-                    )
+
+                        FilledTonalButton(
+                            onClick = { sortType = !sortType },) {
+                            Text(text = if(sortType) "开课时间" else "学分高低")
+                        }
+                    }
                 },
 
                 ) { innerPadding ->

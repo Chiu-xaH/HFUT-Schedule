@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enums.LibraryItems
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.style.Round
@@ -69,14 +70,9 @@ fun LibraryChips() {
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("借阅历史") }
-                    )
+                    CustomTopBar("借阅历史")
                 },) { innerPadding ->
                 Column(
                     modifier = Modifier
@@ -93,14 +89,9 @@ fun LibraryChips() {
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("当前借阅") }
-                    )
+                    CustomTopBar("当前借阅")
                 },) { innerPadding ->
                 Column(
                     modifier = Modifier

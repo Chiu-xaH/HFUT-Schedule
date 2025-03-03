@@ -36,13 +36,15 @@ import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.beans.GithubBean
-import com.hfut.schedule.logic.utils.GithubConsts
+import com.hfut.schedule.logic.utils.data.GithubConsts
 import com.hfut.schedule.logic.utils.Starter
-import com.hfut.schedule.logic.utils.reEmptyLiveDta
+import com.hfut.schedule.logic.utils.data.reEmptyLiveDta
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.Party
 import com.hfut.schedule.ui.utils.components.ScrollText
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.components.URLImage
 import com.hfut.schedule.viewmodel.LoginViewModel
 import kotlinx.coroutines.async
@@ -104,16 +106,9 @@ fun About(vm : LoginViewModel) {
         show = !loading
     ) {
         androidx.compose.material3.Scaffold(
+            containerColor = Color.Transparent,
             topBar = {
-                TopAppBar(
-                    colors = TopAppBarDefaults.mediumTopAppBarColors(
-                        containerColor = Color.Transparent,
-                        titleContentColor = MaterialTheme.colorScheme.primary,
-                    ),
-                    title = {
-                        Text(text = "关于")
-                    },
-                )
+                CustomTopBar("关于")
             },
             bottomBar = {
                 Row(modifier = Modifier.padding(AppHorizontalDp()),horizontalArrangement = Arrangement.Center) {
@@ -142,7 +137,7 @@ fun About(vm : LoginViewModel) {
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())) {
                 DividerTextExpandedWith("开发者") {
-                    ListItem(
+                    TransplantListItem(
                         modifier = Modifier.clickable {
                             Starter.startWebUrl("https://github.com/${GithubConsts.DEVELOPER_NAME}")
                         },
@@ -167,20 +162,20 @@ fun About(vm : LoginViewModel) {
                 }
 
                 DividerTextExpandedWith("构建") {
-                    ListItem(
+                    TransplantListItem(
                         headlineContent = { Text("Kotlin / Java") },
                         overlineContent = { Text("主语言") }
                     )
-                    ListItem(
+                    TransplantListItem(
                         headlineContent = { Text(dependencies.ui) },
                         overlineContent = { Text("UI设计") }
                     )
-                    ListItem(
+                    TransplantListItem(
                         headlineContent = { Text(dependencies.jetpack) },
                     )
                     val builds = dependencies.build
                     for(index in builds.indices) {
-                        ListItem(
+                        TransplantListItem(
                             headlineContent = { Text(builds[index]) },
                             overlineContent = { Text("构建 打包") }
                         )
@@ -190,13 +185,13 @@ fun About(vm : LoginViewModel) {
                 DividerTextExpandedWith("开源引用") {
                     for(index in openSourceProjects.indices step 2) {
                         Row {
-                            ListItem(
+                            TransplantListItem(
                                 headlineContent = { Text(openSourceProjects[index].first) },
                                 supportingContent = { Text(openSourceProjects[index].second) },
                                 modifier = Modifier.weight(.5f)
                             )
                             if(index+1 < openSourceProjects.size)
-                                ListItem(
+                                TransplantListItem(
                                     headlineContent = { Text(openSourceProjects[index+1].first) },
                                     supportingContent = { Text(openSourceProjects[index+1].second) },
                                     modifier = Modifier.weight(.5f)

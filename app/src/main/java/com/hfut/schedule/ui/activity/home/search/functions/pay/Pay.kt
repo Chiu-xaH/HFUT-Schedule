@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.activity.home.search.functions.pay
 
+import android.icu.text.CaseMap.Title
 import android.os.Handler
 import android.os.Looper
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -7,15 +8,18 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -32,6 +36,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.scale
@@ -47,10 +52,13 @@ import com.hfut.schedule.logic.beans.PayData
 import com.hfut.schedule.logic.beans.PayResponse
 import com.hfut.schedule.logic.utils.ClipBoard
 import com.hfut.schedule.logic.utils.Starter
+import com.hfut.schedule.ui.utils.components.ActiveTopBar
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.style.CardForListColor
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
+import com.hfut.schedule.ui.utils.components.LoadingLargeCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.ScrollText
@@ -83,14 +91,37 @@ fun Pay(ifSaved : Boolean,vm : NetWorkViewModel) {
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("学费") },
-                    )
+//                    TopAppBar(
+//                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+//                            containerColor = Color.Transparent,
+//                            titleContentColor = MaterialTheme.colorScheme.primary,
+//                        ),
+//                        title = { Text("学费") },
+//                        actions = {
+//                            FilledTonalButton(
+//                                onClick = { Starter.startWebUrl(url) },
+//                                modifier = Modifier.padding(horizontal = AppHorizontalDp())
+//                            ) {
+//                                Text(text = "缴费")
+//                            }
+//                        }
+//                    )
+                    CustomTopBar("学费") {
+                        FilledTonalButton(
+                                onClick = { Starter.startWebUrl(url) },
+                            ) {
+                                Text(text = "缴费")
+                            }
+                    }
+//                    Text("学费", color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(AppHorizontalDp()), fontSize = 22.sp)
+//                    TopAppBar(
+//                        title = { ScrollText(text = "学费") },
+//                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+//                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+//                            titleContentColor = MaterialTheme.colorScheme.primary),
+//                    )
                 },
             ) { innerPadding ->
                 Column(
@@ -150,60 +181,43 @@ fun PayUI(url : String,vm: NetWorkViewModel) {
 
     val data = getPay(vm)
     DividerTextExpandedWith(text = "欠缴费用",false) {
-        Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = AppHorizontalDp()),
-            modifier = Modifier
-                .fillMaxWidth().scale(scale2.value)
-                .padding(horizontal = AppHorizontalDp(), vertical = 5.dp),
-            shape = MaterialTheme.shapes.medium,
-            colors = CardForListColor()
+        LoadingLargeCard(
+            title = "￥${if(!loading) data.total else "0.0"}",
+            loading = loading
         ) {
-            Column (modifier = Modifier.blur(blurSize).scale(scale.value)) {
-                ListItem(
-                    headlineContent = { Text(text = "￥${if(!loading) data.total else "0.0"}", fontSize = 28.sp) },
-                    trailingContent = {
-                        FilledTonalButton(
-                            onClick = { Starter.startWebUrl(url) },
-                            modifier = Modifier.padding(horizontal = AppHorizontalDp())
-                        ) {
-                            Text(text = "缴费")
-                        }
-                    }
+            Row {
+                TransplantListItem(
+                    headlineContent = { ScrollText(text = "学费 ￥${if(!loading)data.xf else "0.0"}") },
+                    modifier = Modifier.weight(.5f)
                 )
-                Row {
-                    ListItem(
-                        headlineContent = { ScrollText(text = "学费 ￥${if(!loading)data.xf else "0.0"}") },
-                        modifier = Modifier.weight(.5f)
-                    )
-                    ListItem(
-                        headlineContent = { ScrollText(text = "体检费 ￥${if(!loading) data.dstjf else "0.0"}") },
-                        modifier = Modifier.weight(.5f)
-                    )
+                TransplantListItem(
+                    headlineContent = { ScrollText(text = "体检费 ￥${if(!loading) data.dstjf else "0.0"}") },
+                    modifier = Modifier.weight(.5f)
+                )
 
-                }
-                Row {
-                    ListItem(
-                        headlineContent = { ScrollText(text = "住宿费 ￥${if(!loading) data.zsf else "0.0"}") },
-                        modifier = Modifier.weight(.5f)
-                    )
-                    ListItem(
-                        headlineContent = { ScrollText(text = "军训费 ￥${if(!loading) data.dsjxf else "0.0"}") },
-                        modifier = Modifier.weight(.5f)
-                    )
-                }
+            }
+            Row {
+                TransplantListItem(
+                    headlineContent = { ScrollText(text = "住宿费 ￥${if(!loading) data.zsf else "0.0"}") },
+                    modifier = Modifier.weight(.5f)
+                )
+                TransplantListItem(
+                    headlineContent = { ScrollText(text = "军训费 ￥${if(!loading) data.dsjxf else "0.0"}") },
+                    modifier = Modifier.weight(.5f)
+                )
             }
         }
     }
 
     DividerTextExpandedWith(text = "缴费方式") {
 
-        ListItem(
+        TransplantListItem(
             headlineContent = { Text(text = "提前在中国农业银行卡预存费用,学校到期自动扣取") },
             leadingContent = { Icon(
                 painter = painterResource(id = R.drawable.credit_card),
                 contentDescription = ""
             )})
-        ListItem(
+        TransplantListItem(
             headlineContent = { Text(text = "点击右上角打开链接即可调用电子支付(Apple Pay通道)") },
             leadingContent = {Icon(
                 painter = painterResource(id = R.drawable.net),
@@ -211,7 +225,7 @@ fun PayUI(url : String,vm: NetWorkViewModel) {
             ) },
             modifier = Modifier.clickable { Starter.startWebUrl(url) }
         )
-        ListItem(
+        TransplantListItem(
             headlineContent = { Text(text = "点击此处复制链接到剪切板，在微信/支付宝等中打开链接即可走对应的软件支付") },
             leadingContent = { Icon(
                 painter = painterResource(id = R.drawable.barcode),
@@ -225,7 +239,7 @@ fun PayUI(url : String,vm: NetWorkViewModel) {
 
   //  }
     DividerTextExpandedWith(text = "防骗警告") {
-        ListItem(
+        TransplantListItem(
             headlineContent = { Text(text = "电子支付只能通过学校缴费平台官方链接(右上角按钮提供)发起,其余线上途径均需谨慎甄别!") },
             leadingContent = {Icon(
                 painter = painterResource(id = R.drawable.error),
@@ -247,3 +261,5 @@ fun getPay(vm: NetWorkViewModel) : PayData {
         PayData("0.0","0.0","0.0","0.0","0.0")
     }
 }
+
+

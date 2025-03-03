@@ -5,9 +5,9 @@ import androidx.lifecycle.ViewModel
 import com.hfut.schedule.logic.network.NetWork
 import com.hfut.schedule.logic.network.servicecreator.GuaGuaServiceCreator
 import com.hfut.schedule.logic.network.api.GuaGuaService
-import com.hfut.schedule.logic.utils.Encrypt
-import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.parse.Encrypt
+import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback

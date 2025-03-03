@@ -31,7 +31,7 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.activity.funiction.CardActivity
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.ui.activity.home.focus.funictions.getToday
 import com.hfut.schedule.ui.utils.components.EmptyUI
@@ -57,13 +57,16 @@ fun SchoolCardItem(vmUI : UIViewModel,cardBool : Boolean) {
     var card = prefs.getString("card","00")
   //  val bd = BigDecimal(card)
   //  val str = bd.setScale(2, RoundingMode.HALF_UP).toString()
-    val test = vmUI.CardValue.value?.balance ?: card
-val showAdd = prefs.getBoolean("SWITCHCARDADD",true)
+    var test = vmUI.CardValue.value?.balance ?: card
+    if(test == "00") {
+        test = "未登录"
+    }
+    val showAdd = prefs.getBoolean("SWITCHCARDADD",true)
     TransplantListItem(
         headlineContent = { if(cardBool) ScrollText(text = "￥$test") else Text(text = "一卡通 ￥$test") },
         overlineContent = { if(cardBool) {
             ScrollText(
-                if (test != null) {
+                if (test != null && test != "未登录") {
                     if(test.length <= 4){
                         "余额不足"
                     } else "一卡通"
@@ -73,7 +76,7 @@ val showAdd = prefs.getBoolean("SWITCHCARDADD",true)
                           },
         leadingContent = { Icon(painterResource(R.drawable.credit_card), contentDescription = "Localized description",) },
         trailingContent={
-            if (test != null) {
+            if (test != null && test != "未登录") {
                 if(showAdd || !cardBool)
                 FilledTonalIconButton(
                     modifier = Modifier
@@ -88,7 +91,7 @@ val showAdd = prefs.getBoolean("SWITCHCARDADD",true)
             }
         },
         colors = (
-            if (test != null) {
+            if (test != null && test != "未登录") {
                 if(test.length <= 4){
                     MaterialTheme.colorScheme.errorContainer
                 } else null

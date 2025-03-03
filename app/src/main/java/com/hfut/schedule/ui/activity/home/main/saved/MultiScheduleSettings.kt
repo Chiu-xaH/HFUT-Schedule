@@ -48,8 +48,8 @@ import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.dao.dataBaseSchedule
 import com.hfut.schedule.logic.beans.MyAPIResponse
-import com.hfut.schedule.logic.utils.SharePrefs.saveString
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
 import com.hfut.schedule.ui.activity.home.calendar.multi.AddCourseUI
 import com.hfut.schedule.ui.activity.home.calendar.multi.getFriendsList
@@ -57,6 +57,7 @@ import com.hfut.schedule.ui.activity.home.calendar.multi.getFriendsCourse
 import com.hfut.schedule.ui.activity.home.calendar.next.DatumUI
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotalForApi
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
@@ -64,6 +65,7 @@ import com.hfut.schedule.ui.utils.components.LittleDialog
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.viewmodel.UIViewModel
 import java.io.File
@@ -148,14 +150,9 @@ fun MultiScheduleSettings(
              shape = Round(sheetState)
         ) {
             Scaffold(
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("说明") },
-                    )
+                    CustomTopBar("说明")
                 }
             ) {innerPadding->
                 Column(modifier = Modifier
@@ -171,14 +168,9 @@ fun MultiScheduleSettings(
             shape = Round(sheetState_add)
         ) {
             Scaffold(
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("添加课程表") },
-                    )
+                    CustomTopBar("添加课程表")
                 }
             ) {innerPadding->
                 Column(modifier = Modifier
@@ -206,22 +198,16 @@ fun MultiScheduleSettings(
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("下学期课程表") },
-                        actions = {
-                            Row {
-                                CourseTotalForApi(vm=vm, next=next, onNextChange = { next = !next})
-                                TextButton(onClick = { showAll = !showAll }) {
-                                    Icon(painter = painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "")
-                                }
+                    CustomTopBar("下学期课程表") {
+                        Row {
+                            CourseTotalForApi(vm=vm, next=next, onNextChange = { next = !next})
+                            TextButton(onClick = { showAll = !showAll }) {
+                                Icon(painter = painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "")
                             }
                         }
-                    )
+                    }
                 },) { innerPadding ->
                 Column(
                     modifier = Modifier
@@ -235,23 +221,16 @@ fun MultiScheduleSettings(
         }
     }
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-        TopAppBar(
-            colors = TopAppBarDefaults.mediumTopAppBarColors(
-                containerColor = Color.Transparent,
-                titleContentColor = MaterialTheme.colorScheme.primary,
-            ),
-            title = { Text("课程表") },
-            actions = {
-                Row(modifier = Modifier.padding(horizontal = AppHorizontalDp())) {
-                    FilledTonalIconButton(onClick = { showBottomSheet_add = true }) {
-                        Icon(painterResource(id = R.drawable.add), contentDescription = "")
-                    }
-                    FilledTonalIconButton(onClick = { showBottomSheet = true }) {
-                        Icon(painterResource(id = R.drawable.info), contentDescription = "")
-                    }
+        CustomTopBar("课程表") {
+            Row() {
+                FilledTonalIconButton(onClick = { showBottomSheet_add = true }) {
+                    Icon(painterResource(id = R.drawable.add), contentDescription = "")
+                }
+                FilledTonalIconButton(onClick = { showBottomSheet = true }) {
+                    Icon(painterResource(id = R.drawable.info), contentDescription = "")
                 }
             }
-        )
+        }
         val friendList = getFriendsList()
         LazyRow {
             //教务课表
@@ -392,7 +371,7 @@ fun MultiScheduleSettings(
             }
         }
         DividerTextExpandedWith(text = "操作") {
-            ListItem(
+            TransplantListItem(
                 headlineContent = { Text(text = "导出教务课表") },
                 leadingContent = {
                     Icon(painterResource(id = R.drawable.ios_share), contentDescription = "")
@@ -402,7 +381,7 @@ fun MultiScheduleSettings(
                     shareTextFile("HFUT-Schedule-Share.txt")
                 }
             )
-            ListItem(
+            TransplantListItem(
                 headlineContent = { Text(text = "刷新教务课表") },
                 leadingContent = {
                     Icon(painterResource(id = R.drawable.rotate_right), contentDescription = "")
@@ -413,14 +392,14 @@ fun MultiScheduleSettings(
                     else MyToast("目前已是登陆状态")
                 }
             )
-            ListItem(
+            TransplantListItem(
                 headlineContent = { Text(text = "写入日历日程") },
                 leadingContent = {
                     Icon(painterResource(id = R.drawable.calendar), contentDescription = "")
                 },
                 modifier = Modifier.clickable { MyToast("正在开发") }
             )
-            ListItem(
+            TransplantListItem(
                 headlineContent = { Text(text = "恢复默认状态") },
                 leadingContent = {
                     Icon(painterResource(id = R.drawable.delete), contentDescription = "")

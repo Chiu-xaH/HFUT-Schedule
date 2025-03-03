@@ -110,7 +110,7 @@ fun addFocus(vm : NetViewModel) {
             .padding(horizontal = AppHorizontalDp(), vertical = 5.dp),
         shape = MaterialTheme.shapes.medium,
     ){
-        ListItem(
+        TransplantListItem(
             headlineContent = {  Text(text = "添加聚焦卡片") },
             // overlineContent = { Text(text = "${item["日期时间"]}") },
             leadingContent = { Icon(

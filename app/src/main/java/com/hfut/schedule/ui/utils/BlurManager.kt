@@ -1,7 +1,7 @@
 package com.hfut.schedule.ui.utils
 
-import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import kotlin.reflect.typeOf
 
 object BlurManager : PrefsBooleanManager("SWITCHMOTIONBLUR",false)

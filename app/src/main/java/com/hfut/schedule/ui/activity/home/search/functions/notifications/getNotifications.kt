@@ -4,7 +4,7 @@ import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.beans.MyAPIResponse
 import com.hfut.schedule.logic.beans.Notifications
-import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs
 
 
 //解析通知

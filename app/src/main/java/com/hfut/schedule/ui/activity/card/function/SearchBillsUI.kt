@@ -43,14 +43,15 @@ import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
-import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.beans.zjgd.BillResponse
 import com.hfut.schedule.logic.beans.zjgd.records
 import com.hfut.schedule.ui.activity.card.bills.main.getBills
 import com.hfut.schedule.ui.activity.card.bills.main.processTranamt
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.BillsIcons
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
@@ -117,14 +118,9 @@ fun SearchBillsUI(vm : NetWorkViewModel) {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        containerColor = Color.Transparent,
         topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = Color.Transparent,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                title = { Text("流水搜索") }
-            )
+            CustomTopBar("流水搜索")
         },
     ) { innerPadding ->
         Column(

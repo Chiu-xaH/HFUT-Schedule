@@ -51,15 +51,15 @@ import com.hfut.schedule.logic.enums.ShowerBarItems
 import com.hfut.schedule.logic.beans.NavigationBarItemData
 import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.DataStoreManager
-import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs
 //import com.hfut.schedule.ui.activity.card.function.main.turnToBottomBar
 import com.hfut.schedule.ui.activity.shower.bills.GuaguaBills
 import com.hfut.schedule.ui.activity.shower.function.GuaGuaSettings
 import com.hfut.schedule.ui.activity.shower.home.main.GuaguaStart
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.currentPage
+//import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
-import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnToAndClear
 import com.hfut.schedule.ui.utils.style.bottomBarBlur
 import com.hfut.schedule.ui.utils.style.topBarBlur
 import com.hfut.schedule.viewmodel.NetWorkViewModel
@@ -155,7 +155,7 @@ fun ShowerGuaGua(vm: GuaGuaViewModel,netVm : NetWorkViewModel) {
                                         items[2] -> targetPage = ShowerBarItems.FUNCTION
                                     }
                                 }
-                                if (!selected) { turnToAndClear(navController, route) }
+                                if (!selected) { turnTo(navController, route) }
                             },
                             label = { Text(text = item.label) },
                             icon = {

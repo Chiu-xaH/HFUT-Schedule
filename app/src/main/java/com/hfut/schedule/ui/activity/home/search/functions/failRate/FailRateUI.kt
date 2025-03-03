@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
@@ -78,14 +79,9 @@ fun FailRateUI(vm : NetWorkViewModel) {
 
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text(getFailRate(vm)[num].courseName) }
-                    )
+                    CustomTopBar(getFailRate(vm)[num].courseName)
                 },
             ) { innerPadding ->
                 Column(

@@ -9,7 +9,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import com.hfut.manage.ui.theme.聚在工大管理端Theme
 
 class LoginActivity : ComponentActivity() {

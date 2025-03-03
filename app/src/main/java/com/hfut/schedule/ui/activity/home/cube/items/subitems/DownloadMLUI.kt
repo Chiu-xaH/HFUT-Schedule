@@ -33,13 +33,14 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.MyDownloadManager
 import com.hfut.schedule.logic.utils.MyDownloadManager.getDownloadProgress
 import com.hfut.schedule.logic.utils.PermissionManager
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.logic.utils.SharePrefs.saveBoolean
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.saveBoolean
 import com.hfut.schedule.logic.utils.ocr.TesseractUtils
 import com.hfut.schedule.logic.utils.ocr.TesseractUtils.isModelInDownloadFolder
 import com.hfut.schedule.logic.utils.ocr.TesseractUtils.moveDownloadedModel
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 
 @OptIn(ExperimentalFoundationApi::class)
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -82,14 +83,14 @@ fun DownloadMLUI(innerPadding : PaddingValues) {
 
     Column {
         Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
-        ListItem(
+        TransplantListItem(
             headlineContent = { Text("图片验证码自动填充") },
             trailingContent = {
                 Switch(checked = open, onCheckedChange = { openCh -> open = openCh }, enabled = isExistModule )
             }
         )
         DividerTextExpandedWith("模型") {
-            ListItem(
+            TransplantListItem(
                 headlineContent = { Text("English OCR By Tesseract") },
                 supportingContent = { Text("约21MB" + if(isExistModule) " 长按删除" else "") },
                 trailingContent = {

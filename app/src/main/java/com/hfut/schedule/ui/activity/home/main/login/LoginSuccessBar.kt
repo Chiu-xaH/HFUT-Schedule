@@ -60,15 +60,15 @@ import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.LoginViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.beans.NavigationBarItemData
 import com.hfut.schedule.logic.utils.AndroidVersion
-import com.hfut.schedule.logic.utils.SharePrefs.saveString
+import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
 import com.hfut.schedule.ui.activity.home.search.main.SearchScreen
 import com.hfut.schedule.ui.activity.home.cube.main.SettingsScreen
 import com.hfut.schedule.ui.activity.home.focus.main.TodayScreen
 import com.hfut.schedule.logic.enums.BottomBarItems.*
-import com.hfut.schedule.logic.utils.APPVersion
+import com.hfut.schedule.logic.utils.VersionUtils
 import com.hfut.schedule.logic.utils.DataStoreManager
 import com.hfut.schedule.ui.activity.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.activity.home.calendar.jxglstu.CalendarScreen
@@ -89,9 +89,10 @@ import com.hfut.schedule.ui.activity.home.search.functions.webLab.LabUI
 import com.hfut.schedule.ui.activity.home.search.main.SearchFuncs
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.currentPage
-import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnToAndClear
+import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CustomTabRow
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.MyToast
@@ -122,7 +123,7 @@ fun SuccessUI(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel, w
 
     val hazeState = remember { HazeState() }
     var showBadge by remember { mutableStateOf(false) }
-    if (getUpdates().version != APPVersion.getVersionName()) showBadge = true
+    if (getUpdates().version != VersionUtils.getVersionName()) showBadge = true
     val switchblur = prefs.getBoolean("SWITCHBLUR",  AndroidVersion.canBlur)
     var blur by remember { mutableStateOf(switchblur) }
     //监听是否周六周日有课，有则显示红点
@@ -162,14 +163,9 @@ fun SuccessUI(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel, w
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("收纳") }
-                    )
+                    CustomTopBar("收纳")
                 },
             ) { innerPadding ->
                 Column(
@@ -334,8 +330,8 @@ fun SuccessUI(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel, w
                         NavigationBarItemData(FOCUS.name,"聚焦", painterResource(R.drawable.lightbulb),painterResource(R.drawable.lightbulb_filled)),
                         NavigationBarItemData(SEARCH.name,"查询中心", painterResource(R.drawable.search), painterResource(R.drawable.search_filledx)),
                         NavigationBarItemData(
-                            SETTINGS.name,"选项", painterResource(if (getUpdates().version == APPVersion.getVersionName())R.drawable.
-                        deployed_code else R.drawable.deployed_code_update), painterResource(if (getUpdates().version == APPVersion.getVersionName()) R.drawable.deployed_code_filled else R.drawable.deployed_code_update_filled ))
+                            SETTINGS.name,"选项", painterResource(if (getUpdates().version == VersionUtils.getVersionName())R.drawable.
+                        deployed_code else R.drawable.deployed_code_update), painterResource(if (getUpdates().version == VersionUtils.getVersionName()) R.drawable.deployed_code_filled else R.drawable.deployed_code_update_filled ))
 
                     )
                     items.forEach { item ->
@@ -363,7 +359,7 @@ fun SuccessUI(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel, w
                                     items[3] -> bottomBarItems = SETTINGS
                                 }
                                 if (!selected) {
-                                    turnToAndClear(navController,route)
+                                    turnTo(navController,route)
                                 }
                             },
                             label = { Text(text = item.label) },

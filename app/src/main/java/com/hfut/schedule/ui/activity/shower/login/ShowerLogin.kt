@@ -54,9 +54,9 @@ import com.hfut.schedule.viewmodel.GuaGuaViewModel
 import com.hfut.schedule.logic.beans.guagua.GuaGuaLogin
 import com.hfut.schedule.logic.beans.guagua.GuaGuaLoginResponse
 import com.hfut.schedule.logic.beans.guagua.GuaguaLoginMsg
-import com.hfut.schedule.logic.utils.Encrypt
-import com.hfut.schedule.logic.utils.SharePrefs.saveString
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.parse.Encrypt
+import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter.loginGuaGua
 import com.hfut.schedule.logic.utils.Starter.startGuagua
 import com.hfut.schedule.ui.activity.shower.function.EditLoginCode

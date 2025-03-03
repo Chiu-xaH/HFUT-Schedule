@@ -47,11 +47,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.utils.APPVersion
+import com.hfut.schedule.logic.utils.VersionUtils
 import com.hfut.schedule.logic.utils.MyDownloadManager
 import com.hfut.schedule.logic.utils.MyDownloadManager.downloadManage
 import com.hfut.schedule.logic.utils.MyDownloadManager.getDownloadProgress
-import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
 import com.hfut.schedule.ui.utils.components.BottomButton
@@ -85,7 +85,7 @@ fun UpdateUI() {
     MyCustomCard(hasElevation = false, containerColor = MaterialTheme.colorScheme.errorContainer) {
         TransplantListItem(
             headlineContent = { Text(text = "发现新版本") },
-            supportingContent = { Text(text = "${APPVersion.getVersionName()} → ${version.version}") },
+            supportingContent = { Text(text = "${VersionUtils.getVersionName()} → ${version.version}") },
             leadingContent = { Icon(painterResource(R.drawable.arrow_upward), contentDescription = "Localized description",) },
             trailingContent = {
                 FilledTonalIconButton(

@@ -39,6 +39,7 @@ import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.beans.one.EmptyRoomResponse
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -73,14 +74,9 @@ fun emptyRoomUI(vm : NetWorkViewModel) {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        containerColor = Color.Transparent,
         topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = Color.Transparent,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                title = { Text(" 空教室") }
-            )
+            CustomTopBar(" 空教室")
         },) {innerPadding ->
         Column(
             modifier = Modifier

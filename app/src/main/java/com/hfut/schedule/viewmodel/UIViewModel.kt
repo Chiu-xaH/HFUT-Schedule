@@ -9,8 +9,8 @@ import com.hfut.schedule.logic.network.servicecreator.Login.LoginWeb2ServiceCrea
 import com.hfut.schedule.logic.network.servicecreator.Login.LoginWebServiceCreator
 import com.hfut.schedule.logic.network.api.GiteeService
 import com.hfut.schedule.logic.network.api.LoginWebsService
-import com.hfut.schedule.logic.utils.SharePrefs.saveString
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.getIdentifyID
 import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.WebInfo
 import okhttp3.ResponseBody

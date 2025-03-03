@@ -50,10 +50,10 @@ import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.beans.SearchEleResponse
 import com.hfut.schedule.logic.beans.zjgd.FeeResponse
 import com.hfut.schedule.logic.beans.zjgd.FeeType
-import com.hfut.schedule.logic.utils.DateTimeManager
-import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.saveString
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.DateTimeUtils
+import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.focus.funictions.GetZjgdCard
 import com.hfut.schedule.ui.activity.home.focus.funictions.TodayUI
 import com.hfut.schedule.ui.activity.home.focus.funictions.getTodayNet
@@ -67,6 +67,7 @@ import com.hfut.schedule.ui.activity.home.search.functions.shower.getInGuaGua
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CardNormalColor
 import com.hfut.schedule.ui.utils.components.CardNormalDp
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.TransplantListItem
@@ -126,7 +127,7 @@ fun FocusCardSettings() {
 
     Spacer(modifier = Modifier.height(5.dp))
 
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "一卡通")} ,
         leadingContent = { Icon(painter = painterResource(id = R.drawable.credit_card), contentDescription = "")},
         trailingContent = {
@@ -137,35 +138,35 @@ fun FocusCardSettings() {
             }
         }
     )
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "寝室电费")} ,
         leadingContent = { Icon(painter = painterResource(id = R.drawable.flash_on), contentDescription = "")},
         trailingContent = {
             Switch(checked = showEle, onCheckedChange = {showch -> showEle = showch })
         }
     )
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "校园网")} ,
         leadingContent = { Icon(painter = painterResource(id = R.drawable.net), contentDescription = "")},
         trailingContent = { Switch(checked = showWeb, onCheckedChange = {showch -> showWeb = showch})}
     )
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "聚焦通知")} ,
         supportingContent = { Text(text = "明日早八,临近课程,催还图书,临近考试")},
         leadingContent = { Icon(painter = painterResource(id = R.drawable.sentiment_very_satisfied), contentDescription = "")},
         trailingContent = { Switch(checked = showToday, onCheckedChange = {showch -> showToday = showch})}
     )
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "倒计时")} ,
         leadingContent = { Icon(painter = painterResource(id = R.drawable.schedule), contentDescription = "")},
         trailingContent = { Switch(checked = showCountDown, onCheckedChange = {showch -> showCountDown = showch},enabled = false)}
     )
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "绩点排名")} ,
         leadingContent = { Icon(painter = painterResource(id = R.drawable.filter_vintage), contentDescription = "")},
         trailingContent = { Switch(checked = false, onCheckedChange = {}, enabled = false)}
     )
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "预留项")} ,
         leadingContent = { Icon(painter = painterResource(id = R.drawable.add_circle), contentDescription = "")},
         modifier = Modifier.clickable { showBottomSheet = true },
@@ -181,14 +182,9 @@ fun FocusCardSettings() {
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("选择你想放在聚焦首页的项") },
-                    )
+                    CustomTopBar("选择你想放在聚焦首页的项")
                 },
             ) { innerPadding ->
                 Column(
@@ -294,7 +290,7 @@ fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel, refreshing : Boolean) {
                                 shortCut()
                             }
                     }
-                if(DateTimeManager.formattedTime_Hour.toInt() in 22 until 25) {
+                if(DateTimeUtils.formattedTime_Hour.toInt() in 22 until 25) {
                     Row(
                         modifier = Modifier.clickable {
                             getInGuaGua(vm)
@@ -412,7 +408,7 @@ fun getEleNew(vm : NetWorkViewModel, vmUI : UIViewModel) {
 
 @Composable
 fun countDownUI() {
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "添加") },
         leadingContent = { Icon(painter = painterResource(id = R.drawable.schedule), contentDescription = "")},
         overlineContent = { Text(text = "倒计时") }
@@ -420,7 +416,7 @@ fun countDownUI() {
 }
 @Composable
 fun shortCut() {
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "捷径") },
         leadingContent = { Icon(painter = painterResource(id = R.drawable.add_circle), contentDescription = "")},
         overlineContent = { Text(text = "选择要放入的选项") }

@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
 import com.hfut.schedule.ui.activity.home.search.functions.Huixin
 import com.hfut.schedule.ui.activity.home.search.functions.nextCourse.NextCourse
@@ -73,6 +73,7 @@ import com.hfut.schedule.ui.utils.components.CardNormalDp
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.SmallCard
 import com.hfut.schedule.ui.utils.style.CardForListColor
+import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -113,7 +114,7 @@ fun SearchScreen(vm : NetWorkViewModel, ifSaved : Boolean, innerPaddings : Paddi
             content()
         }
     }
-    if(prefs.getString("TOKEN","")?.contains("ey") == false) MyToast("未登录,部分功能不可用")
+//    if(prefs.getString("TOKEN","")?.contains("ey") == false) MyToast("未登录,部分功能不可用")
 
     //建立索引 <搜索关键词,功能>
     val funcMaps : Map<String,@Composable () -> Unit>  = mapOf(
@@ -205,11 +206,7 @@ fun SearchFuncs(ifSaved: Boolean,blur : Boolean,input: String,webVpn: Boolean = 
             label = { Text("搜索功能" ) },
             singleLine = true,
             shape = MaterialTheme.shapes.small,
-            colors = TextFieldDefaults.textFieldColors(
-                focusedIndicatorColor = Color.Transparent, // 有焦点时的颜色，透明
-                unfocusedIndicatorColor = Color.Transparent, // 无焦点时的颜色，绿色,
-                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = if(blur) 0.55f else 1f)
-            ),
+            colors = textFiledTransplant(),
             trailingIcon = {
                 if(ifSaved) {
                     TextButton(onClick = { refreshLogin() }) {

@@ -51,11 +51,12 @@ import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.enums.LibraryItems
 import com.hfut.schedule.logic.beans.community.LibRecord
 import com.hfut.schedule.logic.beans.community.LibraryResponse
-import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CardNormalColor
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.Round
@@ -117,24 +118,17 @@ fun LibraryItem(vm : NetWorkViewModel) {
          //  LibItem()
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("图书") },
-                        actions = {
-                            FilledTonalButton(
-                                onClick = {
+                    CustomTopBar("图书") {
+                        FilledTonalButton(
+                            onClick = {
                                 Starter.startWebUrl("http://210.45.242.5:8080/")
-                            },
-                                modifier = Modifier.padding(horizontal = AppHorizontalDp())
-                            ) {
-                                Text(text = "更多(官网)")
                             }
+                        ) {
+                            Text(text = "更多(官网)")
                         }
-                    )
+                    }
                 },
             ) { innerPadding ->
                 Column(

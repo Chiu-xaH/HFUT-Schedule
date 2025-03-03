@@ -1,7 +1,7 @@
 package com.hfut.schedule.ui.activity.home.cube.items.subitems.update
 
 import com.hfut.schedule.logic.beans.Update
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import org.jsoup.Jsoup
 
 

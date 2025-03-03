@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.utils.MyDownloadManager
 import com.hfut.schedule.logic.utils.MyDownloadManager.getDownloadProgress
-import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.ui.utils.components.MyToast
 
 fun installApk(uri: Uri) {

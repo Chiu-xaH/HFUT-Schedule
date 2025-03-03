@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.TransplantListItem
@@ -60,14 +61,9 @@ fun Life(vm : NetWorkViewModel) {
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("生活服务") }
-                    )
+                    CustomTopBar("生活服务")
                 },) { innerPadding ->
                 Column(
                     modifier = Modifier
@@ -103,14 +99,9 @@ fun ApiFromLife(vm: NetWorkViewModel) {
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("生活服务") }
-                    )
+                    CustomTopBar("生活服务")
                 },) { innerPadding ->
                 Column(
                     modifier = Modifier

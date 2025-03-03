@@ -71,15 +71,16 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.beans.community.courseDetailDTOList
-import com.hfut.schedule.logic.utils.DateTimeManager
-import com.hfut.schedule.logic.utils.DateTimeManager.Benweeks
-import com.hfut.schedule.logic.utils.Semseter.parseSemseter
-import com.hfut.schedule.logic.utils.Semseter.getSemseterFromCloud
+import com.hfut.schedule.logic.utils.DateTimeUtils
+import com.hfut.schedule.logic.utils.DateTimeUtils.Benweeks
+import com.hfut.schedule.logic.utils.parse.Semseter.parseSemseter
+import com.hfut.schedule.logic.utils.parse.Semseter.getSemseterFromCloud
 import com.hfut.schedule.ui.activity.home.calendar.examToCalendar
 import com.hfut.schedule.ui.activity.home.calendar.getScheduleDate
 import com.hfut.schedule.ui.activity.home.search.functions.exam.getExam
 import com.hfut.schedule.ui.activity.home.search.functions.exam.getExamJXGLSTU
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.MyToast
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -190,7 +191,7 @@ fun SaveCourse(
 
 
     //切换周数
-    var Bianhuaweeks by rememberSaveable { mutableStateOf(DateTimeManager.weeksBetween) }
+    var Bianhuaweeks by rememberSaveable { mutableStateOf(DateTimeUtils.weeksBetween) }
     //var date by rememberSaveable { mutableStateOf(LocalDate.now()) }
   //  Log.d("本周", GetDate.a.toString())
 
@@ -630,13 +631,7 @@ fun SaveCourse(
             sheetState = sheetState,
             //shape = Round(sheetState)
         ) {
-            TopAppBar(
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = Color.Transparent,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                title = { Text(if(showAll) sheetall[num].name else sheet[num].name) },
-            )
+            CustomTopBar(if(showAll) sheetall[num].name else sheet[num].name)
             DetailInfos(if(showAll) sheetall[num] else sheet[num],friendUserName != null, vm = vm)
         }
     }
@@ -842,7 +837,7 @@ fun ScheduleTopDate(showAll: Boolean,today : LocalDate,blur : Boolean) {
         LazyVerticalGrid(columns = GridCells.Fixed(if(showAll)7 else 5),modifier = Modifier.padding(horizontal = 10.dp)){
             items(if(showAll)7 else 5) { item ->
                 val date = mondayOfCurrentWeek.plusDays(item.toLong()).toString() //YYYY-MM-DD 与考试对比
-                val isToday = date == DateTimeManager.Date_yyyy_MM_dd
+                val isToday = date == DateTimeUtils.Date_yyyy_MM_dd
                 if (Benweeks > 0)
                     Text(
                         text = date.substringAfter("-"),

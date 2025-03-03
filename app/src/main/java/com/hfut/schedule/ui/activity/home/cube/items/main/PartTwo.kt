@@ -26,11 +26,12 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.activity.funiction.FixActivity
 import com.hfut.schedule.logic.dao.dataBase
-import com.hfut.schedule.logic.utils.APPVersion
+import com.hfut.schedule.logic.utils.VersionUtils
 import com.hfut.schedule.logic.utils.Starter.startWebUrl
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.MyAPIItem
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.monet.MonetColorItem
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.getUpdates
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
@@ -60,7 +61,7 @@ fun PartTwo() {
 
     MonetColorItem()
 
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "关于 疑难解答 修复") },
         supportingContent = { Text(text = "当出现问题时,可从此处进入或长按桌面图标选择修复")},
         leadingContent = { Icon(painterResource(R.drawable.build), contentDescription = "Localized description",) },
@@ -73,12 +74,12 @@ fun PartTwo() {
 
     var version by remember { mutableStateOf(getUpdates()) }
     var showBadge by remember { mutableStateOf(false) }
-    if (version.version != APPVersion.getVersionName()) showBadge = true
+    if (version.version != VersionUtils.getVersionName()) showBadge = true
 
 
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "获取更新") },
-        supportingContent = { Text(text = if(version.version == APPVersion.getVersionName()) "当前为最新版本 ${APPVersion.getVersionName()}" else "当前版本  ${APPVersion.getVersionName()}\n最新版本  ${version.version}") },
+        supportingContent = { Text(text = if(version.version == VersionUtils.getVersionName()) "当前为最新版本 ${VersionUtils.getVersionName()}" else "当前版本  ${VersionUtils.getVersionName()}\n最新版本  ${version.version}") },
         leadingContent = {
             BadgedBox(badge = {
                 if(showBadge)
@@ -87,7 +88,7 @@ fun PartTwo() {
             }
         },
         modifier = Modifier.clickable{
-            if (version.version != APPVersion.getVersionName())
+            if (version.version != VersionUtils.getVersionName())
                 startWebUrl(MyApplication.UpdateURL+ "releases/download/Android/${version.version}.apk")
             else Toast.makeText(MyApplication.context,"与云端版本一致",Toast.LENGTH_SHORT).show()
         }

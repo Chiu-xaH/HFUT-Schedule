@@ -52,10 +52,11 @@ import com.hfut.schedule.logic.beans.community.ApplyingLists
 import com.hfut.schedule.logic.beans.community.ApplyingResponse
 import com.hfut.schedule.logic.beans.community.FriendsList
 import com.hfut.schedule.logic.beans.community.FriendsResopnse
-import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.MyCustomCard
@@ -99,14 +100,9 @@ fun AddCourseUI(vm: NetWorkViewModel) {
             shape = Round(sheetState)
         ) {
             Scaffold(
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("好友") },
-                    )
+                    CustomTopBar("好友")
                 }
             ) {innerPadding->
                 Column(modifier = Modifier

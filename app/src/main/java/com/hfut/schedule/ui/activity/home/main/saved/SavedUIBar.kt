@@ -1,10 +1,12 @@
 package com.hfut.schedule.ui.activity.home.main.saved
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
@@ -55,6 +57,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
@@ -71,15 +74,15 @@ import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.enums.BottomBarItems
 import com.hfut.schedule.logic.enums.BottomBarItems.*
 import com.hfut.schedule.logic.beans.NavigationBarItemData
-import com.hfut.schedule.logic.utils.APPVersion
+import com.hfut.schedule.logic.utils.VersionUtils
 import com.hfut.schedule.logic.utils.AndroidVersion.canBlur
 import com.hfut.schedule.logic.utils.DataStoreManager
-import com.hfut.schedule.logic.utils.DateTimeManager
-import com.hfut.schedule.logic.utils.DateTimeManager.Benweeks
-import com.hfut.schedule.logic.utils.DateTimeManager.Date_MM_dd
-import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.logic.utils.SharePrefs.saveInt
+import com.hfut.schedule.logic.utils.DateTimeUtils
+import com.hfut.schedule.logic.utils.DateTimeUtils.Benweeks
+import com.hfut.schedule.logic.utils.DateTimeUtils.Date_MM_dd
+import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.saveInt
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
 import com.hfut.schedule.ui.activity.home.calendar.jxglstu.CalendarScreen
 import com.hfut.schedule.ui.activity.home.calendar.communtiy.SaveCourse
@@ -101,9 +104,11 @@ import com.hfut.schedule.ui.activity.login.First
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.ANIMATION_SPEED
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.currentPage
-import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnToAndClear
+import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
+//import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnToClearly
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CustomTabRow
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.style.Round
@@ -117,11 +122,11 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @SuppressLint("SuspiciousIndentation", "CoroutineCreationDuringComposition",
     "UnusedMaterial3ScaffoldPaddingParameter"
 )
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationGraphicsApi::class)
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
     if(!isNextOpen()) {
@@ -137,7 +142,7 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
 
 //    var bottomBarItems by remember { mutableStateOf(FOCUS) }
     var showBadge by remember { mutableStateOf(false) }
-    if (getUpdates().version != APPVersion.getVersionName()) showBadge = true
+    if (getUpdates().version != VersionUtils.getVersionName()) showBadge = true
     val switchblur = prefs.getBoolean("SWITCHBLUR", canBlur)
     var blur by remember { mutableStateOf(switchblur) }
    // val savenum = prefs.getInt("GradeNum",0) + prefs.getInt("ExamNum",0) + prefs.getInt("Notifications",0)
@@ -149,13 +154,20 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
 
     //Log.d("动画",animation.toString())
 //判定是否以聚焦作为第一页
-    val first  = when (prefs.getBoolean("SWITCHFOCUS",true)) {
-        true -> FOCUS
-        false -> COURSES
-    }
+    var first  by remember { mutableStateOf(
+        when (prefs.getBoolean("SWITCHFOCUS",true)) {
+            true -> FOCUS
+            false -> COURSES
+        }
+    ) }
 
     // 按下底栏按钮后，要准备去的导航
-    var targetPage by remember { mutableStateOf(first) }
+    var targetPage by remember { mutableStateOf(
+        when (prefs.getBoolean("SWITCHFOCUS",true)) {
+            true -> FOCUS
+            false -> COURSES
+        }
+    ) }
     // 记录上一个
 
     var showAll by remember { mutableStateOf(false) }
@@ -201,14 +213,9 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("收纳") }
-                    )
+                    CustomTopBar("收纳")
                 },
             ) { innerPadding ->
                 Column(
@@ -289,7 +296,6 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
                         titleContentColor = MaterialTheme.colorScheme.primary,
                     ),
                     title = {
-
                         if(targetPage != SEARCH) {
                             ScrollText(texts(targetPage))
                         } else {
@@ -363,8 +369,6 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
         },
         bottomBar = {
             Column {
-//                if(!blur)
-//                    Divider()
                 NavigationBar(containerColor = Color.Transparent ,
                     modifier = Modifier.bottomBarBlur(hazeState, blur)
                 ) {
@@ -374,7 +378,7 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
                         NavigationBarItemData(COURSES.name, "课程表", painterResource(R.drawable.calendar ), painterResource(R.drawable.calendar_month_filled)),
                         NavigationBarItemData(FOCUS.name,"聚焦", painterResource(R.drawable.lightbulb), painterResource(R.drawable.lightbulb_filled)),
                         NavigationBarItemData(SEARCH.name,"查询中心", painterResource(R.drawable.search),painterResource(R.drawable.search_filledx)),
-                        NavigationBarItemData(SETTINGS.name,"选项", painterResource(if (getUpdates().version == APPVersion.getVersionName())R.drawable.deployed_code else R.drawable.deployed_code_update), painterResource(if (getUpdates().version == APPVersion.getVersionName()) R.drawable.deployed_code_filled else R.drawable.deployed_code_update_filled ))
+                        NavigationBarItemData(SETTINGS.name,"选项", painterResource(if (getUpdates().version == VersionUtils.getVersionName())R.drawable.deployed_code else R.drawable.deployed_code_update), painterResource(if (getUpdates().version == VersionUtils.getVersionName()) R.drawable.deployed_code_filled else R.drawable.deployed_code_update_filled ))
                     )
                     items.forEach { item ->
                         val interactionSource = remember { MutableInteractionSource() }
@@ -400,7 +404,7 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
                                     items[3] -> targetPage = SETTINGS
                                 }
                                 if (!selected) {
-                                    turnToAndClear(navController,route)
+                                    turnTo(navController,route)
                                 }
                             },
                             label = { Text(text = item.label) },
@@ -429,42 +433,38 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
                 state = hazeState,
             )) {
             composable(COURSES.name) {
-            Scaffold(modifier = Modifier.pointerInput(Unit) {
-                detectTransformGestures { _, _, zoom, _ ->
-                    if (zoom >= 1f) {
-                        showAll = false
-                    } else if (zoom < 1f) {
-                        showAll = true
-                    }
-                }
-            }) {
-                if(!isFriend)
-                    when (swapUI) {
-                        COMMUNITY -> SaveCourse(showAll, innerPadding,vmUI, onDateChange = { new -> today = new}, today = today, vm = vm)
-                        JXGLSTU -> CalendarScreen(showAll,vm,innerPadding,vmUI,false,vm2,false,{newDate -> today = newDate},today)
-                        else -> {
-                            CustomSchedules(showAll,innerPadding,vmUI,swapUI-2,{newDate-> today = newDate}, today)
+                Scaffold(modifier = Modifier.pointerInput(Unit) {
+                    detectTransformGestures { _, _, zoom, _ ->
+                        if (zoom >= 1f) {
+                            showAll = false
+                        } else if (zoom < 1f) {
+                            showAll = true
                         }
                     }
-                else {
-                    SaveCourse(showAll,innerPadding,vmUI,swapUI.toString(),onDateChange = { new -> today = new}, today = today,vm)
+                }) {
+                    if(!isFriend)
+                        when (swapUI) {
+                            COMMUNITY -> SaveCourse(showAll, innerPadding,vmUI, onDateChange = { new -> today = new}, today = today, vm = vm)
+                            JXGLSTU -> CalendarScreen(showAll,vm,innerPadding,vmUI,false,vm2,false,{newDate -> today = newDate},today)
+                            else -> {
+                                CustomSchedules(showAll,innerPadding,vmUI,swapUI-2,{newDate-> today = newDate}, today)
+                            }
+                        }
+                    else {
+                        SaveCourse(showAll,innerPadding,vmUI,swapUI.toString(),onDateChange = { new -> today = new}, today = today,vm)
+                    }
                 }
-
-            }
 
             }
             composable(FOCUS.name) {
                 Scaffold {
                     TodayScreen(vm,vm2,innerPadding, blur,vmUI,ifSaved,false,pagerState)
                 }
-
-                //Test()
             }
             composable(SEARCH.name) {
                 Scaffold {
                     SearchScreen(vm,ifSaved,innerPadding,vmUI,searchText)
                 }
-
             }
             composable(SETTINGS.name) {
                 Scaffold {
@@ -479,8 +479,8 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
 fun texts(num : BottomBarItems) : String {
     when(num){
         COURSES -> {
-            val dayweek = DateTimeManager.dayweek
-            var chinesenumber  = DateTimeManager.chinesenumber
+            val dayweek = DateTimeUtils.dayweek
+            var chinesenumber  = DateTimeUtils.chinesenumber
 
             when (dayweek) {
                 1 -> chinesenumber = "一"
@@ -494,8 +494,8 @@ fun texts(num : BottomBarItems) : String {
             return "$Date_MM_dd 第${Benweeks}周 周$chinesenumber"
         }
         FOCUS -> {
-            val dayweek = DateTimeManager.dayweek
-            var chinesenumber  = DateTimeManager.chinesenumber
+            val dayweek = DateTimeUtils.dayweek
+            var chinesenumber  = DateTimeUtils.chinesenumber
 
             when (dayweek) {
                 1 -> chinesenumber = "一"

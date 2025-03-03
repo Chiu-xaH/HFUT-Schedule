@@ -11,9 +11,9 @@ import androidx.lifecycle.lifecycleScope
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.beans.MyAPIResponse
-import com.hfut.schedule.logic.utils.Semseter
-import com.hfut.schedule.logic.utils.SharePrefs.saveString
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.parse.Semseter
+import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.main.login.SuccessUI
 import com.hfut.schedule.viewmodel.LoginSuccessViewModelFactory
 import com.hfut.schedule.viewmodel.NetWorkViewModel

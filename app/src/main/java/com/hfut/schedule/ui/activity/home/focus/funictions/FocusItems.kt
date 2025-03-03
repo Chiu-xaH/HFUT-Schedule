@@ -64,13 +64,13 @@ import com.hfut.schedule.logic.beans.community.TodayResponse
 import com.hfut.schedule.logic.beans.community.TodayResult
 import com.hfut.schedule.logic.beans.focus.AddFocus
 import com.hfut.schedule.logic.beans.Schedule
-import com.hfut.schedule.logic.utils.AddCalendar.addToCalendar
-import com.hfut.schedule.logic.utils.DateTimeManager
-import com.hfut.schedule.logic.utils.DateTimeManager.TimeState.*
-import com.hfut.schedule.logic.utils.Semseter.parseSemseter
-import com.hfut.schedule.logic.utils.Semseter.getSemseterFromCloud
-import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.CalendarUtils.addToCalendar
+import com.hfut.schedule.logic.utils.DateTimeUtils
+import com.hfut.schedule.logic.utils.DateTimeUtils.TimeState.*
+import com.hfut.schedule.logic.utils.parse.Semseter.parseSemseter
+import com.hfut.schedule.logic.utils.parse.Semseter.getSemseterFromCloud
+import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.calendar.communtiy.DetailInfos
 import com.hfut.schedule.ui.activity.home.calendar.communtiy.getCourseINFO
 import com.hfut.schedule.ui.activity.home.cube.items.main.apiCheck
@@ -79,6 +79,7 @@ import com.hfut.schedule.ui.activity.home.focus.funictions.FocusDataBaseManager.
 import com.hfut.schedule.ui.activity.home.search.functions.card.TodayInfo
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.RotatingIcon
@@ -118,7 +119,7 @@ fun MyScheuleItem(item : Int, MySchedule : MutableList<Schedule>,Future: Boolean
         val getEndTime = "${endYear}${endMonthStr}${endDateStr}".toInt()
 
 
-        val nowTime = DateTimeManager.Date_yyyy_MM_dd.replace("-","").toInt()
+        val nowTime = DateTimeUtils.Date_yyyy_MM_dd.replace("-","").toInt()
 
 
         if(!Future) {
@@ -223,7 +224,7 @@ fun WangkeItem(item : Int, MyWangKe: MutableList<Schedule>,Future: Boolean,activ
             val getEndTime = "${endYear}${endMonthStr}${endDateStr}".toInt()
 
 
-            val nowTime = DateTimeManager.Date_yyyy_MM_dd.replace("-","").toInt()
+            val nowTime = DateTimeUtils.Date_yyyy_MM_dd.replace("-","").toInt()
 
 
             if(Future) {
@@ -303,9 +304,9 @@ fun TodayCourseItem(item : Int,vm : NetWorkViewModel) {
     val switch_show_ended = prefs.getBoolean("SWITCHSHOWENDED",true)
 
 
-    var week = DateTimeManager.Benweeks.toInt()
+    var week = DateTimeUtils.Benweeks.toInt()
 
-    var weekday = DateTimeManager.dayweek
+    var weekday = DateTimeUtils.dayweek
     if(weekday == 0) weekday = 7
     //课程详情
     val list = getCourseINFO(weekday,week)[item][0]
@@ -315,7 +316,7 @@ fun TodayCourseItem(item : Int,vm : NetWorkViewModel) {
 
     val startTime = time.substringBefore("-")
     val endTime = time.substringAfter("-")
-    val state = DateTimeManager.getTimeState(startTime, endTime)
+    val state = DateTimeUtils.getTimeState(startTime, endTime)
 
     if (showBottomSheet) {
 
@@ -323,13 +324,7 @@ fun TodayCourseItem(item : Int,vm : NetWorkViewModel) {
             onDismissRequest = { showBottomSheet = false },
             sheetState = sheetState,
         ) {
-            TopAppBar(
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = Color.Transparent,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                title = { list.name.let { Text(it) } },
-            )
+            CustomTopBar(list.name)
             DetailInfos(list,vm = vm)
         }
     }
@@ -386,7 +381,7 @@ fun TodayCourseItem(item : Int,vm : NetWorkViewModel) {
     if(switch_show_ended) {
         Item()
     } else {
-        if(state != DateTimeManager.TimeState.ENDED) {
+        if(state != DateTimeUtils.TimeState.ENDED) {
             Item()
         }
     }
@@ -397,8 +392,8 @@ fun TodayCourseItem(item : Int,vm : NetWorkViewModel) {
 @Composable
 fun TomorrowCourseItem(item : Int,vm: NetWorkViewModel) {
 
-    var weekdaytomorrow = DateTimeManager.dayweek + 1
-    var week = DateTimeManager.Benweeks.toInt()
+    var weekdaytomorrow = DateTimeUtils.dayweek + 1
+    var week = DateTimeUtils.Benweeks.toInt()
     //当第二天为下一周的周一时，周数+1
     when(weekdaytomorrow) {
         1 -> week += 1
@@ -414,13 +409,7 @@ fun TomorrowCourseItem(item : Int,vm: NetWorkViewModel) {
             onDismissRequest = { showBottomSheet = false },
             sheetState = sheetState,
         ) {
-            TopAppBar(
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = Color.Transparent,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                title = { list.name.let { Text(it) } },
-            )
+            CustomTopBar(list.name)
             DetailInfos(list,vm = vm)
         }
     }
@@ -502,28 +491,21 @@ fun BoxScope.AddButton(isVisible: Boolean,innerPaddings : PaddingValues) {
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        actions = {
-
-                            FilledTonalIconButton(
-                                modifier = Modifier
-                                    .scale(scale.value)
-                                    .padding(25.dp),
-                                interactionSource = interactionSource,
-                                onClick = {
-                                    addItems(title,info,remark)
-                                    showBottomSheet = false
-                                    Toast.makeText(MyApplication.context,"添加成功", Toast.LENGTH_SHORT).show()
-                                }
-                            ) { Icon(Icons.Filled.Check, contentDescription = "") }
-                        },
-                        title = { Text("添加聚焦卡片") }
-                    )
+                    CustomTopBar("添加聚焦卡片") {
+                        FilledTonalIconButton(
+                            modifier = Modifier
+                                .scale(scale.value),
+//                                .padding(25.dp),
+                            interactionSource = interactionSource,
+                            onClick = {
+                                addItems(title,info,remark)
+                                showBottomSheet = false
+                                Toast.makeText(MyApplication.context,"添加成功", Toast.LENGTH_SHORT).show()
+                            }
+                        ) { Icon(Icons.Filled.Check, contentDescription = "") }
+                    }
                 },
             ) { innerPadding ->
                 Column(
@@ -643,14 +625,9 @@ fun TodayUI() {
 
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("聚焦通知") }
-                    )
+                    CustomTopBar("聚焦通知")
                 },) {innerPadding ->
                 Column(
                     modifier = Modifier
@@ -665,8 +642,8 @@ fun TodayUI() {
 
     //////////////////////////////////////////////////////////////////////////
     //判断明天是否有早八
-    var weekdaytomorrow = DateTimeManager.dayweek + 1
-    var week = DateTimeManager.Benweeks.toInt()
+    var weekdaytomorrow = DateTimeUtils.dayweek + 1
+    var week = DateTimeUtils.Benweeks.toInt()
     //当第二天为下一周的周一时，周数+1
     when(weekdaytomorrow) {
         1 -> week += 1
@@ -684,7 +661,7 @@ fun TodayUI() {
     for(i in 0 until schedule.size) {
         val schedules = schedule[i]
         if(schedules.title.contains("调休")) {
-            if(schedules.time.substringBefore(" ") == DateTimeManager.tomorrow) {
+            if(schedules.time.substringBefore(" ") == DateTimeUtils.tomorrow) {
                 tiaoXiu = true
             //    tiaoXiuInfo = schedules.info
             }

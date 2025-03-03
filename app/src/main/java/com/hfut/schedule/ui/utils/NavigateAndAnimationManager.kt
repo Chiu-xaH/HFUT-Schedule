@@ -18,7 +18,17 @@ import androidx.navigation.NavHostController
 object NavigateAndAnimationManager {
     data class TransferAnimation(val remark : String,val enter : EnterTransition, val exit : ExitTransition)
 
-    fun turnTo(navController : NavHostController, route : String) {
+//    fun turnTo(navController : NavHostController, route : String) {
+//        navController.navigate(route) {
+//            popUpTo(navController.graph.startDestinationId) {
+//                saveState = true
+//            }
+//            launchSingleTop = true
+//            restoreState = true
+//        }
+//    }
+
+    fun turnTo(navController: NavHostController, route: String) {
         navController.navigate(route) {
             popUpTo(navController.graph.startDestinationId) {
                 saveState = true
@@ -27,16 +37,23 @@ object NavigateAndAnimationManager {
             restoreState = true
         }
     }
+//    fun turnToClearly(navController: NavHostController, route: String) {
+//        navController.navigate(route) {
+//            popUpTo(route) { inclusive = false } // 只保留当前 route，不影响返回手势
+//            launchSingleTop = true
+//            restoreState = true
+//        }
+//    }
 
-    fun turnToAndClear(navController: NavHostController, route: String) {
-        navController.navigate(route) {
-            popUpTo(navController.graph.startDestinationId) {
-                inclusive = true
-            }
-            launchSingleTop = true
-            restoreState = true
-        }
-    }
+
+//    fun turnToAndClear(navController: NavHostController, route: String) {
+//        navController.navigate(route) {
+//            popUpTo(navController.graph.startDestinationId) { saveState = true }
+//            launchSingleTop = true
+//            restoreState = true
+//        }
+//    }
+
 
     const val ANIMATION_SPEED = 400
 

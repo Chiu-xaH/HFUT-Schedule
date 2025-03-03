@@ -31,8 +31,10 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
-import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.beans.zjgd.ChangeLimitResponse
+import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -83,14 +85,9 @@ fun CardLimit(vm : NetWorkViewModel, vmUI : UIViewModel) {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        containerColor = Color.Transparent,
         topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = Color.Transparent,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                title = { Text("限额") }
-            )
+            CustomTopBar("限额")
         },
     ) { innerPadding ->
         Column(
@@ -104,7 +101,7 @@ fun CardLimit(vm : NetWorkViewModel, vmUI : UIViewModel) {
             val bd2 = BigDecimal(amt.toString())
             val amts = bd.setScale(0, RoundingMode.HALF_UP).toString()
             //  var Num by remember { mutableStateOf(sliderPosition.toString()) }
-            ListItem(
+            TransplantListItem(
                 headlineContent = { Text(text = "自主转账限额 ￥${limit}")},
                 leadingContent = { Icon(painterResource(id = R.drawable.do_not_disturb_on), contentDescription = "") }
             )
@@ -128,7 +125,7 @@ fun CardLimit(vm : NetWorkViewModel, vmUI : UIViewModel) {
                     modifier = Modifier.padding(horizontal = 25.dp)
                 )
             }
-            ListItem(
+            TransplantListItem(
                 headlineContent = { Text(text = "自主转账金额 ￥${amt}")},
                 leadingContent = { Icon(painterResource(id = R.drawable.do_not_disturb_on), contentDescription = "") }
             )

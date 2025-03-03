@@ -39,10 +39,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
+import com.hfut.schedule.ui.utils.style.textFiledTransplant
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,25 +65,19 @@ fun InfoSet() {
 
     Scaffold(
                 modifier = Modifier.fillMaxSize(),
+        containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("信息配置") },
-                        actions = {
-                            FilledTonalIconButton(
-                                modifier = Modifier.scale(scale.value).padding(25.dp),
-                                interactionSource = interactionSource,
-                                onClick = {
-                                   // showBottomSheet_inputchanged
-                                    SharePrefs.saveString("Yuntoken",inputToken)
-                                    Toast.makeText(MyApplication.context,"已保存",Toast.LENGTH_SHORT).show()
-                                }
-                            ) { Icon(Icons.Filled.Check, contentDescription = "") }
-                        }
-                    )
+                    CustomTopBar("信息配置") {
+                        FilledTonalIconButton(
+//                            modifier = Modifier.scale(scale.value).padding(25.dp),
+                            interactionSource = interactionSource,
+                            onClick = {
+                                // showBottomSheet_inputchanged
+                                SharePrefs.saveString("Yuntoken",inputToken)
+                                Toast.makeText(MyApplication.context,"已保存",Toast.LENGTH_SHORT).show()
+                            }
+                        ) { Icon(Icons.Filled.Check, contentDescription = "") }
+                    }
                 },
             ) { innerPadding ->
                 Column(modifier = Modifier.padding(innerPadding).fillMaxSize()
@@ -105,7 +101,7 @@ fun InfoSet() {
                             label = { Text("token") },
                             singleLine = true,
                             shape = MaterialTheme.shapes.medium,
-                            colors = TextFieldDefaults.textFieldColors(focusedIndicatorColor = Color.Transparent, unfocusedIndicatorColor = Color.Transparent,),
+                            colors = textFiledTransplant(),
                             leadingIcon = { Icon( painterResource(R.drawable.key), contentDescription = "Localized description") }
                         )
                     }

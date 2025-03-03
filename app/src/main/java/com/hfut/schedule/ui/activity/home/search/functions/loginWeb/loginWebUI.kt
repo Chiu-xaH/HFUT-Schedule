@@ -66,11 +66,11 @@ import androidx.compose.ui.window.Dialog
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.beans.zjgd.FeeType
-import com.hfut.schedule.logic.utils.ReservDecimal
-import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.parse.ReservDecimal
+import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter
-import com.hfut.schedule.logic.utils.reEmptyLiveDta
+import com.hfut.schedule.logic.utils.data.reEmptyLiveDta
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.getWebInfoFromZJGD
 import com.hfut.schedule.ui.activity.home.search.functions.electric.PayFor
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
@@ -78,8 +78,11 @@ import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.CampusI
 import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.getCampus
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomButton
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
+import com.hfut.schedule.ui.utils.components.LoadingLargeCard
 import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -294,13 +297,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel) {
         ) {
             Column(
             ) {
-                TopAppBar(
-                    colors = TopAppBarDefaults.mediumTopAppBarColors(
-                        containerColor = Color.Transparent,
-                        titleContentColor = MaterialTheme.colorScheme.primary,
-                    ),
-                    title = { Text("支付订单确认") },
-                )
+                CustomTopBar("支付订单确认")
 //                val info by remember { mutableStateOf("") }
                 var int by remember { mutableIntStateOf(payNumber.toInt()) }
                 if(int > 0) {
@@ -311,68 +308,46 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel) {
         }
     }
 //////////////////////////////布局区///////////////////////////////////
-    TopAppBar(
-        colors = TopAppBarDefaults.mediumTopAppBarColors(
-            containerColor = Color.Transparent,
-            titleContentColor = MaterialTheme.colorScheme.primary,
-        ),
-        title = { Text("校园网-宣城校区") },
-        actions = {
-            FilledTonalIconButton(
-                onClick = {
-                    refreshFlow()
-                },
-                modifier = Modifier.padding(horizontal = AppHorizontalDp())
-            ) {
-                Icon(painterResource(R.drawable.rotate_right),null)
-            }
-        }
-    )
-    DividerTextExpandedWith(text = "数据",false) {
-        Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = AppHorizontalDp()),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = AppHorizontalDp(), vertical = 5.dp).scale(scale2.value),
-            shape = MaterialTheme.shapes.medium,
+    CustomTopBar("校园网-宣城校区") {
+        FilledTonalIconButton(
+            onClick = {
+                refreshFlow()
+            },
         ) {
-            Column(modifier = Modifier.blur(blurSize).scale(scale.value)) {
-                ListItem(
-                    headlineContent = {
-                        Text(
-                            text = "已用 $str GB",
-                            fontSize = 28.sp,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    },
-                    trailingContent = {
-                        Text(text = "$flow MB")
-                    }
-                )
-                if(isXuancheng) {
-                    Row {
-                        ListItem(
-                            headlineContent = { Text(text = "余额 ￥${fee}") },
-                            overlineContent = { Text("1GB / ￥1") },
-                            leadingContent = { Icon(painter = painterResource(id = R.drawable.paid), contentDescription = "")},
-                            modifier = Modifier.weight(.5f)
-                        )
-                        ListItem(
-                            overlineContent = { Text(text = "月免费额度 50GB") },
-                            headlineContent = { Text(text = "已用 $percent%", fontWeight = FontWeight.Bold)},
-                            leadingContent = { Icon(painterResource(R.drawable.percent), contentDescription = "Localized description",) },
-                            modifier = Modifier.weight(.5f)
-                        )
-                    }
-                    BottomButton(
-                        onClick = {
-                            if(!loading) {
-                                showDialog2 = true
-                            }
-                        },
-                        text = "快速充值"
+            Icon(painterResource(R.drawable.rotate_right),null)
+        }
+    }
+    DividerTextExpandedWith(text = "数据",false) {
+        LoadingLargeCard(
+            title = "已用 $str GB",
+            loading = loading,
+            rightTop =  {
+                Text(text = "$flow MB")
+            }
+        ) {
+            if(isXuancheng) {
+                Row {
+                    TransplantListItem(
+                        headlineContent = { Text(text = "余额 ￥${fee}") },
+                        overlineContent = { Text("1GB / ￥1") },
+                        leadingContent = { Icon(painter = painterResource(id = R.drawable.paid), contentDescription = "")},
+                        modifier = Modifier.weight(.5f)
                     )
+                    TransplantListItem(
+                        overlineContent = { Text(text = "月免费额度 50GB") },
+                        headlineContent = { Text(text = "已用 $percent%", fontWeight = FontWeight.Bold)},
+                        leadingContent = { Icon(painterResource(R.drawable.percent), contentDescription = "Localized description",) },
+                        modifier = Modifier.weight(.5f)
+                    )
+                }
+                BottomButton(
+                    onClick = {
+                        if(!loading) {
+                            showDialog2 = true
+                        }
+                    },
+                    text = "快速充值"
+                )
 //                    Divider()
 //                    Box(Modifier.background(MaterialTheme.colorScheme.secondaryContainer)) {
 //                        FilledTonalButton(
@@ -388,39 +363,39 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel) {
 //                            Text("快速充值")
 //                        }
 //                    }
-                } else {
-                    Divider()
-                    Row {
-                        Box(modifier = Modifier.background(MaterialTheme.colorScheme.primary).fillMaxWidth().weight(.5f)) {
-                            Button(
-                                modifier = Modifier.fillMaxWidth(),
-                                shape = RoundedCornerShape(0.dp),
-                                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                                onClick = {
-                                    vmUI.loginWeb()
-                                    vmUI.loginWeb2()
-                                }
-                            ) {
-                                Text(textLogin)
+            } else {
+                Divider()
+                Row {
+                    Box(modifier = Modifier.background(MaterialTheme.colorScheme.primary).fillMaxWidth().weight(.5f)) {
+                        Button(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(0.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                            onClick = {
+                                vmUI.loginWeb()
+                                vmUI.loginWeb2()
                             }
+                        ) {
+                            Text(textLogin)
                         }
-                        Box(modifier = Modifier.background(MaterialTheme.colorScheme.secondaryContainer).fillMaxWidth().weight(.5f)) {
-                            FilledTonalButton(
-                                modifier = Modifier.fillMaxWidth(),
-                                colors = ButtonDefaults.filledTonalButtonColors(containerColor = Color.Transparent),
-                                shape = RoundedCornerShape(0.dp),
-                                onClick = {
-                                    vmUI.loginWeb()
-                                    vmUI.loginWeb2()
-                                }
-                            ) {
-                                Text(textLogout)
+                    }
+                    Box(modifier = Modifier.background(MaterialTheme.colorScheme.secondaryContainer).fillMaxWidth().weight(.5f)) {
+                        FilledTonalButton(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.filledTonalButtonColors(containerColor = Color.Transparent),
+                            shape = RoundedCornerShape(0.dp),
+                            onClick = {
+                                vmUI.loginWeb()
+                                vmUI.loginWeb2()
                             }
+                        ) {
+                            Text(textLogout)
                         }
                     }
                 }
             }
         }
+
 
         Spacer(Modifier.height(10.dp))
         if(isXuancheng) {
@@ -457,20 +432,20 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel) {
         }
     }
     DividerTextExpandedWith(text = "使用说明", defaultIsExpanded = false) {
-        ListItem(
+        TransplantListItem(
             headlineContent = { Text(text = "WLAN连接'hfut-wlan'后自动弹出认证") },
             supportingContent = { Text(text = "宣城校区内两大校园网中心位于图书馆、教室，WLAN质量最好") },
             leadingContent = {
                 Icon(painter = painterResource(id = R.drawable.wifi_tethering), contentDescription = "")
             }
         )
-        ListItem(
+        TransplantListItem(
             headlineContent = { Text(text = "认证初始密码位于 查询中心-个人信息-密码信息") },
             leadingContent = {
                 Icon(painter = painterResource(id = R.drawable.key), contentDescription = "")
             }
         )
-        ListItem(
+        TransplantListItem(
             headlineContent = { Text(text = "部分内网必须连接校园网打开") },
             supportingContent = {
                 Text(text = "学校提供WEBVPN供外网访问部分内网地址,可在 查询中心-网址导航 打开")
@@ -479,7 +454,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel) {
                 Icon(painter = painterResource(id = R.drawable.vpn_key), contentDescription = "")
             }
         )
-        ListItem(
+        TransplantListItem(
             headlineContent = { Text(text = "免费时期") },
             supportingContent = {
                 Text(text = "宣城校区法定节假日与寒暑假不限额度，其余时间限额月50GB；合肥校区不限额")
@@ -488,7 +463,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel) {
                 Icon(painter = painterResource(id = R.drawable.paid), contentDescription = "")
             }
         )
-        ListItem(
+        TransplantListItem(
             headlineContent = { Text(text = "合肥两校区的适配") },
             supportingContent = {
                 Text(text = "开发者得不到接口，如有需求可抓包通过联系方式提交(选项-维护关于)")

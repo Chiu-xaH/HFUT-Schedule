@@ -35,7 +35,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.LoginViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
-import com.hfut.schedule.logic.utils.DateTimeManager
+import com.hfut.schedule.logic.utils.DateTimeUtils
 import com.hfut.schedule.ui.activity.home.focus.funictions.AddButton
 import com.hfut.schedule.ui.activity.home.focus.funictions.AddItem
 import com.hfut.schedule.ui.activity.home.focus.funictions.AddedItems
@@ -103,13 +103,13 @@ fun TodayScreenNoLogin(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding
             .pullRefresh(states)){
             val scrollstate = rememberLazyListState()
             val shouldShowAddButton by remember { derivedStateOf { scrollstate.firstVisibleItemScrollOffset == 0 } }
-            var date = DateTimeManager.Date_MM_dd
+            var date = DateTimeUtils.Date_MM_dd
             val todaydate = (date?.substring(0, 2) ) + date?.substring(3, 5)
-            var week = DateTimeManager.Benweeks.toInt()
+            var week = DateTimeUtils.Benweeks.toInt()
             //  val switch_api = SharePrefs.prefs.getBoolean("SWITCHMYAPI", apiCheck())
-            var weekdaytomorrow = DateTimeManager.dayweek + 1
-            var weekdayToday = DateTimeManager.dayweek
-            var Nextweek = DateTimeManager.Benweeks.toInt()
+            var weekdaytomorrow = DateTimeUtils.dayweek + 1
+            var weekdayToday = DateTimeUtils.dayweek
+            var Nextweek = DateTimeUtils.Benweeks.toInt()
             //当今天为周日时，变0为7
             //当第二天为下一周的周一时，周数+1
             when(weekdaytomorrow) { 1 -> Nextweek += 1 }

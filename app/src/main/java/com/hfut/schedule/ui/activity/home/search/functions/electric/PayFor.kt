@@ -52,12 +52,13 @@ import com.hfut.schedule.logic.beans.zjgd.FeeType
 import com.hfut.schedule.logic.beans.zjgd.PayStep1Response
 import com.hfut.schedule.logic.beans.zjgd.PayStep2Response
 import com.hfut.schedule.logic.beans.zjgd.PayStep3Response
-import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.CirclePoint
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.KeyBoard
 
 import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.getIdentifyID
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.LittleDialog
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.statusUI
@@ -152,14 +153,9 @@ fun PayFor(vm : NetWorkViewModel, payNumber : Int, tipInfo : String, json : Stri
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("支付结果") },
-                    )
+                    CustomTopBar("支付结果")
                 },
             ) { innerPadding ->
                 Column(

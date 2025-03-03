@@ -59,9 +59,9 @@ import com.hfut.schedule.logic.beans.community.LoginCommunityResponse
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.beans.jxglstu.TransferData
 import com.hfut.schedule.logic.utils.ClipBoard
-import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.logic.utils.reEmptyLiveDta
+import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.reEmptyLiveDta
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.getUserInfo
 import com.hfut.schedule.ui.activity.home.search.functions.life.countFunc
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
@@ -69,6 +69,7 @@ import com.hfut.schedule.ui.activity.shower.home.function.ShowerStatusUI
 import com.hfut.schedule.ui.activity.shower.home.function.StatusMsgResponse
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CardNormalDp
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.ScrollText
@@ -136,14 +137,9 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String) {
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("结果") },
-                    )
+                    CustomTopBar("结果")
                 },
             ) { innerPadding ->
                 Column(
@@ -167,14 +163,9 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String) {
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("手机号 (教务要求)") },
-                    )
+                    CustomTopBar("手机号 (教务要求)")
                 },
             ) { innerPadding ->
                 Column(

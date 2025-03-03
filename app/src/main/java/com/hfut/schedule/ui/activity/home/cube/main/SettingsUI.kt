@@ -32,7 +32,7 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.LoginViewModel
 import com.hfut.schedule.logic.enums.FixBarItems
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.fix.about.AboutUI
 import com.hfut.schedule.ui.activity.fix.fix.FixUI
 import com.hfut.schedule.ui.activity.home.cube.items.NavUIs.APPScreen

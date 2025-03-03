@@ -24,8 +24,8 @@ import com.hfut.schedule.logic.beans.MyAPIResponse
 //import com.hfut.schedule.logic.beans.newSchedule
 //import com.hfut.schedule.logic.utils.AddCalendar
 //import com.hfut.schedule.logic.utils.DateTimeManager
-//import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+//import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 //import com.hfut.schedule.ui.activity.home.focus.funictions.openOperation
 //import com.hfut.schedule.ui.utils.MyCard
 //import com.hfut.schedule.ui.utils.MyToast

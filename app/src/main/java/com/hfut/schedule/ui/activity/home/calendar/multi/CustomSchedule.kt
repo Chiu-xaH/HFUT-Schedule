@@ -57,10 +57,10 @@ import androidx.compose.ui.unit.sp
 import com.google.gson.Gson
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.beans.jxglstu.datumResponse
-import com.hfut.schedule.logic.utils.DateTimeManager
-import com.hfut.schedule.logic.utils.Semseter.parseSemseter
-import com.hfut.schedule.logic.utils.Semseter.getSemseterFromCloud
-import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.DateTimeUtils
+import com.hfut.schedule.logic.utils.parse.Semseter.parseSemseter
+import com.hfut.schedule.logic.utils.parse.Semseter.getSemseterFromCloud
+import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.ui.activity.home.calendar.jxglstu.getNewWeek
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.MyToast
@@ -206,9 +206,9 @@ fun CustomSchedules(showAll : Boolean,
 
 
     var Bianhuaweeks by rememberSaveable { mutableStateOf(
-        if(DateTimeManager.weeksBetween > 20) {
+        if(DateTimeUtils.weeksBetween > 20) {
             getNewWeek()
-        } else DateTimeManager.weeksBetween
+        } else DateTimeUtils.weeksBetween
     ) }
 
 
@@ -796,7 +796,7 @@ fun CustomSchedules(showAll : Boolean,
                         if (shouldShowAddButton) {
                             ExtendedFloatingActionButton(
                                 onClick = {
-                                    Bianhuaweeks = DateTimeManager.Benweeks
+                                    Bianhuaweeks = DateTimeUtils.Benweeks
                                     if(showAll) UpdateAll() else Update()
                                     onDateChange(LocalDate.now())
                                 },

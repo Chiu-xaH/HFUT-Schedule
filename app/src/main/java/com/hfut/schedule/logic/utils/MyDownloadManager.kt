@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.Environment
 import androidx.annotation.RequiresApi
 import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.ocr.TesseractUtils
 import com.hfut.schedule.logic.utils.ocr.TesseractUtils.moveDownloadedModel
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.installApk

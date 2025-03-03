@@ -21,7 +21,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
+//import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
@@ -59,11 +59,12 @@ import com.hfut.schedule.logic.beans.jxglstu.CourseSearchResponse
 import com.hfut.schedule.logic.beans.jxglstu.lessonResponse
 import com.hfut.schedule.logic.beans.jxglstu.lessons
 import com.hfut.schedule.logic.utils.ClipBoard
-import com.hfut.schedule.logic.utils.DateTimeManager
-import com.hfut.schedule.logic.utils.DateTimeManager.TimeState.*
+import com.hfut.schedule.logic.utils.DateTimeUtils
+import com.hfut.schedule.logic.utils.DateTimeUtils.TimeState.*
 import com.hfut.schedule.ui.activity.home.search.functions.failRate.permit
 import com.hfut.schedule.ui.activity.home.search.functions.failRate.ApiToFailRate
 import com.hfut.schedule.ui.activity.home.search.functions.teacherSearch.ApiToTeacherSearch
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.EmptyUI
 import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.MyCustomCard
@@ -101,14 +102,9 @@ fun CourseTotalUI(json : String?,isSearch : Boolean,sortType: Boolean,vm : NetWo
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text(list[numItem].course.nameZh) },
-                    )
+                    CustomTopBar(list[numItem].course.nameZh)
                 },
             ) { innerPadding ->
                 Column(
@@ -224,14 +220,9 @@ fun DetailItems(lessons: lessons,vm : NetWorkViewModel) {
 
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("挂科率 ${lessons.course.nameZh}") }
-                    )
+                    CustomTopBar("挂科率 ${lessons.course.nameZh}")
                 },
             ) { innerPadding ->
                 Column(
@@ -259,14 +250,9 @@ fun DetailItems(lessons: lessons,vm : NetWorkViewModel) {
 
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("教师检索 $teacherTitle") }
-                    )
+                    CustomTopBar("教师检索 $teacherTitle")
                 },
             ) { innerPadding ->
                 Column(
@@ -285,7 +271,7 @@ fun DetailItems(lessons: lessons,vm : NetWorkViewModel) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 Column() {
                     Row {
-                        ListItem(
+                        TransplantListItem(
                             overlineContent = { Text("类型") },
                             headlineContent = { lists.courseType.nameZh.let { Text(it) } },
 
@@ -301,7 +287,7 @@ fun DetailItems(lessons: lessons,vm : NetWorkViewModel) {
                                 .weight(.5f),
                         )
                         if(lists.scheduleWeeksInfo != null)
-                            ListItem(
+                            TransplantListItem(
                                 overlineContent = { Text("周数") },
                                 headlineContent = { ScrollText(lists.scheduleWeeksInfo) },
 
@@ -320,7 +306,7 @@ fun DetailItems(lessons: lessons,vm : NetWorkViewModel) {
 
                     Row {
                         if(lists.stdCount != null)
-                        ListItem(
+                            TransplantListItem(
                             overlineContent = { Text("人数" ) },
                             headlineContent = { Text(lists.stdCount.toString()) },
 
@@ -336,7 +322,7 @@ fun DetailItems(lessons: lessons,vm : NetWorkViewModel) {
                                 .weight(.5f),
                         )
                         if(lists.course.credits != null)
-                            ListItem(
+                            TransplantListItem(
                                 overlineContent = { Text("学分") },
                                 headlineContent = { Text(lists.course.credits.toString()) },
 
@@ -362,7 +348,7 @@ fun DetailItems(lessons: lessons,vm : NetWorkViewModel) {
                                 showBottomSheet_Teacher = true
                             }
                         }) {
-                            ListItem(
+                            TransplantListItem(
                                 overlineContent = { Text("教师 " + if(teacherNum == 1) "" else (i+1).toString()) },
                                 headlineContent = {
                                     if (teacherList != null) {
@@ -378,7 +364,7 @@ fun DetailItems(lessons: lessons,vm : NetWorkViewModel) {
                                 modifier = Modifier
                                     .weight(.5f),
                             )
-                            ListItem(
+                            TransplantListItem(
                                 headlineContent = {
                                     if (teacherList != null) {
                                         val t = teacherList.teacher.title?.nameZh ?: "未知"
@@ -407,7 +393,7 @@ fun DetailItems(lessons: lessons,vm : NetWorkViewModel) {
                     Row {
                         var department = lists.openDepartment.nameZh
                         if(department.contains("（")) department = department.substringBefore("（")
-                        ListItem(
+                        TransplantListItem(
                             overlineContent = { Text("开设学院") },
                             headlineContent = { Text(department) },
 
@@ -419,7 +405,7 @@ fun DetailItems(lessons: lessons,vm : NetWorkViewModel) {
                                 .clickable {}
                                 .weight(.5f),
                         )
-                        ListItem(
+                        TransplantListItem(
                             overlineContent = { Text("考察方式 ${lists.examMode.nameZh.toString() }") },
                             headlineContent = { ScrollText(if(lists.planExamWeek != null)"预计第${lists.planExamWeek.toString()}周" else "无时间") },
 
@@ -439,7 +425,7 @@ fun DetailItems(lessons: lessons,vm : NetWorkViewModel) {
                         val code = lists.code
                         val classes = if(code.contains("--")) code.substringAfter("--") else null
                         val classCode = if(code.contains("--")) code.substringBefore("--") else null
-                        ListItem(
+                        TransplantListItem(
                             overlineContent = { Text("课程代码--教学班") },
                             headlineContent = { Text(code) },
 
@@ -455,7 +441,7 @@ fun DetailItems(lessons: lessons,vm : NetWorkViewModel) {
                                 }
                                 .weight(.5f),
                         )
-                        ListItem(
+                        TransplantListItem(
                             overlineContent = classes?.let{ { Text(it + "班") } },
                             headlineContent = { Text("教学班对比") },
                             leadingContent = {
@@ -472,7 +458,7 @@ fun DetailItems(lessons: lessons,vm : NetWorkViewModel) {
                         )
                     }
                     Row {
-                        ListItem(
+                        TransplantListItem(
                             headlineContent = { Text(text = "挂科率查询") },
 
                             leadingContent = {
@@ -488,7 +474,7 @@ fun DetailItems(lessons: lessons,vm : NetWorkViewModel) {
                                 }
                                 .weight(.5f),
                         )
-                        ListItem(
+                        TransplantListItem(
                             headlineContent = { Text("同班同学") },
                             trailingContent = {
                             },
@@ -520,7 +506,7 @@ fun DetailItems(lessons: lessons,vm : NetWorkViewModel) {
 //                        )
                     }
                     if(lists.nameZh != null)
-                        ListItem(
+                        TransplantListItem(
                             overlineContent = { Text("班级") },
                             headlineContent = { Text(lists.nameZh.toString()) },
 
@@ -535,7 +521,7 @@ fun DetailItems(lessons: lessons,vm : NetWorkViewModel) {
                         )
 
                     if(lists.scheduleText.dateTimePlacePersonText.textZh != null)
-                    ListItem(
+                        TransplantListItem(
                         overlineContent = { Text("上课安排") },
                         headlineContent = { Text(lists.scheduleText.dateTimePlacePersonText.textZh ) },
 
@@ -550,7 +536,7 @@ fun DetailItems(lessons: lessons,vm : NetWorkViewModel) {
                     )
 
                     if(lists.remark != null)
-                        ListItem(
+                        TransplantListItem(
                             overlineContent = { Text("备注") },
                             headlineContent = { Text(lists.remark) },
                             trailingContent = {

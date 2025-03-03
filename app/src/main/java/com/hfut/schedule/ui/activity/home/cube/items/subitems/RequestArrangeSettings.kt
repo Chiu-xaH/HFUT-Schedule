@@ -24,8 +24,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
+import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -33,15 +35,10 @@ import java.math.RoundingMode
 @Composable
 fun RequestArrange() {
     Scaffold(
+        containerColor = Color.Transparent,
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = Color.Transparent,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                title = { Text("请求范围") },
-            )
+            CustomTopBar("请求范围")
         },
     ) { innerPadding ->
         Column(modifier = Modifier
@@ -65,7 +62,7 @@ fun ArrangeItem(Title : String,Icon : Int,SaveTitle : String) {
         val bd = BigDecimal(sliderPosition.toString())
         val str = bd.setScale(0, RoundingMode.HALF_UP).toString()
       //  var Num by remember { mutableStateOf(sliderPosition.toString()) }
-        ListItem(
+    TransplantListItem(
             headlineContent = { Text(text = "$Title   $str 条/页")},
             leadingContent = { Icon(painterResource(id = Icon), contentDescription = "") },
             supportingContent = {

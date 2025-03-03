@@ -38,12 +38,13 @@ import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
-import com.hfut.schedule.logic.utils.SharePrefs.saveString
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.beans.lepaoyun.LePaoYunHomeResponse
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CardNormalColor
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.LittleDialog
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
@@ -153,14 +154,9 @@ fun LePaoYunUI() {
 
         Scaffold(
             modifier = Modifier.fillMaxSize(),
+            containerColor = Color.Transparent,
             topBar = {
-                TopAppBar(
-                    colors = TopAppBarDefaults.mediumTopAppBarColors(
-                        containerColor = Color.Transparent,
-                        titleContentColor = MaterialTheme.colorScheme.primary,
-                    ),
-                    title = { Text(cralist.raName) }
-                )
+                CustomTopBar(cralist.raName)
             },) { innerPadding ->
             Column(
                 modifier = Modifier

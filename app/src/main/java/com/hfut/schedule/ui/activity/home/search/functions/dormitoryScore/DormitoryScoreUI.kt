@@ -60,11 +60,12 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
-import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.saveString
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CardNormalDp
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.SmallCard
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import kotlinx.coroutines.CoroutineScope
@@ -130,53 +131,47 @@ fun DormitoryScoreUI(vm : NetWorkViewModel) {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        containerColor = Color.Transparent,
         topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = Color.Transparent,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                title = { Text("寝室评分-宣城校区") },
-                actions = {
-                    Row(modifier = Modifier.padding(horizontal = AppHorizontalDp())) {
-                        if(showitem4)
+            CustomTopBar("寝室评分-宣城校区") {
+                Row() {
+                    if(showitem4)
                         IconButton(onClick = {RoomNumber = RoomNumber.replaceFirst(".$".toRegex(), "")}) {
                             Icon(painter = painterResource(R.drawable.backspace), contentDescription = "description") }
-                        FilledTonalIconButton(onClick = {
-                            CoroutineScope(Job()).launch {
-                                async {
-                                    saveString("BuildNumber", BuildingsNumber)
-                                    saveString("RoomNumber", RoomNumber)
-                                    SharePrefs.saveBoolean("NS",true,NSBoolean)
-                                    showitem4 = false
+                    FilledTonalIconButton(onClick = {
+                        CoroutineScope(Job()).launch {
+                            async {
+                                saveString("BuildNumber", BuildingsNumber)
+                                saveString("RoomNumber", RoomNumber)
+                                SharePrefs.saveBoolean("NS",true,NSBoolean)
+                                showitem4 = false
+                            }
+                            async {
+                                Handler(Looper.getMainLooper()).post{
+                                    vm.XuanquData.value = "{}"
                                 }
-                                async {
-                                    Handler(Looper.getMainLooper()).post{
-                                        vm.XuanquData.value = "{}"
-                                    }
-                                    clicked = true
-                                    loading = true
-                                    saveString("Room",code)
-                                    saveString("XUANQUroom",BuildingsNumber + NS + RoomNumber)
-                                    vm.SearchXuanqu(BuildingsNumber + NS + RoomNumber) }.await()
-                                async {
-                                    Handler(Looper.getMainLooper()).post{
-                                        vm.XuanquData.observeForever { result ->
-                                            // Log.d("r",result)
-                                            if(result.contains("div")) {
-                                                CoroutineScope(Job()).launch {
-                                                    async { loading = false }
-                                                    async { getDormitoryScore(vm) }
-                                                }
+                                clicked = true
+                                loading = true
+                                saveString("Room",code)
+                                saveString("XUANQUroom",BuildingsNumber + NS + RoomNumber)
+                                vm.SearchXuanqu(BuildingsNumber + NS + RoomNumber) }.await()
+                            async {
+                                Handler(Looper.getMainLooper()).post{
+                                    vm.XuanquData.observeForever { result ->
+                                        // Log.d("r",result)
+                                        if(result.contains("div")) {
+                                            CoroutineScope(Job()).launch {
+                                                async { loading = false }
+                                                async { getDormitoryScore(vm) }
                                             }
                                         }
                                     }
                                 }
                             }
-                        }) { Icon(painter = painterResource(R.drawable.search), contentDescription = "description") }
-                    }
+                        }
+                    }) { Icon(painter = painterResource(R.drawable.search), contentDescription = "description") }
                 }
-            )
+            }
         },
     ) { innerPadding ->
         Column(

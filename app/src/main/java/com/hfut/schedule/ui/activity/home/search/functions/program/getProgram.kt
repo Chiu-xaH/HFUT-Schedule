@@ -12,8 +12,8 @@ import com.hfut.schedule.logic.beans.jxglstu.ProgramPartTwo
 import com.hfut.schedule.logic.beans.jxglstu.ProgramResponse
 import com.hfut.schedule.logic.beans.jxglstu.ProgramShow
 import com.hfut.schedule.logic.beans.jxglstu.item
-import com.hfut.schedule.logic.utils.SharePrefs.saveString
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 
 
 fun getProgram()  {

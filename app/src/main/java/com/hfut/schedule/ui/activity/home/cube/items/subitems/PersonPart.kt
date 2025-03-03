@@ -33,16 +33,17 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.beans.UserInfo
-import com.hfut.schedule.logic.utils.APPVersion
+import com.hfut.schedule.logic.utils.VersionUtils
 import com.hfut.schedule.logic.utils.AndroidVersion
-import com.hfut.schedule.logic.utils.DateTimeManager
-import com.hfut.schedule.logic.utils.ReservDecimal
-import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.DateTimeUtils
+import com.hfut.schedule.logic.utils.parse.ReservDecimal
+import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.DepartmentIcons
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -72,15 +73,15 @@ fun PersonPart() {
             {
 
 
-                ListItem(
+                TransplantListItem(
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.person), contentDescription = "")},
                     headlineContent = { Text(text = getPersonInfo().name ?: "游客")  },
                     trailingContent = {
                         if(startDate != null && endDate != null && startDate != "" && endDate != "") {
-                            Text(text = "已陪伴 ${ReservDecimal.reservDecimal(DateTimeManager.getPercent(startDate,endDate),1)}%")
+                            Text(text = "已陪伴 ${ReservDecimal.reservDecimal(DateTimeUtils.getPercent(startDate,endDate),1)}%")
                         } else { null }
                         },
-                    colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+//                    colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                     modifier = Modifier.clickable {
                         expandItems = !expandItems
                         SharePrefs.saveBoolean("expandPerson",true,expandItems)
@@ -101,7 +102,7 @@ fun PersonPart() {
                     Column {
                         getPersonInfo().username?.let{
                             Row {
-                                ListItem(
+                                TransplantListItem(
                                     overlineContent = { Text(text = "学号") },
                                     headlineContent = {  ScrollText(text = it)  },
                                     leadingContent = {
@@ -111,24 +112,24 @@ fun PersonPart() {
                                         )
                                     },
                                     modifier = Modifier.weight(0.5f),
-                                    colors = ListItemDefaults.colors(containerColor = Color.Transparent)
+//                                    colors = ListItemDefaults.colors(containerColor = Color.Transparent)
                                 )
                             }
                         }
                         getPersonInfo().department?.let {
                             Row {
-                                ListItem(
+                                TransplantListItem(
                                     overlineContent = { getPersonInfo().school?.let { Text(text = it) } },
                                     leadingContent = { DepartmentIcons(name = it) },
                                     headlineContent = {  ScrollText(text = it)  },
                                     modifier = Modifier.weight(0.5f),
-                                    colors = ListItemDefaults.colors(containerColor = Color.Transparent)
+//                                    colors = ListItemDefaults.colors(containerColor = Color.Transparent)
                                 )
                             }
                         }
                         getPersonInfo().classes?.let {
                             Row {
-                                ListItem(
+                                TransplantListItem(
                                     overlineContent = {  Text(text = it)  },
                                     leadingContent = {
                                         Icon(
@@ -139,7 +140,7 @@ fun PersonPart() {
                                     headlineContent = { getPersonInfo().major?.let { ScrollText(text = it) } }
                                     ,
                                     modifier = Modifier.weight(1f),
-                                    colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+//                                    colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                                 )
                             }
                         }
@@ -160,12 +161,12 @@ fun TimesUI() {
 @RequiresApi(Build.VERSION_CODES.O)
 fun getUserInfo() : UserInfo {
 
-    val date = DateTimeManager.Date_yyyy_MM_dd
-    val time = "${DateTimeManager.formattedTime_Hour}:${DateTimeManager.formattedTime_Minute}:00"
+    val date = DateTimeUtils.Date_yyyy_MM_dd
+    val time = "${DateTimeUtils.formattedTime_Hour}:${DateTimeUtils.formattedTime_Minute}:00"
     val dateTime = "$date $time"
 
 
-    val appVersion = APPVersion.getVersionName()
+    val appVersion = VersionUtils.getVersionName()
     val androidSDK = AndroidVersion.sdkInt
     val device = Build.MODEL
 

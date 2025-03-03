@@ -35,12 +35,13 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
-import com.hfut.schedule.logic.utils.DateTimeManager
+import com.hfut.schedule.logic.utils.DateTimeUtils
 import com.hfut.schedule.logic.utils.Starter
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.card.bills.main.getBills
 import com.hfut.schedule.ui.activity.card.bills.main.processTranamt
 import com.hfut.schedule.ui.utils.components.BillsIcons
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.ScrollText
@@ -52,7 +53,7 @@ import java.math.RoundingMode
 @Composable
 fun CardRow(vm : NetWorkViewModel, vmUI : UIViewModel) {
     var todaypay = 0.0
-    var date = DateTimeManager.Date_yyyy_MM_dd
+    var date = DateTimeUtils.Date_yyyy_MM_dd
 
     for (item in 0 until getBills(vm).size) {
         val get = getBills(vm)[item].effectdateStr
@@ -129,16 +130,9 @@ fun TodayBills(vm: NetWorkViewModel) {
 //    val bills = getBills(vm)
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        containerColor = Color.Transparent,
         topBar = {
-            Column {
-                TopAppBar(
-                    colors = TopAppBarDefaults.mediumTopAppBarColors(
-                        containerColor = Color.Transparent,
-                        titleContentColor = MaterialTheme.colorScheme.primary,
-                    ),
-                    title = { Text("今日消费") },
-                )
-            }
+            CustomTopBar("今日消费")
         },
     ) {innerPadding ->
         LazyColumn(modifier = Modifier.padding(innerPadding)) {
@@ -157,7 +151,7 @@ fun TodayCount(vm  : NetWorkViewModel, item : Int) {
     val time =bills.effectdateStr
     val getTime = time.substringBefore(" ")
 
-    if(DateTimeManager.Date_yyyy_MM_dd == getTime) {
+    if(DateTimeUtils.Date_yyyy_MM_dd == getTime) {
         StyleCardListItem(
             headlineContent = { Text(text = name) },
             supportingContent = { Text(text = processTranamt(bills)) },

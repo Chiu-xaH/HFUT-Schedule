@@ -56,10 +56,10 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.beans.NavigationBarItemData
 import com.hfut.schedule.logic.enums.BottomBarItems
-import com.hfut.schedule.logic.utils.APPVersion
+import com.hfut.schedule.logic.utils.VersionUtils
 import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.DataStoreManager
-import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.MyAPIItem
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.getUpdates
@@ -71,9 +71,10 @@ import com.hfut.schedule.ui.activity.home.search.functions.webLab.LabUI
 import com.hfut.schedule.ui.activity.home.search.main.SearchFuncs
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.currentPage
-import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnToAndClear
+import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CustomTabRow
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.style.Round
@@ -101,7 +102,7 @@ fun NoLoginUI(vm : NetWorkViewModel,vm2 : LoginViewModel,vmUI : UIViewModel) {
     val hazeState = remember { HazeState() }
 
     var showBadge by remember { mutableStateOf(false) }
-    if (getUpdates().version != APPVersion.getVersionName()) showBadge = true
+    if (getUpdates().version != VersionUtils.getVersionName()) showBadge = true
     val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR", AndroidVersion.canBlur)
     var blur by remember { mutableStateOf(switchblur) }
 
@@ -135,14 +136,9 @@ fun NoLoginUI(vm : NetWorkViewModel,vm2 : LoginViewModel,vmUI : UIViewModel) {
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("收纳") }
-                    )
+                    CustomTopBar("收纳")
                 },
             ) { innerPadding ->
                 Column(
@@ -263,7 +259,7 @@ fun NoLoginUI(vm : NetWorkViewModel,vm2 : LoginViewModel,vmUI : UIViewModel) {
                             BottomBarItems.SEARCH.name,"查询中心", painterResource(
                                 R.drawable.search), painterResource(R.drawable.search_filledx)
                         ),
-                        NavigationBarItemData(BottomBarItems.SETTINGS.name,"选项", painterResource(if (getUpdates().version == APPVersion.getVersionName()) R.drawable.deployed_code else R.drawable.deployed_code_update), painterResource(if (getUpdates().version == APPVersion.getVersionName()) R.drawable.deployed_code_filled else R.drawable.deployed_code_update_filled ))
+                        NavigationBarItemData(BottomBarItems.SETTINGS.name,"选项", painterResource(if (getUpdates().version == VersionUtils.getVersionName()) R.drawable.deployed_code else R.drawable.deployed_code_update), painterResource(if (getUpdates().version == VersionUtils.getVersionName()) R.drawable.deployed_code_filled else R.drawable.deployed_code_update_filled ))
                     )
                     items.forEach { item ->
                         val interactionSource = remember { MutableInteractionSource() }
@@ -287,7 +283,7 @@ fun NoLoginUI(vm : NetWorkViewModel,vm2 : LoginViewModel,vmUI : UIViewModel) {
                                 if(item == items[2]) bottomBarItems = BottomBarItems.SETTINGS
                                 //     atEnd = !atEnd
                                 if (!selected) {
-                                    turnToAndClear(navController,route)
+                                    turnTo(navController,route)
                                 }
                             },
                             label = { Text(text = item.label) },

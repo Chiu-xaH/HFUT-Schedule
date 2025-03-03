@@ -13,7 +13,7 @@ import java.lang.Exception
 
 object ShareAPK {
     fun shareAPK() {
-        val path : String = "${ MyApplication.context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) }/HFUT-Schedule ${APPVersion.getVersionName()}.apk"
+        val path : String = "${ MyApplication.context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) }/HFUT-Schedule ${VersionUtils.getVersionName()}.apk"
         try {
             getAPK(path)
             val file = File(path)

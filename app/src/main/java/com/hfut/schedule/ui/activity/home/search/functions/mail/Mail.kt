@@ -36,13 +36,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.google.gson.Gson
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.viewmodel.NetWorkViewModel
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
-import com.hfut.schedule.logic.utils.reEmptyLiveDta
+import com.hfut.schedule.logic.utils.data.reEmptyLiveDta
 import com.hfut.schedule.ui.utils.components.BottomTip
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.style.RowHorizontal
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.TransplantListItem
@@ -79,14 +80,9 @@ fun Mail(ifSaved : Boolean,vm : NetWorkViewModel) {
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("学生邮箱") },
-                    )
+                    CustomTopBar("学生邮箱")
                 },) {innerPadding ->
                 Column(
                     modifier = Modifier

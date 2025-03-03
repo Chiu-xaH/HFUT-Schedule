@@ -40,10 +40,11 @@ import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.beans.community.CourseTotalResponse
 import com.hfut.schedule.logic.beans.community.courseDetailDTOList
-import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.DetailItems
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.getTotalCourse
 import com.hfut.schedule.ui.utils.components.CardNormalColor
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.TransplantListItem
@@ -210,14 +211,9 @@ fun CourseDetailApi(isNext : Boolean = false,courseName : String,vm : NetWorkVie
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        containerColor = Color.Transparent,
         topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = Color.Transparent,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                title = { Text(getTotalCourse(json)[numItem].course.nameZh) }
-            )
+            CustomTopBar(getTotalCourse(json)[numItem].course.nameZh)
         },
     ) { innerPadding ->
         Column(

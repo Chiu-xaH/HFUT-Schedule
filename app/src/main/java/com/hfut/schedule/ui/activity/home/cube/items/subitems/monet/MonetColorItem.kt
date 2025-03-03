@@ -39,9 +39,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.AndroidVersion
-import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("SuspiciousIndentation")
@@ -56,7 +57,7 @@ fun MonetColorItem() {
     val switch_color = prefs.getBoolean("SWITCHCOLOR",AndroidVersion.sdkInt < 31)
     var DynamicSwitch by remember { mutableStateOf(switch_color) }
 
-        ListItem(
+    TransplantListItem(
             headlineContent = { Text(text = "取色算法") },
             supportingContent = {
             Column {

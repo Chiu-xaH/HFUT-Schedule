@@ -34,11 +34,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.window.DialogProperties
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.DataStoreManager
-import com.hfut.schedule.logic.utils.JxglstuParseUtils
-import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.JxglstuParseUtils
+import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.ui.activity.home.search.functions.life.countFunc
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.Round
@@ -124,14 +125,9 @@ fun TodayCampusUI(vm : NetWorkViewModel) {
 fun LoginStu(vm : NetWorkViewModel) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        containerColor = Color.Transparent,
         topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = Color.Transparent,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                title = { Text("学工系统登录") },
-            )
+            CustomTopBar("学工系统登录")
         },
     ) { innerPadding ->
         Column(
@@ -164,14 +160,9 @@ fun LoginStuUI(vm : NetWorkViewModel) {
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("学工系统") },
-                    )
+                    CustomTopBar("学工系统")
                 },
             ) { innerPadding ->
                 Column(

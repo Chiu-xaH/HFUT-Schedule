@@ -7,7 +7,7 @@ import com.hfut.schedule.logic.beans.jxglstu.MyApplyResponse
 import com.hfut.schedule.logic.beans.jxglstu.TransferData
 import com.hfut.schedule.logic.beans.jxglstu.TransferResponse
 import com.hfut.schedule.logic.beans.jxglstu.courseType
-import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
 import org.jsoup.Jsoup
 

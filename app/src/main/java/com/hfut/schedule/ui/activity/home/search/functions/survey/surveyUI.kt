@@ -53,11 +53,12 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.enums.PostMode
-import com.hfut.schedule.logic.utils.Semseter.parseSemseter
-import com.hfut.schedule.logic.utils.Semseter.getSemseterFromCloud
-import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.parse.Semseter.parseSemseter
+import com.hfut.schedule.logic.utils.parse.Semseter.getSemseterFromCloud
+import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.EmptyUI
 import com.hfut.schedule.ui.utils.components.LittleDialog
 import com.hfut.schedule.ui.utils.components.MyCustomCard
@@ -222,39 +223,33 @@ fun teacherList(vm : NetWorkViewModel, refresh : (Boolean) -> Unit) {
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("发送教评") },
-                        actions = {
-                            Row(modifier = Modifier.padding(horizontal = AppHorizontalDp())) {
-                                FilledTonalIconButton(
-                                    onClick = {
-                                        showDialog = true
-                                        postMode = PostMode.GOOD
-                                    }) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.thumb_up),
-                                        contentDescription = "description"
-                                    )
-                                }
-                                FilledTonalIconButton(
-                                    onClick = {
-                                        showDialog = true
-                                        // MyToast("下版本开放")
-                                        postMode = PostMode.BAD
-                                    }) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.thumb_down),
-                                        contentDescription = "description"
-                                    )
-                                }
+                    CustomTopBar("发送教评") {
+                        Row(modifier = Modifier.padding(horizontal = AppHorizontalDp())) {
+                            FilledTonalIconButton(
+                                onClick = {
+                                    showDialog = true
+                                    postMode = PostMode.GOOD
+                                }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.thumb_up),
+                                    contentDescription = "description"
+                                )
+                            }
+                            FilledTonalIconButton(
+                                onClick = {
+                                    showDialog = true
+                                    // MyToast("下版本开放")
+                                    postMode = PostMode.BAD
+                                }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.thumb_down),
+                                    contentDescription = "description"
+                                )
                             }
                         }
-                    )
+                    }
                 },
             ) { innerPadding ->
                 Column(

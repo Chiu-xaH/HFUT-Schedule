@@ -50,14 +50,16 @@ import androidx.compose.ui.unit.sp
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.beans.jxglstu.CourseItem
-import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.search.functions.life.countFunc
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CardNormalColor
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.style.CardForListColor
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
+import com.hfut.schedule.ui.utils.components.LargeCard
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.style.Round
@@ -115,14 +117,9 @@ fun ProgramPerformance(vm : NetWorkViewModel) {
 
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text(text = title) },
-                    )
+                    CustomTopBar(title)
                 },
             ) {innerPadding ->
                 Column(
@@ -283,13 +280,7 @@ fun PerformanceInfo(vm: NetWorkViewModel,moduleIndex : Int) {
             onDismissRequest = { showBottomSheet = false },
             sheetState = sheetState,
         ) {
-            TopAppBar(
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = Color.Transparent,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                title = { Text(text = itemForInfo.nameZh) },
-            )
+            CustomTopBar(itemForInfo.nameZh)
 //            val item = if(isOuter) getProgramPerformance(vm)?.outerCourseList?.get(indexs)
 //            else getProgramPerformance(vm)?.moduleList?.get(moduleIndex)?.allCourseList?.get(indexs)
             ProgramInfoItem(itemForInfo)
@@ -483,26 +474,15 @@ fun ProgramInfoItem(item : CourseItem) {
             text = text + term[i] + " "
         }
     }
-    Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = AppHorizontalDp()),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = AppHorizontalDp(), vertical = 5.dp),
-        shape = MaterialTheme.shapes.medium,
-        colors = CardForListColor()
-    ) {
-        ListItem(
-            headlineContent = { Text(text = type,fontSize = 28.sp) },
-            trailingContent = {
-                PerfermanceIcons(item.resultType)
-            }
-        )
 
+    LargeCard(
+        title = type
+    ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
-            ListItem(
+            TransplantListItem(
                 headlineContent = { Text(text = item.code) },
                 overlineContent = { ScrollText(text = item.nameZh) },
                 leadingContent = {
@@ -510,7 +490,7 @@ fun ProgramInfoItem(item : CourseItem) {
                 },
                 modifier = Modifier.weight(.5f)
             )
-            ListItem(
+            TransplantListItem(
                 headlineContent = { Text(text = item.credits.toString()) },
                 overlineContent = { Text(text = "学分") },
                 modifier = Modifier.weight(.5f),
@@ -521,7 +501,7 @@ fun ProgramInfoItem(item : CourseItem) {
         }
 
         if(type == "已通过") {
-            ListItem(
+            TransplantListItem(
                 headlineContent = {
                     Text(
                         text =

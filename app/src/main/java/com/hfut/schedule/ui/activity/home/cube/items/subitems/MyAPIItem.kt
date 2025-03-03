@@ -12,9 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.beans.MyAPIResponse
-import com.hfut.schedule.logic.utils.DateTimeManager
+import com.hfut.schedule.logic.utils.DateTimeUtils
 import com.hfut.schedule.ui.utils.components.APIIcons
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
@@ -38,7 +38,7 @@ fun MyAPIItem() {
     if (id != null) {
         if (id.length == 18) {
             val birthday = id.substring(10, 14)
-            val today = DateTimeManager.Date_MM_dd.replace("-", "")
+            val today = DateTimeUtils.Date_MM_dd.replace("-", "")
             if (today == birthday) {
                content = Birthday()
                 title = "Happy Birthday !"
@@ -76,8 +76,8 @@ fun Birthday() : String {
         if (id.length == 18) {
             val year = id.substring(6, 10)
             val birthday = id.substring(10, 14)
-            val todayYear = DateTimeManager.Date_yyyy.toInt()
-            val today = DateTimeManager.Date_MM_dd.replace("-", "")
+            val todayYear = DateTimeUtils.Date_yyyy.toInt()
+            val today = DateTimeUtils.Date_MM_dd.replace("-", "")
             if (today == birthday) {
                 age = " " + (todayYear - year.toInt()).toString() + " 岁"
                 info = "祝你${age}生日快乐"

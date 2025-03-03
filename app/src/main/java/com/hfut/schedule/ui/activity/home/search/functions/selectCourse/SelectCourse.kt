@@ -69,8 +69,8 @@ import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.enums.SelectType
 import com.hfut.schedule.logic.beans.jxglstu.SelectCourseInfo
 import com.hfut.schedule.logic.beans.jxglstu.SelectPostResponse
-import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
 import com.hfut.schedule.ui.activity.home.main.saved.UpdateCourses
 import com.hfut.schedule.ui.activity.home.search.functions.failRate.ApiToFailRate
@@ -79,6 +79,7 @@ import com.hfut.schedule.ui.activity.home.search.functions.teacherSearch.ApiToTe
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CardNormalColor
 import com.hfut.schedule.ui.utils.components.CardNormalDp
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.LittleDialog
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
@@ -123,33 +124,27 @@ fun SelectCourse(ifSaved : Boolean, vm : NetWorkViewModel) {
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("选课") },
-                        actions = {
-                            Row(modifier = Modifier.padding(horizontal = AppHorizontalDp())) {
-                                FilledTonalIconButton(onClick = { showBottomSheet_info = true }, ) {
-                                    Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")
-                                }
-                                FilledTonalButton(onClick = {
-                                    showDialog = true
-                                }) {
-                                    Text(text = "冲突预览")
-                                }
-                                Spacer(modifier = Modifier.width(5.dp))
-                                FilledTonalButton(onClick = {
-                                    UpdateCourses(vm)
-                                    MyToast("已刷新课表与课程汇总")
-                                }) {
-                                    Text(text = "刷新课表")
-                                }
+                    CustomTopBar("选课") {
+                        Row() {
+                            FilledTonalIconButton(onClick = { showBottomSheet_info = true }, ) {
+                                Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")
+                            }
+                            FilledTonalButton(onClick = {
+                                showDialog = true
+                            }) {
+                                Text(text = "冲突预览")
+                            }
+                            Spacer(modifier = Modifier.width(5.dp))
+                            FilledTonalButton(onClick = {
+                                UpdateCourses(vm)
+                                MyToast("已刷新课表与课程汇总")
+                            }) {
+                                Text(text = "刷新课表")
                             }
                         }
-                    )
+                    }
                 },
             ) { innerPadding ->
                 Column(modifier = Modifier
@@ -172,14 +167,9 @@ fun SelectCourse(ifSaved : Boolean, vm : NetWorkViewModel) {
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("功能说明") }
-                    )
+                    CustomTopBar("功能说明")
                 },
             ) { innerPadding ->
                 Column(modifier = Modifier
@@ -293,14 +283,9 @@ fun SelectCourseList(vm: NetWorkViewModel) {
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("已选课程") },
-                    )
+                    CustomTopBar("已选课程")
                 },
             ) { innerPadding ->
                 Column(modifier = Modifier
@@ -321,21 +306,15 @@ fun SelectCourseList(vm: NetWorkViewModel) {
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { ScrollText(name) },
-                        actions = {
-                            FilledTonalButton(onClick = {
-                                showBottomSheet_selected = true
-                            }, modifier = Modifier.padding(horizontal = AppHorizontalDp())) {
-                                Text(text = "退课")
-                            }
+                    CustomTopBar(name) {
+                        FilledTonalButton(onClick = {
+                            showBottomSheet_selected = true
+                        },) {
+                            Text(text = "退课")
                         }
-                    )
+                    }
                 },) { innerPadding ->
                 Column(modifier = Modifier
                     .padding(innerPadding)
@@ -512,14 +491,9 @@ fun SelectCourseInfo(vm: NetWorkViewModel, courseId : Int, search : String = "")
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text(text = "选课结果") }
-                    )
+                    CustomTopBar("选课结果")
                 },
             ) { innerPadding ->
                 Column(modifier = Modifier
@@ -546,20 +520,13 @@ fun SelectCourseInfo(vm: NetWorkViewModel, courseId : Int, search : String = "")
 //            shape = Round(sheetState_info)
         ) {
             Column {
-                TopAppBar(
-                    colors = TopAppBarDefaults.mediumTopAppBarColors(
-                        containerColor = Color.Transparent,
-                        titleContentColor = MaterialTheme.colorScheme.primary,
-                    ),
-                    title = { ScrollText(text = name) },
-                    actions = {
-                        FilledTonalButton(onClick = {
-                            showBottomSheet = true
-                        }, modifier = Modifier.padding(horizontal = AppHorizontalDp())) {
-                            Text(text = "选课")
-                        }
+                CustomTopBar(name) {
+                    FilledTonalButton(onClick = {
+                        showBottomSheet = true
+                    }) {
+                        Text(text = "选课")
                     }
-                )
+                }
                 courseInfo(num,searchList,vm)
                 Spacer(modifier = Modifier.height(20.dp))
             }
@@ -716,14 +683,9 @@ fun courseInfo(num : Int,lists : List<SelectCourseInfo>,vm: NetWorkViewModel) {
 
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("挂科率 ${data.course.nameZh}") }
-                    )
+                    CustomTopBar("挂科率 ${data.course.nameZh}")
                 },
             ) { innerPadding ->
                 Column(
@@ -751,14 +713,9 @@ fun courseInfo(num : Int,lists : List<SelectCourseInfo>,vm: NetWorkViewModel) {
 
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("教师检索 $teacherTitle") }
-                    )
+                    CustomTopBar("教师检索 $teacherTitle")
                 },
             ) { innerPadding ->
                 Column(
@@ -774,13 +731,13 @@ fun courseInfo(num : Int,lists : List<SelectCourseInfo>,vm: NetWorkViewModel) {
 
 
     Row {
-        ListItem(
+        TransplantListItem(
             overlineContent = { Text(text = "学分")},
             headlineContent = { Text(text = data.course.credits.toString()) },
             leadingContent = { Icon(painter = painterResource(id = R.drawable.filter_vintage), contentDescription = "")},
             modifier = Modifier.weight(.5f)
         )
-        ListItem(
+        TransplantListItem(
             overlineContent = { Text(text = "考试形式")},
             headlineContent = { Text(text = data.examMode.nameZh) },
             leadingContent = { Icon(painter = painterResource(id = R.drawable.draw), contentDescription = "")},
@@ -788,13 +745,13 @@ fun courseInfo(num : Int,lists : List<SelectCourseInfo>,vm: NetWorkViewModel) {
         )
     }
     Row {
-        ListItem(
+        TransplantListItem(
             overlineContent = { Text(text = data.nameZh)},
             headlineContent = { Text(text = data.courseType.nameZh) },
             leadingContent = { Icon(painter = painterResource(id = R.drawable.calendar_view_month), contentDescription = "")},
             modifier = Modifier.weight(.5f)
         )
-        ListItem(
+        TransplantListItem(
             headlineContent = { Text(text = "挂科率查询") },
             leadingContent = { Icon(painterResource(R.drawable.monitoring), contentDescription = "Localized description",) },
             modifier = Modifier
@@ -809,7 +766,7 @@ fun courseInfo(num : Int,lists : List<SelectCourseInfo>,vm: NetWorkViewModel) {
     for(i in teachers.indices step 2) {
         val item = teachers[i]
         Row {
-            ListItem(
+            TransplantListItem(
                 overlineContent = { Text(text = "教师 ${i+1}")},
                 headlineContent = { Text(text = item.nameZh) },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.person), contentDescription = "")},
@@ -820,7 +777,7 @@ fun courseInfo(num : Int,lists : List<SelectCourseInfo>,vm: NetWorkViewModel) {
             )
             if(i+1 < teachers.size) {
                 val item2 = teachers[i+1]
-                ListItem(
+                TransplantListItem(
                     overlineContent = { Text(text = "教师 ${i+2}")},
                     headlineContent = { Text(text = item2.nameZh) },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.person), contentDescription = "")},
@@ -834,7 +791,7 @@ fun courseInfo(num : Int,lists : List<SelectCourseInfo>,vm: NetWorkViewModel) {
     }
 
     Row {
-        ListItem(
+        TransplantListItem(
             overlineContent = { Text(text = "代码")},
             headlineContent = { Text(text = data.code) },
             leadingContent = { Icon(painter = painterResource(id = R.drawable.tag), contentDescription = "")},
@@ -842,7 +799,7 @@ fun courseInfo(num : Int,lists : List<SelectCourseInfo>,vm: NetWorkViewModel) {
         )
     }
     data.dateTimePlace.textZh?.let {
-        ListItem(
+        TransplantListItem(
             overlineContent = { Text(text = "安排")},
             headlineContent = { Text(text = it)  },
             leadingContent = { Icon(painter = painterResource(id = R.drawable.calendar), contentDescription = "")}
@@ -911,18 +868,12 @@ fun haveSelectedCourse(vm: NetWorkViewModel, courseId : Int) {
 //            shape = Round(sheetState_info)
         ) {
             Column {
-                TopAppBar(
-                    colors = TopAppBarDefaults.mediumTopAppBarColors(
-                        containerColor = Color.Transparent,
-                        titleContentColor = MaterialTheme.colorScheme.primary,
-                    ),
-                    title = { ScrollText(text = name) },
-                    actions = {
-                        FilledTonalButton(onClick = { showDialog = true }, modifier = Modifier.padding(horizontal = AppHorizontalDp())) {
-                            Text(text = "退课")
-                        }
+                CustomTopBar(name) {
+                    FilledTonalButton(onClick = { showDialog = true }) {
+                        Text(text = "退课")
                     }
-                )
+                }
+
                 courseInfo(num,lists,vm)
                 Spacer(modifier = Modifier.height(20.dp))
             }
@@ -937,14 +888,9 @@ fun haveSelectedCourse(vm: NetWorkViewModel, courseId : Int) {
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text(text = "调课结果") }
-                    )
+                    CustomTopBar("调课结果")
                 },
             ) { innerPadding ->
                 Column(modifier = Modifier

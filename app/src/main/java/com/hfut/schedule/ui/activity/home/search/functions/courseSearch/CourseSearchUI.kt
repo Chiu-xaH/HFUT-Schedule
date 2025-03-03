@@ -56,15 +56,17 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.ClipBoard
 import com.hfut.schedule.viewmodel.NetWorkViewModel
-import com.hfut.schedule.logic.utils.Semseter.parseSemseter
-import com.hfut.schedule.logic.utils.Semseter.getSemseterFromCloud
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.parse.Semseter.parseSemseter
+import com.hfut.schedule.logic.utils.parse.Semseter.getSemseterFromCloud
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter
-import com.hfut.schedule.logic.utils.reEmptyLiveDta
+import com.hfut.schedule.logic.utils.data.reEmptyLiveDta
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotalUI
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.CardNormalDp
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
@@ -76,7 +78,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CourseSearchUI(vm : NetWorkViewModel) {
-    var className by remember { mutableStateOf( "") }
+    var className by remember { mutableStateOf( getPersonInfo().classes ?: "") }
     var courseName by remember { mutableStateOf("") }
     var courseId by remember { mutableStateOf("") }
 
@@ -119,32 +121,23 @@ fun CourseSearchUI(vm : NetWorkViewModel) {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        containerColor = Color.Transparent,
         topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = Color.Transparent,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                title = { Text("开课查询") },
-                actions = {
-
-                    Row(modifier = Modifier.padding(horizontal = AppHorizontalDp())) {
-                        androidx.compose.animation.AnimatedVisibility(
-                            visible = !showSearch,
-                            enter = NavigateAndAnimationManager.upDownAnimation.enter,
-                            exit = NavigateAndAnimationManager.upDownAnimation.exit
-                        ) {
-                            FilledTonalButton(
-                                onClick = {
-                                    showSearch = !showSearch
-                                },
-                            ) {
-                                Text("显示搜索框")
-                            }
-                        }
+            CustomTopBar("开课查询") {
+                androidx.compose.animation.AnimatedVisibility(
+                    visible = !showSearch,
+                    enter = NavigateAndAnimationManager.upDownAnimation.enter,
+                    exit = NavigateAndAnimationManager.upDownAnimation.exit
+                ) {
+                    FilledTonalButton(
+                        onClick = {
+                            showSearch = !showSearch
+                        },
+                    ) {
+                        Text("显示搜索框")
                     }
                 }
-            )
+            }
         },
     ) { innerPadding ->
         Box(
@@ -162,7 +155,7 @@ fun CourseSearchUI(vm : NetWorkViewModel) {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 8.dp),
+                                .padding(horizontal = 12.dp),
                             horizontalArrangement = Arrangement.Center
                         ) {
                             TextField(
@@ -220,7 +213,7 @@ fun CourseSearchUI(vm : NetWorkViewModel) {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 8.dp),
+                                .padding(horizontal = 12.dp),
                             horizontalArrangement = Arrangement.Center
                         ) {
                             val myClass = getPersonInfo().classes
@@ -236,8 +229,8 @@ fun CourseSearchUI(vm : NetWorkViewModel) {
                                 singleLine = true,
                                 shape = MaterialTheme.shapes.medium,
                                 colors = textFiledTransplant(),
-                                trailingIcon = if(myClass != className){
-                                     {
+                                trailingIcon = {
+                                    if(myClass != className){
                                         IconButton(
                                             onClick = {
                                                 myClass?.let { className = it }
@@ -245,8 +238,16 @@ fun CourseSearchUI(vm : NetWorkViewModel) {
                                         ) {
                                             Icon(painterResource(R.drawable.person),null)
                                         }
+                                    } else {
+                                        IconButton(
+                                            onClick = {
+                                                className = ""
+                                            },
+                                        ) {
+                                            Icon(painterResource(R.drawable.close),null)
+                                        }
                                     }
-                                } else null
+                                }
                             )
                             FilledTonalIconButton(
                                 onClick = {
@@ -389,14 +390,9 @@ fun ApiForCourseSearch(vm: NetWorkViewModel,courseName : String?,courseId : Stri
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("开课查询 ${courseName ?: courseId}") },
-                    )
+                    CustomTopBar("开课查询 ${courseName ?: courseId}")
                 },
             ) { innerPadding ->
                 Box(

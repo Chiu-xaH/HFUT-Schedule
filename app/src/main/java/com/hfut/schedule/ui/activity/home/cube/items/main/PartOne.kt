@@ -40,7 +40,7 @@ import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.activity.main.LoginActivity
 import com.hfut.schedule.logic.enums.CardBarItems
 import com.hfut.schedule.logic.enums.FixBarItems
-import com.hfut.schedule.logic.utils.APPVersion
+import com.hfut.schedule.logic.utils.VersionUtils
 import com.hfut.schedule.logic.utils.Starter.startWebUrl
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.MyAPIItem
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.PersonPart
@@ -49,8 +49,10 @@ import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.VersionInfo
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.downloadUI
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.getUpdates
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.Round
 
 
@@ -71,7 +73,7 @@ fun PartOne(vm : NetWorkViewModel,
             blur : Boolean,
             blurchanged :(Boolean) -> Unit,
             navController: NavController) {
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "界面显示") },
         supportingContent = { Text(text = "实时模糊 莫奈取色 动画时长")},
         leadingContent = {
@@ -79,7 +81,7 @@ fun PartOne(vm : NetWorkViewModel,
         },
         modifier = Modifier.clickable { navController.navigate(Screen.UIScreen.route)  }
     )
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "应用行为") },
         supportingContent = { Text(text = "快速启动 预加载 主页面")},
         leadingContent = {
@@ -87,7 +89,7 @@ fun PartOne(vm : NetWorkViewModel,
         },
         modifier = Modifier.clickable { navController.navigate(Screen.APPScreen.route)  }
     )
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "网络相关") },
         supportingContent = { Text(text = "云端接口 请求范围 登录状态")},
         leadingContent = {
@@ -95,7 +97,7 @@ fun PartOne(vm : NetWorkViewModel,
         },
         modifier = Modifier.clickable { navController.navigate(Screen.NetWorkScreen.route)  }
     )
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "维护关于") },
         supportingContent = { Text(text = "疑难修复 反馈信息 分享推广")},
         leadingContent = {
@@ -153,8 +155,8 @@ fun HomeSettingScreen(navController: NavController,
 
         MyAPIItem()
 
-        if (APPVersion.getVersionName() != getUpdates().version) {
-            if(!APPVersion.getVersionName().contains("Preview")) {
+        if (VersionUtils.getVersionName() != getUpdates().version) {
+            if(!VersionUtils.getVersionName().contains("Preview")) {
                 DividerTextExpandedWith(text = "更新版本") {
                     UpdateUI()
 //                    downloadUI()
@@ -182,7 +184,7 @@ fun HomeSettingScreen(navController: NavController,
 fun AlwaysItem() {
     val version by remember { mutableStateOf(getUpdates()) }
     var showBadge by remember { mutableStateOf(false) }
-    if (version.version != APPVersion.getVersionName()) showBadge = true
+    if (version.version != VersionUtils.getVersionName()) showBadge = true
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
     if (showBottomSheet) {
@@ -193,14 +195,9 @@ fun AlwaysItem() {
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("本版本新特性") },
-                    )
+                    CustomTopBar("本版本新特性")
                 },
             ) { innerPadding ->
                 Column(
@@ -214,7 +211,7 @@ fun AlwaysItem() {
             }
         }
     }
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "刷新登录状态") },
         supportingContent = { Text(text = "如果一卡通或者考试成绩等无法查询,可能是登陆过期,需重新登录一次") },
         leadingContent = { Icon(painterResource(R.drawable.rotate_right), contentDescription = "Localized description",) },
@@ -225,10 +222,10 @@ fun AlwaysItem() {
             }
             MyApplication.context.startActivity(it) }
     )
-    if (APPVersion.getVersionName() == getUpdates().version)
-        ListItem(
+    if (VersionUtils.getVersionName() == getUpdates().version)
+        TransplantListItem(
             headlineContent = { Text(text = "查看本版本新特性") },
-            supportingContent = { Text(text = if(version.version == APPVersion.getVersionName()) "当前为最新版本 ${APPVersion.getVersionName()}" else "当前版本  ${APPVersion.getVersionName()}\n最新版本  ${version.version}") },
+            supportingContent = { Text(text = if(version.version == VersionUtils.getVersionName()) "当前为最新版本 ${VersionUtils.getVersionName()}" else "当前版本  ${VersionUtils.getVersionName()}\n最新版本  ${version.version}") },
             leadingContent = {
                 BadgedBox(badge = {
                     if(showBadge)
@@ -237,7 +234,7 @@ fun AlwaysItem() {
                 }
             },
             modifier = Modifier.clickable{
-                if (version.version != APPVersion.getVersionName())
+                if (version.version != VersionUtils.getVersionName())
                     startWebUrl(MyApplication.UpdateURL+ "releases/download/Android/${version.version}.apk")
                 else {
                     showBottomSheet = true

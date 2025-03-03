@@ -1,5 +1,7 @@
 package com.hfut.schedule.logic.utils
 
+import com.hfut.schedule.logic.utils.data.SharePrefs
+
 class CrashHandler : Thread.UncaughtExceptionHandler {
     private val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
     private var isLoggingEnabled = false
@@ -30,6 +32,6 @@ class CrashHandler : Thread.UncaughtExceptionHandler {
     }
 
     private fun saveCrashLogToPrefs(throwable: Throwable) {
-        SharePrefs.saveString("logs",DateTimeManager.Date_yyyy_MM_dd + "*\n" + throwable.stackTraceToString())
+        SharePrefs.saveString("logs",DateTimeUtils.Date_yyyy_MM_dd + "*\n" + throwable.stackTraceToString())
     }
 }

@@ -34,7 +34,6 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -142,8 +141,9 @@ fun StyleCardListItem(
 }
 
 @Composable
-fun CardNormalColor() : Color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = .6f)
-
+fun CardNormalColor() : Color = LargeCardColor().copy(alpha = .6f)
+@Composable
+fun LargeCardColor() : Color = MaterialTheme.colorScheme.surfaceVariant
 //@Composable
 fun CardNormalDp() : Dp = 2.5.dp
 
@@ -190,7 +190,7 @@ fun LargeCard(
     modifier : Modifier = Modifier,
     rightTop:  @Composable() (() -> Unit)? = null,
     leftTop:  @Composable() (() -> Unit)? = null,
-    color : CardColors = CardDefaults.cardColors(),
+    color : CardColors = CardDefaults.cardColors(containerColor = LargeCardColor()),
     content: @Composable () -> Unit
 ) {
     Card(
@@ -224,7 +224,7 @@ fun LoadingLargeCard(
     loading : Boolean,
     rightTop: @Composable() (() -> Unit)? = null,
     leftTop: @Composable() (() -> Unit)? = null,
-    color : CardColors = CardDefaults.cardColors(),
+    color : CardColors = CardDefaults.cardColors(containerColor = LargeCardColor()),
     content: @Composable () -> Unit
 ) {
     val speed = MyApplication.Animation / 2
@@ -328,145 +328,145 @@ fun LoadingLargeCard(
 //    )
 //}
 
-
-@Preview
-@Composable
-fun Previews() {
-    Scaffold { innerPadding->
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .padding(innerPadding).verticalScroll(rememberScrollState())
-        ) {
-
-            Spacer(Modifier.height(5.dp))
-
-            DividerTextExpandedWith("普通卡片") {
-                MyCustomCard {
-                    ListItem(
-                        headlineContent = {
-                            Text("1.0")
-                        },
-                        leadingContent = {
-                            Icon(painterResource(R.drawable.animation),null)
-                        },
-                        supportingContent = {
-                            Text("带阴影 有色彩")
-                        }
-                    )
-                }
-                MyCustomCard {
-                    TransplantListItem(
-                        headlineContent = {
-                            Text("1.5")
-                        },
-                        leadingContent = {
-                            Icon(painterResource(R.drawable.animation),null)
-                        },
-                        supportingContent = {
-                            Text("带阴影 无色彩")
-                        }
-                    )
-                }
-
-
-                CardListItem(
-                    headlineContent = {
-                        Text("2.0")
-                    },
-                    leadingContent = {
-                        Icon(painterResource(R.drawable.animation),null)
-                    },
-                    supportingContent = {
-                        Text("无阴影 以色彩区分主体")
-                    }
-                )
-            }
-
-            DividerTextExpandedWith("大卡片") {
-                var loading by remember { mutableStateOf(false) }
-                val item = @Composable {
-                    Row {
-                        TransplantListItem(
-                            headlineContent = {
-                                Text("描述")
-                            },
-                            leadingContent = {
-                                Icon(painterResource(R.drawable.animation),null)
-                            },
-                            modifier = Modifier.weight(.5f)
-                        )
-                        TransplantListItem(
-                            headlineContent = {
-                                Text("描述")
-                            },
-                            leadingContent = {
-                                Icon(painterResource(R.drawable.animation),null)
-                            },
-                            modifier = Modifier.weight(.5f)
-                        )
-                    }
-                    TransplantListItem(
-                        headlineContent = {
-                            Text("描述")
-                        },
-                        leadingContent = {
-                            Icon(painterResource(R.drawable.animation),null)
-                        },
-                    )
-                }
-                val button = @Composable {
-                    FilledTonalIconButton(
-                        onClick = {
-                            loading = !loading
-                        }
-                    ) {
-                        Icon(painterResource(R.drawable.rotate_right),null)
-                    }
-                }
-                LargeCard(
-                    title = "展示卡片",
-                ) {
-                    item()
-                }
-                Spacer(Modifier.height(20.dp))
-                LoadingLargeCard(
-                    title = "加载卡片",
-                    loading = loading,
-                    rightTop = {
-                        button()
-                    }
-                ) {
-                    item()
-                }
-            }
-
-            DividerTextExpandedWith("自适应卡片") {
-                MultiListItem(
-                    headlineContent = {
-                        Text("适用于小屏")
-                    },
-                    leadingContent = {
-                        Icon(painterResource(R.drawable.animation),null)
-                    },
-                    supportingContent = {
-                        Text("isCard为true时")
-                    },
-                    isCard = true
-                )
-                MultiListItem(
-                    headlineContent = {
-                        Text("适用于大屏")
-                    },
-                    leadingContent = {
-                        Icon(painterResource(R.drawable.animation),null)
-                    },
-                    supportingContent = {
-                        Text("isCard为false时")
-                    },
-                    isCard = false
-                )
-            }
-
-        }
-    }
-}
+//
+//@Preview
+//@Composable
+//fun Previews() {
+//    Scaffold { innerPadding->
+//        Column(modifier = Modifier
+//            .fillMaxSize()
+//            .padding(innerPadding).verticalScroll(rememberScrollState())
+//        ) {
+//
+//            Spacer(Modifier.height(5.dp))
+//
+//            DividerTextExpandedWith("普通卡片") {
+//                MyCustomCard {
+//                    ListItem(
+//                        headlineContent = {
+//                            Text("1.0")
+//                        },
+//                        leadingContent = {
+//                            Icon(painterResource(R.drawable.animation),null)
+//                        },
+//                        supportingContent = {
+//                            Text("带阴影 有色彩")
+//                        }
+//                    )
+//                }
+//                MyCustomCard {
+//                    TransplantListItem(
+//                        headlineContent = {
+//                            Text("1.5")
+//                        },
+//                        leadingContent = {
+//                            Icon(painterResource(R.drawable.animation),null)
+//                        },
+//                        supportingContent = {
+//                            Text("带阴影 无色彩")
+//                        }
+//                    )
+//                }
+//
+//
+//                CardListItem(
+//                    headlineContent = {
+//                        Text("2.0")
+//                    },
+//                    leadingContent = {
+//                        Icon(painterResource(R.drawable.animation),null)
+//                    },
+//                    supportingContent = {
+//                        Text("无阴影 以色彩区分主体")
+//                    }
+//                )
+//            }
+//
+//            DividerTextExpandedWith("大卡片") {
+//                var loading by remember { mutableStateOf(false) }
+//                val item = @Composable {
+//                    Row {
+//                        TransplantListItem(
+//                            headlineContent = {
+//                                Text("描述")
+//                            },
+//                            leadingContent = {
+//                                Icon(painterResource(R.drawable.animation),null)
+//                            },
+//                            modifier = Modifier.weight(.5f)
+//                        )
+//                        TransplantListItem(
+//                            headlineContent = {
+//                                Text("描述")
+//                            },
+//                            leadingContent = {
+//                                Icon(painterResource(R.drawable.animation),null)
+//                            },
+//                            modifier = Modifier.weight(.5f)
+//                        )
+//                    }
+//                    TransplantListItem(
+//                        headlineContent = {
+//                            Text("描述")
+//                        },
+//                        leadingContent = {
+//                            Icon(painterResource(R.drawable.animation),null)
+//                        },
+//                    )
+//                }
+//                val button = @Composable {
+//                    FilledTonalIconButton(
+//                        onClick = {
+//                            loading = !loading
+//                        }
+//                    ) {
+//                        Icon(painterResource(R.drawable.rotate_right),null)
+//                    }
+//                }
+//                LargeCard(
+//                    title = "展示卡片",
+//                ) {
+//                    item()
+//                }
+//                Spacer(Modifier.height(20.dp))
+//                LoadingLargeCard(
+//                    title = "加载卡片",
+//                    loading = loading,
+//                    rightTop = {
+//                        button()
+//                    }
+//                ) {
+//                    item()
+//                }
+//            }
+//
+//            DividerTextExpandedWith("自适应卡片") {
+//                MultiListItem(
+//                    headlineContent = {
+//                        Text("适用于小屏")
+//                    },
+//                    leadingContent = {
+//                        Icon(painterResource(R.drawable.animation),null)
+//                    },
+//                    supportingContent = {
+//                        Text("isCard为true时")
+//                    },
+//                    isCard = true
+//                )
+//                MultiListItem(
+//                    headlineContent = {
+//                        Text("适用于大屏")
+//                    },
+//                    leadingContent = {
+//                        Icon(painterResource(R.drawable.animation),null)
+//                    },
+//                    supportingContent = {
+//                        Text("isCard为false时")
+//                    },
+//                    isCard = false
+//                )
+//            }
+//
+//        }
+//    }
+//}

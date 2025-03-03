@@ -57,15 +57,16 @@ import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
-import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.logic.utils.reEmptyLiveDta
+import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.reEmptyLiveDta
 import com.hfut.schedule.ui.activity.home.calendar.multi.getApplyingList
 import com.hfut.schedule.ui.activity.home.search.functions.life.countFunc
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
 import com.hfut.schedule.ui.utils.components.APIIcons
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.style.CardForListColor
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
@@ -74,8 +75,10 @@ import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.DepartmentIcons
 import com.hfut.schedule.ui.utils.components.EmptyUI
+import com.hfut.schedule.ui.utils.components.LoadingLargeCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.components.statusUI2
 import com.hfut.schedule.ui.utils.style.Round
 import kotlinx.coroutines.CoroutineScope
@@ -106,14 +109,9 @@ fun MyApplyListUI(vm: NetWorkViewModel,batchId : String) {
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("申请详情") },
-                    )
+                    CustomTopBar("申请详情")
                 },
             ) { innerPadding ->
                 Column(
@@ -140,14 +138,9 @@ fun MyApplyListUI(vm: NetWorkViewModel,batchId : String) {
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("结果") },
-                    )
+                    CustomTopBar("结果")
                 },
             ) { innerPadding ->
                 Column(
@@ -307,54 +300,38 @@ fun MyApply(vm: NetWorkViewModel,batchId : String,indexs : Int) {
     val isSuccessTransfer = isSuccessTransfer()
     DividerTextExpandedWith(text = "状态",false) {
         Box {
-
-            Card(
-                elevation = CardDefaults.cardElevation(defaultElevation = AppHorizontalDp()),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .scale(scale2.value)
-                    .padding(horizontal = AppHorizontalDp(), vertical = 5.dp),
-                shape = MaterialTheme.shapes.medium,
-                colors = CardForListColor()
+            LoadingLargeCard(
+                title = if(isSuccessTransfer)"恭喜 已转入"
+                else if(getApplyStatus(vm,indexs) == true) "学籍尚未变更"
+                else if(getApplyStatus(vm,indexs) == false) "未申请或申请不通过"
+                else "状态未知",
+                loading = loading
             ) {
-
-                Column (modifier = Modifier
-                    .blur(blurSize)
-                    .scale(scale.value)){
-
-                    ListItem(headlineContent = { Text(text =
-                    if(isSuccessTransfer)"恭喜 已转入"
-                    else if(getApplyStatus(vm,indexs) == true) "学籍尚未变更"
-                    else if(getApplyStatus(vm,indexs) == false) "未申请或申请不通过"
-                    else "状态未知"
-                        , fontSize = 28.sp) })
-
-                    if(isSuccessTransfer) {
-                        ListItem(
+                if(isSuccessTransfer) {
+                    TransplantListItem(
+                        headlineContent = { getPersonInfo().major?.let { ScrollText(text = it) } },
+                        overlineContent = { getPersonInfo().department?.let { ScrollText(text = it) } },
+                        leadingContent = { getPersonInfo().department?.let { DepartmentIcons(it) } }
+                    )
+                } else {
+                    Row {
+                        TransplantListItem(
                             headlineContent = { getPersonInfo().major?.let { ScrollText(text = it) } },
                             overlineContent = { getPersonInfo().department?.let { ScrollText(text = it) } },
-                            leadingContent = { getPersonInfo().department?.let { DepartmentIcons(it) } }
+                            modifier = Modifier.weight(.4f)
                         )
-                    } else {
-                        Row {
-                            ListItem(
-                                headlineContent = { getPersonInfo().major?.let { ScrollText(text = it) } },
-                                overlineContent = { getPersonInfo().department?.let { ScrollText(text = it) } },
-                                modifier = Modifier.weight(.4f)
-                            )
-                            ListItem(
-                                headlineContent = { ScrollText(text = data.major.nameZh) },
-                                overlineContent = { ScrollText(text = data.department.nameZh) },
-                                leadingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "") },
-                                modifier = Modifier.weight(.6f)
-                            )
-                        }
-                        ListItem(
-                            leadingContent = { Icon(painter = painterResource(id = R.drawable.group), contentDescription = "") },
-                            overlineContent = { ScrollText(text = "已申请/计划录取") },
-                            headlineContent = { Text(text = "${data.applyStdCount} / ${data.preparedStdCount}", fontWeight = FontWeight.Bold ) },
+                        TransplantListItem(
+                            headlineContent = { ScrollText(text = data.major.nameZh) },
+                            overlineContent = { ScrollText(text = data.department.nameZh) },
+                            leadingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "") },
+                            modifier = Modifier.weight(.6f)
                         )
                     }
+                    TransplantListItem(
+                        leadingContent = { Icon(painter = painterResource(id = R.drawable.group), contentDescription = "") },
+                        overlineContent = { ScrollText(text = "已申请/计划录取") },
+                        headlineContent = { Text(text = "${data.applyStdCount} / ${data.preparedStdCount}", fontWeight = FontWeight.Bold ) },
+                    )
                 }
             }
         }
@@ -373,14 +350,14 @@ fun MyApply(vm: NetWorkViewModel,batchId : String,indexs : Int) {
                 val meetSchedule = bean?.meetSchedule
 
                 if(examSchedule != null) {
-                    ListItem(
+                    TransplantListItem(
                         headlineContent = { Text(examSchedule.place.replace("；","\n").replace("："," ").replace("。","")) },
                         supportingContent = { Text(examSchedule.time) },
                         overlineContent = { Text("笔试安排") }
                     )
                 }
                 if(meetSchedule != null) {
-                    ListItem(
+                    TransplantListItem(
                         headlineContent = { Text(meetSchedule.place.replace("；","\n").replace("："," ")) },
                         supportingContent = { Text(meetSchedule.time) },
                         overlineContent = { Text("面试安排") }
@@ -390,7 +367,7 @@ fun MyApply(vm: NetWorkViewModel,batchId : String,indexs : Int) {
 
             if(grade != null) {
                 Row {
-                    ListItem(
+                    TransplantListItem(
                         leadingContent = { Icon(painter = painterResource(id = R.drawable.award_star), contentDescription = "") },
                         overlineContent = { ScrollText(text = "绩点") },
                         headlineContent = { Text(text = "${grade.gpa.score}" ) },
@@ -399,7 +376,7 @@ fun MyApply(vm: NetWorkViewModel,batchId : String,indexs : Int) {
                         },
                         modifier = Modifier.weight(.5f)
                     )
-                    ListItem(
+                    TransplantListItem(
                         leadingContent = { Icon(painter = painterResource(id = R.drawable.filter_vintage), contentDescription = "") },
                         overlineContent = { ScrollText(text = "加权均分") },
                         headlineContent = { Text(text = "${grade.weightAvg.score}" ) },
@@ -410,7 +387,7 @@ fun MyApply(vm: NetWorkViewModel,batchId : String,indexs : Int) {
                     )
                 }
                 Row {
-                    ListItem(
+                    TransplantListItem(
                         leadingContent = { Icon(painter = painterResource(id = R.drawable.award_star), contentDescription = "") },
                         overlineContent = { ScrollText(text = "转专业考核") },
                         headlineContent = { Text(text = "${grade.transferAvg.score}", fontWeight = FontWeight.Bold ) },
@@ -424,7 +401,7 @@ fun MyApply(vm: NetWorkViewModel,batchId : String,indexs : Int) {
                         },
                         modifier = Modifier.weight(.5f)
                     )
-                    ListItem(
+                    TransplantListItem(
                         leadingContent = { Icon(painter = painterResource(id = R.drawable.filter_vintage), contentDescription = "") },
                         overlineContent = { ScrollText(text = "算术均分") },
                         headlineContent = { Text(text = "${grade.operateAvg.score}") },

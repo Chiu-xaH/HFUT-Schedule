@@ -29,12 +29,13 @@ import androidx.navigation.NavController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.activity.main.LoginActivity
-import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.logic.utils.SharePrefs.saveBoolean
+import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.saveBoolean
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.RequestArrange
 import com.hfut.schedule.ui.activity.home.search.functions.lepaoYun.InfoSet
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.Round
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -97,7 +98,7 @@ fun NetWorkScreen(navController: NavController,
             }
         }
 
-        ListItem(
+        TransplantListItem(
             headlineContent = { Text(text = "云端交互(Beta) & 新聚焦接口") },
             supportingContent = { Text(text = "打开后,部分信息将回传云端,不包括用户敏感信息,即使关闭状态下仍保持部分必须云端数据交换") },
             leadingContent = { Icon(painterResource(R.drawable.filter_drama), contentDescription = "Localized description",) },
@@ -106,21 +107,21 @@ fun NetWorkScreen(navController: NavController,
         )
 
 
-        ListItem(
+        TransplantListItem(
             headlineContent = { Text(text = "请求范围") },
             supportingContent = { Text(text = "自定义加载一页时出现的数目,数目越大,加载时间相应地会更长,但可显示更多信息") },
             leadingContent = { Icon(painterResource(R.drawable.settings_ethernet), contentDescription = "Localized description",) },
             modifier = Modifier.clickable {  showBottomSheet_arrange = true }
         )
         if(isFocus())
-            ListItem(
+            TransplantListItem(
                 headlineContent = { Text(text = "网络接口") },
                 supportingContent = { Text(text = "为您提供除学校系统之外的聚焦信息\n(开发者同班同学仅可见此开关)") },
                 leadingContent = { Icon(painterResource(R.drawable.api), contentDescription = "Localized description",) },
                 trailingContent = { Switch(checked = showapi, onCheckedChange = {showapich -> showapi = showapich }) },
                 modifier = Modifier.clickable { showapi = !showapi }
             )
-        ListItem(
+        TransplantListItem(
             headlineContent = { Text(text = "云运动 信息配置") },
             supportingContent = { Text(text = "需要提交已登录手机的信息") },
             leadingContent = { Icon(painterResource(R.drawable.mode_of_travel), contentDescription = "Localized description",) },
@@ -128,7 +129,7 @@ fun NetWorkScreen(navController: NavController,
         )
 
         if(ifSaved)
-            ListItem(
+            TransplantListItem(
                 headlineContent = { Text(text = "刷新登录状态") },
                 supportingContent = { Text(text = "如果一卡通或者考试成绩等无法查询,可能是登陆过期,需重新登录一次") },
                 leadingContent = { Icon(painterResource(R.drawable.rotate_right), contentDescription = "Localized description",) },
@@ -140,7 +141,7 @@ fun NetWorkScreen(navController: NavController,
                     MyApplication.context.startActivity(it) }
             )
 
-        ListItem(
+        TransplantListItem(
             headlineContent = { Text(text = "用户统计数据") },
             supportingContent = { Text(text = "允许上传非敏感数据,以帮助更好的改进体验") },
             leadingContent = { Icon(painterResource(R.drawable.cloud_upload), contentDescription = "Localized description",) },

@@ -40,11 +40,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
-import com.hfut.schedule.logic.utils.AddCalendar
-import com.hfut.schedule.logic.utils.DateTimeManager
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.logic.utils.SharePrefs.saveString
+import com.hfut.schedule.logic.utils.CalendarUtils
+import com.hfut.schedule.logic.utils.DateTimeUtils
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.EmptyUI
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
@@ -111,14 +112,9 @@ fun Exam(vm : NetWorkViewModel, ifSaved : Boolean) {
 
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("考试") }
-                    )
+                    CustomTopBar("考试")
                 },) {innerPadding ->
                 Column(
                     modifier = Modifier
@@ -140,7 +136,7 @@ fun Exam(vm : NetWorkViewModel, ifSaved : Boolean) {
 @Composable
 fun ExamItems(item : Int,status : Boolean) {
 
-    var date = DateTimeManager.Date_yyyy_MM_dd
+    var date = DateTimeUtils.Date_yyyy_MM_dd
     val todaydate = date?.substring(0, 4) + date?.substring(5, 7)  + date?.substring(8, 10)
     val get = getExam()[item].formatEndTime
     //判断考完试不显示信息
@@ -188,7 +184,7 @@ fun ExamItems(item : Int,status : Boolean) {
 @Composable
 fun JxglstuExamUI(item : Map<String,String>,status : Boolean) {
     //时隔一年修补这里的Bug
-    val newDate = DateTimeManager.Date_yyyy_MM_dd
+    val newDate = DateTimeUtils.Date_yyyy_MM_dd
     val newToday = newDate.replace("-","").toLongOrNull() ?: 0
     val examDate = item["日期时间"]
     val examDateNum = examDate?.substringBefore(" ")?.replace("-","")?.toLongOrNull() ?: 0
@@ -246,8 +242,8 @@ fun JxglstuExamUI(item : Map<String,String>,status : Boolean) {
           //  Log.d("打印测试","${year}年 ${month}月 ${day}日 起始 ${startTimeHour}时 ${startTimeMinute}分 结束 ${endTimeHour}时 ${endTimeMinute}分")
 
             //今天 && 已经考完
-            if("$month-$day" == DateTimeManager.Date_MM_dd
-                && DateTimeManager.compareTimes("$endTimeHour:$endTimeMinute") == DateTimeManager.TimeState.ENDED) {
+            if("$month-$day" == DateTimeUtils.Date_MM_dd
+                && DateTimeUtils.compareTimes("$endTimeHour:$endTimeMinute") == DateTimeUtils.TimeState.ENDED) {
 
             } else {
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
@@ -267,7 +263,7 @@ fun JxglstuExamUI(item : Map<String,String>,status : Boolean) {
                                 },
                                 modifier = Modifier.clickable {},
                                 trailingContent = {
-                                    if("$month-$day" == DateTimeManager.Date_MM_dd) {
+                                    if("$month-$day" == DateTimeUtils.Date_MM_dd) {
                                         Text("今日")
                                     } else {
                                         Column(horizontalAlignment = Alignment.CenterHorizontally
@@ -296,7 +292,7 @@ fun JxglstuExamUI(item : Map<String,String>,status : Boolean) {
                                                                 }
                                                             }
                                                         } }
-                                                        course?.let { place?.let { it1 -> startDateList?.let { it2 -> endDateList?.let { it3 -> AddCalendar.addToCalendar(it2, it3, it1, it,"考试", activity) } } } }
+                                                        course?.let { place?.let { it1 -> startDateList?.let { it2 -> endDateList?.let { it3 -> CalendarUtils.addToCalendar(it2, it3, it1, it,"考试", activity) } } } }
 //                                                    MyToast("添加到系统日历成功")
                                                     } catch (e : Exception) {
 //                                                    MyToast("未授予权限")
@@ -307,7 +303,7 @@ fun JxglstuExamUI(item : Map<String,String>,status : Boolean) {
                                             }
                                             time?.substringBefore(" ")?.let {
 //                                                Row(horizontalArrangement = Arrangement.Center) {
-                                                    Text("${DateTimeManager.daysBetween(it)}天")
+                                                    Text("${DateTimeUtils.daysBetween(it)}天")
 //                                                }
                                             }
                                         }

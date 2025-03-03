@@ -25,11 +25,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.AndroidVersion.canBlur
-import com.hfut.schedule.logic.utils.SharePrefs.saveBoolean
+import com.hfut.schedule.logic.utils.data.SharePrefs.saveBoolean
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.AnimationSetting
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.monet.MonetColorItem
 import com.hfut.schedule.ui.utils.BlurManager
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 
 @Composable
 fun UIScreen(navController: NavController, innerPaddings : PaddingValues,
@@ -51,7 +52,7 @@ fun UIScreen(navController: NavController, innerPaddings : PaddingValues,
 
 
 
-        ListItem(
+        TransplantListItem(
             headlineContent = { Text(text = "底栏标签") },
             supportingContent = { Text(text = "屏幕底部的Tab栏底栏标签") },
             leadingContent = { Icon(painterResource(R.drawable.label), contentDescription = "Localized description",) },
@@ -60,7 +61,7 @@ fun UIScreen(navController: NavController, innerPaddings : PaddingValues,
         )
 
         DividerTextExpandedWith("动效") {
-            ListItem(
+            TransplantListItem(
                 headlineContent = { Text(text = "层级实时模糊") },
                 supportingContent = {
                     if(canBlur) {
@@ -73,7 +74,7 @@ fun UIScreen(navController: NavController, innerPaddings : PaddingValues,
                 trailingContent = {  Switch(checked = blur, onCheckedChange = blurchanged, enabled = canBlur ) },
                 modifier = Modifier.clickable { blurchanged.invoke(blur) }
             )
-            ListItem(
+            TransplantListItem(
                 headlineContent = { Text(text = "运动实时模糊") },
                 supportingContent = { Text(text = "开启后部分运动状态的组件伴随实时模糊,此过程可能会加大性能压力") },
                 leadingContent = { Icon(painterResource(R.drawable.motion_mode), contentDescription = "Localized description",) },
@@ -93,7 +94,7 @@ fun UIScreen(navController: NavController, innerPaddings : PaddingValues,
             )
             val cor = rememberCoroutineScope()
 
-            ListItem(
+            TransplantListItem(
                 headlineContent = { Text(text = "底栏转场动画") },
                 supportingContent = {
                     Text("自定义底栏切换页面进行转场的动画")

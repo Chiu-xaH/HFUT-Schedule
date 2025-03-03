@@ -5,7 +5,7 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.beans.community.GradeResponse
 import com.hfut.schedule.logic.beans.community.GradeResponseJXGLSTU
 import com.hfut.schedule.logic.beans.community.scoreInfoDTOList
-import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import org.jsoup.Jsoup
 

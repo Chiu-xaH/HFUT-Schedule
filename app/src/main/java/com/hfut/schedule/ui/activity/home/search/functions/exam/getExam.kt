@@ -6,9 +6,9 @@ import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.beans.community.ExamResponse
 import com.hfut.schedule.logic.beans.community.examArrangementList
-import com.hfut.schedule.logic.utils.DateTimeManager
-import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.DateTimeUtils
+import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import org.jsoup.Jsoup
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -37,7 +37,7 @@ fun getNewExam() : MutableList<examArrangementList> {
     val json = prefs.getString("Exam", MyApplication.NullExams)
     val result = Gson().fromJson(json,ExamResponse::class.java)
     val list = result.result.examArrangementList
-    var date = DateTimeManager.Date_yyyy_MM_dd
+    var date = DateTimeUtils.Date_yyyy_MM_dd
     val todaydate = date?.substring(0, 4) + date?.substring(5, 7)  + date?.substring(8, 10)
 
     var AddExam = mutableListOf<examArrangementList>()

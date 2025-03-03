@@ -26,7 +26,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.window.DialogProperties
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.beans.Notifications
-import com.hfut.schedule.logic.utils.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.ui.utils.components.CardListColorType
 import com.hfut.schedule.ui.utils.components.CardListItem

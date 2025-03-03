@@ -61,13 +61,14 @@ import com.hfut.schedule.logic.enums.FixBarItems
 import com.hfut.schedule.logic.enums.GradeBarItems
 import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.DataStoreManager
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.grade.analysis.GradeCountUI
 import com.hfut.schedule.ui.activity.grade.grade.community.GradeItemUI
 import com.hfut.schedule.ui.activity.grade.grade.jxglstu.GradeItemUIJXGLSTU
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.currentPage
-import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnToAndClear
+import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.style.Round
@@ -112,14 +113,9 @@ fun GradeUI(ifSaved : Boolean,vm : NetWorkViewModel) {
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("说明") }
-                    )
+                    CustomTopBar("说明")
                 },) {innerPadding ->
                 Column(
                     modifier = Modifier
@@ -172,7 +168,6 @@ fun GradeUI(ifSaved : Boolean,vm : NetWorkViewModel) {
                 NavigationBar(containerColor = Color.Transparent ,
                     modifier = Modifier.bottomBarBlur(hazeState, blur)
                 ) {
-
                     val items = listOf(
                         NavigationBarItemData(
                             GradeBarItems.GRADE.name,"学期", painterResource(R.drawable.article), painterResource(
@@ -206,7 +201,7 @@ fun GradeUI(ifSaved : Boolean,vm : NetWorkViewModel) {
                                 }
 
                                 if (!selected) {
-                                    turnToAndClear(navController,route)
+                                    turnTo(navController,route)
                                 }
                             },
                             label = { Text(text = item.label) },
@@ -217,7 +212,6 @@ fun GradeUI(ifSaved : Boolean,vm : NetWorkViewModel) {
                     }
                 }
             }
-
         }
         ) { innerPadding ->
         val animation = NavigateAndAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)

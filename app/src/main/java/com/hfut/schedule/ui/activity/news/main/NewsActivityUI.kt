@@ -71,15 +71,15 @@ import com.hfut.schedule.logic.beans.NavigationBarItemData
 import com.hfut.schedule.logic.enums.NewsBarItems
 import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.DataStoreManager
-import com.hfut.schedule.logic.utils.Encrypt
-import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.reEmptyLiveDta
+import com.hfut.schedule.logic.utils.parse.Encrypt
+import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.data.reEmptyLiveDta
 import com.hfut.schedule.ui.activity.news.departments.SchoolsUI
 import com.hfut.schedule.ui.activity.news.home.NewsItem
 import com.hfut.schedule.ui.activity.news.xuancheng.XuanquNewsUI
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.currentPage
-import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnToAndClear
+import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CardNormalDp
 import com.hfut.schedule.ui.utils.components.CenterLoadingUI
@@ -195,7 +195,7 @@ fun NewsActivityUI(vm: NetWorkViewModel) {
                                         else -> NewsBarItems.News
                                     }
                                 }
-                                if (!selected) { turnToAndClear(navController, route) }
+                                if (!selected) { turnTo(navController, route) }
                             },
                             label = { Text(text = item.label) },
                             icon = {

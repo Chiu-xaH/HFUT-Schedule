@@ -29,11 +29,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.UIViewModel
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
 import com.hfut.schedule.ui.activity.home.calendar.next.DatumUI
 import com.hfut.schedule.ui.activity.home.main.saved.isNextOpen
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotalForApi
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.ScrollText
@@ -60,22 +61,16 @@ fun NextCourse(ifSaved : Boolean,vmUI : UIViewModel,vm : NetWorkViewModel) {
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("下学期课程表") },
-                        actions = {
-                            Row {
-                                CourseTotalForApi(vm=vm, next=next, onNextChange = { next = !next})
-                                TextButton(onClick = { showAll = !showAll }) {
-                                    Icon(painter = painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "")
-                                }
+                    CustomTopBar("下学期课程表") {
+                        Row {
+                            CourseTotalForApi(vm=vm, next=next, onNextChange = { next = !next})
+                            TextButton(onClick = { showAll = !showAll }) {
+                                Icon(painter = painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "")
                             }
                         }
-                    )
+                    }
                 },) { innerPadding ->
                 Column(
                     modifier = Modifier

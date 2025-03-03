@@ -47,21 +47,23 @@ import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.LoginViewModel
 import com.hfut.schedule.activity.main.LoginActivity
-import com.hfut.schedule.logic.utils.APPVersion
+import com.hfut.schedule.logic.utils.VersionUtils
 import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.CrashHandler
-import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.logic.utils.Starter.emailMe
 import com.hfut.schedule.ui.activity.home.cube.items.main.Clear
 import com.hfut.schedule.ui.activity.home.cube.items.main.apiCheck
 import com.hfut.schedule.ui.activity.home.focus.funictions.getTimeStamp
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.LittleDialog
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
 
@@ -89,14 +91,9 @@ fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel,vm2 : NetWorkViewMode
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("常见问题解答") }
-                    )
+                    CustomTopBar("常见问题解答")
                 },) { innerPadding ->
                 Column(
                     modifier = Modifier
@@ -132,7 +129,7 @@ fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel,vm2 : NetWorkViewMode
 //        MyCustomCard{
             StyleCardListItem(
                 headlineContent = { Text(text = "版本信息") },
-                supportingContent = {Text("安卓版本 ${AndroidVersion.sdkInt} | 应用版本 ${APPVersion.getVersionName()} (${APPVersion.getVersionCode()})")},
+                supportingContent = {Text("安卓版本 ${AndroidVersion.sdkInt} | 应用版本 ${VersionUtils.getVersionName()} (${VersionUtils.getVersionCode()})")},
                 leadingContent = { Icon(painterResource(R.drawable.info), contentDescription = "Localized description",) },
                 modifier = Modifier.clickable {}
             )
@@ -142,14 +139,14 @@ fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel,vm2 : NetWorkViewMode
 
 
 
-        ListItem(
+        TransplantListItem(
             headlineContent = { Text(text = "快速启动") },
             leadingContent = { Icon(painterResource(R.drawable.speed), contentDescription = "Localized description",) },
             trailingContent = { Switch(checked = faststart, onCheckedChange = {faststartch -> faststart = faststartch }) },
             modifier = Modifier.clickable { faststart = !faststart }
         )
 
-        ListItem(
+        TransplantListItem(
             headlineContent = { Text(text = "刷新登录状态") },
             leadingContent = { Icon(painterResource(R.drawable.rotate_right), contentDescription = "Localized description",) },
             modifier = Modifier.clickable {
@@ -159,7 +156,7 @@ fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel,vm2 : NetWorkViewMode
                 }
                 MyApplication.context.startActivity(it) }
         )
-        ListItem(
+        TransplantListItem(
             headlineContent = { Text(text = "下载最新版本") },
             leadingContent = { Icon(painterResource(R.drawable.cloud_download), contentDescription = "Localized description",) },
             modifier = Modifier.clickable{ Starter.startWebUrl(MyApplication.UpdateURL + "releases/tag/Android") }
@@ -171,7 +168,7 @@ fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel,vm2 : NetWorkViewMode
 //            modifier = Modifier.clickable{ showDialog = true }
 //        )
         BugShare()
-        ListItem(
+        TransplantListItem(
             headlineContent = { Text(text = "进入主界面") },
             leadingContent = { Icon(painterResource(R.drawable.login), contentDescription = "Localized description",) },
             modifier = Modifier.clickable {
@@ -179,7 +176,7 @@ fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel,vm2 : NetWorkViewMode
                 MyApplication.context.startActivity(it)
             }
         )
-        ListItem(
+        TransplantListItem(
             headlineContent = { Text(text = "开发者接口") },
             overlineContent = { getTimeStamp()?.let { Text(text = it) } },
             leadingContent = { Icon(painterResource(R.drawable.api), contentDescription = "Localized description",) },
@@ -188,14 +185,14 @@ fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel,vm2 : NetWorkViewMode
                 MyToast("正在更新信息")
             }
         )
-        ListItem(
+        TransplantListItem(
             headlineContent = { Text(text = "反馈") },
 //            supportingContent = { Text(text = "直接输入内容,将会发送至开发者的服务器")},
             leadingContent = { Icon(painterResource(R.drawable.feedback), contentDescription = "Localized description",) },
             modifier = Modifier.clickable{ Starter.startWebUrl("https://docs.qq.com/form/page/DWHlwd1JZYlRtcVZ0") }
         )
 
-        ListItem(
+        TransplantListItem(
             headlineContent = { Text(text = "常见问题解答") },
             leadingContent = { Icon(painterResource(R.drawable.help), contentDescription = "Localized description",) },
             modifier = Modifier.clickable {showBottomSheet = true }
@@ -263,7 +260,7 @@ fun BugShare() {
             val list = listOf(0,1)
             println(list[9])
     }
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "日志抓取") },
         overlineContent = {
             if (logs != null) {
@@ -364,28 +361,22 @@ fun feedBackUI(vm : NetWorkViewModel) {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        containerColor = Color.Transparent,
         topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = Color.Transparent,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                title = { Text("反馈") },
-                actions = {
-                    FilledTonalIconButton(
-                        modifier = Modifier.padding(horizontal = AppHorizontalDp()),
-                        onClick = {
-                            if(input == "") {
-                                MyToast("请输入内容")
-                            } else {
-                                vm.feedBack(input,inputContact)
-                                MyToast("已提交,可关闭此界面")
-                            }
+            CustomTopBar("反馈") {
+                FilledTonalIconButton(
+                    onClick = {
+                        if(input == "") {
+                            MyToast("请输入内容")
+                        } else {
+                            vm.feedBack(input,inputContact)
+                            MyToast("已提交,可关闭此界面")
+                        }
                     }) {
-                        Icon(Icons.Filled.Check, contentDescription = "")
-                    }
+                    Icon(Icons.Filled.Check, contentDescription = "")
                 }
-            )
+            }
+
         },
     ) { innerPadding ->
         Column(

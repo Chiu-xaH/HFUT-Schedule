@@ -44,16 +44,18 @@ import androidx.compose.ui.zIndex
 import androidx.navigation.Navigation
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.ClipBoard
-import com.hfut.schedule.logic.utils.DateTimeManager
-import com.hfut.schedule.logic.utils.ReservDecimal
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.DateTimeUtils
+import com.hfut.schedule.logic.utils.parse.ReservDecimal
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.getIdentifyID
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.DepartmentIcons
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 import org.jsoup.Jsoup
 
 
@@ -93,14 +95,9 @@ fun PersonItems(ifSaved : Boolean) {
     val blurSize2 by animateDpAsState(targetValue = if (!show2) 10.dp else 0.dp, label = "")
 
     Scaffold(
+        containerColor = Color.Transparent,
         topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = Color.Transparent,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                title = { Text("个人信息") },
-            )
+            CustomTopBar("个人信息")
         },) {innerPadding ->
         Column(
             modifier = Modifier
@@ -111,7 +108,7 @@ fun PersonItems(ifSaved : Boolean) {
 
             DividerTextExpandedWith(text = "账号信息") {
                 name?.let {
-                    ListItem(
+                    TransplantListItem(
                         headlineContent = { Text(text = it) },
                         overlineContent = { Text(text ="姓名" )},
                         leadingContent = {
@@ -124,7 +121,7 @@ fun PersonItems(ifSaved : Boolean) {
                 }
 
                 studentnumber?.let {
-                    ListItem(
+                    TransplantListItem(
                         headlineContent = {   Text(text = it)  },
                         overlineContent = { Text(text ="学号" )},
                         leadingContent = {
@@ -145,7 +142,7 @@ fun PersonItems(ifSaved : Boolean) {
                     }
                     Column(modifier = Modifier.blur(radius = blurSize2)) {
                         chineseid?.let {
-                            ListItem(
+                            TransplantListItem(
                                 headlineContent = { Text(text = it)  },
                                 overlineContent = { Text(text = "身份证号")},
                                 leadingContent = {
@@ -165,7 +162,7 @@ fun PersonItems(ifSaved : Boolean) {
 
             DividerTextExpandedWith(text = "就读信息") {
                 school?.let {
-                    ListItem(
+                    TransplantListItem(
                         headlineContent = { Text(text = it) },
                         overlineContent = { Text(text = "校区")},
                         leadingContent = {
@@ -178,7 +175,7 @@ fun PersonItems(ifSaved : Boolean) {
                 }
 
                 yuanxi?.let {
-                    ListItem(
+                    TransplantListItem(
                         headlineContent = { Text(text = it)  },
                         overlineContent = { Text(text = "学院")},
                         leadingContent = {
@@ -192,7 +189,7 @@ fun PersonItems(ifSaved : Boolean) {
 
 
                 major?.let {
-                    ListItem(
+                    TransplantListItem(
                         headlineContent = {
                             Text(text = it)
                         },
@@ -211,7 +208,7 @@ fun PersonItems(ifSaved : Boolean) {
                 }
 
                 classes?.let {
-                    ListItem(
+                    TransplantListItem(
                         headlineContent = {  Text(text = it) },
                         overlineContent = { Text(text = "班级")},
                         leadingContent = {
@@ -230,7 +227,7 @@ fun PersonItems(ifSaved : Boolean) {
 
 
             DividerTextExpandedWith(text = "密码信息") {
-                ListItem(
+                TransplantListItem(
                     headlineContent = { Text(text = "密码") },
                     leadingContent = {
                         Icon(
@@ -247,7 +244,7 @@ fun PersonItems(ifSaved : Boolean) {
                 Column(modifier = Modifier.blur(radius = blurSize)) {
                     val pwd= prefs.getString("Password","")
                     pwd?.let {
-                        ListItem(
+                        TransplantListItem(
                             headlineContent = { Text(text = it) },
                             overlineContent = { Text(text = "CAS统一认证密码")},
                             modifier = Modifier.clickable {
@@ -258,7 +255,7 @@ fun PersonItems(ifSaved : Boolean) {
                     chineseid?.let {
                         val p = it.takeLast(6)
                         val d = "Hfut@#\$%${p}"
-                        ListItem(
+                        TransplantListItem(
                             headlineContent = {
                                 Text(text = d)
                             },
@@ -269,7 +266,7 @@ fun PersonItems(ifSaved : Boolean) {
                         )
                     }
                     getIdentifyID()?.let {
-                        ListItem(
+                        TransplantListItem(
                             headlineContent = {  Text(text = it) },
                             overlineContent = { Text(text = "一卡通&校园网初始密码")},
                             modifier = Modifier.clickable {
@@ -283,7 +280,7 @@ fun PersonItems(ifSaved : Boolean) {
 
             DividerTextExpandedWith(text = "学籍信息") {
                 studyType?.let {
-                    ListItem(
+                    TransplantListItem(
                         headlineContent = { Text(text = it)  },
                         overlineContent = { Text(text = "类型")},
                         leadingContent = {
@@ -295,7 +292,7 @@ fun PersonItems(ifSaved : Boolean) {
                     )
                 }
                 xueJiStatus?.let {
-                    ListItem(
+                    TransplantListItem(
                         headlineContent = {  Text(text = it) },
                         overlineContent = { Text(text = "学籍状态")},
                         leadingContent = {
@@ -317,7 +314,7 @@ fun PersonItems(ifSaved : Boolean) {
                     )
                 }
 
-                ListItem(
+                TransplantListItem(
                     headlineContent = { Text(text = "$startDate\n$endDate") },
                     overlineContent = { Text(text = "学制 $studyTime")},
                     leadingContent = {
@@ -328,14 +325,14 @@ fun PersonItems(ifSaved : Boolean) {
                     },
                     trailingContent = {
                         if(startDate != null && endDate != null && startDate != "" && endDate != "") {
-                            Text(text = "已过 ${ReservDecimal.reservDecimal(DateTimeManager.getPercent(startDate,endDate),1)}%")
+                            Text(text = "已过 ${ReservDecimal.reservDecimal(DateTimeUtils.getPercent(startDate,endDate),1)}%")
                         } else { null }
                     },
                     modifier = Modifier.clickable {
                         xueJiStatus?.let { ClipBoard.copy(it) }
                     }
                 )
-                ListItem(
+                TransplantListItem(
                     headlineContent = { program?.let { Text(text = it) } },
                     overlineContent = { Text(text = "培养方案")},
                     leadingContent = {
@@ -349,7 +346,7 @@ fun PersonItems(ifSaved : Boolean) {
                     }
                 )
                 home?.let {
-                    ListItem(
+                    TransplantListItem(
                         headlineContent = {  Text(text = it)  },
                         overlineContent = { Text(text = "来源")},
                         leadingContent = {
@@ -363,7 +360,7 @@ fun PersonItems(ifSaved : Boolean) {
                 }
                 photo?.let {
                     var show by remember { mutableStateOf(false) }
-                    ListItem(
+                    TransplantListItem(
                         headlineContent = { Text(text = "学籍照") },
                         trailingContent = {
                             if(show) {
@@ -398,7 +395,7 @@ fun PersonItems(ifSaved : Boolean) {
 
             DividerTextExpandedWith("私人信息") {
                 getPersonInfo().gender?.let {
-                    ListItem(
+                    TransplantListItem(
                         headlineContent = {  Text(it)  },
                         overlineContent = { Text("性别") },
                         leadingContent = {
@@ -413,7 +410,7 @@ fun PersonItems(ifSaved : Boolean) {
                     )
                 }
                 getPersonInfo().politicalStatus?.let {
-                    ListItem(
+                    TransplantListItem(
                         headlineContent = { Text(it)  },
                         overlineContent = { Text("政治面貌") },
                         leadingContent = {
@@ -424,7 +421,7 @@ fun PersonItems(ifSaved : Boolean) {
                 val mobile = getPersonInfo().mobile
                 val phone = getPersonInfo().phone
                 if(mobile != null && phone != null && mobile == phone) {
-                    ListItem(
+                    TransplantListItem(
                         headlineContent = {  Text(mobile) },
                         overlineContent = { Text("手机号") },
                         leadingContent = {
@@ -436,7 +433,7 @@ fun PersonItems(ifSaved : Boolean) {
                     )
                 } else {
                     mobile?.let {
-                        ListItem(
+                        TransplantListItem(
                             headlineContent = {  Text(it) },
                             overlineContent = { Text("手机") },
                             leadingContent = {
@@ -448,7 +445,7 @@ fun PersonItems(ifSaved : Boolean) {
                         )
                     }
                     phone?.let {
-                        ListItem(
+                        TransplantListItem(
                             headlineContent = { Text(it) },
                             overlineContent = { Text("电话") },
                             leadingContent = {
@@ -462,7 +459,7 @@ fun PersonItems(ifSaved : Boolean) {
                 }
 
                 getPersonInfo().email?.let {
-                    ListItem(
+                    TransplantListItem(
                         headlineContent = {  Text(it) },
                         overlineContent = { Text("电子邮件") },
                         leadingContent = {
@@ -474,7 +471,7 @@ fun PersonItems(ifSaved : Boolean) {
                     )
                 }
                 getPersonInfo().address?.let {
-                    ListItem(
+                    TransplantListItem(
                         headlineContent = {  Text(it)  },
                         overlineContent = { Text("地址") },
                         leadingContent = {
@@ -487,7 +484,7 @@ fun PersonItems(ifSaved : Boolean) {
                 }
 
                 getPersonInfo().postalCode?.let {
-                    ListItem(
+                    TransplantListItem(
                         headlineContent = { Text(it) } ,
                         overlineContent = { Text("邮编") },
                         leadingContent = {

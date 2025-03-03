@@ -46,9 +46,9 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.beans.jxglstu.PlanCoursesSearch
 import com.hfut.schedule.logic.beans.jxglstu.RequireInfo
 import com.hfut.schedule.logic.beans.jxglstu.Type
-import com.hfut.schedule.logic.utils.GithubConsts
+import com.hfut.schedule.logic.utils.data.GithubConsts
 import com.hfut.schedule.logic.utils.Starter
-import com.hfut.schedule.logic.utils.reEmptyLiveDta
+import com.hfut.schedule.logic.utils.data.reEmptyLiveDta
 import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.CampusId
 import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.CampusId.HEFEI
 import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.CampusId.XUANCHENG
@@ -56,6 +56,7 @@ import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.getCamp
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
 import com.hfut.schedule.ui.utils.components.CardNormalDp
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.DepartmentIcons
 import com.hfut.schedule.ui.utils.components.EmptyUI
 import com.hfut.schedule.ui.utils.components.LoadingUI
@@ -132,14 +133,9 @@ fun ProgramSearch(vm : NetWorkViewModel) {
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { ScrollText(item.name) },
-                    )
+                    CustomTopBar(item.name)
                 },
             ) { innerPadding ->
                 Column(
@@ -157,33 +153,27 @@ fun ProgramSearch(vm : NetWorkViewModel) {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        containerColor = Color.Transparent,
         topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = Color.Transparent,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                title = { Text("全校培养方案") },
-                actions = {
-                    FilledTonalButton(
-                        onClick = {
-                            campus = when(campus) {
-                                HEFEI -> XUANCHENG
-                                XUANCHENG -> HEFEI
-                            }
-                            refresh()
-                        },
-                        modifier = Modifier.padding(horizontal = AppHorizontalDp())
-                    ) {
-                        Text(
-                            when(campus) {
-                                HEFEI -> "合肥"
-                                XUANCHENG -> "宣城"
-                            }
-                        )
-                    }
+            CustomTopBar("全校培养方案") {
+                FilledTonalButton(
+                    onClick = {
+                        campus = when(campus) {
+                            HEFEI -> XUANCHENG
+                            XUANCHENG -> HEFEI
+                        }
+                        refresh()
+                    },
+//                    modifier = Modifier.padding(horizontal = AppHorizontalDp())
+                ) {
+                    Text(
+                        when(campus) {
+                            HEFEI -> "合肥"
+                            XUANCHENG -> "宣城"
+                        }
+                    )
                 }
-            )
+            }
         },
     ) { innerPadding ->
         Column(
@@ -343,14 +333,9 @@ fun SearchProgramUI(vm: NetWorkViewModel) {
 
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text(title) },
-                    )
+                    CustomTopBar(title)
                 },) {innerPadding ->
                 Column(
                     modifier = Modifier
@@ -383,14 +368,9 @@ fun SearchProgramUIInfo(num : Int, vm : NetWorkViewModel) {
 
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text(title) }
-                    )
+                    CustomTopBar(title)
                 },) {innerPadding ->
                 Column(
                     modifier = Modifier

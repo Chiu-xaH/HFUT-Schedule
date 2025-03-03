@@ -75,9 +75,9 @@ import com.hfut.schedule.logic.beans.jxglstu.ProgramPartOne
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.beans.jxglstu.ProgramPartThree
 import com.hfut.schedule.logic.beans.jxglstu.ProgramShow
-import com.hfut.schedule.logic.utils.ReservDecimal
-import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.parse.ReservDecimal
+import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
 import com.hfut.schedule.ui.activity.home.search.functions.courseSearch.ApiForCourseSearch
@@ -90,12 +90,14 @@ import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.getCamp
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
 import com.hfut.schedule.ui.utils.components.CardNormalDp
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.style.CardForListColor
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.DepartmentIcons
+import com.hfut.schedule.ui.utils.components.LoadingLargeCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.TransplantListItem
@@ -153,30 +155,24 @@ fun Program(vm : NetWorkViewModel, ifSaved : Boolean) {
 
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("培养方案") },
-                        actions = {
-                            Row (modifier = Modifier.padding(horizontal = AppHorizontalDp())){
+                    CustomTopBar("培养方案") {
+                        Row (){
 //                                FilledTonalIconButton(
 //                                    onClick = { showBottomSheet_info = true },
 //                                ) {
 //                                    Icon(painterResource(id = R.drawable.info), contentDescription = "")
 //                                }
-                                FilledTonalButton(
-                                    onClick = {
-                                        showBottomSheet_search = true
-                                    }
-                                ) {
-                                    Text("全校培养方案")
+                            FilledTonalButton(
+                                onClick = {
+                                    showBottomSheet_search = true
                                 }
+                            ) {
+                                Text("全校培养方案")
                             }
                         }
-                    )
+                    }
                 },
             ) {innerPadding ->
                 Column(
@@ -296,14 +292,9 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean) {
 
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("培养方案 完成情况") },
-                    )
+                    CustomTopBar("培养方案 完成情况")
                 },
             ) {innerPadding ->
                 Column(
@@ -360,42 +351,29 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean) {
     }
 
     DividerTextExpandedWith(text = if(ifSaved)"完成情况(登录后可查看)" else "完成情况",openBlurAnimation = false) {
-        Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = AppHorizontalDp()),
-            modifier = Modifier
-                .fillMaxWidth()
-                .scale(scale2.value)
-                .padding(horizontal = AppHorizontalDp(), vertical = 5.dp),
-            shape = MaterialTheme.shapes.medium,
-            colors = CardForListColor()
-        ) {
-            Column (modifier = Modifier
-                .blur(blurSize)
-                .scale(scale.value)){
+        LoadingLargeCard(
+            title = "已修 ${completion.total.actual}/${completion.total.full}",
+            rightTop = {
                 val res = completion.total.actual/completion.total.full * 100.0
-                ListItem(
-                    headlineContent = { Text(text = "已修 ${completion.total.actual}/${completion.total.full}",fontSize = 28.sp) },
-                    trailingContent = {
-                        Text(text = "${ReservDecimal.reservDecimal(res,1)} %")
-                    }
-                )
-                for(i in 0 until completion.other.size step 2)
-                    Row {
-                        ListItem(
-                            headlineContent = { Text(text = completion.other[i].name) },
-                            overlineContent = {Text(text = "${completion.other[i].actual}/${completion.other[i].full}", fontWeight = FontWeight.Bold) },
+                Text(text = "${ReservDecimal.reservDecimal(res,1)} %")
+            },
+            loading = loadingCard
+        ) {
+            for(i in 0 until completion.other.size step 2)
+                Row {
+                    TransplantListItem(
+                        headlineContent = { Text(text = completion.other[i].name) },
+                        overlineContent = {Text(text = "${completion.other[i].actual}/${completion.other[i].full}", fontWeight = FontWeight.Bold) },
+                        modifier = Modifier.weight(.5f)
+                    )
+                    if(i+1 < completion.other.size)
+                        TransplantListItem(
+                            headlineContent = { Text(text = completion.other[i+1].name) },
+                            overlineContent = {Text(text = "${completion.other[i+1].actual}/${completion.other[i+1].full}",fontWeight = FontWeight.Bold) },
                             modifier = Modifier.weight(.5f)
                         )
-                        if(i+1 < completion.other.size)
-                            ListItem(
-                                headlineContent = { Text(text = completion.other[i+1].name) },
-                                overlineContent = {Text(text = "${completion.other[i+1].actual}/${completion.other[i+1].full}",fontWeight = FontWeight.Bold) },
-                                modifier = Modifier.weight(.5f)
-                            )
-                    }
-            }
+                }
         }
-
         Button(
             onClick = {
                 if(ifSaved) refreshLogin()
@@ -489,14 +467,9 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean) {
 
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text(title) },
-                    )
+                    CustomTopBar(title)
                 },) {innerPadding ->
                 Column(
                     modifier = Modifier
@@ -530,14 +503,9 @@ fun ProgramUIInfo(num : Int, vm : NetWorkViewModel, ifSaved : Boolean) {
 
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text(title) }
-                    )
+                    CustomTopBar(title)
                 },) {innerPadding ->
                 Column(
                     modifier = Modifier
@@ -687,7 +655,7 @@ fun GuestProgram(vm: NetWorkViewModel) {
             ProgramSearch(vm)
         }
     }
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "全校培养方案") },
         leadingContent = {
             Icon(

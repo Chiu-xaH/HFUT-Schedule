@@ -29,8 +29,9 @@ import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.beans.zjgd.BillRangeResponse
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.MyToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -54,57 +55,51 @@ fun SelecctDateRange(vm : NetWorkViewModel) {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        containerColor = Color.Transparent,
         topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = Color.Transparent,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                title = { Text("范围支出") },
-                actions = {
-                    FilledTonalButton(
-                        modifier = Modifier.scale(scale.value).padding(horizontal = AppHorizontalDp()),
-                        interactionSource = interactionSource,
-                        //shape = MaterialTheme.shapes.small,
-                        onClick = {
-                            val formatter = SimpleDateFormat("yyyy-MM-dd")
+            CustomTopBar("范围支出") {
+                FilledTonalButton(
+                    modifier = Modifier.scale(scale.value),
+                    interactionSource = interactionSource,
+                    //shape = MaterialTheme.shapes.small,
+                    onClick = {
+                        val formatter = SimpleDateFormat("yyyy-MM-dd")
 
-                            val startDate = Date(state.selectedStartDateMillis!!)
-                            val endDate = Date(state.selectedEndDateMillis!!)
+                        val startDate = Date(state.selectedStartDateMillis!!)
+                        val endDate = Date(state.selectedEndDateMillis!!)
 
-                            val startDateString = formatter.format(startDate)
-                            val endDateString = formatter.format(endDate)
+                        val startDateString = formatter.format(startDate)
+                        val endDateString = formatter.format(endDate)
 
-                            val auth = prefs.getString("auth", "")
-                            CoroutineScope(Job()).apply {
-                                launch {
-                                    async {
-                                        Handler(Looper.getMainLooper()).post{
-                                            vm.RangeData.value = "{}"
-                                        }
-                                        vm.searchDate("bearer " + auth, startDateString, endDateString)
-                                    }.await()
-                                    async {
-                                        Handler(Looper.getMainLooper()).post{
-                                            vm.RangeData.observeForever { result ->
-                                                if(result.contains("操作成功")){
-                                                    val data = Gson().fromJson(result, BillRangeResponse::class.java)
-                                                    var zhichu = data.data.expenses
-                                                    zhichu = zhichu / 100
-                                                    MyToast("共支出 ${zhichu} 元")
-                                                }
+                        val auth = prefs.getString("auth", "")
+                        CoroutineScope(Job()).apply {
+                            launch {
+                                async {
+                                    Handler(Looper.getMainLooper()).post{
+                                        vm.RangeData.value = "{}"
+                                    }
+                                    vm.searchDate("bearer " + auth, startDateString, endDateString)
+                                }.await()
+                                async {
+                                    Handler(Looper.getMainLooper()).post{
+                                        vm.RangeData.observeForever { result ->
+                                            if(result.contains("操作成功")){
+                                                val data = Gson().fromJson(result, BillRangeResponse::class.java)
+                                                var zhichu = data.data.expenses
+                                                zhichu = zhichu / 100
+                                                MyToast("共支出 ${zhichu} 元")
                                             }
                                         }
                                     }
                                 }
                             }
-                        },
-                        enabled = state.selectedEndDateMillis != null
-                    ) {
-                        Text(text = "查看总支出")
-                    }
+                        }
+                    },
+                    enabled = state.selectedEndDateMillis != null
+                ) {
+                    Text(text = "查看总支出")
                 }
-            )
+            }
         },
     ) { innerPadding ->
         Column(

@@ -82,15 +82,16 @@ import com.hfut.schedule.R
 import com.hfut.schedule.activity.funiction.FixActivity
 import com.hfut.schedule.activity.main.LoginSuccessActivity
 import com.hfut.schedule.activity.main.SavedActivity
-import com.hfut.schedule.logic.utils.APPVersion
-import com.hfut.schedule.logic.utils.Encrypt
-import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
-import com.hfut.schedule.logic.utils.SharePrefs.saveString
+import com.hfut.schedule.logic.utils.VersionUtils
+import com.hfut.schedule.logic.utils.parse.Encrypt
+import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.Starter.noLogin
 import com.hfut.schedule.ui.activity.home.cube.items.main.FirstCube
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.DownloadMLUI
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.URLImageWithOCR
 import com.hfut.schedule.ui.utils.style.Round
@@ -252,7 +253,7 @@ fun LoginUI(vm : LoginViewModel) {
     var showBottomSheet by remember { mutableStateOf(false) }
     val context = LocalContext.current
     var showBadge by remember { mutableStateOf(false) }
-    if (APPVersion.getVersionName() != prefs.getString("version", APPVersion.getVersionName())) showBadge = true
+    if (VersionUtils.getVersionName() != prefs.getString("version", VersionUtils.getVersionName())) showBadge = true
   //  val hazeState = remember { HazeState() }
 
 
@@ -267,14 +268,9 @@ fun LoginUI(vm : LoginViewModel) {
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("选项") }
-                    )
+                    CustomTopBar("选项")
                 },) {innerPadding ->
                 Column(
                     modifier = Modifier
@@ -344,7 +340,7 @@ fun LoginUI(vm : LoginViewModel) {
 @Composable
 fun AnimatedWelcomeScreen() {
     val welcomeTexts = listOf(
-        "你好", "(｡･ω･)ﾉﾞ", "欢迎使用", "ヾ(*ﾟ▽ﾟ)ﾉ","Hello", "*｡٩(ˊωˋ*)و✧*｡","Hola", "(⸝•̀֊•́⸝)", "Bonjour","＼(≧▽≦)／"
+        "你好", "(｡･ω･)ﾉﾞ", "欢迎使用", "ヾ(*ﾟ▽ﾟ)ﾉ","Hello", "٩(ˊωˋ*)و✧","Hola", "(⸝•̀֊•́⸝)", "Bonjour","＼(≧▽≦)／"
     )
     var currentIndex by remember { mutableStateOf(0) }
     LaunchedEffect(Unit) {
@@ -405,14 +401,9 @@ fun TwoTextField(vm : LoginViewModel) {
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        title = { Text("图片验证码自动填充") }
-                    )
+                    CustomTopBar("图片验证码自动填充")
                 },) {innerPadding ->
                 DownloadMLUI(innerPadding)
                 Spacer(modifier = Modifier.height(20.dp))

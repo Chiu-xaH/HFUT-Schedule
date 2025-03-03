@@ -35,8 +35,9 @@ ARM架构，支持64 Bit软件、搭载**Android 7.0 (SDK 26)**及以上版本�
 
 软件通过Gitee Release在启动时检查更新，如有更新会在首页底栏【选项】显示小红点，选项界面会有红色强调卡片，点击下方更新按钮，100%后授权安装未知应用权限，即可 
 
-## [接口文档](markdown/API.md)
-供校内学生们方便参考或学习
+## [更新日志](markdown/UPDATE.md)
+
+## [后续更新计划](markdown/PLAN.md)
 
 ## 构建
 Kotlin 2.0
@@ -76,7 +77,8 @@ UI: Material You (Material Design 3)
 
 [Tesseract](https://github.com/tesseract-ocr/tessdata) OCR(供识别图片验证码)
 
-## [更新日志](markdown/UPDATE.md)
+## [接口文档](markdown/API.md)
+供校内学生们方便参考或学习
 
 ## 统计
 使用为期3个月(2024-10-07 ~ 2025-01-06)的服务器进行统计
@@ -86,7 +88,7 @@ UI: Material You (Material Design 3)
 ## 助力开发
 如果有功能层面改进或创新、Bug，欢迎在issue提交；如果发现了新的有用的接口，可以在接口文档书写补充，开发者会进行适配
 
-## [联系方式](zsh0908@outlook.com)
+## [联系方式](zsh0908@outlook.com) zsh0908@outlook.com
 
 ## 其他
 

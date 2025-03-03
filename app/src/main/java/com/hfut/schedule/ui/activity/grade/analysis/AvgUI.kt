@@ -31,8 +31,8 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.beans.community.GradeAllResponse
 import com.hfut.schedule.logic.beans.community.GradeAllResult
 import com.hfut.schedule.logic.beans.community.GradeAvgResponse
-import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CardNormalColor
 import com.hfut.schedule.ui.utils.components.DividerText

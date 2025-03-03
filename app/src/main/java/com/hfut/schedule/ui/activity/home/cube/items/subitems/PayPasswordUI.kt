@@ -31,11 +31,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.saveBoolean
-import com.hfut.schedule.logic.utils.SharePrefs.saveString
+import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.saveBoolean
+import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.TransplantListItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,7 +55,7 @@ fun LockUI() {
     var sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
 
-    ListItem(
+    TransplantListItem(
         headlineContent = { Text(text = "需要密码") },
         supportingContent = { Text(text = "在调用支付时选择是否需要验证") },
         leadingContent = {
@@ -114,7 +115,7 @@ fun LockUI() {
         }
     }
     if(pin)
-        ListItem(
+        TransplantListItem(
             headlineContent = { Text(text = "生物识别") },
             supportingContent = { Text(text = "调用指纹传感器以免密码") },
             leadingContent = {

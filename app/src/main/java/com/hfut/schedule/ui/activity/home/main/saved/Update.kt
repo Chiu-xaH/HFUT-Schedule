@@ -6,12 +6,12 @@ import androidx.lifecycle.Observer
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
-import com.hfut.schedule.logic.utils.JxglstuParseUtils
+import com.hfut.schedule.logic.utils.data.JxglstuParseUtils
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.LoginViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
-import com.hfut.schedule.logic.utils.SharePrefs
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.focus.funictions.GetZjgdCard
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job

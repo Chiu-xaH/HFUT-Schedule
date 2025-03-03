@@ -1,7 +1,7 @@
 package com.hfut.schedule.logic.network.api
 
-import com.hfut.schedule.logic.utils.Encrypt
-import com.hfut.schedule.logic.utils.QWeatherUtils.getLocation
+import com.hfut.schedule.logic.utils.parse.Encrypt
+import com.hfut.schedule.logic.utils.qweather.QWeatherUtils.getLocation
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.GET

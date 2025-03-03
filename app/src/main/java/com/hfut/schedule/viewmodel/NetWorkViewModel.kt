@@ -59,11 +59,11 @@ import com.hfut.schedule.logic.network.servicecreator.GithubServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.MyServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.QWeatherServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.StuServiceCreator
-import com.hfut.schedule.logic.utils.Encrypt
-import com.hfut.schedule.logic.utils.Semseter
-import com.hfut.schedule.logic.utils.SharePrefs.saveString
-import com.hfut.schedule.logic.utils.SharePrefs.saveInt
-import com.hfut.schedule.logic.utils.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.parse.Encrypt
+import com.hfut.schedule.logic.utils.parse.Semseter
+import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
+import com.hfut.schedule.logic.utils.data.SharePrefs.saveInt
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.getUserInfo
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
 import com.hfut.schedule.ui.activity.news.main.transferToPostData
