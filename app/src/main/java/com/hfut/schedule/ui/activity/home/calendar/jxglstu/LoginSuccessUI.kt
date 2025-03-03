@@ -274,10 +274,10 @@ fun CalendarScreen(
                             table[13].add(text)
                         }
                         if (scheduleList[i].startTime == 1600) {
-                            table[17].add(text)
+                            table[18].add(text)
                         }
                         if (scheduleList[i].startTime == 1900) {
-                            table[22].add(text)
+                            table[23].add(text)
                         }
                     }
                     if (scheduleList[i].weekday == 5) {
@@ -294,7 +294,7 @@ fun CalendarScreen(
                             table[19].add(text)
                         }
                         if (scheduleList[i].startTime == 1900) {
-                            table[23].add(text)
+                            table[24].add(text)
                         }
                     }
                 }
