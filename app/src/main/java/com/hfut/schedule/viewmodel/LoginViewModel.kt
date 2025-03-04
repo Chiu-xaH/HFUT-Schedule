@@ -24,7 +24,7 @@ import retrofit2.Response
 class LoginViewModel : ViewModel() {
     var sessionLiveData = MutableLiveData<String>() //SESSIONID
     var jsessionid = MutableLiveData<String>() // JESSIONID
-    var code = MutableLiveData<String>()
+    var code = MutableLiveData<String?>()
     var location = MutableLiveData<String>()
     var execution = MutableLiveData<String>()
 
@@ -68,7 +68,7 @@ class LoginViewModel : ViewModel() {
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    code.value = "XXX $t"
+                    code.value = "XXX"
                     t.printStackTrace()
                 }
             })

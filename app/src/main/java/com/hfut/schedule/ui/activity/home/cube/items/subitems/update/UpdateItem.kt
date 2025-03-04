@@ -50,10 +50,11 @@ fun VersionInfo() {
     Spacer(Modifier.height(3.dp))
     VersionInfoCard()
     DividerTextExpandedWith(text = "新特性") {
-        UpdateItems("修复 教务课程表部分方块课程错误显示的Bug",null,UpdateType.FIX)
-        UpdateItems("适配 部分操作的预测式返回动画",null,UpdateType.UPDATE)
-        UpdateItems("升级 目标版本为安卓15",null,UpdateType.UPDATE)
-        UpdateItems("升级 Material3组件库",null,UpdateType.UPDATE)
+        UpdateItems("新增 部分长列表的滚动动画",null,UpdateType.ADD)
+        UpdateItems("新增 全校培养方案的点击操作(开课查询)",null,UpdateType.ADD)
+        UpdateItems("修复 下载更新包完成后不自动安装的Bug",null,UpdateType.FIX)
+        UpdateItems("优化 教务课程表由于数据原因误判冲突课程",null,UpdateType.OPTIMIZE)
+        UpdateItems("优化 部分界面的布局",null,UpdateType.FIX)
     }
 }
 

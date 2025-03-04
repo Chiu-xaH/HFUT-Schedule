@@ -39,6 +39,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
+import com.hfut.schedule.ui.utils.components.AnimationCardListItem
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.LoadingUI
@@ -230,7 +231,7 @@ fun TransferListUI(vm: NetWorkViewModel) {
             items(transferList.size) { index ->
                 val data = transferList[index]
 //                MyCustomCard {
-                    StyleCardListItem(
+                    AnimationCardListItem(
                         headlineContent = { Text(data.title) },
                         supportingContent = { Text("申请日期 " + data.applicationDate + "\n转专业时期 " + data.admissionDate) },
                         trailingContent = { Icon(Icons.Filled.ArrowForward,null) },
@@ -238,7 +239,8 @@ fun TransferListUI(vm: NetWorkViewModel) {
                             title = data.title
                             batchId = data.batchId
                             showBottomSheet = true
-                        }
+                        },
+                        index = index
                     )
 //                }
             }

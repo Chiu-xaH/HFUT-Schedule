@@ -35,7 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.utils.AndroidVersion.canBlur
+import com.hfut.schedule.logic.utils.VersionUtils
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
@@ -57,17 +57,17 @@ import java.util.concurrent.TimeUnit
 //@Preview
 fun UseAgreementUI(navController : NavHostController) {
     val hazeState = remember { HazeState() }
-    val switchblur = prefs.getBoolean("SWITCHBLUR", canBlur)
+    val switchblur = prefs.getBoolean("SWITCHBLUR", VersionUtils.canBlur)
     var blur by remember { mutableStateOf(switchblur) }
 
     val argeements = listOf(
-        "本应用所使用权限为：网络、日历(用于向日历写入聚焦日程)、存储(用于导入导出课程表文件)、相机(用于洗浴扫码)，均由用户自由决定是否授予",
+        "本应用所使用权限为：网络、日历(用于向日历写入聚焦日程)、存储(用于导入导出课程表文件)、相机(用于洗浴扫码)、通知(用于提醒更新包已准备好)，均由用户自由决定是否授予",
         "本应用已在Github开源，F-Droid上架，无任何盈利、广告、恶意等行为",
         "本应用不代表学校官方，如侵害到您的权益请联系邮件zsh0908@outlook.com",
         "本应用推荐但不限于合肥工业大学宣城校区在校生使用，不对未登录用户做强制要求，可通过游客模式进入",
         "本应用存在开发者自己的服务端，会收集一些不敏感的数据帮助改善使用体验，开发者承诺不会泄露数据，且用户可自由选择开启与否",
         "开发者只负责分发由自己签名的版本(签名为O=Chiu xaH,ST=Anhui,L=Xuancheng)，其他签名版本不对此负责",
-        "最后编辑于 2025-02-13 22:00 v2"
+        "最后编辑于 2025-03-04 21:38 v3"
     )
 
     val context = LocalContext.current

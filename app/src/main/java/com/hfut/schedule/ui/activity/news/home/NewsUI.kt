@@ -37,6 +37,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.ui.activity.news.getNews
+import com.hfut.schedule.ui.utils.components.AnimationCardListItem
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.WebDialog
@@ -54,26 +55,21 @@ fun NewsItem(vm : NetWorkViewModel, innerPadding : PaddingValues? = null) {
     LazyColumn {
         //item { if (innerPadding != null) Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding())) }
         items(getNews(vm).size){ item ->
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                Column() {
-//                    MyCustomCard {
-                        StyleCardListItem(
-                            overlineContent = { getNews(vm)[item].date?.let { Text(text = it) } },
-                            headlineContent = { getNews(vm)[item].title?.let { Text(it) } },
-                            leadingContent = { Text(text = (item + 1).toString()) },
+            AnimationCardListItem(
+                overlineContent = { getNews(vm)[item].date?.let { Text(text = it) } },
+                headlineContent = { getNews(vm)[item].title?.let { Text(it) } },
+                leadingContent = { Text(text = (item + 1).toString()) },
 //                            trailingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "") },
-                            modifier = Modifier.clickable {
-                                val link = getNews(vm)[item].link
-                                if (link != null) {
-                                    if(link.contains("http")) link?.let { links = link }
-                                    else links = MyApplication.NewsURL + link
-                                }
-                                showDialog = true
-                            },
-                        )
-//                    }
-                }
-            }
+                modifier = Modifier.clickable {
+                    val link = getNews(vm)[item].link
+                    if (link != null) {
+                        if(link.contains("http")) link?.let { links = link }
+                        else links = MyApplication.NewsURL + link
+                    }
+                    showDialog = true
+                },
+                index = item
+            )
         }
         item { if (innerPadding != null) Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding())) }
         item { Spacer(modifier = Modifier.height(85.dp)) }

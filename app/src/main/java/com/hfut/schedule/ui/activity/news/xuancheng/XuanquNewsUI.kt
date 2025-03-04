@@ -43,10 +43,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.logic.utils.data.reEmptyLiveDta
+import com.hfut.schedule.ui.utils.components.AnimationCardListItem
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.MyCustomCard
@@ -151,14 +151,15 @@ fun XuanquNewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                 items(list.size) { index ->
                     val item = list[index]
 //                    MyCustomCard {
-                        StyleCardListItem(
+                        AnimationCardListItem(
                             headlineContent = { Text(item.title) },
                             overlineContent = { Text(item.date) },
                             leadingContent = { Text((index+1).toString()) },
                             modifier = Modifier.clickable {
                                 url = item.url
                                 showDialog = true
-                            }
+                            },
+                            index = index
                         )
 //                    }
                 }

@@ -49,10 +49,12 @@ import com.hfut.schedule.logic.beans.jxglstu.Type
 import com.hfut.schedule.logic.utils.data.GithubConsts
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.logic.utils.data.reEmptyLiveDta
+import com.hfut.schedule.ui.activity.home.search.functions.courseSearch.ApiForCourseSearch
 import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.CampusId
 import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.CampusId.HEFEI
 import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.CampusId.XUANCHENG
 import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.getCampus
+import com.hfut.schedule.ui.utils.components.AnimationCardListItem
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
 import com.hfut.schedule.ui.utils.components.CardNormalDp
@@ -61,6 +63,7 @@ import com.hfut.schedule.ui.utils.components.DepartmentIcons
 import com.hfut.schedule.ui.utils.components.EmptyUI
 import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.MyCustomCard
+import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.statusUI
@@ -95,7 +98,7 @@ fun getProgramList(vm : NetWorkViewModel) : List<ProgramListBean> {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProgramSearch(vm : NetWorkViewModel) {
+fun ProgramSearch(vm : NetWorkViewModel,ifSaved: Boolean) {
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
 
@@ -143,7 +146,7 @@ fun ProgramSearch(vm : NetWorkViewModel) {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    ProgramSearchInfo(vm,item,campus)
+                    ProgramSearchInfo(vm,item,campus, ifSaved)
                 }
             }
         }
@@ -182,7 +185,7 @@ fun ProgramSearch(vm : NetWorkViewModel) {
                 .fillMaxSize()
         ) {
             if(loading) {
-                LoadingUI()
+                LoadingUI(text = "若加载过长 请搭外网")
             } else {
                 val programList = getProgramList(vm)
                 var input by remember { mutableStateOf("") }
@@ -226,14 +229,15 @@ fun ProgramSearch(vm : NetWorkViewModel) {
                             val name = data.name
                             department = department.substringBefore("（")
 //                            MyCustomCard {
-                            StyleCardListItem(
+                            AnimationCardListItem(
                                     headlineContent = { Text(name) },
                                     overlineContent = { Text(data.grade + "级 " + department + " " + data.major) },
                                     leadingContent = { DepartmentIcons(department) },
                                     modifier = Modifier.clickable {
                                         item = data
                                         showBottomSheet = true
-                                    }
+                                    },
+                                index = index
                                 )
 //                            }
                         }
@@ -261,7 +265,7 @@ fun ProgramSearch(vm : NetWorkViewModel) {
 }
 
 @Composable
-fun ProgramSearchInfo(vm: NetWorkViewModel,item: ProgramListBean,campus: CampusId) {
+fun ProgramSearchInfo(vm: NetWorkViewModel,item: ProgramListBean,campus: CampusId,ifSaved: Boolean) {
     val id = item.id
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
@@ -288,13 +292,13 @@ fun ProgramSearchInfo(vm: NetWorkViewModel,item: ProgramListBean,campus: CampusI
     if(loading) {
         LoadingUI("培养方案较大 加载中")
     } else {
-        SearchProgramUI(vm)
+        SearchProgramUI(vm, ifSaved)
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchProgramUI(vm: NetWorkViewModel) {
+fun SearchProgramUI(vm: NetWorkViewModel,ifSaved: Boolean) {
     val sheetState_Program = rememberModalBottomSheetState()
     var showBottomSheet_Program by remember { mutableStateOf(false) }
     val listOne = getProgramListOneSearch(vm)
@@ -307,7 +311,7 @@ fun SearchProgramUI(vm: NetWorkViewModel) {
         items(listOne.size) {item ->
             total += listOne[item].requiedCredits ?: 0.0
 //            MyCustomCard {
-            StyleCardListItem(
+            AnimationCardListItem(
                     headlineContent = { Text(text = listOne[item].type + " | 学分要求 " + listOne[item].requiedCredits) },
                     trailingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "")},
                     //   leadingContent = { Icon(painterResource(id = R.drawable.calendar), contentDescription = "Localized description") },
@@ -316,6 +320,7 @@ fun SearchProgramUI(vm: NetWorkViewModel) {
                         num = item
                         title = listOne[item].type.toString()
                     },
+                index = item
                 )
 //            }
         }
@@ -342,7 +347,7 @@ fun SearchProgramUI(vm: NetWorkViewModel) {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ){
-                    SearchProgramUIInfo(num,vm)
+                    SearchProgramUIInfo(num,vm, ifSaved)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
@@ -352,7 +357,7 @@ fun SearchProgramUI(vm: NetWorkViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchProgramUIInfo(num : Int, vm : NetWorkViewModel) {
+fun SearchProgramUIInfo(num : Int, vm : NetWorkViewModel,ifSaved: Boolean) {
     val listTwo = getProgramListTwoSearch(num,vm)
     var show by remember { mutableStateOf(true) }
     val sheetState_Program = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -377,7 +382,7 @@ fun SearchProgramUIInfo(num : Int, vm : NetWorkViewModel) {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ){
-                    SearchProgramUIInfo2(num,num2,vm)
+                    SearchProgramUIInfo2(num,num2,vm, ifSaved)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
@@ -391,7 +396,7 @@ fun SearchProgramUIInfo(num : Int, vm : NetWorkViewModel) {
         LazyColumn {
             items(listTwo.size) {item ->
 //                MyCustomCard{
-                StyleCardListItem(
+                AnimationCardListItem(
                         headlineContent = { Text(text = listTwo[item].type + " | 学分要求 " + listTwo[item].requiedCredits) },
                         trailingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "")},
                         //   leadingContent = { Icon(painterResource(id = R.drawable.calendar), contentDescription = "Localized description") },
@@ -400,20 +405,27 @@ fun SearchProgramUIInfo(num : Int, vm : NetWorkViewModel) {
                             num2 = item
                             title = listTwo[item].type + " | 学分要求 " + listTwo[item].requiedCredits
                         },
+                    index = item
                     )
 //                }
             }
         }
     } else {
-        SearchProgramUIInfo2(num,num2,vm)
+        SearchProgramUIInfo2(num,num2,vm, ifSaved)
     }
 
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchProgramUIInfo2(num1 : Int, num2 : Int, vm : NetWorkViewModel) {
+fun SearchProgramUIInfo2(num1 : Int, num2 : Int, vm : NetWorkViewModel,ifSaved : Boolean) {
     val listThree = getProgramListThreeSearch(num1,num2,vm)
+
+    var showBottomSheet_Search by remember { mutableStateOf(false) }
+    var courseName by remember { mutableStateOf("") }
+    ApiForCourseSearch(vm,courseName,null,showBottomSheet_Search) {
+        showBottomSheet_Search = false
+    }
 
     if(listThree.size != 0) {
         listThree.sortBy { it.term }
@@ -453,15 +465,24 @@ fun SearchProgramUIInfo2(num1 : Int, num2 : Int, vm : NetWorkViewModel) {
         LazyColumn {
             items(searchList.size) {item ->
 //                MyCustomCard{
-                    var department = searchList[item].depart
-                    if(department.contains("（")) department = department.substringBefore("（")
-                StyleCardListItem(
-                        headlineContent = { Text(text = searchList[item].name) },
+                var department = searchList[item].depart
+                if(department.contains("（")) department = department.substringBefore("（")
+                val name = searchList[item].name
+                AnimationCardListItem(
+                        headlineContent = { Text(text = name) },
                         supportingContent = { Text(text = department) },
                         overlineContent = { Text(text = "第" + searchList[item].term + "学期 | 学分 ${searchList[item].credit}")},
                         leadingContent = { DepartmentIcons(name = searchList[item].depart) },
                         modifier = Modifier.clickable {
+                            if(!ifSaved) {
+                                courseName = name
+                                showBottomSheet_Search = true
+                            } else {
+                                MyToast("登录教务后可查询开课")
+                                Starter.refreshLogin()
+                            }
                         },
+                    index = item
                     )
 //                }
             }

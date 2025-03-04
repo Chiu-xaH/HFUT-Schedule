@@ -56,6 +56,7 @@ import com.hfut.schedule.logic.utils.data.JxglstuParseUtils
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.card.bills.CardRow
+import com.hfut.schedule.ui.utils.components.AnimationCardListItem
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.BillsIcons
 import com.hfut.schedule.ui.utils.components.CardNormalColor
@@ -212,7 +213,7 @@ fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVie
 
 
 //                    MyCustomCard{
-                        StyleCardListItem(
+                        AnimationCardListItem(
                             headlineContent = { Text(text = name) },
                             supportingContent = { Text(text = processTranamt(bills)) },
                             overlineContent = { Text(text = time) },
@@ -224,7 +225,8 @@ fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVie
                             modifier = Modifier.clickable {
                                 Infonum = item
                                 showBottomSheet = true
-                            }
+                            },
+                            index = item
                         )
 //                    }
                 }

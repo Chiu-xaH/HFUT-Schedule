@@ -1,20 +1,25 @@
 package com.hfut.schedule.logic.utils
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.DownloadManager
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import android.provider.Settings
 import androidx.annotation.RequiresApi
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.ocr.TesseractUtils
 import com.hfut.schedule.logic.utils.ocr.TesseractUtils.moveDownloadedModel
-import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.installApk
+import com.hfut.schedule.receiver.BroadcastAction
+import com.hfut.schedule.receiver.UpdateReceiver
 import java.io.File
 
 object MyDownloadManager {
@@ -22,7 +27,9 @@ object MyDownloadManager {
         UPDATE(1),
         ML(2)
     }
+
     val dlManager = MyApplication.context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     fun downloadManage(fileName: String, url: String, destinationDir: String,dlId: DownloadIds, onDownloadComplete: (Uri?) -> Unit) {
         val request = DownloadManager.Request(Uri.parse(url))
@@ -60,14 +67,16 @@ object MyDownloadManager {
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    fun update(version: String) {
+    fun update(version: String,activity: Activity) {
+        PermissionManager.checkAndRequestNotificationPermission(activity)
+        MyNotificationManager.initDownloadChannel()
         downloadManage(
             fileName = "聚在工大_${version}.apk",
             url = "${MyApplication.UpdateURL}releases/download/Android/${version}.apk",
             dlId= DownloadIds.UPDATE,
             destinationDir = Environment.DIRECTORY_DOWNLOADS
         ) { uri ->
-            if (uri != null) installApk(uri)
+            if (uri != null) installApk()
         }
     }
 
@@ -87,6 +96,7 @@ object MyDownloadManager {
         }
         return 0
     }
+
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     fun downloadMl() {
         val filename = TesseractUtils.filename
@@ -101,7 +111,85 @@ object MyDownloadManager {
             }
         }
     }
+
     fun getDownloadId(dlId : DownloadIds) : Long {
         return SharePrefs.prefs.getLong("download_${dlId.id}",-1)
     }
+
+    fun installApk() {
+        val id = getDownloadId(DownloadIds.UPDATE)
+        val uri = dlManager.getUriForDownloadedFile(id)
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        intent.setDataAndType(uri, "application/vnd.android.package-archive")
+        MyApplication.context.startActivity(intent)
+    }
+
+    fun openDownload() {
+        val intent = Intent()
+        intent.action = DownloadManager.ACTION_VIEW_DOWNLOADS
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        try {
+            MyApplication.context.startActivity(intent)
+        } catch (e: Exception) {
+            // 部分定制 ROM 可能不支持此 Intent，可以跳转到存储设置
+            val storageIntent = Intent(Settings.ACTION_INTERNAL_STORAGE_SETTINGS)
+            try {
+                MyApplication.context.startActivity(storageIntent)
+            } catch (ex: Exception) {
+                // 最后尝试打开文件管理器
+                val fileManagerIntent = Intent(Intent.ACTION_VIEW)
+                fileManagerIntent.data = Uri.parse("content://downloads/public_downloads")
+                MyApplication.context.startActivity(fileManagerIntent)
+            }
+        }
+    }
+
+    enum class DownloadStatus {
+        DOWNLOADING,STOPPED,WAITING,OK,FAILURE,UNKNOWN,NOT_FOUND
+    }
+
+    fun getDownloadStatus(downloadId: Long): DownloadStatus {
+        val query = DownloadManager.Query().setFilterById(downloadId)
+        val cursor: Cursor? = dlManager.query(query)
+
+        cursor?.use {
+            if (it.moveToFirst()) {
+                val statusIndex = it.getColumnIndex(DownloadManager.COLUMN_STATUS)
+                if (statusIndex != -1) {
+                    return when (it.getInt(statusIndex)) {
+                        DownloadManager.STATUS_RUNNING -> DownloadStatus.DOWNLOADING
+                        DownloadManager.STATUS_PAUSED -> DownloadStatus.STOPPED
+                        DownloadManager.STATUS_PENDING -> DownloadStatus.WAITING
+                        DownloadManager.STATUS_SUCCESSFUL -> DownloadStatus.OK
+                        DownloadManager.STATUS_FAILED -> DownloadStatus.FAILURE
+                        else -> DownloadStatus.UNKNOWN
+                    }
+                }
+            }
+        }
+        return DownloadStatus.NOT_FOUND
+    }
+
+    fun noticeInstall() {
+        val intent = Intent(MyApplication.context, UpdateReceiver::class.java).apply {
+            action = BroadcastAction.INSTALL_APK.name
+        }
+
+        val pendingIntent = PendingIntent.getBroadcast(
+            MyApplication.context,
+            1,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        MyNotificationManager.showNotification(
+            channelId = MyNotificationManager.NotificationChannel.DOWNLOAD_OK.name,
+            notificationId = 1,
+            title = "新版本准备就绪",
+            content = "点击安装",
+            intent = pendingIntent
+        )
+    }
+    var refused = false
 }

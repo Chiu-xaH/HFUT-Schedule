@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.activity.home.cube.items.subitems.update
 
+import android.app.Activity
 import android.app.DownloadManager
 import android.content.Context
 import android.os.Build
@@ -36,13 +37,16 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
@@ -51,6 +55,11 @@ import com.hfut.schedule.logic.utils.VersionUtils
 import com.hfut.schedule.logic.utils.MyDownloadManager
 import com.hfut.schedule.logic.utils.MyDownloadManager.downloadManage
 import com.hfut.schedule.logic.utils.MyDownloadManager.getDownloadProgress
+import com.hfut.schedule.logic.utils.MyDownloadManager.getDownloadStatus
+import com.hfut.schedule.logic.utils.MyDownloadManager.installApk
+import com.hfut.schedule.logic.utils.MyDownloadManager.noticeInstall
+import com.hfut.schedule.logic.utils.MyDownloadManager.openDownload
+import com.hfut.schedule.logic.utils.MyDownloadManager.refused
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
@@ -63,7 +72,7 @@ import com.hfut.schedule.ui.utils.components.TransplantListItem
 @Composable
 fun UpdateUI() {
     val handler = Handler(Looper.getMainLooper())
-    var pro by remember { mutableStateOf(0f) }
+    var pro by remember { mutableFloatStateOf(0f) }
     var able by remember { mutableStateOf(true) }
     val runnable = object : Runnable {
         override fun run() {
@@ -77,6 +86,14 @@ fun UpdateUI() {
         }
     }
     handler.post(runnable)
+    // 下载完成后触发
+    LaunchedEffect(pro) {
+        if(pro == 1f && !refused) {
+            noticeInstall()
+            refused = true
+            installApk()
+        }
+    }
 
     val version by remember { mutableStateOf(getUpdates()) }
 
@@ -121,9 +138,10 @@ fun UpdateUI() {
             exit = NavigateAndAnimationManager.upDownAnimation.exit,
             enter = NavigateAndAnimationManager.upDownAnimation.enter
         ) {
+            val context = LocalContext.current
             BottomButton(
                 onClick = {
-                    getUpdates().version?.let { MyDownloadManager.update(it) }
+                    getUpdates().version?.let { MyDownloadManager.update(it,context as Activity) }
                     able = false
 //                    expandItems = true
                 },
@@ -137,12 +155,12 @@ fun UpdateUI() {
         exit = NavigateAndAnimationManager.upDownAnimation.exit,
         enter = NavigateAndAnimationManager.upDownAnimation.enter
     ) {
+        val context = LocalContext.current
         Column(modifier = Modifier.padding(horizontal = 7.dp)) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center)  {
                 Button(
                     onClick = {
-                        getUpdates().version?.let { MyDownloadManager.update(it) }
-                        able = false
+                        getUpdates().version?.let { MyDownloadManager.update(it,context as Activity) }
                     },
                     modifier = Modifier
                         .weight(.5f)
@@ -154,27 +172,26 @@ fun UpdateUI() {
                             CircularProgressIndicator(
                                 progress = { pro },
                                 modifier = Modifier.size(20.dp).height(20.dp),
+                                color = MaterialTheme.colorScheme.error
                             )
                             Spacer(modifier = Modifier.width(20.dp))
                         }
-                        Text(text = if(able)"下载更新" else "准备下载")
+                        Text(text = if(able && pro == 0f)"下载更新" else "${(pro*100).toInt()} %")
 
                     }
 
                 }
                 if(pro > 0)
                     FilledTonalButton(onClick = {
-                        //获取下载ID
-                        val downloadManager = MyApplication.context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
                         if (pro == 1f) {
-                            val id = MyDownloadManager.getDownloadId(MyDownloadManager.DownloadIds.UPDATE)
-                            val uri = downloadManager.getUriForDownloadedFile(id)
-                            installApk(uri)
-                        } else MyToast("正在下载")
+                            installApk()
+                        } else {
+                            openDownload()
+                        }
                     }, modifier = Modifier
                         .weight(.5f)
                         .padding(horizontal = 8.dp)) {
-                        Text(text =  "${(pro*100).toInt()} %" + if(pro == 1f) " 安装" else "")
+                        Text(text = if(pro == 1f) "安装" else "管理下载任务")
                     }
             }
         }

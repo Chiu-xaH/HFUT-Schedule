@@ -22,7 +22,7 @@ import com.hfut.schedule.viewmodel.LoginSuccessViewModelFactory
 import com.hfut.schedule.viewmodel.LoginViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.activity.ui.theme.肥工课程表Theme
-import com.hfut.schedule.logic.utils.AndroidVersion
+import com.hfut.schedule.logic.utils.VersionUtils
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.ui.utils.monet.LocalCurrentStickerUuid
 import com.hfut.schedule.ui.utils.monet.MainIntent
@@ -42,7 +42,7 @@ open class BaseActivity : ComponentActivity() {
     val uiVm by lazy { ViewModelProvider(this).get(UIViewModel::class.java) }
 
     val animation = SharePrefs.prefs.getInt("ANIMATION", MyApplication.Animation)
-    val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR",  AndroidVersion.canBlur)
+    val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR",  VersionUtils.canBlur)
 
 
     @Composable

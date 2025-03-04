@@ -49,6 +49,7 @@ import com.hfut.schedule.logic.utils.DateTimeUtils
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.grade.getGrade
+import com.hfut.schedule.ui.utils.components.AnimationCardListItem
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.EmptyUI
 import com.hfut.schedule.ui.utils.components.MyCustomCard
@@ -68,12 +69,13 @@ fun TotalGrade() {
     val Major = result.majorRanking
     val TotalGPA = result.gpa
 
-    StyleCardListItem(
+    AnimationCardListItem(
         headlineContent = {  Text("绩点(GPA)  $TotalGPA") },
         supportingContent = { Text("班级排名: $Class   专业排名: $Major") },
         leadingContent = { Icon(painterResource(R.drawable.flag), contentDescription = "Localized description",) },
         modifier = Modifier.clickable {},
-        color = MaterialTheme.colorScheme.primaryContainer
+        color = MaterialTheme.colorScheme.primaryContainer,
+        index = 0
     )
 
 //    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
@@ -196,7 +198,7 @@ fun GradeItemUI(vm :NetWorkViewModel, innerPadding : PaddingValues) {
                         var passs = ""
                         if (pass == true) passs = "通过"
                         else passs = "挂科"
-                        StyleCardListItem(
+                        AnimationCardListItem(
                             headlineContent = { Text(getGrade()[item].courseName) },
                             supportingContent = { Text("学分: " + getGrade()[item].credit + "   绩点: " + getGrade()[item].gpa + "   分数: ${getGrade()[item].score}") },
                             leadingContent = {
@@ -206,11 +208,11 @@ fun GradeItemUI(vm :NetWorkViewModel, innerPadding : PaddingValues) {
                                 )
                             },
                             trailingContent = { Text(passs) },
-                            modifier = Modifier.clickable {},
+                            index = item
                         )
                     }
                     item {
-                        StyleCardListItem(
+                        AnimationCardListItem(
                             headlineContent = { Text("查看分数详细请点击此处进入教务数据") },
                             supportingContent = { Text(text = "您现在使用的是智慧社区接口,使用教务系统数据可查看详细成绩") },
                             trailingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "") },
@@ -221,6 +223,7 @@ fun GradeItemUI(vm :NetWorkViewModel, innerPadding : PaddingValues) {
                                 }
                                 MyApplication.context.startActivity(it)
                             },
+                            index = 0
                         )
                     }
                     item { Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding())) }

@@ -76,6 +76,7 @@ import com.hfut.schedule.ui.activity.home.main.saved.UpdateCourses
 import com.hfut.schedule.ui.activity.home.search.functions.failRate.ApiToFailRate
 import com.hfut.schedule.ui.activity.home.search.functions.failRate.permit
 import com.hfut.schedule.ui.activity.home.search.functions.teacherSearch.ApiToTeacherSearch
+import com.hfut.schedule.ui.utils.components.AnimationCustomCard
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CardNormalColor
 import com.hfut.schedule.ui.utils.components.CardNormalDp
@@ -343,7 +344,7 @@ fun SelectCourseList(vm: NetWorkViewModel) {
 //                    },
 //                shape = MaterialTheme.shapes.medium,
 //            )
-            MyCustomCard(Modifier.fillMaxWidth()
+            AnimationCustomCard (Modifier.fillMaxWidth()
                 .padding(horizontal = AppHorizontalDp(), vertical = CardNormalDp())
                 .clickable {
                     courseId = list[item].id
@@ -351,6 +352,7 @@ fun SelectCourseList(vm: NetWorkViewModel) {
                     name = list[item].name
                     showBottomSheet = true
                 },
+                index = item,
                 hasElevation = false,
                 containerColor = CardNormalColor()
             ) {

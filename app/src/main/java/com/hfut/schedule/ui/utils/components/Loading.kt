@@ -74,27 +74,9 @@ fun LoadingUI(
                     .scale(scale),
                 polygons = newList,
             )
-//            val primaryColor = MaterialTheme.colorScheme.primary
-//            val primaryContainerColor = MaterialTheme.colorScheme.secondary
-//            AndroidView(
-//                factory = { inflaterContext ->
-//                    val themedContext = ContextThemeWrapper(inflaterContext, R.style.AppTheme)
-//                    LayoutInflater.from(themedContext).inflate(R.layout.loading, null, false)
-//                },
-//                update = { view ->
-//                    // 动态更新 View
-//                    val load = view.findViewById<LoadingIndicator>(R.id.load)
-//                    load.indicatorSize *= sizeX
-//                    load.setIndicatorColor(
-//                        primaryColor.toArgb(),
-//                        primaryContainerColor.toArgb()
-//                    )
-//                },
-//                modifier =  Modifier.scale(scale),
-//            )
         }
         if(text != null) {
-            Spacer(modifier = Modifier.height(5.dp))
+            Spacer(modifier = Modifier.height(2.dp))
             RowHorizontal {
                 Text(text, color = MaterialTheme.colorScheme.primary)
             }

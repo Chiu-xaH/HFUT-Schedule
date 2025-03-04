@@ -59,8 +59,8 @@ import com.hfut.schedule.logic.enums.CardBarItems
 import com.hfut.schedule.logic.beans.NavigationBarItemData
 import com.hfut.schedule.logic.beans.zjgd.BillResponse
 import com.hfut.schedule.logic.beans.zjgd.records
-import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.DataStoreManager
+import com.hfut.schedule.logic.utils.VersionUtils
 import com.hfut.schedule.logic.utils.data.JxglstuParseUtils
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
@@ -92,7 +92,7 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
 
     val showBottomSheet_Bills by remember { mutableStateOf(false) }
     val animation by remember { mutableStateOf(prefs.getInt("ANIMATION", MyApplication.Animation)) }
-    val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR", AndroidVersion.canBlur)
+    val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR", VersionUtils.canBlur)
     val blur by remember { mutableStateOf(switchblur) }
     val hazeState = remember { HazeState() }
     val navController = rememberNavController()

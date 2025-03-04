@@ -19,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.hfut.schedule.ui.utils.components.ScrollText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -60,18 +59,21 @@ fun CustomTopBar(
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun SharedTransitionScope.SharedTopBar(
+fun SharedTopBar(
     title: String,
-    key : String,
+    key: String,
+    sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope
 ) {
-    Text(
-        title,
-        color = MaterialTheme.colorScheme.primary,
-        modifier = Modifier.sharedBounds(
-            rememberSharedContentState(key = key),
-            animatedVisibilityScope = animatedContentScope
-        ).padding(AppHorizontalDp()+1.dp),
-        fontSize = 22.sp,
-    )
+    with(sharedTransitionScope) {
+        Text(
+            title,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.sharedBounds(
+                rememberSharedContentState(key = key),
+                animatedVisibilityScope = animatedContentScope
+            ).padding(AppHorizontalDp()+1.dp),
+            fontSize = 22.sp,
+        )
+    }
 }

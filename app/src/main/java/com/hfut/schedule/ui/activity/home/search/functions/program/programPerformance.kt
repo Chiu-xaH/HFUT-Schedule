@@ -53,6 +53,8 @@ import com.hfut.schedule.logic.beans.jxglstu.CourseItem
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.search.functions.life.countFunc
+import com.hfut.schedule.ui.utils.components.AnimationCardListItem
+import com.hfut.schedule.ui.utils.components.AnimationCustomCard
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CardNormalColor
 import com.hfut.schedule.ui.utils.components.CustomTopBar
@@ -168,7 +170,7 @@ fun ProgramPerformance(vm : NetWorkViewModel) {
                         val requireInfo = item.requireInfo
                         val summary = item.completionSummary
                         DividerTextExpandedWith(text = item.nameZh + " 要求 ${requireInfo.courseNum} 门 ${requireInfo.credits} 学分") {
-                            MyCustomCard(hasElevation = false, containerColor = CardNormalColor()) {
+                            AnimationCustomCard(index = index,containerColor = CardNormalColor()) {
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.Center
@@ -216,7 +218,7 @@ fun ProgramPerformance(vm : NetWorkViewModel) {
                         item { DividerText(text = "培养方案外课程 (包含转专业废弃课程)") }
                         item {
                             if(summary != null) {
-                                MyCustomCard(hasElevation = false, containerColor = CardNormalColor()) {
+                                AnimationCustomCard(containerColor = CardNormalColor()) {
                                     Row(
                                         modifier = Modifier.fillMaxWidth(),
                                         horizontalArrangement = Arrangement.Center
@@ -356,7 +358,7 @@ fun PerformanceInfo(vm: NetWorkViewModel,moduleIndex : Int) {
                         else -> item.resultType
                     }
 //                    MyCustomCard {
-                        StyleCardListItem(
+                        AnimationCardListItem(
                             headlineContent = { Text(text = item.nameZh) },
                             supportingContent = {
                                 if(type == "通过") {
@@ -382,7 +384,8 @@ fun PerformanceInfo(vm: NetWorkViewModel,moduleIndex : Int) {
                             modifier = Modifier.clickable {
                                 itemForInfo = item
                                 showBottomSheet = true
-                            }
+                            },
+                            index = index
                         )
 //                    }
                 }
@@ -408,7 +411,7 @@ fun PerformanceInfo(vm: NetWorkViewModel,moduleIndex : Int) {
                         else -> item.resultType
                     }
 //                    MyCustomCard {
-                        StyleCardListItem(
+                        AnimationCardListItem(
                             headlineContent = { Text(text = item.nameZh) },
                             supportingContent = {
                                 if(type == "通过") {
@@ -428,7 +431,8 @@ fun PerformanceInfo(vm: NetWorkViewModel,moduleIndex : Int) {
                             modifier = Modifier.clickable {
                                 itemForInfo = item
                                 showBottomSheet = true
-                            }
+                            },
+                            index = index
                         )
 //                    }
                 }

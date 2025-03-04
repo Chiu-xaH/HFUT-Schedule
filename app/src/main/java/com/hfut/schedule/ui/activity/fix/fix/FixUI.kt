@@ -48,7 +48,6 @@ import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.LoginViewModel
 import com.hfut.schedule.activity.main.LoginActivity
 import com.hfut.schedule.logic.utils.VersionUtils
-import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.CrashHandler
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
@@ -129,7 +128,7 @@ fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel,vm2 : NetWorkViewMode
 //        MyCustomCard{
             StyleCardListItem(
                 headlineContent = { Text(text = "版本信息") },
-                supportingContent = {Text("安卓版本 ${AndroidVersion.sdkInt} | 应用版本 ${VersionUtils.getVersionName()} (${VersionUtils.getVersionCode()})")},
+                supportingContent = {Text("安卓版本 ${VersionUtils.sdkInt} | 应用版本 ${VersionUtils.getVersionName()} (${VersionUtils.getVersionCode()})")},
                 leadingContent = { Icon(painterResource(R.drawable.info), contentDescription = "Localized description",) },
                 modifier = Modifier.clickable {}
             )

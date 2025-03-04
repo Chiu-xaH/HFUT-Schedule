@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
@@ -87,6 +88,7 @@ import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
 import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.CampusId
 import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.CampusId.*
 import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.getCampus
+import com.hfut.schedule.ui.utils.components.AnimationCardListItem
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
 import com.hfut.schedule.ui.utils.components.CardNormalDp
@@ -99,6 +101,7 @@ import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.DepartmentIcons
 import com.hfut.schedule.ui.utils.components.LoadingLargeCard
 import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.components.statusUI
@@ -114,14 +117,26 @@ import kotlinx.coroutines.launch
 fun Program(vm : NetWorkViewModel, ifSaved : Boolean) {
     val sheetState_Program = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_Program by remember { mutableStateOf(false) }
+    val sheetState_search = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showBottomSheet_search by remember { mutableStateOf(false) }
 
     TransplantListItem(
-        headlineContent = { Text(text = "培养方案") },
+        headlineContent = { ScrollText(text = "培养方案") },
         leadingContent = {
             Icon(
                 painterResource(R.drawable.conversion_path),
                 contentDescription = "Localized description",
             )
+        },
+        trailingContent = {
+            FilledTonalIconButton(
+                onClick = {
+                    showBottomSheet_search = true
+                },
+                modifier = Modifier.size(30.dp)
+            ) {
+                Icon(painterResource(R.drawable.search),null, modifier = Modifier.size(20.dp))
+            }
         },
         modifier = Modifier.clickable {
             if (prefs.getString("program","")?.contains("children") == true || !ifSaved) {
@@ -131,8 +146,6 @@ fun Program(vm : NetWorkViewModel, ifSaved : Boolean) {
         }
     )
 
-    val sheetState_search = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var showBottomSheet_search by remember { mutableStateOf(false) }
 
 
     if (showBottomSheet_search) {
@@ -141,7 +154,7 @@ fun Program(vm : NetWorkViewModel, ifSaved : Boolean) {
             sheetState = sheetState_search,
             shape = Round(sheetState_search)
         ) {
-            ProgramSearch(vm)
+            ProgramSearch(vm,ifSaved)
         }
     }
 
@@ -211,21 +224,21 @@ fun ProgramUI(vm: NetWorkViewModel,ifSaved: Boolean) {
     LazyColumn {
         item {
 //            MyCustomCard{
-                StyleCardListItem(
+                AnimationCardListItem(
                     headlineContent = { Text(text = "合计 ${list.size} 门 $sum 学分") },
                     supportingContent = { Text(text = "不含选修课!")},
                  //   overlineContent = { },
                  //   trailingContent = { Text(text = "学分 " +  list[item].credit)},
                     color = MaterialTheme.colorScheme.primaryContainer,
                     leadingContent = { Icon(painterResource(id = R.drawable.conversion_path), contentDescription = "Localized description") },
-                    modifier = Modifier.clickable {},
+                    index = 0
                 )
 //            }
         }
         items(list.size) { item ->
             val name = list[item].name
 //            MyCustomCard{
-                StyleCardListItem(
+                AnimationCardListItem(
                     headlineContent = { Text(text = name) },
                     supportingContent = { Text(text = list[item].school + "  第" + list[item].term[0] + "学期")},
                     overlineContent = { list[item].type?.let { Text(text = it) } },
@@ -235,6 +248,7 @@ fun ProgramUI(vm: NetWorkViewModel,ifSaved: Boolean) {
                         courseName = name
                         showBottomSheet_Search = true
                     },
+                    index = item
                 )
 //            }
         }
@@ -414,7 +428,7 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean) {
                     items(listOne.size) {item ->
                         total += listOne[item].requiedCredits ?: 0.0
 //                        MyCustomCard {
-                            StyleCardListItem(
+                            AnimationCardListItem(
                                 headlineContent = { Text(text = listOne[item].type + " | 学分要求 " + listOne[item].requiedCredits) },
                                 trailingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "")},
                                 //   leadingContent = { Icon(painterResource(id = R.drawable.calendar), contentDescription = "Localized description") },
@@ -423,6 +437,7 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean) {
                                     num = item
                                     title = listOne[item].type.toString()
                                 },
+                                index = item
                             )
 //                        }
                     }
@@ -525,7 +540,7 @@ fun ProgramUIInfo(num : Int, vm : NetWorkViewModel, ifSaved : Boolean) {
         LazyColumn {
             items(listTwo.size) {item ->
 //                MyCustomCard{
-                    StyleCardListItem(
+                    AnimationCardListItem(
                         headlineContent = { Text(text = listTwo[item].type + " | 学分要求 " + listTwo[item].requiedCredits) },
                         trailingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "")},
                         //   leadingContent = { Icon(painterResource(id = R.drawable.calendar), contentDescription = "Localized description") },
@@ -534,6 +549,7 @@ fun ProgramUIInfo(num : Int, vm : NetWorkViewModel, ifSaved : Boolean) {
                             num2 = item
                             title = listTwo[item].type + " | 学分要求 " + listTwo[item].requiedCredits
                         },
+                        index = item
                     )
 //                }
             }
@@ -595,7 +611,7 @@ fun ProgramUIInfo2(num1 : Int, num2 : Int, vm : NetWorkViewModel, ifSaved : Bool
 //                MyCustomCard{
                     var department = listItem.depart
                     if(department.contains("（")) department = department.substringBefore("（")
-                    StyleCardListItem(
+                    AnimationCardListItem(
                         headlineContent = { Text(text = name) },
                         supportingContent = { Text(text = department) },
                         overlineContent = { Text(text = "第" + listItem.term + "学期 | 学分 ${listItem.credit}")},
@@ -609,6 +625,7 @@ fun ProgramUIInfo2(num1 : Int, num2 : Int, vm : NetWorkViewModel, ifSaved : Bool
                                 Starter.refreshLogin()
                             }
                         },
+                        index = item
                     )
 //                }
             }
@@ -652,7 +669,7 @@ fun GuestProgram(vm: NetWorkViewModel) {
             sheetState = sheetState_search,
             shape = Round(sheetState_search)
         ) {
-            ProgramSearch(vm)
+            ProgramSearch(vm, true)
         }
     }
     TransplantListItem(

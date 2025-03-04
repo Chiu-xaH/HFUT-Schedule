@@ -47,7 +47,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.hfut.schedule.App.MyApplication
-import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.ui.utils.BlurManager
 

@@ -69,8 +69,8 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.beans.NavigationBarItemData
 import com.hfut.schedule.logic.enums.NewsBarItems
-import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.DataStoreManager
+import com.hfut.schedule.logic.utils.VersionUtils
 import com.hfut.schedule.logic.utils.parse.Encrypt
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.reEmptyLiveDta
@@ -104,7 +104,7 @@ fun NewsActivityUI(vm: NetWorkViewModel) {
     val animation by remember { mutableStateOf(SharePrefs.prefs.getInt("ANIMATION", MyApplication.Animation)) }
     val navController = rememberNavController()
     val context = LocalContext.current
-    val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR",  AndroidVersion.canBlur)
+    val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR",  VersionUtils.canBlur)
     val blur by remember { mutableStateOf(switchblur) }
     val hazeState = remember { HazeState() }
 //    var bottomBarItems by remember { mutableStateOf(NewsBarItems.News) }

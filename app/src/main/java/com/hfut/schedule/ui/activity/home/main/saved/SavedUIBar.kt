@@ -75,7 +75,6 @@ import com.hfut.schedule.logic.enums.BottomBarItems
 import com.hfut.schedule.logic.enums.BottomBarItems.*
 import com.hfut.schedule.logic.beans.NavigationBarItemData
 import com.hfut.schedule.logic.utils.VersionUtils
-import com.hfut.schedule.logic.utils.AndroidVersion.canBlur
 import com.hfut.schedule.logic.utils.DataStoreManager
 import com.hfut.schedule.logic.utils.DateTimeUtils
 import com.hfut.schedule.logic.utils.DateTimeUtils.Benweeks
@@ -143,7 +142,7 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
 //    var bottomBarItems by remember { mutableStateOf(FOCUS) }
     var showBadge by remember { mutableStateOf(false) }
     if (getUpdates().version != VersionUtils.getVersionName()) showBadge = true
-    val switchblur = prefs.getBoolean("SWITCHBLUR", canBlur)
+    val switchblur = prefs.getBoolean("SWITCHBLUR", VersionUtils.canBlur)
     var blur by remember { mutableStateOf(switchblur) }
    // val savenum = prefs.getInt("GradeNum",0) + prefs.getInt("ExamNum",0) + prefs.getInt("Notifications",0)
     //val getnum = getGrade().size + getExam().size + getNotifications().size

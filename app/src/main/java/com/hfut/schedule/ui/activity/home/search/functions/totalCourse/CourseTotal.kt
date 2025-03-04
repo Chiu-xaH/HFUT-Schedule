@@ -36,6 +36,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.main.saved.isNextOpen
+import com.hfut.schedule.ui.utils.components.AnimationCardListItem
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.MyCustomCard
@@ -137,7 +138,7 @@ fun periodsSum(json: String) : Double {
 fun SemsterInfo(json : String?) {
 
     val semsterInfo = getTotalCourse(json)[0].semester
-    StyleCardListItem(
+    AnimationCardListItem(
         overlineContent = { Text(text = semsterInfo.startDate + " ~ " + semsterInfo.endDate)},
         headlineContent = {  ScrollText(semsterInfo.nameZh) },
         leadingContent = { Icon(
@@ -146,7 +147,8 @@ fun SemsterInfo(json : String?) {
         ) },
         modifier = Modifier.clickable {},
         color = MaterialTheme.colorScheme.primaryContainer,
-        trailingContent = { if (json != null) { if(json.contains("lessonIds"))Text(text = "学分 ${periodsSum(json)}") } }
+        trailingContent = { if (json != null) { if(json.contains("lessonIds"))Text(text = "学分 ${periodsSum(json)}") } },
+        index = 0
     )
 
 }

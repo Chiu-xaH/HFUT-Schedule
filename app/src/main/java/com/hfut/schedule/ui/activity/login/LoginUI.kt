@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContent
@@ -92,90 +93,91 @@ import com.hfut.schedule.ui.activity.home.cube.items.main.FirstCube
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.DownloadMLUI
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.URLImageWithOCR
 import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.RowHorizontal
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.LoginViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 //登录方法，auto代表前台调用
-fun LoginClick(vm : LoginViewModel,username : String,inputAES : String,code : String,webVpn : Boolean,onRefresh : () -> Unit) {
+private fun loginClick(vm : LoginViewModel, username : String, inputAES : String, code : String, webVpn : Boolean, onRefresh : () -> Unit,onLoad : (Boolean) -> Unit,onResult : (String) -> Unit) {
     val cookie = prefs.getString(if(!webVpn)"cookie" else "webVpnKey", "")
     val outputAES = cookie?.let { it1 -> Encrypt.encryptAES(inputAES, it1) }
     val ONE = "LOGIN_FLAVORING=$cookie"
-    //保存账密
-    saveString("Username",username)
-    saveString("Password",inputAES)
-    //登录
-    if (username.length != 10) MyToast("请输入正确的账号")
-    else outputAES?.let { it1 -> vm.login(username, it1,ONE,code,webVpn) }
+
     //登陆判定机制
     CoroutineScope(Job()).launch {
-        Handler(Looper.getMainLooper()).post{
-            vm.code.observeForever { result ->
-                when(result) {
-                    "XXX" -> {
-                        MyToast("连接Host失败,请再次尝试登录")
-                        vm.getCookie()
-                    }
-                    "401" -> {
-                        MyToast("密码或验证码错误")
-                        onRefresh()
-                        vm.getCookie()
-                    }
-                    "200" -> {
-                        if(!webVpn)
-                        MyToast("请输入正确的账号")
-                        else {
-                            Toast.makeText(MyApplication.context, "登陆成功", Toast.LENGTH_SHORT).show()
-                            vm.loginJxglstu()
-                            saveString("gradeNext",username.substring(2,4))
-                            val it = Intent(MyApplication.context, LoginSuccessActivity::class.java).apply {
-                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                putExtra("Grade", username.substring(2, 4))
-                                putExtra("webVpn",webVpn)
-                            }
-                            MyApplication.context.startActivity(it)
-                        }
-                    }
-                    "302" -> {
-                        when {
-                            vm.location.value.toString() == MyApplication.RedirectURL -> {
-                                MyToast("重定向失败,请重新登录")
+        launch {
+            //保存账密
+            saveString("Username",username)
+            saveString("Password",inputAES)
+        }
+        async {
+            //登录
+            if (username.length != 10) MyToast("请输入正确的账号")
+            else outputAES?.let { it1 -> vm.login(username, it1,ONE,code,webVpn) }
+        }.await()
+        async { onLoad(true) }.await()
+        async {
+            Handler(Looper.getMainLooper()).post{
+                vm.code.observeForever { result ->
+                    if(result != null) {
+                        onLoad(false)
+                        when(result) {
+                            "XXX" -> {
+                                onResult("可能是教务或校园网问题,请再次尝试登录")
                                 vm.getCookie()
                             }
-                            vm.location.value.toString().contains("ticket") -> {
-                                    Toast.makeText(MyApplication.context, "登陆成功", Toast.LENGTH_SHORT).show()
-                                    saveString("gradeNext",username.substring(2,4))
+                            "401" -> {
+                                onResult("密码或验证码错误或教务问题")
+                                onRefresh()
+                                vm.getCookie()
+                            }
+                            "200" -> {
+                                if(!webVpn)
+                                    onResult("请输入正确的账号")
+                                else {
+                                    onResult("登陆成功")
+                                    vm.loginJxglstu()
                                     val it = Intent(MyApplication.context, LoginSuccessActivity::class.java).apply {
                                         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                        putExtra("Grade", username.substring(2, 4))
-                                        putExtra("webVpn",webVpn)
+                                        putExtra("webVpn",true)
                                     }
                                     MyApplication.context.startActivity(it)
+                                }
                             }
-                            else -> {
-                                MyToast("重定向失败,请重新登录")
-                                vm.getCookie()
+                            "302" -> {
+                                when {
+                                    vm.location.value.toString() == MyApplication.RedirectURL -> {
+                                        onResult("登陆失败")
+                                        vm.getCookie()
+                                    }
+                                    vm.location.value.toString().contains("ticket") -> {
+                                        onResult("登陆成功")
+                                        val it = Intent(MyApplication.context, LoginSuccessActivity::class.java).apply {
+                                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                            putExtra("webVpn",webVpn)
+                                        }
+                                        MyApplication.context.startActivity(it)
+                                    }
+                                    else -> {
+                                        onResult("未知响应,登陆失败")
+                                        vm.getCookie()
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
         }
-    }
-    //输入特定暗号进入调试模式
-    if(username == "DEBUG") {
-        MyToast("您已进入调试模式")
-        val it = Intent(MyApplication.context, SavedActivity::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            putExtra("Grade", username.substring(2, 4))
-        }
-        MyApplication.context.startActivity(it)
     }
 }
 
@@ -293,12 +295,12 @@ fun LoginUI(vm : LoginViewModel) {
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
                 title = {
-
-
                     Box(modifier = Modifier.fillMaxWidth()) {
                         Text(
                             text = "教务登录  ",
-                            modifier = Modifier.fillMaxWidth().align(Alignment.Center),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.Center),
                             textAlign = TextAlign.Center,
                         )
                     }
@@ -340,7 +342,7 @@ fun LoginUI(vm : LoginViewModel) {
 @Composable
 fun AnimatedWelcomeScreen() {
     val welcomeTexts = listOf(
-        "你好", "(｡･ω･)ﾉﾞ", "欢迎使用", "ヾ(*ﾟ▽ﾟ)ﾉ","Hello", "٩(ˊωˋ*)و✧","Hola", "(⸝•̀֊•́⸝)", "Bonjour","＼(≧▽≦)／"
+        "你好", "(｡･ω･)ﾉﾞ", "欢迎使用", "ヾ(*ﾟ▽ﾟ)ﾉ","Hello", "٩(ˊωˋ*)و✧","Hola", "(⸝•̀֊•́⸝)", "Bonjour","＼(≧▽≦)"
     )
     var currentIndex by remember { mutableStateOf(0) }
     LaunchedEffect(Unit) {
@@ -411,6 +413,12 @@ fun TwoTextField(vm : LoginViewModel) {
         }
     }
     var onRefresh by remember { mutableStateOf(1) }
+    var loading by remember { mutableStateOf(false) }
+    var status by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(status) {
+        status?.let { MyToast(it) }
+    }
 
 
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -433,7 +441,7 @@ fun TwoTextField(vm : LoginViewModel) {
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
+        RowHorizontal {
             TextField(
                 modifier = Modifier
                     .weight(1f)
@@ -457,7 +465,7 @@ fun TwoTextField(vm : LoginViewModel) {
         }
 
         Spacer(modifier = Modifier.height(20.dp))
-        Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
+        RowHorizontal {
             TextField(
                 modifier = Modifier
                     .weight(1f)
@@ -488,7 +496,7 @@ fun TwoTextField(vm : LoginViewModel) {
         }
 
         Spacer(modifier = Modifier.height(20.dp))
-        Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
+        RowHorizontal {
             TextField(
                 modifier = Modifier
                     .weight(1f)
@@ -508,60 +516,63 @@ fun TwoTextField(vm : LoginViewModel) {
                         }
                     }
                 },
-                supportingText = {
-                    if(!switch_open) {
+                supportingText = if(!switch_open) {
+                    {
                         Text("点击下载模型文件以启用自动填充", modifier = Modifier.clickable {
                             showBottomSheet = true
                         })
                     }
-                }
+                } else null
             )
         }
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        Row (modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center){
+        if(loading) {
+            LoadingUI()
+        } else {
+            RowHorizontal {
+                Button(
+                    onClick = {
+                        val cookie = SharePrefs.prefs.getString("cookie", "")
+                        if (cookie != null) loginClick(vm,username,inputAES,inputCode,webVpn, onRefresh = { onRefresh++ }, onLoad = { loading = it }, onResult = { status = it})
 
-            Button(
-                onClick = {
-                    val cookie = SharePrefs.prefs.getString("cookie", "")
-                    if (cookie != null) LoginClick(vm,username,inputAES,inputCode,webVpn, onRefresh = { onRefresh++ })
                     }, modifier = Modifier.scale(scale.value),
-                interactionSource = interactionSource
+                    interactionSource = interactionSource
 
-            ) { Text("登录") }
+                ) { Text("登录") }
 
-            Spacer(modifier = Modifier.width(AppHorizontalDp()))
+                Spacer(modifier = Modifier.width(AppHorizontalDp()))
 
-            FilledTonalButton(
-                onClick = { SavedClick() },
-                modifier = Modifier.scale(scale2.value),
-                interactionSource = interactionSource2,
+                FilledTonalButton(
+                    onClick = { SavedClick() },
+                    modifier = Modifier.scale(scale2.value),
+                    interactionSource = interactionSource2,
 
-                ) { Text("免登录") }
+                    ) { Text("免登录") }
+            }
+            RowHorizontal{
+                TextButton(
+                    onClick = {webVpn = !webVpn},
+                    content = {
+                        Checkbox(checked = webVpn, onCheckedChange = {change -> webVpn = change})
+                        Text(text = "外地访问")
+                    },
+                )
+                TextButton(
+                    onClick = {
+                        val it = Intent(MyApplication.context, FixActivity::class.java).apply { addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) }
+                        MyApplication.context.startActivity(it)
+                    },
+                    content = {
+                        Box(modifier = Modifier.height(48.dp)) {
+                            Text(text = "遇到问题", modifier = Modifier.align(Alignment.Center),textDecoration = TextDecoration.Underline)
+                        }
+                    },
+                )
+            }
         }
-       // Spacer(modifier = Modifier.height(10.dp))
-        //GetComponentHeightExample()
-        Row (modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center){
-            TextButton(
-                onClick = {webVpn = !webVpn},
-                content = {
-                    Checkbox(checked = webVpn, onCheckedChange = {change -> webVpn = change})
-                    Text(text = "外地访问")
-                },
-            )
-            TextButton(
-                onClick = {
-                    val it = Intent(MyApplication.context, FixActivity::class.java).apply { addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) }
-                    MyApplication.context.startActivity(it)
-                },
-                content = {
-                    Box(modifier = Modifier.height(48.dp)) {
-                        Text(text = "遇到问题", modifier = Modifier.align(Alignment.Center),textDecoration = TextDecoration.Underline)
-                    }
-                },
-            )
-        }
+
     }
 }
 

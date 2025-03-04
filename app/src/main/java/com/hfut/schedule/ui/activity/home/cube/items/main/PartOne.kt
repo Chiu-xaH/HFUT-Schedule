@@ -2,6 +2,8 @@ package com.hfut.schedule.ui.activity.home.cube.items.main
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -16,13 +18,9 @@ import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -36,24 +34,22 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.activity.main.LoginActivity
 import com.hfut.schedule.logic.enums.CardBarItems
 import com.hfut.schedule.logic.enums.FixBarItems
-import com.hfut.schedule.logic.utils.VersionUtils
 import com.hfut.schedule.logic.utils.Starter.startWebUrl
+import com.hfut.schedule.logic.utils.VersionUtils
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.MyAPIItem
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.PersonPart
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.UpdateUI
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.VersionInfo
-import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.downloadUI
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.getUpdates
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
 import com.hfut.schedule.ui.utils.components.CustomTopBar
-import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.viewmodel.NetWorkViewModel
 
 
 fun apiCheck() : Boolean {
@@ -129,6 +125,7 @@ sealed class Screen(val route: String) {
 }
 
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun HomeSettingScreen(navController: NavController,
                       vm : NetWorkViewModel,

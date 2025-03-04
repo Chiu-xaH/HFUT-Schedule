@@ -1,11 +1,8 @@
 package com.hfut.schedule.ui.activity.home.calendar.jxglstu
 
 import android.annotation.SuppressLint
-import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -53,6 +50,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -85,7 +83,6 @@ import com.hfut.schedule.ui.activity.home.calendar.getScheduleDate
 import com.hfut.schedule.ui.activity.home.calendar.next.parseCourseName
 import com.hfut.schedule.ui.activity.home.main.saved.isNextOpen
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.getTotalCourse
-import com.hfut.schedule.ui.utils.components.ActiveTopBar
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.LargeCard
@@ -158,343 +155,286 @@ fun CalendarScreen(
         } else DateTimeUtils.weeksBetween
     ) }
 
-    //填充UI与更新
-    fun update() {
-        for(t in table) {
+    // 去重
+    val distinctUnit = { list : List<SnapshotStateList<String>> ->
+        for(t in list) {
+            val uniqueItems = t.distinct()
+            t.clear()
+            t.addAll(uniqueItems)
+        }
+    }
+    // 清空
+    val clearUnit = { list : List<SnapshotStateList<String>> ->
+        for(t in list) {
             t.clear()
         }
-        //////////////////////////////////////////////////////////////////////////////////
+    }
+
+
+    fun refreshUI(showAll : Boolean) {
+        // 清空
+        if(showAll) {
+            clearUnit(tableAll)
+        } else {
+            clearUnit(table)
+        }
+
         try {
+            // 组装
             val json = prefs.getString("json", "")
             val datumResponse = Gson().fromJson(json, datumResponse::class.java)
             val scheduleList = datumResponse.result.scheduleList
             val lessonList = datumResponse.result.lessonList
-            val scheduleGroupList = datumResponse.result.scheduleGroupList
-
-            for (i in 0 until scheduleList.size) {
-                var starttime = scheduleList[i].startTime.toString()
-                starttime =
-                    starttime.substring(0, starttime.length - 2) + ":" + starttime.substring(
-                        starttime.length - 2
-                    )
-                var room = scheduleList[i].room.nameZh
-                val person = scheduleList[i].personName
-                var date = scheduleList[i].date
-                var scheduleid = scheduleList[i].lessonId.toString()
-                var endtime = scheduleList[i].endTime.toString()
-                var periods = scheduleList[i].periods
-                var lessonType = scheduleList[i].lessonType
-
-                room = room.replace("学堂","")
-
-                for (k in 0 until scheduleGroupList.size) {
-
-                    val id = scheduleGroupList[k].lessonId.toString()
-                    val std = scheduleGroupList[k].stdCount
-                    if ( scheduleid == id) {
-                        periods = std
-                    }
-                }
-
-                for (j in 0 until lessonList.size) {
-                    val lessonlist_id = lessonList[j].id
-                    val INFO = lessonList[j].suggestScheduleWeekInfo
-                    val name = lessonList[j].courseName
-                    val courseTypeName = lessonList[j].courseTypeName
-                    if (scheduleid == lessonlist_id) {
-                        scheduleid = name
-                        endtime = INFO
-                        lessonType = courseTypeName
-                    }
-                }
-
-
-                val text = starttime + "\n" + scheduleid + "\n" + room
-
-                if (scheduleList[i].weekIndex == Bianhuaweeks.toInt()) {
-                    if (scheduleList[i].weekday == 1) {
-                        if (scheduleList[i].startTime == 800) {
-                            table[0].add(text)
-                        }
-                        if (scheduleList[i].startTime == 1010) {
-                            table[5].add(text)
-                        }
-                        if (scheduleList[i].startTime == 1400) {
-                            table[10].add(text)
-                        }
-                        if (scheduleList[i].startTime == 1600) {
-                            table[15].add(text)
-                        }
-                        if (scheduleList[i].startTime == 1900) {
-                            table[20].add(text)
-                        }
-                    }
-                    if (scheduleList[i].weekday == 2) {
-                        if (scheduleList[i].startTime == 800) {
-                            table[1].add(text)
-                        }
-                        if (scheduleList[i].startTime == 1010) {
-                            table[6].add(text)
-                        }
-                        if (scheduleList[i].startTime == 1400) {
-                            table[11].add(text)
-                        }
-                        if (scheduleList[i].startTime == 1600) {
-                            table[16].add(text)
-                        }
-                        if (scheduleList[i].startTime == 1900) {
-                            table[21].add(text)
-                        }
-                    }
-                    if (scheduleList[i].weekday == 3) {
-                        if (scheduleList[i].startTime == 800) {
-                            table[2].add(text)
-                        }
-                        if (scheduleList[i].startTime == 1010) {
-                            table[7].add(text)
-                        }
-                        if (scheduleList[i].startTime == 1400) {
-                            table[12].add(text)
-                        }
-                        if (scheduleList[i].startTime == 1600) {
-                            table[17].add(text)
-                        }
-                        if (scheduleList[i].startTime == 1900) {
-                            table[22].add(text)
-                        }
-                    }
-                    if (scheduleList[i].weekday == 4) {
-                        if (scheduleList[i].startTime == 800) {
-                            table[3].add(text)
-                        }
-                        if (scheduleList[i].startTime == 1010) {
-                            table[8].add(text)
-                        }
-                        if (scheduleList[i].startTime == 1400) {
-                            table[13].add(text)
-                        }
-                        if (scheduleList[i].startTime == 1600) {
-                            table[18].add(text)
-                        }
-                        if (scheduleList[i].startTime == 1900) {
-                            table[23].add(text)
-                        }
-                    }
-                    if (scheduleList[i].weekday == 5) {
-                        if (scheduleList[i].startTime == 800) {
-                            table[4].add(text)
-                        }
-                        if (scheduleList[i].startTime == 1010) {
-                            table[9].add(text)
-                        }
-                        if (scheduleList[i].startTime == 1400) {
-                            table[14].add(text)
-                        }
-                        if (scheduleList[i].startTime == 1600) {
-                            table[19].add(text)
-                        }
-                        if (scheduleList[i].startTime == 1900) {
-                            table[24].add(text)
-                        }
-                    }
-                }
-            }
-        } catch (e : Exception) {
-            e.printStackTrace()
-            Log.d("错误","错误")
-        }
-
-    }
-
-    fun updateAll() {
-        for(t in tableAll) {
-            t.clear()
-        }
-        //////////////////////////////////////////////////////////////////////////////////
-
-        try {
-            val json =  prefs.getString("json", "")
-
-            val datumResponse = Gson().fromJson(json, datumResponse::class.java)
-            val scheduleList = datumResponse.result.scheduleList
-            val lessonList = datumResponse.result.lessonList
-            val scheduleGroupList = datumResponse.result.scheduleGroupList
 
             for (i in scheduleList.indices) {
-                var starttime = scheduleList[i].startTime.toString()
-                starttime =
-                    starttime.substring(0, starttime.length - 2) + ":" + starttime.substring(
-                        starttime.length - 2
+                val item = scheduleList[i]
+                var startTime = item.startTime.toString()
+                startTime =
+                    startTime.substring(0, startTime.length - 2) + ":" + startTime.substring(
+                        startTime.length - 2
                     )
-                var room = scheduleList[i].room.nameZh
-                val person = scheduleList[i].personName
-                var date = scheduleList[i].date
-                var scheduleid = scheduleList[i].lessonId.toString()
-                var endtime = scheduleList[i].endTime.toString()
-                var periods = scheduleList[i].periods
-                var lessonType = scheduleList[i].lessonType
-
+                var room = item.room.nameZh
+                var courseId = item.lessonId.toString()
                 room = room.replace("学堂","")
 
-                for (k in 0 until scheduleGroupList.size) {
 
-                    val id = scheduleGroupList[k].lessonId.toString()
-                    val std = scheduleGroupList[k].stdCount
-                    if ( scheduleid == id) {
-                        periods = std
+                for (j in lessonList.indices) {
+                    if (courseId == lessonList[j].id) {
+                        courseId = lessonList[j].courseName
                     }
                 }
 
-                for (j in 0 until lessonList.size) {
-                    val lessonlist_id = lessonList[j].id
-                    val INFO = lessonList[j].suggestScheduleWeekInfo
-                    val name = lessonList[j].courseName
-                    val courseTypeName = lessonList[j].courseTypeName
-                    if (scheduleid == lessonlist_id) {
-                        scheduleid = name
-                        endtime = INFO
-                        lessonType = courseTypeName
-                    }
-                }
+                val text = startTime + "\n" + courseId + "\n" + room
 
-                val text = starttime + "\n" + scheduleid + "\n" + room
-
-                if (scheduleList[i].weekIndex == Bianhuaweeks.toInt()) {
-                    when(scheduleList[i].weekday) {
+                if (item.weekIndex == Bianhuaweeks.toInt()) {
+                    when(item.weekday) {
                         6 -> { Handler(Looper.getMainLooper()).post { vmUI.findNewCourse.value = text.isNotEmpty() } }
                         7 -> { Handler(Looper.getMainLooper()).post { vmUI.findNewCourse.value = text.isNotEmpty() } }
                     }
-                    if (scheduleList[i].weekday == 1) {
-                        if (scheduleList[i].startTime == 800) {
-                            tableAll[0].add(text)
+                    if(showAll) {
+                        if (item.weekday == 1) {
+                            if (item.startTime == 800) {
+                                tableAll[0].add(text)
+                            }
+                            if (item.startTime == 1010) {
+                                tableAll[7].add(text)
+                            }
+                            if (item.startTime == 1400) {
+                                tableAll[14].add(text)
+                            }
+                            if (item.startTime == 1600) {
+                                tableAll[21].add(text)
+                            }
+                            if (item.startTime == 1900) {
+                                tableAll[28].add(text)
+                            }
                         }
-                        if (scheduleList[i].startTime == 1010) {
-                            tableAll[7].add(text)
+                        if (item.weekday == 2) {
+                            if (item.startTime == 800) {
+                                tableAll[1].add(text)
+                            }
+                            if (item.startTime == 1010) {
+                                tableAll[8].add(text)
+                            }
+                            if (item.startTime == 1400) {
+                                tableAll[15].add(text)
+                            }
+                            if (item.startTime == 1600) {
+                                tableAll[22].add(text)
+                            }
+                            if (item.startTime == 1900) {
+                                tableAll[29].add(text)
+                            }
                         }
-                        if (scheduleList[i].startTime == 1400) {
-                            tableAll[14].add(text)
+                        if (item.weekday == 3) {
+                            if (item.startTime == 800) {
+                                tableAll[2].add(text)
+                            }
+                            if (item.startTime == 1010) {
+                                tableAll[9].add(text)
+                            }
+                            if (item.startTime == 1400) {
+                                tableAll[16].add(text)
+                            }
+                            if (item.startTime == 1600) {
+                                tableAll[23].add(text)
+                            }
+                            if (item.startTime == 1900) {
+                                tableAll[30].add(text)
+                            }
                         }
-                        if (scheduleList[i].startTime == 1600) {
-                            tableAll[21].add(text)
+                        if (item.weekday == 4) {
+                            if (item.startTime == 800) {
+                                tableAll[3].add(text)
+                            }
+                            if (item.startTime == 1010) {
+                                tableAll[10].add(text)
+                            }
+                            if (item.startTime == 1400) {
+                                tableAll[17].add(text)
+                            }
+                            if (item.startTime == 1600) {
+                                tableAll[24].add(text)
+                            }
+                            if (item.startTime == 1900) {
+                                tableAll[31].add(text)
+                            }
                         }
-                        if (scheduleList[i].startTime == 1900) {
-                            tableAll[28].add(text)
+                        if (item.weekday == 5) {
+                            if (item.startTime == 800) {
+                                tableAll[4].add(text)
+                            }
+                            if (item.startTime == 1010) {
+                                tableAll[11].add(text)
+                            }
+                            if (item.startTime == 1400) {
+                                tableAll[18].add(text)
+                            }
+                            if (item.startTime == 1600) {
+                                tableAll[25].add(text)
+                            }
+                            if (item.startTime == 1900) {
+                                tableAll[32].add(text)
+                            }
                         }
-                    }
-                    if (scheduleList[i].weekday == 2) {
-                        if (scheduleList[i].startTime == 800) {
-                            tableAll[1].add(text)
+                        if (item.weekday == 6) {
+                            if (item.startTime == 800) {
+                                tableAll[5].add(text)
+                            }
+                            if (item.startTime == 1010) {
+                                tableAll[12].add(text)
+                            }
+                            if (item.startTime == 1400) {
+                                tableAll[19].add(text)
+                            }
+                            if (item.startTime == 1600) {
+                                tableAll[26].add(text)
+                            }
+                            if (item.startTime == 1900) {
+                                tableAll[33].add(text)
+                            }
                         }
-                        if (scheduleList[i].startTime == 1010) {
-                            tableAll[8].add(text)
+                        if (item.weekday == 7) {
+                            if (item.startTime == 800) {
+                                tableAll[6].add(text)
+                            }
+                            if (item.startTime == 1010) {
+                                tableAll[13].add(text)
+                            }
+                            if (item.startTime == 1400) {
+                                tableAll[20].add(text)
+                            }
+                            if (item.startTime == 1600) {
+                                tableAll[27].add(text)
+                            }
+                            if (item.startTime == 1900) {
+                                tableAll[34].add(text)
+                            }
                         }
-                        if (scheduleList[i].startTime == 1400) {
-                            tableAll[15].add(text)
+                    } else {
+                        if (item.weekday == 1) {
+                            if (item.startTime == 800) {
+                                table[0].add(text)
+                            }
+                            if (item.startTime == 1010) {
+                                table[5].add(text)
+                            }
+                            if (item.startTime == 1400) {
+                                table[10].add(text)
+                            }
+                            if (item.startTime == 1600) {
+                                table[15].add(text)
+                            }
+                            if (item.startTime == 1900) {
+                                table[20].add(text)
+                            }
                         }
-                        if (scheduleList[i].startTime == 1600) {
-                            tableAll[22].add(text)
+                        if (item.weekday == 2) {
+                            if (item.startTime == 800) {
+                                table[1].add(text)
+                            }
+                            if (item.startTime == 1010) {
+                                table[6].add(text)
+                            }
+                            if (item.startTime == 1400) {
+                                table[11].add(text)
+                            }
+                            if (item.startTime == 1600) {
+                                table[16].add(text)
+                            }
+                            if (item.startTime == 1900) {
+                                table[21].add(text)
+                            }
                         }
-                        if (scheduleList[i].startTime == 1900) {
-                            tableAll[29].add(text)
+                        if (item.weekday == 3) {
+                            if (item.startTime == 800) {
+                                table[2].add(text)
+                            }
+                            if (item.startTime == 1010) {
+                                table[7].add(text)
+                            }
+                            if (item.startTime == 1400) {
+                                table[12].add(text)
+                            }
+                            if (item.startTime == 1600) {
+                                table[17].add(text)
+                            }
+                            if (item.startTime == 1900) {
+                                table[22].add(text)
+                            }
                         }
-                    }
-                    if (scheduleList[i].weekday == 3) {
-                        if (scheduleList[i].startTime == 800) {
-                            tableAll[2].add(text)
+                        if (item.weekday == 4) {
+                            if (item.startTime == 800) {
+                                table[3].add(text)
+                            }
+                            if (item.startTime == 1010) {
+                                table[8].add(text)
+                            }
+                            if (item.startTime == 1400) {
+                                table[13].add(text)
+                            }
+                            if (item.startTime == 1600) {
+                                table[18].add(text)
+                            }
+                            if (item.startTime == 1900) {
+                                table[23].add(text)
+                            }
                         }
-                        if (scheduleList[i].startTime == 1010) {
-                            tableAll[9].add(text)
-                        }
-                        if (scheduleList[i].startTime == 1400) {
-                            tableAll[16].add(text)
-                        }
-                        if (scheduleList[i].startTime == 1600) {
-                            tableAll[23].add(text)
-                        }
-                        if (scheduleList[i].startTime == 1900) {
-                            tableAll[30].add(text)
-                        }
-                    }
-                    if (scheduleList[i].weekday == 4) {
-                        if (scheduleList[i].startTime == 800) {
-                            tableAll[3].add(text)
-                        }
-                        if (scheduleList[i].startTime == 1010) {
-                            tableAll[10].add(text)
-                        }
-                        if (scheduleList[i].startTime == 1400) {
-                            tableAll[17].add(text)
-                        }
-                        if (scheduleList[i].startTime == 1600) {
-                            tableAll[24].add(text)
-                        }
-                        if (scheduleList[i].startTime == 1900) {
-                            tableAll[31].add(text)
-                        }
-                    }
-                    if (scheduleList[i].weekday == 5) {
-                        if (scheduleList[i].startTime == 800) {
-                            tableAll[4].add(text)
-                        }
-                        if (scheduleList[i].startTime == 1010) {
-                            tableAll[11].add(text)
-                        }
-                        if (scheduleList[i].startTime == 1400) {
-                            tableAll[18].add(text)
-                        }
-                        if (scheduleList[i].startTime == 1600) {
-                            tableAll[25].add(text)
-                        }
-                        if (scheduleList[i].startTime == 1900) {
-                            tableAll[32].add(text)
-                        }
-                    }
-                    if (scheduleList[i].weekday == 6) {
-                        if (scheduleList[i].startTime == 800) {
-                            tableAll[5].add(text)
-                        }
-                        if (scheduleList[i].startTime == 1010) {
-                            tableAll[12].add(text)
-                        }
-                        if (scheduleList[i].startTime == 1400) {
-                            tableAll[19].add(text)
-                        }
-                        if (scheduleList[i].startTime == 1600) {
-                            tableAll[26].add(text)
-                        }
-                        if (scheduleList[i].startTime == 1900) {
-                            tableAll[33].add(text)
-                        }
-                    }
-                    if (scheduleList[i].weekday == 7) {
-                        if (scheduleList[i].startTime == 800) {
-                            tableAll[6].add(text)
-                        }
-                        if (scheduleList[i].startTime == 1010) {
-                            tableAll[13].add(text)
-                        }
-                        if (scheduleList[i].startTime == 1400) {
-                            tableAll[20].add(text)
-                        }
-                        if (scheduleList[i].startTime == 1600) {
-                            tableAll[27].add(text)
-                        }
-                        if (scheduleList[i].startTime == 1900) {
-                            tableAll[34].add(text)
+                        if (item.weekday == 5) {
+                            if (item.startTime == 800) {
+                                table[4].add(text)
+                            }
+                            if (item.startTime == 1010) {
+                                table[9].add(text)
+                            }
+                            if (item.startTime == 1400) {
+                                table[14].add(text)
+                            }
+                            if (item.startTime == 1600) {
+                                table[19].add(text)
+                            }
+                            if (item.startTime == 1900) {
+                                table[24].add(text)
+                            }
                         }
                     }
                 }
             }
+
+            // 去重
+            if(showAll) {
+                distinctUnit(tableAll)
+            } else {
+                distinctUnit(table)
+            }
         } catch (e : Exception) {
             e.printStackTrace()
-            Log.d("错误ALL","错误")
         }
-
     }
 
+
     LaunchedEffect(showAll,loading) {
-        async { if(showAll) updateAll() else update() }.await()
-//        async { refreshUI = false }
+        async { refreshUI(showAll) }.await()
     }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -819,7 +759,7 @@ fun CalendarScreen(
                                     onClick = {
                                         if (Bianhuaweeks > 1) {
                                             Bianhuaweeks-- - 1
-                                            if(showAll) updateAll() else update()
+                                            refreshUI(showAll)
                                             onDateChange(today.minusDays(7))
                                         }
                                     },
@@ -841,7 +781,7 @@ fun CalendarScreen(
                                 ExtendedFloatingActionButton(
                                     onClick = {
                                         Bianhuaweeks = DateTimeUtils.Benweeks
-                                        if(showAll) updateAll() else update()
+                                        refreshUI(showAll)
                                         onDateChange(LocalDate.now())
                                     },
                                 ) {
@@ -891,7 +831,7 @@ fun CalendarScreen(
                                     onClick = {
                                         if (Bianhuaweeks < 20) {
                                             Bianhuaweeks++ + 1
-                                            if(showAll) updateAll() else update()
+                                            refreshUI(showAll)
                                             onDateChange(today.plusDays(7))
                                         }
                                     },

@@ -213,17 +213,6 @@ fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel, refreshing : Boolean) {
     val showCountDown = prefs.getBoolean("SWITCHCOUNTDOWN",false)
     val showShortCut = prefs.getBoolean("SWITCHSHORTCUT",false)
 
-    val scale = animateFloatAsState(
-        targetValue = if (refreshing) 0.95f else 1f, // 按下时为0.9，松开时为1
-        //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-        animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
-        label = "" // 使用弹簧动画
-    )
-    val blurSize by animateDpAsState(
-        targetValue = if (refreshing) 10.dp else 0.dp, label = ""
-        ,animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
-    )
-
     CoroutineScope(Job()).launch {
         async {
             if(showWeb)
@@ -243,17 +232,11 @@ fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel, refreshing : Boolean) {
         }
     }
     if(showCard || showEle || showToday || showWeb)
-    Row(modifier = Modifier
-        .fillMaxWidth()
-        .padding(horizontal = AppHorizontalDp(), vertical = CardNormalDp()), horizontalArrangement = Arrangement.Center) {
-
-        MyCustomCard(modifier = Modifier
-            .fillMaxWidth()
-            .scale(scale.value),
+        MyCustomCard(
             containerColor = CardNormalColor(),
             hasElevation = false
         ) {
-            Column(modifier = Modifier.blur(blurSize)) {
+            Column() {
                 if(showCard || showToday)
                     Row {
                         if(showCard)
@@ -314,9 +297,7 @@ fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel, refreshing : Boolean) {
                     }
                 }
             }
-
         }
-    }
 }
 //废弃旧的方法
 fun getWeb(vmUI : UIViewModel)  {

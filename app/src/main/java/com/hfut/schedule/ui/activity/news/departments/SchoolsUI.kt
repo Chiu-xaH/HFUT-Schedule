@@ -13,6 +13,7 @@ import androidx.compose.material3.ListItem
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.hfut.schedule.logic.utils.Starter
+import com.hfut.schedule.ui.utils.components.AnimationCardListItem
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.DepartmentIcons
@@ -53,7 +54,7 @@ fun SchoolsUI(innerPdding : PaddingValues? = null) {
             val title = m.value
             val url = m.key
 //            MyCustomCard {
-            StyleCardListItem(
+            AnimationCardListItem(
                     headlineContent = { ScrollText(text = title) },
                     leadingContent = { DepartmentIcons(title) },
                     overlineContent = { ScrollText(text = url) },
@@ -62,7 +63,8 @@ fun SchoolsUI(innerPdding : PaddingValues? = null) {
                     },
                     trailingContent = {
                         Icon(Icons.Filled.ArrowForward, contentDescription = "")
-                    }
+                    },
+                index = index
                 )
 //            }
         }

@@ -49,8 +49,8 @@ import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.GuaGuaViewModel
 import com.hfut.schedule.logic.enums.ShowerBarItems
 import com.hfut.schedule.logic.beans.NavigationBarItemData
-import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.DataStoreManager
+import com.hfut.schedule.logic.utils.VersionUtils
 import com.hfut.schedule.logic.utils.data.SharePrefs
 //import com.hfut.schedule.ui.activity.card.function.main.turnToBottomBar
 import com.hfut.schedule.ui.activity.shower.bills.GuaguaBills
@@ -73,7 +73,7 @@ fun ShowerGuaGua(vm: GuaGuaViewModel,netVm : NetWorkViewModel) {
     val animation by remember { mutableStateOf(SharePrefs.prefs.getInt("ANIMATION", MyApplication.Animation)) }
     val navController = rememberNavController()
     val context = LocalContext.current
-    val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR",  AndroidVersion.canBlur)
+    val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR",  VersionUtils.canBlur)
     val blur by remember { mutableStateOf(switchblur) }
     val hazeState = remember { HazeState() }
 

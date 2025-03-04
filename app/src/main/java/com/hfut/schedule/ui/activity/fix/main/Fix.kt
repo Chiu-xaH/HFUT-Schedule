@@ -52,8 +52,8 @@ import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.LoginViewModel
 import com.hfut.schedule.logic.enums.FixBarItems
 import com.hfut.schedule.logic.beans.NavigationBarItemData
-import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.DataStoreManager
+import com.hfut.schedule.logic.utils.VersionUtils
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.fix.about.AboutUI
@@ -70,7 +70,7 @@ import dev.chrisbanes.haze.haze
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Fix(vm : LoginViewModel,vm2 : NetWorkViewModel) {
-    val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR",  AndroidVersion.canBlur)
+    val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR",  VersionUtils.canBlur)
     var blur by remember { mutableStateOf(switchblur) }
     var animation by remember { mutableStateOf(prefs.getInt("ANIMATION", MyApplication.Animation)) }
     val hazeState = remember { HazeState() }

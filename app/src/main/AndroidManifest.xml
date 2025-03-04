@@ -19,6 +19,8 @@
         tools:ignore="ScopedStorage" />
     <!--    安装APK 用于下载更新后安装-->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <!--    发送通知 用于提示安装包已下载好-->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <queries>
         <package android:name="com.wisedu.cpdaily" />
@@ -102,6 +104,8 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
+        <receiver android:name=".receiver.UpdateReceiver" android:exported="false"/>
 
         <activity
             android:name=".activity.funiction.CardActivity"

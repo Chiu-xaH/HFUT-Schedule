@@ -7,7 +7,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,21 +21,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Divider
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -49,34 +41,31 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.beans.community.GradeResponseJXGLSTU
-import com.hfut.schedule.logic.utils.parse.ReservDecimal
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.data.reEmptyLiveDta
+import com.hfut.schedule.logic.utils.parse.ReservDecimal
 import com.hfut.schedule.ui.activity.card.counts.RadarChart
 import com.hfut.schedule.ui.activity.card.counts.RadarData
 import com.hfut.schedule.ui.activity.grade.getGradeJXGLSTU
 import com.hfut.schedule.ui.activity.home.search.functions.survey.SurveyUI
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotalForApi
+import com.hfut.schedule.ui.utils.components.AnimationCardListItem
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CardNormalDp
 import com.hfut.schedule.ui.utils.components.CustomTopBar
-import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.EmptyUI
 import com.hfut.schedule.ui.utils.components.LargeCard
 import com.hfut.schedule.ui.utils.components.LittleDialog
 import com.hfut.schedule.ui.utils.components.LoadingUI
-import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
-import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.TransplantListItem
+import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -253,28 +242,23 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel,showSea
 
                         items(searchList.size) { item ->
                             val grade = searchList[item]
-                            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                                Column() {
-//                                    MyCustomCard{
-                                        StyleCardListItem(
-                                            headlineContent = {  Text(grade.title) },
-                                            overlineContent = { Text( "成绩  "+ grade.totalGrade + "  |  绩点  " + grade.GPA +  "  |  学分  " + grade.score) },
-                                            leadingContent = { Icon(painterResource(R.drawable.article), contentDescription = "Localized description",) },
-                                            supportingContent = { Text(grade.grade) },
-                                            modifier = Modifier.clickable {
-                                                if(grade.grade.contains("评教")) {
-                                                    MyToast("请为任课老师评教(存在多位老师需全评教，老师列表可在课程汇总查看)")
-                                                    showBottomSheet_Survey = true
-                                                } else {
-                                                    title = grade.title
-                                                    num = grade
-                                                    showBottomSheet = true
-                                                }
-                                            },
-                                        )
-//                                    }
-                                }
-                            }
+                            AnimationCardListItem(
+                                headlineContent = {  Text(grade.title) },
+                                overlineContent = { Text( "成绩  "+ grade.totalGrade + "  |  绩点  " + grade.GPA +  "  |  学分  " + grade.score) },
+                                leadingContent = { Icon(painterResource(R.drawable.article), contentDescription = "Localized description",) },
+                                supportingContent = { Text(grade.grade) },
+                                modifier = Modifier.clickable {
+                                    if(grade.grade.contains("评教")) {
+                                        MyToast("请为任课老师评教(存在多位老师需全评教，老师列表可在课程汇总查看)")
+                                        showBottomSheet_Survey = true
+                                    } else {
+                                        title = grade.title
+                                        num = grade
+                                        showBottomSheet = true
+                                    }
+                                },
+                                index = item
+                            )
                         }
                         item { Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding())) }
                     }

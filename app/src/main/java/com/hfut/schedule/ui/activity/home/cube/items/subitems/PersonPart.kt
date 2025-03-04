@@ -34,7 +34,6 @@ import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.beans.UserInfo
 import com.hfut.schedule.logic.utils.VersionUtils
-import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.DateTimeUtils
 import com.hfut.schedule.logic.utils.parse.ReservDecimal
 import com.hfut.schedule.logic.utils.data.SharePrefs
@@ -151,7 +150,6 @@ fun PersonPart() {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TimesUI() {
    // val startYear = ("20" + getUserInfo().studentID?.substring(0,2)).toIntOrNull()
@@ -167,7 +165,7 @@ fun getUserInfo() : UserInfo {
 
 
     val appVersion = VersionUtils.getVersionName()
-    val androidSDK = AndroidVersion.sdkInt
+    val androidSDK = VersionUtils.sdkInt
     val device = Build.MODEL
 
     return UserInfo(getPersonInfo().name,getPersonInfo().username,dateTime, appVersionName = appVersion, systemVersion = androidSDK, deviceName = device)

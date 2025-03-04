@@ -9,6 +9,7 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
@@ -69,6 +70,11 @@ import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
 import com.hfut.schedule.ui.activity.news.main.transferToPostData
 import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.CampusId
 import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.CampusId.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
@@ -78,6 +84,29 @@ import retrofit2.Response
 
 
 class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
+
+    // 通用网络请求处理函数
+    private fun launchRequest(
+        flow: MutableStateFlow<String?>? = null,
+        sharedFlow: MutableSharedFlow<String?>? = null,
+        request: suspend () -> Response<ResponseBody>
+    ) {
+        viewModelScope.launch {
+            val result: String? = try {
+                val response = withContext(Dispatchers.IO) { request() } // 网络请求
+                if (response.isSuccessful) {
+                    response.body()?.string() // 返回 JSON 字符串
+                } else {
+                    null // 请求失败时返回 null
+                }
+            } catch (e: Exception) {
+                null
+            }
+
+            flow?.value = result       // 更新 StateFlow
+            sharedFlow?.emit(result)   // SharedFlow 发送数据
+        }
+    }
 
     private val JxglstuJSON = JxglstuJSONServiceCreator.create(JxglstuService::class.java,webVpn)
     private val JxglstuHTML = JxglstuHTMLServiceCreator.create(JxglstuService::class.java,webVpn)

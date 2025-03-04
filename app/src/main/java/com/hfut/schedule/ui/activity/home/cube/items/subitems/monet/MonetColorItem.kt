@@ -38,7 +38,7 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.utils.AndroidVersion
+import com.hfut.schedule.logic.utils.VersionUtils
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.utils.components.MyToast
@@ -54,14 +54,14 @@ fun MonetColorItem() {
         true -> "收回"
         false -> "展开"
     }
-    val switch_color = prefs.getBoolean("SWITCHCOLOR",AndroidVersion.sdkInt < 31)
+    val switch_color = prefs.getBoolean("SWITCHCOLOR", VersionUtils.canMonet)
     var DynamicSwitch by remember { mutableStateOf(switch_color) }
 
     TransplantListItem(
             headlineContent = { Text(text = "取色算法") },
             supportingContent = {
             Column {
-                Text(text = if(AndroidVersion.sdkInt >= 31)"若无法调用Android 12+的原生动态取色的系统,可使用莫奈取色算法,点击${text}" else "仅 Android 12+ 支持原生取色 点击${text}")
+                Text(text = if(VersionUtils.canMonet)"若无法调用Android 12+的原生动态取色的系统,可使用莫奈取色算法,点击${text}" else "仅 Android 12+ 支持原生取色 点击${text}")
                 Row {
                     FilterChip(
                         onClick = {
@@ -81,7 +81,7 @@ fun MonetColorItem() {
                         },
                         label = { Text(text = "原生取色") },
                         selected = !DynamicSwitch,
-                        enabled = AndroidVersion.sdkInt >= 31 )
+                        enabled = VersionUtils.canMonet )
                 }
             }
                             },

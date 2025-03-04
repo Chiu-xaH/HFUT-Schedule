@@ -24,7 +24,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.utils.AndroidVersion.canBlur
+import com.hfut.schedule.logic.utils.VersionUtils
 import com.hfut.schedule.logic.utils.data.SharePrefs.saveBoolean
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.AnimationSetting
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.monet.MonetColorItem
@@ -64,14 +64,14 @@ fun UIScreen(navController: NavController, innerPaddings : PaddingValues,
             TransplantListItem(
                 headlineContent = { Text(text = "层级实时模糊") },
                 supportingContent = {
-                    if(canBlur) {
+                    if(VersionUtils.canBlur) {
                         Text(text = "开启后将会转换部分层级渲染为实时渐变模糊,此过程会加大性能压力")
                     } else {
                         Text(text = "需为 Android 13+")
                     }
                 },
                 leadingContent = { Icon(painterResource(R.drawable.deblur), contentDescription = "Localized description",) },
-                trailingContent = {  Switch(checked = blur, onCheckedChange = blurchanged, enabled = canBlur ) },
+                trailingContent = {  Switch(checked = blur, onCheckedChange = blurchanged, enabled = VersionUtils.canBlur ) },
                 modifier = Modifier.clickable { blurchanged.invoke(blur) }
             )
             TransplantListItem(

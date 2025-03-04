@@ -57,7 +57,6 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.beans.NavigationBarItemData
 import com.hfut.schedule.logic.enums.BottomBarItems
 import com.hfut.schedule.logic.utils.VersionUtils
-import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.DataStoreManager
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.Starter
@@ -103,7 +102,7 @@ fun NoLoginUI(vm : NetWorkViewModel,vm2 : LoginViewModel,vmUI : UIViewModel) {
 
     var showBadge by remember { mutableStateOf(false) }
     if (getUpdates().version != VersionUtils.getVersionName()) showBadge = true
-    val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR", AndroidVersion.canBlur)
+    val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR", VersionUtils.canBlur)
     var blur by remember { mutableStateOf(switchblur) }
 
     val animation by remember { mutableStateOf(SharePrefs.prefs.getInt("ANIMATION", MyApplication.Animation)) }

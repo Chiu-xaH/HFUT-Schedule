@@ -54,6 +54,7 @@ import com.hfut.schedule.logic.beans.community.LibraryResponse
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter
+import com.hfut.schedule.ui.utils.components.AnimationCustomCard
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CardNormalColor
 import com.hfut.schedule.ui.utils.components.CustomTopBar
@@ -204,7 +205,7 @@ fun LibraryItem(vm : NetWorkViewModel) {
                                     items (LibItem().size){ item ->
                                         Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)
                                         {
-                                            MyCustomCard(hasElevation = false, containerColor = CardNormalColor()){
+                                            AnimationCustomCard(containerColor = CardNormalColor(), index = item){
                                                 TransplantListItem(
                                                     headlineContent = { LibItem()[item].name?.let { Text(text = it,fontWeight = FontWeight.Bold) } },
                                                     supportingContent = { LibItem()[item].callNumber?.let { Text(text = it) } },

@@ -40,6 +40,7 @@ import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.card.bills.main.getBills
 import com.hfut.schedule.ui.activity.card.bills.main.processTranamt
+import com.hfut.schedule.ui.utils.components.AnimationCustomCard
 import com.hfut.schedule.ui.utils.components.BillsIcons
 import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.MyCustomCard
@@ -99,7 +100,7 @@ fun CardRow(vm : NetWorkViewModel, vmUI : UIViewModel) {
     Spacer(modifier = Modifier.height(5.dp))
 
 
-    MyCustomCard(hasElevation = false, containerColor = MaterialTheme.colorScheme.errorContainer) {
+    AnimationCustomCard(containerColor = MaterialTheme.colorScheme.errorContainer) {
         Row {
             TransplantListItem(
                 headlineContent = { ScrollText(text = "余额 ￥${vmUI.CardValue.value?.now ?: now}") },

@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
+import com.hfut.schedule.ui.utils.components.AnimationCardListItem
 import com.hfut.schedule.viewmodel.GuaGuaViewModel
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.ScrollText
@@ -93,7 +94,7 @@ fun GuaguaBills(innerPadding: PaddingValues, vm: GuaGuaViewModel) {
                 items(list.size) {item ->
 //                    MyCustomCard {
                         val info = list[item].description
-                        StyleCardListItem(
+                        AnimationCardListItem(
                             headlineContent = {
                                 ScrollText(text =
                                 if(info.contains("热水表: ")) info.substringAfter(": ")
@@ -124,7 +125,9 @@ fun GuaguaBills(innerPadding: PaddingValues, vm: GuaGuaViewModel) {
                                     R.drawable.paid
                                 }
                                 ), contentDescription = "")
-                            },)
+                            },
+                            index = item
+                            )
 //                    }
                 }
                 item { Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding())) }

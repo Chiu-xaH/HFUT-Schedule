@@ -67,6 +67,7 @@ import com.hfut.schedule.ui.activity.home.search.functions.life.countFunc
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
 import com.hfut.schedule.ui.activity.shower.home.function.ShowerStatusUI
 import com.hfut.schedule.ui.activity.shower.home.function.StatusMsgResponse
+import com.hfut.schedule.ui.utils.components.AnimationCardListItem
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CardNormalDp
 import com.hfut.schedule.ui.utils.components.CustomTopBar
@@ -324,7 +325,7 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String) {
                         val count = dataItem.applyStdCount
                         val limit = dataItem.preparedStdCount
                         val isFull = count > limit
-                        StyleCardListItem(
+                        AnimationCardListItem(
                             headlineContent = { Text(text = dataItem.major.nameZh, fontWeight = FontWeight.Bold) },
                             supportingContent = { dataItem.registrationConditions?.let { Text(text = it) } },
                             overlineContent = { ScrollText(text = "已申请 $count / $limit $department") },
@@ -339,7 +340,8 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String) {
                                 MaterialTheme.colorScheme.errorContainer
                             } else {
                                 null
-                            }
+                            },
+                            index = item
                         )
                     }
                 }

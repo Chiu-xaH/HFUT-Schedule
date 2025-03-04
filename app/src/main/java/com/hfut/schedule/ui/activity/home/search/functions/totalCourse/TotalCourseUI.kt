@@ -64,6 +64,7 @@ import com.hfut.schedule.logic.utils.DateTimeUtils.TimeState.*
 import com.hfut.schedule.ui.activity.home.search.functions.failRate.permit
 import com.hfut.schedule.ui.activity.home.search.functions.failRate.ApiToFailRate
 import com.hfut.schedule.ui.activity.home.search.functions.teacherSearch.ApiToTeacherSearch
+import com.hfut.schedule.ui.utils.components.AnimationCardListItem
 import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.EmptyUI
 import com.hfut.schedule.ui.utils.components.LoadingUI
@@ -122,32 +123,10 @@ fun CourseTotalUI(json : String?,isSearch : Boolean,sortType: Boolean,vm : NetWo
             item { SemsterInfo(json) }
             items(list.size) { item ->
                 val weeksInfo = list[item].scheduleWeeksInfo
-                val startWeek = weeksInfo?.substringBefore("~")
-                val endWeek = weeksInfo?.substringAfter("~")?.substringBefore("周")
 
-//                var state : DateTimeManager.TimeState? = null
-//                if(startWeek != null && endWeek != null && !isSearch) {
-//                    val week = DateTimeManager.weeksBetween
-//                    if(week in startWeek.toInt()..endWeek.toInt()) {
-//                        state = DateTimeManager.TimeState.ONGOING
-//                    } else if(week < startWeek.toInt()) {
-//                        state = DateTimeManager.TimeState.NOT_STARTED
-//                    } else if(week > endWeek.toInt()) {
-//                        state = DateTimeManager.TimeState.ENDED
-//                    }
-//                }
-
-                val infiniteTransition = rememberInfiniteTransition(label = "")
-                val alpha by infiniteTransition.animateFloat(
-                    initialValue = 1f,
-                    targetValue = .5f,
-                    animationSpec = infiniteRepeatable(
-                        animation = tween(500, easing = LinearEasing),
-                        repeatMode = RepeatMode.Reverse
-                    ), label = ""
-                )
                 val code = list[item].code
-                StyleCardListItem(
+
+                AnimationCardListItem(
                     headlineContent = {  Text(list[item].course.nameZh) },
                     overlineContent = { ScrollText(text =
                     "学分 ${list[item].course.credits}" +
@@ -169,15 +148,7 @@ fun CourseTotalUI(json : String?,isSearch : Boolean,sortType: Boolean,vm : NetWo
                                 }
                             }
                         }
-
-//                                    when(state) {
-//                                        ONGOING -> Text("开课中", modifier = Modifier.alpha(alpha))
-//                                        NOT_STARTED -> Text("未开课")
-//                                        ENDED -> Icon(Icons.Filled.Check,null)
-//                                        null -> Icon(Icons.Filled.ArrowForward,null)
-//                                    }
                     },
-                    //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
                     leadingContent = {
                         list[item].openDepartment.nameZh.let { DepartmentIcons(name = it) }
                     },
@@ -185,14 +156,8 @@ fun CourseTotalUI(json : String?,isSearch : Boolean,sortType: Boolean,vm : NetWo
                         showBottomSheet = true
                         numItem = item
                     },
+                    index = item
                 )
-//                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-//                    Column() {
-//                        MyCustomCard {
-//
-//                        }
-//                    }
-//                }
             }
             if(isSearch)
             item { Spacer(modifier = Modifier.height(85.dp)) }

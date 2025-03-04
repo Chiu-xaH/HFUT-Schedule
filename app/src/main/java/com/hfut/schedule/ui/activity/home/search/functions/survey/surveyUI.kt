@@ -57,6 +57,7 @@ import com.hfut.schedule.logic.utils.parse.Semseter.parseSemseter
 import com.hfut.schedule.logic.utils.parse.Semseter.getSemseterFromCloud
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
+import com.hfut.schedule.ui.utils.components.AnimationCardListItem
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.EmptyUI
@@ -267,7 +268,7 @@ fun teacherList(vm : NetWorkViewModel, refresh : (Boolean) -> Unit) {
         LazyColumn {
             items(list.size) { item ->
 //                MyCustomCard{
-                    StyleCardListItem(
+                    AnimationCardListItem(
                         headlineContent = { list[item].teacher.person?.let { Text(text = it.nameZh) } },
                         leadingContent = { Icon(painterResource(R.drawable.person), contentDescription = "Localized description",) },
                         trailingContent = { if(!list[item].submitted) Icon(Icons.Filled.ArrowForward, contentDescription = "") else Text(text = "已评") },
@@ -278,6 +279,7 @@ fun teacherList(vm : NetWorkViewModel, refresh : (Boolean) -> Unit) {
                                 showBottomSheet = true
                             } else MyToast("已评教")
                         },
+                        index = item
                     )
 //                }
             }

@@ -59,8 +59,8 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.beans.NavigationBarItemData
 import com.hfut.schedule.logic.enums.FixBarItems
 import com.hfut.schedule.logic.enums.GradeBarItems
-import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.DataStoreManager
+import com.hfut.schedule.logic.utils.VersionUtils
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.grade.analysis.GradeCountUI
 import com.hfut.schedule.ui.activity.grade.grade.community.GradeItemUI
@@ -83,7 +83,7 @@ import dev.chrisbanes.haze.haze
 @Composable
 fun GradeUI(ifSaved : Boolean,vm : NetWorkViewModel) {
 
-    val switchblur = prefs.getBoolean("SWITCHBLUR",  AndroidVersion.canBlur)
+    val switchblur = prefs.getBoolean("SWITCHBLUR",  VersionUtils.canBlur)
     val blur by remember { mutableStateOf(switchblur) }
     val hazeState = remember { HazeState() }
     val navController = rememberNavController()

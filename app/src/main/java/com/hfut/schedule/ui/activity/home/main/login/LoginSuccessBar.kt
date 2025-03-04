@@ -62,7 +62,6 @@ import com.hfut.schedule.viewmodel.LoginViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.beans.NavigationBarItemData
-import com.hfut.schedule.logic.utils.AndroidVersion
 import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
 import com.hfut.schedule.ui.activity.home.search.main.SearchScreen
 import com.hfut.schedule.ui.activity.home.cube.main.SettingsScreen
@@ -124,7 +123,7 @@ fun SuccessUI(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel, w
     val hazeState = remember { HazeState() }
     var showBadge by remember { mutableStateOf(false) }
     if (getUpdates().version != VersionUtils.getVersionName()) showBadge = true
-    val switchblur = prefs.getBoolean("SWITCHBLUR",  AndroidVersion.canBlur)
+    val switchblur = prefs.getBoolean("SWITCHBLUR",  VersionUtils.canBlur)
     var blur by remember { mutableStateOf(switchblur) }
     //监听是否周六周日有课，有则显示红点
     var findCourse by remember { mutableStateOf(false) }
