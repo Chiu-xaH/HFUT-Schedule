@@ -158,7 +158,7 @@ fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel,vm2 : NetWorkViewMode
         TransplantListItem(
             headlineContent = { Text(text = "下载最新版本") },
             leadingContent = { Icon(painterResource(R.drawable.cloud_download), contentDescription = "Localized description",) },
-            modifier = Modifier.clickable{ Starter.startWebUrl(MyApplication.UpdateURL + "releases/tag/Android") }
+            modifier = Modifier.clickable{ Starter.startWebUrl(MyApplication.GITEE_UPDATE_URL + "releases/tag/Android") }
         )
 
 //        ListItem(

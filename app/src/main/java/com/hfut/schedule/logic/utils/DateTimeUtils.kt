@@ -7,6 +7,7 @@ import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.beans.community.CourseTotalResponse
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
+import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.getStartWeek
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -17,33 +18,27 @@ import java.util.Calendar
 import java.util.Date
 
 object DateTimeUtils {
+    @SuppressLint("SimpleDateFormat")
+    val Date_yyyy_MM: String = SimpleDateFormat("yyyy-MM").format(Date())
+    @SuppressLint("SimpleDateFormat")
+    val Date_MM_dd: String = SimpleDateFormat("MM-dd").format(Date())
+    @SuppressLint("SimpleDateFormat")
+    val Date_MM: String = SimpleDateFormat("MM").format(Date())
+    @SuppressLint("SimpleDateFormat")
+    val Date_dd: String = SimpleDateFormat("dd").format(Date())
+    @SuppressLint("SimpleDateFormat")
+    val Date_yyyy: String = SimpleDateFormat("yyyy").format(Date())
+    @SuppressLint("SimpleDateFormat")
+    val Date_yyyy_MM_dd: String = SimpleDateFormat("yyyy-MM-dd").format(Date())
     /////////////周数 社区课表
-    private val json = prefs.getString("Course", MyApplication.NullTotal)
-    private val result = Gson().fromJson(json,CourseTotalResponse::class.java).result
-    private val start = result.start.substringBefore(" ")
-    private val firstWeekStart: LocalDate = LocalDate.parse(start)
+    private val firstWeekStart: LocalDate = getStartWeek()
     /////////////////////////////////////////////////////////
     val today: LocalDate = LocalDate.now()
     val weeksBetween = ChronoUnit.WEEKS.between(firstWeekStart, today) + 1
-    val Benweeks = weeksBetween  //固定本周
-    ///////////////////////////////////
-    @SuppressLint("SimpleDateFormat")
-    val Date_yyyy_MM = SimpleDateFormat("yyyy-MM").format(Date())
-    @SuppressLint("SimpleDateFormat")
-    val Date_MM_dd = SimpleDateFormat("MM-dd").format(Date())
-    @SuppressLint("SimpleDateFormat")
-    val Date_MM = SimpleDateFormat("MM").format(Date())
-    @SuppressLint("SimpleDateFormat")
-    val Date_dd = SimpleDateFormat("dd").format(Date())
-    @SuppressLint("SimpleDateFormat")
-    val Date_yyyy = SimpleDateFormat("yyyy").format(Date())
-    @SuppressLint("SimpleDateFormat")
-    val Date_yyyy_MM_dd = SimpleDateFormat("yyyy-MM-dd").format(Date())
     //////////////////////////////////////////////////////////
     private val calendar = Calendar.getInstance()
     private val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
     val dayweek = dayOfWeek - 1 //周几
-    var chinesenumber  = ""
     /////////////////////////////////////////////////////////
     //时间
     private val currentTime = LocalDateTime.now()
@@ -62,7 +57,6 @@ object DateTimeUtils {
         // 将字符串转换为 LocalDate
         val startDate = LocalDate.parse(startDateStr, formatter)
         val endDate = LocalDate.parse(endDateStr, formatter)
-//        val currentDate = LocalDate.now()
         // 计算总天数和已过天数
         val totalDays = endDate.toEpochDay() - startDate.toEpochDay()
         val pastDays = today.toEpochDay() - startDate.toEpochDay()

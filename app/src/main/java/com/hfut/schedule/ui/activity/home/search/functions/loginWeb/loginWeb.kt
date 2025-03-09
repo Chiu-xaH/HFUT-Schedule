@@ -56,7 +56,7 @@ fun LoginWeb(vmUI : UIViewModel, card : Boolean,vm :  NetWorkViewModel) {
     val bd = BigDecimal(gB)
     val str = bd.setScale(2, RoundingMode.HALF_UP).toString()
 
-    val bd2 = BigDecimal(((flow?.toDouble() ?: 0.0) / (1024 * MyApplication.maxFreeFlow)) * 100)
+    val bd2 = BigDecimal(((flow?.toDouble() ?: 0.0) / (1024 * MyApplication.MAX_FREE_FLOW)) * 100)
     val precent = bd2.setScale(1, RoundingMode.HALF_UP).toString()
 
     TransplantListItem(

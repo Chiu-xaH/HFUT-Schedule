@@ -10,9 +10,9 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 object JxglstuHTMLServiceCreator {
     fun getRetrofit(useAlternativeUrl: Boolean): Retrofit {
         val baseUrl = if (useAlternativeUrl) {
-            MyApplication.JxglstuWebVpnURL
+            MyApplication.JXGLSTU_WEBVPN_URL
         } else {
-            MyApplication.JxglstuURL
+            MyApplication.JXGLSTU_URL
         }
 
         return Retrofit.Builder()
@@ -39,9 +39,9 @@ object JxglstuJSONServiceCreator {
 
     private fun getRetrofit(useAlternativeUrl: Boolean): Retrofit {
         val baseUrl = if (useAlternativeUrl) {
-            MyApplication.JxglstuWebVpnURL
+            MyApplication.JXGLSTU_WEBVPN_URL
         } else {
-            MyApplication.JxglstuURL
+            MyApplication.JXGLSTU_URL
         }
 
         return Retrofit.Builder()
@@ -69,9 +69,9 @@ object JxglstuSurveyServiceCreator {
 
     fun getRetrofit(useAlternativeUrl: Boolean): Retrofit {
         val baseUrl = if (useAlternativeUrl) {
-            MyApplication.JxglstuWebVpnURL
+            MyApplication.JXGLSTU_WEBVPN_URL
         } else {
-            MyApplication.JxglstuURL
+            MyApplication.JXGLSTU_URL
         }
 
         return Retrofit.Builder()

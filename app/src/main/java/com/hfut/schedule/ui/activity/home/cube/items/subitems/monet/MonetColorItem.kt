@@ -54,6 +54,7 @@ fun MonetColorItem() {
         true -> "收回"
         false -> "展开"
     }
+    // true原生取色
     val switch_color = prefs.getBoolean("SWITCHCOLOR", VersionUtils.canMonet)
     var DynamicSwitch by remember { mutableStateOf(switch_color) }
 
@@ -65,28 +66,28 @@ fun MonetColorItem() {
                 Row {
                     FilterChip(
                         onClick = {
-                            DynamicSwitch = true
+                            DynamicSwitch = false
                             MyToast("切换算法后,重启应用生效")
                             SharePrefs.saveBoolean("SWITCHCOLOR", true, DynamicSwitch)
                         },
-                        label = { Text(text = "莫奈取色") }, selected = DynamicSwitch)
+                        label = { Text(text = "莫奈取色") }, selected = !DynamicSwitch)
                     Spacer(modifier = Modifier.width(10.dp))
                     FilterChip(
                         onClick = {
                             MyToast("切换算法后,重启应用生效")
                             expandItems = false
-                            SharePrefs.saveBoolean("expandMonet",false,expandItems)
-                            DynamicSwitch = false
-                            SharePrefs.saveBoolean("SWITCHCOLOR", true, DynamicSwitch)
+                            SharePrefs.saveBoolean("expandMonet",false,false)
+                            DynamicSwitch = true
+                            SharePrefs.saveBoolean("SWITCHCOLOR", true, true)
                         },
                         label = { Text(text = "原生取色") },
-                        selected = !DynamicSwitch,
+                        selected = DynamicSwitch,
                         enabled = VersionUtils.canMonet )
                 }
             }
                             },
             leadingContent = { Icon(painterResource(R.drawable.color), contentDescription = "Localized description",) },
-            trailingContent = { if(DynamicSwitch) {
+            trailingContent = { if(!DynamicSwitch) {
                 IconButton(onClick = {
                     expandItems = !expandItems
                     SharePrefs.saveBoolean("expandMonet",false,expandItems)
@@ -94,7 +95,7 @@ fun MonetColorItem() {
             }
                               },
             modifier = Modifier.clickable {
-                if(DynamicSwitch) {
+                if(!DynamicSwitch) {
                     expandItems = !expandItems
                     SharePrefs.saveBoolean("expandMonet",false,expandItems)
                 } else MyToast("未打开")

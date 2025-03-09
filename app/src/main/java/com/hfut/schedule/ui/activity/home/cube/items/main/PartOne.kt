@@ -232,7 +232,7 @@ fun AlwaysItem() {
             },
             modifier = Modifier.clickable{
                 if (version.version != VersionUtils.getVersionName())
-                    startWebUrl(MyApplication.UpdateURL+ "releases/download/Android/${version.version}.apk")
+                    startWebUrl(MyApplication.GITEE_UPDATE_URL+ "releases/download/Android/${version.version}.apk")
                 else {
                     showBottomSheet = true
                 }

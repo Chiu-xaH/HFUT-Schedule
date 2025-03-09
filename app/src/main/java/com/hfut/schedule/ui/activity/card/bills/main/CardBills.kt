@@ -55,6 +55,7 @@ import com.hfut.schedule.logic.utils.DateTimeUtils
 import com.hfut.schedule.logic.utils.data.JxglstuParseUtils
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.reEmptyLiveDta
 import com.hfut.schedule.ui.activity.card.bills.CardRow
 import com.hfut.schedule.ui.utils.components.AnimationCardListItem
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
@@ -165,11 +166,15 @@ fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVie
                     loading = true
                     vm.CardGet("bearer $auth",page)
                 }.await()
+                async { reEmptyLiveDta(vm.BillsData) }.await()
                 async {
                     Handler(Looper.getMainLooper()).post {
-                        vm.libraryData.observeForever { result ->
-                            loading = false
-                            getBills(vm)
+                        vm.BillsData.observeForever { result ->
+                            if (result != null) {
+                                if(result.contains("{")) {
+                                    loading = false
+                                }
+                            }
                         }
                     }
                 }

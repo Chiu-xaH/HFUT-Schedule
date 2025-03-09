@@ -139,24 +139,24 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false) {
 
     val blurSize by animateDpAsState(
         targetValue = if (!show) 10.dp else 0.dp, label = ""
-        ,animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
+        ,animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
     )
 
     val scale = animateFloatAsState(
         targetValue = if (!show) 0.9f else 1f, // 按下时为0.9，松开时为1
         //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-        animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
+        animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
         label = "" // 使用弹簧动画
     )
     val scale2 = animateFloatAsState(
         targetValue = if (!show) 0.97f else 1f, // 按下时为0.9，松开时为1
         //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-        animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
+        animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
         label = "" // 使用弹簧动画
     )
     val auth = SharePrefs.prefs.getString("auth","")
 
-    val url = MyApplication.ZJGDBillURL + "charge-app/?name=pays&appsourse=ydfwpt&id=223&name=pays&paymentUrl=http://121.251.19.62/plat&token=" + auth
+    val url = MyApplication.ZJGD_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=223&name=pays&paymentUrl=http://121.251.19.62/plat&token=" + auth
     val switch_startUri = SharePrefs.prefs.getBoolean("SWITCHSTARTURI",true)
     var showDialog2 by remember { mutableStateOf(false) }
 

@@ -63,28 +63,21 @@ import kotlinx.coroutines.launch
 @Composable
 fun TotalGrade() {
 
-    val json = SharePrefs.prefs.getString("Grade", MyApplication.NullGrades)
-    val result = Gson().fromJson(json,com.hfut.schedule.logic.beans.community.GradeResponse::class.java).result
-    val Class = result.classRanking
-    val Major = result.majorRanking
-    val TotalGPA = result.gpa
+    val result = getTotalGrade()
+    if(result != null) {
+        val Class = result.classRanking
+        val Major = result.majorRanking
+        val TotalGPA = result.gpa
 
-    AnimationCardListItem(
-        headlineContent = {  Text("绩点(GPA)  $TotalGPA") },
-        supportingContent = { Text("班级排名: $Class   专业排名: $Major") },
-        leadingContent = { Icon(painterResource(R.drawable.flag), contentDescription = "Localized description",) },
-        modifier = Modifier.clickable {},
-        color = MaterialTheme.colorScheme.primaryContainer,
-        index = 0
-    )
-
-//    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-//        Column() {
-//            MyCustomCard{
-//
-//            }
-//        }
-//    }
+        AnimationCardListItem(
+            headlineContent = {  Text("绩点(GPA)  $TotalGPA") },
+            supportingContent = { Text("班级排名: $Class   专业排名: $Major") },
+            leadingContent = { Icon(painterResource(R.drawable.flag), contentDescription = "Localized description",) },
+            modifier = Modifier.clickable {},
+            color = MaterialTheme.colorScheme.primaryContainer,
+            index = 0
+        )
+    }
 }
 
 @Composable

@@ -83,7 +83,7 @@ fun SchoolCardItem(vmUI : UIViewModel,cardBool : Boolean) {
                         .scale(scale2.value)
                         .size(30.dp),
                     interactionSource = interactionSource2,
-                    onClick = { Starter.startAppUrl(MyApplication.AlipayCardURL) },
+                    onClick = { Starter.startAppUrl(MyApplication.ALIPAY_CARD_URL) },
                     colors =  if(test.length <= 4) {
                         IconButtonDefaults.filledTonalIconButtonColors(MaterialTheme.colorScheme.error.copy(alpha = 0.1f))
                     } else IconButtonDefaults.filledTonalIconButtonColors()

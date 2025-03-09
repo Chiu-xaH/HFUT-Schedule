@@ -6,15 +6,14 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.beans.MyAPIResponse
 import com.hfut.schedule.logic.beans.jxglstu.semester
 import com.hfut.schedule.logic.utils.DateTimeUtils
-import com.hfut.schedule.logic.utils.parse.Semseter.parseSemseter
+import com.hfut.schedule.logic.utils.parse.SemseterParser.parseSemseter
 import com.hfut.schedule.logic.utils.data.SharePrefs
 
-object Semseter {
+object SemseterParser {
     enum class TermPeriod {
         DEFAULT,UP,DOWN
     }
     fun parseSemseter(semster : Int) : String {
-        Log.d("seme",semster.toString())
         val codes = (semster - 4) / 10
         val year = 2017
         val code = 3
@@ -66,12 +65,11 @@ object Semseter {
         }
     }
 
-    fun getSemseterFromCloud() : Int {
+    fun getSemseter() : Int {
         return try {
-            Log.d("seme2",Gson().fromJson(SharePrefs.prefs.getString("my",""), MyAPIResponse::class.java).semesterId)
-            Gson().fromJson(SharePrefs.prefs.getString("my",""), MyAPIResponse::class.java).semesterId.toInt()
-        } catch (e:Exception) {
             reverseGetSemester(DateTimeUtils.Date_yyyy_MM) ?: 0
+        } catch (e:Exception) {
+            getMy()!!.semesterId.toInt()
         }
     }
 }

@@ -30,7 +30,7 @@ import com.hfut.schedule.ui.utils.components.TransplantListItem
 @Composable
 fun DormitoryScoreXuanCheng(vm : NetWorkViewModel) {
     vm.XuanquData.value = "{}"
-    val sheetState_Xuanqu = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val sheetState_Xuanqu = rememberModalBottomSheetState(skipPartiallyExpanded = false)
     var showBottomSheet_Xuanqu by remember { mutableStateOf(false) }
 
 

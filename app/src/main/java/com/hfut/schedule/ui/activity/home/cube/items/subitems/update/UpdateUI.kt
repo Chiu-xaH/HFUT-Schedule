@@ -62,7 +62,7 @@ import com.hfut.schedule.logic.utils.MyDownloadManager.openDownload
 import com.hfut.schedule.logic.utils.MyDownloadManager.refused
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.Starter
-import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
+import com.hfut.schedule.ui.utils.NavigateAnimationManager
 import com.hfut.schedule.ui.utils.components.BottomButton
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
@@ -111,7 +111,7 @@ fun UpdateUI() {
                 ) { Icon(painterResource(id = if(!expandItems) R.drawable.expand_content else R.drawable.collapse_content), contentDescription = "")
                 }
             },
-            modifier = Modifier.clickable{ Starter.startWebUrl(MyApplication.UpdateURL+ "/releases/tag/Android") },
+            modifier = Modifier.clickable{ Starter.startWebUrl(MyApplication.GITEE_UPDATE_URL+ "/releases/tag/Android") },
         )
 
         AnimatedVisibility(
@@ -135,8 +135,8 @@ fun UpdateUI() {
         }
         AnimatedVisibility(
             visible = able,
-            exit = NavigateAndAnimationManager.upDownAnimation.exit,
-            enter = NavigateAndAnimationManager.upDownAnimation.enter
+            exit = NavigateAnimationManager.upDownAnimation.exit,
+            enter = NavigateAnimationManager.upDownAnimation.enter
         ) {
             val context = LocalContext.current
             BottomButton(
@@ -152,8 +152,8 @@ fun UpdateUI() {
     }
     AnimatedVisibility(
         visible = !able || pro > 0,
-        exit = NavigateAndAnimationManager.upDownAnimation.exit,
-        enter = NavigateAndAnimationManager.upDownAnimation.enter
+        exit = NavigateAnimationManager.upDownAnimation.exit,
+        enter = NavigateAnimationManager.upDownAnimation.enter
     ) {
         val context = LocalContext.current
         Column(modifier = Modifier.padding(horizontal = 7.dp)) {

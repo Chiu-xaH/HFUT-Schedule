@@ -37,7 +37,7 @@ fun VersionInfoCard() {
         title = "版本 " + VersionUtils.getVersionName()
     ) {
         TransplantListItem(
-            overlineContent = { Text(text = "2025-03-03") },
+            overlineContent = { Text(text = "2025-03-09") },
             leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
             headlineContent = { Text(text = "版本号 ${VersionUtils.getVersionCode()}") },
         )
@@ -50,11 +50,13 @@ fun VersionInfo() {
     Spacer(Modifier.height(3.dp))
     VersionInfoCard()
     DividerTextExpandedWith(text = "新特性") {
-        UpdateItems("新增 部分长列表的滚动动画",null,UpdateType.ADD)
-        UpdateItems("新增 全校培养方案的点击操作(开课查询)",null,UpdateType.ADD)
-        UpdateItems("修复 下载更新包完成后不自动安装的Bug",null,UpdateType.FIX)
-        UpdateItems("优化 教务课程表由于数据原因误判冲突课程",null,UpdateType.OPTIMIZE)
-        UpdateItems("优化 部分界面的布局",null,UpdateType.FIX)
+        UpdateItems("新增 图书检索翻页与地点信息",null,UpdateType.ADD)
+        UpdateItems("修复 初次使用时取色设置默认值错误的Bug",null,UpdateType.FIX)
+        UpdateItems("优化 菜单组件的UI定位",null,UpdateType.ADD)
+        UpdateItems("优化 部分逻辑与云端的解耦",null,UpdateType.OPTIMIZE)
+        UpdateItems("优化 图片验证码的启停逻辑","受云控，当需要图片验证码时自动启用",UpdateType.OPTIMIZE)
+        UpdateItems("优化 部分界面的显示",null,UpdateType.OPTIMIZE)
+        UpdateItems("优化 网页预览部分逻辑，以及点击下载附件时的处理",null,UpdateType.OPTIMIZE)
     }
 }
 

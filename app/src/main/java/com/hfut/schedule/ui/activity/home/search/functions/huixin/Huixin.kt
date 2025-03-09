@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.activity.home.search.functions
+package com.hfut.schedule.ui.activity.home.search.functions.huixin
 
 import androidx.compose.foundation.clickable
 import androidx.compose.material3.Icon
@@ -22,7 +22,7 @@ fun Huixin() {
 
     var showDialog_Huixin by remember { mutableStateOf(false) }
 
-    val urlHuixin = MyApplication.ZJGDBillURL + "plat" + "?synjones-auth=" + auth
+    val urlHuixin = MyApplication.ZJGD_URL + "plat" + "?synjones-auth=" + auth
 
     WebDialog(showDialog_Huixin,{ showDialog_Huixin = false },urlHuixin,"慧新易校")
 

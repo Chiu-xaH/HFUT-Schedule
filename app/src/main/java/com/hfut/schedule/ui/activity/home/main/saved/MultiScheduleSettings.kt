@@ -51,6 +51,7 @@ import com.hfut.schedule.logic.beans.MyAPIResponse
 import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
+import com.hfut.schedule.logic.utils.parse.getMy
 import com.hfut.schedule.ui.activity.home.calendar.multi.AddCourseUI
 import com.hfut.schedule.ui.activity.home.calendar.multi.getFriendsList
 import com.hfut.schedule.ui.activity.home.calendar.multi.getFriendsCourse
@@ -462,7 +463,7 @@ fun getIndex(id : Int) : String? {
 
 fun isNextOpen() : Boolean {
     return try {
-        Gson().fromJson(prefs.getString("my", MyApplication.NullMy), MyAPIResponse::class.java).Next
+        getMy()!!.Next
     } catch (_:Exception) {
         false
     }

@@ -2,4 +2,4 @@ package com.hfut.schedule.logic.network.servicecreator
 
 import com.hfut.schedule.App.MyApplication
 
-object TeacherServiceCreator : BaseServiceCreator(MyApplication.TeacherURL)
+object TeacherServiceCreator : BaseServiceCreator(MyApplication.TEACHER_URL)

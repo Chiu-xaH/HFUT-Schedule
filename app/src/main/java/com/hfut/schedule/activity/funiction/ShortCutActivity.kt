@@ -8,7 +8,7 @@ import com.hfut.schedule.logic.utils.Starter
 class ShortCutActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Starter.startAppUrl(MyApplication.AlipayHotWaterURL)
+        Starter.startAppUrl(MyApplication.ALIPAY_HOT_WATER_URL)
         this.finish()
     }
 }

@@ -9,6 +9,7 @@ import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -35,16 +36,22 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
@@ -132,11 +139,13 @@ fun StyleCardListItem(
     supportingContent : @Composable() (() -> Unit)? = null,
     trailingContent : @Composable() (() -> Unit)? = null,
     leadingContent : @Composable() (() -> Unit)? = null,
-
     color : Color? = null,
     modifier: Modifier = Modifier,
-    cardModifier: Modifier = Modifier
+    cardModifier: Modifier = Modifier,
+//    onOfferSet : ((DpOffset?) -> Unit)? = null
 ) {
+
+
     CardListItem(
         headlineContent, overlineContent, supportingContent, trailingContent,leadingContent, modifier = modifier, cardModifier = cardModifier,
         hasElevation = false,
@@ -155,14 +164,15 @@ fun AnimationCardListItem(
     index : Int,
     scale : Float = 0.8f,
     modifier: Modifier = Modifier,
-    cardModifier: Modifier = Modifier
+    cardModifier: Modifier = Modifier,
+//    onOfferSet : ((DpOffset?) -> Unit)? = null
 ) {
     val animatedProgress = remember { Animatable(scale) }
 
     LaunchedEffect(index) {
         animatedProgress.animateTo(
             targetValue = 1f,
-            animationSpec = tween(MyApplication.Animation, easing = EaseInOutQuad)
+            animationSpec = tween(MyApplication.ANIMATION_SPEED, easing = EaseInOutQuad)
         )
     }
     StyleCardListItem(
@@ -176,7 +186,8 @@ fun AnimationCardListItem(
         cardModifier.graphicsLayer {
             scaleX = animatedProgress.value
             scaleY = animatedProgress.value
-        }
+        },
+//        onOfferSet
     )
 }
 @Composable
@@ -192,7 +203,7 @@ fun AnimationCustomCard(
     LaunchedEffect(index) {
         animatedProgress.animateTo(
             targetValue = 1f,
-            animationSpec = tween(MyApplication.Animation, easing = EaseInOutQuad)
+            animationSpec = tween(MyApplication.ANIMATION_SPEED, easing = EaseInOutQuad)
         )
     }
 
@@ -284,7 +295,7 @@ fun LoadingLargeCard(
     color : CardColors = CardDefaults.cardColors(containerColor = LargeCardColor()),
     content: @Composable () -> Unit
 ) {
-    val speed = MyApplication.Animation / 2
+    val speed = MyApplication.ANIMATION_SPEED / 2
     val scale = animateFloatAsState(
         targetValue = if (loading) 0.9f else 1f, // 按下时为0.9，松开时为1
         //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),

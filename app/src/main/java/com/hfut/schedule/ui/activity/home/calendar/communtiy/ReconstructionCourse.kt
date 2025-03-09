@@ -42,6 +42,7 @@ import com.hfut.schedule.logic.beans.community.CourseTotalResponse
 import com.hfut.schedule.logic.beans.community.courseDetailDTOList
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.DetailItems
+import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.getCourse
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.getTotalCourse
 import com.hfut.schedule.ui.utils.components.CardNormalColor
 import com.hfut.schedule.ui.utils.components.CustomTopBar
@@ -51,15 +52,13 @@ import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.Round
 
 
-@RequiresApi(Build.VERSION_CODES.O)
 fun getCouses(Week : Int,friendUserName : String? = null) : Array<Array<List<courseDetailDTOList>>> {
     val dayArray = Array(7) { Array<List<courseDetailDTOList>>(12) { emptyList() } }
-    val json = SharePrefs.prefs.getString(if(friendUserName == null) "Course" else "Course${friendUserName}", MyApplication.NullTotal)
-    val result = Gson().fromJson(json, CourseTotalResponse::class.java).result.courseBasicInfoDTOList
-    for (i in 0 until result.size){
+    val result = getCourse(friendUserName)
+    for (i in result.indices){
         val Name = result[i].courseName
         val List = result[i].courseDetailDTOList
-        for(j in 0 until List.size) {
+        for(j in List.indices) {
             val section = List[j].section
             val weekCount = List[j].weekCount
             val week = List[j].week
@@ -74,7 +73,6 @@ fun getCouses(Week : Int,friendUserName : String? = null) : Array<Array<List<cou
     return dayArray
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 fun getCourseINFO(weekday : Int,Week : Int,friendUserName : String? = null) : MutableList<List<courseDetailDTOList>> {
     val new = mutableListOf<List<courseDetailDTOList>>()
     return try {
@@ -82,7 +80,7 @@ fun getCourseINFO(weekday : Int,Week : Int,friendUserName : String? = null) : Mu
             val days = getCouses(Week,friendUserName)[weekday - 1]
             for (i in days.indices){
                 if(days[i].isNotEmpty())
-                    days[i].forEach { new.add(days[i]) }
+                    days[i].forEach { _ -> new.add(days[i]) }
             }
             new
         } else new

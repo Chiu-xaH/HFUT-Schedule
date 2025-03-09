@@ -10,7 +10,7 @@ import com.hfut.schedule.viewmodel.NetWorkViewModel
 import org.jsoup.Jsoup
 
 fun getGrade() :  List<scoreInfoDTOList> {
-    val json = SharePrefs.prefs.getString("Grade", MyApplication.NullGrades)
+    val json = SharePrefs.prefs.getString("Grade","")
     try {
         val result = Gson().fromJson(json,GradeResponse::class.java).result
         return result.scoreInfoDTOList

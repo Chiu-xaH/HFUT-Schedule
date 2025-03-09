@@ -14,7 +14,7 @@ object GetAESKeyServiceCreator {
 
 
     val retrofit = Retrofit.Builder()
-        .baseUrl(MyApplication.LoginURL)
+        .baseUrl(MyApplication.CAS_LOGIN_URL)
         .client(Client)
         .addConverterFactory(GsonConverterFactory.create())
         .build()

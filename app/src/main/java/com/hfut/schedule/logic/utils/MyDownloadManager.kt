@@ -72,7 +72,7 @@ object MyDownloadManager {
         MyNotificationManager.initDownloadChannel()
         downloadManage(
             fileName = "聚在工大_${version}.apk",
-            url = "${MyApplication.UpdateURL}releases/download/Android/${version}.apk",
+            url = "${MyApplication.GITEE_UPDATE_URL}releases/download/Android/${version}.apk",
             dlId= DownloadIds.UPDATE,
             destinationDir = Environment.DIRECTORY_DOWNLOADS
         ) { uri ->

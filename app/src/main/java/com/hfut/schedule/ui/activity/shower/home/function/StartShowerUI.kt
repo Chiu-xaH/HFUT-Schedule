@@ -193,11 +193,11 @@ fun StartShowerUI(vm: GuaGuaViewModel) {
     var swapBlur by remember { mutableStateOf(true) }
     val height by animateDpAsState(
         targetValue = if(isFull) 1000.dp else 500.dp, label = "",
-        animationSpec = tween(MyApplication.Animation, easing = FastOutSlowInEasing)
+        animationSpec = tween(MyApplication.ANIMATION_SPEED, easing = FastOutSlowInEasing)
     )
     val blur by animateDpAsState(
         targetValue = if(swapBlur) 20.dp else 0.dp, label = "",
-        animationSpec = tween(MyApplication.Animation, easing = FastOutSlowInEasing)
+        animationSpec = tween(MyApplication.ANIMATION_SPEED, easing = FastOutSlowInEasing)
     )
     if(show) {
         ModalBottomSheet(

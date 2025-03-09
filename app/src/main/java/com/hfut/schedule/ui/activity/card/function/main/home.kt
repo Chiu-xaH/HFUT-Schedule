@@ -78,7 +78,7 @@ import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.LoginWebUI
 
 import com.hfut.schedule.ui.activity.home.search.functions.shower.ShowerUI
 //import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
-import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
+import com.hfut.schedule.ui.utils.NavigateAnimationManager.turnTo
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.style.CardForListColor
@@ -200,11 +200,11 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
 
     val auth = SharePrefs.prefs.getString("auth","")
     //Log.d("auth",auth.toString())
-    val url = MyApplication.ZJGDBillURL + "plat/pay" + "?synjones-auth=" + auth
+    val url = MyApplication.ZJGD_URL + "plat/pay" + "?synjones-auth=" + auth
 
     var showDialog_Huixin by remember { mutableStateOf(false) }
 
-    val urlHuixin = MyApplication.ZJGDBillURL + "plat" + "?synjones-auth=" + auth
+    val urlHuixin = MyApplication.ZJGD_URL + "plat" + "?synjones-auth=" + auth
 
 //    val switch_startUri = SharePrefs.prefs.getBoolean("SWITCHSTARTURI",true)
 
@@ -451,18 +451,18 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
     val scale = animateFloatAsState(
         targetValue = if (refreshing) 0.9f else 1f, // 按下时为0.9，松开时为1
         //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-        animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
+        animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
         label = "" // 使用弹簧动画
     )
     val scale2 = animateFloatAsState(
         targetValue = if (refreshing) 0.97f else 1f, // 按下时为0.9，松开时为1
         //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-        animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
+        animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
         label = "" // 使用弹簧动画
     )
     val blurSize by animateDpAsState(
         targetValue = if (refreshing) 10.dp else 0.dp, label = ""
-        ,animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
+        ,animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
     )
     Box(modifier = Modifier
         .fillMaxHeight()
@@ -518,7 +518,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                                             if (test != null) {
                                                 //余额不足//未登录//正常
                                                 if (test != "00" && test!!.toDouble() < 10) {
-                                                    Starter.startAppUrl(MyApplication.AlipayCardURL)
+                                                    Starter.startAppUrl(MyApplication.ALIPAY_CARD_URL)
                                                 } else if (test == "00") {
                                                     refreshLogin()
                                                 } else {
@@ -569,7 +569,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                         headlineContent = { Text(text = "充值") },
                         supportingContent = { Text(text = "跳转至支付宝校园卡页面")},
                         leadingContent = { Icon(painter = painterResource(id = R.drawable.add_card), contentDescription = "")},
-                        modifier = Modifier.clickable { Starter.startAppUrl(MyApplication.AlipayCardURL) }
+                        modifier = Modifier.clickable { Starter.startAppUrl(MyApplication.ALIPAY_CARD_URL) }
                     )
                     TransplantListItem(
                         headlineContent = { Text(text = "搜索") },

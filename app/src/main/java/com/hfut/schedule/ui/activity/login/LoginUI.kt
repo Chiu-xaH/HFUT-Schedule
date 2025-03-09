@@ -89,6 +89,7 @@ import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.Starter.noLogin
+import com.hfut.schedule.logic.utils.parse.useCaptcha
 import com.hfut.schedule.ui.activity.home.cube.items.main.FirstCube
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.DownloadMLUI
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
@@ -155,7 +156,7 @@ private fun loginClick(vm : LoginViewModel, username : String, inputAES : String
                             }
                             "302" -> {
                                 when {
-                                    vm.location.value.toString() == MyApplication.RedirectURL -> {
+                                    vm.location.value.toString() == MyApplication.REDIRECT_URL -> {
                                         onResult("登陆失败")
                                         vm.getCookie()
                                     }
@@ -208,8 +209,8 @@ fun ImageCodeUI(webVpn : Boolean,vm: LoginViewModel,onRefresh: Int = 1,onResult 
         CircularProgressIndicator()
     } else  {
         val url = (
-                if(!webVpn) MyApplication.LoginURL
-                else MyApplication.WebVpnURL + "http/77726476706e69737468656265737421f3f652d22f367d44300d8db9d6562d/"
+                if(!webVpn) MyApplication.CAS_LOGIN_URL
+                else MyApplication.WEBVPN_URL + "http/77726476706e69737468656265737421f3f652d22f367d44300d8db9d6562d/"
                 ) + "cas/vercode"
         // 让 URL 可变，每次点击时更新
         var imageUrl by remember { mutableStateOf("$url?timestamp=${System.currentTimeMillis()}") }
@@ -495,35 +496,36 @@ fun TwoTextField(vm : LoginViewModel) {
             )
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
-        RowHorizontal {
-            TextField(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 25.dp),
-                value = inputCode,
-                onValueChange = { inputCode = it },
-                label = { Text("图片验证码" ) },
-                singleLine = true,
-                // placeholder = { Text("请输入正确格式")},
-                shape = MaterialTheme.shapes.medium,
-                colors = textFiledTransplant(),
-                leadingIcon = { Icon( painterResource(R.drawable.password), contentDescription = "Localized description") },
-                trailingIcon = {
-                    Box(modifier = Modifier.padding(5.dp)) {
-                        ImageCodeUI(webVpn,vm, onRefresh =onRefresh ) {
-                            inputCode = it
+        if(useCaptcha()) {
+            Spacer(modifier = Modifier.height(20.dp))
+            RowHorizontal {
+                TextField(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 25.dp),
+                    value = inputCode,
+                    onValueChange = { inputCode = it },
+                    label = { Text("图片验证码" ) },
+                    singleLine = true,
+                    shape = MaterialTheme.shapes.medium,
+                    colors = textFiledTransplant(),
+                    leadingIcon = { Icon( painterResource(R.drawable.password), contentDescription = "Localized description") },
+                    trailingIcon = {
+                        Box(modifier = Modifier.padding(5.dp)) {
+                            ImageCodeUI(webVpn,vm, onRefresh =onRefresh ) {
+                                inputCode = it
+                            }
                         }
-                    }
-                },
-                supportingText = if(!switch_open) {
-                    {
-                        Text("点击下载模型文件以启用自动填充", modifier = Modifier.clickable {
-                            showBottomSheet = true
-                        })
-                    }
-                } else null
-            )
+                    },
+                    supportingText = if(!switch_open) {
+                        {
+                            Text("点击下载模型文件以启用自动填充", modifier = Modifier.clickable {
+                                showBottomSheet = true
+                            })
+                        }
+                    } else null
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(20.dp))

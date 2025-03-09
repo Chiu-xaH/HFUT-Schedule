@@ -56,14 +56,14 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.ClipBoard
 import com.hfut.schedule.viewmodel.NetWorkViewModel
-import com.hfut.schedule.logic.utils.parse.Semseter.parseSemseter
-import com.hfut.schedule.logic.utils.parse.Semseter.getSemseterFromCloud
+import com.hfut.schedule.logic.utils.parse.SemseterParser.parseSemseter
+import com.hfut.schedule.logic.utils.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.logic.utils.data.reEmptyLiveDta
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotalUI
-import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
+import com.hfut.schedule.ui.utils.NavigateAnimationManager
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CardNormalDp
 import com.hfut.schedule.ui.utils.components.CustomTopBar
@@ -93,7 +93,7 @@ fun CourseSearchUI(vm : NetWorkViewModel) {
 
     var showSearch by remember { mutableStateOf(true) }
 
-    val semsters = getSemseterFromCloud()
+    val semsters = getSemseter()
     var semester by remember { mutableIntStateOf(semsters) }
 
     fun refresh() {
@@ -126,8 +126,8 @@ fun CourseSearchUI(vm : NetWorkViewModel) {
             CustomTopBar("开课查询") {
                 androidx.compose.animation.AnimatedVisibility(
                     visible = !showSearch,
-                    enter = NavigateAndAnimationManager.upDownAnimation.enter,
-                    exit = NavigateAndAnimationManager.upDownAnimation.exit
+                    enter = NavigateAnimationManager.upDownAnimation.enter,
+                    exit = NavigateAnimationManager.upDownAnimation.exit
                 ) {
                     FilledTonalButton(
                         onClick = {
@@ -148,8 +148,8 @@ fun CourseSearchUI(vm : NetWorkViewModel) {
             Column {
                 AnimatedVisibility(
                     visible = showSearch,
-                    enter = NavigateAndAnimationManager.downUpAnimation.enter,
-                    exit = NavigateAndAnimationManager.downUpAnimation.exit
+                    enter = NavigateAnimationManager.downUpAnimation.enter,
+                    exit = NavigateAnimationManager.downUpAnimation.exit
                 ) {
                     Column {
                         Row(
@@ -356,7 +356,7 @@ fun ApiForCourseSearch(vm: NetWorkViewModel,courseName : String?,courseId : Stri
     if(showBottomSheet) {
         var onclick by remember { mutableStateOf(false) }
         var loading by remember { mutableStateOf(true) }
-        val semsters = getSemseterFromCloud()
+        val semsters = getSemseter()
         var semester by remember { mutableIntStateOf(semsters) }
 
         fun refresh() {

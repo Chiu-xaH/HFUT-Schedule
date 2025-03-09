@@ -69,10 +69,10 @@ import com.hfut.schedule.ui.activity.card.bills.main.CardBills
 import com.hfut.schedule.ui.activity.card.counts.CardHome
 //import com.hfut.schedule.ui.activity.card.function.main.turnToBottomBar
 import com.hfut.schedule.ui.activity.home.focus.funictions.GetZjgdCard
-import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
-import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.currentPage
+import com.hfut.schedule.ui.utils.NavigateAnimationManager
+import com.hfut.schedule.ui.utils.NavigateAnimationManager.currentPage
 //import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
-import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
+import com.hfut.schedule.ui.utils.NavigateAnimationManager.turnTo
 import com.hfut.schedule.ui.utils.components.CustomTabRow
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.style.bottomBarBlur
@@ -91,7 +91,7 @@ import kotlinx.coroutines.launch
 fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
 
     val showBottomSheet_Bills by remember { mutableStateOf(false) }
-    val animation by remember { mutableStateOf(prefs.getInt("ANIMATION", MyApplication.Animation)) }
+    val animation by remember { mutableStateOf(prefs.getInt("ANIMATION", MyApplication.ANIMATION_SPEED)) }
     val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR", VersionUtils.canBlur)
     val blur by remember { mutableStateOf(switchblur) }
     val hazeState = remember { HazeState() }
@@ -259,7 +259,7 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
 
         }
     ) {innerPadding ->
-        val animation = NavigateAndAnimationManager.getAnimationType(currentAnimationIndex,bottomBarItems.page)
+        val animation = NavigateAnimationManager.getAnimationType(currentAnimationIndex,bottomBarItems.page)
 
         NavHost(navController = navController,
             startDestination = CardBarItems.HOME.name,

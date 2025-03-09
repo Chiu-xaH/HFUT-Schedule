@@ -11,7 +11,7 @@ import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.ui.activity.home.main.saved.COMMUNITY
-import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
+import com.hfut.schedule.ui.utils.NavigateAnimationManager
 import com.hfut.schedule.ui.utils.monet.dataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -45,7 +45,7 @@ object DataStoreManager {
 
     val animationTypeFlow: Flow<Int> = dataStore.data
         .map { preferences ->
-            preferences[ANIMATION_TYPE] ?: NavigateAndAnimationManager.AnimationTypes.FadeAnimation.code
+            preferences[ANIMATION_TYPE] ?: NavigateAnimationManager.AnimationTypes.FadeAnimation.code
         }
     val stuCookieFlow: Flow<String> = dataStore.data
         .map { preferences ->

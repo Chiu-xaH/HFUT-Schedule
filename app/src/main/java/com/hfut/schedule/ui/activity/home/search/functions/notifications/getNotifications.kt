@@ -5,14 +5,14 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.beans.MyAPIResponse
 import com.hfut.schedule.logic.beans.Notifications
 import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.parse.getMy
 
 
 //解析通知
 fun getNotifications() : List<Notifications> {
-    try {
-        val json = SharePrefs.prefs.getString("my", MyApplication.NullMy)
-        return Gson().fromJson(json, MyAPIResponse::class.java).Notifications
+    return try {
+        getMy()!!.Notifications
     } catch (_:Exception) {
-        return emptyList()
+        emptyList()
     }
 }

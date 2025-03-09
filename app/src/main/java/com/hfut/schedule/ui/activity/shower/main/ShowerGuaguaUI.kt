@@ -56,10 +56,10 @@ import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.ui.activity.shower.bills.GuaguaBills
 import com.hfut.schedule.ui.activity.shower.function.GuaGuaSettings
 import com.hfut.schedule.ui.activity.shower.home.main.GuaguaStart
-import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
-import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.currentPage
+import com.hfut.schedule.ui.utils.NavigateAnimationManager
+import com.hfut.schedule.ui.utils.NavigateAnimationManager.currentPage
 //import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
-import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
+import com.hfut.schedule.ui.utils.NavigateAnimationManager.turnTo
 import com.hfut.schedule.ui.utils.style.bottomBarBlur
 import com.hfut.schedule.ui.utils.style.topBarBlur
 import com.hfut.schedule.viewmodel.NetWorkViewModel
@@ -70,7 +70,7 @@ import dev.chrisbanes.haze.haze
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShowerGuaGua(vm: GuaGuaViewModel,netVm : NetWorkViewModel) {
-    val animation by remember { mutableStateOf(SharePrefs.prefs.getInt("ANIMATION", MyApplication.Animation)) }
+    val animation by remember { mutableStateOf(SharePrefs.prefs.getInt("ANIMATION", MyApplication.ANIMATION_SPEED)) }
     val navController = rememberNavController()
     val context = LocalContext.current
     val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR",  VersionUtils.canBlur)
@@ -168,7 +168,7 @@ fun ShowerGuaGua(vm: GuaGuaViewModel,netVm : NetWorkViewModel) {
 
         }
     ) {innerPadding ->
-        val animation = NavigateAndAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
+        val animation = NavigateAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
 
         NavHost(navController = navController,
             startDestination = ShowerBarItems.HOME.name,

@@ -8,9 +8,10 @@ data class MyAPIResponse (val SettingsInfo : SettingsInfo,
                           val SchoolCalendar : String,
                           val Next : Boolean,
                           val API : String,
-                          val useNewAPI : Boolean)
-data class SettingsInfo(val version : String,
-                        val title : String,
+                          val useCaptcha : Boolean,
+                          val startDay : String
+                        )
+data class SettingsInfo(val title : String,
                         val info : String,
                         val show : Boolean,
                         val celebration : Boolean)

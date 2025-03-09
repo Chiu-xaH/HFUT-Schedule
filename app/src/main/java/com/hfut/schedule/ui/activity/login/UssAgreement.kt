@@ -38,7 +38,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.VersionUtils
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
-import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
+import com.hfut.schedule.ui.utils.NavigateAnimationManager
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.TransplantListItem
@@ -117,7 +117,7 @@ fun UseAgreementUI(navController : NavHostController) {
                     Button(
                         onClick = {
                             SharePrefs.saveBoolean("canUse", default = false, save = true)
-                            NavigateAndAnimationManager.turnTo(navController, First.HOME.name)
+                            NavigateAnimationManager.turnTo(navController, First.HOME.name)
                         },
                         modifier = Modifier
                             .fillMaxWidth()

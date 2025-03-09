@@ -42,7 +42,7 @@ import com.hfut.schedule.ui.activity.home.cube.items.main.Screen
 import com.hfut.schedule.ui.activity.home.cube.items.NavUIs.UIScreen
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.DownloadMLUI
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.TEST
-import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
+import com.hfut.schedule.ui.utils.NavigateAnimationManager
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @SuppressLint("SuspiciousIndentation", "UnusedMaterial3ScaffoldPaddingParameter")
@@ -60,7 +60,7 @@ fun SettingsScreen(vm : NetWorkViewModel
 
     val navController = rememberNavController()
 
-    var animation by remember { mutableStateOf(prefs.getInt("ANIMATION", MyApplication.Animation)) }
+    var animation by remember { mutableStateOf(prefs.getInt("ANIMATION", MyApplication.ANIMATION_SPEED)) }
     Box{
         Scaffold(floatingActionButton = {
             //如果界面处于Screen.HomeScreen.route则不显示
@@ -78,10 +78,10 @@ fun SettingsScreen(vm : NetWorkViewModel
                 navController = navController,
                 startDestination = Screen.HomeScreen.route,
                 enterTransition = {
-                    NavigateAndAnimationManager.centerAnimation.enter
+                    NavigateAnimationManager.centerAnimation.enter
                 },
                 exitTransition = {
-                    NavigateAndAnimationManager.centerAnimation.exit
+                    NavigateAnimationManager.centerAnimation.exit
                 }
             ) {
 

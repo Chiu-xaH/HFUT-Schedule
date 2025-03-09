@@ -32,7 +32,7 @@ fun SchoolsUI(innerPdding : PaddingValues? = null) {
         "http://jjxy.hfut.edu.cn/" to "经济学院",
         "http://wgyxy.hfut.edu.cn/" to "外国语学院",
         "http://wfxy.hfut.edu.cn/" to "文法学院",
-        "http://som.hfut.edu.cn/glxy/index.htm" to "管理学院",
+        "http://som.hfut.edu.cn/" to "管理学院",
         "http://yqkx.hfut.edu.cn/" to "仪器科学与光电工程学院",
         "http://jyxy.hfut.edu.cn/" to "建筑与艺术学院",
         "http://geoscience.hfut.edu.cn/" to "资源与环境工程学院",

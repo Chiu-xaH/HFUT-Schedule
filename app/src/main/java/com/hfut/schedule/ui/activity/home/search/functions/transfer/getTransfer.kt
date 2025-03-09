@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.activity.home.search.functions.transferMajor
+package com.hfut.schedule.ui.activity.home.search.functions.transfer
 
 import com.google.gson.Gson
 import com.hfut.schedule.logic.beans.jxglstu.MyApplyModels

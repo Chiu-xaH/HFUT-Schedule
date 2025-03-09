@@ -37,8 +37,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.DataStoreManager
-import com.hfut.schedule.logic.utils.parse.Semseter.parseSemseter
-import com.hfut.schedule.logic.utils.parse.Semseter.getSemseterFromCloud
+import com.hfut.schedule.logic.utils.parse.SemseterParser.parseSemseter
+import com.hfut.schedule.logic.utils.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.saveBoolean
@@ -198,7 +198,7 @@ fun APPScreen(navController: NavController,
             },
             supportingContent = {
                 Column {
-                    Text(text = "全局学期 ${parseSemseter(getSemseterFromCloud())}", fontWeight = FontWeight.Bold)
+                    Text(text = "全局学期 ${parseSemseter(getSemseter())}", fontWeight = FontWeight.Bold)
                     Text(text = "其他部分功能如教评、成绩等需要在全局学期下切换学期的，可在相应功能区切换")
                 }
             },

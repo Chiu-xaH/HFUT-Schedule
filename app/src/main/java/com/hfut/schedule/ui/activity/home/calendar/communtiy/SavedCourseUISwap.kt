@@ -72,9 +72,9 @@ import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.beans.community.courseDetailDTOList
 import com.hfut.schedule.logic.utils.DateTimeUtils
-import com.hfut.schedule.logic.utils.DateTimeUtils.Benweeks
-import com.hfut.schedule.logic.utils.parse.Semseter.parseSemseter
-import com.hfut.schedule.logic.utils.parse.Semseter.getSemseterFromCloud
+import com.hfut.schedule.logic.utils.DateTimeUtils.weeksBetween
+import com.hfut.schedule.logic.utils.parse.SemseterParser.parseSemseter
+import com.hfut.schedule.logic.utils.parse.SemseterParser.getSemseter
 import com.hfut.schedule.ui.activity.home.calendar.examToCalendar
 import com.hfut.schedule.ui.activity.home.calendar.getScheduleDate
 import com.hfut.schedule.ui.activity.home.search.functions.exam.getExam
@@ -762,7 +762,7 @@ fun SaveCourse(
                     if (shouldShowAddButton) {
                         ExtendedFloatingActionButton(
                             onClick = {
-                                Bianhuaweeks = Benweeks
+                                Bianhuaweeks = weeksBetween
                                 onDateChange(LocalDate.now())
                                 //today = LocalDate.now()
                             },
@@ -791,7 +791,7 @@ fun SaveCourse(
                 ) {
                     TextButton(onClick = {  }) {
                         Text(
-                            text = parseSemseter(getSemseterFromCloud()),
+                            text = parseSemseter(getSemseter()),
                             style = TextStyle(shadow = Shadow(
                                 color = Color.Gray,
                                 offset = Offset(5.0f,5.0f),
@@ -838,7 +838,7 @@ fun ScheduleTopDate(showAll: Boolean,today : LocalDate,blur : Boolean) {
             items(if(showAll)7 else 5) { item ->
                 val date = mondayOfCurrentWeek.plusDays(item.toLong()).toString() //YYYY-MM-DD 与考试对比
                 val isToday = date == DateTimeUtils.Date_yyyy_MM_dd
-                if (Benweeks > 0)
+                if (weeksBetween > 0)
                     Text(
                         text = date.substringAfter("-"),
                         textAlign = TextAlign.Center,

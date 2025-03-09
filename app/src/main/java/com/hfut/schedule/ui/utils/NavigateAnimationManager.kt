@@ -3,6 +3,8 @@ package com.hfut.schedule.ui.utils
 //import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -15,18 +17,8 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.ui.Alignment
 import androidx.navigation.NavHostController
 
-object NavigateAndAnimationManager {
+object NavigateAnimationManager {
     data class TransferAnimation(val remark : String,val enter : EnterTransition, val exit : ExitTransition)
-
-//    fun turnTo(navController : NavHostController, route : String) {
-//        navController.navigate(route) {
-//            popUpTo(navController.graph.startDestinationId) {
-//                saveState = true
-//            }
-//            launchSingleTop = true
-//            restoreState = true
-//        }
-//    }
 
     fun turnTo(navController: NavHostController, route: String) {
         navController.navigate(route) {
@@ -37,22 +29,6 @@ object NavigateAndAnimationManager {
             restoreState = true
         }
     }
-//    fun turnToClearly(navController: NavHostController, route: String) {
-//        navController.navigate(route) {
-//            popUpTo(route) { inclusive = false } // 只保留当前 route，不影响返回手势
-//            launchSingleTop = true
-//            restoreState = true
-//        }
-//    }
-
-
-//    fun turnToAndClear(navController: NavHostController, route: String) {
-//        navController.navigate(route) {
-//            popUpTo(navController.graph.startDestinationId) { saveState = true }
-//            launchSingleTop = true
-//            restoreState = true
-//        }
-//    }
 
 
     const val ANIMATION_SPEED = 400
@@ -87,19 +63,31 @@ object NavigateAndAnimationManager {
 
     val nullAnimation = TransferAnimation("无", enterAnimationNull, exitAnimationNull)
 
+    private val enterRightAnimation = slideInHorizontally(
+        initialOffsetX = { it }, // 从右侧进入
+        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow)
+    )
+    private val exitRightAnimation = slideOutHorizontally(
+        targetOffsetX = { it }, // 向右侧隐藏
+        animationSpec = tween(durationMillis = ANIMATION_SPEED)
+    )
+    val hiddenRightAnimation = TransferAnimation("向右侧边隐藏", enterRightAnimation, exitRightAnimation)
+
+    private val enterLeftAnimation = slideInHorizontally(animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow))
+    private val exitLeftAnimation = slideOutHorizontally(animationSpec = tween(durationMillis = ANIMATION_SPEED))
+    val hiddenLeftAnimation = TransferAnimation("向左侧边隐藏", enterRightAnimation, exitRightAnimation)
+
+
 
     // 左右动画
     private val enterAnimationLeft = slideInHorizontally(
         initialOffsetX = { fullWidth -> -fullWidth },
         animationSpec = tween(durationMillis = ANIMATION_SPEED)
     )
-//    + fadeIn(animationSpec = tween(durationMillis = ANIMATION_SPEED))
-
     private val exitAnimationLeft = slideOutHorizontally(
         targetOffsetX = { fullWidth -> -fullWidth },
         animationSpec = tween(durationMillis = ANIMATION_SPEED)
     )
-//    + fadeOut(animationSpec = tween(durationMillis = ANIMATION_SPEED))
 
     private val leftToRightAnimation = TransferAnimation("从左向右运动", enterAnimationLeft, exitAnimationLeft)
 
@@ -107,13 +95,11 @@ object NavigateAndAnimationManager {
         initialOffsetX = { fullWidth -> fullWidth },
         animationSpec = tween(durationMillis = ANIMATION_SPEED)
     )
-//    + fadeIn(animationSpec = tween(durationMillis = ANIMATION_SPEED))
 
     private val exitAnimationRight = slideOutHorizontally(
         targetOffsetX = { fullWidth -> fullWidth },
         animationSpec = tween(durationMillis = ANIMATION_SPEED)
     )
-//    + fadeOut(animationSpec = tween(durationMillis = ANIMATION_SPEED))
 
     private val rightToLeftAnimation = TransferAnimation("从右向左运动", enterAnimationRight, exitAnimationRight)
 

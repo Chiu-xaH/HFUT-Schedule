@@ -112,7 +112,7 @@ fun SelectCourse(ifSaved : Boolean, vm : NetWorkViewModel) {
     WebDialog(
         showDialog,
         { showDialog = false },
-        url = if(vm.webVpn) MyApplication.JxglstuWebVpnURL else MyApplication.JxglstuURL + "for-std/course-table",
+        url = if(vm.webVpn) MyApplication.JXGLSTU_WEBVPN_URL else MyApplication.JXGLSTU_URL + "for-std/course-table",
         title = "教务系统",
         cookie = cookie
     )
@@ -344,9 +344,7 @@ fun SelectCourseList(vm: NetWorkViewModel) {
 //                    },
 //                shape = MaterialTheme.shapes.medium,
 //            )
-            AnimationCustomCard (Modifier.fillMaxWidth()
-                .padding(horizontal = AppHorizontalDp(), vertical = CardNormalDp())
-                .clickable {
+            AnimationCustomCard (Modifier.clickable {
                     courseId = list[item].id
                     SharePrefs.saveString("courseIDS", list[item].id.toString())
                     name = list[item].name

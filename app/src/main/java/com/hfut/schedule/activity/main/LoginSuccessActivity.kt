@@ -11,7 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.beans.MyAPIResponse
-import com.hfut.schedule.logic.utils.parse.Semseter
+import com.hfut.schedule.logic.utils.parse.SemseterParser
 import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.main.login.SuccessUI
@@ -46,10 +46,6 @@ class LoginSuccessActivity : BaseActivity() {
                     val cookie = prefs.getString("redirect", "")
                     networkVms.Jxglstulogin(cookie!!)
                 }
-            }
-            launch {
-                val semesterId = Semseter.getSemseterFromCloud().toString()
-                saveString("semesterId",semesterId)
             }
         }
     }

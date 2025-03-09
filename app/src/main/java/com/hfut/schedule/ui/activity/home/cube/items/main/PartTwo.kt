@@ -89,7 +89,7 @@ fun PartTwo() {
         },
         modifier = Modifier.clickable{
             if (version.version != VersionUtils.getVersionName())
-                startWebUrl(MyApplication.UpdateURL+ "releases/download/Android/${version.version}.apk")
+                startWebUrl(MyApplication.GITEE_UPDATE_URL+ "releases/download/Android/${version.version}.apk")
             else Toast.makeText(MyApplication.context,"与云端版本一致",Toast.LENGTH_SHORT).show()
         }
     )

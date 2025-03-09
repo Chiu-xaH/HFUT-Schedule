@@ -58,9 +58,9 @@ import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.fix.about.AboutUI
 import com.hfut.schedule.ui.activity.fix.fix.FixUI
-import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
-import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.currentPage
-import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
+import com.hfut.schedule.ui.utils.NavigateAnimationManager
+import com.hfut.schedule.ui.utils.NavigateAnimationManager.currentPage
+import com.hfut.schedule.ui.utils.NavigateAnimationManager.turnTo
 import com.hfut.schedule.ui.utils.style.bottomBarBlur
 import com.hfut.schedule.ui.utils.style.topBarBlur
 import dev.chrisbanes.haze.HazeState
@@ -72,7 +72,7 @@ import dev.chrisbanes.haze.haze
 fun Fix(vm : LoginViewModel,vm2 : NetWorkViewModel) {
     val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR",  VersionUtils.canBlur)
     var blur by remember { mutableStateOf(switchblur) }
-    var animation by remember { mutableStateOf(prefs.getInt("ANIMATION", MyApplication.Animation)) }
+    var animation by remember { mutableStateOf(prefs.getInt("ANIMATION", MyApplication.ANIMATION_SPEED)) }
     val hazeState = remember { HazeState() }
     val navController = rememberNavController()
     val currentAnimationIndex by DataStoreManager.animationTypeFlow.collectAsState(initial = 0)
@@ -163,7 +163,7 @@ fun Fix(vm : LoginViewModel,vm2 : NetWorkViewModel) {
 
         }
     ) {innerPadding ->
-        val animation = NavigateAndAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
+        val animation = NavigateAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
 
         NavHost(navController = navController,
             startDestination = FixBarItems.Fix.name,

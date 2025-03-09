@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
-import com.hfut.schedule.ui.activity.home.search.functions.Huixin
+import com.hfut.schedule.ui.activity.home.search.functions.huixin.Huixin
 import com.hfut.schedule.ui.activity.home.search.functions.bus.SchoolBus
 import com.hfut.schedule.ui.activity.home.search.functions.card.SchoolCardItem
 import com.hfut.schedule.ui.activity.home.search.functions.courseSearch.CoursesSearch
@@ -60,10 +60,10 @@ import com.hfut.schedule.ui.activity.home.search.functions.survey.Survey
 import com.hfut.schedule.ui.activity.home.search.functions.teacherSearch.TeacherSearch
 import com.hfut.schedule.ui.activity.home.search.functions.todayCampus.ToadyCampus
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotal
-import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.Transfer
+import com.hfut.schedule.ui.activity.home.search.functions.transfer.Transfer
 import com.hfut.schedule.ui.activity.home.search.functions.webLab.WebUI
 import com.hfut.schedule.ui.activity.home.search.functions.work.Work
-import com.hfut.schedule.ui.activity.home.search.functions.xueXin.XueXin
+import com.hfut.schedule.ui.activity.home.search.functions.xuexin.XueXin
 import com.hfut.schedule.ui.utils.components.CardNormalColor
 import com.hfut.schedule.ui.utils.components.CardNormalDp
 import com.hfut.schedule.ui.utils.components.SmallCard

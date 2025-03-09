@@ -68,9 +68,9 @@ import com.hfut.schedule.ui.activity.home.search.functions.notifications.Notific
 import com.hfut.schedule.ui.activity.home.search.functions.notifications.getNotifications
 import com.hfut.schedule.ui.activity.home.search.functions.webLab.LabUI
 import com.hfut.schedule.ui.activity.home.search.main.SearchFuncs
-import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
-import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.currentPage
-import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
+import com.hfut.schedule.ui.utils.NavigateAnimationManager
+import com.hfut.schedule.ui.utils.NavigateAnimationManager.currentPage
+import com.hfut.schedule.ui.utils.NavigateAnimationManager.turnTo
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CustomTabRow
 import com.hfut.schedule.ui.utils.components.CustomTopBar
@@ -105,7 +105,7 @@ fun NoLoginUI(vm : NetWorkViewModel,vm2 : LoginViewModel,vmUI : UIViewModel) {
     val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR", VersionUtils.canBlur)
     var blur by remember { mutableStateOf(switchblur) }
 
-    val animation by remember { mutableStateOf(SharePrefs.prefs.getInt("ANIMATION", MyApplication.Animation)) }
+    val animation by remember { mutableStateOf(SharePrefs.prefs.getInt("ANIMATION", MyApplication.ANIMATION_SPEED)) }
 
     val first = BottomBarItems.SEARCH
 
@@ -300,7 +300,7 @@ fun NoLoginUI(vm : NetWorkViewModel,vm2 : LoginViewModel,vmUI : UIViewModel) {
             }
         }
     ) { innerPadding ->
-        val animation = NavigateAndAnimationManager.getAnimationType(currentAnimationIndex,bottomBarItems.page)
+        val animation = NavigateAnimationManager.getAnimationType(currentAnimationIndex,bottomBarItems.page)
 
         NavHost(
             navController = navController,

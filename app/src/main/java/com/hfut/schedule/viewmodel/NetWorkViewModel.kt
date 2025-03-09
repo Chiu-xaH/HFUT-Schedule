@@ -61,15 +61,15 @@ import com.hfut.schedule.logic.network.servicecreator.MyServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.QWeatherServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.StuServiceCreator
 import com.hfut.schedule.logic.utils.parse.Encrypt
-import com.hfut.schedule.logic.utils.parse.Semseter
+import com.hfut.schedule.logic.utils.parse.SemseterParser
 import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.data.SharePrefs.saveInt
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.getUserInfo
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
 import com.hfut.schedule.ui.activity.news.main.transferToPostData
-import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.CampusId
-import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.CampusId.*
+import com.hfut.schedule.ui.activity.home.search.functions.transfer.CampusId
+import com.hfut.schedule.ui.activity.home.search.functions.transfer.CampusId.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -572,7 +572,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         val call =  JxglstuJSON.getLessonIds(
             cookie,
             bizTypeId.toString(),
-            Semseter.getSemseterFromCloud().toString(),
+            SemseterParser.getSemseter().toString(),
             studentid
         )
 
@@ -808,11 +808,10 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         })
     }
 
-    val BillsData = MutableLiveData<String>()
+    val BillsData = MutableLiveData<String?>()
     fun CardGet(auth : String,page : Int) {// 创建一个Call对象，用于发送异步请求
 
         val size = prefs.getString("CardRequest","15")
-        size?.let { Log.d("size", it) }
         val call = size?.let { ZJGDBill.Cardget(auth,page, it) }
 
         if (call != null) {
@@ -1310,12 +1309,12 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         }
     }
 
-    val libraryData = MutableLiveData<String>()
-    fun SearchBooks(CommuityTOKEN: String,name: String) {
+    val libraryData = MutableLiveData<String?>()
+    fun SearchBooks(CommuityTOKEN: String,name: String,page: Int) {
 
         val size = prefs.getString("BookRequest","15")
       //  size?.let { Log.d("size", it) }
-        val call = CommuityTOKEN?.let { size?.let { it1 -> Community.searchBooks(it,name,"1", it1) } }
+        val call = CommuityTOKEN?.let { size?.let { it1 -> Community.searchBooks(it,name,page.toString(), it1) } }
         if (call != null) {
             call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -1330,6 +1329,9 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             })
         }
     }
+
+    val bookPositionData = MutableLiveData<String?>()
+    fun getBookPosition(token: String,callNo: String) = NetWork.makeRequest(Community.getBookPosition(token,callNo),bookPositionData)
 
     fun GetCourse(CommuityTOKEN : String,studentId: String? = null) {
 
@@ -1395,8 +1397,8 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 //        }
     }
     fun GetBorrowed(CommuityTOKEN: String,page : String) {
-        val size = prefs.getString("BookRequest","15")
-        val call = CommuityTOKEN?.let { size?.let { it1 -> Community.getBorrowedBook(it,page, it1) } }
+//        val size = prefs.getString("BookRequest","15")
+        val call = CommuityTOKEN?.let { it1 -> Community.getBorrowedBook("100",page, it1)  }
 
         if (call != null) {
             call.enqueue(object : Callback<ResponseBody> {
@@ -1410,18 +1412,15 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     }
 
     fun GetHistory(CommuityTOKEN: String,page : String) {
-        val size = prefs.getString("BookRequest","15")
-        val call = CommuityTOKEN?.let { size?.let { it1 -> Community.getHistoyBook(it,page, it1) } }
+        val call =  Community.getHistoyBook(token = CommuityTOKEN, size = "100", page = page)
 
-        if (call != null) {
-            call.enqueue(object : Callback<ResponseBody> {
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    saveString(LibraryItems.HISTORY.name, response.body()?.string())
-                }
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                saveString(LibraryItems.HISTORY.name, response.body()?.string())
+            }
 
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-            })
-        }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
     }
     fun getOverDueBook(CommuityTOKEN: String,page : String) {
         val size = prefs.getString("BookRequest","15")
@@ -1485,7 +1484,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
     var lessonIdsNext = MutableLiveData<List<Int>>()
     fun getLessonIdsNext(cookie : String, bizTypeId : Int,studentid : String) {
-        val call = (Semseter.getSemseterFromCloud()?.plus(20)).toString()
+        val call = (SemseterParser.getSemseter()?.plus(20)).toString()
             ?.let { JxglstuJSON.getLessonIds(cookie,bizTypeId.toString(), it,studentid) }
 
         if (call != null) {

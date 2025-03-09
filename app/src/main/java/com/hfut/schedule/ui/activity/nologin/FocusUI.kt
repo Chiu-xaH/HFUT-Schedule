@@ -105,11 +105,11 @@ fun TodayScreenNoLogin(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding
             val shouldShowAddButton by remember { derivedStateOf { scrollstate.firstVisibleItemScrollOffset == 0 } }
             var date = DateTimeUtils.Date_MM_dd
             val todaydate = (date?.substring(0, 2) ) + date?.substring(3, 5)
-            var week = DateTimeUtils.Benweeks.toInt()
+            var week = DateTimeUtils.weeksBetween.toInt()
             //  val switch_api = SharePrefs.prefs.getBoolean("SWITCHMYAPI", apiCheck())
             var weekdaytomorrow = DateTimeUtils.dayweek + 1
             var weekdayToday = DateTimeUtils.dayweek
-            var Nextweek = DateTimeUtils.Benweeks.toInt()
+            var Nextweek = DateTimeUtils.weeksBetween.toInt()
             //当今天为周日时，变0为7
             //当第二天为下一周的周一时，周数+1
             when(weekdaytomorrow) { 1 -> Nextweek += 1 }

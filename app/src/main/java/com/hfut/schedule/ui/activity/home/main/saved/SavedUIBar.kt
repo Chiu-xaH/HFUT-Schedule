@@ -77,7 +77,7 @@ import com.hfut.schedule.logic.beans.NavigationBarItemData
 import com.hfut.schedule.logic.utils.VersionUtils
 import com.hfut.schedule.logic.utils.DataStoreManager
 import com.hfut.schedule.logic.utils.DateTimeUtils
-import com.hfut.schedule.logic.utils.DateTimeUtils.Benweeks
+import com.hfut.schedule.logic.utils.DateTimeUtils.weeksBetween
 import com.hfut.schedule.logic.utils.DateTimeUtils.Date_MM_dd
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
@@ -100,10 +100,10 @@ import com.hfut.schedule.ui.activity.home.search.functions.webLab.LabUI
 import com.hfut.schedule.ui.activity.home.search.main.SearchFuncs
 import com.hfut.schedule.ui.activity.home.search.main.SearchScreen
 import com.hfut.schedule.ui.activity.login.First
-import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
-import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.ANIMATION_SPEED
-import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.currentPage
-import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
+import com.hfut.schedule.ui.utils.NavigateAnimationManager
+import com.hfut.schedule.ui.utils.NavigateAnimationManager.ANIMATION_SPEED
+import com.hfut.schedule.ui.utils.NavigateAnimationManager.currentPage
+import com.hfut.schedule.ui.utils.NavigateAnimationManager.turnTo
 //import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnToClearly
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CustomTabRow
@@ -132,26 +132,19 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
         //重置
         saveInt("FIRST",0)
     }
-   // val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
     val navController = rememberNavController()
     val isEnabled by remember { mutableStateOf(true) }
     val switch = prefs.getBoolean("SWITCH",true)
     var showlable by remember { mutableStateOf(switch) }
     val hazeState = remember { HazeState() }
 
-//    var bottomBarItems by remember { mutableStateOf(FOCUS) }
     var showBadge by remember { mutableStateOf(false) }
     if (getUpdates().version != VersionUtils.getVersionName()) showBadge = true
     val switchblur = prefs.getBoolean("SWITCHBLUR", VersionUtils.canBlur)
     var blur by remember { mutableStateOf(switchblur) }
-   // val savenum = prefs.getInt("GradeNum",0) + prefs.getInt("ExamNum",0) + prefs.getInt("Notifications",0)
-    //val getnum = getGrade().size + getExam().size + getNotifications().size
-    //if (savenum != getnum) showBadge2 = true
-    val animation by remember { mutableStateOf(prefs.getInt("ANIMATION", MyApplication.Animation)) }
 
 
 
-    //Log.d("动画",animation.toString())
 //判定是否以聚焦作为第一页
     var first  by remember { mutableStateOf(
         when (prefs.getBoolean("SWITCHFOCUS",true)) {
@@ -183,11 +176,7 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
     val sheetState_multi = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_multi by remember { mutableStateOf(false) }
 
-    val sheetState_totalCourse = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var showBottomSheet_totalCourse by remember { mutableStateOf(false) }
-
     val ExamObserver = Observer<Int> { result ->
-      //  Log.d("re",result.toString())
         when(result) {
             200 -> {
                 ifSaved = false
@@ -199,10 +188,9 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
         }
     }
 
-    CoroutineScope(Job()).launch { NetWorkUpdate(vm, vm2,vmUI, ifSaved) }
+//    CoroutineScope(Job()).launch { NetWorkUpdate(vm, vm2,vmUI, ifSaved) }
 
     Handler(Looper.getMainLooper()).post { vm.examCode.observeForever(ExamObserver) }
-
 
 
     if (showBottomSheet) {
@@ -421,7 +409,7 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
             }
         }
     ) { innerPadding ->
-        val animation = NavigateAndAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
+        val animation = NavigateAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
         NavHost(
             navController = navController,
             startDestination = first.name,
@@ -479,7 +467,7 @@ fun texts(num : BottomBarItems) : String {
     when(num){
         COURSES -> {
             val dayweek = DateTimeUtils.dayweek
-            var chinesenumber  = DateTimeUtils.chinesenumber
+            var chinesenumber  = ""
 
             when (dayweek) {
                 1 -> chinesenumber = "一"
@@ -490,11 +478,11 @@ fun texts(num : BottomBarItems) : String {
                 6 -> chinesenumber = "六"
                 0 -> chinesenumber = "日"
             }
-            return "$Date_MM_dd 第${Benweeks}周 周$chinesenumber"
+            return "$Date_MM_dd 第${weeksBetween}周 周$chinesenumber"
         }
         FOCUS -> {
             val dayweek = DateTimeUtils.dayweek
-            var chinesenumber  = DateTimeUtils.chinesenumber
+            var chinesenumber  = ""
 
             when (dayweek) {
                 1 -> chinesenumber = "一"
@@ -505,7 +493,7 @@ fun texts(num : BottomBarItems) : String {
                 6 -> chinesenumber = "六"
                 0 -> chinesenumber = "日"
             }
-            return "$Date_MM_dd 第${Benweeks}周 周$chinesenumber"
+            return "$Date_MM_dd 第${weeksBetween}周 周$chinesenumber"
         }
         SEARCH -> {
 //            var text  = "你好"

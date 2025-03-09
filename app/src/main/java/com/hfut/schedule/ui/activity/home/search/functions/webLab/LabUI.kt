@@ -32,6 +32,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.ui.utils.components.MyCustomCard
+import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.TransplantListItem
@@ -42,9 +43,11 @@ import com.hfut.schedule.ui.utils.components.WebViewScreen
 @Composable
 fun LabUI() {
     var showDialog by remember { mutableStateOf(false) }
-    var num by remember { mutableStateOf(0) }
+    var num by remember { mutableStateOf(-1) }
 
-    WebDialog(showDialog,{ showDialog = false },getLab()[num].info,getLab()[num].title)
+    if(num != -1) {
+        WebDialog(showDialog,{ showDialog = false },getLab()[num].info,getLab()[num].title)
+    }
 
 
     StyleCardListItem(

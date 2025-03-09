@@ -83,19 +83,19 @@ fun UseCodeUI(vm: GuaGuaViewModel) {
     val scale = animateFloatAsState(
         targetValue = if (loading) 0.9f else 1f, // 按下时为0.9，松开时为1
         //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-        animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
+        animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
         label = "" // 使用弹簧动画
     )
     val scale2 = animateFloatAsState(
         targetValue = if (loading) 0.97f else 1f, // 按下时为0.9，松开时为1
         //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-        animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
+        animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
         label = "" // 使用弹簧动画
     )
 
     val blurSize by animateDpAsState(
         targetValue = if (loading) 10.dp else 0.dp, label = ""
-        ,animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
+        ,animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
     )
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -216,12 +216,12 @@ fun UseCodeUI(vm: GuaGuaViewModel) {
             if(!switchAutoRefresh) {
                 androidx.compose.animation.AnimatedVisibility(
                     visible = showButton,
-                    exit = fadeOut(tween(durationMillis = MyApplication.Animation)) + scaleOut(tween(durationMillis = MyApplication.Animation)),
+                    exit = fadeOut(tween(durationMillis = MyApplication.ANIMATION_SPEED)) + scaleOut(tween(durationMillis = MyApplication.ANIMATION_SPEED)),
                     modifier = Modifier.align(Alignment.Center).zIndex(1f)
                 ) {
                     val blurSizeButton by animateDpAsState(
                         targetValue = if (!showButton) 4.dp else 0.dp, label = ""
-                        ,animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
+                        ,animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
                     )
                     Button(
                         onClick = { refresh() },

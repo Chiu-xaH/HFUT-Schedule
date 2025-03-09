@@ -4,11 +4,11 @@ import com.google.gson.Gson
 import com.hfut.schedule.logic.beans.Lab
 import com.hfut.schedule.logic.beans.MyAPIResponse
 import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.parse.getMy
 
 fun getLab() : List<Lab>{
-    val json = SharePrefs.prefs.getString("my","")
     return try {
-        Gson().fromJson(json, MyAPIResponse::class.java).Labs
+        getMy()!!.Labs
     } catch (e : Exception) {
         emptyList()
     }

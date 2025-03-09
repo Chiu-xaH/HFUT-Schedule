@@ -150,13 +150,7 @@ fun PersonPart() {
     }
 }
 
-@Composable
-fun TimesUI() {
-   // val startYear = ("20" + getUserInfo().studentID?.substring(0,2)).toIntOrNull()
 
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
 fun getUserInfo() : UserInfo {
 
     val date = DateTimeUtils.Date_yyyy_MM_dd

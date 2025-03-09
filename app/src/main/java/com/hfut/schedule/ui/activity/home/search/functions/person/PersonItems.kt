@@ -48,7 +48,7 @@ import com.hfut.schedule.logic.utils.DateTimeUtils
 import com.hfut.schedule.logic.utils.parse.ReservDecimal
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.getIdentifyID
-import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
+import com.hfut.schedule.ui.utils.NavigateAnimationManager
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith

@@ -8,7 +8,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 object GetCookieServiceCreator {
 
     val retrofit = Retrofit.Builder()
-        .baseUrl(MyApplication.LoginURL)
+        .baseUrl(MyApplication.CAS_LOGIN_URL)
         .addConverterFactory(ScalarsConverterFactory.create())
         .addConverterFactory(GsonConverterFactory.create())
         .build()

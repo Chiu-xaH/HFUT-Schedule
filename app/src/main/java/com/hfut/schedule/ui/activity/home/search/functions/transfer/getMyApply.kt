@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.activity.home.search.functions.transferMajor
+package com.hfut.schedule.ui.activity.home.search.functions.transfer
 
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
 import com.hfut.schedule.viewmodel.NetWorkViewModel

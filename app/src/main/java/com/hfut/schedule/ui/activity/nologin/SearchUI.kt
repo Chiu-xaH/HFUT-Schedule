@@ -30,14 +30,12 @@ import com.hfut.schedule.ui.activity.home.search.functions.life.Life
 import com.hfut.schedule.ui.activity.home.search.functions.news.News
 import com.hfut.schedule.ui.activity.home.search.functions.notifications.NotificationsCenter
 import com.hfut.schedule.ui.activity.home.search.functions.program.GuestProgram
-import com.hfut.schedule.ui.activity.home.search.functions.program.Program
 import com.hfut.schedule.ui.activity.home.search.functions.repair.Repair
 import com.hfut.schedule.ui.activity.home.search.functions.schoolCalendar.SchoolCalendar
 import com.hfut.schedule.ui.activity.home.search.functions.shower.Shower
 import com.hfut.schedule.ui.activity.home.search.functions.teacherSearch.TeacherSearch
-import com.hfut.schedule.ui.activity.home.search.functions.todayCampus.ToadyCampus
 import com.hfut.schedule.ui.activity.home.search.functions.webLab.WebUI
-import com.hfut.schedule.ui.activity.home.search.functions.xueXin.XueXin
+import com.hfut.schedule.ui.activity.home.search.functions.xuexin.XueXin
 import com.hfut.schedule.ui.utils.components.SmallCard
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel

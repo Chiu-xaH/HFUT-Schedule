@@ -16,7 +16,7 @@ object LoginServiceCreator {
 
 
     val retrofit = Retrofit.Builder()
-        .baseUrl(MyApplication.LoginURL)
+        .baseUrl(MyApplication.CAS_LOGIN_URL)
         .client(Client)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
@@ -27,4 +27,4 @@ object LoginServiceCreator {
     inline fun <reified  T> create() : T = create(T::class.java)
 
 }
-object LoginWebVpnServiceCreator : BaseServiceCreator(MyApplication.WebVpnURL)
+object LoginWebVpnServiceCreator : BaseServiceCreator(MyApplication.WEBVPN_URL)

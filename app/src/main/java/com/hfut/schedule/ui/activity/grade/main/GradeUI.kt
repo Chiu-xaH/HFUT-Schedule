@@ -65,9 +65,9 @@ import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.grade.analysis.GradeCountUI
 import com.hfut.schedule.ui.activity.grade.grade.community.GradeItemUI
 import com.hfut.schedule.ui.activity.grade.grade.jxglstu.GradeItemUIJXGLSTU
-import com.hfut.schedule.ui.utils.NavigateAndAnimationManager
-import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.currentPage
-import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
+import com.hfut.schedule.ui.utils.NavigateAnimationManager
+import com.hfut.schedule.ui.utils.NavigateAnimationManager.currentPage
+import com.hfut.schedule.ui.utils.NavigateAnimationManager.turnTo
 import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
@@ -88,7 +88,7 @@ fun GradeUI(ifSaved : Boolean,vm : NetWorkViewModel) {
     val hazeState = remember { HazeState() }
     val navController = rememberNavController()
     val context = LocalContext.current
-    val animation by remember { mutableIntStateOf(prefs.getInt("ANIMATION", MyApplication.Animation)) }
+    val animation by remember { mutableIntStateOf(prefs.getInt("ANIMATION", MyApplication.ANIMATION_SPEED)) }
 
     var showSearch by remember { mutableStateOf(false) }
 
@@ -214,7 +214,7 @@ fun GradeUI(ifSaved : Boolean,vm : NetWorkViewModel) {
             }
         }
         ) { innerPadding ->
-        val animation = NavigateAndAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
+        val animation = NavigateAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
 
         NavHost(navController = navController,
                 startDestination = GradeBarItems.GRADE.name,

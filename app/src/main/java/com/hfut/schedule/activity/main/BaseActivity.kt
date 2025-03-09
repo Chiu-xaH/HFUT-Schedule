@@ -34,23 +34,19 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 open class BaseActivity : ComponentActivity() {
-    private val switchColor= SharePrefs.prefs.getBoolean("SWITCHCOLOR",true)
+    private val switchColor= SharePrefs.prefs.getBoolean("SWITCHCOLOR",VersionUtils.canMonet)
     private val monetVm: MainViewModel by viewModels()
     val loginVm by lazy { ViewModelProvider(this).get(LoginViewModel::class.java) }
     open val networkVm by lazy { ViewModelProvider(this, LoginSuccessViewModelFactory(false)).get(NetWorkViewModel::class.java) }
     val showerVm by lazy { ViewModelProvider(this).get(GuaGuaViewModel::class.java) }
     val uiVm by lazy { ViewModelProvider(this).get(UIViewModel::class.java) }
 
-    val animation = SharePrefs.prefs.getInt("ANIMATION", MyApplication.Animation)
+    val animation = SharePrefs.prefs.getInt("ANIMATION", MyApplication.ANIMATION_SPEED)
     val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR",  VersionUtils.canBlur)
 
 
     @Composable
-    open fun UI() {
-//        open val blur by remember { mutableStateOf(switchblur) }
-//        val hazeState = remember { HazeState() }
-//        val navController = rememberNavController()
-    }
+    open fun UI() {}
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
@@ -59,7 +55,7 @@ open class BaseActivity : ComponentActivity() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 //        enableEdgeToEdge()
         setContent {
-            if(!switchColor) {
+            if(switchColor) {
                 肥工课程表Theme {
                     Surface(
                         modifier = Modifier.fillMaxSize(),

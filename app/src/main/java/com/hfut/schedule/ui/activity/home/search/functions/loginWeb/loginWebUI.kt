@@ -74,8 +74,8 @@ import com.hfut.schedule.logic.utils.data.reEmptyLiveDta
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.getWebInfoFromZJGD
 import com.hfut.schedule.ui.activity.home.search.functions.electric.PayFor
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
-import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.CampusId
-import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.getCampus
+import com.hfut.schedule.ui.activity.home.search.functions.transfer.CampusId
+import com.hfut.schedule.ui.activity.home.search.functions.transfer.getCampus
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomButton
 import com.hfut.schedule.ui.utils.components.CustomTopBar
@@ -126,7 +126,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel) {
 
     // 百分比
     val percent = try {
-        val bd2 = BigDecimal(((flow?.toDouble() ?: 0.0) / (1024 * MyApplication.maxFreeFlow)) * 100)
+        val bd2 = BigDecimal(((flow?.toDouble() ?: 0.0) / (1024 * MyApplication.MAX_FREE_FLOW)) * 100)
         bd2.setScale(2, RoundingMode.HALF_UP).toString()
     } catch (_:Exception) {
         "未知"
@@ -144,19 +144,19 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel) {
     val scale = animateFloatAsState(
         targetValue = if (loading) 0.9f else 1f, // 按下时为0.9，松开时为1
         //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-        animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
+        animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
         label = "" // 使用弹簧动画
     )
     val scale2 = animateFloatAsState(
         targetValue = if (loading) 0.97f else 1f, // 按下时为0.9，松开时为1
         //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-        animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
+        animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
         label = "" // 使用弹簧动画
     )
 
     val blurSize by animateDpAsState(
         targetValue = if (loading) 10.dp else 0.dp, label = ""
-        ,animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
+        ,animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
     )
 
 

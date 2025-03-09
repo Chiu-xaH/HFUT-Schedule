@@ -32,15 +32,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enums.LibraryItems
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
+import com.hfut.schedule.ui.utils.components.AnimationCardListItem
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.viewmodel.NetWorkViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LibraryChips() {
+fun LibraryChips(vm : NetWorkViewModel) {
     val sheetState_History = rememberModalBottomSheetState(true)
     var showBottomSheet_History by remember { mutableStateOf(false) }
     val sheetState_Borrow = rememberModalBottomSheetState(true)
@@ -110,7 +113,7 @@ fun BorrowItems(PerfsJson : String) {
         items(getBorrow(PerfsJson).size){ item ->
             val Outtime = getBorrow(PerfsJson)[item].outTime
             val Returntime = getBorrow(PerfsJson)[item].returnTime
-            StyleCardListItem(
+            AnimationCardListItem(
                 headlineContent = { Text(text = getBorrow(PerfsJson)[item].bookName,fontWeight = FontWeight.Bold) },
                 supportingContent = {  Text(text = getBorrow(PerfsJson)[item].author) },
                 overlineContent = {
@@ -121,7 +124,8 @@ fun BorrowItems(PerfsJson : String) {
                 },
                 leadingContent = {
                     Icon(painterResource(R.drawable.book), contentDescription = "Localized description",)
-                }
+                },
+                index = item
             )
         }
     }

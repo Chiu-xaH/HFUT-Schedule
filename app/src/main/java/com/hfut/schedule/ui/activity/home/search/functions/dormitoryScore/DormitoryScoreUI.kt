@@ -66,6 +66,7 @@ import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CardNormalDp
 import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.MenuChip
 import com.hfut.schedule.ui.utils.components.SmallCard
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import kotlinx.coroutines.CoroutineScope
@@ -103,29 +104,35 @@ fun DormitoryScoreUI(vm : NetWorkViewModel) {
     if (NSBoolean) NS = "S"
     else NS = "N"
 
+    var menuOffset by remember { mutableStateOf<DpOffset?>(null) }
 
-    DropdownMenu(expanded = showitem, onDismissRequest = { showitem = false }, offset = DpOffset(AppHorizontalDp(),0.dp)) {
-        DropdownMenuItem(text = { Text(text = "北一号楼") }, onClick = { BuildingsNumber =  "1"
-            showitem = false})
-        DropdownMenuItem(text = { Text(text = "北二号楼") }, onClick = {  BuildingsNumber =  "2"
-            showitem = false})
-        DropdownMenuItem(text = { Text(text = "北三号楼") }, onClick = {  BuildingsNumber =  "3"
-            showitem = false})
-        DropdownMenuItem(text = { Text(text = "北四号楼") }, onClick = {  BuildingsNumber =  "4"
-            showitem = false})
-        DropdownMenuItem(text = { Text(text = "北五号楼") }, onClick = {  BuildingsNumber =  "5"
-            showitem = false})
-        DropdownMenuItem(text = { Text(text = "南六号楼") }, onClick = {  BuildingsNumber =  "6"
-            showitem = false})
-        DropdownMenuItem(text = { Text(text = "南七号楼") }, onClick = {  BuildingsNumber =  "7"
-            showitem = false})
-        DropdownMenuItem(text = { Text(text = "南八号楼") }, onClick = {  BuildingsNumber =  "8"
-            showitem = false})
-        DropdownMenuItem(text = { Text(text = "南九号楼") }, onClick = {  BuildingsNumber =  "9"
-            showitem = false})
-        DropdownMenuItem(text = { Text(text = "南十号楼") }, onClick = {  BuildingsNumber = "10"
-            showitem = false})
+    menuOffset?.let {
+        DropdownMenu(expanded = showitem, onDismissRequest = { showitem = false }, offset = it) {
+            DropdownMenuItem(text = { Text(text = "北一号楼") }, onClick = { BuildingsNumber =  "1"
+                showitem = false})
+            DropdownMenuItem(text = { Text(text = "北二号楼") }, onClick = {  BuildingsNumber =  "2"
+                showitem = false})
+            DropdownMenuItem(text = { Text(text = "北三号楼") }, onClick = {  BuildingsNumber =  "3"
+                showitem = false})
+            DropdownMenuItem(text = { Text(text = "北四号楼") }, onClick = {  BuildingsNumber =  "4"
+                showitem = false})
+            DropdownMenuItem(text = { Text(text = "北五号楼") }, onClick = {  BuildingsNumber =  "5"
+                showitem = false})
+            DropdownMenuItem(text = { Text(text = "南六号楼") }, onClick = {  BuildingsNumber =  "6"
+                showitem = false})
+            DropdownMenuItem(text = { Text(text = "南七号楼") }, onClick = {  BuildingsNumber =  "7"
+                showitem = false})
+            DropdownMenuItem(text = { Text(text = "南八号楼") }, onClick = {  BuildingsNumber =  "8"
+                showitem = false})
+            DropdownMenuItem(text = { Text(text = "南九号楼") }, onClick = {  BuildingsNumber =  "9"
+                showitem = false})
+            DropdownMenuItem(text = { Text(text = "南十号楼") }, onClick = {  BuildingsNumber = "10"
+                showitem = false})
+        }
     }
+
+
+
 
 
 
@@ -185,11 +192,12 @@ fun DormitoryScoreUI(vm : NetWorkViewModel) {
                     .fillMaxWidth()
                     .padding(horizontal = AppHorizontalDp(), vertical = 0.dp), horizontalArrangement = Arrangement.Start){
 
-                    AssistChip(
-                        onClick = { showitem = true },
+                    MenuChip (
                         label = { Text(text = "楼栋 ${BuildingsNumber}") },
-                        //leadingIcon = { Icon(painter = painterResource(R.drawable.add), contentDescription = "description") }
-                    )
+                    )  {
+                        menuOffset = it
+                        showitem = true
+                    }
 
                     Spacer(modifier = Modifier.width(10.dp))
 
@@ -208,7 +216,7 @@ fun DormitoryScoreUI(vm : NetWorkViewModel) {
                 }
 
 
-                Spacer(modifier = Modifier.height(7.dp))
+//                Spacer(modifier = Modifier.height(7.dp))
 
 
                 AnimatedVisibility(

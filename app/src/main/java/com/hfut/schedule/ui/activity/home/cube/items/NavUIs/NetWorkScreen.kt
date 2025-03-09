@@ -56,7 +56,6 @@ fun NetWorkScreen(navController: NavController,
 
 
         saveBoolean("SWITCHMYAPIS",false,showapi)
-        val my = prefs.getString("my","")
 
         val switch_upload = SharePrefs.prefs.getBoolean("SWITCHUPLOAD",true )
         var upload by remember { mutableStateOf(switch_upload) }

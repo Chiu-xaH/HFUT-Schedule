@@ -19,7 +19,7 @@ fun Modifier.bottomBarBlur(hazeState : HazeState, blur : Boolean) : Modifier {
         style = HazeStyle(
             tint = HazeTint(color = surfaceColor),
             backgroundColor =  Color.Transparent
-            ,blurRadius = MyApplication.Blur,
+            ,blurRadius = MyApplication.BLUR_RADIUS,
             noiseFactor = 0f)
     ) {
         if(blur)
@@ -43,7 +43,7 @@ fun Modifier.topBarBlur(hazeState : HazeState, blur : Boolean) : Modifier {
         style = HazeStyle(
             tint = HazeTint(color = surfaceColor ),
             backgroundColor =  Color.Transparent
-            ,blurRadius = MyApplication.Blur,
+            ,blurRadius = MyApplication.BLUR_RADIUS,
             noiseFactor = 0f)
     ) {
         if(blur)

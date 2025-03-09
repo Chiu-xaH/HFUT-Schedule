@@ -5,7 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
-import com.hfut.schedule.ui.activity.home.cube.items.subitems.Birthday
 
 @Composable
 fun DepartmentIcons(name : String, modifier: Modifier = Modifier) {
@@ -51,7 +50,6 @@ fun ScheduleIcons(title : String) {
 fun APIIcons(celebration: Boolean) {
     when {
         celebration -> Icon(painterResource(R.drawable.celebration), contentDescription = "Localized description",)
-        Birthday().contains("生日") ->  Icon(painterResource(R.drawable.cake), contentDescription = "Localized description",)
         else -> Icon(painterResource(R.drawable.error), contentDescription = "Localized description",)
     }
 }

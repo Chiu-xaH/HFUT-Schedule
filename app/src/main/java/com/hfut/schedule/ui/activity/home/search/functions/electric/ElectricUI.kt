@@ -51,6 +51,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,6 +59,7 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -75,6 +77,7 @@ import com.hfut.schedule.ui.utils.components.BottomTip
 import com.hfut.schedule.ui.utils.components.CustomTopBar
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.LoadingLargeCard
+import com.hfut.schedule.ui.utils.components.MenuChip
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.CardForListColor
@@ -91,8 +94,8 @@ import java.math.RoundingMode
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EleUI(vm : NetWorkViewModel) {
-    val SavedBuildNumber = prefs.getString("BuildNumber", "0")
-    var BuildingsNumber by remember { mutableStateOf(SavedBuildNumber ?: "0") }
+    val SavedBuildNumber = prefs.getString("BuildNumber", "0") ?: "0"
+    var BuildingsNumber by remember { mutableStateOf(SavedBuildNumber) }
     val SavedRoomNumber = prefs.getString("RoomNumber", "")
     var RoomNumber by remember { mutableStateOf(SavedRoomNumber ?: "") }
     val SavedEndNumber = prefs.getString("EndNumber", "")
@@ -140,15 +143,17 @@ fun EleUI(vm : NetWorkViewModel) {
         }
     }
 
-    when(EndNumber) {
-        "11"-> region = "南边照明"
-        "12" -> region = "南边空调"
-        "21" -> region = "北边照明"
-        "22" -> region = "北边空调"
-        else -> region = "选择南北"
+    region = when(EndNumber) {
+        "11"-> "南边照明"
+        "12" -> "南边空调"
+        "21" -> "北边照明"
+        "22" -> "北边空调"
+        else -> "选择南北"
     }
     val auth = prefs.getString("auth","")
-    //var roomInfo  = "${BuildingsNumber}号楼${RoomNumber}寝室${region}"
+
+    var menuOffset by remember { mutableStateOf<DpOffset?>(null) }
+
     Column() {
 
         CustomTopBar("寝室电费-宣城校区") {
@@ -196,45 +201,46 @@ fun EleUI(vm : NetWorkViewModel) {
             }
         }
 
-        DropdownMenu(expanded = showitem, onDismissRequest = { showitem = false }, offset = DpOffset(103.dp,0.dp)) {
-            DropdownMenuItem(text = { Text(text = "北一号楼") }, onClick = { BuildingsNumber =  "1"
-                showitem = false})
-            DropdownMenuItem(text = { Text(text = "北二号楼") }, onClick = {  BuildingsNumber =  "2"
-                showitem = false})
-            DropdownMenuItem(text = { Text(text = "北三号楼") }, onClick = {  BuildingsNumber =  "3"
-                showitem = false})
-            DropdownMenuItem(text = { Text(text = "北四号楼") }, onClick = {  BuildingsNumber =  "4"
-                showitem = false})
-            DropdownMenuItem(text = { Text(text = "北五号楼") }, onClick = {  BuildingsNumber =  "5"
-                showitem = false})
-            DropdownMenuItem(text = { Text(text = "南六号楼") }, onClick = {  BuildingsNumber =  "6"
-                showitem = false})
-            DropdownMenuItem(text = { Text(text = "南七号楼") }, onClick = {  BuildingsNumber =  "7"
-                showitem = false})
-            DropdownMenuItem(text = { Text(text = "南八号楼") }, onClick = {  BuildingsNumber =  "8"
-                showitem = false})
-            DropdownMenuItem(text = { Text(text = "南九号楼") }, onClick = {  BuildingsNumber =  "9"
-                showitem = false})
-            DropdownMenuItem(text = { Text(text = "南十号楼") }, onClick = {  BuildingsNumber = "10"
-                showitem = false})
+        menuOffset?.let {
+            DropdownMenu(expanded = showitem, onDismissRequest = { showitem = false }, offset = it) {
+                DropdownMenuItem(text = { Text(text = "北一号楼") }, onClick = { BuildingsNumber =  "1"
+                    showitem = false})
+                DropdownMenuItem(text = { Text(text = "北二号楼") }, onClick = {  BuildingsNumber =  "2"
+                    showitem = false})
+                DropdownMenuItem(text = { Text(text = "北三号楼") }, onClick = {  BuildingsNumber =  "3"
+                    showitem = false})
+                DropdownMenuItem(text = { Text(text = "北四号楼") }, onClick = {  BuildingsNumber =  "4"
+                    showitem = false})
+                DropdownMenuItem(text = { Text(text = "北五号楼") }, onClick = {  BuildingsNumber =  "5"
+                    showitem = false})
+                DropdownMenuItem(text = { Text(text = "南六号楼") }, onClick = {  BuildingsNumber =  "6"
+                    showitem = false})
+                DropdownMenuItem(text = { Text(text = "南七号楼") }, onClick = {  BuildingsNumber =  "7"
+                    showitem = false})
+                DropdownMenuItem(text = { Text(text = "南八号楼") }, onClick = {  BuildingsNumber =  "8"
+                    showitem = false})
+                DropdownMenuItem(text = { Text(text = "南九号楼") }, onClick = {  BuildingsNumber =  "9"
+                    showitem = false})
+                DropdownMenuItem(text = { Text(text = "南十号楼") }, onClick = {  BuildingsNumber = "10"
+                    showitem = false})
+            }
+            DropdownMenu(expanded = showitem2, onDismissRequest = { showitem2 = false }, offset = it) {
+                DropdownMenuItem(text = { Text(text = "南边照明") }, onClick = { EndNumber = "11"
+                    showitem2 = false})
+                DropdownMenuItem(text = { Text(text = "南边空调") }, onClick = { EndNumber = "12"
+                    showitem2 = false})
+                DropdownMenuItem(text = { Text(text = "北边照明") }, onClick = { EndNumber = "21"
+                    showitem2 = false})
+                DropdownMenuItem(text = { Text(text = "北边空调") }, onClick = { EndNumber = "22"
+                    showitem2 = false})
+            }
+            DropdownMenu(expanded = showitem3, onDismissRequest = { showitem3 = false }, offset = it) {
+                DropdownMenuItem(text = { Text(text = "南边") }, onClick = { EndNumber = "11"
+                    showitem3 = false })
+                DropdownMenuItem(text = { Text(text = "北边") }, onClick = { EndNumber = "21"
+                    showitem3 = false })
+            }
         }
-        DropdownMenu(expanded = showitem2, onDismissRequest = { showitem2 = false }, offset = DpOffset(210.dp,0.dp)) {
-            DropdownMenuItem(text = { Text(text = "南边照明") }, onClick = { EndNumber = "11"
-                showitem2 = false})
-            DropdownMenuItem(text = { Text(text = "南边空调") }, onClick = { EndNumber = "12"
-                showitem2 = false})
-            DropdownMenuItem(text = { Text(text = "北边照明") }, onClick = { EndNumber = "21"
-                showitem2 = false})
-            DropdownMenuItem(text = { Text(text = "北边空调") }, onClick = { EndNumber = "22"
-                showitem2 = false})
-        }
-        DropdownMenu(expanded = showitem3, onDismissRequest = { showitem3 = false }) {
-            DropdownMenuItem(text = { Text(text = "南边") }, onClick = { EndNumber = "11"
-                showitem3 = false })
-            DropdownMenuItem(text = { Text(text = "北边") }, onClick = { EndNumber = "21"
-                showitem3 = false })
-        }
-
 
         if (BuildingsNumber == "0") BuildingsNumber = ""
 
@@ -305,24 +311,30 @@ fun EleUI(vm : NetWorkViewModel) {
             .fillMaxWidth()
             .padding(horizontal = AppHorizontalDp(), vertical = 0.dp), horizontalArrangement = Arrangement.Start) {
 
-            AssistChip(
-                onClick = { showitem = true },
-                label = { Text(text = "楼栋 $BuildingsNumber") }
-            )
+            MenuChip(
+                label = { Text(text = "楼栋 $BuildingsNumber") },
+            ) {
+                menuOffset = it
+                showitem = true
+            }
 
             Spacer(modifier = Modifier.width(10.dp))
 
-            AssistChip(
-                onClick = {
-                    when {
-                        BuildingsNumber.toInt() > 5 -> showitem2 = true
-                        BuildingsNumber.toInt() in 1..4 -> showitem3 = true
-                        else -> Toast.makeText(MyApplication.context,"请选择楼栋", Toast.LENGTH_SHORT).show()
-                    }
-                },
+            MenuChip(
                 label = { Text(text = region) },
                 //    leadingIcon = { Icon(painter = painterResource(R.drawable.calendar), contentDescription = "description") }
-            )
+            ) {
+                menuOffset = it
+                when {
+                    BuildingsNumber.toIntOrNull() != null -> {
+                        when {
+                            BuildingsNumber.toInt() > 5 -> showitem2 = true
+                            BuildingsNumber.toInt() in 1..4 -> showitem3 = true
+                        }
+                    }
+                    else -> Toast.makeText(MyApplication.context,"请选择楼栋", Toast.LENGTH_SHORT).show()
+                }
+            }
 
             Spacer(modifier = Modifier.width(10.dp))
             AssistChip(
@@ -332,11 +344,10 @@ fun EleUI(vm : NetWorkViewModel) {
             )
         }
 
-
         // Spacer(modifier = Modifier.height(7.dp))
 
 //充值界面
-        Spacer(modifier = Modifier.height(7.dp))
+//        Spacer(modifier = Modifier.height(7.dp))
         AnimatedVisibility(
             visible = showitem4,
             enter = slideInVertically(
@@ -388,11 +399,6 @@ fun EleUI(vm : NetWorkViewModel) {
             }
         }
 
-        val blurSize by animateDpAsState(
-            targetValue = if (!show) 10.dp else 0.dp, label = ""
-            ,animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
-        )
-
         if(Result.contains("剩余金额")){
             Result2 = "剩余金额 " +Result.substringAfter("剩余金额")
             Result2 = Result2.replace(":","")
@@ -401,19 +407,6 @@ fun EleUI(vm : NetWorkViewModel) {
 
         } else if(Result.contains("无法获取房间信息") || Result.contains("hfut")) Result2 = "失败"
 
-
-        val scale = animateFloatAsState(
-            targetValue = if (!show) 0.9f else 1f, // 按下时为0.9，松开时为1
-            //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-            animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
-            label = "" // 使用弹簧动画
-        )
-        val scale2 = animateFloatAsState(
-            targetValue = if (!show) 0.97f else 1f, // 按下时为0.9，松开时为1
-            //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-            animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
-            label = "" // 使用弹簧动画
-        )
 
         DividerTextExpandedWith(text = "查询结果") {
             Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {

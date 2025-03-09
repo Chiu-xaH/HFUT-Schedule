@@ -56,7 +56,7 @@ fun DividerText(text: String, onClick: (() -> Unit?)? = null) {
     var isPressed by remember { mutableStateOf(false) }
     val scale = animateFloatAsState(
         targetValue = if (isPressed) 0.9f else 1f, // 按下时为0.9，松开时为1
-        animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
+        animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
         label = "" // 使用弹簧动画
     )
     val color by animateColorAsState(
@@ -96,7 +96,7 @@ fun DividerTextExpandedWith(
 ) {
 
 
-    val speed = MyApplication.Animation
+    val speed = MyApplication.ANIMATION_SPEED
 
     var expanded by remember { mutableStateOf(defaultIsExpanded) }
     fun set() {

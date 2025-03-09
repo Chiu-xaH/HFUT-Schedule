@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.activity.home.search.functions.transferMajor
+package com.hfut.schedule.ui.activity.home.search.functions.transfer
 
 import android.annotation.SuppressLint
 import android.os.Handler

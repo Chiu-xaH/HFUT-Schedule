@@ -107,7 +107,7 @@ fun CardRow(vm : NetWorkViewModel, vmUI : UIViewModel) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(.5f)
-                    .clickable { Starter.startAppUrl(MyApplication.AlipayCardURL) },
+                    .clickable { Starter.startAppUrl(MyApplication.ALIPAY_CARD_URL) },
                 overlineContent = { ScrollText(text = "待圈存 ￥${vmUI.CardValue.value?.settle ?: settle}") },
                 leadingContent = { Icon(painterResource(R.drawable.account_balance_wallet), contentDescription = "Localized description",) },
 //                colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)

@@ -80,7 +80,7 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean
                     Row(modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = AppHorizontalDp(), vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
-                        val qrPainter = createQRCodeBitmap(MyApplication.UpdateURL + "releases/tag/Android",1000,1000)
+                        val qrPainter = createQRCodeBitmap(MyApplication.GITEE_UPDATE_URL + "releases/tag/Android",1000,1000)
                         qrPainter?.let { Image(it.asImageBitmap(), contentDescription = "") }
                     }
                     Spacer(modifier = Modifier.height(AppHorizontalDp()))
@@ -160,7 +160,7 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean
                 },
                 onLongClick = { ShareAPK.shareAPK() },
                 onDoubleClick = {
-                    ClipBoard.copy(MyApplication.UpdateURL + "releases/tag/Android","已将下载链接复制到剪切板")
+                    ClipBoard.copy(MyApplication.GITEE_UPDATE_URL + "releases/tag/Android","已将下载链接复制到剪切板")
                 }
 
             )

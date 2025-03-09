@@ -20,21 +20,19 @@ import kotlinx.coroutines.launch
 
 suspend fun NetWorkUpdate(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel, ifSaved : Boolean){
     val CommuityTOKEN = SharePrefs.prefs.getString("TOKEN","")
-    val auth = prefs.getString("auth","")
+//    val auth = prefs.getString("auth","")
 
     val cookie = if(!vm.webVpn) prefs.getString("redirect", "")  else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket","")
     CoroutineScope(Job()).apply {
-        //async { MyWangKe() }
         launch { vm2.My() }
-        //async { MySchedule() }
-        //async { AddedItems() }
-        //async { getNotifications() }
         launch { vm.getExamJXGLSTU(cookie!!) } //用于更新ifSaved
         launch {
             if(!ifSaved) {
                 UpdateCourses(vm)
             }
         }
+        launch { CommuityTOKEN?.let { vm.GetBorrowed(CommuityTOKEN = it,"1") } }
+        launch { CommuityTOKEN?.let { vm.GetHistory(CommuityTOKEN = it,"1") } }
 
         launch { CommuityTOKEN?.let { vm.GetCourse(it) } }
         async { GetZjgdCard(vm,vmUI) }.await()

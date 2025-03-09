@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.activity.home.search.functions.transferMajor
+package com.hfut.schedule.ui.activity.home.search.functions.transfer
 
 import android.annotation.SuppressLint
 import android.os.Handler
@@ -281,19 +281,19 @@ fun MyApply(vm: NetWorkViewModel,batchId : String,indexs : Int) {
     val scale = animateFloatAsState(
         targetValue = if (loading) 0.9f else 1f, // 按下时为0.9，松开时为1
         //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-        animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
+        animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
         label = "" // 使用弹簧动画
     )
     val scale2 = animateFloatAsState(
         targetValue = if (loading) 0.97f else 1f, // 按下时为0.9，松开时为1
         //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-        animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
+        animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
         label = "" // 使用弹簧动画
     )
 
     val blurSize by animateDpAsState(
         targetValue = if (loading) 10.dp else 0.dp, label = ""
-        ,animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
+        ,animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
     )
 //    val status = getPersonInfo().status
     val data = getMyTransfer(vm,indexs)

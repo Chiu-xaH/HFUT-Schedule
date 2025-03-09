@@ -23,7 +23,7 @@ fun Round(sheetState: SheetState) : RoundedCornerShape {
 fun RoundDp(sheetState : SheetState) : Dp {
     val dpAnimation by animateDpAsState(
         targetValue = if (sheetState.currentValue != SheetValue.Expanded) 28.dp else 0.dp, label = ""
-        ,animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
+        ,animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
     )
     return dpAnimation
 }

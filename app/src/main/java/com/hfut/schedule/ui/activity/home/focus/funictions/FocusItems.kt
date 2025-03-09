@@ -67,8 +67,8 @@ import com.hfut.schedule.logic.beans.Schedule
 import com.hfut.schedule.logic.utils.CalendarUtils.addToCalendar
 import com.hfut.schedule.logic.utils.DateTimeUtils
 import com.hfut.schedule.logic.utils.DateTimeUtils.TimeState.*
-import com.hfut.schedule.logic.utils.parse.Semseter.parseSemseter
-import com.hfut.schedule.logic.utils.parse.Semseter.getSemseterFromCloud
+import com.hfut.schedule.logic.utils.parse.SemseterParser.parseSemseter
+import com.hfut.schedule.logic.utils.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.calendar.communtiy.DetailInfos
@@ -145,8 +145,7 @@ fun ScheduleItems(MySchedule: MutableList<Schedule>, item : Int,Future : Boolean
     val switch_api = SharePrefs.prefs.getBoolean("SWITCHMYAPIS", apiCheck())
 
 
-    @Composable
-    fun Item() {
+    val Item = @Composable {
 //        MyCustomCard {
             StyleCardListItem(
                 headlineContent = {  Text(text = title) },
@@ -198,8 +197,8 @@ fun WangkeItem(item : Int, MyWangKe: MutableList<Schedule>,Future: Boolean,activ
     val title = MyWangKes.title
     val showPublic = MyWangKes.showPublic
 
-    @Composable
-    fun Item() {
+
+    val Item = @Composable {
         if(prefs.getString("my","")?.contains("Schedule") == true) {
             val startTime = MyWangKes.startTime
             val endTime = MyWangKes.endTime
@@ -304,7 +303,7 @@ fun TodayCourseItem(item : Int,vm : NetWorkViewModel) {
     val switch_show_ended = prefs.getBoolean("SWITCHSHOWENDED",true)
 
 
-    var week = DateTimeUtils.Benweeks.toInt()
+    var week = DateTimeUtils.weeksBetween.toInt()
 
     var weekday = DateTimeUtils.dayweek
     if(weekday == 0) weekday = 7
@@ -393,7 +392,7 @@ fun TodayCourseItem(item : Int,vm : NetWorkViewModel) {
 fun TomorrowCourseItem(item : Int,vm: NetWorkViewModel) {
 
     var weekdaytomorrow = DateTimeUtils.dayweek + 1
-    var week = DateTimeUtils.Benweeks.toInt()
+    var week = DateTimeUtils.weeksBetween.toInt()
     //当第二天为下一周的周一时，周数+1
     when(weekdaytomorrow) {
         1 -> week += 1
@@ -606,7 +605,7 @@ fun TimeStampItem() {
 
 @Composable
 fun SemsterTip() {
-    BottomTip(parseSemseter(getSemseterFromCloud()))
+    BottomTip(parseSemseter(getSemseter()))
 }
 
 
@@ -643,7 +642,7 @@ fun TodayUI() {
     //////////////////////////////////////////////////////////////////////////
     //判断明天是否有早八
     var weekdaytomorrow = DateTimeUtils.dayweek + 1
-    var week = DateTimeUtils.Benweeks.toInt()
+    var week = DateTimeUtils.weeksBetween.toInt()
     //当第二天为下一周的周一时，周数+1
     when(weekdaytomorrow) {
         1 -> week += 1

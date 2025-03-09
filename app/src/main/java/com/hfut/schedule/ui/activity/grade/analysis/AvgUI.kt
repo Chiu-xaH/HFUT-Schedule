@@ -73,10 +73,10 @@ fun GradeCountUI(innerPadding : PaddingValues) {
     }
 }
 
+
 @Composable
 fun AvgGrade() {
-    val jsonAvg = SharePrefs.prefs.getString("Avg", MyApplication.NullGrades)
-    val resultAvg = Gson().fromJson(jsonAvg, GradeAvgResponse::class.java).result
+    val resultAvg = getAvg()
     MyCustomCard(hasElevation = false, containerColor = CardNormalColor()) {
         Text(text = "我的水平", modifier = Modifier.padding(horizontal = AppHorizontalDp(), vertical = 8.dp), color = MaterialTheme.colorScheme.primary)
 

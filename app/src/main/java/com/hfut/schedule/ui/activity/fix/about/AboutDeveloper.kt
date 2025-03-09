@@ -17,11 +17,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -143,7 +139,7 @@ fun About(vm : LoginViewModel) {
                         },
                         headlineContent = { ScrollText(GithubConsts.DEVELOPER_NAME) },
                         leadingContent = {
-                            URLImage(url = MyApplication.GithubUserImageURL + GithubConsts.USER_ID, width = 50.dp, height = 50.dp)
+                            URLImage(url = MyApplication.GITHUB_USER_IMAGE_URL + GithubConsts.USER_ID, width = 50.dp, height = 50.dp)
                         },
                         supportingContent = {
                             Text("一名热爱安卓的开发者,宣城校区23级计算机科学与技术专业(转)本科生")

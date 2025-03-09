@@ -58,8 +58,8 @@ import com.google.gson.Gson
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.beans.jxglstu.datumResponse
 import com.hfut.schedule.logic.utils.DateTimeUtils
-import com.hfut.schedule.logic.utils.parse.Semseter.parseSemseter
-import com.hfut.schedule.logic.utils.parse.Semseter.getSemseterFromCloud
+import com.hfut.schedule.logic.utils.parse.SemseterParser.parseSemseter
+import com.hfut.schedule.logic.utils.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.ui.activity.home.calendar.jxglstu.getNewWeek
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
@@ -796,7 +796,7 @@ fun CustomSchedules(showAll : Boolean,
                         if (shouldShowAddButton) {
                             ExtendedFloatingActionButton(
                                 onClick = {
-                                    Bianhuaweeks = DateTimeUtils.Benweeks
+                                    Bianhuaweeks = DateTimeUtils.weeksBetween
                                     if(showAll) UpdateAll() else Update()
                                     onDateChange(LocalDate.now())
                                 },
@@ -823,7 +823,7 @@ fun CustomSchedules(showAll : Boolean,
                     ) {
                         TextButton(onClick = {  }) {
                             Text(
-                                text = parseSemseter(getSemseterFromCloud()),
+                                text = parseSemseter(getSemseter()),
                                 style = TextStyle(shadow = Shadow(
                                     color = Color.Gray,
                                     offset = Offset(5.0f,5.0f),

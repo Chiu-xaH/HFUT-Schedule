@@ -85,9 +85,9 @@ import com.hfut.schedule.ui.activity.home.search.functions.courseSearch.ApiForCo
 import com.hfut.schedule.ui.activity.home.search.functions.dormitoryScore.DormitoryScoreUI
 import com.hfut.schedule.ui.activity.home.search.functions.life.countFunc
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
-import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.CampusId
-import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.CampusId.*
-import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.getCampus
+import com.hfut.schedule.ui.activity.home.search.functions.transfer.CampusId
+import com.hfut.schedule.ui.activity.home.search.functions.transfer.CampusId.*
+import com.hfut.schedule.ui.activity.home.search.functions.transfer.getCampus
 import com.hfut.schedule.ui.utils.components.AnimationCardListItem
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
@@ -280,19 +280,19 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean) {
     val scale = animateFloatAsState(
         targetValue = if (loadingCard) 0.9f else 1f, // 按下时为0.9，松开时为1
         //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-        animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
+        animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
         label = "" // 使用弹簧动画
     )
     val scale2 = animateFloatAsState(
         targetValue = if (loadingCard) 0.97f else 1f, // 按下时为0.9，松开时为1
         //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-        animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
+        animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
         label = "" // 使用弹簧动画
     )
 
     val blurSize by animateDpAsState(
         targetValue = if (loadingCard) 10.dp else 0.dp, label = ""
-        ,animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
+        ,animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
     )
     val completion = getProgramCompletion(vm)
 

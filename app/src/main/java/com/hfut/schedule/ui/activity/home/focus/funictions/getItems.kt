@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.logic.beans.Lessons
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.dao.dataBase
@@ -15,6 +16,7 @@ import com.hfut.schedule.logic.beans.zjgd.BalanceResponse
 import com.hfut.schedule.logic.beans.zjgd.ReturnCard
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.parse.getMy
 import com.hfut.schedule.ui.utils.components.MyToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -82,7 +84,6 @@ fun transferNum(num : Int) : Float {
 }
 
 fun getTodayNet(vm : NetWorkViewModel) {
-
         val CommuityTOKEN = prefs.getString("TOKEN","")
         CommuityTOKEN?.let { vm.getToday(it) }
 }
@@ -105,39 +106,34 @@ fun AddedItems() : MutableList<AddFocus> {
     return AddFocus
 }
 
+private fun getAPISchedule(): Lessons? {
+    return try {
+        getMy()!!.Lessons
+    } catch (e : Exception) {
+        null
+    }
+}
 fun MySchedule() : MutableList<Schedule> {
     return try {
-        val my = prefs.getString("my", MyApplication.NullMy)
-        val data = Gson().fromJson(my, MyAPIResponse::class.java).Lessons
-        data.Schedule.toMutableList()
+        getAPISchedule()!!.Schedule.toMutableList()
     } catch (e : Exception) {
         e.printStackTrace()
-        MyToast("解析出错,请联系开发者纠正")
         mutableListOf()
     }
 }
 
 fun MyWangKe() : MutableList<Schedule> {
     return try {
-        val my = prefs.getString("my", MyApplication.NullMy)
-        val data = Gson().fromJson(my, MyAPIResponse::class.java).Lessons
-        data.MyList.toMutableList()
+        getAPISchedule()!!.MyList.toMutableList()
     } catch (e : Exception) {
         e.printStackTrace()
-        MyToast("解析出错,请联系开发者纠正")
         mutableListOf()
     }
 }
 
 fun getTimeStamp() : String? {
-    val my = prefs.getString("my", MyApplication.NullMy)
     return try {
-        if (my != null) {
-            if(my.contains("更新")) {
-                val data = Gson().fromJson(my, MyAPIResponse::class.java).TimeStamp
-                data
-            } else "未获取到"
-        } else "未获取到"
+        getMy()!!.TimeStamp
     } catch (e : Exception) {
         null
     }

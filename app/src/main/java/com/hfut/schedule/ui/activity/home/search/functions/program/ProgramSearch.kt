@@ -50,10 +50,10 @@ import com.hfut.schedule.logic.utils.data.GithubConsts
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.logic.utils.data.reEmptyLiveDta
 import com.hfut.schedule.ui.activity.home.search.functions.courseSearch.ApiForCourseSearch
-import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.CampusId
-import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.CampusId.HEFEI
-import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.CampusId.XUANCHENG
-import com.hfut.schedule.ui.activity.home.search.functions.transferMajor.getCampus
+import com.hfut.schedule.ui.activity.home.search.functions.transfer.CampusId
+import com.hfut.schedule.ui.activity.home.search.functions.transfer.CampusId.HEFEI
+import com.hfut.schedule.ui.activity.home.search.functions.transfer.CampusId.XUANCHENG
+import com.hfut.schedule.ui.activity.home.search.functions.transfer.getCampus
 import com.hfut.schedule.ui.utils.components.AnimationCardListItem
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip

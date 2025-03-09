@@ -25,8 +25,8 @@ android {
         applicationId "com.hfut.schedule"
         minSdk 26
         targetSdk 35
-        versionCode 167
-        versionName "4.13.7.2"
+        versionCode 168
+        versionName "4.13.7.3"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
@@ -112,10 +112,8 @@ dependencies {
     implementation ("com.squareup.retrofit2:converter-gson:$retrofit2_version")
     // Material Design 1
     implementation 'androidx.compose.material:material:1.0.5'
-    // Material Design 3 不要更新，新版本颜色有所改变，导致全局风格发生异常
-    // 1.1.2
+    // Material Design 3
     implementation 'androidx.compose.material3:material3:1.4.0-alpha08'
-//    implementation 'com.google.android.material:material:1.13.0-alpha09'
     // 透明状态栏
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.31.0-alpha"
     // 底栏
@@ -149,5 +147,4 @@ dependencies {
     implementation 'nl.dionsegijn:konfetti-compose:2.0.5'
     // 图片验证码识别
     implementation 'com.rmtheis:tess-two:9.1.0'
-//    implementation 'org.opencv:opencv-android:1.0.1'
 }

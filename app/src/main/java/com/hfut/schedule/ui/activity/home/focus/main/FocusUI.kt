@@ -63,7 +63,6 @@ import kotlinx.coroutines.launch
 @SuppressLint("SuspiciousIndentation", "CoroutineCreationDuringComposition",
     "UnusedMaterial3ScaffoldPaddingParameter"
 )
-@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun TodayScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding : PaddingValues, blur : Boolean, vmUI : UIViewModel, ifSaved : Boolean, webVpn : Boolean, state: PagerState) {
@@ -72,7 +71,7 @@ fun TodayScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding : Padd
     val TAB_RIGHT = 1
 
 /////////////////////////////////////////逻辑函数区/////////////////////////////////////////////////
-    CoroutineScope(Job()).launch{ async { NetWorkUpdate(vm,vm2,vmUI,ifSaved) } }
+    CoroutineScope(Job()).launch{  NetWorkUpdate(vm,vm2,vmUI,ifSaved)  }
 //Today操作区///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -80,7 +79,7 @@ fun TodayScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding : Padd
     var refreshing by remember { mutableStateOf(false) }
     // 用协程模拟一个耗时加载
     val scope = rememberCoroutineScope()
-    var states = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
+    val states = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
         scope.launch {
             async {
                 refreshing = true
@@ -112,11 +111,11 @@ fun TodayScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding : Padd
                 val shouldShowAddButton by remember { derivedStateOf { scrollstate.firstVisibleItemScrollOffset == 0 } }
                 var date = DateTimeUtils.Date_MM_dd
                 val todaydate = (date?.substring(0, 2) ) + date?.substring(3, 5)
-                var week = DateTimeUtils.Benweeks.toInt()
+                var week = DateTimeUtils.weeksBetween.toInt()
               //  val switch_api = SharePrefs.prefs.getBoolean("SWITCHMYAPI", apiCheck())
                 var weekdaytomorrow = DateTimeUtils.dayweek + 1
                 var weekdayToday = DateTimeUtils.dayweek
-                var Nextweek = DateTimeUtils.Benweeks.toInt()
+                var Nextweek = DateTimeUtils.weeksBetween.toInt()
                 //当今天为周日时，变0为7
                 //当第二天为下一周的周一时，周数+1
                 when(weekdaytomorrow) { 1 -> Nextweek += 1 }
@@ -180,11 +179,11 @@ fun TodayScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding : Padd
 fun isTodayCoursesOvered() : Boolean {
     var date = DateTimeUtils.Date_MM_dd
     val todaydate = (date?.substring(0, 2) ) + date?.substring(3, 5)
-    var week = DateTimeUtils.Benweeks.toInt()
+    var week = DateTimeUtils.weeksBetween.toInt()
     //  val switch_api = SharePrefs.prefs.getBoolean("SWITCHMYAPI", apiCheck())
     var weekdaytomorrow = DateTimeUtils.dayweek + 1
     var weekdayToday = DateTimeUtils.dayweek
-    var Nextweek = DateTimeUtils.Benweeks.toInt()
+    var Nextweek = DateTimeUtils.weeksBetween.toInt()
     //当今天为周日时，变0为7
     //当第二天为下一周的周一时，周数+1
     when(weekdaytomorrow) { 1 -> Nextweek += 1 }
