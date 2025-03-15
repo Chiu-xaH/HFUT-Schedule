@@ -8,14 +8,14 @@ buildscript {
     }
     repositories {
         maven { url 'https://maven.aliyun.com/repository/google' }
-        maven { url 'https://maven.aliyun.com/repository/jcenter' }
+//        maven { url 'https://maven.aliyun.com/repository/jcenter' }
         maven { url 'https://maven.aliyun.com/nexus/content/groups/public' }
         google()
     }
 }
 plugins {
-    id 'com.android.application' version '8.1.4' apply false
-    id 'com.android.library' version '8.1.4' apply false
+    id 'com.android.application' version '8.7.2' apply false
+    id 'com.android.library' version '8.7.2' apply false
     // Kotlin版本
     id 'org.jetbrains.kotlin.android' version '2.0.0' apply false
     id 'org.jetbrains.kotlin.plugin.compose' version '2.0.0' apply false

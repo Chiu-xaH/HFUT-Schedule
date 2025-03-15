@@ -67,7 +67,7 @@ fun About(vm : LoginViewModel) {
         "Glide" to "网络图片",
         "EdDSA Java" to "加密(供和风天气API使用)",
         "Konfetti" to "礼花动画",
-        "Tesseract" to "OCR(供图片验证码识别)"
+        "Tesseract4Android" to "封装Tesseract4(供图片验证码识别)"
     )
     val dependencies = Build(
         jetpack = "Jetpack Compose",

@@ -75,7 +75,7 @@ UI: Material You (Material Design 3)
 
 [Konfetti](https://github.com/DanielMartinus/Konfetti) 礼花🎉动画
 
-[Tesseract](https://github.com/tesseract-ocr/tessdata) OCR(供识别图片验证码)
+[Tesseract4Android](https://github.com/adaptech-cz/Tesseract4Android) 封装Tesseract4 (供识别图片验证码)
 
 ## [接口文档](markdown/API.md)
 供校内学生们方便参考或学习

@@ -52,12 +52,9 @@ fun VersionInfo() {
         VersionInfoCard()
     }
     DividerTextExpandedWith(text = "新特性") {
-        UpdateItems("重构 弹窗对话框组件的样式",null,UpdateType.RENEW)
-        UpdateItems("新增 对全局界面的实时模糊适配",null,UpdateType.ADD)
-        UpdateItems("优化 冗余代码、内存的占用及性能",null,UpdateType.OPTIMIZE)
-        UpdateItems("优化 原有渐变模糊的显示",null,UpdateType.OPTIMIZE)
-        UpdateItems("砍掉 莫奈取色功能，仅保留原生取色","考虑到所有常用用户均为Android12+(不包含游客)，并且旧的库已落后，删掉对后续的维护能带来便利和性能的优化",UpdateType.DEGREE)
-        UpdateItems("砍掉 不必要非必须的开关","例如 运动模糊",UpdateType.DEGREE)
+        UpdateItems("升级 适配安卓16",null,UpdateType.UPDATE)
+        UpdateItems("新增 对16KB对齐的支持", null,UpdateType.UPDATE)
+        UpdateItems("修复 校园网缴费错误到洗浴的Bug", null,UpdateType.FIX)
     }
 }
 

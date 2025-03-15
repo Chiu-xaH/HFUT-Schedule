@@ -20,5 +20,3 @@ dependencyResolutionManagement {
 }
 rootProject.name = "肥工课程表"
 include ':app'
-include ':shower'
-include ':shared'

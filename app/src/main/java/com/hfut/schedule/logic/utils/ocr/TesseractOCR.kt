@@ -23,7 +23,7 @@ class TesseractOCR {
     // 释放资源
     fun release() {
         tessBaseAPI.stop()
-        tessBaseAPI.end()
+//        tessBaseAPI.end()
     }
 
     // 获取 Tesseract 数据路径

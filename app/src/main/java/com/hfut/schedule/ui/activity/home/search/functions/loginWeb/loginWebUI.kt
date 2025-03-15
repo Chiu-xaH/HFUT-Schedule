@@ -275,7 +275,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel,hazeState: HazeState) {
 //                val info by remember { mutableStateOf("") }
                 var int by remember { mutableIntStateOf(payNumber.toInt()) }
                 if(int > 0) {
-                    PayFor(vm,int,"学号 ${getPersonInfo().username}",json, FeeType.SHOWER,hazeState)
+                    PayFor(vm,int,"学号 ${getPersonInfo().username}",json, FeeType.WEB,hazeState)
                 } else MyToast("输入数值")
             }
 
