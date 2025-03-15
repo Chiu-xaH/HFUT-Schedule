@@ -73,15 +73,19 @@ import com.hfut.schedule.logic.utils.Starter.startGuagua
 import com.hfut.schedule.ui.activity.home.search.functions.electric.PayFor
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
+import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LoadingLargeCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.components.WebDialog
 import com.hfut.schedule.ui.utils.style.CardForListColor
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.NetWorkViewModel
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -116,8 +120,9 @@ fun getInGuaGua(vm: NetWorkViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false) {
-    var savedPhoneNumber = prefs.getString("PhoneNumber","")
+fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false,hazeState: HazeState) {
+//    val hazeState = remember { HazeState() }
+    val savedPhoneNumber = prefs.getString("PhoneNumber","")
     var phoneNumber by remember { mutableStateOf(savedPhoneNumber ?: "") }
     var balance by remember { mutableStateOf(0) }
     var givenBalance by remember { mutableStateOf(0) }
@@ -129,7 +134,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false) {
 
 
     var showButton by remember { mutableStateOf(false) }
-    var showAdd by remember { mutableStateOf(false) }
+    val showAdd by remember { mutableStateOf(false) }
     var payNumber by remember { mutableStateOf("") }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -137,43 +142,28 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false) {
     var show by remember { mutableStateOf(false) }
     var json by remember { mutableStateOf("") }
 
-    val blurSize by animateDpAsState(
-        targetValue = if (!show) 10.dp else 0.dp, label = ""
-        ,animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
-    )
-
-    val scale = animateFloatAsState(
-        targetValue = if (!show) 0.9f else 1f, // 按下时为0.9，松开时为1
-        //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-        animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
-        label = "" // 使用弹簧动画
-    )
-    val scale2 = animateFloatAsState(
-        targetValue = if (!show) 0.97f else 1f, // 按下时为0.9，松开时为1
-        //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-        animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
-        label = "" // 使用弹簧动画
-    )
     val auth = SharePrefs.prefs.getString("auth","")
 
     val url = MyApplication.ZJGD_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=223&name=pays&paymentUrl=http://121.251.19.62/plat&token=" + auth
-    val switch_startUri = SharePrefs.prefs.getBoolean("SWITCHSTARTURI",true)
     var showDialog2 by remember { mutableStateOf(false) }
 
     if (showBottomSheet) {
 
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState,
+            showBottomSheet = showBottomSheet,
+            hazeState = hazeState,
+            autoShape = false
+//            sheetState = sheetState,
             //    shape = sheetState
         ) {
             Column(
             ) {
-                CustomTopBar("支付订单确认")
+                HazeBottomSheetTopBar("支付订单确认", isPaddingStatusBar = false)
                 val info by remember { mutableStateOf("手机号 $phoneNumber") }
                 var int by remember { mutableStateOf(payNumber.toInt()) }
                 if(int > 0) {
-                    PayFor(vm,int,info,json, FeeType.SHOWER)
+                    PayFor(vm,int,info,json, FeeType.SHOWER, hazeState)
                 } else MyToast("输入数值")
             }
 
@@ -246,8 +236,8 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false) {
         }
 
     //布局///////////////////////////////////////////////////////////////////////////
-    Column {
-        CustomTopBar("洗浴-宣城校区") {
+    Column() {
+        HazeBottomSheetTopBar("洗浴-宣城校区", isPaddingStatusBar = false) {
             Row {
                 if(showitem4)
                     IconButton(onClick = {phoneNumber = phoneNumber.replaceFirst(".$".toRegex(), "")}) {

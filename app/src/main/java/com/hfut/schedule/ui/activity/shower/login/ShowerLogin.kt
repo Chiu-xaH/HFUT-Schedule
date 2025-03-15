@@ -47,6 +47,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
@@ -54,6 +55,7 @@ import com.hfut.schedule.viewmodel.GuaGuaViewModel
 import com.hfut.schedule.logic.beans.guagua.GuaGuaLogin
 import com.hfut.schedule.logic.beans.guagua.GuaGuaLoginResponse
 import com.hfut.schedule.logic.beans.guagua.GuaguaLoginMsg
+import com.hfut.schedule.logic.enums.ShowerScreen
 import com.hfut.schedule.logic.utils.parse.Encrypt
 import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
@@ -65,6 +67,7 @@ import com.hfut.schedule.ui.utils.components.BottomTip
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.navigateAndClear
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -74,7 +77,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShowerLogin(vm : GuaGuaViewModel,netVm : NetWorkViewModel) {
+fun ShowerLogin(vm : GuaGuaViewModel,netVm : NetWorkViewModel,navHostController: NavHostController) {
 
     val context = LocalContext.current
 
@@ -122,14 +125,14 @@ fun ShowerLogin(vm : GuaGuaViewModel,netVm : NetWorkViewModel) {
         Column(modifier = Modifier
             .padding(innerPadding)
             .fillMaxSize()) {
-            GuaGuaLoginUI(vm,netVm)
+            GuaGuaLoginUI(vm,netVm,navHostController)
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GuaGuaLoginUI(vm : GuaGuaViewModel,netVm : NetWorkViewModel) {
+fun GuaGuaLoginUI(vm : GuaGuaViewModel,netVm : NetWorkViewModel,navHostController: NavHostController) {
 
     var hidden by rememberSaveable { mutableStateOf(true) }
 
@@ -224,7 +227,7 @@ fun GuaGuaLoginUI(vm : GuaGuaViewModel,netVm : NetWorkViewModel) {
 
             Button(
                 onClick = {
-                    LoginGuaGuaClick(username,inputAES,vm)
+                    LoginGuaGuaClick(username,inputAES,vm,navHostController)
                 }, modifier = Modifier.scale(scale.value),
                 interactionSource = interactionSource
 
@@ -244,7 +247,7 @@ fun GuaGuaLoginUI(vm : GuaGuaViewModel,netVm : NetWorkViewModel) {
                                 netVm.guaguaUserInfo.observeForever { result ->
                                     if (result?.contains("成功") == true) {
                                         saveString("GuaGuaPersonInfo",result)
-                                        startGuagua()
+                                        navHostController.navigateAndClear(ShowerScreen.HOME.name)
                                     } else if(result?.contains("error") == true) {
                                         MyToast("登陆失败")
                                     }
@@ -258,7 +261,7 @@ fun GuaGuaLoginUI(vm : GuaGuaViewModel,netVm : NetWorkViewModel) {
     }
 }
 
-fun LoginGuaGuaClick(phoneNumber : String,psk : String,vm: GuaGuaViewModel) {
+fun LoginGuaGuaClick(phoneNumber : String,psk : String,vm: GuaGuaViewModel,navHostController: NavHostController) {
     val inputPSK = Encrypt.md5Hash(psk).toUpperCase()
     saveString("PHONENUM",phoneNumber)
     saveString("GuaGuaPsk",psk)
@@ -270,7 +273,7 @@ fun LoginGuaGuaClick(phoneNumber : String,psk : String,vm: GuaGuaViewModel) {
                 vm.loginResult.observeForever { result ->
                     if (result != null && result.contains("成功")) {
                         saveLoginCode(result)
-                        startGuagua()
+                        navHostController.navigateAndClear(ShowerScreen.HOME.name)
                         MyToast("登录成功")
                     } else if(result != null && result.contains("error")) {
                         MyToast(getLoginedMsg(result))

@@ -42,10 +42,13 @@ import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
+import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.TransplantListItem
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
+import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -58,7 +61,7 @@ fun Click(vm: NetWorkViewModel, input : String, page : Int) {
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FailRate(vm: NetWorkViewModel) {
+fun FailRate(vm: NetWorkViewModel,hazeState: HazeState) {
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -72,17 +75,19 @@ fun FailRate(vm: NetWorkViewModel) {
 
 
     if (showBottomSheet) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState,
-            shape = Round(sheetState)
+            showBottomSheet = showBottomSheet,
+            hazeState = hazeState
+//            sheetState = sheetState,
+//            shape = bottomSheetRound(sheetState)
         ) {
 
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("挂科率")
+                    HazeBottomSheetTopBar("挂科率")
                 },
             ) { innerPadding ->
                 Column(
@@ -90,7 +95,6 @@ fun FailRate(vm: NetWorkViewModel) {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-
                     FailRateSearch(vm)
                 }
             }
@@ -181,7 +185,7 @@ fun FailRateSearch(vm: NetWorkViewModel) {
 }
 var permit = 1
 @Composable
-fun ApiToFailRate(input : String,vm: NetWorkViewModel) {
+fun ApiToFailRate(input : String,vm: NetWorkViewModel,hazeState: HazeState) {
     var loading by remember { mutableStateOf(true) }
     if(permit == 1)
     CoroutineScope(Job()).launch {

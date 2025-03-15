@@ -43,12 +43,15 @@ import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
 import com.hfut.schedule.logic.utils.data.reEmptyLiveDta
 import com.hfut.schedule.ui.utils.components.BottomTip
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
+import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.style.RowHorizontal
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.components.WebDialog
 import com.hfut.schedule.ui.utils.components.WebViewScreen
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -57,7 +60,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Mail(ifSaved : Boolean,vm : NetWorkViewModel) {
+fun Mail(ifSaved : Boolean,vm : NetWorkViewModel,hazeState: HazeState) {
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
     val savedUsername = prefs.getString("Username", "")
@@ -74,15 +77,18 @@ fun Mail(ifSaved : Boolean,vm : NetWorkViewModel) {
     )
 
     if (showBottomSheet ) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState
+            hazeState = hazeState,
+            isFullExpand = false,
+            showBottomSheet = showBottomSheet
+//            sheetState = sheetState
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("学生邮箱")
+                    HazeBottomSheetTopBar("学生邮箱", isPaddingStatusBar = false)
                 },) {innerPadding ->
                 Column(
                     modifier = Modifier

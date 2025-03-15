@@ -2,10 +2,6 @@
     <string name="app_name">聚在工大</string>
     <string name="title_activity_uiacitivity">主界面</string>
     <string name="title_activity_schedule">聚在工大</string>
-<!--    <string name="title_activity_urlactivity">URLActivity</string>-->
-<!--    <string name="title_activity_jxglstu">JxglstuActivity</string>-->
-<!--    <string name="title_activity_no_net">NoNetActivity</string>-->
-<!--    <string name="title_activity_fwdtlogin">FWDTLoginActivity</string>-->
     <string name="title_activity_card">一卡通</string>
     <string name="card">一卡通</string>
     <string name="main">主界面</string>
@@ -13,12 +9,9 @@
     <string name="hot_water">热水机</string>
     <string name="title_activity_grade">成绩</string>
     <string name="title_activity_fix">修复与检测</string>
-    <string name="title_activity_shortcut">跳转</string>
-<!--    <string name="title_activity_file">FileActivity</string>-->
     <string name="title_activity_shower_login">呱呱物联登录</string>
     <string name="title_activity_shower">呱呱物联</string>
     <string name="title_activity_base">基类</string>
-    <string name="title_activity_news">新闻通知公告</string>
-<!--    <string name="title_activity_life">LifeActivity</string>-->
+    <string name="title_activity_news">新闻与通知</string>
     <string name="title_activity_anonymity">游客模式</string>
 </resources>

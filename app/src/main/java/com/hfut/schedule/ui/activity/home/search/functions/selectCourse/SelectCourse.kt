@@ -80,16 +80,19 @@ import com.hfut.schedule.ui.utils.components.AnimationCustomCard
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CardNormalColor
 import com.hfut.schedule.ui.utils.components.CardNormalDp
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
+import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LittleDialog
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.components.WebDialog
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
+import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -97,7 +100,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SelectCourse(ifSaved : Boolean, vm : NetWorkViewModel) {
+fun SelectCourse(ifSaved : Boolean, vm : NetWorkViewModel,hazeState: HazeState) {
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
@@ -118,16 +121,18 @@ fun SelectCourse(ifSaved : Boolean, vm : NetWorkViewModel) {
     )
 
     if (showBottomSheet) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState,
-            shape = Round(sheetState)
+            showBottomSheet = showBottomSheet,
+            hazeState = hazeState
+//            sheetState = sheetState,
+//            shape = bottomSheetRound(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("选课") {
+                    HazeBottomSheetTopBar("选课") {
                         Row() {
                             FilledTonalIconButton(onClick = { showBottomSheet_info = true }, ) {
                                 Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")
@@ -151,26 +156,28 @@ fun SelectCourse(ifSaved : Boolean, vm : NetWorkViewModel) {
                 Column(modifier = Modifier
                     .padding(innerPadding)
                     .fillMaxSize()) {
-                    selectCourseListLoading(vm)
+                    selectCourseListLoading(vm, hazeState = hazeState)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
         }
     }
     if (showBottomSheet_info) {
-        ModalBottomSheet(
+        HazeBottomSheet(
             onDismissRequest = {
                 showBottomSheet_info = false
                 UpdateCourses(vm)
                                },
-            sheetState = sheetState_info,
-            shape = Round(sheetState_info)
+            hazeState = hazeState,
+            showBottomSheet = showBottomSheet_info
+//            sheetState = sheetState_info,
+//            shape = bottomSheetRound(sheetState_info)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("功能说明")
+                    HazeBottomSheetTopBar("功能说明")
                 },
             ) { innerPadding ->
                 Column(modifier = Modifier
@@ -212,7 +219,7 @@ fun SelectShuoming() {
 }
 
 @Composable
-fun selectCourseListLoading(vm : NetWorkViewModel) {
+fun selectCourseListLoading(vm : NetWorkViewModel,hazeState: HazeState) {
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
     val cookie = if (!vm.webVpn) prefs.getString(
@@ -257,7 +264,7 @@ fun selectCourseListLoading(vm : NetWorkViewModel) {
     if(loading) {
         LoadingUI()
     } else {
-        SelectCourseList(vm)
+        SelectCourseList(vm, hazeState = hazeState)
     }
 
 
@@ -265,7 +272,7 @@ fun selectCourseListLoading(vm : NetWorkViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SelectCourseList(vm: NetWorkViewModel) {
+fun SelectCourseList(vm: NetWorkViewModel,hazeState: HazeState) {
     val list = getSelectCourseList(vm)
     var courseId by remember { mutableStateOf(0) }
     var name by remember { mutableStateOf("选课") }
@@ -277,22 +284,24 @@ fun SelectCourseList(vm: NetWorkViewModel) {
     val sheetState_selected = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     if (showBottomSheet_selected) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet_selected = false },
-            sheetState = sheetState_selected,
-            shape = Round(sheetState_selected)
+            showBottomSheet = showBottomSheet_selected,
+            hazeState = hazeState
+//            sheetState = sheetState_selected,
+//            shape = bottomSheetRound(sheetState_selected)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("已选课程")
+                    HazeBottomSheetTopBar("已选课程")
                 },
             ) { innerPadding ->
                 Column(modifier = Modifier
                     .padding(innerPadding)
                     .fillMaxSize()) {
-                    HaveSelectedCourseLoad(vm, courseId)
+                    HaveSelectedCourseLoad(vm, courseId,hazeState)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
@@ -300,16 +309,18 @@ fun SelectCourseList(vm: NetWorkViewModel) {
     }
 
     if (showBottomSheet) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState,
-            shape = Round(sheetState)
+            hazeState = hazeState,
+            showBottomSheet = showBottomSheet
+//            sheetState = sheetState,
+//            shape = bottomSheetRound(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar(name) {
+                    HazeBottomSheetTopBar(name) {
                         FilledTonalButton(onClick = {
                             showBottomSheet_selected = true
                         },) {
@@ -320,7 +331,7 @@ fun SelectCourseList(vm: NetWorkViewModel) {
                 Column(modifier = Modifier
                     .padding(innerPadding)
                     .fillMaxSize()) {
-                    SelectCourseInfoLoad(courseId,vm)
+                    SelectCourseInfoLoad(courseId,vm, hazeState =hazeState )
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
@@ -396,7 +407,7 @@ fun SelectCourseList(vm: NetWorkViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SelectCourseInfoLoad(courseId : Int, vm: NetWorkViewModel) {
+fun SelectCourseInfoLoad(courseId : Int, vm: NetWorkViewModel,hazeState: HazeState) {
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
     val cookie = if (!vm.webVpn) prefs.getString(
@@ -459,7 +470,7 @@ fun SelectCourseInfoLoad(courseId : Int, vm: NetWorkViewModel) {
                 )
             }
             Spacer(modifier = Modifier.height(CardNormalDp()))
-            SelectCourseInfo(vm,courseId,input)
+            SelectCourseInfo(vm,courseId,input, hazeState =hazeState )
         }
     } else {
         LoadingUI()
@@ -468,7 +479,7 @@ fun SelectCourseInfoLoad(courseId : Int, vm: NetWorkViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SelectCourseInfo(vm: NetWorkViewModel, courseId : Int, search : String = "") {
+fun SelectCourseInfo(vm: NetWorkViewModel, courseId : Int, search : String = "",hazeState: HazeState) {
     val list = getSelectCourseInfo(vm)
     val cookie = if (!vm.webVpn) prefs.getString(
         "redirect",
@@ -484,16 +495,19 @@ fun SelectCourseInfo(vm: NetWorkViewModel, courseId : Int, search : String = "")
     var showBottomSheet_info by remember { mutableStateOf(false) }
 
     if (showBottomSheet) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState,
-            shape = Round(sheetState)
+            autoShape = false,
+            hazeState = hazeState,
+            showBottomSheet = showBottomSheet
+//            sheetState = sheetState,
+//            shape = bottomSheetRound(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("选课结果")
+                    HazeBottomSheetTopBar("选课结果", isPaddingStatusBar = false)
                 },
             ) { innerPadding ->
                 Column(modifier = Modifier
@@ -514,20 +528,23 @@ fun SelectCourseInfo(vm: NetWorkViewModel, courseId : Int, search : String = "")
 
 
     if (showBottomSheet_info) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet_info = false },
-            sheetState = sheetState_info,
+            showBottomSheet = showBottomSheet_info,
+            hazeState = hazeState,
+            autoShape = false
+//            sheetState = sheetState_info,
 //            shape = Round(sheetState_info)
         ) {
             Column {
-                CustomTopBar(name) {
+                HazeBottomSheetTopBar(name) {
                     FilledTonalButton(onClick = {
                         showBottomSheet = true
                     }) {
                         Text(text = "选课")
                     }
                 }
-                courseInfo(num,searchList,vm)
+                courseInfo(num,searchList,vm, hazeState =hazeState )
                 Spacer(modifier = Modifier.height(20.dp))
             }
         }
@@ -668,24 +685,26 @@ fun selectCourseResultLoad(vm : NetWorkViewModel, courseId : Int, lessonId : Int
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun courseInfo(num : Int,lists : List<SelectCourseInfo>,vm: NetWorkViewModel) {
+fun courseInfo(num : Int,lists : List<SelectCourseInfo>,vm: NetWorkViewModel,hazeState: HazeState) {
     val data = lists[num]
 
     val sheetState_FailRate = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_FailRate by remember { mutableStateOf(false) }
 
     if (showBottomSheet_FailRate) {
-        ModalBottomSheet(
+        HazeBottomSheet(
             onDismissRequest = { showBottomSheet_FailRate = false },
-            sheetState = sheetState_FailRate,
-            shape = Round(sheetState_FailRate)
+            hazeState = hazeState,
+            showBottomSheet = showBottomSheet_FailRate
+//            sheetState = sheetState_FailRate,
+//            shape = bottomSheetRound(sheetState_FailRate)
         ) {
 
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("挂科率 ${data.course.nameZh}")
+                    HazeBottomSheetTopBar("挂科率 ${data.course.nameZh}")
                 },
             ) { innerPadding ->
                 Column(
@@ -693,7 +712,7 @@ fun courseInfo(num : Int,lists : List<SelectCourseInfo>,vm: NetWorkViewModel) {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    ApiToFailRate(data.course.nameZh,vm)
+                    ApiToFailRate(data.course.nameZh,vm, hazeState = hazeState)
                 }
             }
         }
@@ -705,17 +724,19 @@ fun courseInfo(num : Int,lists : List<SelectCourseInfo>,vm: NetWorkViewModel) {
     var teacherTitle by remember { mutableStateOf("") }
 
     if (showBottomSheet_Teacher) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet_Teacher = false },
-            sheetState = sheetState_Teacher,
-            shape = Round(sheetState_Teacher)
+            hazeState = hazeState,
+            showBottomSheet = showBottomSheet_Teacher,
+//            sheetState = sheetState_Teacher,
+//            shape = bottomSheetRound(sheetState_Teacher)
         ) {
 
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("教师检索 $teacherTitle")
+                    HazeBottomSheetTopBar("教师检索 $teacherTitle")
                 },
             ) { innerPadding ->
                 Column(
@@ -808,7 +829,7 @@ fun courseInfo(num : Int,lists : List<SelectCourseInfo>,vm: NetWorkViewModel) {
 }
 
 @Composable
-fun HaveSelectedCourseLoad(vm: NetWorkViewModel, courseId: Int) {
+fun HaveSelectedCourseLoad(vm: NetWorkViewModel, courseId: Int,hazeState: HazeState) {
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
     val cookie = if (!vm.webVpn) prefs.getString(
@@ -841,7 +862,7 @@ fun HaveSelectedCourseLoad(vm: NetWorkViewModel, courseId: Int) {
 
 
     if(!loading) {
-        haveSelectedCourse(vm, courseId)
+        haveSelectedCourse(vm, courseId, hazeState = hazeState)
     } else {
         LoadingUI()
     }
@@ -849,7 +870,7 @@ fun HaveSelectedCourseLoad(vm: NetWorkViewModel, courseId: Int) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun haveSelectedCourse(vm: NetWorkViewModel, courseId : Int) {
+fun haveSelectedCourse(vm: NetWorkViewModel, courseId : Int,hazeState: HazeState) {
     val lists = getSelectedCourse(vm)
     var name by remember { mutableStateOf("课程详情") }
     var num by remember { mutableStateOf(0) }
@@ -868,13 +889,13 @@ fun haveSelectedCourse(vm: NetWorkViewModel, courseId : Int) {
 //            shape = Round(sheetState_info)
         ) {
             Column {
-                CustomTopBar(name) {
+                BottomSheetTopBar(name) {
                     FilledTonalButton(onClick = { showDialog = true }) {
                         Text(text = "退课")
                     }
                 }
 
-                courseInfo(num,lists,vm)
+                courseInfo(num,lists,vm, hazeState = hazeState)
                 Spacer(modifier = Modifier.height(20.dp))
             }
         }
@@ -884,13 +905,13 @@ fun haveSelectedCourse(vm: NetWorkViewModel, courseId : Int) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
             sheetState = sheetState,
-            shape = Round(sheetState)
+            shape = bottomSheetRound(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("调课结果")
+                    BottomSheetTopBar("调课结果")
                 },
             ) { innerPadding ->
                 Column(modifier = Modifier
@@ -912,8 +933,8 @@ fun haveSelectedCourse(vm: NetWorkViewModel, courseId : Int) {
                              },
             dialogTitle = "警告",
             dialogText = "请再次确定,是否退掉 ${name}\n若为培养计划内的公共或专业课,如需再选需在教务完全关闭之前选择!否则无法再修改",
-            conformtext = "确定",
-            dismisstext = "取消"
+            conformText = "确定",
+            dismissText = "取消"
         )
     }
 

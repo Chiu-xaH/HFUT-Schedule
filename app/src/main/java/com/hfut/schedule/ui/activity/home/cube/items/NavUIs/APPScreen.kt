@@ -48,10 +48,13 @@ import com.hfut.schedule.ui.activity.home.cube.items.subitems.FocusCardSettings
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.LockUI
 import com.hfut.schedule.ui.activity.home.main.saved.COMMUNITY
 import com.hfut.schedule.ui.activity.home.main.saved.JXGLSTU
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
+import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.TransplantListItem
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
+import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -60,7 +63,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun APPScreen(navController: NavController,
               innerPaddings : PaddingValues,
-              ifSaved : Boolean,) {
+              ifSaved : Boolean,
+              hazeState: HazeState
+              ) {
     // Design your second screen here
     Column(modifier = Modifier
         .verticalScroll(rememberScrollState())
@@ -97,16 +102,18 @@ fun APPScreen(navController: NavController,
 
 
         if (showBottomSheet_card) {
-            ModalBottomSheet(
+            HazeBottomSheet (
                 onDismissRequest = { showBottomSheet_card = false },
-                sheetState = sheetState_card,
-                shape = Round(sheetState_card)
+//                sheetState = sheetState_card,
+//                shape = bottomSheetRound(sheetState_card),
+                showBottomSheet = showBottomSheet_card,
+                hazeState = hazeState,
             ) {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     containerColor = Color.Transparent,
                     topBar = {
-                        CustomTopBar("即时卡片")
+                        HazeBottomSheetTopBar("即时卡片")
                     },
                 ) { innerPadding ->
                     Column(
@@ -124,16 +131,19 @@ fun APPScreen(navController: NavController,
         var sheetState_lock = rememberModalBottomSheetState()
 
         if (showBottomSheet_lock) {
-            ModalBottomSheet(
+            HazeBottomSheet (
                 onDismissRequest = { showBottomSheet_lock = false },
-                sheetState = sheetState_lock,
-                shape = Round(sheetState_lock)
+                isFullExpand = false,
+                showBottomSheet = showBottomSheet_lock,
+                hazeState = hazeState
+//                sheetState = sheetState_lock,
+//                shape = bottomSheetRound(sheetState_lock)
             ) {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     containerColor = Color.Transparent,
                     topBar = {
-                        CustomTopBar("支付设置")
+                        HazeBottomSheetTopBar("支付设置")
                     },
                 ) { innerPadding ->
                     Column(
@@ -141,7 +151,7 @@ fun APPScreen(navController: NavController,
                             .padding(innerPadding)
                             .fillMaxSize()
                     ) {
-                        LockUI()
+                        LockUI(hazeState)
                         Spacer(modifier = Modifier.height(100.dp))
                     }
                 }
@@ -199,10 +209,9 @@ fun APPScreen(navController: NavController,
             supportingContent = {
                 Column {
                     Text(text = "全局学期 ${parseSemseter(getSemseter())}", fontWeight = FontWeight.Bold)
-                    Text(text = "其他部分功能如教评、成绩等需要在全局学期下切换学期的，可在相应功能区切换")
+                    Text(text = "其他部分功能如教评、成绩等需要在全局学期下切换学期的，可在相应功能区切换\n由本地函数计算，每年的2~7月为第二学期，8~次1月为第一学期")
                 }
-            },
-            modifier = Modifier.clickable {  MyToast("全局学期不可修改,受服务器云控") }
+            }
         )
 
         TransplantListItem(

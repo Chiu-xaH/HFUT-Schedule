@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -38,7 +38,7 @@ fun RequestArrange() {
         containerColor = Color.Transparent,
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            CustomTopBar("请求范围")
+            BottomSheetTopBar("请求范围")
         },
     ) { innerPadding ->
         Column(modifier = Modifier

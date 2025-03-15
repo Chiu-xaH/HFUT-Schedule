@@ -44,7 +44,7 @@ import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
-import com.hfut.schedule.activity.main.LoginActivity
+import com.hfut.schedule.activity.MainActivity
 import com.hfut.schedule.logic.utils.DateTimeUtils
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
@@ -210,7 +210,7 @@ fun GradeItemUI(vm :NetWorkViewModel, innerPadding : PaddingValues) {
                             supportingContent = { Text(text = "您现在使用的是智慧社区接口,使用教务系统数据可查看详细成绩") },
                             trailingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "") },
                             modifier = Modifier.clickable {
-                                val it = Intent(MyApplication.context, LoginActivity::class.java).apply {
+                                val it = Intent(MyApplication.context, MainActivity::class.java).apply {
                                     putExtra("nologin",false)
                                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                                 }

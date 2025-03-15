@@ -72,13 +72,15 @@ import com.hfut.schedule.ui.activity.home.focus.funictions.GetZjgdCard
 import com.hfut.schedule.ui.utils.NavigateAnimationManager
 import com.hfut.schedule.ui.utils.NavigateAnimationManager.currentPage
 //import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
-import com.hfut.schedule.ui.utils.NavigateAnimationManager.turnTo
+
 import com.hfut.schedule.ui.utils.components.CustomTabRow
 import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.navigateAndSave
 import com.hfut.schedule.ui.utils.style.bottomBarBlur
 import com.hfut.schedule.ui.utils.style.topBarBlur
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
+import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -176,7 +178,7 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            Column(modifier = Modifier.topBarBlur(hazeState, blur)) {
+            Column(modifier = Modifier.topBarBlur(hazeState)) {
                 TopAppBar(
                     colors = TopAppBarDefaults.mediumTopAppBarColors(
                         containerColor = Color.Transparent,
@@ -207,7 +209,7 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
 //                }
                 NavigationBar(containerColor = Color.Transparent ,
                     modifier = Modifier
-                        .bottomBarBlur(hazeState, blur)) {
+                        .bottomBarBlur(hazeState)) {
 
                     val items = listOf(
                         NavigationBarItemData(
@@ -245,7 +247,7 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
                                 }
                                 //     atEnd = !atEnd
                                 if (!selected) {
-                                    turnTo(navController, route)
+                                    navController.navigateAndSave(route)
                                 }
                             },
                             label = { Text(text = item.label) },
@@ -266,18 +268,19 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
             enterTransition = { animation.enter },
             exitTransition = { animation.exit },
             modifier = Modifier
-            .haze(
-                state = hazeState,
-                //backgroundColor = MaterialTheme.colorScheme.surface,
-            )) {
+                .hazeSource(
+                    state = hazeState
+                    //backgroundColor = MaterialTheme.colorScheme.surface,
+                )
+        ) {
             composable(CardBarItems.HOME.name) {
                 Scaffold {
-                    HomeScreen(innerPadding,vm,navController,vmUI)
+                    HomeScreen(innerPadding,vm,navController,vmUI,hazeState)
                 }
             }
             composable(CardBarItems.BILLS.name) {
                 Scaffold {
-                    CardBills(vm,innerPadding,vmUI)
+                    CardBills(vm,innerPadding,vmUI, hazeState)
                 }
 
             }

@@ -22,16 +22,12 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -44,31 +40,32 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.viewmodel.NetWorkViewModel
-import com.hfut.schedule.viewmodel.LoginViewModel
-import com.hfut.schedule.activity.main.LoginActivity
-import com.hfut.schedule.logic.utils.VersionUtils
+import com.hfut.schedule.activity.MainActivity
 import com.hfut.schedule.logic.utils.CrashHandler
-import com.hfut.schedule.logic.utils.data.SharePrefs
-import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.logic.utils.Starter.emailMe
-import com.hfut.schedule.ui.activity.home.cube.items.main.Clear
+import com.hfut.schedule.logic.utils.VersionUtils
+import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.cube.items.main.apiCheck
 import com.hfut.schedule.ui.activity.home.focus.funictions.getTimeStamp
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
+import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LittleDialog
-import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.TransplantListItem
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
+import com.hfut.schedule.viewmodel.LoginViewModel
+import com.hfut.schedule.viewmodel.NetWorkViewModel
+import dev.chrisbanes.haze.HazeState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel,vm2 : NetWorkViewModel) {
+fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel,vm2 : NetWorkViewModel,hazeState: HazeState) {
     var showDialog by remember { mutableStateOf(false) }
     val switch_faststart = SharePrefs.prefs.getBoolean("SWITCHFASTSTART",
         SharePrefs.prefs.getString("TOKEN","")?.isNotEmpty() ?: false)
@@ -83,16 +80,18 @@ fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel,vm2 : NetWorkViewMode
     var showBottomSheet by remember { mutableStateOf(false) }
 
     if (showBottomSheet) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState,
-            shape = Round(sheetState)
+            showBottomSheet = showBottomSheet,
+            hazeState = hazeState
+//            sheetState = sheetState,
+//            shape = bottomSheetRound(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("常见问题解答")
+                    HazeBottomSheetTopBar("常见问题解答")
                 },) { innerPadding ->
                 Column(
                     modifier = Modifier
@@ -114,7 +113,7 @@ fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel,vm2 : NetWorkViewMode
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet_feedBack = false },
             sheetState = sheetState_feedBack,
-            shape = Round(sheetState_feedBack)
+            shape = bottomSheetRound(sheetState_feedBack)
         ) {
             feedBackUI(vm2)
         }
@@ -149,7 +148,7 @@ fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel,vm2 : NetWorkViewMode
             headlineContent = { Text(text = "刷新登录状态") },
             leadingContent = { Icon(painterResource(R.drawable.rotate_right), contentDescription = "Localized description",) },
             modifier = Modifier.clickable {
-                val it = Intent(MyApplication.context, LoginActivity::class.java).apply {
+                val it = Intent(MyApplication.context, MainActivity::class.java).apply {
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     putExtra("nologin",false)
                 }
@@ -171,7 +170,7 @@ fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel,vm2 : NetWorkViewMode
             headlineContent = { Text(text = "进入主界面") },
             leadingContent = { Icon(painterResource(R.drawable.login), contentDescription = "Localized description",) },
             modifier = Modifier.clickable {
-                val it = Intent(MyApplication.context, LoginActivity::class.java).apply { addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) }
+                val it = Intent(MyApplication.context, MainActivity::class.java).apply { addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) }
                 MyApplication.context.startActivity(it)
             }
         )
@@ -196,33 +195,6 @@ fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel,vm2 : NetWorkViewMode
             leadingContent = { Icon(painterResource(R.drawable.help), contentDescription = "Localized description",) },
             modifier = Modifier.clickable {showBottomSheet = true }
         )
-
-
-
-        //Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding()))
-    }
-    if (showDialog) {
-        LittleDialog(
-            onDismissRequest = { showDialog = false },
-            onConfirmation = { Clear() },
-            dialogTitle = "警告",
-            dialogText = "确定要抹掉数据吗,抹掉数据后,应用将退出",
-            conformtext = "抹掉数据",
-            dismisstext = "取消"
-        )
-        //This will look like IOS!
-    }
-
-}
-@Composable
-fun DebugUI(innerPadding : PaddingValues,vm : LoginViewModel) {
-    Column (modifier = Modifier
-        .verticalScroll(rememberScrollState())
-        .padding(innerPadding)){
-        Spacer(modifier = Modifier.height(5.dp))
-
-
-        //Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding()))
     }
 }
 
@@ -249,8 +221,8 @@ fun BugShare() {
                 },
                 dialogTitle = "日志内容",
                 dialogText = it,
-                conformtext = "分享",
-                dismisstext = "取消"
+                conformText = "分享",
+                dismissText = "取消"
             )
         }
     }
@@ -362,7 +334,7 @@ fun feedBackUI(vm : NetWorkViewModel) {
         modifier = Modifier.fillMaxSize(),
         containerColor = Color.Transparent,
         topBar = {
-            CustomTopBar("反馈") {
+            BottomSheetTopBar("反馈") {
                 FilledTonalIconButton(
                     onClick = {
                         if(input == "") {

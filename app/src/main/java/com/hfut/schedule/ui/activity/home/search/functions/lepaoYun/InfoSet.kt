@@ -41,7 +41,7 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
@@ -67,7 +67,7 @@ fun InfoSet() {
                 modifier = Modifier.fillMaxSize(),
         containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("信息配置") {
+                    BottomSheetTopBar("信息配置") {
                         FilledTonalIconButton(
 //                            modifier = Modifier.scale(scale.value).padding(25.dp),
                             interactionSource = interactionSource,

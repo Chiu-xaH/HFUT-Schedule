@@ -2,10 +2,8 @@ pluginManagement {
     repositories {
         google()
         mavenCentral()
-      //  maven { url 'https://maven.aliyun.com/repository/public' }
         maven { url 'https://jitpack.io' }
         gradlePluginPortal()
-        //jcenter()
     }
 }
 dependencyResolutionManagement {
@@ -13,14 +11,14 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-       // maven { url 'https://maven.aliyun.com/repository/public' }
         maven { url 'https://jitpack.io'}
         maven { url 'http://maven.aliyun.com/nexus/content/groups/public'
             allowInsecureProtocol = true }
         maven { url 'http://maven.aliyun.com/nexus/content/repositories/jcenter'
             allowInsecureProtocol = true }
-       // jcenter()
     }
 }
 rootProject.name = "肥工课程表"
 include ':app'
+include ':shower'
+include ':shared'

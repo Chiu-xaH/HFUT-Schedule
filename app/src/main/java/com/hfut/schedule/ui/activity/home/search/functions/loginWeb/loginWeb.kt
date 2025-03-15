@@ -34,9 +34,11 @@ import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.components.WebDialog
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
+import dev.chrisbanes.haze.HazeState
 import org.jsoup.Jsoup
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -44,7 +46,7 @@ import java.math.RoundingMode
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginWeb(vmUI : UIViewModel, card : Boolean,vm :  NetWorkViewModel) {
+fun LoginWeb(vmUI : UIViewModel, card : Boolean,vm :  NetWorkViewModel,hazeState: HazeState) {
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -70,12 +72,15 @@ fun LoginWeb(vmUI : UIViewModel, card : Boolean,vm :  NetWorkViewModel) {
     )
 
     if (showBottomSheet) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState,
+            autoShape = false,
+            hazeState = hazeState,
+            showBottomSheet = showBottomSheet
+//            sheetState = sheetState,
 //            shape = Round(sheetState)
         ) {
-            LoginWebScaUI(vmUI, vm)
+            LoginWebScaUI(vmUI, vm,hazeState)
         }
     }
 }

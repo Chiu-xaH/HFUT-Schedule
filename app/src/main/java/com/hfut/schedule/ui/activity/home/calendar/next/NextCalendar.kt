@@ -55,49 +55,39 @@ import com.hfut.schedule.ui.activity.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.activity.home.calendar.next.DatumMode.*
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.MyToast
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.viewmodel.NetWorkViewModel
+import dev.chrisbanes.haze.HazeState
 
 enum class DatumMode {
     JXGLSTU,COMMUNITY,NEXT
 }
-@Composable
-fun datumMode(Mode : DatumMode) {
-    when(Mode) {
-        COMMUNITY -> {
 
-        }
-
-        JXGLSTU -> {
-
-        }
-        NEXT -> {
-
-        }
-    }
-}
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DatumUI(showAll : Boolean,
-            grade : String,
             innerPadding : PaddingValues,
             vmUI : UIViewModel,
-            vm : NetWorkViewModel
+            vm : NetWorkViewModel,
+            hazeState: HazeState
            ) {
 
     val sheetState_totalCourse = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_totalCourse by remember { mutableStateOf(false) }
     var courseName by remember { mutableStateOf("") }
     if (showBottomSheet_totalCourse) {
-        ModalBottomSheet(
+        HazeBottomSheet(
             onDismissRequest = {
                 showBottomSheet_totalCourse = false
             },
-            sheetState = sheetState_totalCourse,
-            shape = Round(sheetState_totalCourse)
+            showBottomSheet = showBottomSheet_totalCourse,
+            hazeState = hazeState
+//            sheetState = sheetState_totalCourse,
+//            shape = bottomSheetRound(sheetState_totalCourse)
         ) {
-            CourseDetailApi(isNext = true,courseName = courseName, vm = vm)
+            CourseDetailApi(isNext = true,courseName = courseName, vm = vm,hazeState = hazeState)
         }
     }
 

@@ -51,7 +51,7 @@ import com.hfut.schedule.ui.activity.home.search.functions.life.QWeatherLevel.*
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.style.CardForListColor
 import com.hfut.schedule.ui.utils.components.DevelopingUI
 import com.hfut.schedule.ui.utils.components.DividerText
@@ -59,7 +59,7 @@ import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.LoadingLargeCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.TransplantListItem
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -79,13 +79,13 @@ fun LifeUIS(vm : NetWorkViewModel) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet_Weather = false },
             sheetState = sheetState_Weather,
-            shape = Round(sheetState_Weather)
+            shape = bottomSheetRound(sheetState_Weather)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("生活服务")
+                    BottomSheetTopBar("生活服务")
                 },) { innerPadding ->
                 Column(
                     modifier = Modifier

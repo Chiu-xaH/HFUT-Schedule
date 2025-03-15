@@ -55,6 +55,7 @@ import com.hfut.schedule.ui.activity.home.focus.funictions.WangkeItem
 import com.hfut.schedule.ui.activity.home.main.saved.NetWorkUpdate
 import com.hfut.schedule.ui.activity.home.search.functions.exam.JxglstuExamUI
 import com.hfut.schedule.ui.activity.home.search.functions.exam.getExamJXGLSTU
+import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -65,7 +66,7 @@ import kotlinx.coroutines.launch
 )
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
-fun TodayScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding : PaddingValues, blur : Boolean, vmUI : UIViewModel, ifSaved : Boolean, webVpn : Boolean, state: PagerState) {
+fun TodayScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding : PaddingValues, blur : Boolean, vmUI : UIViewModel, ifSaved : Boolean, webVpn : Boolean, state: PagerState,hazeState: HazeState) {
 
     val  TAB_LEFT = 0
     val TAB_RIGHT = 1
@@ -136,12 +137,12 @@ fun TodayScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding : Padd
                             item { Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding())) }
                             when(page) {
                                 TAB_LEFT -> {
-                                    item { FocusCard(vmUI,vm,refreshing) }
+                                    item { FocusCard(vmUI,vm,refreshing,hazeState) }
                                     //课表
                                     if (DateTimeUtils.compareTimes(lastTime) != DateTimeUtils.TimeState.NOT_STARTED)
-                                        items(getCourseINFO(weekdaytomorrow,Nextweek).size) { item -> TomorrowCourseItem(item = item,vm) }
+                                        items(getCourseINFO(weekdaytomorrow,Nextweek).size) { item -> TomorrowCourseItem(item = item,vm,hazeState) }
                                     else
-                                        items(todayCourseList.size) { item -> TodayCourseItem(item = item,vm) }
+                                        items(todayCourseList.size) { item -> TodayCourseItem(item = item,vm, hazeState) }
                                     //日程
                                     items(MySchedule().size) { item -> MyScheuleItem(item = item, MySchedule = MySchedule(),false,activity) }
                                     //考试
@@ -156,7 +157,7 @@ fun TodayScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding : Padd
                                     items(MyWangKe().size) { item -> WangkeItem(item = item, MyWangKe = MyWangKe(),true,activity) }
                                     //第二天课表
                                     if (DateTimeUtils.compareTimes(lastTime) == DateTimeUtils.TimeState.NOT_STARTED)
-                                        items(getCourseINFO(weekdaytomorrow,Nextweek).size) { item -> TomorrowCourseItem(item = item,vm) }
+                                        items(getCourseINFO(weekdaytomorrow,Nextweek).size) { item -> TomorrowCourseItem(item = item,vm,hazeState) }
 
                                     items(AddedItems().size){ item -> AddItem(item = item, AddedItems = AddedItems()) }
 
@@ -167,7 +168,7 @@ fun TodayScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding : Padd
                         }
                     }
                 }
-                AddButton(isVisible = shouldShowAddButton,innerPadding)
+                AddButton(isVisible = shouldShowAddButton,innerPadding,hazeState)
                 PullRefreshIndicator(refreshing, states, Modifier.padding(innerPadding).align(Alignment.TopCenter))
             }
 

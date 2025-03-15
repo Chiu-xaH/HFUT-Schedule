@@ -4,10 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import androidx.compose.ui.unit.dp
-import com.hfut.schedule.logic.utils.DateTimeUtils
-import dagger.hilt.android.HiltAndroidApp
 
-@HiltAndroidApp
 class MyApplication : Application() {
     companion object {
         @SuppressLint("StaticFieldLeak")
@@ -70,6 +67,11 @@ class MyApplication : Application() {
         const val QWEATHER_URL = "https://devapi.qweather.com/v7/"
         // 学工系统
         const val STU_URL = "https://stu.hfut.edu.cn/"
+
+        // Github常量池
+        const val GITHUB_USER_ID = 116127902
+        const val GITHUB_DEVELOPER_NAME = "Chiu-xaH"
+        const val GITHUB_REPO_NAME = "HFUT-Schedule"
     }
 
     override fun onCreate() {

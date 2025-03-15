@@ -34,16 +34,19 @@ import com.hfut.schedule.logic.utils.Starter.refreshLogin
 import com.hfut.schedule.ui.activity.home.calendar.next.DatumUI
 import com.hfut.schedule.ui.activity.home.main.saved.isNextOpen
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotalForApi
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
+import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.MyToast
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.TransplantListItem
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.NetWorkViewModel
+import dev.chrisbanes.haze.HazeState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NextCourse(ifSaved : Boolean,vmUI : UIViewModel,vm : NetWorkViewModel) {
+fun NextCourse(ifSaved : Boolean,vmUI : UIViewModel,vm : NetWorkViewModel,hazeState: HazeState) {
 
     val sheetState_next = rememberModalBottomSheetState(true)
     var showBottomSheet_next by remember { mutableStateOf(false) }
@@ -54,18 +57,20 @@ fun NextCourse(ifSaved : Boolean,vmUI : UIViewModel,vm : NetWorkViewModel) {
 
 
     if (showBottomSheet_next) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet_next = false },
-            sheetState = sheetState_next,
-            shape = Round(sheetState_next)
+//            sheetState = sheetState_next,
+//            shape = bottomSheetRound(sheetState_next),
+            showBottomSheet = showBottomSheet_next,
+            hazeState = hazeState
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("下学期课程表") {
+                    HazeBottomSheetTopBar("下学期课程表") {
                         Row {
-                            CourseTotalForApi(vm=vm, next=next, onNextChange = { next = !next})
+                            CourseTotalForApi(vm=vm, next=next, onNextChange = { next = !next}, hazeState = hazeState)
                             TextButton(onClick = { showAll = !showAll }) {
                                 Icon(painter = painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "")
                             }
@@ -77,7 +82,7 @@ fun NextCourse(ifSaved : Boolean,vmUI : UIViewModel,vm : NetWorkViewModel) {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    prefs.getString("gradeNext","23")?.let { DatumUI(showAll, it, innerPadding, vmUI,vm) }
+                    DatumUI(showAll, innerPadding, vmUI,vm, hazeState)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }

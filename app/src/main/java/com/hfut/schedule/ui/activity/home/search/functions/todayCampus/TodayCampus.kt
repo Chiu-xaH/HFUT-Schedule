@@ -39,10 +39,10 @@ import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.ui.activity.home.search.functions.life.countFunc
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.TransplantListItem
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.ui.utils.components.WebViewScreen
 import com.hfut.schedule.ui.utils.components.statusUI
 import com.hfut.schedule.ui.utils.components.statusUI2
@@ -127,7 +127,7 @@ fun LoginStu(vm : NetWorkViewModel) {
         modifier = Modifier.fillMaxSize(),
         containerColor = Color.Transparent,
         topBar = {
-            CustomTopBar("学工系统登录")
+            BottomSheetTopBar("学工系统登录")
         },
     ) { innerPadding ->
         Column(
@@ -156,13 +156,13 @@ fun LoginStuUI(vm : NetWorkViewModel) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
             sheetState = sheetState,
-            shape = Round(sheetState)
+            shape = bottomSheetRound(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("学工系统")
+                    BottomSheetTopBar("学工系统")
                 },
             ) { innerPadding ->
                 Column(

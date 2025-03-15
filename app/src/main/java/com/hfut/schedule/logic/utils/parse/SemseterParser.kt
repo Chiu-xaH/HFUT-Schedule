@@ -1,18 +1,10 @@
 package com.hfut.schedule.logic.utils.parse
 
-import android.util.Log
-import com.google.gson.Gson
-import com.hfut.schedule.App.MyApplication
-import com.hfut.schedule.logic.beans.MyAPIResponse
-import com.hfut.schedule.logic.beans.jxglstu.semester
 import com.hfut.schedule.logic.utils.DateTimeUtils
-import com.hfut.schedule.logic.utils.parse.SemseterParser.parseSemseter
-import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.parse.ParseJsons.getMy
 
 object SemseterParser {
-    enum class TermPeriod {
-        DEFAULT,UP,DOWN
-    }
+    @JvmStatic
     fun parseSemseter(semster : Int) : String {
         val codes = (semster - 4) / 10
         val year = 2017
@@ -31,6 +23,7 @@ object SemseterParser {
     // ((semster-4)/10)-3)/4 + 2018 = firstYear
     // ((firstYear - 2018)*4 + 3)*10 + 4 = semster
     // 传入YYYY-MM
+    @JvmStatic
     fun reverseGetSemester(date : String): Int? {
         // YYYY年的2~7月为 (YYYY-1)~YYYY 第2学期
         // YYYY年的8~12为 YYYY~(YYYY+1) 第1学期
@@ -40,13 +33,13 @@ object SemseterParser {
             val year = str[0].toInt()
             val month = str[1].toInt()
             // 学期判定
-            var period = TermPeriod.DEFAULT
+            var period = 0
             if(month == 1) {
-                period = TermPeriod.UP
+                period = 1 // 第一学期
             } else if(month in 2..7) {
-                period = TermPeriod.DOWN
+                period = 2 // 第二学期
             } else if(month in 8..12) {
-                period = TermPeriod.UP
+                period = 1
             }
             // 第一个年份的判断
             var parseYear = year
@@ -56,15 +49,16 @@ object SemseterParser {
             // 基础数据
             val semster = ((parseYear - 2018)*4 + 3)*10 + 4
             return when(period) {
-                TermPeriod.UP -> semster
-                TermPeriod.DOWN -> semster + 20
-                TermPeriod.DEFAULT -> null
+                1 -> semster
+                2 -> semster + 20
+                else -> null
             }
         } catch (e : Exception) {
             return null
         }
     }
 
+    @JvmStatic
     fun getSemseter() : Int {
         return try {
             reverseGetSemester(DateTimeUtils.Date_yyyy_MM) ?: 0
@@ -73,10 +67,3 @@ object SemseterParser {
         }
     }
 }
-
-//fun main( ) {
-////    println(Semseter.reverseGetSemester(2025,2)?.let { parseSemseter(it) })
-////    println(Semseter.reverseGetSemester(2024,9)?.let { parseSemseter(it) })
-////    println(Semseter.reverseGetSemester(2025,1)?.let { parseSemseter(it) })
-//    println(Semseter.reverseGetSemester("2025-02")?.let { parseSemseter(it) })
-//}

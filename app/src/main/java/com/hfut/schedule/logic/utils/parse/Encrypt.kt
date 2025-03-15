@@ -8,10 +8,11 @@ import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
 object Encrypt {
+    @JvmStatic
     fun encryptAES(input:String, password:String): String {
         return try {
             val cipher = Cipher.getInstance("AES")
-            val keySpec: SecretKeySpec = SecretKeySpec(password.toByteArray(),"AES")
+            val keySpec = SecretKeySpec(password.toByteArray(),"AES")
             cipher.init(Cipher.ENCRYPT_MODE,keySpec)
             val encrypt = cipher.doFinal(input.toByteArray())
             Base64.encodeToString(encrypt,Base64.NO_WRAP)
@@ -19,25 +20,23 @@ object Encrypt {
             "NULL"
         }
     }
-    fun encodeToBase64(input: String): String {
-        return java.util.Base64.getEncoder().encodeToString(input.toByteArray(Charsets.UTF_8))
-    }
+    @JvmStatic
+    fun encodeToBase64(input: String): String =java.util.Base64.getEncoder().encodeToString(input.toByteArray(Charsets.UTF_8))
 
+    @JvmStatic
     fun md5Hash(input: String): String {
         // 获取MD5实例
         val md = MessageDigest.getInstance("MD5")
-
         // 将输入字符串转换为字节数组并进行MD5加密
         val digest = md.digest(input.toByteArray())
-
         // 将加密后的字节数组转换为16进制字符串
         val hexString = digest.joinToString("") { "%02x".format(it) }
-
         // 返回最后10位
         return if (hexString.length > 10) hexString.takeLast(10) else hexString
     }
 
     //校务行用的，就是微信小程序逆向JS
+    @JvmStatic
     fun encryptXiaoWuXing(plainText: String): String {
         val key = "JL$<&*l9~67?:#5p"
         val iv = "{g;,9~l4'/sw`885"
@@ -56,6 +55,7 @@ object Encrypt {
         return java.util.Base64.getEncoder().encodeToString(encryptedBytes)
     }
 
+    @JvmStatic
     fun encryptAesECB(plainText: String, key: String): String {
         val cipher = Cipher.getInstance("AES/ECB/PKCS5Padding")
         val secretKey = SecretKeySpec(key.toByteArray(), "AES")
@@ -64,6 +64,7 @@ object Encrypt {
         return Base64.encodeToString(encryptedBytes, Base64.DEFAULT)
     }
 
+    @JvmStatic
     fun generateRandomHexString(): String {
         var result = ""
         repeat(16) {
@@ -74,6 +75,7 @@ object Encrypt {
     }
 
     //用于生成和风天气密钥
+    @JvmStatic
     fun getQWeatherAuth() : String {
         return "Bearer " + GenerateQWeather()
             .generate(
@@ -82,7 +84,6 @@ object Encrypt {
             "THB3UBK56Q"
         )
     }
-
 }
 
 

@@ -42,17 +42,20 @@ import com.hfut.schedule.ui.activity.card.bills.main.getBills
 import com.hfut.schedule.ui.activity.card.bills.main.processTranamt
 import com.hfut.schedule.ui.utils.components.AnimationCustomCard
 import com.hfut.schedule.ui.utils.components.BillsIcons
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
+import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.MyCustomCard
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.TransplantListItem
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import dev.chrisbanes.haze.HazeState
 import java.math.BigDecimal
 import java.math.RoundingMode
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CardRow(vm : NetWorkViewModel, vmUI : UIViewModel) {
+fun CardRow(vm : NetWorkViewModel, vmUI : UIViewModel,hazeState: HazeState) {
     var todaypay = 0.0
     var date = DateTimeUtils.Date_yyyy_MM_dd
 
@@ -87,10 +90,13 @@ fun CardRow(vm : NetWorkViewModel, vmUI : UIViewModel) {
 
 
     if(showBottomSheet) {
-        ModalBottomSheet(
+        HazeBottomSheet(
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState,
-            shape = Round(sheetState)
+            isFullExpand = false,
+            showBottomSheet = showBottomSheet,
+            hazeState = hazeState
+//            sheetState = sheetState,
+//            shape = bottomSheetRound(sheetState)
         ){
            TodayBills(vm)
         }
@@ -133,7 +139,7 @@ fun TodayBills(vm: NetWorkViewModel) {
         modifier = Modifier.fillMaxSize(),
         containerColor = Color.Transparent,
         topBar = {
-            CustomTopBar("今日消费")
+            HazeBottomSheetTopBar("今日消费")
         },
     ) {innerPadding ->
         LazyColumn(modifier = Modifier.padding(innerPadding)) {

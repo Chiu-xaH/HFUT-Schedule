@@ -1,6 +1,6 @@
 package com.hfut.schedule.ui.activity.home.focus
 
-import com.hfut.schedule.logic.utils.parse.getMy
+import com.hfut.schedule.logic.utils.parse.ParseJsons.getMy
 
 fun getURL() : String {
     return try {

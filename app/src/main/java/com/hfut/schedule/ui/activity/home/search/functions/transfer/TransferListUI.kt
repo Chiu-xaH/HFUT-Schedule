@@ -70,17 +70,20 @@ import com.hfut.schedule.ui.activity.shower.home.function.StatusMsgResponse
 import com.hfut.schedule.ui.utils.components.AnimationCardListItem
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CardNormalDp
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.DepartmentIcons
+import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.components.statusUI2
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.GuaGuaViewModel
+import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -88,7 +91,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TransferUI(vm: NetWorkViewModel, batchId: String) {
+fun TransferUI(vm: NetWorkViewModel, batchId: String,hazeState: HazeState) {
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
     val sheetState = rememberModalBottomSheetState()
@@ -129,18 +132,21 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String) {
 
     if(showBottomSheet) {
         countFunc = 0
-        ModalBottomSheet(
+        HazeBottomSheet(
             onDismissRequest = {
                 showBottomSheet = false
             },
-            sheetState = sheetState,
-            shape = Round(sheetState)
+            hazeState = hazeState,
+            showBottomSheet = showBottomSheet,
+            isFullExpand = false
+//            sheetState = sheetState,
+//            shape = bottomSheetRound(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("结果")
+                    HazeBottomSheetTopBar("结果", isPaddingStatusBar = false)
                 },
             ) { innerPadding ->
                 Column(
@@ -155,18 +161,21 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String) {
     }
 
     if(showBottomSheet_select) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = {
                 showBottomSheet_select = false
             },
-            sheetState = sheetState_select,
-            shape = Round(sheetState_select)
+            hazeState = hazeState,
+            isFullExpand = false,
+            showBottomSheet = showBottomSheet_select
+//            sheetState = sheetState_select,
+//            shape = bottomSheetRound(sheetState_select)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("手机号 (教务要求)")
+                    HazeBottomSheetTopBar("手机号 (教务要求)", isPaddingStatusBar = false)
                 },
             ) { innerPadding ->
                 Column(

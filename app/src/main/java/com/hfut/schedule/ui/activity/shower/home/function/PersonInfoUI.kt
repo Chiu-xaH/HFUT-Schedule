@@ -36,23 +36,28 @@ import com.hfut.schedule.ui.utils.components.LargeCard
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.CardForListColor
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.viewmodel.NetWorkViewModel
+import dev.chrisbanes.haze.HazeState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GuaGuaPersonInfoUI(vm: NetWorkViewModel) {
+fun GuaGuaPersonInfoUI(vm: NetWorkViewModel,hazeState: HazeState) {
 
     val sheetState = rememberModalBottomSheetState(true)
     var showBottomSheet by remember { mutableStateOf(false) }
 
     if (showBottomSheet) {
-        ModalBottomSheet(
+        HazeBottomSheet(
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState
+            showBottomSheet = showBottomSheet,
+            hazeState = hazeState,
+            autoShape = false
+//            sheetState = sheetState
 //            , shape = Round(sheetState)
         ) {
-            ShowerUI(vm,true)
+            ShowerUI(vm,true, hazeState = hazeState)
         }
     }
 

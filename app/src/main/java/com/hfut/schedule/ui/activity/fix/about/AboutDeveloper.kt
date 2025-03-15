@@ -32,12 +32,12 @@ import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.beans.GithubBean
-import com.hfut.schedule.logic.utils.data.GithubConsts
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.logic.utils.data.reEmptyLiveDta
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
+import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.Party
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.TransplantListItem
@@ -62,8 +62,8 @@ fun About(vm : LoginViewModel) {
         "Zxing" to "二维码",
         "Haze" to "实时模糊(SDK>=33)",
         "Accompanist" to "用做实现透明状态栏",
-        "Monet" to "莫奈取色(供SDK<32不支持MY取色平替)",
-        "Dagger" to "Hilt注入,辅助莫奈取色功能",
+//        "Monet" to "莫奈取色(供SDK<32不支持MY取色平替)",
+//        "Dagger" to "Hilt注入,辅助莫奈取色功能",
         "Glide" to "网络图片",
         "EdDSA Java" to "加密(供和风天气API使用)",
         "Konfetti" to "礼花动画",
@@ -104,12 +104,12 @@ fun About(vm : LoginViewModel) {
         androidx.compose.material3.Scaffold(
             containerColor = Color.Transparent,
             topBar = {
-                CustomTopBar("关于")
+                HazeBottomSheetTopBar("关于")
             },
             bottomBar = {
                 Row(modifier = Modifier.padding(AppHorizontalDp()),horizontalArrangement = Arrangement.Center) {
                     Button(
-                        onClick = { Starter.startWebUrl("https://github.com/${GithubConsts.DEVELOPER_NAME}/${GithubConsts.REPO_NAME}") },
+                        onClick = { Starter.startWebUrl("https://github.com/${MyApplication.GITHUB_DEVELOPER_NAME}/${MyApplication.GITHUB_REPO_NAME}") },
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(.5f)
@@ -119,7 +119,7 @@ fun About(vm : LoginViewModel) {
 
                     Spacer(modifier = Modifier.width(AppHorizontalDp()))
                     FilledTonalButton(
-                        onClick = { Starter.startWebUrl("https://github.com/${GithubConsts.DEVELOPER_NAME}/${GithubConsts.REPO_NAME}/releases/latest") },
+                        onClick = { Starter.startWebUrl("https://github.com/${MyApplication.GITHUB_DEVELOPER_NAME}/${MyApplication.GITHUB_REPO_NAME}/releases/latest") },
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(.5f)
@@ -135,11 +135,11 @@ fun About(vm : LoginViewModel) {
                 DividerTextExpandedWith("开发者") {
                     TransplantListItem(
                         modifier = Modifier.clickable {
-                            Starter.startWebUrl("https://github.com/${GithubConsts.DEVELOPER_NAME}")
+                            Starter.startWebUrl("https://github.com/${MyApplication.GITHUB_DEVELOPER_NAME}")
                         },
-                        headlineContent = { ScrollText(GithubConsts.DEVELOPER_NAME) },
+                        headlineContent = { ScrollText(MyApplication.GITHUB_DEVELOPER_NAME) },
                         leadingContent = {
-                            URLImage(url = MyApplication.GITHUB_USER_IMAGE_URL + GithubConsts.USER_ID, width = 50.dp, height = 50.dp)
+                            URLImage(url = MyApplication.GITHUB_USER_IMAGE_URL + MyApplication.GITHUB_USER_ID, width = 50.dp, height = 50.dp)
                         },
                         supportingContent = {
                             Text("一名热爱安卓的开发者,宣城校区23级计算机科学与技术专业(转)本科生")

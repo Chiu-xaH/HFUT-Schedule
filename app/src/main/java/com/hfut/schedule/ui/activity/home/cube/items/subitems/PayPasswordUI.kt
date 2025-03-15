@@ -37,10 +37,12 @@ import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.TransplantListItem
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import dev.chrisbanes.haze.HazeState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LockUI() {
+fun LockUI(hazeState: HazeState) {
     val switch_pin = SharePrefs.prefs.getBoolean("SWITCHPIN",false)
     var pin by remember { mutableStateOf(switch_pin) }
     saveBoolean("SWITCHPIN", false,pin)
@@ -71,12 +73,16 @@ fun LockUI() {
     // if(pin) {
     if (showDialog) {
         // if(password.length != 6)
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = { showDialog = false },
-            sheetState = sheetState,
+            autoShape = false,
+            hazeState = hazeState,
+            showBottomSheet = showDialog
+//            sheetState = sheetState,
             // shape = Round(sheetState)
         ) {
             Column {
+                Spacer(Modifier.height(AppHorizontalDp()*1.5f))
                 CirclePoint(text = if(!pin)"录入新密码" else "请输入密码", password = input)
                 Spacer(modifier = Modifier.height(20.dp))
                 KeyBoard(

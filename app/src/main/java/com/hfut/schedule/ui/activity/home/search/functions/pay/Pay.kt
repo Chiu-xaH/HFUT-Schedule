@@ -54,15 +54,18 @@ import com.hfut.schedule.logic.utils.ClipBoard
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.ui.utils.components.ActiveTopBar
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.style.CardForListColor
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
+import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LoadingLargeCard
 import com.hfut.schedule.ui.utils.components.MyToast
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.TransplantListItem
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -70,7 +73,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Pay(ifSaved : Boolean,vm : NetWorkViewModel) {
+fun Pay(ifSaved : Boolean,vm : NetWorkViewModel,hazeState: HazeState) {
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
  //   var showDialog by remember { mutableStateOf(false) }
@@ -84,10 +87,12 @@ fun Pay(ifSaved : Boolean,vm : NetWorkViewModel) {
         }
     )
     if (showBottomSheet) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState,
-            shape = Round(sheetState)
+            hazeState = hazeState,
+            showBottomSheet = showBottomSheet,
+//            sheetState = sheetState,
+//            shape = bottomSheetRound(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
@@ -108,7 +113,7 @@ fun Pay(ifSaved : Boolean,vm : NetWorkViewModel) {
 //                            }
 //                        }
 //                    )
-                    CustomTopBar("学费") {
+                    HazeBottomSheetTopBar("学费") {
                         FilledTonalButton(
                                 onClick = { Starter.startWebUrl(url) },
                             ) {

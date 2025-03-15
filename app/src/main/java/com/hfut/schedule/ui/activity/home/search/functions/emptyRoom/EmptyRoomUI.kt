@@ -27,12 +27,14 @@ import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
 import com.hfut.schedule.ui.utils.components.TransplantListItem
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
+import dev.chrisbanes.haze.HazeState
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EmptyRoom(vm : NetWorkViewModel, ifSaved : Boolean){
+fun EmptyRoom(vm : NetWorkViewModel, ifSaved : Boolean,hazeState: HazeState){
     val sheetState_EmptyRoom = rememberModalBottomSheetState()
     var showBottomSheet_EmptyRoom by remember { mutableStateOf(false) }
 
@@ -58,12 +60,14 @@ fun EmptyRoom(vm : NetWorkViewModel, ifSaved : Boolean){
     )
 
     if (showBottomSheet_EmptyRoom) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = {
                 showBottomSheet_EmptyRoom = false
             },
-            sheetState = sheetState_EmptyRoom,
-            shape = Round(sheetState_EmptyRoom)
+            showBottomSheet = showBottomSheet_EmptyRoom,
+            hazeState = hazeState
+//            sheetState = sheetState_EmptyRoom,
+//            shape = bottomSheetRound(sheetState_EmptyRoom)
         ) {
             Column() {
                 Row(

@@ -7,8 +7,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -22,10 +20,8 @@ import androidx.compose.animation.with
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -52,7 +48,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -78,27 +73,27 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.activity.funiction.FixActivity
-import com.hfut.schedule.activity.main.LoginSuccessActivity
-import com.hfut.schedule.activity.main.SavedActivity
+import com.hfut.schedule.activity.screen.FixActivity
+import com.hfut.schedule.activity.screen.main.SuccessActivity
 import com.hfut.schedule.logic.utils.VersionUtils
-import com.hfut.schedule.logic.utils.parse.Encrypt
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
-import com.hfut.schedule.logic.utils.Starter.noLogin
-import com.hfut.schedule.logic.utils.parse.useCaptcha
+import com.hfut.schedule.logic.utils.parse.Encrypt
+import com.hfut.schedule.logic.utils.parse.ParseJsons.useCaptcha
 import com.hfut.schedule.ui.activity.home.cube.items.main.FirstCube
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.DownloadMLUI
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.URLImageWithOCR
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.navigateAndClear
 import com.hfut.schedule.ui.utils.style.RowHorizontal
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.LoginViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -147,7 +142,7 @@ private fun loginClick(vm : LoginViewModel, username : String, inputAES : String
                                 else {
                                     onResult("登陆成功")
                                     vm.loginJxglstu()
-                                    val it = Intent(MyApplication.context, LoginSuccessActivity::class.java).apply {
+                                    val it = Intent(MyApplication.context, SuccessActivity::class.java).apply {
                                         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                                         putExtra("webVpn",true)
                                     }
@@ -162,7 +157,7 @@ private fun loginClick(vm : LoginViewModel, username : String, inputAES : String
                                     }
                                     vm.location.value.toString().contains("ticket") -> {
                                         onResult("登陆成功")
-                                        val it = Intent(MyApplication.context, LoginSuccessActivity::class.java).apply {
+                                        val it = Intent(MyApplication.context, SuccessActivity::class.java).apply {
                                             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                                             putExtra("webVpn",webVpn)
                                         }
@@ -231,18 +226,14 @@ fun ImageCodeUI(webVpn : Boolean,vm: LoginViewModel,onRefresh: Int = 1,onResult 
 
 
 
-fun SavedClick() {
+fun isAnonymity() : Boolean {
     val json = prefs.getString("json", "")
-    if (json?.contains("result") == true) {
-        val it = Intent(MyApplication.context, SavedActivity::class.java)
-        it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        MyApplication.context.startActivity(it)
-    } else noLogin()
+    return json?.contains("result") != true
 }
 
 
 enum class First {
-    HOME,USE_AGREEMENT
+    HOME,USE_AGREEMENT,GUEST
 }
 
 
@@ -250,7 +241,7 @@ enum class First {
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginUI(vm : LoginViewModel) {
+fun LoginUI(vm : LoginViewModel,navController : NavHostController) {
 
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -267,13 +258,13 @@ fun LoginUI(vm : LoginViewModel) {
                 showBottomSheet = false
             },
             sheetState = sheetState,
-            shape = Round(sheetState)
+            shape = bottomSheetRound(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("选项")
+                    BottomSheetTopBar("选项")
                 },) {innerPadding ->
                 Column(
                     modifier = Modifier
@@ -334,7 +325,7 @@ fun LoginUI(vm : LoginViewModel) {
         Column(modifier = Modifier
             .padding(innerPadding)
             .fillMaxSize()) {
-            TwoTextField(vm)
+            TwoTextField(vm,navController)
         }
     }
 }
@@ -378,7 +369,7 @@ fun AnimatedWelcomeScreen() {
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TwoTextField(vm : LoginViewModel) {
+fun TwoTextField(vm : LoginViewModel,navHostController: NavHostController) {
 
     var hidden by rememberSaveable { mutableStateOf(true) }
 
@@ -400,13 +391,13 @@ fun TwoTextField(vm : LoginViewModel) {
                 showBottomSheet = false
             },
             sheetState = sheetState,
-            shape = Round(sheetState)
+            shape = bottomSheetRound(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("图片验证码自动填充")
+                    BottomSheetTopBar("图片验证码自动填充")
                 },) {innerPadding ->
                 DownloadMLUI(innerPadding)
                 Spacer(modifier = Modifier.height(20.dp))
@@ -544,14 +535,20 @@ fun TwoTextField(vm : LoginViewModel) {
 
                 ) { Text("登录") }
 
-                Spacer(modifier = Modifier.width(AppHorizontalDp()))
+                if(isAnonymity()) {
+                    Spacer(modifier = Modifier.width(AppHorizontalDp()))
 
-                FilledTonalButton(
-                    onClick = { SavedClick() },
-                    modifier = Modifier.scale(scale2.value),
-                    interactionSource = interactionSource2,
+                    FilledTonalButton(
+                        onClick = {
 
-                    ) { Text("免登录") }
+//                            noLogin(navHostController =navHostController )
+                            navHostController.navigateAndClear(First.GUEST.name)
+                        },
+                        modifier = Modifier.scale(scale2.value),
+                        interactionSource = interactionSource2,
+
+                        ) { Text("游客") }
+                }
             }
             RowHorizontal{
                 TextButton(

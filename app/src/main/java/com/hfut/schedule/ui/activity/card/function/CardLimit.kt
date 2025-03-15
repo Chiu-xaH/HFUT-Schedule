@@ -33,7 +33,8 @@ import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.beans.zjgd.ChangeLimitResponse
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
+import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -87,7 +88,7 @@ fun CardLimit(vm : NetWorkViewModel, vmUI : UIViewModel) {
         modifier = Modifier.fillMaxSize(),
         containerColor = Color.Transparent,
         topBar = {
-            CustomTopBar("限额")
+            HazeBottomSheetTopBar("限额")
         },
     ) { innerPadding ->
         Column(

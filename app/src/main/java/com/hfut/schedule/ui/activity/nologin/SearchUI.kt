@@ -39,10 +39,11 @@ import com.hfut.schedule.ui.activity.home.search.functions.xuexin.XueXin
 import com.hfut.schedule.ui.utils.components.SmallCard
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
+import dev.chrisbanes.haze.HazeState
 
 @SuppressLint("CoroutineCreationDuringComposition", "SuspiciousIndentation")
 @Composable
-fun SearchScreenNoLogin(vm : NetWorkViewModel, ifSaved : Boolean, innerPaddings : PaddingValues, vmUI : UIViewModel, webVpn : Boolean, input : String) {
+fun SearchScreenNoLogin(vm : NetWorkViewModel, ifSaved : Boolean, innerPaddings : PaddingValues, vmUI : UIViewModel, webVpn : Boolean, input : String,hazeState: HazeState) {
 
 
     @Composable
@@ -69,27 +70,27 @@ fun SearchScreenNoLogin(vm : NetWorkViewModel, ifSaved : Boolean, innerPaddings 
 //        "挂科率" to { FailRate(vm) },
 //        "课程汇总" to { CourseTotal(vm) },
 //        "个人信息" to { PersonUI(ifSaved) },
-        "网址导航 实验室 收纳" to { WebUI() },
+        "网址导航 实验室 收纳" to { WebUI(hazeState) },
         "报修 维修" to { Repair() },
 //        "选课" to { SelectCourse(ifSaved, vm) },
-        "寝室卫生评分 寝室卫生分数" to { DormitoryScoreXuanCheng(vm) },
-        "消息中心 通知中心 收纳" to { NotificationsCenter() },
+        "寝室卫生评分 寝室卫生分数" to { DormitoryScoreXuanCheng(vm,hazeState) },
+        "消息中心 通知中心 收纳" to { NotificationsCenter(hazeState) },
 //        "教师评教 教师教评" to { Survey(ifSaved, vm) },
         "通知公告 新闻" to { News(vm) },
-        "培养方案" to { GuestProgram(vm) },
+        "培养方案" to { GuestProgram(vm, hazeState   ) },
         "校历" to { SchoolCalendar() },
         "校车" to { SchoolBus() },
-        "洗浴 洗澡 呱呱物联 慧新易校 缴费" to { Shower(vm) },
+        "洗浴 洗澡 呱呱物联 慧新易校 缴费" to { Shower(vm,hazeState = hazeState) },
 //        "下学期课程表 下学期课表" to { NextCourse(ifSaved, vmUI) },
 //        "今日校园 学工系统 请假 助学金 奖学金 贫困 寝室 心理 日常" to { ToadyCampus(ifSaved) },
 //        "空教室" to { EmptyRoom(vm, ifSaved) },
         "乐跑云运动 校园跑" to { LePaoYun(vm) },
         "热水机 趣智校园" to { HotWater() },
         "学信网" to { XueXin() },
-        "生活服务 校园 校园 天气 教学楼 建筑 学堂" to { Life(vm) },
+        "生活服务 校园 校园 天气 教学楼 建筑 学堂" to { Life(vm,hazeState) },
 //        "转专业" to { Transfer(ifSaved, vm) },
 //        "开课查询 全校开课" to { CoursesSearch(ifSaved, vm) },
-        "教师 老师" to { TeacherSearch(vm) },
+        "教师 老师" to { TeacherSearch(vm,hazeState) },
 //        "学费 费用 欠缴学费" to { Pay(ifSaved, vm) },
 //        "实习" to { Work(ifSaved) },
 //        "第二课堂" to { Second() }

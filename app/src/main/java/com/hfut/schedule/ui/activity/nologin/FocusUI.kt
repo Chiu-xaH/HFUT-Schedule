@@ -44,6 +44,7 @@ import com.hfut.schedule.ui.activity.home.focus.funictions.MyScheuleItem
 import com.hfut.schedule.ui.activity.home.focus.funictions.MyWangKe
 import com.hfut.schedule.ui.activity.home.focus.funictions.TimeStampItem
 import com.hfut.schedule.ui.activity.home.focus.funictions.WangkeItem
+import dev.chrisbanes.haze.HazeState
 //import com.hfut.schedule.ui.activity.home.focus.getResult
 //import com.hfut.schedule.ui.activity.home.focus.newScheduleItems
 //import com.hfut.schedule.ui.activity.home.focus.newWangkeItem
@@ -58,7 +59,7 @@ import kotlinx.coroutines.launch
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
-fun TodayScreenNoLogin(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding : PaddingValues, blur : Boolean, vmUI : UIViewModel, ifSaved : Boolean, webVpn : Boolean, state: PagerState) {
+fun TodayScreenNoLogin(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding : PaddingValues, blur : Boolean, vmUI : UIViewModel, ifSaved : Boolean, webVpn : Boolean, state: PagerState,hazeState : HazeState) {
 
     val  TAB_LEFT = 0
     val TAB_RIGHT = 1
@@ -139,7 +140,7 @@ fun TodayScreenNoLogin(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding
                     }
                 }
             }
-            AddButton(isVisible = shouldShowAddButton,innerPadding)
+            AddButton(isVisible = shouldShowAddButton,innerPadding, hazeState)
             PullRefreshIndicator(refreshing, states, Modifier.padding(innerPadding).align(Alignment.TopCenter))
         }
 

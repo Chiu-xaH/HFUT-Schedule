@@ -35,15 +35,19 @@ import com.hfut.schedule.logic.enums.LibraryItems
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.utils.components.AnimationCardListItem
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
+import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.viewmodel.NetWorkViewModel
+import dev.chrisbanes.haze.HazeState
+import kotlinx.coroutines.joinAll
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LibraryChips(vm : NetWorkViewModel) {
+fun LibraryChips(vm : NetWorkViewModel,hazeState: HazeState) {
     val sheetState_History = rememberModalBottomSheetState(true)
     var showBottomSheet_History by remember { mutableStateOf(false) }
     val sheetState_Borrow = rememberModalBottomSheetState(true)
@@ -68,14 +72,18 @@ fun LibraryChips(vm : NetWorkViewModel) {
         )
     }
     if(showBottomSheet_History) {
-        ModalBottomSheet(onDismissRequest = { showBottomSheet_History = false }, sheetState = sheetState_History,
-            shape = Round(sheetState_History)
+        HazeBottomSheet (
+            onDismissRequest = { showBottomSheet_History = false },
+            hazeState = hazeState,
+            showBottomSheet = showBottomSheet_History
+//            sheetState = sheetState_History,
+//            shape = bottomSheetRound(sheetState_History)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("借阅历史")
+                    HazeBottomSheetTopBar("借阅历史")
                 },) { innerPadding ->
                 Column(
                     modifier = Modifier
@@ -87,14 +95,16 @@ fun LibraryChips(vm : NetWorkViewModel) {
     }
 
     if(showBottomSheet_Borrow) {
-        ModalBottomSheet(onDismissRequest = { showBottomSheet_Borrow = false }, sheetState = sheetState_Borrow,
-            shape = Round(sheetState_Borrow)
+        HazeBottomSheet (
+            onDismissRequest = { showBottomSheet_Borrow = false },
+            hazeState = hazeState,
+            showBottomSheet = showBottomSheet_Borrow
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("当前借阅")
+                    HazeBottomSheetTopBar("当前借阅")
                 },) { innerPadding ->
                 Column(
                     modifier = Modifier

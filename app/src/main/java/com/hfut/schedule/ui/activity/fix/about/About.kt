@@ -53,16 +53,19 @@ import com.hfut.schedule.ui.activity.home.cube.items.main.Screen
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.VersionInfo
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.getUpdates
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
+import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.TransplantListItem
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.viewmodel.LoginViewModel
+import dev.chrisbanes.haze.HazeState
 import java.util.Hashtable
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean,navController : NavController) {
+fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean,navController : NavController,hazeState: HazeState) {
     Column (modifier = Modifier
         .verticalScroll(rememberScrollState())
         .padding(innerPadding)){
@@ -71,9 +74,12 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean
         var showBottomSheet by remember { mutableStateOf(false) }
         val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
         if (showBottomSheet) {
-            ModalBottomSheet(
+            HazeBottomSheet (
                 onDismissRequest = { showBottomSheet = false },
-                sheetState = sheetState,
+                showBottomSheet = showBottomSheet,
+                hazeState = hazeState,
+                autoShape = false
+//                sheetState = sheetState,
                 //shape = Round(sheetState)
             ) {
                 Column {
@@ -90,16 +96,18 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean
         val sheetState_version = rememberModalBottomSheetState(skipPartiallyExpanded = true)
         var showBottomSheet_version by remember { mutableStateOf(false) }
         if (showBottomSheet_version) {
-            ModalBottomSheet(
+            HazeBottomSheet (
                 onDismissRequest = { showBottomSheet_version = false },
-                sheetState = sheetState_version,
-                shape = Round(sheetState_version)
+                hazeState = hazeState,
+                showBottomSheet = showBottomSheet_version
+//                sheetState = sheetState_version,
+//                shape = bottomSheetRound(sheetState_version)
             ) {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     containerColor = androidx.compose.ui.graphics.Color.Transparent,
                     topBar = {
-                        CustomTopBar("本版本新特性")
+                        HazeBottomSheetTopBar("本版本新特性")
                     },
                 ) { innerPadding ->
                     Column(
@@ -117,33 +125,17 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean
         val sheetState_info = rememberModalBottomSheetState(skipPartiallyExpanded = true)
         var showBottomSheet_info by remember { mutableStateOf(false) }
         if (showBottomSheet_info) {
-            ModalBottomSheet(
+            HazeBottomSheet(
                 onDismissRequest = { showBottomSheet_info = false },
-                sheetState = sheetState_info,
-                shape = Round(sheetState_info)
+                hazeState = hazeState,
+                showBottomSheet = showBottomSheet_info,
+//                sheetState = sheetState_info,
+//                shape = bottomSheetRound(sheetState_info)
             ) {
                 About(vm)
             }
         }
 
-//
-//        ListItem(
-//            headlineContent = { Text(text = "Github开源") },
-//            supportingContent = { Text(text = "如您想成为下个版本的构建者,来这里提交你的代码吧")},
-//            leadingContent = {
-//                Icon(
-//                    painterResource(R.drawable.github),
-//                    contentDescription = "Localized description",
-//                )
-//            },
-//            modifier = Modifier.clickable{
-//                //when(select) {
-//                //   false -> StartUri("https://gitee.com/chiu-xah/HFUT-Schedule")
-//                //true ->
-//                Starter.startWebUrl("https://github.com/Chiu-xaH/HFUT-Schedule")
-//                //  }
-//            }
-//        )
 
         TransplantListItem(
             headlineContent = { Text(text = "推广本应用") },
@@ -197,7 +189,7 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean
 
             ///////////////////////////////
 
-            if(VersionUtils.getVersionName().contains("Preview"))
+            if(VersionUtils.isPreview())
                 TransplantListItem(
                     headlineContent = { Text(text = "测试 调试") },
                     supportingContent = { Text(text = "用户禁入!")},

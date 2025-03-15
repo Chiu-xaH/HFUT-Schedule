@@ -46,10 +46,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.beans.guagua.UseCodeResponse
+import com.hfut.schedule.logic.enums.ShowerScreen
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.logic.utils.data.reEmptyLiveDta
@@ -63,9 +66,13 @@ import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.components.statusUI
 import com.hfut.schedule.ui.utils.components.statusUI2
+import com.hfut.schedule.ui.utils.navigateAndClear
+import com.hfut.schedule.ui.utils.navigateAndSave
 import com.hfut.schedule.ui.utils.style.CardForListColor
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
 import com.hfut.schedule.ui.utils.style.RowHorizontal
 import com.hfut.schedule.viewmodel.GuaGuaViewModel
+import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -74,7 +81,7 @@ import kotlinx.coroutines.launch
 //*******最新模范写法****
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UseCodeUI(vm: GuaGuaViewModel) {
+fun UseCodeUI(vm: GuaGuaViewModel,hazeState: HazeState,navController: NavHostController) {
     var refresh by remember { mutableStateOf(true) }
     var loading by remember { mutableStateOf(true) }
     var useCode by remember { mutableStateOf("# # #") }
@@ -107,12 +114,16 @@ fun UseCodeUI(vm: GuaGuaViewModel) {
 
     if (showBottomSheet) {
         password = ""
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState,
+            showBottomSheet = showBottomSheet,
+            hazeState = hazeState,
+            autoShape = false
+//            sheetState = sheetState,
         ) {
             if(password.length != len) {
                 Column {
+                    Spacer(Modifier.height(AppHorizontalDp()*1.5f))
                     CirclePoint(text = passwordStatus, password = password, num = 5)
                     Spacer(modifier = Modifier.height(20.dp))
                     KeyBoard(
@@ -161,7 +172,7 @@ fun UseCodeUI(vm: GuaGuaViewModel) {
                             RowHorizontal {
                                 Button(
                                     onClick = {
-                                        Starter.loginGuaGua()
+                                        navController.navigateAndSave(ShowerScreen.LOGIN.name)
                                     }
                                 ) {
                                     Text("去登录")

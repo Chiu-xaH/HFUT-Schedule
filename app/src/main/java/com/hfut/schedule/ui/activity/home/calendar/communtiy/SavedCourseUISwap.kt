@@ -49,6 +49,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -80,8 +81,11 @@ import com.hfut.schedule.ui.activity.home.calendar.getScheduleDate
 import com.hfut.schedule.ui.activity.home.search.functions.exam.getExam
 import com.hfut.schedule.ui.activity.home.search.functions.exam.getExamJXGLSTU
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
+import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -99,7 +103,9 @@ fun SaveCourse(
     friendUserName : String? = null,
     onDateChange : (LocalDate) ->Unit,
     today: LocalDate,
-    vm : NetWorkViewModel) {
+    vm : NetWorkViewModel,
+    hazeState: HazeState
+) {
 
     val table_1_1 by rememberSaveable { mutableStateOf("") }
     val table_1_2 by rememberSaveable { mutableStateOf("") }
@@ -626,13 +632,16 @@ fun SaveCourse(
     var showBottomSheet by remember { mutableStateOf(false) }
     if (showBottomSheet) {
 
-        ModalBottomSheet(
+        HazeBottomSheet(
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState,
+            showBottomSheet = showBottomSheet,
+            hazeState = hazeState,
+            autoShape = false
+//            sheetState = sheetState,
             //shape = Round(sheetState)
         ) {
-            CustomTopBar(if(showAll) sheetall[num].name else sheet[num].name)
-            DetailInfos(if(showAll) sheetall[num] else sheet[num],friendUserName != null, vm = vm)
+            HazeBottomSheetTopBar(if(showAll) sheetall[num].name else sheet[num].name)
+            DetailInfos(if(showAll) sheetall[num] else sheet[num],friendUserName != null, vm = vm, hazeState )
         }
     }
 
@@ -832,18 +841,35 @@ fun SaveCourse(
 @Composable
 fun ScheduleTopDate(showAll: Boolean,today : LocalDate,blur : Boolean) {
     val mondayOfCurrentWeek = today.minusDays(today.dayOfWeek.value - 1L)
+    val todayDate = DateTimeUtils.Date_yyyy_MM_dd
+
     Column(modifier = Modifier.background(Color.Transparent)) {
         Spacer(modifier = Modifier.height(5.dp))
         LazyVerticalGrid(columns = GridCells.Fixed(if(showAll)7 else 5),modifier = Modifier.padding(horizontal = 10.dp)){
             items(if(showAll)7 else 5) { item ->
+
                 val date = mondayOfCurrentWeek.plusDays(item.toLong()).toString() //YYYY-MM-DD 与考试对比
-                val isToday = date == DateTimeUtils.Date_yyyy_MM_dd
+                val isToday = date == todayDate
+
+                var animated by remember { mutableStateOf(false) }
+                val fontSize = if (showAll) 12f else 14f
+                val fontSizeAnimated by animateFloatAsState(
+                    targetValue = if (isToday && animated) fontSize*1.25f else fontSize,
+                    animationSpec = tween(durationMillis = MyApplication.ANIMATION_SPEED), label = "fontSizeAnimation",
+                    finishedListener = { if (isToday) animated = false }
+                )
+                LaunchedEffect(isToday) {
+                    if (isToday) {
+                        animated = true
+                    }
+                }
+
                 if (weeksBetween > 0)
                     Text(
                         text = date.substringAfter("-"),
                         textAlign = TextAlign.Center,
-                        fontSize = if(showAll)12.sp else 14.sp,
-                        color = if(isToday) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.primary,
+                        fontSize = fontSizeAnimated.sp,
+                        color = if(isToday) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.primary,
                         fontWeight = if(isToday) FontWeight.Bold else FontWeight.Normal
                     )
                 else Text(

@@ -13,16 +13,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -51,24 +55,27 @@ import com.hfut.schedule.logic.beans.MyAPIResponse
 import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
-import com.hfut.schedule.logic.utils.parse.getMy
+import com.hfut.schedule.logic.utils.parse.ParseJsons.getMy
 import com.hfut.schedule.ui.activity.home.calendar.multi.AddCourseUI
 import com.hfut.schedule.ui.activity.home.calendar.multi.getFriendsList
 import com.hfut.schedule.ui.activity.home.calendar.multi.getFriendsCourse
 import com.hfut.schedule.ui.activity.home.calendar.next.DatumUI
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotalForApi
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
+import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LittleDialog
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.TransplantListItem
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.viewmodel.UIViewModel
+import dev.chrisbanes.haze.HazeState
 import java.io.File
 
 
@@ -83,12 +90,12 @@ fun MultiScheduleSettings(
     onSelectedChange : (Int) -> Unit,
     vm : NetWorkViewModel,
     onFriendChange : (Boolean) -> Unit,
-    vmUI : UIViewModel
+    vmUI : UIViewModel,
+    hazeState: HazeState
 ) {
 
     var num  by remember { mutableStateOf(getNum()) }
     var showDialog by remember { mutableStateOf(false) }
-    var showDialog_Add by remember { mutableStateOf(false) }
     var showDialog_Del by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -114,25 +121,11 @@ fun MultiScheduleSettings(
                 showDialog = false
                 Remove(selectedDel)
             },
-            dialogTitle = "提示",
             dialogText = "要删除课表 ${getIndex(num)} 吗",
-            conformtext = "确定",
-            dismisstext = "取消"
+            hazeState = hazeState
         )
     }
-    if(showDialog_Add) {
-        LittleDialog(
-            onDismissRequest = { showDialog_Add = false },
-            onConfirmation = {
-                Add("课表"+(getNum()+4).toString())
-                showDialog_Add = false
-            },
-            dialogTitle = "添加",
-            dialogText = "确定新的课表",
-            conformtext = "确定",
-            dismisstext = "取消"
-        )
-    }
+
     if(showDialog_Del) {
         LittleDialog(
             onDismissRequest = { showDialog_Del = false },
@@ -140,20 +133,21 @@ fun MultiScheduleSettings(
                 showDialog_Del = false
                 DeleteAll()
             },
-            dialogTitle = "提示",
             dialogText = "要删除自定义添加的全部课表吗",
-            conformtext = "确定",
-            dismisstext = "取消"
+            hazeState = hazeState
         )
     }
     if (showBottomSheet) {
-        ModalBottomSheet(onDismissRequest = { showBottomSheet = false }, sheetState = sheetState, modifier = Modifier,
-             shape = Round(sheetState)
+        HazeBottomSheet (
+            onDismissRequest = { showBottomSheet = false },
+            showBottomSheet = showBottomSheet,
+            hazeState = hazeState,
+            isFullExpand = false
         ) {
             Scaffold(
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("说明")
+                    HazeBottomSheetTopBar("说明")
                 }
             ) {innerPadding->
                 Column(modifier = Modifier
@@ -165,19 +159,21 @@ fun MultiScheduleSettings(
         }
     }
     if (showBottomSheet_add) {
-        ModalBottomSheet(onDismissRequest = { showBottomSheet_add = false }, sheetState = sheetState_add, modifier = Modifier,
-            shape = Round(sheetState_add)
+        HazeBottomSheet (onDismissRequest = { showBottomSheet_add = false },
+            showBottomSheet = showBottomSheet_add,
+            hazeState = hazeState,
+            isFullExpand = false
         ) {
             Scaffold(
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("添加课程表")
+                    HazeBottomSheetTopBar("添加课程表")
                 }
             ) {innerPadding->
                 Column(modifier = Modifier
                     .padding(innerPadding)
                     .fillMaxSize()) {
-                    AddCourseUI(vm)
+                    AddCourseUI(vm,hazeState)
                 }
             }
         }
@@ -192,18 +188,20 @@ fun MultiScheduleSettings(
 
 
     if (showBottomSheet_next) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet_next = false },
-            sheetState = sheetState_next,
-            shape = Round(sheetState_next)
+//            sheetState = sheetState_next,
+//            shape = bottomSheetRound(sheetState_next)
+            showBottomSheet = showBottomSheet_next,
+            hazeState = hazeState
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("下学期课程表") {
+                    HazeBottomSheetTopBar("下学期课程表") {
                         Row {
-                            CourseTotalForApi(vm=vm, next=next, onNextChange = { next = !next})
+                            CourseTotalForApi(vm=vm, next=next, onNextChange = { next = !next}, hazeState = hazeState)
                             TextButton(onClick = { showAll = !showAll }) {
                                 Icon(painter = painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "")
                             }
@@ -215,14 +213,17 @@ fun MultiScheduleSettings(
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    prefs.getString("gradeNext","23")?.let { DatumUI(showAll, it, innerPadding, vmUI,vm) }
+                    DatumUI(showAll, innerPadding, vmUI,vm,hazeState)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
         }
     }
+    val selectedColor = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
+    val normalColor = CardDefaults.outlinedCardColors(containerColor = Color.Transparent)
+
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-        CustomTopBar("课程表") {
+        BottomSheetTopBar("多课表") {
             Row() {
                 FilledTonalIconButton(onClick = { showBottomSheet_add = true }) {
                     Icon(painterResource(id = R.drawable.add), contentDescription = "")
@@ -233,10 +234,12 @@ fun MultiScheduleSettings(
             }
         }
         val friendList = getFriendsList()
+
         LazyRow {
             //教务课表
+            item { Spacer(Modifier.width(AppHorizontalDp()-3.dp)) }
             item {
-                Card(
+                OutlinedCard (
                     modifier = Modifier
                         .size(width = 100.dp, height = 70.dp)
                         .padding(horizontal = 4.dp)
@@ -244,6 +247,7 @@ fun MultiScheduleSettings(
                             isFriendMode = false
                             selected = JXGLSTU
                         },
+                    colors = if(selected == JXGLSTU) selectedColor else normalColor
                 ) {
                     Box(modifier = Modifier.fillMaxSize()) {
                         Text("教务系统", modifier = Modifier.align(Alignment.Center)
@@ -253,14 +257,15 @@ fun MultiScheduleSettings(
             }
             //社区课表
             item {
-                Card(
+                OutlinedCard (
                     modifier = Modifier
                         .size(width = 100.dp, height = 70.dp)
                         .padding(horizontal = 4.dp)
                         .clickable {
                             isFriendMode = false
                             selected = COMMUNITY
-                        }
+                        },
+                    colors = if(selected == COMMUNITY) selectedColor else normalColor
                 ) {
                     Box(modifier = Modifier.fillMaxSize()) {
                         Text("智慧社区", modifier = Modifier.align(Alignment.Center)
@@ -271,7 +276,7 @@ fun MultiScheduleSettings(
             }
             //下学期课表
             item {
-                Card(
+                OutlinedCard (
                     modifier = Modifier
                         .size(width = 100.dp, height = 70.dp)
                         .padding(horizontal = 4.dp)
@@ -286,7 +291,8 @@ fun MultiScheduleSettings(
                             } else {
                                 MyToast("入口暂未开放")
                             }
-                        }
+                        },
+                    colors = if(selected == NEXT) selectedColor else normalColor
                 ) {
                     Box(modifier = Modifier.fillMaxSize()) {
                         Text("下学期", modifier = Modifier.align(Alignment.Center)
@@ -297,7 +303,7 @@ fun MultiScheduleSettings(
             }
             //好友课表
             items(friendList.size) { item ->
-                Card(
+                OutlinedCard (
                     modifier = Modifier
                         .size(width = 100.dp, height = 70.dp)
                         .padding(horizontal = 4.dp)
@@ -315,7 +321,8 @@ fun MultiScheduleSettings(
                                 //s删除
 
                             }
-                        )
+                        ),
+                    colors = if(selected.toString() == (friendList[item]?.userId ?: 999)) selectedColor else normalColor
                 ) {
                     Box(modifier = Modifier.fillMaxSize()) {
                         friendList[item]?.realname?.let {
@@ -330,7 +337,7 @@ fun MultiScheduleSettings(
             }
             //文件导入课表
             items(num) { item ->
-                Card(
+                OutlinedCard (
                     modifier = Modifier
                         .size(width = 100.dp, height = 70.dp)
                         .padding(horizontal = 4.dp)
@@ -345,7 +352,8 @@ fun MultiScheduleSettings(
                                 selectedDel = item + 1
                                 showDialog = true
                             }
-                        )
+                        ),
+                    colors = if(selected == item+1+2) selectedColor else normalColor
                 ) {
                     Box(modifier = Modifier.fillMaxSize()) {
                         Text(getIndex(item+1).toString(), modifier = Modifier.align(Alignment.Center),
@@ -355,7 +363,7 @@ fun MultiScheduleSettings(
             }
             //添加按钮
             item {
-                Card(
+                OutlinedCard (
                     modifier = Modifier
                         .size(width = 100.dp, height = 70.dp)
                         .padding(horizontal = 4.dp)
@@ -363,14 +371,17 @@ fun MultiScheduleSettings(
                             showBottomSheet_add = true
                             //showDialog_Add = true
                             //MyToast("请于文件管理选择他人分享的文件(json,txt)以本应用打开")
-                        }
+                        },
+                    colors = normalColor
                 ) {
                     Box(modifier = Modifier.fillMaxSize()) {
                         Icon(painterResource(id = R.drawable.add), contentDescription = "",modifier = Modifier.align(Alignment.Center))
                     }
                 }
             }
+            item { Spacer(Modifier.width(AppHorizontalDp()-3.dp)) }
         }
+        Spacer(Modifier.height(10.dp))
         DividerTextExpandedWith(text = "操作") {
             TransplantListItem(
                 headlineContent = { Text(text = "导出教务课表") },

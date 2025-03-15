@@ -31,6 +31,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -103,16 +104,21 @@ import com.hfut.schedule.ui.activity.login.First
 import com.hfut.schedule.ui.utils.NavigateAnimationManager
 import com.hfut.schedule.ui.utils.NavigateAnimationManager.ANIMATION_SPEED
 import com.hfut.schedule.ui.utils.NavigateAnimationManager.currentPage
-import com.hfut.schedule.ui.utils.NavigateAnimationManager.turnTo
+
 //import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnToClearly
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CustomTabRow
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.ui.utils.components.ScrollText
+import com.hfut.schedule.ui.utils.navigateAndSave
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
 import com.hfut.schedule.ui.utils.style.bottomBarBlur
+import com.hfut.schedule.ui.utils.style.bottomSheetBlur
+import com.hfut.schedule.ui.utils.style.dialogBlur
 import com.hfut.schedule.ui.utils.style.topBarBlur
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
@@ -195,14 +201,12 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
 
     if (showBottomSheet) {
         SharePrefs.saveString("Notifications", getNotifications().size.toString())
-        ModalBottomSheet(onDismissRequest = { showBottomSheet = false }, sheetState = sheetState, modifier = Modifier,
-            shape = Round(sheetState)
-        ) {
+        HazeBottomSheet(onDismissRequest = { showBottomSheet = false }, showBottomSheet = showBottomSheet, isFullExpand = true, hazeState = hazeState) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("收纳")
+                    HazeBottomSheetTopBar("收纳")
                 },
             ) { innerPadding ->
                 Column(
@@ -225,11 +229,20 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
     val currentAnimationIndex by DataStoreManager.animationTypeFlow.collectAsState(initial = 0)
 
     if (showBottomSheet_multi) {
-        ModalBottomSheet(onDismissRequest = { showBottomSheet_multi = false }, sheetState = sheetState_multi, modifier = Modifier,
-          //  shape = Round(sheetState_multi)
-        ) {
-            Column(
+//        ModalBottomSheet(
+//            onDismissRequest = { showBottomSheet_multi = false }, sheetState = sheetState_multi,
+//            dragHandle = null,
+//        )
+        HazeBottomSheet(
+            showBottomSheet = showBottomSheet_multi,
+            onDismissRequest = { showBottomSheet_multi = false },
+            hazeState = hazeState,
+            autoShape = false
 
+        )
+        {
+            Column(
+//                modifier = Modifier.bottomSheetBlur(hazeState)
             ){
                 MultiScheduleSettings(ifSaved,swapUI,
                     onSelectedChange = { newSelected ->
@@ -239,7 +252,8 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
                     onFriendChange = { newed ->
                         isFriend = newed
                     },
-                    vmUI
+                    vmUI,
+                    hazeState
                 )
             }
         }
@@ -274,7 +288,7 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
         modifier = Modifier.fillMaxSize(),
             //.blur(blurRadius, BlurredEdgeTreatment.Unbounded),
         topBar = {
-            Column(modifier = Modifier.topBarBlur(hazeState, blur)) {
+            Column(modifier = Modifier.topBarBlur(hazeState,)) {
                 TopAppBar(
                     colors = TopAppBarDefaults.mediumTopAppBarColors(
                         containerColor = Color.Transparent
@@ -298,7 +312,7 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
                     actions = {
                         when(targetPage){
                             COURSES -> {
-                                CourseTotalForApi(vm=vm, isIconOrText = true)
+                                CourseTotalForApi(vm=vm, isIconOrText = true, hazeState = hazeState)
                                 IconButton(onClick = {
                                     showBottomSheet_multi = true
                                 }) {
@@ -312,7 +326,7 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
                             }
                             FOCUS -> {
                                 Row {
-                                    ApiFromLife(vm)
+                                    ApiFromLife(vm,hazeState)
                                     TextButton(onClick = { showBottomSheet = true }) {
                                         BadgedBox(badge = {
                                             if (getNotifications().size.toString() != prefs.getString("Notifications",""))
@@ -342,14 +356,9 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
                         }
                     },
                 )
-//                if(!blur) {
-//                    if(bottomBarItems != FOCUS)
-//                        Divider()
-//                }
                 when(targetPage){
                     COURSES -> ScheduleTopDate(showAll,today,blur)
                     FOCUS -> CustomTabRow(pagerState, titles, blur)
-                   // SEARCH -> SearchFuncs()
                     else -> null
                 }
             }
@@ -357,7 +366,7 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
         bottomBar = {
             Column {
                 NavigationBar(containerColor = Color.Transparent ,
-                    modifier = Modifier.bottomBarBlur(hazeState, blur)
+                    modifier = Modifier.bottomBarBlur(hazeState)
                 ) {
                     //悬浮底栏效果
                     //modifier = Modifier.padding(AppHorizontalDp()).shadow(10.dp).clip(RoundedCornerShape(14.dp))
@@ -391,7 +400,7 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
                                     items[3] -> targetPage = SETTINGS
                                 }
                                 if (!selected) {
-                                    turnTo(navController,route)
+                                    navController.navigateAndSave(route)
                                 }
                             },
                             label = { Text(text = item.label) },
@@ -431,31 +440,41 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
                 }) {
                     if(!isFriend)
                         when (swapUI) {
-                            COMMUNITY -> SaveCourse(showAll, innerPadding,vmUI, onDateChange = { new -> today = new}, today = today, vm = vm)
-                            JXGLSTU -> CalendarScreen(showAll,vm,innerPadding,vmUI,false,vm2,false,{newDate -> today = newDate},today)
+                            COMMUNITY -> SaveCourse(showAll, innerPadding,vmUI, onDateChange = { new -> today = new}, today = today, vm = vm, hazeState = hazeState)
+                            JXGLSTU -> CalendarScreen(showAll,vm,innerPadding,vmUI,false,vm2,false,{newDate -> today = newDate},today,hazeState)
                             else -> {
                                 CustomSchedules(showAll,innerPadding,vmUI,swapUI-2,{newDate-> today = newDate}, today)
                             }
                         }
                     else {
-                        SaveCourse(showAll,innerPadding,vmUI,swapUI.toString(),onDateChange = { new -> today = new}, today = today,vm)
+                        SaveCourse(showAll,innerPadding,vmUI,swapUI.toString(),onDateChange = { new -> today = new}, today = today,vm,hazeState)
                     }
                 }
 
             }
             composable(FOCUS.name) {
                 Scaffold {
-                    TodayScreen(vm,vm2,innerPadding, blur,vmUI,ifSaved,false,pagerState)
+                    TodayScreen(vm,vm2,innerPadding, blur,vmUI,ifSaved,false,pagerState, hazeState = hazeState)
                 }
             }
             composable(SEARCH.name) {
                 Scaffold {
-                    SearchScreen(vm,ifSaved,innerPadding,vmUI,searchText)
+                    SearchScreen(vm,ifSaved,innerPadding,vmUI,searchText, hazeState = hazeState)
                 }
             }
             composable(SETTINGS.name) {
                 Scaffold {
-                    SettingsScreen(vm,showlable, showlablechanged = { showlablech -> showlable = showlablech},ifSaved,innerPadding, blur,blurchanged = { blurch -> blur = blurch},vm2)
+                    SettingsScreen(
+                        vm,
+                        showlable,
+                        showlablechanged = { showlablech -> showlable = showlablech},
+                        ifSaved,
+                        innerPadding,
+                        blur,
+                        blurchanged = { blurch -> blur = blurch},
+                        vm2,
+                        hazeState
+                    )
                 }
             }
         }

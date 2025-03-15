@@ -37,7 +37,7 @@ fun VersionInfoCard() {
         title = "版本 " + VersionUtils.getVersionName()
     ) {
         TransplantListItem(
-            overlineContent = { Text(text = "2025-03-09") },
+            overlineContent = { Text(text = "2025-03-15") },
             leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
             headlineContent = { Text(text = "版本号 ${VersionUtils.getVersionCode()}") },
         )
@@ -48,15 +48,16 @@ fun VersionInfoCard() {
 @Composable
 fun VersionInfo() {
     Spacer(Modifier.height(3.dp))
-    VersionInfoCard()
+    DividerTextExpandedWith("版本信息",openBlurAnimation = false) {
+        VersionInfoCard()
+    }
     DividerTextExpandedWith(text = "新特性") {
-        UpdateItems("新增 图书检索翻页与地点信息",null,UpdateType.ADD)
-        UpdateItems("修复 初次使用时取色设置默认值错误的Bug",null,UpdateType.FIX)
-        UpdateItems("优化 菜单组件的UI定位",null,UpdateType.ADD)
-        UpdateItems("优化 部分逻辑与云端的解耦",null,UpdateType.OPTIMIZE)
-        UpdateItems("优化 图片验证码的启停逻辑","受云控，当需要图片验证码时自动启用",UpdateType.OPTIMIZE)
-        UpdateItems("优化 部分界面的显示",null,UpdateType.OPTIMIZE)
-        UpdateItems("优化 网页预览部分逻辑，以及点击下载附件时的处理",null,UpdateType.OPTIMIZE)
+        UpdateItems("重构 弹窗对话框组件的样式",null,UpdateType.RENEW)
+        UpdateItems("新增 对全局界面的实时模糊适配",null,UpdateType.ADD)
+        UpdateItems("优化 冗余代码、内存的占用及性能",null,UpdateType.OPTIMIZE)
+        UpdateItems("优化 原有渐变模糊的显示",null,UpdateType.OPTIMIZE)
+        UpdateItems("砍掉 莫奈取色功能，仅保留原生取色","考虑到所有常用用户均为Android12+(不包含游客)，并且旧的库已落后，删掉对后续的维护能带来便利和性能的优化",UpdateType.DEGREE)
+        UpdateItems("砍掉 不必要非必须的开关","例如 运动模糊",UpdateType.DEGREE)
     }
 }
 

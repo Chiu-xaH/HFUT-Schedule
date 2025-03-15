@@ -67,11 +67,12 @@ import com.hfut.schedule.ui.activity.home.search.functions.shower.getInGuaGua
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CardNormalColor
 import com.hfut.schedule.ui.utils.components.CardNormalDp
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.TransplantListItem
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
+import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -178,13 +179,13 @@ fun FocusCardSettings() {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
             sheetState = sheetState,
-            shape = Round(sheetState)
+            shape = bottomSheetRound(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("选择你想放在聚焦首页的项")
+                    BottomSheetTopBar("选择你想放在聚焦首页的项")
                 },
             ) { innerPadding ->
                 Column(
@@ -205,7 +206,7 @@ fun FocusCardSettings() {
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel, refreshing : Boolean) {
+fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel, refreshing : Boolean,hazeState: HazeState) {
     val showEle = prefs.getBoolean("SWITCHELE",true)
     val showToday = prefs.getBoolean("SWITCHTODAY",true)
     val showWeb = prefs.getBoolean("SWITCHWEB",true)
@@ -246,19 +247,19 @@ fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel, refreshing : Boolean) {
                         if(showToday)
                             Box(modifier = Modifier
                                 .weight(.5f)) {
-                                TodayUI()
+                                TodayUI(hazeState)
                             }
                     }
                 if(showWeb || showEle)
                     Row {
                         if(showEle)
                             Box(modifier = Modifier.weight(.5f)) {
-                                Electric(vm,true,vmUI)
+                                Electric(vm,true,vmUI,hazeState)
                             }
                         if(showWeb)
                             Box(modifier = Modifier
                                 .weight(.5f)) {
-                                LoginWeb(vmUI,true,vm)
+                                LoginWeb(vmUI,true,vm,hazeState)
                             }
                     }
                 if(showCountDown || showShortCut)

@@ -44,6 +44,7 @@ import java.io.File
 
 object TesseractUtils {
     const val filename = "eng.traineddata"
+    @JvmStatic
     fun recognizeCaptcha(bitmap: Bitmap): String {
         try {
             val tesseractOCR = TesseractOCR()
@@ -55,11 +56,13 @@ object TesseractUtils {
         }
     }
 
+    @JvmStatic
     fun isExistModule(): Boolean {
         val appFilesDir = MyApplication.context.getExternalFilesDir(null) // 获取 /Android/data/包名/files/
         val tessFile = File(appFilesDir, "tessdata/$filename") // 目标路径：Android/data/包名/files/tessdata/eng.traineddata
         return tessFile.exists()
     }
+    @JvmStatic
     fun isModelInDownloadFolder(): Boolean {
         val downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) // /storage/emulated/0/Download/
         val modelFile = File(downloadDir, filename)
@@ -67,6 +70,7 @@ object TesseractUtils {
     }
 
     // 移动下载好的模型到目录
+    @JvmStatic
     fun moveDownloadedModel() {
         val appFilesDir = MyApplication.context.getExternalFilesDir(null) // Android/data/包名/files/
         val tessDir = File(appFilesDir, "tessdata") // 目标目录：Android/data/包名/files/tessdata
@@ -89,6 +93,7 @@ object TesseractUtils {
         }
     }
 
+    @JvmStatic
     fun deleteModel(): Boolean {
         val tessDir = File(MyApplication.context.getExternalFilesDir(null), "tessdata") // 获取 Android/data/包名/files/tessdata 目录
         val modelFile = File(tessDir, filename)

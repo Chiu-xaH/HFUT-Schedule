@@ -66,10 +66,13 @@ import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTot
 import com.hfut.schedule.ui.utils.NavigateAnimationManager
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CardNormalDp
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
+import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.MyToast
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
+import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -77,7 +80,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CourseSearchUI(vm : NetWorkViewModel) {
+fun CourseSearchUI(vm : NetWorkViewModel,hazeState: HazeState) {
     var className by remember { mutableStateOf( getPersonInfo().classes ?: "") }
     var courseName by remember { mutableStateOf("") }
     var courseId by remember { mutableStateOf("") }
@@ -123,7 +126,7 @@ fun CourseSearchUI(vm : NetWorkViewModel) {
         modifier = Modifier.fillMaxSize(),
         containerColor = Color.Transparent,
         topBar = {
-            CustomTopBar("开课查询") {
+            HazeBottomSheetTopBar("开课查询") {
                 androidx.compose.animation.AnimatedVisibility(
                     visible = !showSearch,
                     enter = NavigateAnimationManager.upDownAnimation.enter,
@@ -284,7 +287,7 @@ fun CourseSearchUI(vm : NetWorkViewModel) {
                             enter = fadeIn(),
                             exit = fadeOut()
                         ) {
-                            CourseTotalUI(json = vm.courseRsponseData.value, isSearch = true, sortType = true,vm)
+                            CourseTotalUI(json = vm.courseRsponseData.value, isSearch = true, sortType = true,vm, hazeState = hazeState)
                         }
                     }
                 }
@@ -345,7 +348,7 @@ fun CourseSearchUI(vm : NetWorkViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ApiForCourseSearch(vm: NetWorkViewModel,courseName : String?,courseId : String?,showBottomSheet : Boolean,onDismissRequest :  () -> Unit) {
+fun ApiForCourseSearch(vm: NetWorkViewModel,courseName : String?,courseId : String?,showBottomSheet : Boolean,hazeState: HazeState,onDismissRequest :  () -> Unit) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     val cookie = if (!vm.webVpn) prefs.getString(
@@ -383,16 +386,18 @@ fun ApiForCourseSearch(vm: NetWorkViewModel,courseName : String?,courseId : Stri
 
         if(loading) { refresh() }
 
-        ModalBottomSheet(
-            onDismissRequest,
-            sheetState = sheetState,
-            shape = Round(sheetState)
+        HazeBottomSheet (
+            onDismissRequest = onDismissRequest,
+            showBottomSheet = showBottomSheet,
+            hazeState = hazeState,
+//            sheetState = sheetState,
+//            shape = bottomSheetRound(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("开课查询 ${courseName ?: courseId}")
+                    HazeBottomSheetTopBar("开课查询 ${courseName ?: courseId}")
                 },
             ) { innerPadding ->
                 Box(
@@ -418,7 +423,7 @@ fun ApiForCourseSearch(vm: NetWorkViewModel,courseName : String?,courseId : Stri
                                     enter = fadeIn(),
                                     exit = fadeOut()
                                 ) {
-                                    CourseTotalUI(json = vm.courseRsponseData.value, isSearch = true, sortType = true,vm)
+                                    CourseTotalUI(json = vm.courseRsponseData.value, isSearch = true, sortType = true,vm, hazeState = hazeState)
                                 }
                             }
                         }

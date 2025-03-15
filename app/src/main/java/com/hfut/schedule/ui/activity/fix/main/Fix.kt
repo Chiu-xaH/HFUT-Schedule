@@ -60,7 +60,8 @@ import com.hfut.schedule.ui.activity.fix.about.AboutUI
 import com.hfut.schedule.ui.activity.fix.fix.FixUI
 import com.hfut.schedule.ui.utils.NavigateAnimationManager
 import com.hfut.schedule.ui.utils.NavigateAnimationManager.currentPage
-import com.hfut.schedule.ui.utils.NavigateAnimationManager.turnTo
+
+import com.hfut.schedule.ui.utils.navigateAndSave
 import com.hfut.schedule.ui.utils.style.bottomBarBlur
 import com.hfut.schedule.ui.utils.style.topBarBlur
 import dev.chrisbanes.haze.HazeState
@@ -91,7 +92,7 @@ fun Fix(vm : LoginViewModel,vm2 : NetWorkViewModel) {
         topBar = {
             Column {
                 TopAppBar(
-                    modifier = Modifier.topBarBlur(hazeState, blur),
+                    modifier = Modifier.topBarBlur(hazeState),
                     colors = TopAppBarDefaults.mediumTopAppBarColors(
                         containerColor = Color.Transparent,
                         titleContentColor = MaterialTheme.colorScheme.primary,
@@ -114,7 +115,7 @@ fun Fix(vm : LoginViewModel,vm2 : NetWorkViewModel) {
 //                if(!blur)
 //                Divider()
                 NavigationBar(containerColor =  Color.Transparent,
-                    modifier = Modifier.bottomBarBlur(hazeState, blur)) {
+                    modifier = Modifier.bottomBarBlur(hazeState)) {
 
                     val items = listOf(
                         NavigationBarItemData(
@@ -149,7 +150,7 @@ fun Fix(vm : LoginViewModel,vm2 : NetWorkViewModel) {
                                 }
 
                                 if (!selected) {
-                                    turnTo(navController,route)
+                                    navController.navigateAndSave(route)
                                 }
                             },
                             label = { Text(text = item.label) },
@@ -176,13 +177,13 @@ fun Fix(vm : LoginViewModel,vm2 : NetWorkViewModel) {
             )) {
             composable(FixBarItems.Fix.name) {
                 Scaffold {
-                    FixUI(innerPadding = innerPadding,vm, vm2)
+                    FixUI(innerPadding = innerPadding,vm, vm2,hazeState)
                 }
 
             }
             composable(FixBarItems.About.name) {
                 Scaffold {
-                    AboutUI(innerPadding = innerPadding, vm,false,navController)
+                    AboutUI(innerPadding = innerPadding, vm,false,navController,hazeState)
                 }
             }
         }

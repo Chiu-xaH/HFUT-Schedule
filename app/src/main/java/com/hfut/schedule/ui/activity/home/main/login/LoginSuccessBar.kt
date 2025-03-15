@@ -1,16 +1,9 @@
 package com.hfut.schedule.ui.activity.home.main.login
 
 import android.annotation.SuppressLint
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Column
@@ -44,12 +37,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Observer
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -57,48 +48,50 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.viewmodel.NetWorkViewModel
-import com.hfut.schedule.viewmodel.LoginViewModel
-import com.hfut.schedule.viewmodel.UIViewModel
-import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.beans.NavigationBarItemData
-import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
-import com.hfut.schedule.ui.activity.home.search.main.SearchScreen
-import com.hfut.schedule.ui.activity.home.cube.main.SettingsScreen
-import com.hfut.schedule.ui.activity.home.focus.main.TodayScreen
-import com.hfut.schedule.logic.enums.BottomBarItems.*
-import com.hfut.schedule.logic.utils.VersionUtils
+import com.hfut.schedule.logic.enums.BottomBarItems.COURSES
+import com.hfut.schedule.logic.enums.BottomBarItems.FOCUS
+import com.hfut.schedule.logic.enums.BottomBarItems.SEARCH
+import com.hfut.schedule.logic.enums.BottomBarItems.SETTINGS
 import com.hfut.schedule.logic.utils.DataStoreManager
-import com.hfut.schedule.ui.activity.home.calendar.communtiy.CourseDetailApi
-import com.hfut.schedule.ui.activity.home.calendar.jxglstu.CalendarScreen
-import com.hfut.schedule.ui.activity.home.main.saved.texts
-import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.getUpdates
+import com.hfut.schedule.logic.utils.VersionUtils
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
 import com.hfut.schedule.ui.activity.home.calendar.communtiy.SaveCourse
 import com.hfut.schedule.ui.activity.home.calendar.communtiy.ScheduleTopDate
+import com.hfut.schedule.ui.activity.home.calendar.jxglstu.CalendarScreen
 import com.hfut.schedule.ui.activity.home.calendar.multi.CustomSchedules
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.MyAPIItem
+import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.getUpdates
+import com.hfut.schedule.ui.activity.home.cube.main.SettingsScreen
+import com.hfut.schedule.ui.activity.home.focus.main.TodayScreen
 import com.hfut.schedule.ui.activity.home.main.saved.COMMUNITY
 import com.hfut.schedule.ui.activity.home.main.saved.JXGLSTU
 import com.hfut.schedule.ui.activity.home.main.saved.MultiScheduleSettings
+import com.hfut.schedule.ui.activity.home.main.saved.texts
 import com.hfut.schedule.ui.activity.home.search.functions.life.ApiFromLife
 import com.hfut.schedule.ui.activity.home.search.functions.notifications.NotificationItems
 import com.hfut.schedule.ui.activity.home.search.functions.notifications.getNotifications
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotalForApi
 import com.hfut.schedule.ui.activity.home.search.functions.webLab.LabUI
 import com.hfut.schedule.ui.activity.home.search.main.SearchFuncs
+import com.hfut.schedule.ui.activity.home.search.main.SearchScreen
 import com.hfut.schedule.ui.utils.NavigateAnimationManager
 import com.hfut.schedule.ui.utils.NavigateAnimationManager.currentPage
-import com.hfut.schedule.ui.utils.NavigateAnimationManager.turnTo
+
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.CustomTabRow
-import com.hfut.schedule.ui.utils.components.CustomTopBar
-import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.MyToast
-import com.hfut.schedule.ui.utils.style.Round
 import com.hfut.schedule.ui.utils.components.ScrollText
+import com.hfut.schedule.ui.utils.navigateAndSave
 import com.hfut.schedule.ui.utils.style.bottomBarBlur
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.ui.utils.style.topBarBlur
+import com.hfut.schedule.viewmodel.LoginViewModel
+import com.hfut.schedule.viewmodel.NetWorkViewModel
+import com.hfut.schedule.viewmodel.UIViewModel
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 import kotlinx.coroutines.CoroutineScope
@@ -158,13 +151,13 @@ fun SuccessUI(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel, w
     if (showBottomSheet) {
         saveString("Notifications", getNotifications().size.toString())
         ModalBottomSheet(onDismissRequest = { showBottomSheet = false }, sheetState = sheetState,
-            shape = Round(sheetState)
+            shape = bottomSheetRound(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("收纳")
+                    BottomSheetTopBar("收纳")
                 },
             ) { innerPadding ->
                 Column(
@@ -208,7 +201,8 @@ fun SuccessUI(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel, w
                     onFriendChange = { newed ->
                         isFriend = newed
                     },
-                    vmUI
+                    vmUI,
+                    hazeState
                 )
             }
         }
@@ -228,7 +222,7 @@ fun SuccessUI(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel, w
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            Column(modifier = Modifier.topBarBlur(hazeState, blur)) {
+            Column(modifier = Modifier.topBarBlur(hazeState)) {
                 TopAppBar(
                    // modifier = Modifier.topBarBlur(hazeState, blur),
                     colors = TopAppBarDefaults.mediumTopAppBarColors(
@@ -260,7 +254,7 @@ fun SuccessUI(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel, w
 //                                        MyAPIResponse::class.java).Next) {
 //                                    NextCourse(vmUI, false)
 //                                }
-                                CourseTotalForApi(vm=vm, isIconOrText = true)
+                                CourseTotalForApi(vm=vm, isIconOrText = true, hazeState = hazeState)
                                 IconButton(onClick = {
                                     showBottomSheet_multi = true
                                 }) {
@@ -274,7 +268,7 @@ fun SuccessUI(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel, w
                             }
                             FOCUS -> {
                                 Row {
-                                    ApiFromLife(vm)
+                                    ApiFromLife(vm,hazeState)
                                     TextButton(onClick = { showBottomSheet = true }) {
                                         BadgedBox(badge = {
                                             if (getNotifications().size.toString() != prefs.getString("Notifications",""))
@@ -322,7 +316,7 @@ fun SuccessUI(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel, w
 //                    Divider()
                 NavigationBar(
                     containerColor = Color.Transparent ,
-                    modifier = Modifier.bottomBarBlur(hazeState, blur)
+                    modifier = Modifier.bottomBarBlur(hazeState,)
                 ) {
                     val items = listOf(
                         NavigationBarItemData(COURSES.name, "课程表", painterResource(R.drawable.calendar),painterResource(R.drawable.calendar_month_filled)),
@@ -358,7 +352,7 @@ fun SuccessUI(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel, w
                                     items[3] -> bottomBarItems = SETTINGS
                                 }
                                 if (!selected) {
-                                    turnTo(navController,route)
+                                    navController.navigateAndSave(route)
                                 }
                             },
                             label = { Text(text = item.label) },
@@ -392,8 +386,8 @@ fun SuccessUI(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel, w
 
                     if(!isFriend)
                         when (swapUI) {
-                            COMMUNITY -> SaveCourse(showAll, innerPadding,vmUI, onDateChange = { new -> today = new}, today = today, vm = vm)
-                            JXGLSTU -> CalendarScreen(showAll,vm,innerPadding,vmUI,webVpn,vm2,true,{newDate -> today = newDate},today)
+                            COMMUNITY -> SaveCourse(showAll, innerPadding,vmUI, onDateChange = { new -> today = new}, today = today, vm = vm, hazeState = hazeState)
+                            JXGLSTU -> CalendarScreen(showAll,vm,innerPadding,vmUI,webVpn,vm2,true,{newDate -> today = newDate},today, hazeState)
                             ///CustomSchedules(showAll,innerPadding,vmUI,-1)
 //                        NEXT -> {
 //                            Column(modifier = Modifier.padding(innerPadding)) {
@@ -405,7 +399,7 @@ fun SuccessUI(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel, w
                             }
                         }
                     else {
-                        SaveCourse(showAll,innerPadding,vmUI,swapUI.toString(),onDateChange = { new -> today = new}, today = today,vm)
+                        SaveCourse(showAll,innerPadding,vmUI,swapUI.toString(),onDateChange = { new -> today = new}, today = today,vm,hazeState = hazeState)
                     }
 
 //                    if(!swapUI) CalendarScreen(showAll,vm,grade,innerPadding,vmUI,webVpn,vm2,true,{newDate -> today = newDate},today)
@@ -414,19 +408,27 @@ fun SuccessUI(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel, w
             }
             composable(FOCUS.name) {
                 Scaffold {
-                    TodayScreen(vm,vm2,innerPadding,blur,vmUI,false,webVpn,pagerState)
+                    TodayScreen(vm,vm2,innerPadding,blur,vmUI,false,webVpn,pagerState, hazeState = hazeState)
                 }
             }
             composable(SEARCH.name) {
                 Scaffold {
-                    SearchScreen(vm,false,innerPadding,vmUI,searchText)
+                    SearchScreen(vm,false,innerPadding,vmUI,searchText,hazeState = hazeState)
                 }
             }
             composable(SETTINGS.name) {
                 Scaffold {
                     SettingsScreen(
-                        vm, showlable, showlablechanged = {showlablech -> showlable = showlablech},
-                        false,innerPadding,blur,blurchanged = {blurch -> blur = blurch},vm2 ) }
+                        vm,
+                        showlable,
+                        showlablechanged = {showlablech -> showlable = showlablech},
+                        false,
+                        innerPadding,
+                        blur,
+                        blurchanged = {blurch -> blur = blurch},
+                        vm2,
+                        hazeState
+                    ) }
             }
         }
     }

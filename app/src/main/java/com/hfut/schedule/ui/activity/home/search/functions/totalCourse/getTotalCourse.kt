@@ -10,7 +10,7 @@ import com.hfut.schedule.logic.utils.DateTimeUtils
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.parse.SemseterParser
-import com.hfut.schedule.logic.utils.parse.getMy
+import com.hfut.schedule.logic.utils.parse.ParseJsons.getMy
 import java.time.LocalDate
 
 fun getCourse(friendUserName : String? = null): List<courseBasicInfoDTOList>  {

@@ -28,13 +28,16 @@ import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotalForApi
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
+import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.TransplantListItem
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
+import dev.chrisbanes.haze.HazeState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Survey(ifSaved : Boolean,vm : NetWorkViewModel){
+fun Survey(ifSaved : Boolean,vm : NetWorkViewModel,hazeState: HazeState){
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
 
@@ -47,17 +50,19 @@ fun Survey(ifSaved : Boolean,vm : NetWorkViewModel){
         }
     )
     if (showBottomSheet) {
-        ModalBottomSheet(
+        HazeBottomSheet(
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState,
-            shape = Round(sheetState)
+            hazeState = hazeState,
+            showBottomSheet = showBottomSheet
+//            sheetState = sheetState,
+//            shape = bottomSheetRound(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("评教") {
-                        CourseTotalForApi(vm=vm)
+                    HazeBottomSheetTopBar("评教") {
+                        CourseTotalForApi(vm=vm, hazeState = hazeState)
                     }
                 },
             ) { innerPadding ->
@@ -66,7 +71,7 @@ fun Survey(ifSaved : Boolean,vm : NetWorkViewModel){
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    SurveyUI(vm)
+                    SurveyUI(vm,hazeState)
                 }
             }
         }

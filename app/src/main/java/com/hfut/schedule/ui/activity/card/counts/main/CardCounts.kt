@@ -65,11 +65,11 @@ import com.hfut.schedule.ui.activity.card.counts.drawLineChart
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CardNormalColor
 import com.hfut.schedule.ui.utils.components.CardNormalDp
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.SmallCard
 import com.hfut.schedule.ui.utils.components.TransplantListItem
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -170,13 +170,13 @@ fun monthCount(vm : NetWorkViewModel, innerPadding : PaddingValues) {
             ModalBottomSheet(
                 onDismissRequest = { showBottomSheet = false },
                 sheetState = sheetState,
-                shape = Round(sheetState)
+                shape = bottomSheetRound(sheetState)
             ) {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     containerColor = Color.Transparent,
                     topBar = {
-                        CustomTopBar("查询 ${Years}年${Months}月") {
+                        BottomSheetTopBar("查询 ${Years}年${Months}月") {
                             FilledTonalIconButton(onClick = {
                                 showBottomSheet = false
                                 Click(0)

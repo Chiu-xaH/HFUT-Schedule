@@ -4,10 +4,14 @@ import android.content.pm.PackageManager
 import com.hfut.schedule.App.MyApplication
 
 object VersionUtils {
+    private val packageName = MyApplication.context.packageManager.getPackageInfo(MyApplication.context.packageName,0)
+
+    fun isPreview() : Boolean = getVersionName().contains("Preview")
+
     fun getVersionCode() : Int {
         var versionCode = 0
         try {
-            versionCode = MyApplication.context.packageManager.getPackageInfo(MyApplication.context.packageName,0).versionCode
+            versionCode = packageName.versionCode
         } catch ( e : PackageManager.NameNotFoundException) {
             e.printStackTrace()
         }
@@ -17,7 +21,7 @@ object VersionUtils {
     fun getVersionName() : String {
         var versionName = ""
         try {
-            versionName = MyApplication.context.packageManager.getPackageInfo(MyApplication.context.packageName,0).versionName.toString()
+            versionName = packageName.versionName.toString()
         } catch ( e : PackageManager.NameNotFoundException) {
             e.printStackTrace()
         }
@@ -44,6 +48,7 @@ object VersionUtils {
     * 安卓8 27
     * 安卓7 26
      */
+    @JvmStatic
     fun androidVersionToSDK(androidVersion : String) : Int? {
         return when(androidVersion) {
             "15" -> 35

@@ -54,22 +54,25 @@ import com.hfut.schedule.logic.utils.data.reEmptyLiveDta
 import com.hfut.schedule.ui.utils.components.AnimationCustomCard
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CardNormalColor
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
+import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.TransplantListItem
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.NetWorkViewModel
+import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LibraryItem(vm : NetWorkViewModel) {
+fun LibraryItem(vm : NetWorkViewModel,hazeState: HazeState) {
     val sheetState_Library = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_Library by remember { mutableStateOf(false) }
 
@@ -89,16 +92,18 @@ fun LibraryItem(vm : NetWorkViewModel) {
 
 
     if (showBottomSheet_Library) {
-        ModalBottomSheet(
+        HazeBottomSheet(
             onDismissRequest = { showBottomSheet_Library = false },
-            sheetState = sheetState_Library,
-            shape = Round(sheetState_Library)
+            showBottomSheet = showBottomSheet_Library,
+            hazeState = hazeState
+//            sheetState = sheetState_Library,
+//            shape = bottomSheetRound(sheetState_Library)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("图书") {
+                    HazeBottomSheetTopBar("图书") {
                         FilledTonalButton(
                             onClick = {
                                 Starter.startWebUrl("http://210.45.242.5:8080/")
@@ -114,7 +119,7 @@ fun LibraryItem(vm : NetWorkViewModel) {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    BooksUI(vm)
+                    BooksUI(vm,hazeState)
                 }
             }
         }
@@ -125,7 +130,7 @@ fun LibraryItem(vm : NetWorkViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BooksUI(vm: NetWorkViewModel) {
+fun BooksUI(vm: NetWorkViewModel,hazeState: HazeState) {
     var input by remember { mutableStateOf( "") }
     val CommuityTOKEN = prefs.getString("TOKEN","")
     var refresh by remember { mutableStateOf(false) }
@@ -156,19 +161,22 @@ fun BooksUI(vm: NetWorkViewModel) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
     if (showBottomSheet) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState,
+            hazeState = hazeState,
+            showBottomSheet = showBottomSheet,
+            autoShape = false
+//            sheetState = sheetState,
         ) {
             Column {
-                CustomTopBar(title)
+                HazeBottomSheetTopBar(title, isPaddingStatusBar = false)
                 DetailBookUI(vm,callNum)
             }
         }
     }
 
     Column {
-        LibraryChips(vm)
+        LibraryChips(vm,hazeState)
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center

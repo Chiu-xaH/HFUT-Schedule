@@ -3,15 +3,40 @@ package com.hfut.schedule.activity.shower
 import android.content.pm.PackageManager
 import android.widget.Toast
 import androidx.compose.runtime.Composable
-import com.hfut.schedule.activity.main.BaseActivity
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.hfut.schedule.activity.BaseActivity
+import com.hfut.schedule.logic.enums.ShowerScreen
+import com.hfut.schedule.ui.activity.shower.login.ShowerLogin
 import com.hfut.schedule.ui.activity.shower.main.ShowerGuaGua
-import dagger.hilt.android.AndroidEntryPoint
+import com.hfut.schedule.ui.utils.NavigateAnimationManager
 
-@AndroidEntryPoint
+
 class ShowerActivity : BaseActivity() {
     @Composable
     override fun UI() {
-        ShowerGuaGua(super.showerVm,super.networkVm)
+        val navController = rememberNavController()
+        val first = if(intent.getStringExtra("FIRST") == ShowerScreen.HOME.name) ShowerScreen.HOME.name else ShowerScreen.LOGIN.name
+        NavHost(
+            navController = navController,
+            startDestination = first,
+            enterTransition = {
+                NavigateAnimationManager.fadeAnimation.enter
+            },
+            exitTransition = {
+                NavigateAnimationManager.fadeAnimation.exit
+            }
+        ) {
+            // 主UI
+            composable(ShowerScreen.HOME.name) {
+                ShowerGuaGua(super.showerVm,super.networkVm,navController)
+            }
+            // 游客模式
+            composable(ShowerScreen.LOGIN.name) {
+                ShowerLogin(super.showerVm,super.networkVm,navController)
+            }
+        }
     }
     @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(

@@ -100,7 +100,7 @@ fun SurveyList(vm : NetWorkViewModel) {
     val choiceList = getSurveyChoice(vm)
     val inputList = getSurveyInput(vm)
     //saveList(vm,choiceList,inputList)
-    var input by remember { mutableStateOf("好") }
+    var input by remember { mutableStateOf("") }
     val choiceNewList = mutableListOf<radioQuestionAnswer>()
     val inputNewList = mutableListOf<blankQuestionAnswer>()
 
@@ -120,7 +120,7 @@ fun SurveyList(vm : NetWorkViewModel) {
             Text("请选择右上角发送", color = MaterialTheme.colorScheme.primary)
         }
         RowHorizontal {
-            Text( "好评(100分 \"好\") / 差评(0分 \"好\")", color = MaterialTheme.colorScheme.primary)
+            Text( "评(100分 \"好\") / 差评(0分 \"好\")", color = MaterialTheme.colorScheme.primary)
         }
     }
 

@@ -58,10 +58,13 @@ import com.hfut.schedule.ui.activity.home.cube.items.subitems.KeyBoard
 
 import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.getIdentifyID
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
+import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LittleDialog
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.ui.utils.components.statusUI
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -70,7 +73,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PayFor(vm : NetWorkViewModel, payNumber : Int, tipInfo : String, json : String, type : FeeType) {
+fun PayFor(vm : NetWorkViewModel, payNumber : Int, tipInfo : String, json : String, type : FeeType,hazeState: HazeState) {
     var showDialog by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -90,10 +93,9 @@ fun PayFor(vm : NetWorkViewModel, payNumber : Int, tipInfo : String, json : Stri
                 showDialog = false
                 showBottomSheet = true
             },
-            dialogTitle = "确认支付吗?",
+            dialogTitle = "确认支付吗",
             dialogText = "是否核定好信息无误,交错后请自行处理",
-            conformtext = "立即缴费",
-            dismisstext = "返回"
+            hazeState = hazeState
         )
     }
 
@@ -105,14 +107,18 @@ fun PayFor(vm : NetWorkViewModel, payNumber : Int, tipInfo : String, json : Stri
 
     if (showBottomSheet_pin) {
         if(password.length != 6) {
-            ModalBottomSheet(
+            HazeBottomSheet (
                 onDismissRequest = {
                     showBottomSheet_pin = false
                 },
-                sheetState = sheetState_pin,
+                showBottomSheet = showBottomSheet_pin,
+                hazeState = hazeState,
+                autoShape = false
+//                sheetState = sheetState_pin,
                 // shape = Round(sheetState)
             ) {
                 Column {
+                    Spacer(Modifier.height(AppHorizontalDp()*1.5f))
                     CirclePoint(text = passwordStatus, password = password)
                     Spacer(modifier = Modifier.height(20.dp))
                     KeyBoard(
@@ -144,18 +150,21 @@ fun PayFor(vm : NetWorkViewModel, payNumber : Int, tipInfo : String, json : Stri
 
     if (showBottomSheet) {
 
-        ModalBottomSheet(
+        HazeBottomSheet(
             onDismissRequest = {
                 showBottomSheet = false
                                },
-            sheetState = sheetState,
-            shape = Round(sheetState)
+            showBottomSheet = showBottomSheet,
+            hazeState = hazeState,
+            isFullExpand = false
+//            sheetState = sheetState,
+//            shape = bottomSheetRound(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("支付结果")
+                    HazeBottomSheetTopBar("支付结果", isPaddingStatusBar = false)
                 },
             ) { innerPadding ->
                 Column(

@@ -9,20 +9,10 @@
         tools:ignore="UnusedAttribute">
         <intent
             android:action="com.hfut.schedule.shortcut"
-            android:targetClass="com.hfut.schedule.activity.funiction.CardActivity"
+            android:targetClass="com.hfut.schedule.activity.screen.CardActivity"
             android:targetPackage="com.hfut.schedule" />
     </shortcut>
-    <shortcut
-        android:icon="@drawable/water_voc_shortcut"
-        android:shortcutId="hot_water"
-        android:shortcutLongLabel="@string/hot_water"
-        android:shortcutShortLabel="@string/hot_water"
-        tools:ignore="UnusedAttribute">
-        <intent
-            android:action="com.hfut.schedule.shortcuts"
-            android:targetClass="com.hfut.schedule.activity.funiction.ShortCutActivity"
-            android:targetPackage="com.hfut.schedule" />
-    </shortcut>
+
     <shortcut
         android:icon="@drawable/build_shortcut"
         android:shortcutId="fix"
@@ -31,7 +21,7 @@
         tools:ignore="UnusedAttribute">
         <intent
             android:action="com.hfut.schedule.shortcuts"
-            android:targetClass="com.hfut.schedule.activity.funiction.FixActivity"
+            android:targetClass="com.hfut.schedule.activity.screen.FixActivity"
             android:targetPackage="com.hfut.schedule" />
     </shortcut>
 </shortcuts>

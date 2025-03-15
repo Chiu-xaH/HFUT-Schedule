@@ -27,42 +27,27 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import com.hfut.schedule.ui.utils.components.LoadingUI
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -72,40 +57,35 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.beans.jxglstu.ProgramPartOne
-import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.beans.jxglstu.ProgramPartThree
 import com.hfut.schedule.logic.beans.jxglstu.ProgramShow
-import com.hfut.schedule.logic.utils.parse.ReservDecimal
-import com.hfut.schedule.logic.utils.data.SharePrefs
-import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.parse.formatDecimal
 import com.hfut.schedule.ui.activity.home.search.functions.courseSearch.ApiForCourseSearch
-import com.hfut.schedule.ui.activity.home.search.functions.dormitoryScore.DormitoryScoreUI
 import com.hfut.schedule.ui.activity.home.search.functions.life.countFunc
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
-import com.hfut.schedule.ui.activity.home.search.functions.transfer.CampusId
-import com.hfut.schedule.ui.activity.home.search.functions.transfer.CampusId.*
-import com.hfut.schedule.ui.activity.home.search.functions.transfer.getCampus
 import com.hfut.schedule.ui.utils.components.AnimationCardListItem
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
 import com.hfut.schedule.ui.utils.components.CardNormalDp
-import com.hfut.schedule.ui.utils.components.CustomTopBar
-import com.hfut.schedule.ui.utils.style.CardForListColor
-import com.hfut.schedule.ui.utils.components.DividerText
-import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
-import com.hfut.schedule.ui.utils.components.MyCustomCard
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.DepartmentIcons
+import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
+import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LoadingLargeCard
+import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.components.statusUI
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
+import com.hfut.schedule.viewmodel.NetWorkViewModel
+import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -114,7 +94,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Program(vm : NetWorkViewModel, ifSaved : Boolean) {
+fun Program(vm : NetWorkViewModel, ifSaved : Boolean,hazeState: HazeState) {
     val sheetState_Program = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_Program by remember { mutableStateOf(false) }
     val sheetState_search = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -149,28 +129,32 @@ fun Program(vm : NetWorkViewModel, ifSaved : Boolean) {
 
 
     if (showBottomSheet_search) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet_search = false },
-            sheetState = sheetState_search,
-            shape = Round(sheetState_search)
+            showBottomSheet = showBottomSheet_search,
+            hazeState = hazeState,
+//            sheetState = sheetState_search,
+//            shape = bottomSheetRound(sheetState_search)
         ) {
-            ProgramSearch(vm,ifSaved)
+            ProgramSearch(vm,ifSaved,hazeState)
         }
     }
 
 
     if (showBottomSheet_Program ) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet_Program = false },
-            sheetState = sheetState_Program,
-            shape = Round(sheetState_Program)
+            hazeState = hazeState,
+            showBottomSheet = showBottomSheet_Program
+//            sheetState = sheetState_Program,
+//            shape = bottomSheetRound(sheetState_Program)
         ) {
 
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("培养方案") {
+                    HazeBottomSheetTopBar("培养方案") {
                         Row (){
 //                                FilledTonalIconButton(
 //                                    onClick = { showBottomSheet_info = true },
@@ -193,7 +177,7 @@ fun Program(vm : NetWorkViewModel, ifSaved : Boolean) {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ){
-                    ProgramUI2(vm,ifSaved)
+                    ProgramUI2(vm,ifSaved,hazeState)
                     //ProgramPerformance(vm)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
@@ -203,7 +187,7 @@ fun Program(vm : NetWorkViewModel, ifSaved : Boolean) {
 }
 
 @Composable
-fun ProgramUI(vm: NetWorkViewModel,ifSaved: Boolean) {
+fun ProgramUI(vm: NetWorkViewModel,ifSaved: Boolean,hazeState: HazeState) {
   //  val list =
         val json = prefs.getString("programJSON","")
        // try {
@@ -218,7 +202,7 @@ fun ProgramUI(vm: NetWorkViewModel,ifSaved: Boolean) {
     }
     var showBottomSheet_Search by remember { mutableStateOf(false) }
     var courseName by remember { mutableStateOf("") }
-    ApiForCourseSearch(vm,courseName,null,showBottomSheet_Search) {
+    ApiForCourseSearch(vm,courseName,null,showBottomSheet_Search, hazeState = hazeState) {
         showBottomSheet_Search = false
     }
     LazyColumn {
@@ -257,7 +241,7 @@ fun ProgramUI(vm: NetWorkViewModel,ifSaved: Boolean) {
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean) {
+fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean,hazeState: HazeState) {
 
     val sheetState_Performance = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_Performance by remember { mutableStateOf(false) }
@@ -277,12 +261,7 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean) {
     var title by remember { mutableStateOf("培养方案") }
     var num by remember { mutableStateOf(0) }
     var loadingCard by remember { mutableStateOf(true) }
-    val scale = animateFloatAsState(
-        targetValue = if (loadingCard) 0.9f else 1f, // 按下时为0.9，松开时为1
-        //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-        animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
-        label = "" // 使用弹簧动画
-    )
+
     val scale2 = animateFloatAsState(
         targetValue = if (loadingCard) 0.97f else 1f, // 按下时为0.9，松开时为1
         //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
@@ -290,25 +269,24 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean) {
         label = "" // 使用弹簧动画
     )
 
-    val blurSize by animateDpAsState(
-        targetValue = if (loadingCard) 10.dp else 0.dp, label = ""
-        ,animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
-    )
+
     val completion = getProgramCompletion(vm)
 
 
     if (showBottomSheet_Performance ) {
-        ModalBottomSheet(
+        HazeBottomSheet(
             onDismissRequest = { showBottomSheet_Performance = false },
-            sheetState = sheetState_Performance,
-            shape = Round(sheetState_Performance)
+            hazeState = hazeState,
+            showBottomSheet = showBottomSheet_Performance
+//            sheetState = sheetState_Performance,
+//            shape = bottomSheetRound(sheetState_Performance)
         ) {
 
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("培养方案 完成情况")
+                    HazeBottomSheetTopBar("培养方案 完成情况")
                 },
             ) {innerPadding ->
                 Column(
@@ -317,7 +295,7 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean) {
                         .fillMaxSize()
                 ){
                     countFunc = 0
-                    ProgramPerformance(vm)
+                    ProgramPerformance(vm,hazeState)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
@@ -369,7 +347,7 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean) {
             title = "已修 ${completion.total.actual}/${completion.total.full}",
             rightTop = {
                 val res = completion.total.actual/completion.total.full * 100.0
-                Text(text = "${ReservDecimal.reservDecimal(res,1)} %")
+                Text(text = "${formatDecimal(res,1)} %")
             },
             loading = loadingCard
         ) {
@@ -473,10 +451,12 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean) {
 
 
     if (showBottomSheet_Program ) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet_Program = false },
-            sheetState = sheetState_Program,
-            shape = Round(sheetState_Program),
+            showBottomSheet = showBottomSheet_Program,
+            hazeState = hazeState
+//            sheetState = sheetState_Program,
+//            shape = bottomSheetRound(sheetState_Program),
 //            modifier = Modifier.nestedScroll(nestedScrollConnection)
         ) {
 
@@ -484,14 +464,14 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean) {
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar(title)
+                    HazeBottomSheetTopBar(title)
                 },) {innerPadding ->
                 Column(
                     modifier = Modifier
                         .padding(innerPadding)
                         .fillMaxSize()
                 ){
-                    ProgramUIInfo(num,vm, ifSaved)
+                    ProgramUIInfo(num,vm, ifSaved, hazeState =hazeState )
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
@@ -502,7 +482,7 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProgramUIInfo(num : Int, vm : NetWorkViewModel, ifSaved : Boolean) {
+fun ProgramUIInfo(num : Int, vm : NetWorkViewModel, ifSaved : Boolean,hazeState: HazeState) {
     val listTwo = getProgramListTwo(num,vm,ifSaved)
     var show by remember { mutableStateOf(true) }
     val sheetState_Program = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -510,24 +490,26 @@ fun ProgramUIInfo(num : Int, vm : NetWorkViewModel, ifSaved : Boolean) {
     var title by remember { mutableStateOf("培养方案") }
     var num2 by remember { mutableStateOf(0) }
     if (showBottomSheet_Program ) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet_Program = false },
-            sheetState = sheetState_Program,
-            shape = Round(sheetState_Program)
+            hazeState = hazeState,
+            showBottomSheet = showBottomSheet_Program
+//            sheetState = sheetState_Program,
+//            shape = bottomSheetRound(sheetState_Program)
         ) {
 
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar(title)
+                    HazeBottomSheetTopBar(title)
                 },) {innerPadding ->
                 Column(
                     modifier = Modifier
                         .padding(innerPadding)
                         .fillMaxSize()
                 ){
-                    ProgramUIInfo2(num,num2,vm, ifSaved)
+                    ProgramUIInfo2(num,num2,vm, ifSaved, hazeState = hazeState)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
@@ -555,13 +537,13 @@ fun ProgramUIInfo(num : Int, vm : NetWorkViewModel, ifSaved : Boolean) {
             }
         }
     } else {
-       ProgramUIInfo2(num,num2,vm, ifSaved)
+       ProgramUIInfo2(num,num2,vm, ifSaved,hazeState)
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProgramUIInfo2(num1 : Int, num2 : Int, vm : NetWorkViewModel, ifSaved : Boolean) {
+fun ProgramUIInfo2(num1 : Int, num2 : Int, vm : NetWorkViewModel, ifSaved : Boolean,hazeState: HazeState) {
     val listThree = getProgramListThree(num1,num2,vm, ifSaved)
     if(listThree.size != 0) {
         listThree.sortBy { it.term }
@@ -569,7 +551,7 @@ fun ProgramUIInfo2(num1 : Int, num2 : Int, vm : NetWorkViewModel, ifSaved : Bool
 
         var showBottomSheet_Search by remember { mutableStateOf(false) }
         var courseName by remember { mutableStateOf("") }
-        ApiForCourseSearch(vm,courseName,null,showBottomSheet_Search) {
+        ApiForCourseSearch(vm,courseName,null,showBottomSheet_Search, hazeState = hazeState) {
             showBottomSheet_Search = false
         }
 
@@ -658,18 +640,20 @@ fun ProgramTips() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GuestProgram(vm: NetWorkViewModel) {
+fun GuestProgram(vm: NetWorkViewModel,hazeState: HazeState) {
     val sheetState_search = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_search by remember { mutableStateOf(false) }
 
 
     if (showBottomSheet_search) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet_search = false },
-            sheetState = sheetState_search,
-            shape = Round(sheetState_search)
+            hazeState = hazeState,
+            showBottomSheet = showBottomSheet_search
+//            sheetState = sheetState_search,
+//            shape = bottomSheetRound(sheetState_search)
         ) {
-            ProgramSearch(vm, true)
+            ProgramSearch(vm, true, hazeState )
         }
     }
     TransplantListItem(

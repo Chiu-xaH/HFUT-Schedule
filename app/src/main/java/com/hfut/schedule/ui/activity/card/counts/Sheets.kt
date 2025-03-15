@@ -74,7 +74,7 @@ fun RadarChart(data: List<RadarData>, modifier: Modifier = Modifier) {
     val angle = 360f / data.size
     val startAngle = -90f // 使第一个点位于顶部
     val primaryColor = MaterialTheme.colorScheme.primary
-    val onPrimaryColor = MaterialTheme.colorScheme.primaryContainer
+    val onPrimaryColor = MaterialTheme.colorScheme.inversePrimary
     val fillColor = primaryColor.copy(alpha = 0.3f)
 
     Canvas(modifier = modifier) {

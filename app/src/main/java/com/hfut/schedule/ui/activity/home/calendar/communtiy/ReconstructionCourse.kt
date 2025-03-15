@@ -45,11 +45,14 @@ import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.DetailIte
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.getCourse
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.getTotalCourse
 import com.hfut.schedule.ui.utils.components.CardNormalColor
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
+import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.TransplantListItem
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
+import dev.chrisbanes.haze.HazeState
 
 
 fun getCouses(Week : Int,friendUserName : String? = null) : Array<Array<List<courseDetailDTOList>>> {
@@ -94,21 +97,23 @@ fun getCourseINFO(weekday : Int,Week : Int,friendUserName : String? = null) : Mu
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailInfos(sheet : courseDetailDTOList,isFriend : Boolean = false,vm: NetWorkViewModel) {
+fun DetailInfos(sheet : courseDetailDTOList,isFriend : Boolean = false,vm: NetWorkViewModel,hazeState: HazeState) {
     val sheetState_totalCourse = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_totalCourse by remember { mutableStateOf(false) }
 //    val json = SharePrefs.prefs.getString("courses","")
     var courseName by remember { mutableStateOf("") }
 //    val list = getTotalCourse(json)
     if (showBottomSheet_totalCourse) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = {
                 showBottomSheet_totalCourse = false
             },
-            sheetState = sheetState_totalCourse,
-            shape = Round(sheetState_totalCourse)
+            showBottomSheet = showBottomSheet_totalCourse,
+            hazeState = hazeState
+//            sheetState = sheetState_totalCourse,
+//            shape = bottomSheetRound(sheetState_totalCourse)
         ) {
-            CourseDetailApi(courseName = courseName, vm = vm)
+            CourseDetailApi(courseName = courseName, vm = vm, hazeState = hazeState)
         }
     }
 
@@ -180,7 +185,7 @@ fun DetailInfos(sheet : courseDetailDTOList,isFriend : Boolean = false,vm: NetWo
 //根据课程名跨接口查找唯一课程信息
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CourseDetailApi(isNext : Boolean = false,courseName : String,vm : NetWorkViewModel) {
+fun CourseDetailApi(isNext : Boolean = false,courseName : String,vm : NetWorkViewModel,hazeState: HazeState) {
     //用法
 //    val sheetState_totalCourse = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 //    var showBottomSheet_totalCourse by remember { mutableStateOf(false) }
@@ -211,7 +216,7 @@ fun CourseDetailApi(isNext : Boolean = false,courseName : String,vm : NetWorkVie
         modifier = Modifier.fillMaxSize(),
         containerColor = Color.Transparent,
         topBar = {
-            CustomTopBar(getTotalCourse(json)[numItem].course.nameZh)
+            HazeBottomSheetTopBar(getTotalCourse(json)[numItem].course.nameZh)
         },
     ) { innerPadding ->
         Column(
@@ -219,7 +224,7 @@ fun CourseDetailApi(isNext : Boolean = false,courseName : String,vm : NetWorkVie
                 .padding(innerPadding)
                 .fillMaxSize()
         ){
-            DetailItems(getTotalCourse(json)[numItem], vm)
+            DetailItems(getTotalCourse(json)[numItem], vm, hazeState =hazeState )
             Spacer(modifier = Modifier.height(20.dp))
         }
     }

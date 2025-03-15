@@ -65,23 +65,26 @@ import com.hfut.schedule.ui.activity.home.search.functions.failRate.permit
 import com.hfut.schedule.ui.activity.home.search.functions.failRate.ApiToFailRate
 import com.hfut.schedule.ui.activity.home.search.functions.teacherSearch.ApiToTeacherSearch
 import com.hfut.schedule.ui.utils.components.AnimationCardListItem
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.EmptyUI
 import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.RotatingIcon
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.DepartmentIcons
+import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.ColumnVertical
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import dev.chrisbanes.haze.HazeState
 
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CourseTotalUI(json : String?,isSearch : Boolean,sortType: Boolean,vm : NetWorkViewModel) {
+fun CourseTotalUI(json : String?,isSearch : Boolean,sortType: Boolean,vm : NetWorkViewModel,hazeState: HazeState) {
 
     val list = getTotalCourse(json)
     if(sortType)
@@ -96,16 +99,18 @@ fun CourseTotalUI(json : String?,isSearch : Boolean,sortType: Boolean,vm : NetWo
     //val json = prefs.getString("courses","")
     if (showBottomSheet) {
 
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState,
-            shape = Round(sheetState)
+            showBottomSheet = showBottomSheet,
+            hazeState = hazeState
+//            sheetState = sheetState,
+//            shape = bottomSheetRound(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar(list[numItem].course.nameZh)
+                    HazeBottomSheetTopBar(list[numItem].course.nameZh)
                 },
             ) { innerPadding ->
                 Column(
@@ -113,7 +118,7 @@ fun CourseTotalUI(json : String?,isSearch : Boolean,sortType: Boolean,vm : NetWo
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    DetailItems(list[numItem],vm)
+                    DetailItems(list[numItem],vm,hazeState)
                 }
             }
         }
@@ -169,7 +174,7 @@ fun CourseTotalUI(json : String?,isSearch : Boolean,sortType: Boolean,vm : NetWo
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun DetailItems(lessons: lessons,vm : NetWorkViewModel) {
+fun DetailItems(lessons: lessons,vm : NetWorkViewModel,hazeState: HazeState) {
 
     val lists = lessons
 
@@ -180,14 +185,14 @@ fun DetailItems(lessons: lessons,vm : NetWorkViewModel) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet_FailRate = false },
             sheetState = sheetState_FailRate,
-            shape = Round(sheetState_FailRate)
+            shape = bottomSheetRound(sheetState_FailRate)
         ) {
 
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("挂科率 ${lessons.course.nameZh}")
+                    BottomSheetTopBar("挂科率 ${lessons.course.nameZh}")
                 },
             ) { innerPadding ->
                 Column(
@@ -195,7 +200,7 @@ fun DetailItems(lessons: lessons,vm : NetWorkViewModel) {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    ApiToFailRate(lessons.course.nameZh,vm)
+                    ApiToFailRate(lessons.course.nameZh,vm, hazeState =hazeState )
                 }
             }
         }
@@ -210,14 +215,14 @@ fun DetailItems(lessons: lessons,vm : NetWorkViewModel) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet_Teacher = false },
             sheetState = sheetState_Teacher,
-            shape = Round(sheetState_Teacher)
+            shape = bottomSheetRound(sheetState_Teacher)
         ) {
 
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("教师检索 $teacherTitle")
+                    BottomSheetTopBar("教师检索 $teacherTitle")
                 },
             ) { innerPadding ->
                 Column(

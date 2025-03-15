@@ -30,7 +30,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.enums.ShowerScreen
 import com.hfut.schedule.logic.utils.ClipBoard
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
@@ -40,11 +42,13 @@ import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.TransplantListItem
+import com.hfut.schedule.ui.utils.navigateAndClear
+import com.hfut.schedule.ui.utils.navigateAndSave
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GuaGuaSettings(innerPadding: PaddingValues) {
+fun GuaGuaSettings(innerPadding: PaddingValues,navHostController: NavHostController) {
     val switch_usecode = prefs.getBoolean("SWITCHUSECODE",false)
     var autoUseCode by remember { mutableStateOf(switch_usecode) }
     saveBoolean("SWITCHUSECODE",true,autoUseCode)
@@ -58,7 +62,7 @@ fun GuaGuaSettings(innerPadding: PaddingValues) {
             leadingContent = {
                 Icon(painterResource(id = R.drawable.rotate_right), contentDescription = "")
             },
-            modifier = Modifier.clickable { loginGuaGua() }
+            modifier = Modifier.clickable { navHostController.navigateAndSave(ShowerScreen.LOGIN.name) }
         )
            TransplantListItem(
                headlineContent = { Text(text = "预加载使用码") },

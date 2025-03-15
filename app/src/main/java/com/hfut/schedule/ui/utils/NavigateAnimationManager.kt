@@ -20,17 +20,6 @@ import androidx.navigation.NavHostController
 object NavigateAnimationManager {
     data class TransferAnimation(val remark : String,val enter : EnterTransition, val exit : ExitTransition)
 
-    fun turnTo(navController: NavHostController, route: String) {
-        navController.navigate(route) {
-            popUpTo(navController.graph.startDestinationId) {
-                saveState = true
-            }
-            launchSingleTop = true
-            restoreState = true
-        }
-    }
-
-
     const val ANIMATION_SPEED = 400
 
     private val enterAnimation1 = scaleIn(animationSpec = tween(durationMillis = ANIMATION_SPEED)) +

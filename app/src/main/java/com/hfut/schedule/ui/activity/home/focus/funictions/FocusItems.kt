@@ -64,7 +64,7 @@ import com.hfut.schedule.logic.beans.community.TodayResponse
 import com.hfut.schedule.logic.beans.community.TodayResult
 import com.hfut.schedule.logic.beans.focus.AddFocus
 import com.hfut.schedule.logic.beans.Schedule
-import com.hfut.schedule.logic.utils.CalendarUtils.addToCalendar
+import com.hfut.schedule.logic.utils.addToCalendar
 import com.hfut.schedule.logic.utils.DateTimeUtils
 import com.hfut.schedule.logic.utils.DateTimeUtils.TimeState.*
 import com.hfut.schedule.logic.utils.parse.SemseterParser.parseSemseter
@@ -74,21 +74,24 @@ import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.calendar.communtiy.DetailInfos
 import com.hfut.schedule.ui.activity.home.calendar.communtiy.getCourseINFO
 import com.hfut.schedule.ui.activity.home.cube.items.main.apiCheck
-import com.hfut.schedule.ui.activity.home.focus.funictions.FocusDataBaseManager.addItems
-import com.hfut.schedule.ui.activity.home.focus.funictions.FocusDataBaseManager.removeItems
+import com.hfut.schedule.logic.dao.FocusDataBaseManager.addItems
+import com.hfut.schedule.logic.dao.FocusDataBaseManager.removeItems
 import com.hfut.schedule.ui.activity.home.search.functions.card.TodayInfo
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
+import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.RotatingIcon
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.ui.utils.components.ScheduleIcons
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.TransplantListItem
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
+import dev.chrisbanes.haze.HazeState
 
 @Composable
 fun MyScheuleItem(item : Int, MySchedule : MutableList<Schedule>,Future: Boolean,activity : Activity ) {
@@ -297,7 +300,7 @@ fun WangkeItem(item : Int, MyWangKe: MutableList<Schedule>,Future: Boolean,activ
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun TodayCourseItem(item : Int,vm : NetWorkViewModel) {
+fun TodayCourseItem(item : Int,vm : NetWorkViewModel,hazeState: HazeState) {
 
 
     val switch_show_ended = prefs.getBoolean("SWITCHSHOWENDED",true)
@@ -319,12 +322,15 @@ fun TodayCourseItem(item : Int,vm : NetWorkViewModel) {
 
     if (showBottomSheet) {
 
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState,
+//            sheetState = sheetState,
+            showBottomSheet = showBottomSheet,
+            hazeState = hazeState,
+            autoShape = false
         ) {
-            CustomTopBar(list.name)
-            DetailInfos(list,vm = vm)
+            HazeBottomSheetTopBar(list.name)
+            DetailInfos(list,vm = vm, hazeState = hazeState)
         }
     }
     @Composable
@@ -389,7 +395,7 @@ fun TodayCourseItem(item : Int,vm : NetWorkViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TomorrowCourseItem(item : Int,vm: NetWorkViewModel) {
+fun TomorrowCourseItem(item : Int,vm: NetWorkViewModel,hazeState: HazeState) {
 
     var weekdaytomorrow = DateTimeUtils.dayweek + 1
     var week = DateTimeUtils.weeksBetween.toInt()
@@ -404,12 +410,15 @@ fun TomorrowCourseItem(item : Int,vm: NetWorkViewModel) {
     var showBottomSheet by remember { mutableStateOf(false) }
     if (showBottomSheet) {
 
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState,
+//            sheetState = sheetState,
+            showBottomSheet = showBottomSheet,
+            hazeState = hazeState,
+            autoShape = false
         ) {
-            CustomTopBar(list.name)
-            DetailInfos(list,vm = vm)
+            HazeBottomSheetTopBar(list.name)
+            DetailInfos(list,vm = vm, hazeState = hazeState)
         }
     }
 
@@ -465,7 +474,7 @@ fun AddItem(item : Int, AddedItems : MutableList<AddFocus>) {
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("Range")
 @Composable
-fun BoxScope.AddButton(isVisible: Boolean,innerPaddings : PaddingValues) {
+fun BoxScope.AddButton(isVisible: Boolean,innerPaddings : PaddingValues,hazeState: HazeState) {
 
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -485,14 +494,16 @@ fun BoxScope.AddButton(isVisible: Boolean,innerPaddings : PaddingValues) {
 
 
     if (showBottomSheet) {
-        ModalBottomSheet(onDismissRequest = { showBottomSheet = false },sheetState = sheetState,
-            shape = Round(sheetState)
+        HazeBottomSheet (
+            onDismissRequest = { showBottomSheet = false },
+            hazeState = hazeState,
+            showBottomSheet = showBottomSheet
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("添加聚焦卡片") {
+                    HazeBottomSheetTopBar("添加聚焦卡片") {
                         FilledTonalIconButton(
                             modifier = Modifier
                                 .scale(scale.value),
@@ -611,22 +622,25 @@ fun SemsterTip() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TodayUI() {
+fun TodayUI(hazeState: HazeState) {
     ////////////////////////////////////////////////////////////
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by  remember { mutableStateOf(false) }
     if (showBottomSheet ) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState,
-            shape = Round(sheetState)
+//            sheetState = sheetState,
+//            shape = bottomSheetRound(sheetState),
+            isFullExpand = false,
+            showBottomSheet = showBottomSheet,
+            hazeState = hazeState
         ) {
 
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("聚焦通知")
+                    HazeBottomSheetTopBar("聚焦通知")
                 },) {innerPadding ->
                 Column(
                     modifier = Modifier

@@ -11,22 +11,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.BadgedBox
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.Badge
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -39,25 +33,25 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
-import com.hfut.schedule.viewmodel.NetWorkViewModel
-import com.hfut.schedule.logic.utils.CalendarUtils
 import com.hfut.schedule.logic.utils.DateTimeUtils
+import com.hfut.schedule.logic.utils.Starter.refreshLogin
+import com.hfut.schedule.logic.utils.addToCalendar
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
-import com.hfut.schedule.logic.utils.Starter.refreshLogin
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.EmptyUI
-import com.hfut.schedule.ui.utils.components.MyCustomCard
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.TransplantListItem
-import com.hfut.schedule.ui.utils.style.Round
-import com.hfut.schedule.ui.utils.style.RowHorizontal
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
+import com.hfut.schedule.viewmodel.NetWorkViewModel
+import dev.chrisbanes.haze.HazeState
 
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Exam(vm : NetWorkViewModel, ifSaved : Boolean) {
+fun Exam(vm : NetWorkViewModel, ifSaved : Boolean,hazeState: HazeState) {
     val sheetState_Exam = rememberModalBottomSheetState()
     var showBottomSheet_Exam by remember { mutableStateOf(false) }
     val CommuityTOKEN = prefs.getString("TOKEN","")
@@ -75,46 +69,34 @@ fun Exam(vm : NetWorkViewModel, ifSaved : Boolean) {
         overlineContent = { Text(text = "${if(ifSaved) getNewExam().size else getExamJXGLSTU().size} 门")},
         leadingContent = {
             Icon(painterResource(R.drawable.draw), contentDescription = "Localized description",)
-//            BadgedBox(badge = {
-//                if(prefs.getString("ExamNum","0") != getNewExam().size.toString())
-//                Badge(){
-//                    Text(text = getNewExam().size.toString())
-//                }
-//            }) {
-//
-//            }
         },
         modifier = Modifier.clickable {
-
-
             if(ifSaved)  {
                 refreshLogin()
-                saveString("ExamNum", getNewExam().size.toString())
             }
             else {
                 showBottomSheet_Exam = true
-                saveString("ExamNum", getExamJXGLSTU().size.toString())
             }
-
-
         }
     )
 
     if (showBottomSheet_Exam) {
         
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = {
                 showBottomSheet_Exam = false
             },
-            sheetState = sheetState_Exam,
-            shape = Round(sheetState_Exam)
+            showBottomSheet = showBottomSheet_Exam,
+            hazeState = hazeState,
+//            sheetState = sheetState_Exam,
+//            shape = bottomSheetRound(sheetState_Exam)
         ) {
 
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("考试")
+                    HazeBottomSheetTopBar("考试")
                 },) {innerPadding ->
                 Column(
                     modifier = Modifier
@@ -134,7 +116,7 @@ fun Exam(vm : NetWorkViewModel, ifSaved : Boolean) {
     }
 }
 @Composable
-fun ExamItems(item : Int,status : Boolean) {
+private fun ExamItems(item : Int,status : Boolean) {
 
     var date = DateTimeUtils.Date_yyyy_MM_dd
     val todaydate = date?.substring(0, 4) + date?.substring(5, 7)  + date?.substring(8, 10)
@@ -292,7 +274,7 @@ fun JxglstuExamUI(item : Map<String,String>,status : Boolean) {
                                                                 }
                                                             }
                                                         } }
-                                                        course?.let { place?.let { it1 -> startDateList?.let { it2 -> endDateList?.let { it3 -> CalendarUtils.addToCalendar(it2, it3, it1, it,"考试", activity) } } } }
+                                                        course?.let { place?.let { it1 -> startDateList?.let { it2 -> endDateList?.let { it3 -> addToCalendar(it2, it3, it1, it,"考试", activity) } } } }
 //                                                    MyToast("添加到系统日历成功")
                                                     } catch (e : Exception) {
 //                                                    MyToast("未授予权限")

@@ -61,13 +61,16 @@ import com.hfut.schedule.ui.utils.components.AnimationCardListItem
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.BillsIcons
 import com.hfut.schedule.ui.utils.components.CardNormalColor
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
+import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.TransplantListItem
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
+import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -106,7 +109,7 @@ fun getBills(vm : NetWorkViewModel) : List<records> {
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIViewModel) {
+fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIViewModel,hazeState : HazeState) {
     var loading by remember { mutableStateOf(true) }
     var page by remember { mutableStateOf(1) }
     var counter by remember { mutableStateOf(1) }
@@ -150,9 +153,12 @@ fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVie
     var Infonum by remember { mutableStateOf(0) }
 
     if(showBottomSheet) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState,
+            autoShape = false,
+            showBottomSheet = showBottomSheet,
+            hazeState = hazeState
+//            sheetState = sheetState,
         ){
             BillsInfo(vm,Infonum)
         }
@@ -207,7 +213,7 @@ fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVie
             LazyColumn() {
                 item { Spacer(modifier = Modifier.height(innerPaddings.calculateTopPadding())) }
                 if (page == 1)
-                    item { CardRow(vm,vmUI) }
+                    item { CardRow(vm,vmUI, hazeState) }
                 items(list.size) { item ->
                     val bills = list[item]
                     var name = bills.resume
@@ -309,7 +315,7 @@ fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVie
 fun BillsInfo(vm : NetWorkViewModel, Infonum : Int) {
     val bills = getBills(vm)[Infonum]
     Column {
-        CustomTopBar("详情")
+        HazeBottomSheetTopBar("详情", isPaddingStatusBar = false)
         MyCustomCard(hasElevation = false, containerColor = CardNormalColor()){
             TransplantListItem(
                 headlineContent = { Text( bills.resume.substringBefore("-") ) },

@@ -84,11 +84,14 @@ import com.hfut.schedule.ui.activity.home.calendar.next.parseCourseName
 import com.hfut.schedule.ui.activity.home.main.saved.isNextOpen
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.getTotalCourse
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
+import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LargeCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.TransplantListItem
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
+import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -109,7 +112,9 @@ fun CalendarScreen(
     vm2: LoginViewModel,
     load: Boolean,
     onDateChange: (LocalDate) ->Unit,
-    today: LocalDate) {
+    today: LocalDate,
+    hazeState: HazeState
+) {
     val sheetState_totalCourse = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_totalCourse by remember { mutableStateOf(false) }
     val sheetState_multiCourse = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -121,24 +126,28 @@ fun CalendarScreen(
     var multiWeekday by remember { mutableStateOf(0) }
     var multiWeek by remember { mutableStateOf(0) }
     if (showBottomSheet_totalCourse) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = {
                 showBottomSheet_totalCourse = false
             },
-            sheetState = sheetState_totalCourse,
-            shape = Round(sheetState_totalCourse)
+            showBottomSheet = showBottomSheet_totalCourse,
+            hazeState = hazeState
+//            sheetState = sheetState_totalCourse,
+//            shape = bottomSheetRound(sheetState_totalCourse)
         ) {
-            CourseDetailApi(courseName = courseName, vm = vm)
+            CourseDetailApi(courseName = courseName, vm = vm, hazeState = hazeState)
         }
     }
     if (showBottomSheet_multiCourse) {
-        ModalBottomSheet(
+        HazeBottomSheet (
+            showBottomSheet = showBottomSheet_multiCourse,
             onDismissRequest = {
                 showBottomSheet_multiCourse = false
             },
-            sheetState = sheetState_multiCourse,
+            autoShape = false,
+            hazeState = hazeState
         ) {
-            MultiCourseSheetUI(courses = courses ,weekday = multiWeekday,week = multiWeek,vm = vm)
+            MultiCourseSheetUI(courses = courses ,weekday = multiWeekday,week = multiWeek,vm = vm, hazeState = hazeState)
         }
     }
 
@@ -860,23 +869,25 @@ fun getNewWeek() : Long {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MultiCourseSheetUI(week : Int,weekday : Int,courses : List<String>,vm: NetWorkViewModel) {
+private fun MultiCourseSheetUI(week : Int,weekday : Int,courses : List<String>,vm: NetWorkViewModel,hazeState: HazeState) {
     var courseName by remember { mutableStateOf("") }
     val sheetState_totalCourse = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_totalCourse by remember { mutableStateOf(false) }
     if (showBottomSheet_totalCourse) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = {
                 showBottomSheet_totalCourse = false
             },
-            sheetState = sheetState_totalCourse,
-            shape = Round(sheetState_totalCourse)
+            hazeState = hazeState,
+            showBottomSheet = showBottomSheet_totalCourse
+//            sheetState = sheetState_totalCourse,
+//            shape = bottomSheetRound(sheetState_totalCourse)
         ) {
-            CourseDetailApi(courseName = courseName, vm = vm)
+            CourseDetailApi(courseName = courseName, vm = vm, hazeState = hazeState)
         }
     }
     Column {
-        CustomTopBar("第${week}周 周${numToChinese(weekday)}")
+        HazeBottomSheetTopBar("第${week}周 周${numToChinese(weekday)}", isPaddingStatusBar = false)
         LargeCard(
             title = "${courses.size}节课冲突"
         ) {
@@ -906,7 +917,7 @@ fun MultiCourseSheetUI(week : Int,weekday : Int,courses : List<String>,vm: NetWo
                 )
             }
         }
-        Spacer(Modifier.height(30.dp))
+        Spacer(Modifier.height(40.dp))
     }
 
 }

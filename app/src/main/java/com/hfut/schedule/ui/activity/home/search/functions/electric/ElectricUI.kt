@@ -74,14 +74,18 @@ import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
+import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LoadingLargeCard
 import com.hfut.schedule.ui.utils.components.MenuChip
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.CardForListColor
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.NetWorkViewModel
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -93,7 +97,7 @@ import java.math.RoundingMode
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EleUI(vm : NetWorkViewModel) {
+fun EleUI(vm : NetWorkViewModel,hazeState: HazeState) {
     val SavedBuildNumber = prefs.getString("BuildNumber", "0") ?: "0"
     var BuildingsNumber by remember { mutableStateOf(SavedBuildNumber) }
     val SavedRoomNumber = prefs.getString("RoomNumber", "")
@@ -105,7 +109,6 @@ fun EleUI(vm : NetWorkViewModel) {
 
     var input = "300$BuildingsNumber$RoomNumber$EndNumber"
    // var jsons = "{ \"query_elec_roominfo\": { \"aid\":\"0030000000007301\", \"account\": \"24027\",\"room\": { \"roomid\": \"${input}\", \"room\": \"${input}\" },  \"floor\": { \"floorid\": \"\", \"floor\": \"\" }, \"area\": { \"area\": \"\", \"areaname\": \"\" }, \"building\": { \"buildingid\": \"\", \"building\": \"\" },\"extdata\":\"info1=\" } }"
-
 
     var showitem by remember { mutableStateOf(false) }
     var showitem2 by remember { mutableStateOf(false) }
@@ -126,18 +129,21 @@ fun EleUI(vm : NetWorkViewModel) {
     var json by remember { mutableStateOf("") }
     if (showBottomSheet) {
 
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState,
+            showBottomSheet = showBottomSheet,
+            autoShape = false,
+            hazeState = hazeState
+//            sheetState = sheetState,
         ) {
                 Column(
 
                 ) {
-                    CustomTopBar("支付订单确认")
+                    HazeBottomSheetTopBar("支付订单确认", isPaddingStatusBar = false)
                     val roomInfo by remember { mutableStateOf("${BuildingsNumber}号楼${RoomNumber}寝室${region}") }
                     var int by remember { mutableStateOf(payNumber.toInt()) }
                     if(int > 0) {
-                        PayFor(vm,int,roomInfo,json,FeeType.ELECTRIC)
+                        PayFor(vm,int,roomInfo,json,FeeType.ELECTRIC,hazeState)
                     } else MyToast("输入数值")
                 }
         }
@@ -156,7 +162,7 @@ fun EleUI(vm : NetWorkViewModel) {
 
     Column() {
 
-        CustomTopBar("寝室电费-宣城校区") {
+        HazeBottomSheetTopBar("寝室电费-宣城校区", isPaddingStatusBar = false) {
             Row() {
                 if(showitem4)
                     IconButton(onClick = {RoomNumber = RoomNumber.replaceFirst(".$".toRegex(), "")}) {

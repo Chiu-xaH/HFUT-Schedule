@@ -16,11 +16,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.utils.components.TransplantListItem
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
+import dev.chrisbanes.haze.HazeState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PersonUI(ifSaved : Boolean) {
+fun PersonUI(ifSaved : Boolean,hazeState: HazeState) {
     val sheetState_Person = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_Person by remember { mutableStateOf(false) }
 
@@ -32,12 +34,13 @@ fun PersonUI(ifSaved : Boolean) {
 
     if (showBottomSheet_Person) {
 
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = {
                 showBottomSheet_Person = false
-            },
-            sheetState = sheetState_Person,
-            shape = Round(sheetState_Person)
+            }, hazeState = hazeState,
+            showBottomSheet = showBottomSheet_Person
+//            sheetState = sheetState_Person,
+//            shape = bottomSheetRound(sheetState_Person)
         ) { PersonItems(ifSaved) }
     }
 }

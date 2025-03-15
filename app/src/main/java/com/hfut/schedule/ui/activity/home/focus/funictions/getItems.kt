@@ -16,7 +16,7 @@ import com.hfut.schedule.logic.beans.zjgd.BalanceResponse
 import com.hfut.schedule.logic.beans.zjgd.ReturnCard
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
-import com.hfut.schedule.logic.utils.parse.getMy
+import com.hfut.schedule.logic.utils.parse.ParseJsons.getMy
 import com.hfut.schedule.ui.utils.components.MyToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job

@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.activity.main.LoginActivity
+import com.hfut.schedule.activity.MainActivity
 import com.hfut.schedule.logic.enums.CardBarItems
 import com.hfut.schedule.logic.enums.FixBarItems
 import com.hfut.schedule.logic.utils.Starter.startWebUrl
@@ -45,11 +45,14 @@ import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.UpdateUI
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.VersionInfo
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.getUpdates
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
+import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.TransplantListItem
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.viewmodel.NetWorkViewModel
+import dev.chrisbanes.haze.HazeState
 
 
 fun apiCheck() : Boolean {
@@ -71,7 +74,7 @@ fun PartOne(vm : NetWorkViewModel,
             navController: NavController) {
     TransplantListItem(
         headlineContent = { Text(text = "界面显示") },
-        supportingContent = { Text(text = "实时模糊 莫奈取色 动画时长")},
+        supportingContent = { Text(text = "实时模糊 运动模糊 转场动画")},
         leadingContent = {
             Icon(painter = painterResource(id = R.drawable.stacks), contentDescription ="" )
         },
@@ -134,7 +137,9 @@ fun HomeSettingScreen(navController: NavController,
                       ifSaved : Boolean,
                       innerPaddings : PaddingValues,
                       blur : Boolean,
-                      blurchanged : (Boolean) -> Unit) {
+                      blurchanged : (Boolean) -> Unit,
+                      hazeState: HazeState
+) {
    //
 
 
@@ -153,17 +158,15 @@ fun HomeSettingScreen(navController: NavController,
         MyAPIItem()
 
         if (VersionUtils.getVersionName() != getUpdates().version) {
-            if(!VersionUtils.getVersionName().contains("Preview")) {
+            if(!VersionUtils.isPreview()) {
                 DividerTextExpandedWith(text = "更新版本") {
                     UpdateUI()
-//                    downloadUI()
                 }
-
             }
         }
 
-        DividerTextExpandedWith(text = "猜你想用") {
-            AlwaysItem()
+        DividerTextExpandedWith(text = "常驻项目") {
+            AlwaysItem(hazeState)
         }
 
 
@@ -178,23 +181,25 @@ fun HomeSettingScreen(navController: NavController,
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AlwaysItem() {
+fun AlwaysItem(hazeState: HazeState) {
     val version by remember { mutableStateOf(getUpdates()) }
     var showBadge by remember { mutableStateOf(false) }
     if (version.version != VersionUtils.getVersionName()) showBadge = true
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
     if (showBottomSheet) {
-        ModalBottomSheet(
+        HazeBottomSheet(
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState,
-            shape = Round(sheetState)
+            showBottomSheet = showBottomSheet,
+            hazeState = hazeState
+//            sheetState = sheetState,
+//            shape = bottomSheetRound(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("本版本新特性")
+                    HazeBottomSheetTopBar("本版本新特性")
                 },
             ) { innerPadding ->
                 Column(
@@ -213,7 +218,7 @@ fun AlwaysItem() {
         supportingContent = { Text(text = "如果一卡通或者考试成绩等无法查询,可能是登陆过期,需重新登录一次") },
         leadingContent = { Icon(painterResource(R.drawable.rotate_right), contentDescription = "Localized description",) },
         modifier = Modifier.clickable {
-            val it = Intent(MyApplication.context, LoginActivity::class.java).apply {
+            val it = Intent(MyApplication.context, MainActivity::class.java).apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 putExtra("nologin",false)
             }

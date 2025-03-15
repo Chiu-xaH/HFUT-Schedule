@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.UIViewModel
-import com.hfut.schedule.activity.funiction.CardActivity
+import com.hfut.schedule.activity.screen.CardActivity
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.ui.activity.home.focus.funictions.getToday

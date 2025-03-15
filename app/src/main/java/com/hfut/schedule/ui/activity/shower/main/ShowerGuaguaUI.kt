@@ -40,6 +40,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -59,7 +60,8 @@ import com.hfut.schedule.ui.activity.shower.home.main.GuaguaStart
 import com.hfut.schedule.ui.utils.NavigateAnimationManager
 import com.hfut.schedule.ui.utils.NavigateAnimationManager.currentPage
 //import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
-import com.hfut.schedule.ui.utils.NavigateAnimationManager.turnTo
+
+import com.hfut.schedule.ui.utils.navigateAndSave
 import com.hfut.schedule.ui.utils.style.bottomBarBlur
 import com.hfut.schedule.ui.utils.style.topBarBlur
 import com.hfut.schedule.viewmodel.NetWorkViewModel
@@ -69,7 +71,7 @@ import dev.chrisbanes.haze.haze
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShowerGuaGua(vm: GuaGuaViewModel,netVm : NetWorkViewModel) {
+fun ShowerGuaGua(vm: GuaGuaViewModel,netVm : NetWorkViewModel,navHostController: NavHostController) {
     val animation by remember { mutableStateOf(SharePrefs.prefs.getInt("ANIMATION", MyApplication.ANIMATION_SPEED)) }
     val navController = rememberNavController()
     val context = LocalContext.current
@@ -92,7 +94,7 @@ fun ShowerGuaGua(vm: GuaGuaViewModel,netVm : NetWorkViewModel) {
         topBar = {
             Column {
                 TopAppBar(
-                    modifier = Modifier.topBarBlur(hazeState, blur),
+                    modifier = Modifier.topBarBlur(hazeState),
                     colors = TopAppBarDefaults.mediumTopAppBarColors(
                         containerColor = Color.Transparent,
                         titleContentColor = MaterialTheme.colorScheme.primary,
@@ -116,7 +118,7 @@ fun ShowerGuaGua(vm: GuaGuaViewModel,netVm : NetWorkViewModel) {
 //                    Divider()
                 NavigationBar(containerColor = Color.Transparent,
                     modifier = Modifier
-                        .bottomBarBlur(hazeState, blur)) {
+                        .bottomBarBlur(hazeState)) {
 
                     val items = listOf(
                         NavigationBarItemData(
@@ -155,7 +157,7 @@ fun ShowerGuaGua(vm: GuaGuaViewModel,netVm : NetWorkViewModel) {
                                         items[2] -> targetPage = ShowerBarItems.FUNCTION
                                     }
                                 }
-                                if (!selected) { turnTo(navController, route) }
+                                if (!selected) { navController.navigateAndSave(route) }
                             },
                             label = { Text(text = item.label) },
                             icon = {
@@ -181,7 +183,7 @@ fun ShowerGuaGua(vm: GuaGuaViewModel,netVm : NetWorkViewModel) {
                 )) {
             composable(ShowerBarItems.HOME.name) {
                 Scaffold {
-                    GuaguaStart(vm,innerPadding,netVm)
+                    GuaguaStart(vm,innerPadding,netVm, hazeState = hazeState, navHostController)
                 }
             }
             composable(ShowerBarItems.BILLS.name) {
@@ -192,7 +194,7 @@ fun ShowerGuaGua(vm: GuaGuaViewModel,netVm : NetWorkViewModel) {
             }
             composable(ShowerBarItems.FUNCTION.name) {
                 Scaffold {
-                    GuaGuaSettings(innerPadding)
+                    GuaGuaSettings(innerPadding,navHostController)
                 }
             }
         }

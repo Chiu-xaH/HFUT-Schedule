@@ -66,7 +66,7 @@ import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
 import com.hfut.schedule.ui.utils.components.APIIcons
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.style.CardForListColor
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
@@ -75,12 +75,15 @@ import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.DepartmentIcons
 import com.hfut.schedule.ui.utils.components.EmptyUI
+import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LoadingLargeCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.components.statusUI2
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
+import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -89,7 +92,7 @@ import org.jsoup.Jsoup
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyApplyListUI(vm: NetWorkViewModel,batchId : String) {
+fun MyApplyListUI(vm: NetWorkViewModel,batchId : String,hazeState: HazeState) {
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
     var indexs by remember { mutableStateOf(0) }
@@ -102,16 +105,18 @@ fun MyApplyListUI(vm: NetWorkViewModel,batchId : String) {
     var showBottomSheet_apply by remember { mutableStateOf(false) }
 
     if (showBottomSheet_apply) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet_apply = false },
-            sheetState = sheetState_apply,
-            shape = Round(sheetState_apply)
+            hazeState = hazeState,
+            showBottomSheet = showBottomSheet_apply,
+//            sheetState = sheetState_apply,
+//            shape = bottomSheetRound(sheetState_apply)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("申请详情")
+                    HazeBottomSheetTopBar("申请详情")
                 },
             ) { innerPadding ->
                 Column(
@@ -134,13 +139,13 @@ fun MyApplyListUI(vm: NetWorkViewModel,batchId : String) {
                 showBottomSheet = false
             },
             sheetState = sheetState,
-            shape = Round(sheetState)
+            shape = bottomSheetRound(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("结果")
+                    BottomSheetTopBar("结果")
                 },
             ) { innerPadding ->
                 Column(
@@ -278,23 +283,6 @@ fun MyApply(vm: NetWorkViewModel,batchId : String,indexs : Int) {
     }
 
 
-    val scale = animateFloatAsState(
-        targetValue = if (loading) 0.9f else 1f, // 按下时为0.9，松开时为1
-        //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-        animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
-        label = "" // 使用弹簧动画
-    )
-    val scale2 = animateFloatAsState(
-        targetValue = if (loading) 0.97f else 1f, // 按下时为0.9，松开时为1
-        //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-        animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
-        label = "" // 使用弹簧动画
-    )
-
-    val blurSize by animateDpAsState(
-        targetValue = if (loading) 10.dp else 0.dp, label = ""
-        ,animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
-    )
 //    val status = getPersonInfo().status
     val data = getMyTransfer(vm,indexs)
     val isSuccessTransfer = isSuccessTransfer()

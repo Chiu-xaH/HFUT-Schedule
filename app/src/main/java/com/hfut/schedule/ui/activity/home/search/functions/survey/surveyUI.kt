@@ -59,13 +59,16 @@ import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.utils.components.AnimationCardListItem
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.EmptyUI
+import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LittleDialog
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
+import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -73,7 +76,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SurveyUI(vm : NetWorkViewModel) {
+fun SurveyUI(vm : NetWorkViewModel,hazeState: HazeState) {
 //    var expanded by remember { mutableStateOf(true) }
 //    val sheetState = rememberModalBottomSheetState()
 //    var showitem by remember { mutableStateOf(false) }
@@ -133,7 +136,7 @@ fun SurveyUI(vm : NetWorkViewModel) {
             enter = fadeIn(),
             exit = fadeOut()
         ) {
-            teacherList(vm, refresh = {refreshch -> refresh = refreshch})
+            teacherList(vm, hazeState  ,refresh = {refreshch -> refresh = refreshch})
         }
 
 
@@ -187,7 +190,7 @@ fun SurveyUI(vm : NetWorkViewModel) {
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun teacherList(vm : NetWorkViewModel, refresh : (Boolean) -> Unit) {
+fun teacherList(vm : NetWorkViewModel,hazeState: HazeState, refresh : (Boolean) -> Unit) {
     val list =  getSurveyList(vm)
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -212,21 +215,24 @@ fun teacherList(vm : NetWorkViewModel, refresh : (Boolean) -> Unit) {
             },
             dialogTitle = "确定提交",
             dialogText = "实名制上网,理性填表,不可修改",
-            conformtext = "提交",
-            dismisstext = "返回"
+            conformText = "提交",
+            dismissText = "返回"
         )
     }
     if (showBottomSheet) {
-        ModalBottomSheet(
+        HazeBottomSheet(
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState,
-            shape = Round(sheetState)
+            hazeState = hazeState,
+            showBottomSheet = showBottomSheet,
+            isFullExpand = false
+//            sheetState = sheetState,
+//            shape = bottomSheetRound(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("发送教评") {
+                    HazeBottomSheetTopBar("发送教评") {
                         Row(modifier = Modifier.padding(horizontal = AppHorizontalDp())) {
                             FilledTonalIconButton(
                                 onClick = {

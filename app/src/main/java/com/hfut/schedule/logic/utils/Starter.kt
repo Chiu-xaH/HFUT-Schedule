@@ -3,18 +3,18 @@ package com.hfut.schedule.logic.utils
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.webkit.CookieManager
+import androidx.navigation.NavHostController
 import com.hfut.schedule.App.MyApplication
-import com.hfut.schedule.activity.main.AnonymityActivity
-import com.hfut.schedule.activity.main.LoginActivity
+import com.hfut.schedule.activity.MainActivity
 import com.hfut.schedule.activity.shower.ShowerActivity
-import com.hfut.schedule.activity.shower.ShowerLoginActivity
-import com.hfut.schedule.ui.activity.home.search.functions.life.countFunc
+import com.hfut.schedule.logic.enums.ShowerScreen
+import com.hfut.schedule.ui.activity.login.First
 import com.hfut.schedule.ui.utils.components.MyToast
 
 object Starter {
     //通过包名启动第三方应用
+    @JvmStatic
     @SuppressLint("QueryPermissionsNeeded")
     fun startLaunchAPK(packageName: String,appName : String = "应用") {
         try {
@@ -26,6 +26,7 @@ object Starter {
         }
     }
     //传入应用URL打开
+    @JvmStatic
     fun startAppUrl(url : String) {
         try {
             val intent = Intent(Intent.ACTION_DEFAULT, Uri.parse(url))
@@ -36,6 +37,7 @@ object Starter {
         }
     }
     //传入网页URL打开
+    @JvmStatic
     fun startWebUrl(url : String,cookies : String? = null) {
         try {
             val it = Intent(Intent.ACTION_VIEW, Uri.parse(url))
@@ -52,6 +54,7 @@ object Starter {
         }
     }
     //跳转Activity
+    @JvmStatic
     fun startActivity(clazz: Class<*>, extras: Map<String, Any>? = null) {
         val intent = Intent(MyApplication.context, clazz).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -66,44 +69,43 @@ object Starter {
         }
         MyApplication.context.startActivity(intent)
     }
-
-
+    @JvmStatic
     fun refreshLogin() {
-        val it = Intent(MyApplication.context, LoginActivity::class.java).apply {
+        val it = Intent(MyApplication.context, MainActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             putExtra("nologin",false)
         }
         MyApplication.context.startActivity(it)
     }
+    @JvmStatic
     fun loginGuaGua() {
 //        countFunc = 0
-        val it = Intent(MyApplication.context, ShowerLoginActivity::class.java).apply {
+        val it = Intent(MyApplication.context, ShowerActivity::class.java).apply {
+            putExtra("FIRST",ShowerScreen.LOGIN.name)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         MyApplication.context.startActivity(it)
     }
-
+    @JvmStatic
     fun startGuagua() {
 //        countFunc = 0
         val it = Intent(MyApplication.context, ShowerActivity::class.java).apply {
+            putExtra("FIRST",ShowerScreen.HOME.name)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         MyApplication.context.startActivity(it)
     }
+//    @JvmStatic
+//    fun noLogin(navHostController: NavHostController) = turnTo(navHostController,First.GUEST.name)
+//        val it = Intent(MyApplication.context, AnonymityActivity::class.java).apply {
+//            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//        }
+//        MyApplication.context.startActivity(it)
 
-
-    fun noLogin() {
-        val it = Intent(MyApplication.context, AnonymityActivity::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
-        MyApplication.context.startActivity(it)
-    }
-
+    @JvmStatic
     fun emailMe() {
         val it = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:zsh0908@outlook.com"))
         it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         MyApplication.context.startActivity(it)
     }
-
-
 }

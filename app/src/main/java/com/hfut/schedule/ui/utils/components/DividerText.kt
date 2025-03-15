@@ -7,27 +7,15 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandIn
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,16 +27,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.zIndex
 import com.hfut.schedule.App.MyApplication
-import com.hfut.schedule.logic.utils.data.SharePrefs
-import com.hfut.schedule.ui.utils.BlurManager
 
 // 小标题
 @Composable
@@ -108,7 +89,6 @@ fun DividerTextExpandedWith(
         ,animationSpec = tween(speed, easing = LinearOutSlowInEasing),
     )
 
-    val canBlur = BlurManager.getValue()
 
     DividerText(text, onClick = {
         set()
@@ -124,7 +104,7 @@ fun DividerTextExpandedWith(
                 shrinkOut(shrinkTowards = Alignment.BottomCenter,animationSpec = tween(durationMillis = speed))
         ,
         visible = expanded,
-        modifier = if (openBlurAnimation && canBlur) Modifier.blur(blurSize) else Modifier
+        modifier = if (openBlurAnimation) Modifier.blur(blurSize) else Modifier
     ) {
         Column {
             content()

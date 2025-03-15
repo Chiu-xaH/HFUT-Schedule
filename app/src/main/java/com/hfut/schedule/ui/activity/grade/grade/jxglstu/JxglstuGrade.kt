@@ -46,7 +46,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.beans.community.GradeResponseJXGLSTU
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.data.reEmptyLiveDta
-import com.hfut.schedule.logic.utils.parse.ReservDecimal
+import com.hfut.schedule.logic.utils.parse.formatDecimal
 import com.hfut.schedule.ui.activity.card.counts.RadarChart
 import com.hfut.schedule.ui.activity.card.counts.RadarData
 import com.hfut.schedule.ui.activity.grade.getGradeJXGLSTU
@@ -55,19 +55,22 @@ import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTot
 import com.hfut.schedule.ui.utils.components.AnimationCardListItem
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CardNormalDp
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.EmptyUI
+import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LargeCard
 import com.hfut.schedule.ui.utils.components.LittleDialog
 import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.ScrollText
-import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.TransplantListItem
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.NetWorkViewModel
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -77,7 +80,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel,showSearch : Boolean) {
+fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel,showSearch : Boolean,hazeState: HazeState) {
 
 
     val cookie = if(!vm.webVpn) prefs.getString("redirect", "")  else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket","")
@@ -98,17 +101,19 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel,showSea
     var showBottomSheet_Survey by remember { mutableStateOf(false) }
 
     if (showBottomSheet_Survey) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet_Survey = false },
-            sheetState = sheetState_Survey,
-            shape = Round(sheetState_Survey)
+            hazeState = hazeState,
+            showBottomSheet = showBottomSheet_Survey
+//            sheetState = sheetState_Survey,
+//            shape = bottomSheetRound(sheetState_Survey)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("评教") {
-                        CourseTotalForApi(vm=vm)
+                    HazeBottomSheetTopBar("评教") {
+                        CourseTotalForApi(vm=vm, hazeState = hazeState)
                     }
                 },
             ) { innerPadding ->
@@ -117,24 +122,26 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel,showSea
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    SurveyUI(vm)
+                    SurveyUI(vm,hazeState)
                 }
             }
         }
     }
 
     if (showBottomSheet) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet= false },
-            sheetState = sheetState,
-            shape = Round(sheetState)
+            showBottomSheet = showBottomSheet,
+            hazeState = hazeState
+//            sheetState = sheetState,
+//            shape = bottomSheetRound(sheetState)
         ) {
 
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar(title)
+                    HazeBottomSheetTopBar(title)
                 },) {innerPadding ->
                 Column(
                     modifier = Modifier
@@ -274,6 +281,7 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel,showSea
 
 @Composable
 fun GradeInfo(num : GradeResponseJXGLSTU,vm: NetWorkViewModel) {
+    val hazeState = remember { HazeState() }
     val list = num.grade.split(" ")
     val radarList = mutableListOf<RadarData>()
     list.forEach { item ->
@@ -328,10 +336,10 @@ fun GradeInfo(num : GradeResponseJXGLSTU,vm: NetWorkViewModel) {
         LittleDialog(
             onDismissRequest = { showDialog = false },
             onConfirmation = { showDialog = false },
-            dialogTitle = "提示",
             dialogText = "平时因数=除去期末成绩各项平均分/期末分数,可大致反映最终成绩平时分占比\n越接近1则平衡,越>1则表明最终成绩可能更靠平时分,越<1表明最终成绩可能因平时分拖后腿",
-            conformtext = "好",
-            dismisstext = "关闭"
+            conformText = "好",
+            dismissText = "关闭",
+            hazeState = hazeState
         )
     }
 
@@ -341,67 +349,67 @@ fun GradeInfo(num : GradeResponseJXGLSTU,vm: NetWorkViewModel) {
         delay(4000L)
         scrollState.animateScrollTo(0)
     }
-    DividerTextExpandedWith(text = "雷达图") {
+    Column(modifier = Modifier.hazeSource(hazeState)) {
+        DividerTextExpandedWith(text = "雷达图") {
 //        Divider()
-        val topPadding = if(radarList.size == 0) {
-            0
-        } else {
-            35
-        }
-        Spacer(modifier = Modifier.height(topPadding.dp))
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-            RadarChart(data = radarList, modifier = Modifier.size(200.dp))
-        }
-        val bottomPadding = if(radarList.size == 0) {
-            0
-        } else if(radarList.size == 1) {
-            0
-        } else if(radarList.size == 3) {
-            0
-        } else {
-            25
-        }
-        Spacer(modifier = Modifier.height(bottomPadding.dp))
+            val topPadding = if(radarList.size == 0) {
+                0
+            } else {
+                35
+            }
+            Spacer(modifier = Modifier.height(topPadding.dp))
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                RadarChart(data = radarList, modifier = Modifier.size(200.dp))
+            }
+            val bottomPadding = if(radarList.size == 0) {
+                0
+            } else if(radarList.size == 1) {
+                0
+            } else if(radarList.size == 3) {
+                0
+            } else {
+                25
+            }
+            Spacer(modifier = Modifier.height(bottomPadding.dp))
 //        Divider()
-    }
+        }
+        DividerTextExpandedWith(text = "成绩详情",false) {
+            LargeCard(title) {
+                for (i in list.indices step 2)
+                    Row {
+                        val l1 = list[i]
+                        val t1 = l1.substringBefore(":")
+                        val score1 = l1.substringAfter(":")
 
-    DividerTextExpandedWith(text = "成绩详情",false) {
-        LargeCard(title) {
-            for (i in list.indices step 2)
-                Row {
-                    val l1 = list[i]
-                    val t1 = l1.substringBefore(":")
-                    val score1 = l1.substringAfter(":")
-
-                    TransplantListItem(
-                        headlineContent = {
-                            Text(
-                                text = score1,
-                                fontWeight = if(t1.contains("期末考试") || t1.contains("期中考试")) FontWeight.Bold else FontWeight.Normal,
-                                textDecoration = if(t1.contains("期末考试") || t1.contains("期中考试")) TextDecoration.Underline else TextDecoration.None
-                            ) },
-                        overlineContent = { Text(t1) },
-                        modifier = Modifier.weight(.5f),
-                        leadingContent = { GradeIcons(t1) }
-                    )
-                    if (i + 1 < list.size) {
-                        val l2 = list[i+1]
-                        val t2 = l2.substringBefore(":")
-                        val score2 = l2.substringAfter(":")
                         TransplantListItem(
                             headlineContent = {
                                 Text(
-                                    text = score2,
-                                    fontWeight = if(t2.contains("期末考试") || t2.contains("期中考试")) FontWeight.Bold else FontWeight.Normal,
-                                    textDecoration = if(t2.contains("期末考试") || t2.contains("期中考试")) TextDecoration.Underline else TextDecoration.None
+                                    text = score1,
+                                    fontWeight = if(t1.contains("期末考试") || t1.contains("期中考试")) FontWeight.Bold else FontWeight.Normal,
+                                    textDecoration = if(t1.contains("期末考试") || t1.contains("期中考试")) TextDecoration.Underline else TextDecoration.None
                                 ) },
-                            overlineContent = { Text(t2) },
+                            overlineContent = { Text(t1) },
                             modifier = Modifier.weight(.5f),
-                            leadingContent = { GradeIcons(t2) }
+                            leadingContent = { GradeIcons(t1) }
                         )
+                        if (i + 1 < list.size) {
+                            val l2 = list[i+1]
+                            val t2 = l2.substringBefore(":")
+                            val score2 = l2.substringAfter(":")
+                            TransplantListItem(
+                                headlineContent = {
+                                    Text(
+                                        text = score2,
+                                        fontWeight = if(t2.contains("期末考试") || t2.contains("期中考试")) FontWeight.Bold else FontWeight.Normal,
+                                        textDecoration = if(t2.contains("期末考试") || t2.contains("期中考试")) TextDecoration.Underline else TextDecoration.None
+                                    ) },
+                                overlineContent = { Text(t2) },
+                                modifier = Modifier.weight(.5f),
+                                leadingContent = { GradeIcons(t2) }
+                            )
+                        }
                     }
-                }
-            Row {
+                Row {
 //                ListItem(
 //                    leadingContent = {
 //                        Icon(
@@ -416,44 +424,45 @@ fun GradeInfo(num : GradeResponseJXGLSTU,vm: NetWorkViewModel) {
 //                    },
 //                    modifier = Modifier.weight(.4f)
 //                )
-                TransplantListItem(
-                    leadingContent = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.filter_vintage),
-                            contentDescription = ""
-                        )
-                    },
-                    headlineContent = {
-                        ScrollText(
-                            text =  num.score
-                        )
-                    },
-                    overlineContent = {
-                        Text("学分")
-                    },
-                    modifier = Modifier.weight(.5f)
-                )
-                TransplantListItem(
-                    leadingContent = {
-                        Icon(painter = painterResource(R.drawable.percent), contentDescription = "")
-                    },
-                    headlineContent = {
-                        ScrollText(
-                            text = if (avgPingshi != 0f) ReservDecimal.reservDecimal(
-                                avgPingshi.toDouble(),
-                                2
-                            ) else "未知"
-                        )
-                    },
-                    overlineContent = {
-                        Text("平时因数")
-                    },
-                    modifier = Modifier
-                        .weight(.5f)
-                        .clickable {
-                            showDialog = true
-                        }
-                )
+                    TransplantListItem(
+                        leadingContent = {
+                            Icon(
+                                painter = painterResource(id = R.drawable.filter_vintage),
+                                contentDescription = ""
+                            )
+                        },
+                        headlineContent = {
+                            ScrollText(
+                                text =  num.score
+                            )
+                        },
+                        overlineContent = {
+                            Text("学分")
+                        },
+                        modifier = Modifier.weight(.5f)
+                    )
+                    TransplantListItem(
+                        leadingContent = {
+                            Icon(painter = painterResource(R.drawable.percent), contentDescription = "")
+                        },
+                        headlineContent = {
+                            ScrollText(
+                                text = if (avgPingshi != 0f) formatDecimal(
+                                    avgPingshi.toDouble(),
+                                    2
+                                ) else "未知"
+                            )
+                        },
+                        overlineContent = {
+                            Text("平时因数")
+                        },
+                        modifier = Modifier
+                            .weight(.5f)
+                            .clickable {
+                                showDialog = true
+                            }
+                    )
+                }
             }
         }
     }

@@ -67,17 +67,18 @@ import com.hfut.schedule.ui.activity.shower.home.ShowerDataBaseManager
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
 import com.hfut.schedule.ui.utils.components.CameraScan
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.LittleDialog
 import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.statusUI2
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.ui.utils.style.RowHorizontal
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.GuaGuaViewModel
+import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -156,7 +157,7 @@ data class StatusMsgResponse(val message : String)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StartShowerUI(vm: GuaGuaViewModel) {
+fun StartShowerUI(vm: GuaGuaViewModel,hazeState: HazeState) {
     val context = LocalContext.current
     val activity = context as Activity
 
@@ -172,7 +173,6 @@ fun StartShowerUI(vm: GuaGuaViewModel) {
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
 
-//    val context = LocalContext.current
     val imageAnalysis = ImageAnalysis.Builder() .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888).build().also {
         it.setAnalyzer(ContextCompat.getMainExecutor(context), QRCodeAnalyzer { result ->
             result?.let {
@@ -190,22 +190,18 @@ fun StartShowerUI(vm: GuaGuaViewModel) {
         })
     }
     var isFull by remember { mutableStateOf(false) }
-    var swapBlur by remember { mutableStateOf(true) }
     val height by animateDpAsState(
         targetValue = if(isFull) 1000.dp else 500.dp, label = "",
         animationSpec = tween(MyApplication.ANIMATION_SPEED, easing = FastOutSlowInEasing)
     )
-    val blur by animateDpAsState(
-        targetValue = if(swapBlur) 20.dp else 0.dp, label = "",
-        animationSpec = tween(MyApplication.ANIMATION_SPEED, easing = FastOutSlowInEasing)
-    )
+
     if(show) {
         ModalBottomSheet(
             onDismissRequest = {
                 show = false
             },
             sheetState = sheetState_scan,
-            shape = if(isFull) Round(sheetState_scan) else BottomSheetDefaults.ExpandedShape,
+            shape = if(isFull) bottomSheetRound(sheetState_scan) else BottomSheetDefaults.ExpandedShape,
             dragHandle = {
                 if(!isFull) BottomSheetDefaults. DragHandle()
             }
@@ -220,19 +216,6 @@ fun StartShowerUI(vm: GuaGuaViewModel) {
                 ) {
                     Icon(Icons.Filled.Close,null, modifier = Modifier.size(30.dp))
                 }
-//                Box(
-//                    modifier = Modifier
-//                        .size(150.dp, 50.dp)
-//                        .align(Alignment.Center)
-//                        .graphicsLayer {
-//                            renderEffect = RenderEffect.createBlurEffect(
-//                                20f, 20f, Shader.TileMode.CLAMP
-//                            )
-//                        }
-//                        .background(Color.White.copy(alpha = 0.3f), shape = RoundedCornerShape(12.dp))
-//                ) {
-//
-//                }
                 FilledTonalIconButton (
                     onClick = { isFull = !isFull },
                     colors = IconButtonDefaults.filledTonalIconButtonColors(containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = .7f)),
@@ -301,10 +284,8 @@ fun StartShowerUI(vm: GuaGuaViewModel) {
                     ShowerDataBaseManager.removeItems(id)
                 showDialog_Del = false
             },
-            dialogTitle = "删除",
             dialogText = "要删除这个标签吗",
-            conformtext = "确定",
-            dismisstext = "取消"
+            hazeState = hazeState
         )
     }
 
@@ -315,13 +296,13 @@ fun StartShowerUI(vm: GuaGuaViewModel) {
                 showBottomSheet = false
             },
             sheetState = sheetState,
-            shape = Round(sheetState)
+            shape = bottomSheetRound(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("结果")
+                    BottomSheetTopBar("结果")
                 },
             ) { innerPadding ->
                 Column(

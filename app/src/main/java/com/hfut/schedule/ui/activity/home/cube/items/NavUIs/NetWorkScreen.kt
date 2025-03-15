@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.activity.main.LoginActivity
+import com.hfut.schedule.activity.MainActivity
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.saveBoolean
@@ -36,13 +36,16 @@ import com.hfut.schedule.ui.activity.home.cube.items.subitems.RequestArrange
 import com.hfut.schedule.ui.activity.home.search.functions.lepaoYun.InfoSet
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
 import com.hfut.schedule.ui.utils.components.TransplantListItem
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
+import dev.chrisbanes.haze.HazeState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NetWorkScreen(navController: NavController,
                   innerPaddings : PaddingValues,
-                  ifSaved : Boolean
+                  ifSaved : Boolean,
+                  hazeState: HazeState
 ) {
     // Design your second screen here
     Column(modifier = Modifier
@@ -68,43 +71,37 @@ fun NetWorkScreen(navController: NavController,
         saveBoolean("SWITCHSERVER",false,server)
 
 
-
-        var showBottomSheet_input by remember { mutableStateOf(false) }
-        val sheetState_input = rememberModalBottomSheetState()
-        if (showBottomSheet_input) {
-            ModalBottomSheet(
-                onDismissRequest = { showBottomSheet_input = false },
-                sheetState = sheetState_input,
-                shape = Round(sheetState_input)
-            ) {
-                InfoSet()
-                Spacer(modifier = Modifier.height(100.dp))
-            }
-        }
+//
+//        var showBottomSheet_input by remember { mutableStateOf(false) }
+//        val sheetState_input = rememberModalBottomSheetState()
+//        if (showBottomSheet_input) {
+//            ModalBottomSheet(
+//                onDismissRequest = { showBottomSheet_input = false },
+//                sheetState = sheetState_input,
+//                shape = bottomSheetRound(sheetState_input)
+//            ) {
+//                InfoSet()
+//                Spacer(modifier = Modifier.height(100.dp))
+//            }
+//        }
 
 
 
         var showBottomSheet_arrange by remember { mutableStateOf(false) }
         var sheetState_arrange = rememberModalBottomSheetState()
         if (showBottomSheet_arrange) {
-            ModalBottomSheet(
+            HazeBottomSheet (
                 onDismissRequest = { showBottomSheet_arrange = false },
-                sheetState = sheetState_arrange,
-                shape = Round(sheetState_arrange)
+                showBottomSheet = showBottomSheet_arrange,
+                hazeState = hazeState,
+                isFullExpand = false
+//                sheetState = sheetState_arrange,
+//                shape = bottomSheetRound(sheetState_arrange)
             ) {
                 RequestArrange()
                 Spacer(modifier = Modifier.height(100.dp))
             }
         }
-
-        TransplantListItem(
-            headlineContent = { Text(text = "云端交互(Beta) & 新聚焦接口") },
-            supportingContent = { Text(text = "打开后,部分信息将回传云端,不包括用户敏感信息,即使关闭状态下仍保持部分必须云端数据交换") },
-            leadingContent = { Icon(painterResource(R.drawable.filter_drama), contentDescription = "Localized description",) },
-            trailingContent = { Switch(checked = false, onCheckedChange = {serverch -> server = serverch }, enabled = false) },
-            // modifier = Modifier.clickable { server = !server }
-        )
-
 
         TransplantListItem(
             headlineContent = { Text(text = "请求范围") },
@@ -120,12 +117,7 @@ fun NetWorkScreen(navController: NavController,
                 trailingContent = { Switch(checked = showapi, onCheckedChange = {showapich -> showapi = showapich }) },
                 modifier = Modifier.clickable { showapi = !showapi }
             )
-        TransplantListItem(
-            headlineContent = { Text(text = "云运动 信息配置") },
-            supportingContent = { Text(text = "需要提交已登录手机的信息") },
-            leadingContent = { Icon(painterResource(R.drawable.mode_of_travel), contentDescription = "Localized description",) },
-            modifier = Modifier.clickable { showBottomSheet_input = true }
-        )
+
 
         if(ifSaved)
             TransplantListItem(
@@ -133,7 +125,7 @@ fun NetWorkScreen(navController: NavController,
                 supportingContent = { Text(text = "如果一卡通或者考试成绩等无法查询,可能是登陆过期,需重新登录一次") },
                 leadingContent = { Icon(painterResource(R.drawable.rotate_right), contentDescription = "Localized description",) },
                 modifier = Modifier.clickable {
-                    val it = Intent(MyApplication.context, LoginActivity::class.java).apply {
+                    val it = Intent(MyApplication.context, MainActivity::class.java).apply {
                         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         putExtra("nologin",false)
                     }

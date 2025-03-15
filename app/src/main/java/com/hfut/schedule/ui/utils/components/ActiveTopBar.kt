@@ -4,10 +4,14 @@ import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -19,6 +23,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.hfut.schedule.logic.utils.VersionUtils
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,9 +36,10 @@ fun ActiveTopBar(title : String) {
             titleContentColor = MaterialTheme.colorScheme.primary)
     )
 }
-
+// BottomSheet专用
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomTopBar(
+fun BottomSheetTopBar(
     title: String,
     singleLine : Boolean = false,
     textModifier : Modifier = Modifier,
@@ -56,6 +63,26 @@ fun CustomTopBar(
         }
     }
 }
+
+@Composable
+fun HazeBottomSheetTopBar(
+    title: String,
+    singleLine : Boolean = false,
+    textModifier : Modifier = Modifier,
+    isPaddingStatusBar : Boolean = true,
+    rightContent : (@Composable () -> Unit)? = null
+) {
+    Column {
+        Spacer(Modifier.height(AppHorizontalDp() * if(isPaddingStatusBar) 1.5f else 0f))
+        BottomSheetTopBar(
+            title,
+            singleLine,
+            textModifier,
+            rightContent
+        )
+    }
+}
+
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable

@@ -67,11 +67,12 @@ import com.hfut.schedule.ui.activity.grade.grade.community.GradeItemUI
 import com.hfut.schedule.ui.activity.grade.grade.jxglstu.GradeItemUIJXGLSTU
 import com.hfut.schedule.ui.utils.NavigateAnimationManager
 import com.hfut.schedule.ui.utils.NavigateAnimationManager.currentPage
-import com.hfut.schedule.ui.utils.NavigateAnimationManager.turnTo
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.navigateAndSave
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.ui.utils.style.bottomBarBlur
 import com.hfut.schedule.ui.utils.style.topBarBlur
 import com.hfut.schedule.viewmodel.NetWorkViewModel
@@ -109,13 +110,13 @@ fun GradeUI(ifSaved : Boolean,vm : NetWorkViewModel) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet= false },
             sheetState = sheetState,
-            shape = Round(sheetState)
+            shape = bottomSheetRound(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("说明")
+                    BottomSheetTopBar("说明")
                 },) {innerPadding ->
                 Column(
                     modifier = Modifier
@@ -133,7 +134,7 @@ fun GradeUI(ifSaved : Boolean,vm : NetWorkViewModel) {
         topBar = {
             Column {
                 TopAppBar(
-                    modifier = Modifier.topBarBlur(hazeState, blur),
+                    modifier = Modifier.topBarBlur(hazeState,),
                     colors = TopAppBarDefaults.mediumTopAppBarColors(
                         containerColor = Color.Transparent,
                         titleContentColor = MaterialTheme.colorScheme.primary,
@@ -166,7 +167,7 @@ fun GradeUI(ifSaved : Boolean,vm : NetWorkViewModel) {
         bottomBar = {
             Column {
                 NavigationBar(containerColor = Color.Transparent ,
-                    modifier = Modifier.bottomBarBlur(hazeState, blur)
+                    modifier = Modifier.bottomBarBlur(hazeState,)
                 ) {
                     val items = listOf(
                         NavigationBarItemData(
@@ -201,7 +202,7 @@ fun GradeUI(ifSaved : Boolean,vm : NetWorkViewModel) {
                                 }
 
                                 if (!selected) {
-                                    turnTo(navController,route)
+                                    navController.navigateAndSave(route)
                                 }
                             },
                             label = { Text(text = item.label) },
@@ -223,27 +224,16 @@ fun GradeUI(ifSaved : Boolean,vm : NetWorkViewModel) {
                 modifier = Modifier.haze(state = hazeState)
             ) {
                 composable(GradeBarItems.GRADE.name) {
-//                    val selected = navController.currentBackStackEntryAsState().value?.destination?.route == GradeBarItems.GRADE.name
-//                    val blurSize by animateDpAsState(
-//                        targetValue = if (!selected) 10.dp else 0.dp, label = ""
-//                        ,animationSpec = tween(animation, easing = LinearOutSlowInEasing),
-//                    )
+
                     Scaffold(
-//                        modifier = Modifier.blur(blurSize)
                     ) {
                         if (ifSaved) GradeItemUI(vm,innerPadding)
-                        else GradeItemUIJXGLSTU(innerPadding,vm,showSearch)
+                        else GradeItemUIJXGLSTU(innerPadding,vm,showSearch,hazeState)
                     }
 
                 }
                 composable(GradeBarItems.COUNT.name) {
-//                    val selected = navController.currentBackStackEntryAsState().value?.destination?.route == GradeBarItems.COUNT.name
-//                    val blurSize by animateDpAsState(
-//                        targetValue = if (!selected) 100.dp else 0.dp, label = ""
-//                        ,animationSpec = tween(animation, easing = LinearOutSlowInEasing),
-//                    )
                     Scaffold(
-//                        modifier = Modifier.blur(blurSize)
                     ) {
                         GradeCountUI(innerPadding)
                     }

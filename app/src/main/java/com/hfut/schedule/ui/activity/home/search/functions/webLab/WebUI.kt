@@ -31,19 +31,21 @@ import com.hfut.schedule.R
 import com.hfut.schedule.ui.activity.news.departments.SchoolsUI
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
+import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.TransplantListItem
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
+import dev.chrisbanes.haze.HazeState
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WebUI() {
+fun WebUI(hazeState: HazeState) {
     val sheetState_Web = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_Web by remember { mutableStateOf(false) }
-
 
 
     TransplantListItem(
@@ -58,17 +60,19 @@ fun WebUI() {
     )
 
     if (showBottomSheet_Web) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet_Web = false },
-            sheetState = sheetState_Web,
-            shape = Round(sheetState_Web)
+            showBottomSheet = showBottomSheet_Web,
+            hazeState = hazeState,
+//            sheetState = sheetState_Web,
+//            shape = bottomSheetRound(sheetState_Web)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("网址导航") {
-                        Schools()
+                    HazeBottomSheetTopBar("网址导航") {
+                        Schools(hazeState)
                     }
                 },
             ) { innerPadding ->
@@ -94,21 +98,23 @@ fun WebUI() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Schools() {
+private fun Schools(hazeState: HazeState) {
     val sheetState_School = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_School by remember { mutableStateOf(false) }
 
     if (showBottomSheet_School) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet_School = false },
-            sheetState = sheetState_School,
-            shape = Round(sheetState_School)
+            hazeState = hazeState,
+            showBottomSheet = showBottomSheet_School
+//            sheetState = sheetState_School,
+//            shape = bottomSheetRound(sheetState_School)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("学院")
+                    HazeBottomSheetTopBar("学院")
                 },
             ) { innerPadding ->
                 Column(

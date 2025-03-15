@@ -12,6 +12,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 
 object PermissionManager {
+    @JvmStatic
     fun checkAndRequestStoragePermission(activity: Activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             if (!Environment.isExternalStorageManager()) {
@@ -27,7 +28,7 @@ object PermissionManager {
             )
         }
     }
-
+    @JvmStatic
     fun checkAndRequestCalendarPermission(activity: Activity) {
         if(
             ContextCompat.checkSelfPermission(activity,
@@ -45,13 +46,12 @@ object PermissionManager {
                 Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED)
             ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.READ_CALENDAR),1)
     }
-
-
+    @JvmStatic
     fun checkAndRequestCameraPermission(activity: Activity) {
         if(ContextCompat.checkSelfPermission(activity,Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
             ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.CAMERA),1)
     }
-
+    @JvmStatic
     fun checkAndRequestNotificationPermission(activity: Activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13 (API 33) 需要通知权限
             if (ContextCompat.checkSelfPermission(activity, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
@@ -59,5 +59,4 @@ object PermissionManager {
             }
         }
     }
-
 }

@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.viewmodel.GuaGuaViewModel
 import com.hfut.schedule.ui.activity.shower.home.function.GuaGuaPersonInfoUI
@@ -34,23 +35,27 @@ import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.viewmodel.NetWorkViewModel
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.hazeSource
 
 @Composable
-fun GuaguaStart(vm: GuaGuaViewModel, innerPadding : PaddingValues,netWm : NetWorkViewModel) {
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .verticalScroll(rememberScrollState())) {
+fun GuaguaStart(vm: GuaGuaViewModel, innerPadding : PaddingValues,netWm : NetWorkViewModel,hazeState: HazeState,navHostController: NavHostController) {
+//    val hazeState = remember { HazeState() }
+    Column(
+        modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+
+
         Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
         DividerTextExpandedWith(text = "个人信息",false) {
-            GuaGuaPersonInfoUI(netWm)
+            GuaGuaPersonInfoUI(netWm,hazeState)
         }
 
         DividerTextExpandedWith(text = "开始洗浴") {
-            StartShowerUI(vm)
+            StartShowerUI(vm,hazeState)
         }
 
         DividerTextExpandedWith("脱机使用 (无需APP 输入使用码)") {
-            UseCodeUI(vm)
+            UseCodeUI(vm,hazeState,navHostController)
         }
         Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
     }

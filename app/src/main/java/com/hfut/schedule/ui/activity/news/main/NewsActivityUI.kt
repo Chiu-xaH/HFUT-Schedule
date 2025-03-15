@@ -79,11 +79,12 @@ import com.hfut.schedule.ui.activity.news.home.NewsItem
 import com.hfut.schedule.ui.activity.news.xuancheng.XuanquNewsUI
 import com.hfut.schedule.ui.utils.NavigateAnimationManager
 import com.hfut.schedule.ui.utils.NavigateAnimationManager.currentPage
-import com.hfut.schedule.ui.utils.NavigateAnimationManager.turnTo
+
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CardNormalDp
 import com.hfut.schedule.ui.utils.components.CenterLoadingUI
 import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.navigateAndSave
 import com.hfut.schedule.ui.utils.style.bottomBarBlur
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import com.hfut.schedule.ui.utils.style.topBarBlur
@@ -124,7 +125,7 @@ fun NewsActivityUI(vm: NetWorkViewModel) {
         topBar = {
             Column {
                 TopAppBar(
-                    modifier = Modifier.topBarBlur(hazeState, blur),
+                    modifier = Modifier.topBarBlur(hazeState,),
                     colors = TopAppBarDefaults.mediumTopAppBarColors(
                         containerColor = Color.Transparent,
                         titleContentColor = MaterialTheme.colorScheme.primary,
@@ -155,7 +156,7 @@ fun NewsActivityUI(vm: NetWorkViewModel) {
 //                    Divider()
                 NavigationBar(containerColor = Color.Transparent,
                     modifier = Modifier
-                        .bottomBarBlur(hazeState, blur)) {
+                        .bottomBarBlur(hazeState)) {
 
                     val items = listOf(
                         NavigationBarItemData(
@@ -195,7 +196,7 @@ fun NewsActivityUI(vm: NetWorkViewModel) {
                                         else -> NewsBarItems.News
                                     }
                                 }
-                                if (!selected) { turnTo(navController, route) }
+                                if (!selected) { navController.navigateAndSave( route) }
                             },
                             label = { Text(text = item.label) },
                             icon = {

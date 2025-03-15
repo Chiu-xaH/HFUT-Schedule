@@ -17,7 +17,7 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-//data class WebData(var flow : String?,var fee : String?)
+
 class UIViewModel : ViewModel()  {
     private val Gitee = GiteeServiceCreator.create(GiteeService::class.java)
     private val LoginWeb = LoginWebServiceCreator.create(LoginWebsService::class.java)
@@ -34,7 +34,6 @@ class UIViewModel : ViewModel()  {
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-              //  UpdateValue.value = response.body()?.string()
                 saveString("versions",response.body()?.string())
             }
 

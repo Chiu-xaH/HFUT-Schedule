@@ -12,6 +12,7 @@ import java.io.IOException
 import java.lang.Exception
 
 object ShareAPK {
+    @JvmStatic
     fun shareAPK() {
         val path : String = "${ MyApplication.context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) }/HFUT-Schedule ${VersionUtils.getVersionName()}.apk"
         try {
@@ -32,7 +33,7 @@ object ShareAPK {
             Log.d("错误", e.toString())
         }
     }
-
+    @JvmStatic
     private fun getAPK(destinationPath : String) {
         val apkFile = File(MyApplication.context.packageCodePath)
         val destinationFile = File(destinationPath)

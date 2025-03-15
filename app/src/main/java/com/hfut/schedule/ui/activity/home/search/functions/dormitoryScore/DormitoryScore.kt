@@ -22,13 +22,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.TransplantListItem
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import dev.chrisbanes.haze.HazeState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DormitoryScoreXuanCheng(vm : NetWorkViewModel) {
+fun DormitoryScoreXuanCheng(vm : NetWorkViewModel,hazeState: HazeState) {
     vm.XuanquData.value = "{}"
     val sheetState_Xuanqu = rememberModalBottomSheetState(skipPartiallyExpanded = false)
     var showBottomSheet_Xuanqu by remember { mutableStateOf(false) }
@@ -41,12 +43,14 @@ fun DormitoryScoreXuanCheng(vm : NetWorkViewModel) {
     )
 
     if (showBottomSheet_Xuanqu) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = {
                 showBottomSheet_Xuanqu = false
             },
-            sheetState = sheetState_Xuanqu,
-            shape = Round(sheetState_Xuanqu)
+            hazeState = hazeState,
+            showBottomSheet = showBottomSheet_Xuanqu
+//            sheetState = sheetState_Xuanqu,
+//            shape = bottomSheetRound(sheetState_Xuanqu)
         ) {
             Column() {
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center

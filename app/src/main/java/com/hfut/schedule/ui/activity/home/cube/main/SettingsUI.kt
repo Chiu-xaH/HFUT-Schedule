@@ -43,6 +43,7 @@ import com.hfut.schedule.ui.activity.home.cube.items.NavUIs.UIScreen
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.DownloadMLUI
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.TEST
 import com.hfut.schedule.ui.utils.NavigateAnimationManager
+import dev.chrisbanes.haze.HazeState
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @SuppressLint("SuspiciousIndentation", "UnusedMaterial3ScaffoldPaddingParameter")
@@ -56,11 +57,11 @@ fun SettingsScreen(vm : NetWorkViewModel
                    blur : Boolean,
                    blurchanged : (Boolean) -> Unit,
                    vm1 : LoginViewModel,
+                   hazeState: HazeState
 ) {
 
     val navController = rememberNavController()
 
-    var animation by remember { mutableStateOf(prefs.getInt("ANIMATION", MyApplication.ANIMATION_SPEED)) }
     Box{
         Scaffold(floatingActionButton = {
             //如果界面处于Screen.HomeScreen.route则不显示
@@ -87,7 +88,7 @@ fun SettingsScreen(vm : NetWorkViewModel
 
                 composable(Screen.HomeScreen.route) {
                     Scaffold {
-                        HomeSettingScreen(navController,vm, showlable, showlablechanged, ifSaved, innerPaddings, blur, blurchanged)
+                        HomeSettingScreen(navController,vm, showlable, showlablechanged, ifSaved, innerPaddings, blur, blurchanged,hazeState)
                     }
                 }
                 composable(Screen.UIScreen.route) {
@@ -97,29 +98,29 @@ fun SettingsScreen(vm : NetWorkViewModel
                 }
                 composable(Screen.APPScreen.route) {
                     Scaffold {
-                        APPScreen(navController, innerPaddings,ifSaved)
+                        APPScreen(navController, innerPaddings,ifSaved,hazeState)
                     }
                 }
                 composable(Screen.FIxAboutScreen.route) {
                 Scaffold {
-                    AboutUI(innerPadding = innerPaddings, vm1,true,navController)
+                    AboutUI(innerPadding = innerPaddings, vm1,true,navController,hazeState)
                 }
                 }
                 composable(Screen.NetWorkScreen.route) {
                 Scaffold {
-                    NetWorkScreen(navController, innerPaddings,ifSaved)
+                    NetWorkScreen(navController, innerPaddings,ifSaved,hazeState)
                    }
                 }
                 composable(FixBarItems.Fix.name) {
                 Scaffold {
-                    FixUI(innerPadding = innerPaddings,vm1,vm)
+                    FixUI(innerPadding = innerPaddings,vm1,vm,hazeState)
                 }
                 }
-                composable(FixBarItems.About.name) {
-                    Scaffold {
-
-                    }
-                }
+//                composable(FixBarItems.About.name) {
+//                    Scaffold {
+//
+//                    }
+//                }
                 composable("DEBUG") {
                     Scaffold {
                         TEST(innerPadding)

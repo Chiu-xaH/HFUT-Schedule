@@ -7,6 +7,7 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.ui.utils.components.MyToast
 
 object ClipBoard {
+    @JvmStatic
     fun copy(str : String,tip : String = "已复制到剪切板") {
         try {
             val clipboard = MyApplication.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
@@ -17,6 +18,7 @@ object ClipBoard {
             MyToast("复制到剪切板失败")
         }
     }
+    @JvmStatic
     fun paste(): String {
         return try {
             val clipboard = MyApplication.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager

@@ -17,15 +17,17 @@ import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.TransplantListItem
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import dev.chrisbanes.haze.HazeState
 
 
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CoursesSearch(ifSaved :  Boolean, vm : NetWorkViewModel) {
+fun CoursesSearch(ifSaved :  Boolean, vm : NetWorkViewModel,hazeState : HazeState) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
 
@@ -45,12 +47,15 @@ fun CoursesSearch(ifSaved :  Boolean, vm : NetWorkViewModel) {
     )
 
     if (showBottomSheet) {
-        ModalBottomSheet(
+        HazeBottomSheet(
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState,
-            shape = Round(sheetState)
+            hazeState = hazeState,
+            showBottomSheet = showBottomSheet,
+
+//            sheetState = sheetState,
+//            shape = bottomSheetRound(sheetState)
         ) {
-            CourseSearchUI(vm)
+            CourseSearchUI(vm, hazeState )
         }
     }
 }

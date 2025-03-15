@@ -78,18 +78,22 @@ import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.LoginWebUI
 
 import com.hfut.schedule.ui.activity.home.search.functions.shower.ShowerUI
 //import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
-import com.hfut.schedule.ui.utils.NavigateAnimationManager.turnTo
+
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.style.CardForListColor
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
+import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LargeCardColor
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.components.WebDialog
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.navigateAndSave
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
+import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -99,7 +103,7 @@ import java.math.RoundingMode
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
-fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navController :  NavHostController, vmUI : UIViewModel) {
+fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navController :  NavHostController, vmUI : UIViewModel,hazeState: HazeState) {
     //刷新
     var refreshing by remember { mutableStateOf(false) }
     var loading by remember { mutableStateOf(false) }
@@ -199,105 +203,34 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
     val settles = vmUI.CardValue.value?.settle ?: settle
 
     val auth = SharePrefs.prefs.getString("auth","")
-    //Log.d("auth",auth.toString())
     val url = MyApplication.ZJGD_URL + "plat/pay" + "?synjones-auth=" + auth
 
     var showDialog_Huixin by remember { mutableStateOf(false) }
 
     val urlHuixin = MyApplication.ZJGD_URL + "plat" + "?synjones-auth=" + auth
 
-//    val switch_startUri = SharePrefs.prefs.getBoolean("SWITCHSTARTURI",true)
 
-//    if (showDialog) {
-//        androidx.compose.ui.window.Dialog(
-//            onDismissRequest = { showDialog = false },
-//            properties = DialogProperties(usePlatformDefaultWidth = false)
-//        ) {
-//            Scaffold(
-//                modifier = Modifier.fillMaxSize(),
-//                topBar = {
-//                    TopAppBar(
-//                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-//                            containerColor = Color.Transparent,
-//                            titleContentColor = MaterialTheme.colorScheme.primary,
-//                        ),
-//                        actions = {
-//                            Row{
-//                                IconButton(onClick = { Starter.startWebUrl(url) }) { Icon(painterResource(id = R.drawable.net), contentDescription = "") }
-//                                IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "") }
-//                            }
-//                        },
-//                        title = { Text("付款码") }
-//                    )
-//                },
-//            ) { innerPadding ->
-//                Column(
-//                    modifier = Modifier
-//                        .padding(innerPadding)
-//                        .fillMaxSize()
-//                ) {
-//                    WebViewScreen(url)
-//                }
-//            }
-//        }
-//    }
 
     WebDialog(showDialog,{ showDialog = false },url,"付款码")
     WebDialog(showDialog_Huixin,{ showDialog_Huixin = false },urlHuixin,"慧新易校")
-//    if (showDialog_Huixin) {
-//        if(switch_startUri) {
-//            androidx.compose.ui.window.Dialog(
-//                onDismissRequest = { showDialog_Huixin = false },
-//                properties = DialogProperties(usePlatformDefaultWidth = false)
-//            ) {
-//                Scaffold(
-//                    modifier = Modifier.fillMaxSize(),
-//                    topBar = {
-//                        TopAppBar(
-//                            colors = TopAppBarDefaults.mediumTopAppBarColors(
-//                                containerColor = Color(0xFFFDCA31),
-//                                titleContentColor = Color.White,
-//                            ),
-//                            actions = {
-//                                Row{
-//                                    IconButton(onClick = { Starter.startWebUrl(urlHuixin) }) { Icon(
-//                                        painterResource(id = R.drawable.net), contentDescription = "", tint = Color.White
-//                                    ) }
-//                                    IconButton(onClick = { showDialog_Huixin = false }) { Icon(
-//                                        painterResource(id = R.drawable.close), contentDescription = "", tint = Color.White) }
-//                                }
-//                            },
-//                            title = { Text("慧新易校") }
-//                        )
-//                    },
-//                ) { innerPadding ->
-//                    Column(
-//                        modifier = Modifier
-//                            .padding(innerPadding)
-//                            .fillMaxSize()
-//                    ) {
-//                        WebViewScreen(urlHuixin)
-//                    }
-//                }
-//            }
-//        } else {
-//            Starter.startWebUrl(urlHuixin)
-//        }
-//    }
+
 
     if(showBottomSheet_Fee) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = {
                 showBottomSheet_Fee = false
             },
-            sheetState = sheetState_Fee,
-            shape = Round(sheetState_Fee)
+            hazeState = hazeState,
+            showBottomSheet = showBottomSheet_Fee,
+            isFullExpand = false
+//            sheetState = sheetState_Fee,
+//            shape = bottomSheetRound(sheetState_Fee)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("缴费与查询")
+                    HazeBottomSheetTopBar("缴费与查询")
                 },
             ) { innerPadding ->
                 Column(
@@ -346,14 +279,17 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
     }
 
     if (showBottomSheet_ELectric) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = {
                 showBottomSheet_ELectric = false
             },
-            sheetState = sheetState_ELectric,
+            showBottomSheet = showBottomSheet_ELectric,
+            hazeState = hazeState,
+            autoShape = false
+//            sheetState = sheetState_ELectric,
 //            shape = Round(sheetState_ELectric)
         ) {
-            EleUI(vm = vm)
+            EleUI(vm = vm,hazeState)
         }
     }
 
@@ -365,7 +301,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
             sheetState = sheetState_Web,
 //            shape = Round(sheetState_Web)
         ) {
-            LoginWebScaUI(vmUI, vm)
+            LoginWebScaUI(vmUI, vm,hazeState)
         }
     }
 
@@ -375,25 +311,29 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                 showBottomSheet_Shower = false
             },
             sheetState = sheetState_Shower,
-            shape = Round(sheetState_Shower)
+            shape = bottomSheetRound(sheetState_Shower)
         ) {
-            ShowerUI(vm)
+            ShowerUI(vm,hazeState = hazeState)
         }
     }
 
     if(showBottomSheet_NFC) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = {
                 showBottomSheet_NFC = false
             },
-            sheetState = sheetState_NFC,
-            shape = Round(sheetState_NFC)
+
+            showBottomSheet = showBottomSheet_NFC,
+            hazeState = hazeState,
+            isFullExpand = false
+//            sheetState = sheetState_NFC,
+//            shape = bottomSheetRound(sheetState_NFC)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("NFC复制说明")
+                    HazeBottomSheetTopBar("NFC复制说明")
                 },
             ) { innerPadding ->
                 Column(
@@ -401,47 +341,57 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    TransplantListItem(headlineContent = { Text(text = "实体卡芯片自带加密,复制后手机仅可在图书馆储物柜刷取，其余场景均不可用，包括但不限于宿舍门禁、寝室门禁、消费终端等") })
+                    StyleCardListItem(headlineContent = { Text(text = "实体卡芯片自带加密,复制后手机仅可在图书馆储物柜刷取，其余场景均不可用，包括但不限于宿舍门禁、寝室门禁、消费终端等") })
                 }
             }
         }
     }
 
     if(showBottomSheet_Range) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = {
                 showBottomSheet_Range = false
             },
-            sheetState = sheetState_Range,
-            shape = Round(sheetState_Range)
+            hazeState = hazeState,
+            showBottomSheet = showBottomSheet_Range
+//            sheetState = sheetState_Range,
+//            shape = bottomSheetRound(sheetState_Range)
         ) { SelecctDateRange(vm) }
     }
 
     if (showBottomSheet_Search) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = {
                 showBottomSheet_Search = false
             },
-            sheetState = sheetState_Search,
-            shape = Round(sheetState_Search)
+            hazeState = hazeState,
+            showBottomSheet = showBottomSheet_Search
+//            sheetState = sheetState_Search,
+//            shape = bottomSheetRound(sheetState_Search)
         ) { SearchBillsUI(vm) }
     }
 
     if (showBottomSheet_Settings) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = {
                 showBottomSheet_Settings = false
             },
-            sheetState = sheetState_Settings,
-            shape = Round(sheetState_Settings)
+            hazeState = hazeState,
+            showBottomSheet = showBottomSheet_Settings,
+            isFullExpand = false
+//            sheetState = sheetState_Settings,
+//            shape = bottomSheetRound(sheetState_Settings)
         ) { CardLimit(vm,vmUI) }
     }
 
     if(showBottomSheet_Toady) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet_Toady = false },
-            sheetState = sheetState_Today,
-            shape = Round(sheetState_Today)
+//            sheetState = sheetState_Today,
+//            shape = bottomSheetRound(sheetState_Today),
+            isFullExpand = false,
+            showBottomSheet = showBottomSheet_Toady,
+            hazeState = hazeState
         ){
             TodayBills(vm)
         }
@@ -557,13 +507,13 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                         headlineContent = { Text(text = "账单") },
                         supportingContent = { Text(text = "按消费先后查看交易记录")},
                         leadingContent = { Icon(painter = painterResource(id = R.drawable.receipt_long), contentDescription = "") },
-                        modifier = Modifier.clickable { turnTo(navController,CardBarItems.BILLS.name) }
+                        modifier = Modifier.clickable { navController.navigateAndSave(CardBarItems.BILLS.name) }
                     )
                     TransplantListItem(
                         headlineContent = { Text(text = "统计") },
                         supportingContent = { Text(text = "按时间段归纳统计消费")},
                         leadingContent = { Icon(painter = painterResource(id = R.drawable.leaderboard), contentDescription = "") },
-                        modifier = Modifier.clickable { turnTo(navController,CardBarItems.COUNT.name) }
+                        modifier = Modifier.clickable { navController.navigateAndSave(CardBarItems.COUNT.name) }
                     )
                     TransplantListItem(
                         headlineContent = { Text(text = "充值") },

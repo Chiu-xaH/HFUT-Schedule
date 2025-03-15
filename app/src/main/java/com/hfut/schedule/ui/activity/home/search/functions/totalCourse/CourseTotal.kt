@@ -38,16 +38,19 @@ import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.main.saved.isNextOpen
 import com.hfut.schedule.ui.utils.components.AnimationCardListItem
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
+import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.MyCustomCard
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.TransplantListItem
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import dev.chrisbanes.haze.HazeState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CourseTotal(vm :NetWorkViewModel) {
+fun CourseTotal(vm :NetWorkViewModel,hazeState: HazeState) {
     val sheetState_Total = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_Total by remember { mutableStateOf(false) }
     val CommuityTOKEN = prefs.getString("TOKEN","")
@@ -69,18 +72,20 @@ fun CourseTotal(vm :NetWorkViewModel) {
     var next by remember { mutableStateOf(false) }
     var sortType by remember { mutableStateOf(true) }
     if (showBottomSheet_Total) {
-        ModalBottomSheet(
+        HazeBottomSheet(
             onDismissRequest = {
                 showBottomSheet_Total = false
             },
-            sheetState = sheetState_Total,
-            shape = Round(sheetState_Total)
+            showBottomSheet = showBottomSheet_Total,
+            hazeState = hazeState
+//            sheetState = sheetState_Total,
+//            shape = bottomSheetRound(sheetState_Total)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("课程汇总") {
+                    HazeBottomSheetTopBar("课程汇总") {
                         Row {
                             if (isNextOpen()) {
                                 FilledTonalButton(
@@ -113,7 +118,9 @@ fun CourseTotal(vm :NetWorkViewModel) {
                         ,
                         false,
                         sortType,
-                        vm)
+                        vm,
+                        hazeState
+                    )
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
@@ -155,7 +162,7 @@ fun SemsterInfo(json : String?) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CourseTotalForApi(modifier: Modifier = Modifier, vm: NetWorkViewModel, isIconOrText : Boolean = false,next : Boolean = false,onNextChange : (() -> Unit)? = null) {
+fun CourseTotalForApi(modifier: Modifier = Modifier, vm: NetWorkViewModel, isIconOrText : Boolean = false, next : Boolean = false, hazeState: HazeState, onNextChange : (() -> Unit)? = null) {
     val sheetState_Total = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_Total by remember { mutableStateOf(false) }
 
@@ -178,18 +185,20 @@ fun CourseTotalForApi(modifier: Modifier = Modifier, vm: NetWorkViewModel, isIco
 
     var sortType by remember { mutableStateOf(true) }
     if (showBottomSheet_Total) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = {
                 showBottomSheet_Total = false
             },
-            sheetState = sheetState_Total,
-            shape = Round(sheetState_Total)
+            showBottomSheet = showBottomSheet_Total,
+            hazeState = hazeState
+//            sheetState = sheetState_Total,
+//            shape = bottomSheetRound(sheetState_Total)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar("课程汇总") {
+                    HazeBottomSheetTopBar("课程汇总") {
                         if(onNextChange == null) {
                             if(isNextOpen()) {
                                 FilledTonalButton(
@@ -223,8 +232,6 @@ fun CourseTotalForApi(modifier: Modifier = Modifier, vm: NetWorkViewModel, isIco
                         .padding(innerPadding)
                         .fillMaxSize()
                 ){
-
-
                     CourseTotalUI(
                         if(isNextOpen() && onNextChange == null) {
                             if(next2) jsonNext
@@ -236,7 +243,9 @@ fun CourseTotalForApi(modifier: Modifier = Modifier, vm: NetWorkViewModel, isIco
                         ,
                         false,
                         sortType,
-                        vm)
+                        vm,
+                        hazeState
+                    )
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }

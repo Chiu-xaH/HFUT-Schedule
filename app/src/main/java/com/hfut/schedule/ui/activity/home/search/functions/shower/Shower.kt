@@ -19,20 +19,25 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.utils.components.TransplantListItem
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.NetWorkViewModel
+import dev.chrisbanes.haze.HazeState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Shower(vm: NetWorkViewModel) {
+fun Shower(vm: NetWorkViewModel,hazeState: HazeState) {
     val sheetState = rememberModalBottomSheetState(true)
     var showBottomSheet by remember { mutableStateOf(false) }
 
     if (showBottomSheet) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState
+            autoShape = false,
+            showBottomSheet = showBottomSheet,
+            hazeState = hazeState
+//            sheetState = sheetState
         ) {
-            ShowerUI(vm)
+            ShowerUI(vm,hazeState = hazeState)
         }
     }
 

@@ -16,7 +16,6 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.ocr.TesseractUtils.recognizeCaptcha
 import com.hfut.schedule.logic.utils.loadImage
-import com.hfut.schedule.logic.utils.ocr.OpenCVUtils
 
 //import com.hfut.schedule.logic.utils.recognizeCaptcha
 

@@ -57,19 +57,22 @@ import com.hfut.schedule.ui.utils.components.AnimationCardListItem
 import com.hfut.schedule.ui.utils.components.AnimationCustomCard
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CardNormalColor
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.style.CardForListColor
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
+import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LargeCard
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
-import com.hfut.schedule.ui.utils.style.Round
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.ui.utils.style.RowHorizontal
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.TransplantListItem
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
+import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -78,7 +81,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProgramPerformance(vm : NetWorkViewModel) {
+fun ProgramPerformance(vm : NetWorkViewModel,hazeState: HazeState) {
     var loading by remember { mutableStateOf(true) }
     val cookie = if (!vm.webVpn) prefs.getString(
         "redirect",
@@ -111,17 +114,19 @@ fun ProgramPerformance(vm : NetWorkViewModel) {
 
 
     if (showBottomSheet) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState,
-            shape = Round(sheetState)
+            showBottomSheet = showBottomSheet,
+            hazeState = hazeState
+//            sheetState = sheetState,
+//            shape = bottomSheetRound(sheetState)
         ) {
 
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    CustomTopBar(title)
+                    HazeBottomSheetTopBar(title)
                 },
             ) {innerPadding ->
                 Column(
@@ -129,7 +134,7 @@ fun ProgramPerformance(vm : NetWorkViewModel) {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ){
-                    PerformanceInfo(vm, moduleIndex)
+                    PerformanceInfo(vm, moduleIndex,hazeState)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
@@ -270,7 +275,7 @@ fun ProgramPerformance(vm : NetWorkViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PerformanceInfo(vm: NetWorkViewModel,moduleIndex : Int) {
+private fun PerformanceInfo(vm: NetWorkViewModel,moduleIndex : Int,hazeState: HazeState) {
     val sheetState = rememberModalBottomSheetState(true)
     var showBottomSheet by remember { mutableStateOf(false) }
 
@@ -278,11 +283,14 @@ fun PerformanceInfo(vm: NetWorkViewModel,moduleIndex : Int) {
     var itemForInfo by remember { mutableStateOf(CourseItem("","详情",0.0, listOf(""),"",null,null,null)) }
 
     if (showBottomSheet) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState,
+            hazeState = hazeState,
+            showBottomSheet = showBottomSheet,
+            autoShape = false
+//            sheetState = sheetState,
         ) {
-            CustomTopBar(itemForInfo.nameZh)
+            HazeBottomSheetTopBar(itemForInfo.nameZh)
 //            val item = if(isOuter) getProgramPerformance(vm)?.outerCourseList?.get(indexs)
 //            else getProgramPerformance(vm)?.moduleList?.get(moduleIndex)?.allCourseList?.get(indexs)
             ProgramInfoItem(itemForInfo)

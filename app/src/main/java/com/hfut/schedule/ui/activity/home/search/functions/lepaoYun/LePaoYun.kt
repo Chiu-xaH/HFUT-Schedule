@@ -44,7 +44,7 @@ import com.hfut.schedule.logic.beans.lepaoyun.LePaoYunHomeResponse
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.CardNormalColor
-import com.hfut.schedule.ui.utils.components.CustomTopBar
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LittleDialog
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
@@ -112,8 +112,8 @@ fun LePaoYun(vm : NetWorkViewModel) {
             onConfirmation = { showDialog = false },
             dialogTitle = "提示",
             dialogText = "未检测到token,或token不正确,需前往 选项 配置信息",
-            conformtext = "好",
-            dismisstext = "取消"
+            conformText = "好",
+            dismissText = "取消"
         )
     }
     
@@ -156,7 +156,7 @@ fun LePaoYunUI() {
             modifier = Modifier.fillMaxSize(),
             containerColor = Color.Transparent,
             topBar = {
-                CustomTopBar(cralist.raName)
+                BottomSheetTopBar(cralist.raName)
             },) { innerPadding ->
             Column(
                 modifier = Modifier
