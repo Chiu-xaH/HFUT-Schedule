@@ -22,7 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.viewmodel.NetWorkViewModel
-import com.hfut.schedule.ui.utils.components.CardNormalColor
+import com.hfut.schedule.ui.utils.components.cardNormalColor
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.components.URLImage
 import com.hfut.schedule.ui.utils.components.WebDialog
@@ -47,7 +47,7 @@ fun TeacherListUI(vm: NetWorkViewModel) {
                         .fillMaxWidth()
                         .padding(4.dp),
                     shape = MaterialTheme.shapes.medium,
-                    colors =  CardDefaults.cardColors(containerColor = CardNormalColor())
+                    colors =  CardDefaults.cardColors(containerColor = cardNormalColor())
                 ) {
                     TransplantListItem(
                         headlineContent = { Text(text = it.name) },

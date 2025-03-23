@@ -33,8 +33,8 @@ import com.hfut.schedule.logic.beans.community.GradeAllResult
 import com.hfut.schedule.logic.beans.community.GradeAvgResponse
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
-import com.hfut.schedule.ui.utils.components.CardNormalColor
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
+import com.hfut.schedule.ui.utils.components.cardNormalColor
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.MyCustomCard
@@ -77,8 +77,8 @@ fun GradeCountUI(innerPadding : PaddingValues) {
 @Composable
 fun AvgGrade() {
     val resultAvg = getAvg()
-    MyCustomCard(hasElevation = false, containerColor = CardNormalColor()) {
-        Text(text = "我的水平", modifier = Modifier.padding(horizontal = AppHorizontalDp(), vertical = 8.dp), color = MaterialTheme.colorScheme.primary)
+    MyCustomCard(hasElevation = false, containerColor = cardNormalColor()) {
+        Text(text = "我的水平", modifier = Modifier.padding(horizontal = appHorizontalDp(), vertical = 8.dp), color = MaterialTheme.colorScheme.primary)
 
         Row {
             TransplantListItem(
@@ -102,7 +102,7 @@ fun AvgGrade() {
             )
         }
         Divider()
-        Text(text = "专业水平", modifier = Modifier.padding(horizontal = AppHorizontalDp(), vertical = 8.dp), color = MaterialTheme.colorScheme.primary)
+        Text(text = "专业水平", modifier = Modifier.padding(horizontal = appHorizontalDp(), vertical = 8.dp), color = MaterialTheme.colorScheme.primary)
 
         Row {
             TransplantListItem(
@@ -136,9 +136,9 @@ fun AllGrade() {
     for (index in list.indices) {
         val item = getAllGrade()[index]
         if(item.myAvgGpa != null || item.myAvgScore != null || item.majorAvgGpa != null || item.majorAvgScore != null)
-            MyCustomCard(hasElevation = false, containerColor = CardNormalColor()) {
-            Text(text = chineseList[index] + "学期", modifier = Modifier.padding(horizontal = AppHorizontalDp(), vertical = 8.dp), color = MaterialTheme.colorScheme.primary)
-                Text(text = "我的水平", modifier = Modifier.padding(horizontal = AppHorizontalDp(), vertical = 8.dp), color = MaterialTheme.colorScheme.primary)
+            MyCustomCard(hasElevation = false, containerColor = cardNormalColor()) {
+            Text(text = chineseList[index] + "学期", modifier = Modifier.padding(horizontal = appHorizontalDp(), vertical = 8.dp), color = MaterialTheme.colorScheme.primary)
+                Text(text = "我的水平", modifier = Modifier.padding(horizontal = appHorizontalDp(), vertical = 8.dp), color = MaterialTheme.colorScheme.primary)
                 Row {
                     TransplantListItem(
                         headlineContent = { Text("绩点 ${item.myAvgGpa}") },
@@ -159,7 +159,7 @@ fun AllGrade() {
                     )
                 }
                 Divider()
-                Text(text = "专业水平", modifier = Modifier.padding(horizontal = AppHorizontalDp(), vertical = 8.dp), color = MaterialTheme.colorScheme.primary)
+                Text(text = "专业水平", modifier = Modifier.padding(horizontal = appHorizontalDp(), vertical = 8.dp), color = MaterialTheme.colorScheme.primary)
                 Row {
                     TransplantListItem(
                         headlineContent = { Text("绩点(GPA)") },

@@ -18,8 +18,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
@@ -31,13 +29,10 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -74,18 +69,14 @@ import com.hfut.schedule.ui.activity.home.cube.items.subitems.getUserInfo
 import com.hfut.schedule.ui.activity.home.focus.funictions.GetZjgdCard
 import com.hfut.schedule.ui.activity.home.search.functions.electric.EleUI
 import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.LoginWebScaUI
-import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.LoginWebUI
 
 import com.hfut.schedule.ui.activity.home.search.functions.shower.ShowerUI
 //import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
 
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
-import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
-import com.hfut.schedule.ui.utils.style.CardForListColor
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.utils.components.LargeCardColor
-import com.hfut.schedule.ui.utils.components.MyCustomCard
+import com.hfut.schedule.ui.utils.components.largeCardColor
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.TransplantListItem
@@ -212,7 +203,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
 
 
     WebDialog(showDialog,{ showDialog = false },url,"付款码")
-    WebDialog(showDialog_Huixin,{ showDialog_Huixin = false },urlHuixin,"慧新易校")
+    WebDialog(showDialog_Huixin,{ showDialog_Huixin = false },urlHuixin,"慧新易校", showTop = false)
 
 
     if(showBottomSheet_Fee) {
@@ -425,13 +416,13 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
 
                 DividerTextExpandedWith(text = "校园卡",false) {
                     Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = AppHorizontalDp()),
+                        elevation = CardDefaults.cardElevation(defaultElevation = appHorizontalDp()),
                         modifier = Modifier
                             .fillMaxWidth()
                             .scale(scale2.value)
-                            .padding(horizontal = AppHorizontalDp(), vertical = 5.dp),
+                            .padding(horizontal = appHorizontalDp(), vertical = 5.dp),
                         shape = MaterialTheme.shapes.medium,
-                        colors = CardDefaults.cardColors(LargeCardColor())
+                        colors = CardDefaults.cardColors(largeCardColor())
                     ) {
                         Column(modifier = Modifier
                             .blur(blurSize)

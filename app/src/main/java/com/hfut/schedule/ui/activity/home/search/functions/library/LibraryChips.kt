@@ -34,7 +34,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.enums.LibraryItems
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.utils.components.AnimationCardListItem
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.MyCustomCard
@@ -55,7 +55,7 @@ fun LibraryChips(vm : NetWorkViewModel,hazeState: HazeState) {
 
     Row(modifier = Modifier
         .fillMaxWidth()
-        .padding(horizontal = AppHorizontalDp(), vertical = 0.dp), horizontalArrangement = Arrangement.Start){
+        .padding(horizontal = appHorizontalDp(), vertical = 0.dp), horizontalArrangement = Arrangement.Start){
 
         AssistChip(
             onClick = { showBottomSheet_Borrow = true },

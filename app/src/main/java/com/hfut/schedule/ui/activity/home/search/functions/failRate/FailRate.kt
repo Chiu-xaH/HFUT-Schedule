@@ -41,7 +41,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.data.SharePrefs
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.TransplantListItem
@@ -117,7 +117,7 @@ fun FailRateSearch(vm: NetWorkViewModel) {
         TextField(
             modifier = Modifier
                 .weight(1f)
-                .padding(horizontal = AppHorizontalDp()),
+                .padding(horizontal = appHorizontalDp()),
             value = input,
             onValueChange = {
                 input = it

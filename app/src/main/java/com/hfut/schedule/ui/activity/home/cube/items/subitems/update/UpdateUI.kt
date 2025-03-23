@@ -60,13 +60,17 @@ import com.hfut.schedule.logic.utils.MyDownloadManager.installApk
 import com.hfut.schedule.logic.utils.MyDownloadManager.noticeInstall
 import com.hfut.schedule.logic.utils.MyDownloadManager.openDownload
 import com.hfut.schedule.logic.utils.MyDownloadManager.refused
+import com.hfut.schedule.logic.utils.PermissionManager
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.ui.utils.NavigateAnimationManager
 import com.hfut.schedule.ui.utils.components.BottomButton
+import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.TransplantListItem
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
+import com.xah.bsdiffs.BsdiffUpdate
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
@@ -94,6 +98,9 @@ fun UpdateUI() {
             installApk()
         }
     }
+
+    val context = LocalContext.current as Activity
+
 
     val version by remember { mutableStateOf(getUpdates()) }
 
@@ -138,7 +145,6 @@ fun UpdateUI() {
             exit = NavigateAnimationManager.upDownAnimation.exit,
             enter = NavigateAnimationManager.upDownAnimation.enter
         ) {
-            val context = LocalContext.current
             BottomButton(
                 onClick = {
                     getUpdates().version?.let { MyDownloadManager.update(it,context as Activity) }
@@ -155,12 +161,11 @@ fun UpdateUI() {
         exit = NavigateAnimationManager.upDownAnimation.exit,
         enter = NavigateAnimationManager.upDownAnimation.enter
     ) {
-        val context = LocalContext.current
         Column(modifier = Modifier.padding(horizontal = 7.dp)) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center)  {
                 Button(
                     onClick = {
-                        getUpdates().version?.let { MyDownloadManager.update(it,context as Activity) }
+                        getUpdates().version?.let { MyDownloadManager.update(it,context) }
                     },
                     modifier = Modifier
                         .weight(.5f)
@@ -198,3 +203,111 @@ fun UpdateUI() {
     }
 }
 
+
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+@Composable
+fun PatchUpdateUI(patch: Patch) {
+    var loadingPatch by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current as Activity
+    val handler = Handler(Looper.getMainLooper())
+    var pro by remember { mutableFloatStateOf(0f) }
+    var able by remember { mutableStateOf(true) }
+    val runnable = object : Runnable {
+        override fun run() {
+            val id = MyDownloadManager.getDownloadId(MyDownloadManager.DownloadIds.PATCH)
+            val progress = getDownloadProgress(id)
+            // 更新 UI，例如进度条
+            pro = progress / 100f
+            if (progress < 100) {
+                handler.postDelayed(this, 1000) // 每秒查询一次
+            }
+        }
+    }
+    val patchFileName = patch.oldVersion + "_to_" + patch.newVersion + ".patch"
+    handler.post(runnable)
+    // 下载完成后触发
+    LaunchedEffect(pro) {
+        if(pro == 1f && !refused) {
+            MyToast("补丁包下载完成，请点击安装按钮")
+            refused = true
+        }
+    }
+
+
+
+    if(loadingPatch) {
+        LoadingUI()
+    } else {
+        MyCustomCard(hasElevation = false, containerColor = MaterialTheme.colorScheme.surfaceContainer) {
+            TransplantListItem(
+                headlineContent = { Text(text = "增量更新(Beta)") },
+                supportingContent = {
+                    Text(text = "开发者为最新版本的最近若干版本提供补丁包，使用户以更少的下载量获取更新")
+                },
+                leadingContent = { Icon(painterResource(R.drawable.package_2), contentDescription = "Localized description",) },
+            )
+
+
+            AnimatedVisibility(
+                visible = able,
+                exit = NavigateAnimationManager.upDownAnimation.exit,
+                enter = NavigateAnimationManager.upDownAnimation.enter
+            ) {
+                BottomButton(
+                    onClick = {
+                        MyDownloadManager.downloadPatch(patchFileName,context)
+                        able = false
+                    },
+                    text = patch.newVersion.let { if(it != getUpdates().version) "更新至${it}" else "增量更新" },
+                    color = MaterialTheme.colorScheme.primary.copy(.07f)
+                )
+            }
+        }
+        AnimatedVisibility(
+            visible = !able || pro > 0,
+            exit = NavigateAnimationManager.upDownAnimation.exit,
+            enter = NavigateAnimationManager.upDownAnimation.enter
+        ) {
+
+            Column(modifier = Modifier.padding(horizontal = 7.dp)) {
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center)  {
+                    Button(
+                        onClick = {
+                            MyDownloadManager.downloadPatch(patchFileName,context )
+                        },
+                        modifier = Modifier
+                            .weight(.5f)
+                            .padding(horizontal = 8.dp),
+                        enabled = able
+                    ) {
+                        Row {
+                            if(pro != 0f && pro != 1f) {
+                                CircularProgressIndicator(
+                                    progress = { pro },
+                                    modifier = Modifier.size(20.dp).height(20.dp),
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                                Spacer(modifier = Modifier.width(20.dp))
+                            }
+                            Text(text = if(able && pro == 0f)"下载补丁包" else "${(pro*100).toInt()} %")
+
+                        }
+                    }
+                    if(pro > 0)
+                        FilledTonalButton(onClick = {
+                            if (pro == 1f) {
+                                BsdiffUpdate.mergePatchApk(MyApplication.context,patchFileName , onLoad = { load -> loadingPatch = load })
+                            } else {
+                                openDownload()
+                            }
+                        }, modifier = Modifier
+                            .weight(.5f)
+                            .padding(horizontal = 8.dp)) {
+                            Text(text = if(pro == 1f) "安装补丁包" else "管理下载任务")
+                        }
+                }
+            }
+        }
+    }
+}

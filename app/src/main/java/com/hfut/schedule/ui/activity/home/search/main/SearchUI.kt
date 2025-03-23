@@ -64,8 +64,8 @@ import com.hfut.schedule.ui.activity.home.search.functions.transfer.Transfer
 import com.hfut.schedule.ui.activity.home.search.functions.webLab.WebUI
 import com.hfut.schedule.ui.activity.home.search.functions.work.Work
 import com.hfut.schedule.ui.activity.home.search.functions.xuexin.XueXin
-import com.hfut.schedule.ui.utils.components.CardNormalColor
-import com.hfut.schedule.ui.utils.components.CardNormalDp
+import com.hfut.schedule.ui.utils.components.cardNormalColor
+import com.hfut.schedule.ui.utils.components.cardNormalDp
 import com.hfut.schedule.ui.utils.components.SmallCard
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.NetWorkViewModel
@@ -166,7 +166,7 @@ fun SearchScreen(
             }
         }
         items(filteredList.size) { index->
-            SmallCard(modifier = Modifier.padding(horizontal = CardNormalDp(), vertical = CardNormalDp())) {
+            SmallCard(modifier = Modifier.padding(horizontal = cardNormalDp(), vertical = cardNormalDp())) {
                 filteredList[index]()
             }
         }

@@ -62,7 +62,7 @@ import com.hfut.schedule.logic.utils.parse.SemseterParser.parseSemseter
 import com.hfut.schedule.logic.utils.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.ui.activity.home.calendar.jxglstu.getNewWeek
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.MyToast
 import java.time.LocalDate
 
@@ -768,7 +768,7 @@ fun CustomSchedules(showAll : Boolean,
                         modifier = Modifier
                             .align(Alignment.BottomStart)
                             .padding(innerPadding)
-                            .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
+                            .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
                     ) {
                         if (shouldShowAddButton) {
                             FloatingActionButton(
@@ -791,7 +791,7 @@ fun CustomSchedules(showAll : Boolean,
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
                             .padding(innerPadding)
-                            .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
+                            .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
                     ) {
                         if (shouldShowAddButton) {
                             ExtendedFloatingActionButton(
@@ -819,7 +819,7 @@ fun CustomSchedules(showAll : Boolean,
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
                             .padding(innerPadding)
-                            .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
+                            .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
                     ) {
                         TextButton(onClick = {  }) {
                             Text(
@@ -840,7 +840,7 @@ fun CustomSchedules(showAll : Boolean,
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
                             .padding(innerPadding)
-                            .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
+                            .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
                     ) {
                         if (shouldShowAddButton) {
                             FloatingActionButton(

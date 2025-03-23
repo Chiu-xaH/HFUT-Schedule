@@ -55,8 +55,8 @@ import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.search.functions.life.countFunc
 import com.hfut.schedule.ui.utils.components.AnimationCardListItem
 import com.hfut.schedule.ui.utils.components.AnimationCustomCard
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
-import com.hfut.schedule.ui.utils.components.CardNormalColor
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
+import com.hfut.schedule.ui.utils.components.cardNormalColor
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.style.CardForListColor
 import com.hfut.schedule.ui.utils.components.DividerText
@@ -175,7 +175,7 @@ fun ProgramPerformance(vm : NetWorkViewModel,hazeState: HazeState) {
                         val requireInfo = item.requireInfo
                         val summary = item.completionSummary
                         DividerTextExpandedWith(text = item.nameZh + " 要求 ${requireInfo.courseNum} 门 ${requireInfo.credits} 学分") {
-                            AnimationCustomCard(index = index,containerColor = CardNormalColor()) {
+                            AnimationCustomCard(index = index,containerColor = cardNormalColor()) {
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.Center
@@ -223,7 +223,7 @@ fun ProgramPerformance(vm : NetWorkViewModel,hazeState: HazeState) {
                         item { DividerText(text = "培养方案外课程 (包含转专业废弃课程)") }
                         item {
                             if(summary != null) {
-                                AnimationCustomCard(containerColor = CardNormalColor()) {
+                                AnimationCustomCard(containerColor = cardNormalColor()) {
                                     Row(
                                         modifier = Modifier.fillMaxWidth(),
                                         horizontalArrangement = Arrangement.Center
@@ -304,7 +304,7 @@ private fun PerformanceInfo(vm: NetWorkViewModel,moduleIndex : Int,hazeState: Ha
         TextField(
             modifier = Modifier
                 .weight(1f)
-                .padding(horizontal = AppHorizontalDp()),
+                .padding(horizontal = appHorizontalDp()),
             value = input,
             onValueChange = {
                 input = it

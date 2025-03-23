@@ -45,7 +45,7 @@ fun MyCustomCard(
         elevation = CardDefaults.cardElevation(defaultElevation = if(hasElevation) 1.75.dp else 0.dp),
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = AppHorizontalDp(), vertical = CardNormalDp()),
+            .padding(horizontal = appHorizontalDp(), vertical = cardNormalDp()),
         shape = MaterialTheme.shapes.medium,
         colors = if(containerColor == null) CardDefaults.cardColors() else CardDefaults.cardColors(containerColor = containerColor)
     ) {
@@ -58,7 +58,7 @@ fun SmallCard(modifier: Modifier = Modifier.fillMaxSize(), content: @Composable 
     Card(
         modifier = modifier,
         shape = MaterialTheme.shapes.small,
-        colors = CardDefaults.cardColors(containerColor = CardNormalColor())
+        colors = CardDefaults.cardColors(containerColor = cardNormalColor())
     ) {
         content()
     }
@@ -120,14 +120,11 @@ fun StyleCardListItem(
     color : Color? = null,
     modifier: Modifier = Modifier,
     cardModifier: Modifier = Modifier,
-//    onOfferSet : ((DpOffset?) -> Unit)? = null
 ) {
-
-
     CardListItem(
         headlineContent, overlineContent, supportingContent, trailingContent,leadingContent, modifier = modifier, cardModifier = cardModifier,
         hasElevation = false,
-        containerColor = color ?: CardNormalColor()
+        containerColor = color ?: cardNormalColor()
     )
 }
 // 用在LazyColumn
@@ -143,7 +140,6 @@ fun AnimationCardListItem(
     scale : Float = 0.8f,
     modifier: Modifier = Modifier,
     cardModifier: Modifier = Modifier,
-//    onOfferSet : ((DpOffset?) -> Unit)? = null
 ) {
     val animatedProgress = remember { Animatable(scale) }
 
@@ -215,20 +211,19 @@ fun SharedCardListItem(
         headlineContent, overlineContent, supportingContent, trailingContent,leadingContent, modifier = modifier, cardModifier = cardModifier,
         hasElevation = false,
         containerColor = color
-            ?:   CardNormalColor()
+            ?:   cardNormalColor()
 
     )
 }
 
 @Composable
-fun CardNormalColor() : Color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = .05f)
+fun cardNormalColor() : Color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = .05f)
 @Composable
-fun LargeCardColor() : Color = MaterialTheme.colorScheme.surfaceContainerHigh
-//@Composable
-fun CardNormalDp() : Dp = 2.5.dp
+fun largeCardColor() : Color = MaterialTheme.colorScheme.surfaceVariant
 
-//@Composable
-fun AppHorizontalDp() : Dp = 15.dp
+fun cardNormalDp() : Dp = 2.5.dp
+
+fun appHorizontalDp() : Dp = 15.dp
 
 @Composable
 fun LargeCard(
@@ -236,12 +231,12 @@ fun LargeCard(
     modifier : Modifier = Modifier,
     rightTop:  @Composable() (() -> Unit)? = null,
     leftTop:  @Composable() (() -> Unit)? = null,
-    color : CardColors = CardDefaults.cardColors(containerColor = LargeCardColor()),
+    color : CardColors = CardDefaults.cardColors(containerColor = largeCardColor()),
     content: @Composable () -> Unit
 ) {
     Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = AppHorizontalDp()),
-        modifier = modifier.fillMaxWidth().padding(horizontal = AppHorizontalDp(), vertical = 5.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = appHorizontalDp()),
+        modifier = modifier.fillMaxWidth().padding(horizontal = appHorizontalDp(), vertical = 5.dp),
         shape = MaterialTheme.shapes.medium,
         colors = color
     ) {
@@ -262,7 +257,6 @@ fun LargeCard(
     }
 }
 
-
 //加载大卡片
 @Composable
 fun LoadingLargeCard(
@@ -270,7 +264,7 @@ fun LoadingLargeCard(
     loading : Boolean,
     rightTop: @Composable() (() -> Unit)? = null,
     leftTop: @Composable() (() -> Unit)? = null,
-    color : CardColors = CardDefaults.cardColors(containerColor = LargeCardColor()),
+    color : CardColors = CardDefaults.cardColors(containerColor = largeCardColor()),
     content: @Composable () -> Unit
 ) {
     val speed = MyApplication.ANIMATION_SPEED / 2
@@ -293,8 +287,8 @@ fun LoadingLargeCard(
     )
 
     Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = AppHorizontalDp()),
-        modifier = Modifier.fillMaxWidth().padding(horizontal = AppHorizontalDp(), vertical = 5.dp).scale(scale2.value),
+        elevation = CardDefaults.cardElevation(defaultElevation = appHorizontalDp()),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = appHorizontalDp(), vertical = 5.dp).scale(scale2.value),
         shape = MaterialTheme.shapes.medium,
         colors = color
     ) {
@@ -317,202 +311,3 @@ fun LoadingLargeCard(
     }
 }
 
-//封存按钮大卡片
-//@Composable
-//fun PrepareLoadLargeCard(
-//    title: String,
-//    loading: Boolean,
-//    rightTop: @Composable() (() -> Unit)? = null,
-//    leftTop: @Composable() (() -> Unit)? = null,
-//    color: CardColors = CardDefaults.cardColors(),
-//    switchAutoRefresh: Boolean = false,
-//    actionButtonContent: @Composable () -> Unit = {
-//        Text("加载")
-//    },
-//    actionButtonOnClick: () -> Unit = {
-//        //按钮点击逻辑，通常传入refresh()函数，通过网络请求更新数据
-//    },
-//    content: @Composable () -> Unit
-//) {
-//    var showButton by remember { mutableStateOf(true) }
-//    LoadingLargeCard(
-//        title,
-//        loading,
-//        rightTop,
-//        leftTop,
-//        color,
-//        content = {
-//            Box(modifier = Modifier.fillMaxSize()) {
-//                if(!switchAutoRefresh) {
-//                    AnimatedVisibility(
-//                        visible = showButton,
-//                        exit = fadeOut(tween(durationMillis = MyApplication.Animation)) + scaleOut(
-//                            tween(durationMillis = MyApplication.Animation)
-//                        ),
-//                        modifier = Modifier.align(Alignment.Center).zIndex(1f)
-//                    ) {
-//                        val blurSizeButton by animateDpAsState(
-//                            targetValue = if (!showButton) 4.dp else 0.dp, label = ""
-//                            ,animationSpec = tween(MyApplication.Animation / 2, easing = LinearOutSlowInEasing),
-//                        )
-//
-//                        Button(
-//                            onClick = {
-//                                showButton = false
-//                                actionButtonOnClick.invoke()
-//                            },
-//                            modifier = Modifier.blur(blurSizeButton),
-//                            elevation = ButtonDefaults.elevatedButtonElevation()
-//                        ) {
-//                            actionButtonContent()
-//                        }
-//                    }
-//                }
-//                Column { content() }
-//            }
-//        }
-//    )
-//}
-
-//
-//@Preview
-//@Composable
-//fun Previews() {
-//    Scaffold { innerPadding->
-//        Column(modifier = Modifier
-//            .fillMaxSize()
-//            .padding(innerPadding).verticalScroll(rememberScrollState())
-//        ) {
-//
-//            Spacer(Modifier.height(5.dp))
-//
-//            DividerTextExpandedWith("普通卡片") {
-//                MyCustomCard {
-//                    ListItem(
-//                        headlineContent = {
-//                            Text("1.0")
-//                        },
-//                        leadingContent = {
-//                            Icon(painterResource(R.drawable.animation),null)
-//                        },
-//                        supportingContent = {
-//                            Text("带阴影 有色彩")
-//                        }
-//                    )
-//                }
-//                MyCustomCard {
-//                    TransplantListItem(
-//                        headlineContent = {
-//                            Text("1.5")
-//                        },
-//                        leadingContent = {
-//                            Icon(painterResource(R.drawable.animation),null)
-//                        },
-//                        supportingContent = {
-//                            Text("带阴影 无色彩")
-//                        }
-//                    )
-//                }
-//
-//
-//                CardListItem(
-//                    headlineContent = {
-//                        Text("2.0")
-//                    },
-//                    leadingContent = {
-//                        Icon(painterResource(R.drawable.animation),null)
-//                    },
-//                    supportingContent = {
-//                        Text("无阴影 以色彩区分主体")
-//                    }
-//                )
-//            }
-//
-//            DividerTextExpandedWith("大卡片") {
-//                var loading by remember { mutableStateOf(false) }
-//                val item = @Composable {
-//                    Row {
-//                        TransplantListItem(
-//                            headlineContent = {
-//                                Text("描述")
-//                            },
-//                            leadingContent = {
-//                                Icon(painterResource(R.drawable.animation),null)
-//                            },
-//                            modifier = Modifier.weight(.5f)
-//                        )
-//                        TransplantListItem(
-//                            headlineContent = {
-//                                Text("描述")
-//                            },
-//                            leadingContent = {
-//                                Icon(painterResource(R.drawable.animation),null)
-//                            },
-//                            modifier = Modifier.weight(.5f)
-//                        )
-//                    }
-//                    TransplantListItem(
-//                        headlineContent = {
-//                            Text("描述")
-//                        },
-//                        leadingContent = {
-//                            Icon(painterResource(R.drawable.animation),null)
-//                        },
-//                    )
-//                }
-//                val button = @Composable {
-//                    FilledTonalIconButton(
-//                        onClick = {
-//                            loading = !loading
-//                        }
-//                    ) {
-//                        Icon(painterResource(R.drawable.rotate_right),null)
-//                    }
-//                }
-//                LargeCard(
-//                    title = "展示卡片",
-//                ) {
-//                    item()
-//                }
-//                Spacer(Modifier.height(20.dp))
-//                LoadingLargeCard(
-//                    title = "加载卡片",
-//                    loading = loading,
-//                    rightTop = {
-//                        button()
-//                    }
-//                ) {
-//                    item()
-//                }
-//            }
-//
-//            DividerTextExpandedWith("自适应卡片") {
-//                MultiListItem(
-//                    headlineContent = {
-//                        Text("适用于小屏")
-//                    },
-//                    leadingContent = {
-//                        Icon(painterResource(R.drawable.animation),null)
-//                    },
-//                    supportingContent = {
-//                        Text("isCard为true时")
-//                    },
-//                    isCard = true
-//                )
-//                MultiListItem(
-//                    headlineContent = {
-//                        Text("适用于大屏")
-//                    },
-//                    leadingContent = {
-//                        Icon(painterResource(R.drawable.animation),null)
-//                    },
-//                    supportingContent = {
-//                        Text("isCard为false时")
-//                    },
-//                    isCard = false
-//                )
-//            }
-//
-//        }
-//    }
-//}

@@ -53,8 +53,8 @@ import com.hfut.schedule.ui.activity.grade.getGradeJXGLSTU
 import com.hfut.schedule.ui.activity.home.search.functions.survey.SurveyUI
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotalForApi
 import com.hfut.schedule.ui.utils.components.AnimationCardListItem
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
-import com.hfut.schedule.ui.utils.components.CardNormalDp
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
+import com.hfut.schedule.ui.utils.components.cardNormalDp
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.EmptyUI
@@ -208,7 +208,7 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel,showSea
                         TextField(
                             modifier = Modifier
                                 .weight(1f)
-                                .padding(horizontal = AppHorizontalDp()),
+                                .padding(horizontal = appHorizontalDp()),
                             value = input,
                             onValueChange = {
                                 input = it
@@ -234,7 +234,7 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel,showSea
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(CardNormalDp()))
+                    Spacer(modifier = Modifier.height(cardNormalDp()))
                 } else {
                     searchList = gradeList
                 }

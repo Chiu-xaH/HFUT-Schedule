@@ -41,7 +41,7 @@ import com.hfut.schedule.logic.utils.DateTimeUtils
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.parse.formatDecimal
 import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.getIdentifyID
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.DepartmentIcons
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
@@ -129,7 +129,7 @@ fun PersonItems(ifSaved : Boolean) {
                 }
 
                 Box() {
-                    FilledTonalIconButton(onClick = { show2 = !show2 }, modifier = Modifier.zIndex(1f).align(Alignment.CenterEnd).padding(horizontal = AppHorizontalDp())) {
+                    FilledTonalIconButton(onClick = { show2 = !show2 }, modifier = Modifier.zIndex(1f).align(Alignment.CenterEnd).padding(horizontal = appHorizontalDp())) {
                         Icon(painter = painterResource(id = if(show2)R.drawable.visibility else R.drawable.visibility_off), contentDescription = "")
                     }
                     Column(modifier = Modifier.blur(radius = blurSize2)) {

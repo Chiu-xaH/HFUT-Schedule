@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import androidx.compose.ui.unit.dp
+import com.xah.bsdiffs.BsdiffUpdate
 
 class MyApplication : Application() {
     companion object {
@@ -15,7 +16,7 @@ class MyApplication : Application() {
         // 全局动画速度
         const val ANIMATION_SPEED = 400
         // 宣城校区免费流量额度
-        const val MAX_FREE_FLOW = 50
+        const val MAX_FREE_FLOW = 30
         // 教务系统
         const val JXGLSTU_URL = "http://jxglstu.hfut.edu.cn/eams5-student/"
         // Github

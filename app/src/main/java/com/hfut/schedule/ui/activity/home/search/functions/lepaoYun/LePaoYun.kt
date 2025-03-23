@@ -42,8 +42,8 @@ import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.beans.lepaoyun.LePaoYunHomeResponse
 import com.hfut.schedule.logic.utils.Starter
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
-import com.hfut.schedule.ui.utils.components.CardNormalColor
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
+import com.hfut.schedule.ui.utils.components.cardNormalColor
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LittleDialog
 import com.hfut.schedule.ui.utils.components.MyCustomCard
@@ -168,7 +168,7 @@ fun LePaoYunUI() {
 
                     Row(modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = AppHorizontalDp(), vertical = 0.dp), horizontalArrangement = Arrangement.Start){
+                        .padding(horizontal = appHorizontalDp(), vertical = 0.dp), horizontalArrangement = Arrangement.Start){
 
                         AssistChip(
                             onClick = { OpenLePao() },
@@ -185,7 +185,7 @@ fun LePaoYunUI() {
                         )
 //                    }
 
-                    MyCustomCard(hasElevation = false, containerColor = CardNormalColor()){
+                    MyCustomCard(hasElevation = false, containerColor = cardNormalColor()){
 
                         TransplantListItem(
                             headlineContent = { Text(text = "单次要求")},
@@ -212,7 +212,7 @@ fun LePaoYunUI() {
                         }
                     }
 
-                    MyCustomCard(hasElevation = false, containerColor = CardNormalColor()){
+                    MyCustomCard(hasElevation = false, containerColor = cardNormalColor()){
                         TransplantListItem(
                             headlineContent = { Text(text = "日期")},
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.calendar), contentDescription = "")},
@@ -224,7 +224,7 @@ fun LePaoYunUI() {
                             supportingContent = { Text(text = "${cralist.dayStartTime} - ${cralist.dayEndTime}")},
                         )
                     }
-                    MyCustomCard(hasElevation = false, containerColor = CardNormalColor()){
+                    MyCustomCard(hasElevation = false, containerColor = cardNormalColor()){
                         LazyColumn{
                             item {
                                 TransplantListItem(
@@ -255,7 +255,7 @@ fun LePaoYunUI() {
     } else {
         Row(modifier = Modifier
             .fillMaxWidth()
-            .padding(AppHorizontalDp()), horizontalArrangement = Arrangement.Center){ Text(text = msg)
+            .padding(appHorizontalDp()), horizontalArrangement = Arrangement.Center){ Text(text = msg)
         }
         Spacer(modifier = Modifier.height(100.dp))
     }

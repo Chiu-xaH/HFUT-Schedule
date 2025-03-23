@@ -106,7 +106,7 @@ import com.hfut.schedule.ui.utils.NavigateAnimationManager.ANIMATION_SPEED
 import com.hfut.schedule.ui.utils.NavigateAnimationManager.currentPage
 
 //import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnToClearly
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.CustomTabRow
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.DividerText
@@ -346,10 +346,10 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
                                             Icon(painter = painterResource(id =  R.drawable.login), contentDescription = "")
                                         }
                                     } else {
-                                        Text(text = "已登录",Modifier.padding(horizontal = AppHorizontalDp()), color = MaterialTheme.colorScheme.primary)
+                                        Text(text = "已登录",Modifier.padding(horizontal = appHorizontalDp()), color = MaterialTheme.colorScheme.primary)
                                     }
                                 }
-                                Spacer(modifier = Modifier.width(AppHorizontalDp()))
+                                Spacer(modifier = Modifier.width(appHorizontalDp()))
                                 //null
                             }
                             SETTINGS -> null

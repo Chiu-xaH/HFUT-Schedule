@@ -16,7 +16,7 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.utils.VersionUtils
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.main.saved.MultiScheduleSettings
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import dev.chrisbanes.haze.HazeEffectScope
 import dev.chrisbanes.haze.HazeProgressive
@@ -124,7 +124,7 @@ fun HazeBottomSheet(
         shape = bottomSheetRound(sheetState,autoShape)
     ) {
         Column(modifier = Modifier.bottomSheetBlur(hazeState)){
-            Spacer(Modifier.height(AppHorizontalDp() *1.5f))
+            Spacer(Modifier.height(appHorizontalDp() *1.5f))
             content()
         }
     }

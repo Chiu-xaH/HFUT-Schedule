@@ -49,7 +49,7 @@ import com.hfut.schedule.logic.beans.zjgd.BillResponse
 import com.hfut.schedule.logic.beans.zjgd.records
 import com.hfut.schedule.ui.activity.card.bills.main.getBills
 import com.hfut.schedule.ui.activity.card.bills.main.processTranamt
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.BillsIcons
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
@@ -135,7 +135,7 @@ fun SearchBillsUI(vm : NetWorkViewModel) {
                     //  modifier = Modifier.size(width = 170.dp, height = 70.dp).padding(horizontal = AppHorizontalDp(), vertical = 5.dp),
                     modifier = Modifier
                         .weight(1f)
-                        .padding(horizontal = AppHorizontalDp(), vertical = 5.dp),
+                        .padding(horizontal = appHorizontalDp(), vertical = 5.dp),
                     value = input,
                     onValueChange = {
                         input = it
@@ -187,7 +187,7 @@ fun SearchBillsUI(vm : NetWorkViewModel) {
                                             //  modifier = Modifier.size(width = 170.dp, height = 70.dp).padding(horizontal = AppHorizontalDp(), vertical = 5.dp),
                                             modifier = Modifier
                                                 .weight(1f)
-                                                .padding(horizontal = AppHorizontalDp(), vertical = 5.dp),
+                                                .padding(horizontal = appHorizontalDp(), vertical = 5.dp),
                                             value = input,
                                             onValueChange = {
                                                 input = it
@@ -247,7 +247,7 @@ fun SearchBillsUI(vm : NetWorkViewModel) {
 
                                             }) { Text(text = "上一页") }
 
-                                        Spacer(modifier = Modifier.width(AppHorizontalDp()))
+                                        Spacer(modifier = Modifier.width(appHorizontalDp()))
 
                                         OutlinedButton(
                                             onClick = {
@@ -270,7 +270,7 @@ fun SearchBillsUI(vm : NetWorkViewModel) {
                                             }
                                         ) { Text(text = "${page} / ${prefs.getInt("totalsearch",1)}") }
 
-                                        Spacer(modifier = Modifier.width(AppHorizontalDp()))
+                                        Spacer(modifier = Modifier.width(appHorizontalDp()))
 
                                         OutlinedButton(
                                             onClick = {

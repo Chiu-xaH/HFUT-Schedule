@@ -63,8 +63,8 @@ import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
-import com.hfut.schedule.ui.utils.components.CardNormalDp
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
+import com.hfut.schedule.ui.utils.components.cardNormalDp
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.MenuChip
@@ -191,7 +191,7 @@ fun DormitoryScoreUI(vm : NetWorkViewModel) {
 
                 Row(modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = AppHorizontalDp(), vertical = 0.dp), horizontalArrangement = Arrangement.Start){
+                    .padding(horizontal = appHorizontalDp(), vertical = 0.dp), horizontalArrangement = Arrangement.Start){
 
                     MenuChip (
                         label = { Text(text = "楼栋 ${BuildingsNumber}") },
@@ -232,7 +232,7 @@ fun DormitoryScoreUI(vm : NetWorkViewModel) {
                     ) + fadeIn(initialAlpha = 0.3f),
                     exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
                 ){
-                    Row (modifier = Modifier.padding(horizontal = AppHorizontalDp())){
+                    Row (modifier = Modifier.padding(horizontal = appHorizontalDp())){
                         OutlinedCard{
                             LazyColumn(modifier = Modifier.padding(horizontal = 10.dp)) {
                                 item {
@@ -298,10 +298,10 @@ fun DormitoryScoreUI(vm : NetWorkViewModel) {
                             enter = fadeIn(),
                             exit = fadeOut()
                         ){
-                            LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.padding(horizontal = AppHorizontalDp()- CardNormalDp())) {
+                            LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.padding(horizontal = appHorizontalDp()- cardNormalDp())) {
                                 getDormitoryScore(vm)?.let {
                                     items(it.size) { item ->
-                                        SmallCard(modifier = Modifier.padding(horizontal = CardNormalDp(), vertical = CardNormalDp())) {
+                                        SmallCard(modifier = Modifier.padding(horizontal = cardNormalDp(), vertical = cardNormalDp())) {
                                             TransplantListItem(
                                                 headlineContent = { getDormitoryScore(vm)?.get(item)?.let { it1 -> Text(text = it1.date) } },
                                                 supportingContent = { Text(text =  "${getDormitoryScore(vm)?.get(item)?.score} 分")}

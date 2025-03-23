@@ -58,7 +58,7 @@ import com.hfut.schedule.logic.utils.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.utils.components.AnimationCardListItem
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.EmptyUI
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
@@ -146,7 +146,7 @@ fun SurveyUI(vm : NetWorkViewModel,hazeState: HazeState) {
             exit = scaleOut(),
             modifier = Modifier
                 .align(Alignment.BottomStart)
-                .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
+                .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
         ) {
             FloatingActionButton(
                 onClick = {
@@ -163,7 +163,7 @@ fun SurveyUI(vm : NetWorkViewModel,hazeState: HazeState) {
             exit = scaleOut(),
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
+                .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
         ) {
             ExtendedFloatingActionButton(
                 onClick = {refresh = true},
@@ -176,7 +176,7 @@ fun SurveyUI(vm : NetWorkViewModel,hazeState: HazeState) {
             exit = scaleOut(),
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
+                .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
         ) {
             FloatingActionButton(
                 onClick = {
@@ -233,7 +233,7 @@ fun teacherList(vm : NetWorkViewModel,hazeState: HazeState, refresh : (Boolean) 
                 containerColor = Color.Transparent,
                 topBar = {
                     HazeBottomSheetTopBar("发送教评") {
-                        Row(modifier = Modifier.padding(horizontal = AppHorizontalDp())) {
+                        Row(modifier = Modifier.padding(horizontal = appHorizontalDp())) {
                             FilledTonalIconButton(
                                 onClick = {
                                     showDialog = true

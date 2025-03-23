@@ -63,7 +63,7 @@ interface ZJGDBillService {
             //同上 网费/电费
             @Field("feeitemid") typeId : Int?,
             //支付金额
-            @Field("tranamt") pay : Int?,
+            @Field("tranamt") pay : Float?,
             @Field("flag") flag : String?,
             @Field("paystep") paystep : Int,
             //寝室房间

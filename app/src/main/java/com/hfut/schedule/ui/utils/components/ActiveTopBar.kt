@@ -46,7 +46,7 @@ fun BottomSheetTopBar(
     rightContent : (@Composable () -> Unit)? = null
 ) {
     Row (
-        modifier = Modifier.fillMaxWidth().padding(AppHorizontalDp()+1.dp),
+        modifier = Modifier.fillMaxWidth().padding(appHorizontalDp()+1.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -73,7 +73,7 @@ fun HazeBottomSheetTopBar(
     rightContent : (@Composable () -> Unit)? = null
 ) {
     Column {
-        Spacer(Modifier.height(AppHorizontalDp() * if(isPaddingStatusBar) 1.5f else 0f))
+        Spacer(Modifier.height(appHorizontalDp() * if(isPaddingStatusBar) 1.5f else 0f))
         BottomSheetTopBar(
             title,
             singleLine,
@@ -99,7 +99,7 @@ fun SharedTopBar(
             modifier = Modifier.sharedBounds(
                 rememberSharedContentState(key = key),
                 animatedVisibilityScope = animatedContentScope
-            ).padding(AppHorizontalDp()+1.dp),
+            ).padding(appHorizontalDp()+1.dp),
             fontSize = 22.sp,
         )
     }

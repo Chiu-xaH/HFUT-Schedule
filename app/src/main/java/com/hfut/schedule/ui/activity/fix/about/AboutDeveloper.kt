@@ -34,7 +34,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.beans.GithubBean
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.logic.utils.data.reEmptyLiveDta
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
@@ -62,12 +62,11 @@ fun About(vm : LoginViewModel) {
         "Zxing" to "二维码",
         "Haze" to "实时模糊(SDK>=33)",
         "Accompanist" to "用做实现透明状态栏",
-//        "Monet" to "莫奈取色(供SDK<32不支持MY取色平替)",
-//        "Dagger" to "Hilt注入,辅助莫奈取色功能",
         "Glide" to "网络图片",
         "EdDSA Java" to "加密(供和风天气API使用)",
         "Konfetti" to "礼花动画",
-        "Tesseract4Android" to "封装Tesseract4(供图片验证码识别)"
+        "Tesseract4Android" to "封装Tesseract4(供图片验证码识别)",
+        "Bsdiff-Lib" to "增量更新"
     )
     val dependencies = Build(
         jetpack = "Jetpack Compose",
@@ -107,7 +106,7 @@ fun About(vm : LoginViewModel) {
                 HazeBottomSheetTopBar("关于")
             },
             bottomBar = {
-                Row(modifier = Modifier.padding(AppHorizontalDp()),horizontalArrangement = Arrangement.Center) {
+                Row(modifier = Modifier.padding(appHorizontalDp()),horizontalArrangement = Arrangement.Center) {
                     Button(
                         onClick = { Starter.startWebUrl("https://github.com/${MyApplication.GITHUB_DEVELOPER_NAME}/${MyApplication.GITHUB_REPO_NAME}") },
                         modifier = Modifier
@@ -117,7 +116,7 @@ fun About(vm : LoginViewModel) {
                         Text("Stars ⭐ $starsNum")
                     }
 
-                    Spacer(modifier = Modifier.width(AppHorizontalDp()))
+                    Spacer(modifier = Modifier.width(appHorizontalDp()))
                     FilledTonalButton(
                         onClick = { Starter.startWebUrl("https://github.com/${MyApplication.GITHUB_DEVELOPER_NAME}/${MyApplication.GITHUB_REPO_NAME}/releases/latest") },
                         modifier = Modifier

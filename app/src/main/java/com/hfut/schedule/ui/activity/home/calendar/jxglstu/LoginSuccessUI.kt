@@ -83,7 +83,7 @@ import com.hfut.schedule.ui.activity.home.calendar.getScheduleDate
 import com.hfut.schedule.ui.activity.home.calendar.next.parseCourseName
 import com.hfut.schedule.ui.activity.home.main.saved.isNextOpen
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.getTotalCourse
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LargeCard
@@ -761,7 +761,7 @@ fun CalendarScreen(
                             modifier = Modifier
                                 .align(Alignment.BottomStart)
                                 .padding(innerPadding)
-                                .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
+                                .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
                         ) {
                             if (shouldShowAddButton) {
                                 FloatingActionButton(
@@ -784,7 +784,7 @@ fun CalendarScreen(
                             modifier = Modifier
                                 .align(Alignment.BottomCenter)
                                 .padding(innerPadding)
-                                .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
+                                .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
                         ) {
                             if (shouldShowAddButton) {
                                 ExtendedFloatingActionButton(
@@ -812,7 +812,7 @@ fun CalendarScreen(
                             modifier = Modifier
                                 .align(Alignment.BottomCenter)
                                 .padding(innerPadding)
-                                .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
+                                .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
                         ) {
                             TextButton(onClick = {  }) {
                                 Text(
@@ -833,7 +833,7 @@ fun CalendarScreen(
                             modifier = Modifier
                                 .align(Alignment.BottomEnd)
                                 .padding(innerPadding)
-                                .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
+                                .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
                         ) {
                             if (shouldShowAddButton) {
                                 FloatingActionButton(

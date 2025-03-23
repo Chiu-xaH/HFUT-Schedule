@@ -848,11 +848,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     val showerData = MutableLiveData<String?>()
     fun getFee(auth: String,type : FeeType,level : String? = null,room : String? = null,phoneNumber : String? = null) {
 
-        val feeitemid = when(type) {
-            WEB -> "281"
-            ELECTRIC -> "261"
-            SHOWER -> "223"
-        }
+        val feeitemid = type.code.toString()
         val levels = when(type) {
             WEB -> "0"
             ELECTRIC -> null
@@ -899,12 +895,8 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     }
 
     val orderIdData = MutableLiveData<String?>()
-    fun payStep1(auth: String,json: String,pay : Int,type: FeeType) {
-        val feeitemid = when(type) {
-            WEB -> 281
-            ELECTRIC -> 261
-            SHOWER -> 223
-        }
+    fun payStep1(auth: String,json: String,pay : Float,type: FeeType) {
+        val feeitemid = type.code
         val call = ZJGDBill.pay(
             auth = auth,
             pay = pay,
@@ -929,7 +921,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         })
     }
     val uuIdData = MutableLiveData<String?>()
-    fun payStep2(auth: String,orderId : String) {
+    fun payStep2(auth: String,orderId : String,type : FeeType) {
 
         val call = ZJGDBill.pay(
             auth = auth,
@@ -942,7 +934,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             orderid = orderId,
             password = null,
             paytype = "CARDTSM",
-            paytypeid = 101,
+            paytypeid = type.payTypeId,
             cardId = null
         )
 
@@ -955,7 +947,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         })
     }
     val payResultData = MutableLiveData<String?>()
-    fun payStep3(auth: String,orderId : String,password : String,uuid : String) {
+    fun payStep3(auth: String,orderId : String,password : String,uuid : String,type: FeeType) {
 
         val call = ZJGDBill.pay(
             auth = auth,
@@ -963,13 +955,13 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             flag = null,
             paystep = 2,
             json = null,
-            typeId = 261,
             isWX = 0,
             orderid = orderId,
             password = password,
             paytype = "CARDTSM",
-            paytypeid = 101,
-            cardId = uuid
+            paytypeid = type.payTypeId,
+            cardId = uuid,
+            typeId = null
         )
 
         call.enqueue(object : Callback<ResponseBody> {

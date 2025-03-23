@@ -57,12 +57,12 @@ fun LittleDialog(
         Surface(
             shape = MaterialTheme.shapes.large,
             color = MaterialTheme.colorScheme.surface.copy(if(blur) 1f else 0.95f),
-            modifier = Modifier.padding(AppHorizontalDp())
+            modifier = Modifier.padding(appHorizontalDp())
         ) {
             Column(modifier = modifier) {
                 Column(
                     modifier = Modifier.padding(22.dp),
-                    verticalArrangement = Arrangement.spacedBy(AppHorizontalDp())
+                    verticalArrangement = Arrangement.spacedBy(appHorizontalDp())
                 ) {
                     Text(
                         text = dialogTitle,

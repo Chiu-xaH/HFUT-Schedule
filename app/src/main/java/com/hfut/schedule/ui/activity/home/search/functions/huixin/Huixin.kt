@@ -24,11 +24,11 @@ fun Huixin() {
 
     val urlHuixin = MyApplication.ZJGD_URL + "plat" + "?synjones-auth=" + auth
 
-    WebDialog(showDialog_Huixin,{ showDialog_Huixin = false },urlHuixin,"慧新易校")
+    WebDialog(showDialog_Huixin,{ showDialog_Huixin = false },urlHuixin,"慧新易校", showTop = false)
 
     TransplantListItem(
-        headlineContent = { Text(text = "肥区缴费") },
-        overlineContent = { Text("惠新易校平台") },
+        headlineContent = { Text(text = "生活缴费") },
+        overlineContent = { Text("惠新易校官方平台") },
         leadingContent = {
             Icon(
                 painterResource(R.drawable.corporate_fare),

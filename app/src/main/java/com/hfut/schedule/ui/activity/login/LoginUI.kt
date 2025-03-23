@@ -27,13 +27,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
@@ -84,13 +79,12 @@ import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.parse.Encrypt
 import com.hfut.schedule.logic.utils.parse.ParseJsons.useCaptcha
-import com.hfut.schedule.ui.activity.home.cube.items.main.FirstCube
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.DownloadMLUI
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.URLImageWithOCR
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.navigateAndClear
 import com.hfut.schedule.ui.utils.style.RowHorizontal
 import com.hfut.schedule.ui.utils.style.bottomSheetRound
@@ -252,33 +246,6 @@ fun LoginUI(vm : LoginViewModel,navController : NavHostController) {
 
 
 
-    if (showBottomSheet) {
-        ModalBottomSheet(
-            onDismissRequest = {
-                showBottomSheet = false
-            },
-            sheetState = sheetState,
-            shape = bottomSheetRound(sheetState)
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    BottomSheetTopBar("选项")
-                },) {innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .verticalScroll(rememberScrollState())
-                ){
-
-                    FirstCube()
-                    Spacer(modifier = Modifier.height(20.dp))
-                }
-            }
-        }
-    }
-
     Scaffold(
         topBar = {
             LargeTopAppBar(
@@ -298,23 +265,11 @@ fun LoginUI(vm : LoginViewModel,navController : NavHostController) {
                     }
                         },
                 actions = {
-                  //  Row {
-                        TextButton(onClick = {
-                            showBottomSheet = true
-                        }){
-                            BadgedBox(badge = {
-                                if (showBadge)
-                                Badge(modifier = Modifier.size(5.dp))
-                            }) { Icon(painterResource(id = R.drawable.deployed_code), contentDescription = "主页") }
-                        }
                     IconButton(onClick = {
                         (context as? Activity)?.finish()
                     }) {
                         Icon(painterResource(id = R.drawable.logout), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
                     }
-                    //    Text(text = "   ")
-                   /// }
-                   
                 },
                 navigationIcon  = {
                     AnimatedWelcomeScreen()
@@ -536,7 +491,7 @@ fun TwoTextField(vm : LoginViewModel,navHostController: NavHostController) {
                 ) { Text("登录") }
 
                 if(isAnonymity()) {
-                    Spacer(modifier = Modifier.width(AppHorizontalDp()))
+                    Spacer(modifier = Modifier.width(appHorizontalDp()))
 
                     FilledTonalButton(
                         onClick = {

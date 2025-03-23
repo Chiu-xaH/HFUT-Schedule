@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.utils.data.reEmptyLiveDta
 import com.hfut.schedule.ui.utils.components.AnimationCardListItem
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.WebDialog
@@ -155,7 +155,7 @@ fun XuanquNewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
             modifier = Modifier
                 .padding(innerPadding)
                 .align(Alignment.BottomStart)
-                .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
+                .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
         ) {
             FloatingActionButton(
                 onClick = {
@@ -177,7 +177,7 @@ fun XuanquNewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
             modifier = Modifier
                 .padding(innerPadding)
                 .align(Alignment.BottomCenter)
-                .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
+                .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
         ) {
             ExtendedFloatingActionButton(
                 onClick = {
@@ -194,7 +194,7 @@ fun XuanquNewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(innerPadding)
-                .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
+                .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
         ) {
             FloatingActionButton(
                 onClick = {

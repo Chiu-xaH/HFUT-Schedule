@@ -24,7 +24,7 @@ import com.hfut.schedule.logic.utils.Starter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WebDialog(showDialog : Boolean,showChanged : () -> Unit,url : String,title : String = "网页",cookie :String? = null) {
+fun WebDialog(showDialog : Boolean,showChanged : () -> Unit,url : String,title : String = "网页",cookie :String? = null,showTop : Boolean = true) {
 
     val switch_startUri = prefs.getBoolean("SWITCHSTARTURI",true)
 
@@ -34,7 +34,7 @@ fun WebDialog(showDialog : Boolean,showChanged : () -> Unit,url : String,title :
                 onDismissRequest = showChanged,
                 properties = DialogProperties(usePlatformDefaultWidth = false)
             ) {
-                WebViewScreen(url,cookie,showDialog, showChanged,title)
+                WebViewScreen(url,cookie, showChanged,title,showTop)
             }
         } else {
             Starter.startWebUrl(url)

@@ -62,9 +62,9 @@ import com.hfut.schedule.logic.beans.zjgd.BillMonthResponse
 import com.hfut.schedule.logic.utils.DateTimeUtils
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.ui.activity.card.counts.drawLineChart
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
-import com.hfut.schedule.ui.utils.components.CardNormalColor
-import com.hfut.schedule.ui.utils.components.CardNormalDp
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
+import com.hfut.schedule.ui.utils.components.cardNormalColor
+import com.hfut.schedule.ui.utils.components.cardNormalDp
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.SmallCard
@@ -240,9 +240,9 @@ fun monthCount(vm : NetWorkViewModel, innerPadding : PaddingValues) {
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = AppHorizontalDp(), vertical = CardNormalDp()),
+                                .padding(horizontal = appHorizontalDp(), vertical = cardNormalDp()),
                             shape = MaterialTheme.shapes.medium,
-                            colors = CardDefaults.cardColors(containerColor = CardNormalColor())
+                            colors = CardDefaults.cardColors(containerColor = cardNormalColor())
                         ){
                             Spacer(modifier = Modifier.height(8.dp))
                             Row(modifier = Modifier.padding(14.dp,6.dp)){
@@ -265,10 +265,10 @@ fun monthCount(vm : NetWorkViewModel, innerPadding : PaddingValues) {
 
                     //Spacer(modifier = Modifier.height(50.dp))
                     val list = getbillmonth(vm,false)
-                    LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.padding(horizontal = AppHorizontalDp() - CardNormalDp()), state = scrollstate){
+                    LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.padding(horizontal = appHorizontalDp() - cardNormalDp()), state = scrollstate){
 
                         item {
-                            SmallCard(modifier = Modifier.padding(horizontal = CardNormalDp(), vertical = CardNormalDp())) {
+                            SmallCard(modifier = Modifier.padding(horizontal = cardNormalDp(), vertical = cardNormalDp())) {
                                     TransplantListItem(
                                         headlineContent = { Text(text = "￥$str") },
                                         overlineContent = { Text(text = "支出总和")},
@@ -280,7 +280,7 @@ fun monthCount(vm : NetWorkViewModel, innerPadding : PaddingValues) {
                         item {
                             val big = BigDecimal((str.toFloat() / getbillmonth(vm,false).size).toString())
                             val sumFloat = big.setScale(2, RoundingMode.HALF_UP).toString()
-                            SmallCard(modifier = Modifier.padding(horizontal = CardNormalDp(), vertical = CardNormalDp())) {
+                            SmallCard(modifier = Modifier.padding(horizontal = cardNormalDp(), vertical = cardNormalDp())) {
                                 TransplantListItem(
                                     headlineContent = { Text(text = "￥$sumFloat") },
                                     overlineContent = { Text(text = "支出平均")},
@@ -294,7 +294,7 @@ fun monthCount(vm : NetWorkViewModel, innerPadding : PaddingValues) {
                             balance /= 100
 //                            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center)
 //                            {
-                            SmallCard(modifier = Modifier.padding(horizontal = CardNormalDp(), vertical = CardNormalDp())){
+                            SmallCard(modifier = Modifier.padding(horizontal = cardNormalDp(), vertical = cardNormalDp())){
                                     TransplantListItem(
                                         overlineContent = { Text(text = list[item].date) },
                                         headlineContent = { Text(text = "￥$balance") },
@@ -318,7 +318,7 @@ fun monthCount(vm : NetWorkViewModel, innerPadding : PaddingValues) {
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                        .padding(innerPadding)
-                    .padding(AppHorizontalDp())
+                    .padding(appHorizontalDp())
             )
             AnimatedVisibility(
                 visible = shouldShowAddButton,
@@ -327,7 +327,7 @@ fun monthCount(vm : NetWorkViewModel, innerPadding : PaddingValues) {
                 modifier = Modifier
                     .align(Alignment.BottomStart)
                      .padding(innerPadding)
-                    .padding(AppHorizontalDp())
+                    .padding(appHorizontalDp())
             ) {
                 if (shouldShowAddButton) {
                     Row {
@@ -338,7 +338,7 @@ fun monthCount(vm : NetWorkViewModel, innerPadding : PaddingValues) {
                                 else MyToast("请切换年份")
                             },
                         ) { Icon(Icons.Filled.ArrowBack, contentDescription = "") }
-                        Spacer(modifier = Modifier.padding(horizontal =AppHorizontalDp()))
+                        Spacer(modifier = Modifier.padding(horizontal =appHorizontalDp()))
                         FloatingActionButton(
                             onClick = {
                                 if(Months.toInt() <= 11)
@@ -359,7 +359,7 @@ fun monthCount(vm : NetWorkViewModel, innerPadding : PaddingValues) {
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(innerPadding)
-                    .padding(AppHorizontalDp())
+                    .padding(appHorizontalDp())
             )
         }
     }

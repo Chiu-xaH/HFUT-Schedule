@@ -31,7 +31,7 @@ import com.hfut.schedule.logic.network.NetWork
 import com.hfut.schedule.ui.activity.home.search.functions.shower.ShowerUI
 import com.hfut.schedule.ui.activity.home.search.functions.shower.tranamt
 import com.hfut.schedule.ui.activity.shower.login.getGuaGuaPersonInfo
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.LargeCard
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.TransplantListItem

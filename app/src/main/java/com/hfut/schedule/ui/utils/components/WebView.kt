@@ -9,8 +9,11 @@ import android.webkit.WebViewClient
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -33,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
@@ -43,7 +47,7 @@ import com.hfut.schedule.ui.utils.NavigateAnimationManager
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
-fun WebViewScreen(url: String,cookies : String? = null,showDialog : Boolean,showChanged : () -> Unit,title : String) {
+fun WebViewScreen(url: String,cookies : String? = null,showChanged : () -> Unit,title : String,showTop : Boolean) {
     var webView by remember { mutableStateOf<WebView?>(null) }
     var visible by remember { mutableStateOf(true) }
     BackHandler {
@@ -73,21 +77,28 @@ fun WebViewScreen(url: String,cookies : String? = null,showDialog : Boolean,show
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = Color.Transparent,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                actions = {
-                    Row{
-                        if(!visible) {
-                            tools()
+            if(showTop){
+                TopAppBar(
+                    colors = TopAppBarDefaults.mediumTopAppBarColors(
+                        containerColor = Color.Transparent,
+                        titleContentColor = MaterialTheme.colorScheme.primary,
+                    ),
+                    actions = {
+                        Row{
+                            if(!visible) {
+                                tools()
+                            }
                         }
-                    }
-                },
-                title = { Text(title) }
-            )
+                    },
+                    title = { Text(title) }
+                )
+            }
         },
+        bottomBar = {
+            if(!showTop){
+                Spacer(Modifier.height(appHorizontalDp()*2.75f))
+            }
+        }
     ) { innerPadding ->
         Box(
             modifier = Modifier
@@ -98,7 +109,7 @@ fun WebViewScreen(url: String,cookies : String? = null,showDialog : Boolean,show
                 visible = visible,
                 enter = NavigateAnimationManager.hiddenRightAnimation.enter,
                 exit = NavigateAnimationManager.hiddenRightAnimation.exit,
-                modifier = Modifier.padding(innerPadding).padding(horizontal = AppHorizontalDp()).align(Alignment.CenterEnd).zIndex(1f)
+                modifier = Modifier.padding(innerPadding).padding(horizontal = appHorizontalDp()).align(Alignment.CenterEnd).zIndex(1f)
             ) {
                 VerticalFloatingToolbar (expanded = true) {
                     tools()

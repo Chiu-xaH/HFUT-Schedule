@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.utils.DataStoreManager
 import com.hfut.schedule.ui.utils.NavigateAnimationManager
 import com.hfut.schedule.ui.utils.NavigateAnimationManager.ANIMATION_SPEED
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -57,7 +57,7 @@ fun AnimationSetting() {
             AnimationCard(lists[index],currentAnimationIndex,index)
         }
         item {
-            Spacer(Modifier.width(AppHorizontalDp()))
+            Spacer(Modifier.width(appHorizontalDp()))
         }
     }
 }

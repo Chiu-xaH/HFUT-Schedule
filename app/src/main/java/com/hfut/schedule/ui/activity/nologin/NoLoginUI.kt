@@ -64,7 +64,7 @@ import com.hfut.schedule.ui.activity.home.search.main.SearchFuncs
 import com.hfut.schedule.ui.utils.NavigateAnimationManager
 import com.hfut.schedule.ui.utils.NavigateAnimationManager.currentPage
 
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.CustomTabRow
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
@@ -220,7 +220,7 @@ fun NoLoginUI(vm : NetWorkViewModel,vm2 : LoginViewModel,vmUI : UIViewModel) {
                                         Icon(painter = painterResource(id =  R.drawable.login), contentDescription = "")
                                     }
                                 }
-                                Spacer(modifier = Modifier.width(AppHorizontalDp()))
+                                Spacer(modifier = Modifier.width(appHorizontalDp()))
                                 //null
                             }
                             else -> null

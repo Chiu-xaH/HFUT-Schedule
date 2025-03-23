@@ -49,7 +49,7 @@ import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.cube.items.main.apiCheck
 import com.hfut.schedule.ui.activity.home.focus.funictions.getTimeStamp
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LittleDialog
@@ -359,7 +359,7 @@ fun feedBackUI(vm : NetWorkViewModel) {
                 TextField(
                     modifier = Modifier
                         .weight(1f)
-                        .padding(horizontal = AppHorizontalDp()),
+                        .padding(horizontal = appHorizontalDp()),
                     value = input,
                     onValueChange = {
                         input = it
@@ -375,7 +375,7 @@ fun feedBackUI(vm : NetWorkViewModel) {
                 TextField(
                     modifier = Modifier
                         .weight(1f)
-                        .padding(horizontal = AppHorizontalDp()),
+                        .padding(horizontal = appHorizontalDp()),
                     value = inputContact,
                     onValueChange = { inputContact = it },
                     label = { Text("你的联系方式(可不填)" ) },

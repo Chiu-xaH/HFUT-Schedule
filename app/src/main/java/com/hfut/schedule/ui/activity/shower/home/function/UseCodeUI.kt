@@ -27,10 +27,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -46,7 +43,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
@@ -54,21 +50,18 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.beans.guagua.UseCodeResponse
 import com.hfut.schedule.logic.enums.ShowerScreen
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
-import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.logic.utils.data.reEmptyLiveDta
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.CirclePoint
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.KeyBoard
 import com.hfut.schedule.ui.utils.components.ActiveTopBar
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
-import com.hfut.schedule.ui.utils.components.LargeCardColor
+import com.hfut.schedule.ui.utils.components.largeCardColor
 import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.components.statusUI
 import com.hfut.schedule.ui.utils.components.statusUI2
-import com.hfut.schedule.ui.utils.navigateAndClear
 import com.hfut.schedule.ui.utils.navigateAndSave
-import com.hfut.schedule.ui.utils.style.CardForListColor
 import com.hfut.schedule.ui.utils.style.HazeBottomSheet
 import com.hfut.schedule.ui.utils.style.RowHorizontal
 import com.hfut.schedule.viewmodel.GuaGuaViewModel
@@ -123,11 +116,11 @@ fun UseCodeUI(vm: GuaGuaViewModel,hazeState: HazeState,navController: NavHostCon
         ) {
             if(password.length != len) {
                 Column {
-                    Spacer(Modifier.height(AppHorizontalDp()*1.5f))
+                    Spacer(Modifier.height(appHorizontalDp()*1.5f))
                     CirclePoint(text = passwordStatus, password = password, num = 5)
                     Spacer(modifier = Modifier.height(20.dp))
                     KeyBoard(
-                        modifier = Modifier.padding(horizontal = AppHorizontalDp()),
+                        modifier = Modifier.padding(horizontal = appHorizontalDp()),
                         onKeyClick = { num ->
                             if (password.length < len) {
                                 password += num.toString()
@@ -216,12 +209,12 @@ fun UseCodeUI(vm: GuaGuaViewModel,hazeState: HazeState,navController: NavHostCon
     if(switchAutoRefresh && refresh) { refresh() }
 
     Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = AppHorizontalDp()),
+        elevation = CardDefaults.cardElevation(defaultElevation = appHorizontalDp()),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = AppHorizontalDp(), vertical = 5.dp).scale(scale2.value),
+            .padding(horizontal = appHorizontalDp(), vertical = 5.dp).scale(scale2.value),
         shape = MaterialTheme.shapes.medium,
-        colors = CardDefaults.cardColors(containerColor = LargeCardColor())
+        colors = CardDefaults.cardColors(containerColor = largeCardColor())
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             if(!switchAutoRefresh) {

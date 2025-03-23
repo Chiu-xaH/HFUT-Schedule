@@ -24,8 +24,8 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.Starter
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
-import com.hfut.schedule.ui.utils.components.CardNormalDp
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
+import com.hfut.schedule.ui.utils.components.cardNormalDp
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.SmallCard
 import com.hfut.schedule.ui.utils.components.TransplantListItem
@@ -42,11 +42,11 @@ fun WebItem() {
         WebItemData(title = "图书馆", icon = R.drawable.book, url = "http://210.45.242.5:8080/", remark = "需接入校园网")
     )
 
-    Column(modifier = Modifier.padding(horizontal = AppHorizontalDp())) {
+    Column(modifier = Modifier.padding(horizontal = appHorizontalDp())) {
         for(index in webs.indices step 2) {
             Row {
                 val item = webs[index]
-                SmallCard(modifier = Modifier.padding(horizontal = CardNormalDp(), vertical = CardNormalDp()).weight(.5f)) {
+                SmallCard(modifier = Modifier.padding(horizontal = cardNormalDp(), vertical = cardNormalDp()).weight(.5f)) {
                     TransplantListItem(
                         headlineContent = { Text(item.title) },
                         overlineContent = if(item.remark != null) {
@@ -65,7 +65,7 @@ fun WebItem() {
                 }
                 if(index+1 != webs.size) {
                     val item2 = webs[index+1]
-                    SmallCard(modifier = Modifier.padding(horizontal = CardNormalDp(), vertical = CardNormalDp()).weight(.5f)) {
+                    SmallCard(modifier = Modifier.padding(horizontal = cardNormalDp(), vertical = cardNormalDp()).weight(.5f)) {
                         TransplantListItem(
                             headlineContent = { Text(item2.title) },
                             overlineContent = if(item2.remark != null) {

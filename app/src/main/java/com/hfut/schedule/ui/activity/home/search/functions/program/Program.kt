@@ -67,9 +67,9 @@ import com.hfut.schedule.ui.activity.home.search.functions.courseSearch.ApiForCo
 import com.hfut.schedule.ui.activity.home.search.functions.life.countFunc
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
 import com.hfut.schedule.ui.utils.components.AnimationCardListItem
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
-import com.hfut.schedule.ui.utils.components.CardNormalDp
+import com.hfut.schedule.ui.utils.components.cardNormalDp
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.DepartmentIcons
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
@@ -373,7 +373,7 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean,hazeState: HazeState) {
             },
             modifier = Modifier
                 .fillMaxWidth().scale(scale2.value)
-                .padding(horizontal = AppHorizontalDp()),
+                .padding(horizontal = appHorizontalDp(), vertical = 5.dp),
         ) {
             Text(text = "培养方案进度")
         }
@@ -562,7 +562,7 @@ fun ProgramUIInfo2(num1 : Int, num2 : Int, vm : NetWorkViewModel, ifSaved : Bool
             TextField(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(horizontal = AppHorizontalDp()),
+                    .padding(horizontal = appHorizontalDp()),
                 value = input,
                 onValueChange = {
                     input = it
@@ -585,7 +585,7 @@ fun ProgramUIInfo2(num1 : Int, num2 : Int, vm : NetWorkViewModel, ifSaved : Bool
                 searchList.add(item)
             }
         }
-        Spacer(modifier = Modifier.height(CardNormalDp()))
+        Spacer(modifier = Modifier.height(cardNormalDp()))
         LazyColumn {
             items(searchList.size) {item ->
                 val listItem = searchList[item]

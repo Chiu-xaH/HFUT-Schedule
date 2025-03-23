@@ -18,7 +18,6 @@ import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -33,6 +32,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.App.MyApplication.Companion.context
 import com.hfut.schedule.R
 import com.hfut.schedule.activity.MainActivity
 import com.hfut.schedule.logic.enums.CardBarItems
@@ -41,17 +41,18 @@ import com.hfut.schedule.logic.utils.Starter.startWebUrl
 import com.hfut.schedule.logic.utils.VersionUtils
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.MyAPIItem
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.PersonPart
+import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.PatchUpdateUI
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.UpdateUI
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.VersionInfo
+import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.getPatchVersions
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.getUpdates
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
-import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.HazeBottomSheet
-import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.viewmodel.NetWorkViewModel
+import com.xah.bsdiffs.BsdiffUpdate
 import dev.chrisbanes.haze.HazeState
 
 
@@ -82,7 +83,7 @@ fun PartOne(vm : NetWorkViewModel,
     )
     TransplantListItem(
         headlineContent = { Text(text = "应用行为") },
-        supportingContent = { Text(text = "快速启动 预加载 主页面")},
+        supportingContent = { Text(text = "默认设置 机器学习 增量更新")},
         leadingContent = {
             Icon(painter = painterResource(id = R.drawable.empty_dashboard), contentDescription ="" )
         },
@@ -90,7 +91,7 @@ fun PartOne(vm : NetWorkViewModel,
     )
     TransplantListItem(
         headlineContent = { Text(text = "网络相关") },
-        supportingContent = { Text(text = "云端接口 请求范围 登录状态")},
+        supportingContent = { Text(text = "网络接口 请求范围 登录状态")},
         leadingContent = {
             Icon(painter = painterResource(id = R.drawable.net), contentDescription ="" )
         },
@@ -98,7 +99,7 @@ fun PartOne(vm : NetWorkViewModel,
     )
     TransplantListItem(
         headlineContent = { Text(text = "维护关于") },
-        supportingContent = { Text(text = "疑难修复 反馈信息 分享推广")},
+        supportingContent = { Text(text = "疑难修复 联系反馈 分享推广")},
         leadingContent = {
             Icon(painter = painterResource(id = R.drawable.responsive_layout), contentDescription ="" )
         },
@@ -141,8 +142,8 @@ fun HomeSettingScreen(navController: NavController,
                       hazeState: HazeState
 ) {
    //
-
-
+    val currentVersion = VersionUtils.getVersionName()
+    var hasCleaned by remember { mutableStateOf(false) }
     Column(modifier = Modifier
         .verticalScroll(rememberScrollState())
         .fillMaxSize()
@@ -157,11 +158,20 @@ fun HomeSettingScreen(navController: NavController,
 
         MyAPIItem()
 
-        if (VersionUtils.getVersionName() != getUpdates().version) {
-            if(!VersionUtils.isPreview()) {
-                DividerTextExpandedWith(text = "更新版本") {
-                    UpdateUI()
+        if (currentVersion != getUpdates().version) {
+            DividerTextExpandedWith(text = "更新版本") {
+                UpdateUI()
+
+                val patchItem = getPatchVersions().find { item ->
+                    currentVersion == item.oldVersion
                 }
+                if (patchItem != null) {
+                    PatchUpdateUI(patchItem)
+                }
+            }
+        } else {
+            if(!hasCleaned) {
+                hasCleaned = BsdiffUpdate.deleteCache(context)
             }
         }
 

@@ -44,7 +44,7 @@ import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.DetailItems
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.getCourse
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.getTotalCourse
-import com.hfut.schedule.ui.utils.components.CardNormalColor
+import com.hfut.schedule.ui.utils.components.cardNormalColor
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.MyCustomCard
@@ -121,7 +121,7 @@ fun DetailInfos(sheet : courseDetailDTOList,isFriend : Boolean = false,vm: NetWo
         item{
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 Column {
-                    MyCustomCard(hasElevation = false, containerColor = CardNormalColor()) {
+                    MyCustomCard(hasElevation = false, containerColor = cardNormalColor()) {
                         TransplantListItem(
                             headlineContent = { sheet.place?.let { Text(it) } },
                             leadingContent = {

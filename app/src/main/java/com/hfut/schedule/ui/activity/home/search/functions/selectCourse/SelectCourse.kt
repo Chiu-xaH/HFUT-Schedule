@@ -77,9 +77,9 @@ import com.hfut.schedule.ui.activity.home.search.functions.failRate.ApiToFailRat
 import com.hfut.schedule.ui.activity.home.search.functions.failRate.permit
 import com.hfut.schedule.ui.activity.home.search.functions.teacherSearch.ApiToTeacherSearch
 import com.hfut.schedule.ui.utils.components.AnimationCustomCard
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
-import com.hfut.schedule.ui.utils.components.CardNormalColor
-import com.hfut.schedule.ui.utils.components.CardNormalDp
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
+import com.hfut.schedule.ui.utils.components.cardNormalColor
+import com.hfut.schedule.ui.utils.components.cardNormalDp
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LittleDialog
@@ -363,7 +363,7 @@ fun SelectCourseList(vm: NetWorkViewModel,hazeState: HazeState) {
                 },
                 index = item,
                 hasElevation = false,
-                containerColor = CardNormalColor()
+                containerColor = cardNormalColor()
             ) {
                 TransplantListItem(
                     headlineContent = { Text(text = list[item].name) },
@@ -450,7 +450,7 @@ fun SelectCourseInfoLoad(courseId : Int, vm: NetWorkViewModel,hazeState: HazeSta
                 TextField(
                     modifier = Modifier
                         .weight(1f)
-                        .padding(horizontal = AppHorizontalDp()),
+                        .padding(horizontal = appHorizontalDp()),
                     value = input,
                     onValueChange = {
                         input = it
@@ -469,7 +469,7 @@ fun SelectCourseInfoLoad(courseId : Int, vm: NetWorkViewModel,hazeState: HazeSta
                     colors = textFiledTransplant(),
                 )
             }
-            Spacer(modifier = Modifier.height(CardNormalDp()))
+            Spacer(modifier = Modifier.height(cardNormalDp()))
             SelectCourseInfo(vm,courseId,input, hazeState =hazeState )
         }
     } else {

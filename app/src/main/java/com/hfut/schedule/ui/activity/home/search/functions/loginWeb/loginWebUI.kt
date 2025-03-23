@@ -63,7 +63,7 @@ import com.hfut.schedule.ui.activity.home.search.functions.electric.PayFor
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
 import com.hfut.schedule.ui.activity.home.search.functions.transfer.CampusId
 import com.hfut.schedule.ui.activity.home.search.functions.transfer.getCampus
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomButton
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
@@ -71,6 +71,7 @@ import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LoadingLargeCard
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.TransplantListItem
+import com.hfut.schedule.ui.utils.components.WebDialog
 import com.hfut.schedule.ui.utils.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
@@ -80,6 +81,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -100,6 +102,10 @@ fun LoginWebScaUI(vmUI : UIViewModel, vm : NetWorkViewModel,hazeState: HazeState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel,hazeState: HazeState) {
+    val auth = prefs.getString("auth","")
+    val zjgdUrl = MyApplication.ZJGD_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${FeeType.WEB.code}&name=pays&paymentUrl=${MyApplication.ZJGD_URL}plat&token=" + auth
+    var showDialogWeb by remember { mutableStateOf(false) }
+    WebDialog(showDialogWeb, url = zjgdUrl, title = "慧新易校",showChanged = { showDialogWeb = false }, showTop = false)
     // 支付用的变量
     var showDialog2 by remember { mutableStateOf(false) }
     var payNumber by remember { mutableStateOf("") }
@@ -135,7 +141,6 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel,hazeState: HazeState) {
     var textLogin by  remember { mutableStateOf("登录") }
     var textLogout by  remember { mutableStateOf("注销") }
 
-    val auth = prefs.getString("auth","")
 
     fun refresh() {
         CoroutineScope(Job()).launch {
@@ -177,7 +182,11 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel,hazeState: HazeState) {
                                 val webInfo = getWebInfo(vm)
                                 vmUI.webValue.value = webInfo
                                 if (webInfo != null) {
-                                    json = webInfo.postJson
+                                    val jsonObject = JSONObject(result)
+                                    val dataObject = jsonObject.getJSONObject("map").getJSONObject("data")
+                                    dataObject.put("myCustomInfo", "undefined：undefined")
+                                    json = dataObject.toString()
+//                                    json = webInfo.postJson
                                     flow = webInfo.flow
                                     fee = webInfo.fee
                                     loading = false
@@ -255,6 +264,17 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel,hazeState: HazeState) {
                     ) {
                         Icon(Icons.Filled.Check, contentDescription = "description")
                     }
+
+                    FilledTonalButton(
+                        onClick = {
+                            showDialog2 = false
+                            payNumber = "0.01"
+                            showBottomSheet = true
+                        },
+                        modifier = Modifier.padding(horizontal = 5.dp)
+                    ) {
+                        Text("尝试充值0.01")
+                    }
                 }
             }
         }
@@ -273,7 +293,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel,hazeState: HazeState) {
             ) {
                 HazeBottomSheetTopBar("支付订单确认", isPaddingStatusBar = false)
 //                val info by remember { mutableStateOf("") }
-                var int by remember { mutableIntStateOf(payNumber.toInt()) }
+                var int by remember { mutableStateOf(payNumber.toFloat()) }
                 if(int > 0) {
                     PayFor(vm,int,"学号 ${getPersonInfo().username}",json, FeeType.WEB,hazeState)
                 } else MyToast("输入数值")
@@ -284,12 +304,21 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel,hazeState: HazeState) {
 //////////////////////////////布局区///////////////////////////////////
     Column() {
         HazeBottomSheetTopBar("校园网-宣城校区", isPaddingStatusBar = false) {
-            FilledTonalIconButton(
-                onClick = {
-                    refreshFlow()
-                },
-            ) {
-                Icon(painterResource(R.drawable.rotate_right),null)
+            Row {
+                FilledTonalIconButton(
+                    onClick = {
+                        refreshFlow()
+                    },
+                ) {
+                    Icon(painterResource(R.drawable.rotate_right),null)
+                }
+                FilledTonalButton(
+                    onClick = {
+                        showDialogWeb = true
+                    },
+                ) {
+                    Text("官方充值")
+                }
             }
         }
         DividerTextExpandedWith(text = "数据",false) {
@@ -309,7 +338,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel,hazeState: HazeState) {
                             modifier = Modifier.weight(.5f)
                         )
                         TransplantListItem(
-                            overlineContent = { Text(text = "月免费额度 50GB") },
+                            overlineContent = { Text(text = "月免费额度 ${MyApplication.MAX_FREE_FLOW}GB") },
                             headlineContent = { Text(text = "已用 $percent%", fontWeight = FontWeight.Bold)},
                             leadingContent = { Icon(painterResource(R.drawable.percent), contentDescription = "Localized description",) },
                             modifier = Modifier.weight(.5f)
@@ -374,7 +403,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel,hazeState: HazeState) {
 
             Spacer(Modifier.height(10.dp))
             if(isXuancheng) {
-                Row(modifier = Modifier.fillMaxWidth().padding(horizontal = AppHorizontalDp())) {
+                Row(modifier = Modifier.fillMaxWidth().padding(horizontal = appHorizontalDp())) {
                     Button(
                         modifier = Modifier.fillMaxWidth().weight(.5f),
                         onClick = {
@@ -397,7 +426,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel,hazeState: HazeState) {
             }
             if(textLogin == "已登录") {
                 OutlinedButton(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = AppHorizontalDp()),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = appHorizontalDp()),
                     onClick = {
                         Starter.startWebUrl("https://cn.bing.com/")
                     }

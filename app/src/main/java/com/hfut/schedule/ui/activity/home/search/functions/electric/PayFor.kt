@@ -34,6 +34,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,11 +54,12 @@ import com.hfut.schedule.logic.beans.zjgd.PayStep1Response
 import com.hfut.schedule.logic.beans.zjgd.PayStep2Response
 import com.hfut.schedule.logic.beans.zjgd.PayStep3Response
 import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.data.reEmptyLiveDta
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.CirclePoint
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.KeyBoard
 
 import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.getIdentifyID
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LittleDialog
@@ -73,7 +75,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PayFor(vm : NetWorkViewModel, payNumber : Int, tipInfo : String, json : String, type : FeeType,hazeState: HazeState) {
+fun PayFor(vm : NetWorkViewModel, payNumber : Float, tipInfo : String, json : String, type : FeeType,hazeState: HazeState) {
     var showDialog by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -86,6 +88,14 @@ fun PayFor(vm : NetWorkViewModel, payNumber : Int, tipInfo : String, json : Stri
         label = "" // 使用弹簧动画
     )
 
+    LaunchedEffect(Unit) {
+        async { reEmptyLiveDta(vm.orderIdData) }.await()
+        async { reEmptyLiveDta(vm.uuIdData) }.await()
+        async { reEmptyLiveDta(vm.payResultData) }.await()
+    }
+
+
+
     if(showDialog) {
         LittleDialog(
             onDismissRequest = { showDialog = false },
@@ -94,7 +104,7 @@ fun PayFor(vm : NetWorkViewModel, payNumber : Int, tipInfo : String, json : Stri
                 showBottomSheet = true
             },
             dialogTitle = "确认支付吗",
-            dialogText = "是否核定好信息无误,交错后请自行处理",
+            dialogText = "是否核定好信息无误,交错后或者由于对方接口变动造成的损失请自行处理",
             hazeState = hazeState
         )
     }
@@ -118,11 +128,11 @@ fun PayFor(vm : NetWorkViewModel, payNumber : Int, tipInfo : String, json : Stri
                 // shape = Round(sheetState)
             ) {
                 Column {
-                    Spacer(Modifier.height(AppHorizontalDp()*1.5f))
+                    Spacer(Modifier.height(appHorizontalDp()*1.5f))
                     CirclePoint(text = passwordStatus, password = password)
                     Spacer(modifier = Modifier.height(20.dp))
                     KeyBoard(
-                        modifier = Modifier.padding(horizontal = AppHorizontalDp()),
+                        modifier = Modifier.padding(horizontal = appHorizontalDp()),
                         onKeyClick = { num ->
                             if (password.length < 6) {
                                 password += num.toString()
@@ -172,11 +182,12 @@ fun PayFor(vm : NetWorkViewModel, payNumber : Int, tipInfo : String, json : Stri
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    payStatusUI(vm,payNumber,json,type)
+                    PayStatusUI(vm,payNumber,json,type)
                 }
             }
         }
     }
+
 
 
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
@@ -188,7 +199,7 @@ fun PayFor(vm : NetWorkViewModel, payNumber : Int, tipInfo : String, json : Stri
         )
     }
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-        Text(text = "￥$payNumber.00", fontSize = 48.sp,)
+        Text(text = "￥${payNumber}", fontSize = 48.sp,)
     }
     Spacer(modifier = Modifier.height(10.dp))
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
@@ -207,7 +218,7 @@ fun PayFor(vm : NetWorkViewModel, payNumber : Int, tipInfo : String, json : Stri
             modifier = Modifier
                 .weight(1f)
                 .scale(scale.value)
-                .padding(horizontal = AppHorizontalDp())) {
+                .padding(horizontal = appHorizontalDp())) {
             Text(text = "支付")
         }
     }
@@ -216,7 +227,7 @@ fun PayFor(vm : NetWorkViewModel, payNumber : Int, tipInfo : String, json : Stri
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun payStatusUI(vm : NetWorkViewModel, payNumber : Int, json: String, type : FeeType) {
+private fun PayStatusUI(vm : NetWorkViewModel, payNumber : Float, json: String, type : FeeType) {
 
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
@@ -226,20 +237,21 @@ fun payStatusUI(vm : NetWorkViewModel, payNumber : Int, json: String, type : Fee
     var count = 0;
     if(refresh) {
         loading = true
-        CoroutineScope(Job()).launch{
-            async{ vm.payStep1(auth,json,payNumber.toInt(),type) }.await()
+        CoroutineScope(Job()).launch {
+            async{ vm.payStep1(auth,json, payNumber,type) }.await()
             async {
                 Handler(Looper.getMainLooper()).post{
                     vm.orderIdData.observeForever { result ->
                         if (result != null) {
                             if(result.contains("操作成功")) {
                                 orderid = Gson().fromJson(result, PayStep1Response::class.java).data.orderid
-                                vm.payStep2(auth,orderid)
+                                vm.payStep2(auth,orderid,type)
                             }
                         }
                     }
                 }
             }.await()
+
             async {
                 Handler(Looper.getMainLooper()).post{
                     vm.uuIdData.observeForever { result ->
@@ -254,7 +266,7 @@ fun payStatusUI(vm : NetWorkViewModel, payNumber : Int, json: String, type : Fee
                                 }
                                 //正式支付
                                 if(count == 0) {
-                                    vm.payStep3(auth,orderid,getPsk(passwordKey),uuid)
+                                    vm.payStep3(auth,orderid,getPsk(passwordKey),uuid,type)
                                     count++
                                 }
                             }
@@ -262,6 +274,7 @@ fun payStatusUI(vm : NetWorkViewModel, payNumber : Int, json: String, type : Fee
                     }
                 }
             }.await()
+
             async {
                 Handler(Looper.getMainLooper()).post{
                     vm.payResultData.observeForever { result ->

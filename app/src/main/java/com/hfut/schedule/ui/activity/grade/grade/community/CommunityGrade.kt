@@ -50,7 +50,7 @@ import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.grade.getGrade
 import com.hfut.schedule.ui.utils.components.AnimationCardListItem
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.EmptyUI
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
@@ -102,7 +102,7 @@ fun GradeItemUI(vm :NetWorkViewModel, innerPadding : PaddingValues) {
     else term = "2"
 
     var showitem_year by remember { mutableStateOf(false) }
-    DropdownMenu(expanded = showitem_year, onDismissRequest = { showitem_year = false }, offset = DpOffset(AppHorizontalDp(),0.dp)) {
+    DropdownMenu(expanded = showitem_year, onDismissRequest = { showitem_year = false }, offset = DpOffset(appHorizontalDp(),0.dp)) {
         DropdownMenuItem(text = { Text(text = "${(DateTimeUtils.Date_yyyy.toInt() - 3).toString()} - ${(DateTimeUtils.Date_yyyy.toInt() - 2).toString()}" )}, onClick = {
             Years = (DateTimeUtils.Date_yyyy.toInt() - 3)
             showitem_year = false})
@@ -133,7 +133,7 @@ fun GradeItemUI(vm :NetWorkViewModel, innerPadding : PaddingValues) {
             Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
             Row(modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = AppHorizontalDp(), vertical = 0.dp), horizontalArrangement = Arrangement.Start){
+                .padding(horizontal = appHorizontalDp(), vertical = 0.dp), horizontalArrangement = Arrangement.Start){
 
                 AssistChip(
                     onClick = { showitem_year = true },

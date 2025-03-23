@@ -72,7 +72,7 @@ import com.hfut.schedule.logic.beans.zjgd.FeeResponse
 import com.hfut.schedule.logic.beans.zjgd.FeeType
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
@@ -81,6 +81,7 @@ import com.hfut.schedule.ui.utils.components.LoadingLargeCard
 import com.hfut.schedule.ui.utils.components.MenuChip
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.TransplantListItem
+import com.hfut.schedule.ui.utils.components.WebDialog
 import com.hfut.schedule.ui.utils.style.CardForListColor
 import com.hfut.schedule.ui.utils.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.NetWorkViewModel
@@ -98,6 +99,11 @@ import java.math.RoundingMode
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EleUI(vm : NetWorkViewModel,hazeState: HazeState) {
+    val auth = SharePrefs.prefs.getString("auth","")
+    val zjgdUrl = MyApplication.ZJGD_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${FeeType.ELECTRIC.code}&name=pays&paymentUrl=${MyApplication.ZJGD_URL}plat&token=" + auth
+    var showDialogWeb by remember { mutableStateOf(false) }
+    WebDialog(showDialogWeb, url = zjgdUrl, title = "慧新易校",showChanged = { showDialogWeb = false }, showTop = false)
+
     val SavedBuildNumber = prefs.getString("BuildNumber", "0") ?: "0"
     var BuildingsNumber by remember { mutableStateOf(SavedBuildNumber) }
     val SavedRoomNumber = prefs.getString("RoomNumber", "")
@@ -141,7 +147,7 @@ fun EleUI(vm : NetWorkViewModel,hazeState: HazeState) {
                 ) {
                     HazeBottomSheetTopBar("支付订单确认", isPaddingStatusBar = false)
                     val roomInfo by remember { mutableStateOf("${BuildingsNumber}号楼${RoomNumber}寝室${region}") }
-                    var int by remember { mutableStateOf(payNumber.toInt()) }
+                    val int by remember { mutableStateOf(payNumber.toFloat()) }
                     if(int > 0) {
                         PayFor(vm,int,roomInfo,json,FeeType.ELECTRIC,hazeState)
                     } else MyToast("输入数值")
@@ -156,7 +162,6 @@ fun EleUI(vm : NetWorkViewModel,hazeState: HazeState) {
         "22" -> "北边空调"
         else -> "选择南北"
     }
-    val auth = prefs.getString("auth","")
 
     var menuOffset by remember { mutableStateOf<DpOffset?>(null) }
 
@@ -204,6 +209,14 @@ fun EleUI(vm : NetWorkViewModel,hazeState: HazeState) {
                         }
                     }
                 }) { Icon(painter = painterResource(R.drawable.search), contentDescription = "description") }
+
+                FilledTonalButton(
+                    onClick = {
+                        showDialogWeb = true
+                    }
+                ) {
+                    Text("官方充值")
+                }
             }
         }
 
@@ -310,12 +323,23 @@ fun EleUI(vm : NetWorkViewModel,hazeState: HazeState) {
                         ) {
                             Icon(Icons.Filled.Check, contentDescription = "description")
                         }
+
+                        FilledTonalButton(
+                            onClick = {
+                                showDialog2 = false
+                                payNumber = "0.01"
+                                showBottomSheet = true
+                            },
+                            modifier = Modifier.padding(horizontal = 5.dp)
+                        ) {
+                            Text("尝试充值0.01")
+                        }
                     }
                 }
             }
         Row(modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = AppHorizontalDp(), vertical = 0.dp), horizontalArrangement = Arrangement.Start) {
+            .padding(horizontal = appHorizontalDp(), vertical = 0.dp), horizontalArrangement = Arrangement.Start) {
 
             MenuChip(
                 label = { Text(text = "楼栋 $BuildingsNumber") },
@@ -366,7 +390,7 @@ fun EleUI(vm : NetWorkViewModel,hazeState: HazeState) {
             ) + fadeIn(initialAlpha = 0.3f),
             exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
         ){
-            Row (modifier = Modifier.padding(horizontal = AppHorizontalDp())){
+            Row (modifier = Modifier.padding(horizontal = appHorizontalDp())){
                 OutlinedCard{
                     LazyColumn(modifier = Modifier.padding(horizontal = 10.dp)) {
                         item {
@@ -461,6 +485,7 @@ fun EleUI(vm : NetWorkViewModel,hazeState: HazeState) {
             }
             Spacer(modifier = Modifier.height(10.dp))
             BottomTip(str = "月末补贴 照明空调各￥15")
+            BottomTip(str = "寝室缴费实测存在一定延迟")
         }
         Spacer(modifier = Modifier.height(10.dp))
     }

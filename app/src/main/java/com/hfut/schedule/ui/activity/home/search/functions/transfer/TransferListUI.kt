@@ -68,8 +68,8 @@ import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
 import com.hfut.schedule.ui.activity.shower.home.function.ShowerStatusUI
 import com.hfut.schedule.ui.activity.shower.home.function.StatusMsgResponse
 import com.hfut.schedule.ui.utils.components.AnimationCardListItem
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
-import com.hfut.schedule.ui.utils.components.CardNormalDp
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
+import com.hfut.schedule.ui.utils.components.cardNormalDp
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.MyToast
@@ -194,7 +194,7 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String,hazeState: HazeState) {
                         TextField(
                             modifier = Modifier
                                 .weight(1f)
-                                .padding(horizontal = AppHorizontalDp()),
+                                .padding(horizontal = appHorizontalDp()),
                             value = telephone,
                             onValueChange = {
                                 telephone = it
@@ -299,7 +299,7 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String,hazeState: HazeState) {
                     TextField(
                         modifier = Modifier
                             .weight(1f)
-                            .padding(horizontal = AppHorizontalDp()),
+                            .padding(horizontal = appHorizontalDp()),
                         value = input,
                         onValueChange = {
                             input = it
@@ -323,7 +323,7 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String,hazeState: HazeState) {
                         searchList.add(item)
                     }
                 }
-                Spacer(modifier = Modifier.height(CardNormalDp()))
+                Spacer(modifier = Modifier.height(cardNormalDp()))
 
                 LazyColumn {
                     items(searchList.size) {item ->

@@ -52,8 +52,8 @@ import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.data.reEmptyLiveDta
 import com.hfut.schedule.ui.utils.components.AnimationCustomCard
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
-import com.hfut.schedule.ui.utils.components.CardNormalColor
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
+import com.hfut.schedule.ui.utils.components.cardNormalColor
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
@@ -184,7 +184,7 @@ fun BooksUI(vm: NetWorkViewModel,hazeState: HazeState) {
             TextField(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(horizontal = AppHorizontalDp()),
+                    .padding(horizontal = appHorizontalDp()),
                 value = input,
                 onValueChange = {
                     input = it
@@ -221,7 +221,7 @@ fun BooksUI(vm: NetWorkViewModel,hazeState: HazeState) {
                         val callNo = item.callNumber
                         Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
                             AnimationCustomCard(
-                                containerColor = CardNormalColor(),
+                                containerColor = cardNormalColor(),
                                 index = index,
                                 modifier = Modifier.clickable {
                                     title = name
@@ -264,7 +264,7 @@ fun BooksUI(vm: NetWorkViewModel,hazeState: HazeState) {
                     visible = shouldShowAddButton,
                     enter = fadeIn(),
                     exit = fadeOut(),
-                    modifier = Modifier.padding(AppHorizontalDp()).align(Alignment.BottomCenter)
+                    modifier = Modifier.padding(appHorizontalDp()).align(Alignment.BottomCenter)
                 ) {
                     ExtendedFloatingActionButton(
                         onClick = {
@@ -279,7 +279,7 @@ fun BooksUI(vm: NetWorkViewModel,hazeState: HazeState) {
                     visible = shouldShowAddButton,
                     enter = fadeIn(),
                     exit = fadeOut(),
-                    modifier = Modifier.padding(AppHorizontalDp()).align(Alignment.BottomStart)
+                    modifier = Modifier.padding(appHorizontalDp()).align(Alignment.BottomStart)
                 ) {
                     FloatingActionButton(
                         onClick = {
@@ -298,7 +298,7 @@ fun BooksUI(vm: NetWorkViewModel,hazeState: HazeState) {
                     visible = shouldShowAddButton,
                     enter = fadeIn(),
                     exit = fadeOut(),
-                    modifier = Modifier.padding(AppHorizontalDp()).align(Alignment.BottomEnd)
+                    modifier = Modifier.padding(appHorizontalDp()).align(Alignment.BottomEnd)
                 ) {
                     FloatingActionButton(
                         onClick = {

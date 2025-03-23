@@ -58,9 +58,9 @@ import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.data.reEmptyLiveDta
 import com.hfut.schedule.ui.activity.card.bills.CardRow
 import com.hfut.schedule.ui.utils.components.AnimationCardListItem
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.BillsIcons
-import com.hfut.schedule.ui.utils.components.CardNormalColor
+import com.hfut.schedule.ui.utils.components.cardNormalColor
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LoadingUI
@@ -269,13 +269,13 @@ fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVie
                                 }
                             }) { Text(text = "上一页") }
 
-                        Spacer(modifier = Modifier.width(AppHorizontalDp()))
+                        Spacer(modifier = Modifier.width(appHorizontalDp()))
 
                         OutlinedButton(
                             onClick = { Updade()}
                         ) { Text(text = "${page} / ${totalpage}") }
 
-                        Spacer(modifier = Modifier.width(AppHorizontalDp()))
+                        Spacer(modifier = Modifier.width(appHorizontalDp()))
 
                         OutlinedButton(
                             onClick = {
@@ -316,7 +316,7 @@ fun BillsInfo(vm : NetWorkViewModel, Infonum : Int) {
     val bills = getBills(vm)[Infonum]
     Column {
         HazeBottomSheetTopBar("详情", isPaddingStatusBar = false)
-        MyCustomCard(hasElevation = false, containerColor = CardNormalColor()){
+        MyCustomCard(hasElevation = false, containerColor = cardNormalColor()){
             TransplantListItem(
                 headlineContent = { Text( bills.resume.substringBefore("-") ) },
                 leadingContent = {

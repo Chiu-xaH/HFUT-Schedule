@@ -80,8 +80,8 @@ import com.hfut.schedule.ui.activity.news.xuancheng.XuanquNewsUI
 import com.hfut.schedule.ui.utils.NavigateAnimationManager
 import com.hfut.schedule.ui.utils.NavigateAnimationManager.currentPage
 
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
-import com.hfut.schedule.ui.utils.components.CardNormalDp
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
+import com.hfut.schedule.ui.utils.components.cardNormalDp
 import com.hfut.schedule.ui.utils.components.CenterLoadingUI
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.navigateAndSave
@@ -279,7 +279,7 @@ fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
     ) {
         Column {
             Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
-            LazyRow(modifier = Modifier.padding(horizontal = AppHorizontalDp())) {
+            LazyRow(modifier = Modifier.padding(horizontal = appHorizontalDp())) {
                 items(words.size) { index ->
                     val word = words[index]
                     AssistChip(onClick = {
@@ -297,7 +297,7 @@ fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                 TextField(
                     modifier = Modifier
                         .weight(1f)
-                        .padding(horizontal = AppHorizontalDp()),
+                        .padding(horizontal = appHorizontalDp()),
                     value = input,
                     onValueChange = {
                         input = it
@@ -320,7 +320,7 @@ fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                     colors = textFiledTransplant(),
                 )
             }
-            Spacer(modifier = Modifier.height(CardNormalDp()))
+            Spacer(modifier = Modifier.height(cardNormalDp()))
 
             if(loading) {
                 CenterLoadingUI()
@@ -337,7 +337,7 @@ fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
             modifier = Modifier
                 .padding(innerPadding)
                 .align(Alignment.BottomStart)
-                .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
+                .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
         ) {
             FloatingActionButton(
                 onClick = {
@@ -359,7 +359,7 @@ fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
             modifier = Modifier
                 .padding(innerPadding)
                 .align(Alignment.BottomCenter)
-                .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
+                .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
         ) {
             ExtendedFloatingActionButton(
                 onClick = {
@@ -376,7 +376,7 @@ fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(innerPadding)
-                .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
+                .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
         ) {
             FloatingActionButton(
                 onClick = {

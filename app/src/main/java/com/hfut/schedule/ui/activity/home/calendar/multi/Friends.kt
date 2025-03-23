@@ -54,7 +54,7 @@ import com.hfut.schedule.logic.beans.community.FriendsList
 import com.hfut.schedule.logic.beans.community.FriendsResopnse
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.DividerText
@@ -195,7 +195,7 @@ fun FriendsSetting(vm : NetWorkViewModel) {
             TextField(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(horizontal = AppHorizontalDp()),
+                    .padding(horizontal = appHorizontalDp()),
                 value = input,
                 onValueChange = {
                     input = it
@@ -277,7 +277,7 @@ fun FriendsSetting(vm : NetWorkViewModel) {
                             leadingContent = { Icon(painterResource(id = R.drawable.person_add), contentDescription = "")},
                             overlineContent = { applyList[i]?.let { Text(text = it.applyUserId) } },
                             trailingContent = {
-                                Row(modifier = Modifier.padding(horizontal = AppHorizontalDp())) {
+                                Row(modifier = Modifier.padding(horizontal = appHorizontalDp())) {
                                     FilledTonalButton(onClick = {
                                         val id = applyList[i]?.id
                                         id?.let { CommuityTOKEN?.let { it1 -> vm.checkApplying(it1, it,true) } }
@@ -286,7 +286,7 @@ fun FriendsSetting(vm : NetWorkViewModel) {
                                     }) {
                                         Text(text = "同意")
                                     }
-                                    Spacer(modifier = Modifier.width(AppHorizontalDp()))
+                                    Spacer(modifier = Modifier.width(appHorizontalDp()))
                                     FilledTonalButton(onClick = {
                                         val id = applyList[i]?.id
                                         CommuityTOKEN?.let { id?.let { it1 -> vm.checkApplying(it, it1,false) } }

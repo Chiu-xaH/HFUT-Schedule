@@ -55,9 +55,9 @@ import com.hfut.schedule.ui.activity.home.search.functions.transfer.CampusId.HEF
 import com.hfut.schedule.ui.activity.home.search.functions.transfer.CampusId.XUANCHENG
 import com.hfut.schedule.ui.activity.home.search.functions.transfer.getCampus
 import com.hfut.schedule.ui.utils.components.AnimationCardListItem
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
-import com.hfut.schedule.ui.utils.components.CardNormalDp
+import com.hfut.schedule.ui.utils.components.cardNormalDp
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.DepartmentIcons
 import com.hfut.schedule.ui.utils.components.EmptyUI
@@ -201,7 +201,7 @@ fun ProgramSearch(vm : NetWorkViewModel,ifSaved: Boolean,hazeState: HazeState) {
                     TextField(
                         modifier = Modifier
                             .weight(1f)
-                            .padding(horizontal = AppHorizontalDp()),
+                            .padding(horizontal = appHorizontalDp()),
                         value = input,
                         onValueChange = {
                             input = it
@@ -221,7 +221,7 @@ fun ProgramSearch(vm : NetWorkViewModel,ifSaved: Boolean,hazeState: HazeState) {
                         colors = textFiledTransplant()
                     )
                 }
-                Spacer(modifier = Modifier.height(CardNormalDp()))
+                Spacer(modifier = Modifier.height(cardNormalDp()))
 
                 val searchList = programList.filter {
                     it.name.contains(input) || it.department.contains(input) || it.major.contains(input) || it.grade.contains(input)
@@ -447,7 +447,7 @@ fun SearchProgramUIInfo2(num1 : Int, num2 : Int, vm : NetWorkViewModel,ifSaved :
             TextField(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(horizontal = AppHorizontalDp()),
+                    .padding(horizontal = appHorizontalDp()),
                 value = input,
                 onValueChange = {
                     input = it
@@ -470,7 +470,7 @@ fun SearchProgramUIInfo2(num1 : Int, num2 : Int, vm : NetWorkViewModel,ifSaved :
                 searchList.add(item)
             }
         }
-        Spacer(modifier = Modifier.height(CardNormalDp()))
+        Spacer(modifier = Modifier.height(cardNormalDp()))
         LazyColumn {
             items(searchList.size) {item ->
 //                MyCustomCard{

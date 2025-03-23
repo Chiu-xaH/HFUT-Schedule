@@ -61,7 +61,7 @@ import com.hfut.schedule.ui.activity.home.calendar.multi.getFriendsList
 import com.hfut.schedule.ui.activity.home.calendar.multi.getFriendsCourse
 import com.hfut.schedule.ui.activity.home.calendar.next.DatumUI
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotalForApi
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 
 import com.hfut.schedule.ui.utils.components.DividerText
@@ -237,7 +237,7 @@ fun MultiScheduleSettings(
 
         LazyRow {
             //教务课表
-            item { Spacer(Modifier.width(AppHorizontalDp()-3.dp)) }
+            item { Spacer(Modifier.width(appHorizontalDp()-3.dp)) }
             item {
                 OutlinedCard (
                     modifier = Modifier
@@ -379,7 +379,7 @@ fun MultiScheduleSettings(
                     }
                 }
             }
-            item { Spacer(Modifier.width(AppHorizontalDp()-3.dp)) }
+            item { Spacer(Modifier.width(appHorizontalDp()-3.dp)) }
         }
         Spacer(Modifier.height(10.dp))
         DividerTextExpandedWith(text = "操作") {

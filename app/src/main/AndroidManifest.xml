@@ -4,22 +4,15 @@
 
     <uses-feature
         android:name="android.hardware.camera"
-        android:required="false" />
-
-    <!--    联网权限-->
-    <uses-permission android:name="android.permission.INTERNET" />
-    <!--    日历的读取 用于写入聚焦日程到日历-->
+        android:required="false" /> <!-- 联网权限 -->
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- 日历的读取 用于写入聚焦日程到日历 -->
     <uses-permission android:name="android.permission.READ_CALENDAR" />
-    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
-    <!--    洗浴扫码-->
-    <uses-permission android:name="android.permission.CAMERA" />
-    <!--   外部调用打开文件 用于导入课表-->
+    <uses-permission android:name="android.permission.WRITE_CALENDAR" /> <!-- 洗浴扫码 -->
+    <uses-permission android:name="android.permission.CAMERA" /> <!-- 外部调用打开文件 用于导入课表 -->
     <uses-permission
         android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
-        tools:ignore="ScopedStorage" />
-    <!--    安装APK 用于下载更新后安装-->
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
-    <!--    发送通知 用于提示安装包已下载好-->
+        tools:ignore="ScopedStorage" /> <!-- 安装APK 用于下载更新后安装 -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" /> <!-- 发送通知 用于提示安装包已下载好 -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <queries>
@@ -41,19 +34,19 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.App.Starting"
         tools:targetApi="tiramisu">
-<!--        小组件-->
-<!--        <receiver android:name=".ui.widget.MyAppWidgetReceiver"-->
-<!--            android:exported="true">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />-->
-<!--            </intent-filter>-->
-<!--            <meta-data-->
-<!--                android:name="android.appwidget.provider"-->
-<!--                android:resource="@xml/widget_info" />-->
-<!--        </receiver>-->
-<!--        <profileable android:shell="true" />-->
-
-
+        <!--预编译-->
+        <profileable android:shell="true" />
+        <!-- 小组件 -->
+        <!-- <receiver android:name=".ui.widget.MyAppWidgetReceiver" -->
+        <!-- android:exported="true"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.appwidget.action.APPWIDGET_UPDATE" /> -->
+        <!-- </intent-filter> -->
+        <!-- <meta-data -->
+        <!-- android:name="android.appwidget.provider" -->
+        <!-- android:resource="@xml/widget_info" /> -->
+        <!-- </receiver> -->
+        <!-- <profileable android:shell="true" /> -->
         <activity
             android:name=".activity.screen.NewsActivity"
             android:exported="true"
@@ -69,7 +62,6 @@
             android:exported="true"
             android:label="@string/title_activity_shower"
             android:theme="@style/Theme.肥工课程表" />
-
         <activity
             android:name=".activity.screen.FixActivity"
             android:exported="true"
@@ -91,7 +83,9 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <receiver android:name=".receiver.UpdateReceiver" android:exported="false"/>
+        <receiver
+            android:name=".receiver.UpdateReceiver"
+            android:exported="false" />
 
         <activity
             android:name=".activity.screen.CardActivity"

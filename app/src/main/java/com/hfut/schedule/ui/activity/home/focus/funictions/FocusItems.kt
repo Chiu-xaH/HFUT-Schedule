@@ -77,7 +77,7 @@ import com.hfut.schedule.ui.activity.home.cube.items.main.apiCheck
 import com.hfut.schedule.logic.dao.FocusDataBaseManager.addItems
 import com.hfut.schedule.logic.dao.FocusDataBaseManager.removeItems
 import com.hfut.schedule.ui.activity.home.search.functions.card.TodayInfo
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
@@ -542,7 +542,7 @@ fun BoxScope.AddButton(isVisible: Boolean,innerPaddings : PaddingValues,hazeStat
                         TextField(
                             modifier = Modifier
                                 .weight(1f)
-                                .padding(horizontal = AppHorizontalDp()),
+                                .padding(horizontal = appHorizontalDp()),
                             value = title,
                             onValueChange = { title = it },
                             leadingIcon = { Icon( painterResource(R.drawable.title), contentDescription = "Localized description") },
@@ -559,7 +559,7 @@ fun BoxScope.AddButton(isVisible: Boolean,innerPaddings : PaddingValues,hazeStat
                         TextField(
                             modifier = Modifier
                                 .weight(1f)
-                                .padding(horizontal = AppHorizontalDp()),
+                                .padding(horizontal = appHorizontalDp()),
                             value = info,
                             onValueChange = { info = it },
                             leadingIcon = { Icon( painterResource(R.drawable.info_i), contentDescription = "Localized description") },
@@ -575,7 +575,7 @@ fun BoxScope.AddButton(isVisible: Boolean,innerPaddings : PaddingValues,hazeStat
                         TextField(
                             modifier = Modifier
                                 .weight(1f)
-                                .padding(horizontal = AppHorizontalDp()),
+                                .padding(horizontal = appHorizontalDp()),
                             value = remark,
                             onValueChange = { remark = it },
                             leadingIcon = { Icon( painterResource(R.drawable.format_italic), contentDescription = "Localized description") },
@@ -599,7 +599,7 @@ fun BoxScope.AddButton(isVisible: Boolean,innerPaddings : PaddingValues,hazeStat
         modifier = Modifier
             .align(Alignment.BottomEnd)
             .padding(innerPaddings)
-            .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
+            .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
     ) {
         if (isVisible) {
             FloatingActionButton(

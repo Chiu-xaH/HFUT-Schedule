@@ -64,9 +64,9 @@ import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.getWebInfoOl
 import com.hfut.schedule.ui.activity.home.search.functions.card.SchoolCardItem
 import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.getWebInfo
 import com.hfut.schedule.ui.activity.home.search.functions.shower.getInGuaGua
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
-import com.hfut.schedule.ui.utils.components.CardNormalColor
-import com.hfut.schedule.ui.utils.components.CardNormalDp
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
+import com.hfut.schedule.ui.utils.components.cardNormalColor
+import com.hfut.schedule.ui.utils.components.cardNormalDp
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
@@ -234,7 +234,7 @@ fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel, refreshing : Boolean,ha
     }
     if(showCard || showEle || showToday || showWeb)
         MyCustomCard(
-            containerColor = CardNormalColor(),
+            containerColor = cardNormalColor(),
             hasElevation = false
         ) {
             Column() {

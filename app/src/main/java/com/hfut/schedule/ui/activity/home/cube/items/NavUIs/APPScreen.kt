@@ -159,14 +159,19 @@ fun APPScreen(navController: NavController,
         }
 
 
-
-
         TransplantListItem(
             headlineContent = { Text(text = "快速启动") },
             supportingContent = { Text(text = "打开后,再次打开应用时将默认打开免登录二级界面,而不是登陆教务页面,但您仍可通过查询中心中的选项以登录") },
             leadingContent = { Icon(painterResource(R.drawable.speed), contentDescription = "Localized description",) },
             trailingContent = { Switch(checked = faststart, onCheckedChange = {faststartch -> faststart = faststartch }) },
             modifier = Modifier.clickable { faststart = !faststart }
+        )
+
+        TransplantListItem(
+            headlineContent = { Text(text = "聚焦展示今天已上完的课程") },
+            leadingContent = { Icon(painterResource(R.drawable.search_activity), contentDescription = "Localized description",) },
+            trailingContent = { Switch(checked = showEnded, onCheckedChange = { ch -> showEnded = ch}) },
+            modifier = Modifier.clickable { showEnded = !showEnded }
         )
 
 
@@ -202,63 +207,6 @@ fun APPScreen(navController: NavController,
             )
 
         TransplantListItem(
-            headlineContent = { Text(text = "学期") },
-            leadingContent = {
-                Icon(painter = painterResource(id = R.drawable.approval), contentDescription = "")
-            },
-            supportingContent = {
-                Column {
-                    Text(text = "全局学期 ${parseSemseter(getSemseter())}", fontWeight = FontWeight.Bold)
-                    Text(text = "其他部分功能如教评、成绩等需要在全局学期下切换学期的，可在相应功能区切换\n由本地函数计算，每年的2~7月为第二学期，8~次1月为第一学期")
-                }
-            }
-        )
-
-        TransplantListItem(
-            headlineContent = { Text(text = "即时卡片") },
-            supportingContent = { Text(text = "启动APP时会自动加载或更新一些即时数据,您可按需调整") },
-            leadingContent = { Icon(painterResource(R.drawable.reset_iso), contentDescription = "Localized description",) },
-            modifier = Modifier.clickable { showBottomSheet_card = true }
-        )
-
-        TransplantListItem(
-            headlineContent = { Text(text = "聚焦展示今天已上完的课程") },
-            supportingContent = { Text(text = "屏幕底部的Tab栏底栏标签") },
-            leadingContent = { Icon(painterResource(R.drawable.search_activity), contentDescription = "Localized description",) },
-            trailingContent = { Switch(checked = showEnded, onCheckedChange = { ch -> showEnded = ch}) },
-            modifier = Modifier.clickable { showEnded = !showEnded }
-        )
-
-        TransplantListItem(
-            headlineContent = { Text(text = "打开外部链接") },
-            supportingContent = {
-                Column {
-                    Text(text = "您希望链接从应用内部打开或者调用系统浏览器")
-                    Row {
-                        FilterChip(
-                            onClick = {
-                                showStartUri = true
-                                saveBoolean("SWITCHSTARTURI",true,showStartUri)
-                            },
-                            label = { Text(text = "应用内部") }, selected = showStartUri)
-                        Spacer(modifier = Modifier.width(10.dp))
-                        FilterChip(
-                            onClick = {
-                                showStartUri = false
-                                saveBoolean("SWITCHSTARTURI",false,showStartUri)
-                            },
-                            label = { Text(text = "外部浏览器") }, selected = !showStartUri)
-                    }
-                }
-            },
-            leadingContent = { Icon(painterResource(R.drawable.net), contentDescription = "Localized description",) },
-            modifier = Modifier.clickable {
-                showStartUri = !showStartUri
-                saveBoolean("SWITCHSTARTURI",true,showStartUri)
-            }
-        )
-
-        TransplantListItem(
             headlineContent = { Text(text = "默认课程表") },
             supportingContent = {
                 Column {
@@ -291,13 +239,49 @@ fun APPScreen(navController: NavController,
                 saveInt("SWITCH_DEFAULT_CALENDAR",currentDefaultCalendar)
             }
         )
+
         TransplantListItem(
-            headlineContent = { Text(text = "支付设置") },
+                headlineContent = { Text(text = "打开网页链接方式") },
+                supportingContent = {
+                    Column {
+                        Row {
+                            FilterChip(
+                                onClick = {
+                                    showStartUri = true
+                                    saveBoolean("SWITCHSTARTURI",true,showStartUri)
+                                },
+                                label = { Text(text = "应用内部") }, selected = showStartUri)
+                            Spacer(modifier = Modifier.width(10.dp))
+                            FilterChip(
+                                onClick = {
+                                    showStartUri = false
+                                    saveBoolean("SWITCHSTARTURI",false,showStartUri)
+                                },
+                                label = { Text(text = "外部浏览器") }, selected = !showStartUri)
+                        }
+                    }
+                },
+                leadingContent = { Icon(painterResource(R.drawable.net), contentDescription = "Localized description",) },
+                modifier = Modifier.clickable {
+                    showStartUri = !showStartUri
+                    saveBoolean("SWITCHSTARTURI",true,showStartUri)
+                }
+        )
+
+        TransplantListItem(
+            headlineContent = { Text(text = "支付验证") },
             supportingContent = {
                 Text(text = "调用校园卡进行网电缴费时,启用生物识别快速验证")
             },
             leadingContent = { Icon(painterResource(R.drawable.lock), contentDescription = "Localized description",) },
             modifier = Modifier.clickable { showBottomSheet_lock = true }
+        )
+
+        TransplantListItem(
+            headlineContent = { Text(text = "即时卡片") },
+            supportingContent = { Text(text = "启动APP时会自动加载或更新一些即时数据,您可按需调整") },
+            leadingContent = { Icon(painterResource(R.drawable.reset_iso), contentDescription = "Localized description",) },
+            modifier = Modifier.clickable { showBottomSheet_card = true }
         )
 
         TransplantListItem(
@@ -307,6 +291,18 @@ fun APPScreen(navController: NavController,
             },
             leadingContent = { Icon(painterResource(R.drawable.center_focus_strong), contentDescription = "Localized description",) },
             modifier = Modifier.clickable { navController.navigate(Screen.DownloadScreen.route) }
+        )
+        TransplantListItem(
+            headlineContent = { Text(text = "学期") },
+            leadingContent = {
+                Icon(painter = painterResource(id = R.drawable.approval), contentDescription = "")
+            },
+            supportingContent = {
+                Column {
+                    Text(text = "全局学期 ${parseSemseter(getSemseter())}", fontWeight = FontWeight.Bold)
+                    Text(text = "其他部分功能如教评、成绩等需要在全局学期下切换学期的，可在相应功能区切换\n由本地函数计算，每年的2~7月为第二学期，8~次1月为第一学期")
+                }
+            }
         )
     }
 }

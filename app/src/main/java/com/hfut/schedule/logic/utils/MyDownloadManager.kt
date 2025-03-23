@@ -25,7 +25,8 @@ import java.io.File
 object MyDownloadManager {
     enum class DownloadIds(val id : Long) {
         UPDATE(1),
-        ML(2)
+        ML(2),
+        PATCH(3)
     }
 
     val dlManager = MyApplication.context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
@@ -64,6 +65,19 @@ object MyDownloadManager {
                 }
             }
         }, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE), Context.RECEIVER_NOT_EXPORTED)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    fun downloadPatch(filename: String,activity: Activity) {
+        PermissionManager.checkAndRequestNotificationPermission(activity)
+        downloadManage(
+            fileName = filename,
+            url = "${MyApplication.GITEE_UPDATE_URL}releases/download/Android/$filename",
+            dlId= DownloadIds.PATCH,
+            destinationDir = Environment.DIRECTORY_DOWNLOADS
+        ) { uri ->
+//            if (uri != null) installApk()
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)

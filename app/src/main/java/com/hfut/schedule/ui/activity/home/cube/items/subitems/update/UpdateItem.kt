@@ -52,9 +52,11 @@ fun VersionInfo() {
         VersionInfoCard()
     }
     DividerTextExpandedWith(text = "新特性") {
-        UpdateItems("升级 适配安卓16",null,UpdateType.UPDATE)
-        UpdateItems("新增 对16KB对齐的支持", null,UpdateType.UPDATE)
-        UpdateItems("修复 校园网缴费错误到洗浴的Bug", null,UpdateType.FIX)
+        UpdateItems("新增 增量更新", null,UpdateType.ADD)
+        UpdateItems("新增 洗浴、网费、电费的0.01缴费测试、官方充值", null,UpdateType.ADD)
+        UpdateItems("修复 慧新易校网页展示时底部部分系统出现遮挡的Bug", null,UpdateType.FIX)
+        UpdateItems("修复 校园网缴费错误到洗浴的Bug", "本次对慧新易校所有接口进行了排查修正，目前全部是正常可用的，不过还是希望用户缴费时先选择新加的测试按钮，先用0.01元测试",UpdateType.FIX)
+        UpdateItems("优化 部分界面的显示", null,UpdateType.OPTIMIZE)
     }
 }
 

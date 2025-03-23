@@ -18,6 +18,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -29,6 +30,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.AssistChip
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -71,7 +73,7 @@ import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.Starter.loginGuaGua
 import com.hfut.schedule.logic.utils.Starter.startGuagua
 import com.hfut.schedule.ui.activity.home.search.functions.electric.PayFor
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
@@ -122,6 +124,10 @@ fun getInGuaGua(vm: NetWorkViewModel) {
 @Composable
 fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false,hazeState: HazeState) {
 //    val hazeState = remember { HazeState() }
+    val auth = SharePrefs.prefs.getString("auth","")
+    val zjgdUrl = MyApplication.ZJGD_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${FeeType.SHOWER.code}&name=pays&paymentUrl=${MyApplication.ZJGD_URL}plat&token=" + auth
+    var showDialogWeb by remember { mutableStateOf(false) }
+    WebDialog(showDialogWeb, url = zjgdUrl, title = "慧新易校",showChanged = { showDialogWeb = false }, showTop = false)
     val savedPhoneNumber = prefs.getString("PhoneNumber","")
     var phoneNumber by remember { mutableStateOf(savedPhoneNumber ?: "") }
     var balance by remember { mutableStateOf(0) }
@@ -142,7 +148,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false,hazeState: Haze
     var show by remember { mutableStateOf(false) }
     var json by remember { mutableStateOf("") }
 
-    val auth = SharePrefs.prefs.getString("auth","")
+
 
     val url = MyApplication.ZJGD_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=223&name=pays&paymentUrl=http://121.251.19.62/plat&token=" + auth
     var showDialog2 by remember { mutableStateOf(false) }
@@ -161,7 +167,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false,hazeState: Haze
             ) {
                 HazeBottomSheetTopBar("支付订单确认", isPaddingStatusBar = false)
                 val info by remember { mutableStateOf("手机号 $phoneNumber") }
-                var int by remember { mutableStateOf(payNumber.toInt()) }
+                var int by remember { mutableStateOf(payNumber.toFloat()) }
                 if(int > 0) {
                     PayFor(vm,int,info,json, FeeType.SHOWER, hazeState)
                 } else MyToast("输入数值")
@@ -170,7 +176,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false,hazeState: Haze
         }
     }
 
-    WebDialog(showDialog,{ showDialog = false },url,"宣城校区 洗浴缴纳")
+//    WebDialog(showDialog,{ showDialog = false },url,"宣城校区 洗浴缴纳", showTop = false)
 
     if(showDialog2)
         Dialog(onDismissRequest = { showDialog2 = false }) {
@@ -231,6 +237,17 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false,hazeState: Haze
                     ) {
                         Icon(Icons.Filled.Check, contentDescription = "description")
                     }
+
+                    FilledTonalButton(
+                        onClick = {
+                            showDialog2 = false
+                            payNumber = "0.01"
+                            showBottomSheet = true
+                        },
+                        modifier = Modifier.padding(horizontal = 5.dp)
+                    ) {
+                        Text("尝试充值0.01")
+                    }
                 }
             }
         }
@@ -261,7 +278,6 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false,hazeState: Haze
                                         val jsons = Gson().fromJson(result, ShowerFeeResponse::class.java).map.data
                                         try {
                                             studentID = jsons.identifier.toString()
-                                            //val name = jsons.name
                                             balance = jsons.accountMoney
                                             givenBalance = jsons.accountGivenMoney
                                             val jsonObject = JSONObject(result)
@@ -279,19 +295,20 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false,hazeState: Haze
                         }
                     }
                 }) { Icon(painter = painterResource(R.drawable.search), contentDescription = "description") }
-                if(!isInGuagua) {
-                    FilledTonalButton(onClick = {
-                        getInGuaGua(vm)
-                    }) {
-                        Text(text = "呱呱物联")
+
+                FilledTonalButton(
+                    onClick = {
+                        showDialogWeb = true
                     }
+                ) {
+                    Text("官方充值")
                 }
             }
         }
 
         Row(modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = AppHorizontalDp(), vertical = 0.dp), horizontalArrangement = Arrangement.Start) {
+            .padding(horizontal = appHorizontalDp(), vertical = 0.dp), horizontalArrangement = Arrangement.Start) {
             AssistChip(
                 onClick = { showitem4 = !showitem4 },
                 label = { Text(text = "手机号 ${phoneNumber}") },
@@ -311,7 +328,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false,hazeState: Haze
             ) + fadeIn(initialAlpha = 0.3f),
             exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
         ) {
-            Row (modifier = Modifier.padding(horizontal = AppHorizontalDp())){
+            Row (modifier = Modifier.padding(horizontal = appHorizontalDp())){
                 OutlinedCard{
                     LazyColumn(modifier = Modifier.padding(horizontal = 10.dp)) {
                         item {
@@ -353,6 +370,13 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false,hazeState: Haze
             }
         }
 
+        val scale = animateFloatAsState(
+            targetValue = if (!show) 0.97f else 1f, // 按下时为0.9，松开时为1
+            //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
+            animationSpec = tween(MyApplication.ANIMATION_SPEED/2, easing = LinearOutSlowInEasing),
+            label = "" // 使用弹簧动画
+        )
+
         DividerTextExpandedWith(text = "查询结果") {
             Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
                 Spacer(modifier = Modifier.height(100.dp))
@@ -373,12 +397,20 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false,hazeState: Haze
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(10.dp))
-            BottomTip(str = "慧新易校已集成 可前往 查询中心-一卡通-卡包")
-            BottomTip(str = "首次使用前需在微信小程序-呱呱物联绑定手机号")
+
+            if(!isInGuagua) {
+                Button(
+                    onClick = {
+                        getInGuaGua(vm)
+                    },
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = appHorizontalDp(), vertical = 5.dp).scale(scale.value)
+                ) {
+                    Text(text = "进入呱呱物联")
+                }
+            }
         }
 
-        Spacer(modifier = Modifier.height(AppHorizontalDp()))
+        Spacer(modifier = Modifier.height(appHorizontalDp()))
     }
 }
 //适配

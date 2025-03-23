@@ -64,7 +64,7 @@ import com.hfut.schedule.logic.utils.PermissionManager.checkAndRequestCameraPerm
 import com.hfut.schedule.logic.utils.QRCodeAnalyzer
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.ui.activity.shower.home.ShowerDataBaseManager
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
 import com.hfut.schedule.ui.utils.components.CameraScan
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
@@ -212,14 +212,14 @@ fun StartShowerUI(vm: GuaGuaViewModel,hazeState: HazeState) {
                 FilledTonalIconButton (
                     onClick = { show = false },
                     colors = IconButtonDefaults.filledTonalIconButtonColors(containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = .7f)),
-                    modifier = Modifier.align(Alignment.BottomEnd).padding(AppHorizontalDp()).size(60.dp),
+                    modifier = Modifier.align(Alignment.BottomEnd).padding(appHorizontalDp()).size(60.dp),
                 ) {
                     Icon(Icons.Filled.Close,null, modifier = Modifier.size(30.dp))
                 }
                 FilledTonalIconButton (
                     onClick = { isFull = !isFull },
                     colors = IconButtonDefaults.filledTonalIconButtonColors(containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = .7f)),
-                    modifier = Modifier.align(Alignment.BottomStart).padding(AppHorizontalDp()).size(60.dp),
+                    modifier = Modifier.align(Alignment.BottomStart).padding(appHorizontalDp()).size(60.dp),
                 ) {
                     Icon(painterResource(if(!isFull) R.drawable.expand_content else R.drawable.collapse_content),null, modifier = Modifier.size(30.dp))
                 }
@@ -240,7 +240,7 @@ fun StartShowerUI(vm: GuaGuaViewModel,hazeState: HazeState) {
                     TextField(
                         modifier = Modifier
                             .weight(1f)
-                            .padding(horizontal = AppHorizontalDp()),
+                            .padding(horizontal = appHorizontalDp()),
                         value = inputName,
                         onValueChange = {
                             inputName = it
@@ -323,7 +323,7 @@ fun StartShowerUI(vm: GuaGuaViewModel,hazeState: HazeState) {
         TextField(
             modifier = Modifier
                 .weight(1f)
-                .padding(horizontal = AppHorizontalDp()),
+                .padding(horizontal = appHorizontalDp()),
             value = input,
             onValueChange = {
                 input = it
@@ -346,7 +346,7 @@ fun StartShowerUI(vm: GuaGuaViewModel,hazeState: HazeState) {
     Spacer(modifier = Modifier.height(10.dp))
     Row(modifier = Modifier
         .fillMaxWidth()
-        .padding(horizontal = AppHorizontalDp()),horizontalArrangement = Arrangement.Center) {
+        .padding(horizontal = appHorizontalDp()),horizontalArrangement = Arrangement.Center) {
         FilledTonalButton(onClick = {
             if(input == "") MyToast("请扫码或填写二维码贴纸下的MAC地址")
             else if(input.length != 12) {
@@ -382,7 +382,7 @@ fun StartShowerUI(vm: GuaGuaViewModel,hazeState: HazeState) {
     val list = ShowerDataBaseManager.queryAll()
     if(list.size != 0) {
         DividerTextExpandedWith(text = "常用标签") {
-            LazyRow(modifier = Modifier.padding(horizontal = AppHorizontalDp())) {
+            LazyRow(modifier = Modifier.padding(horizontal = appHorizontalDp())) {
                 items(list.size) { index ->
                     AssistChip(
                         onClick = {

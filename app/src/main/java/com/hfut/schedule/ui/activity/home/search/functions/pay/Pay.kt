@@ -53,7 +53,7 @@ import com.hfut.schedule.logic.beans.PayResponse
 import com.hfut.schedule.logic.utils.ClipBoard
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.ui.utils.components.ActiveTopBar
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.style.CardForListColor
 import com.hfut.schedule.ui.utils.components.DividerText

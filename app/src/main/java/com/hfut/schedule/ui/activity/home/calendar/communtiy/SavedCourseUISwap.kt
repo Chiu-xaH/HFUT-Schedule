@@ -80,7 +80,7 @@ import com.hfut.schedule.ui.activity.home.calendar.examToCalendar
 import com.hfut.schedule.ui.activity.home.calendar.getScheduleDate
 import com.hfut.schedule.ui.activity.home.search.functions.exam.getExam
 import com.hfut.schedule.ui.activity.home.search.functions.exam.getExamJXGLSTU
-import com.hfut.schedule.ui.utils.components.AppHorizontalDp
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.MyToast
@@ -743,7 +743,7 @@ fun SaveCourse(
                     modifier = Modifier
                         .align(Alignment.BottomStart)
                         .padding(innerPaddings)
-                        .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
+                        .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
                 ) {
                     if (shouldShowAddButton) {
                         FloatingActionButton(
@@ -766,7 +766,7 @@ fun SaveCourse(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .padding(innerPaddings)
-                        .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
+                        .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
                 ) {
                     if (shouldShowAddButton) {
                         ExtendedFloatingActionButton(
@@ -796,7 +796,7 @@ fun SaveCourse(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .padding(innerPaddings)
-                        .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
+                        .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
                 ) {
                     TextButton(onClick = {  }) {
                         Text(
@@ -817,7 +817,7 @@ fun SaveCourse(
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .padding(innerPaddings)
-                        .padding(horizontal = AppHorizontalDp(), vertical = AppHorizontalDp())
+                        .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
                 ) {
                     if (shouldShowAddButton) {
                         FloatingActionButton(
