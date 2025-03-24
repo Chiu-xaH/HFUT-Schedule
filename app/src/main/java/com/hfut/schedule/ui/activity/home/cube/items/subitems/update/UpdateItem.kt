@@ -36,11 +36,22 @@ fun VersionInfoCard() {
     LargeCard(
         title = "版本 " + VersionUtils.getVersionName()
     ) {
-        TransplantListItem(
-            overlineContent = { Text(text = "2025-03-24") },
-            leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
-            headlineContent = { Text(text = "版本号 ${VersionUtils.getVersionCode()}") },
-        )
+        Row {
+            TransplantListItem(
+                overlineContent = { Text(text = "2025-03-24") },
+                leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
+                headlineContent = { Text(text = "版本号 ${VersionUtils.getVersionCode()}") },
+                modifier = Modifier.weight(.5f)
+            )
+            VersionUtils.getSplitType().let {
+                TransplantListItem(
+                    overlineContent = { Text(text = if(it == VersionUtils.SplitType.COMMON) "全量包" else "架构分包") },
+                    leadingContent = { Icon(painter = painterResource(id = R.drawable.package_2), contentDescription = "") },
+                    headlineContent = { Text(text = it.description) },
+                    modifier = Modifier.weight(.5f)
+                )
+            }
+        }
     }
 }
 

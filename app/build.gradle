@@ -22,9 +22,9 @@ android {
         abi {
             // 启用 ABI 分割
             enable true
-            reset() // 防止其他不需要的架构
-            include 'arm64-v8a', 'armeabi-v7a', 'x86', 'x86_64' // 可以根据需要指定哪些架构
-            universalApk true // 不生成通用 APK，只生成每个架构的 APK
+            reset()
+            include 'arm64-v8a', 'armeabi-v7a', 'x86', 'x86_64'
+            universalApk true
         }
     }
 
@@ -40,9 +40,29 @@ android {
         }
     }
 
+    applicationVariants.configureEach { variant ->
+        variant.outputs.each { output ->
+            def abi = output.getFilter(com.android.build.OutputFile.ABI)
+            if (abi != null) {
+                def baseVersionCode = defaultConfig.versionCode * 10
+                def abiVersionCodes = [
+                        "armeabi-v7a" : 1,
+                        "arm64-v8a"   : 2,
+                        "x86"         : 3,
+                        "x86_64"      : 4
+                ]
+
+                def newVersionCode = baseVersionCode + (abiVersionCodes[abi] ?: 0)
+
+                output.versionCodeOverride = newVersionCode
+            }
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
+            vcsInfo.include false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         benchmark {
