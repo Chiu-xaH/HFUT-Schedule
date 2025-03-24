@@ -18,12 +18,22 @@ android {
     namespace 'com.hfut.schedule'
     compileSdk 36
 
+    splits {
+        abi {
+            // 启用 ABI 分割
+            enable true
+            reset() // 防止其他不需要的架构
+            include 'arm64-v8a', 'armeabi-v7a', 'x86', 'x86_64' // 可以根据需要指定哪些架构
+            universalApk true // 不生成通用 APK，只生成每个架构的 APK
+        }
+    }
+
     defaultConfig {
         applicationId "com.hfut.schedule"
         minSdk 26
         targetSdk 36
-        versionCode 171
-        versionName "4.14.2"
+        versionCode 172
+        versionName "4.14.2.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
