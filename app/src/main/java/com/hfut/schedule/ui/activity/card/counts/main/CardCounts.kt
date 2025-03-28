@@ -81,23 +81,27 @@ fun getbillmonth(vm : NetWorkViewModel, count : Boolean) : MutableList<BillMonth
     val json = vm.MonthData.value
     val lists = listOf(BillMonth("",0.0)).toMutableList()
 
-    return if(json?.contains("操作成功") == true) {
-        val data = Gson().fromJson(json, BillMonthResponse::class.java)
-        val bill = data.data
-        var list = bill.map { (date,balance) -> BillMonth(date, balance) }.toMutableList()
-        val iterator = list.iterator()
-        if(!count) {
-            while (iterator.hasNext()) {
-                val billMonth = iterator.next()
-                if(DateTimeUtils.Date_yyyy_MM == billMonth.date.substring(0,7)) {
-                    if(DateTimeUtils.Date_MM_dd.replace("-","").toInt() < billMonth.date.substringAfter("-").replace("-","").toInt()) {
-                        iterator.remove() // 使用迭代器删除元素
+    try {
+        return if(json?.contains("操作成功") == true) {
+            val data = Gson().fromJson(json, BillMonthResponse::class.java)
+            val bill = data.data
+            var list = bill.map { (date,balance) -> BillMonth(date, balance) }.toMutableList()
+            val iterator = list.iterator()
+            if(!count) {
+                while (iterator.hasNext()) {
+                    val billMonth = iterator.next()
+                    if(DateTimeUtils.Date_yyyy_MM == billMonth.date.substring(0,7)) {
+                        if(DateTimeUtils.Date_MM_dd.replace("-","").toInt() < billMonth.date.substringAfter("-").replace("-","").toInt()) {
+                            iterator.remove() // 使用迭代器删除元素
+                        }
                     }
                 }
             }
-        }
-        list
-    } else lists
+            list
+        } else lists
+    } catch (e : Exception) {
+        return lists
+    }
 }
 @SuppressLint("SuspiciousIndentation")
 @Composable

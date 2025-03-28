@@ -30,7 +30,7 @@ object ShareAPK {
                 Intent.createChooser(shareIntent,"分享安装包").addFlags(
                     Intent.FLAG_ACTIVITY_NEW_TASK))
         } catch (e : Exception) {
-            Log.d("错误", e.toString())
+//            Log.d("错误", e.toString())
         }
     }
     @JvmStatic

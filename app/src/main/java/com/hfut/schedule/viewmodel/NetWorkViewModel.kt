@@ -14,6 +14,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.enums.LibraryItems
 import com.hfut.schedule.logic.beans.jxglstu.lessonResponse
 import com.hfut.schedule.logic.beans.one.BorrowBooksResponse
@@ -68,8 +69,8 @@ import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.getUserInfo
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
 import com.hfut.schedule.ui.activity.news.main.transferToPostData
-import com.hfut.schedule.ui.activity.home.search.functions.transfer.CampusId
-import com.hfut.schedule.ui.activity.home.search.functions.transfer.CampusId.*
+import com.hfut.schedule.ui.activity.home.search.functions.transfer.Campus
+import com.hfut.schedule.ui.activity.home.search.functions.transfer.Campus.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -138,7 +139,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
 
     var programList = MutableLiveData<String?>()
-    fun getProgramList(campus : CampusId) {
+    fun getProgramList(campus : Campus) {
         val campusText = when(campus) {
             HEFEI -> "hefei"
             XUANCHENG -> "xuancheng"
@@ -147,7 +148,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     }
 
     var programSearchData = MutableLiveData<String?>()
-    fun getProgramListInfo(id : Int,campus : CampusId) {
+    fun getProgramListInfo(id : Int,campus : Campus) {
         val campusText = when(campus) {
             HEFEI -> "hefei"
             XUANCHENG -> "xuancheng"
@@ -581,9 +582,11 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                     val json = response.body()?.string()
                     if (json != null) {
-                        val id = Gson().fromJson(json, lessonResponse::class.java)
+                        try {
+                            val id = Gson().fromJson(json, lessonResponse::class.java)
+                            lessonIds.value = id.lessonIds
+                        } catch (e : Exception) { }
                         saveString("courses",json)
-                        lessonIds.value = id.lessonIds
                     }
                 }
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -668,7 +671,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
     val programPerformanceData = MutableLiveData<String?>()
 
-    fun getProgramPerformance(cookie: String) {
+    fun searchTeacher(cookie: String) {
         val call = studentId.value?.let { JxglstuJSON.getProgramPerformance(cookie, it) }
 
         if (call != null) {
@@ -686,8 +689,8 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
     val teacherSearchData = MutableLiveData<String?>()
 
-    fun getProgramPerformance(name: String = "",direction: String = "") {
-        val call = teacher.searchTeacher(name=name, direction = direction)
+    fun searchTeacher(name: String = "", direction: String = "") {
+        val call = teacher.searchTeacher(name=name, direction = direction, size = prefs.getString("TeacherSearchRequest",MyApplication.PAGE_SIZE.toString()) ?: MyApplication.PAGE_SIZE.toString() )
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -702,7 +705,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     val courseData = MutableLiveData<String?>()
     val courseRsponseData = MutableLiveData<String?>()
     fun searchCourse(cookie: String, className : String?,courseName : String?, semester : Int,courseId : String?) {
-        val call = JxglstuJSON.searchCourse(cookie,studentId.value.toString(),semester,className,"1,100",courseName,courseId)
+        val call = JxglstuJSON.searchCourse(cookie,studentId.value.toString(),semester,className,"1,${prefs.getString("CourseSearchRequest",MyApplication.PAGE_SIZE.toString()) ?: MyApplication.PAGE_SIZE}",courseName,courseId)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -1003,7 +1006,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     val SearchBillsData = MutableLiveData<String>()
     fun searchBills(auth : String, info: String,page : Int) {
         val size = prefs.getString("CardRequest","15")
-        size?.let { Log.d("size", it) }
+//        size?.let { Log.d("size", it) }
         val call = size?.let { ZJGDBill.searchBills(auth,info,page, it) }
 
         if (call != null) {
@@ -1045,11 +1048,13 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                     val json = response.body()?.string()
-                    val data = Gson().fromJson(json, getTokenResponse::class.java)
-                    if (data.msg == "success") {
-                        token.value = data.data.access_token
-                        saveString("bearer", data.data.access_token)
-                    }
+                    try {
+                        val data = Gson().fromJson(json, getTokenResponse::class.java)
+                        if (data.msg == "success") {
+                            token.value = data.data.access_token
+                            saveString("bearer", data.data.access_token)
+                        }
+                    } catch (_: Exception) {}
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -1082,13 +1087,12 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 val json = response.body()?.string()
                 if (json.toString().contains("success")) {
-                    val data = Gson().fromJson(json, BorrowBooksResponse::class.java)
+                    try {
+                        val data = Gson().fromJson(json, BorrowBooksResponse::class.java)
                         val borrow = data.data.toString()
-                    saveString("borrow",borrow)
-
-                }
-                 else saveString("borrow","未获取")
-
+                        saveString("borrow",borrow)
+                    } catch (_ : Exception) {}
+                } else saveString("borrow","未获取")
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -1103,9 +1107,11 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 val json = response.body()?.string()
                 if (json.toString().contains("success")) {
-                    val data = Gson().fromJson(json, SubBooksResponse::class.java)
+                    try {
+                        val data = Gson().fromJson(json, SubBooksResponse::class.java)
                         val sub = data.data.toString()
-                    saveString("sub", sub)
+                        saveString("sub", sub)
+                    } catch (_ : Exception) {}
                 }
                 else saveString("borrow","0")
             }
@@ -1306,20 +1312,18 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
         val size = prefs.getString("BookRequest","15")
       //  size?.let { Log.d("size", it) }
-        val call = CommuityTOKEN?.let { size?.let { it1 -> Community.searchBooks(it,name,page.toString(), it1) } }
-        if (call != null) {
-            call.enqueue(object : Callback<ResponseBody> {
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    libraryData.value = response.body()?.string()
-                    saveString("Library", response.body()?.string())
-                }
+        val call = CommuityTOKEN.let { size?.let { it1 -> Community.searchBooks(it,name,page.toString(), it1) } }
+        call?.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                libraryData.value = response.body()?.string()
+                saveString("Library", response.body()?.string())
+            }
 
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    libraryData.value = "错误"
-                    t.printStackTrace()
-                }
-            })
-        }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                libraryData.value = "错误"
+                t.printStackTrace()
+            }
+        })
     }
 
     val bookPositionData = MutableLiveData<String?>()
@@ -1362,15 +1366,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         val call = Community.applyAdd(CommuityTOKEN,CommunityService.RequestJsonApply(username))
 
         NetWork.makeRequest(call,applyResponseMsg)
-//        if (call != null) {
-//            call.enqueue(object : Callback<ResponseBody> {
-//                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-//                    applyResponseMsg.value = response.body()?.string()
-//                }
-//
-//                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-//            })
-//        }
+
     }
     val applyData = MutableLiveData<String>()
     fun getApplying(CommuityTOKEN : String) {
@@ -1378,19 +1374,10 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         val call = size?.let { Community.getApplyingList(CommuityTOKEN, it) }
 
         call?.let { NetWork.makeRequest(it,applyData) }
-//        if (call != null) {
-//            call.enqueue(object : Callback<ResponseBody> {
-//                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-//                    applyData.value = response.body()?.string()
-//                }
-//
-//                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-//            })
-//        }
+
     }
-    fun GetBorrowed(CommuityTOKEN: String,page : String) {
-//        val size = prefs.getString("BookRequest","15")
-        val call = CommuityTOKEN?.let { it1 -> Community.getBorrowedBook("100",page, it1)  }
+    fun getBorrowed(CommuityTOKEN: String, page : String) {
+        val call = CommuityTOKEN?.let { it1 -> Community.getBorrowedBook(size = "100",page = page, token = it1)  }
 
         if (call != null) {
             call.enqueue(object : Callback<ResponseBody> {
@@ -1403,8 +1390,8 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         }
     }
 
-    fun GetHistory(CommuityTOKEN: String,page : String) {
-        val call =  Community.getHistoyBook(token = CommuityTOKEN, size = "100", page = page)
+    fun getHistory(CommuityTOKEN: String, page : String) {
+        val call =  Community.getHistoryBook(token = CommuityTOKEN, size = "100", page = page)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -1484,9 +1471,11 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                     val json = response.body()?.string()
                     if (json != null) {
-                        val id = Gson().fromJson(json, lessonResponse::class.java)
-                        saveString("coursesNext",json)
-                        lessonIdsNext.value = id.lessonIds
+                        try {
+                            val id = Gson().fromJson(json, lessonResponse::class.java)
+                            saveString("coursesNext",json)
+                            lessonIdsNext.value = id.lessonIds
+                        } catch (_ : Exception) {}
                     }
                 }
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -1514,15 +1503,9 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     }
 
     val weatherWarningData = MutableLiveData<String?>()
-    fun getWeatherWarn() {
-        val call = qWeather.getWeatherWarn()
-        NetWork.makeRequest(call,weatherWarningData)
-    }
+    fun getWeatherWarn() = NetWork.makeRequest(qWeather.getWeatherWarn(),weatherWarningData)
     val weatherData = MutableLiveData<String?>()
-    fun getWeather() {
-        val call = qWeather.getWeather()
-        NetWork.makeRequest(call,weatherData)
-    }
+    fun getWeather() = NetWork.makeRequest(qWeather.getWeather(),weatherData)
 
     val goToStuResponse = MutableLiveData<String?>()
     val stuTicket = MutableLiveData<String?>(null)
@@ -1535,7 +1518,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
                 if(statusCode == 302) {
                     goToStuResponse.value = response.headers()["Location"]
                 } else {
-                    Log.d(statusCode.toString(),"登陆失败")
+//                    Log.d(statusCode.toString(),"登陆失败")
                 }
             }
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -1549,10 +1532,10 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 val statusCode = response.code()
                 if(statusCode == 200) {
-                    Log.d("成功",response.headers()["Set-Cookie"].toString())
+//                    Log.d("成功",response.headers()["Set-Cookie"].toString())
                     loginStuResponse.value = response.headers()["Set-Cookie"]
                 } else {
-                    Log.d("登失败",response.headers().toString())
+//                    Log.d("登失败",response.headers().toString())
                 }
             }
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }

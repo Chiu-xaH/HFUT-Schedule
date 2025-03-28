@@ -4,13 +4,18 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.webkit.CookieManager
-import androidx.navigation.NavHostController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.activity.MainActivity
+import com.hfut.schedule.activity.screen.CardActivity
+import com.hfut.schedule.activity.screen.FixActivity
+import com.hfut.schedule.activity.screen.GradeActivity
+import com.hfut.schedule.activity.screen.NewsActivity
+import com.hfut.schedule.activity.screen.SuccessActivity
 import com.hfut.schedule.activity.shower.ShowerActivity
 import com.hfut.schedule.logic.enums.ShowerScreen
-import com.hfut.schedule.ui.activity.login.First
+import com.hfut.schedule.logic.utils.data.WebVpn
 import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.viewmodel.NetWorkViewModel
 
 object Starter {
     //通过包名启动第三方应用
@@ -79,7 +84,6 @@ object Starter {
     }
     @JvmStatic
     fun loginGuaGua() {
-//        countFunc = 0
         val it = Intent(MyApplication.context, ShowerActivity::class.java).apply {
             putExtra("FIRST",ShowerScreen.LOGIN.name)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -87,25 +91,53 @@ object Starter {
         MyApplication.context.startActivity(it)
     }
     @JvmStatic
-    fun startGuagua() {
-//        countFunc = 0
+    fun startGuaGua() {
         val it = Intent(MyApplication.context, ShowerActivity::class.java).apply {
             putExtra("FIRST",ShowerScreen.HOME.name)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         MyApplication.context.startActivity(it)
     }
-//    @JvmStatic
-//    fun noLogin(navHostController: NavHostController) = turnTo(navHostController,First.GUEST.name)
-//        val it = Intent(MyApplication.context, AnonymityActivity::class.java).apply {
-//            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-//        }
-//        MyApplication.context.startActivity(it)
-
+    @JvmStatic
+    fun startCard() {
+        val it = Intent(MyApplication.context, CardActivity::class.java).apply { addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) }
+        MyApplication.context.startActivity(it)
+    }
     @JvmStatic
     fun emailMe() {
         val it = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:zsh0908@outlook.com"))
         it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         MyApplication.context.startActivity(it)
     }
+    @JvmStatic
+    fun startGrade(vm : NetWorkViewModel, isUnRefreshStatus : Boolean) {
+        val it = Intent(MyApplication.context, GradeActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            WebVpn.webVpn = vm.webVpn
+            putExtra("saved",isUnRefreshStatus)
+        }
+        MyApplication.context.startActivity(it)
+    }
+    @JvmStatic
+    fun loginSuccess(webVpn : Boolean = true) {
+        val it = Intent(MyApplication.context, SuccessActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            putExtra("webVpn",webVpn)
+        }
+        MyApplication.context.startActivity(it)
+    }
+    @JvmStatic
+    fun startNews() {
+        val it = Intent(MyApplication.context, NewsActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        MyApplication.context.startActivity(it)
+    }
+    @JvmStatic
+    fun startFix() {
+        val it = Intent(MyApplication.context, FixActivity::class.java).apply { addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) }
+        MyApplication.context.startActivity(it)
+    }
 }
+
+

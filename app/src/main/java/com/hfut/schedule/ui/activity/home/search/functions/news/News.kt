@@ -12,6 +12,7 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.activity.screen.NewsActivity
+import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 
 @Composable
@@ -25,10 +26,7 @@ fun News(vm : NetWorkViewModel) {
             )
         },
         modifier = Modifier.clickable {
-            val it = Intent(MyApplication.context, NewsActivity::class.java).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-            MyApplication.context.startActivity(it)
+            Starter.startNews()
         }
     )
 }

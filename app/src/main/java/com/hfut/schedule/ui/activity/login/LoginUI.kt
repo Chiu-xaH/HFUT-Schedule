@@ -72,7 +72,8 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.activity.screen.FixActivity
-import com.hfut.schedule.activity.screen.main.SuccessActivity
+import com.hfut.schedule.activity.screen.SuccessActivity
+import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.logic.utils.VersionUtils
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
@@ -136,11 +137,7 @@ private fun loginClick(vm : LoginViewModel, username : String, inputAES : String
                                 else {
                                     onResult("登陆成功")
                                     vm.loginJxglstu()
-                                    val it = Intent(MyApplication.context, SuccessActivity::class.java).apply {
-                                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                        putExtra("webVpn",true)
-                                    }
-                                    MyApplication.context.startActivity(it)
+                                    Starter.loginSuccess()
                                 }
                             }
                             "302" -> {
@@ -151,11 +148,7 @@ private fun loginClick(vm : LoginViewModel, username : String, inputAES : String
                                     }
                                     vm.location.value.toString().contains("ticket") -> {
                                         onResult("登陆成功")
-                                        val it = Intent(MyApplication.context, SuccessActivity::class.java).apply {
-                                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                            putExtra("webVpn",webVpn)
-                                        }
-                                        MyApplication.context.startActivity(it)
+                                        Starter.loginSuccess(webVpn)
                                     }
                                     else -> {
                                         onResult("未知响应,登陆失败")
@@ -515,8 +508,7 @@ fun TwoTextField(vm : LoginViewModel,navHostController: NavHostController) {
                 )
                 TextButton(
                     onClick = {
-                        val it = Intent(MyApplication.context, FixActivity::class.java).apply { addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) }
-                        MyApplication.context.startActivity(it)
+                        Starter.startFix()
                     },
                     content = {
                         Box(modifier = Modifier.height(48.dp)) {

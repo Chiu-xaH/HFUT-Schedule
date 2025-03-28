@@ -5,7 +5,7 @@ import com.hfut.schedule.ui.utils.components.MyToast
 import okhttp3.Interceptor
 import okhttp3.Response
 
-class GotoInterceptor() : Interceptor {
+class GotoInterceptor : Interceptor {
     var num = 1
 
         override fun intercept(chain: Interceptor.Chain): Response {

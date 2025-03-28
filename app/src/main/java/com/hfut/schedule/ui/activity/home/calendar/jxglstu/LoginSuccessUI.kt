@@ -475,13 +475,14 @@ fun CalendarScreen(
                val LoginCommunityObserver = Observer<String?> { result ->
                    if (result != null) {
                        if (result.contains("200") && result.contains("token")) {
-                           val result = Gson().fromJson(result, LoginCommunityResponse::class.java)
-                           val token = result.result.token
-                           SharePrefs.saveString("TOKEN", token)
-                           if (num2 == 1) {
-                               MyToast("Community登陆成功")
-                               num2++
-                           }
+                           try {
+                               val tokens = Gson().fromJson(result, LoginCommunityResponse::class.java).result.token
+                               SharePrefs.saveString("TOKEN", tokens)
+                               if (num2 == 1) {
+                                   MyToast("Community登陆成功")
+                                   num2++
+                               }
+                           }catch (_:Exception) {}
                        }
                    }
                }

@@ -27,34 +27,23 @@ import java.math.RoundingMode
 
 
 //使用指尖工大接口获取一卡通余额
-fun GetZjgdCard(vm : NetWorkViewModel, vmUI : UIViewModel) {
-    CoroutineScope(Job()).apply {
+fun getZjgdCard(vm : NetWorkViewModel, vmUI : UIViewModel) {
+    val auth = prefs.getString("auth","")
+    CoroutineScope(Job()).launch {
+        async { vm.getyue("bearer $auth") }.await()
         launch {
-            async {
-                val auth = prefs.getString("auth","")
-                vm.getyue("bearer $auth")
-            }.await()
-            async {
-                Handler(Looper.getMainLooper()).post {
-                    vm.CardData.observeForever { result ->
-                        if (result != null) {
-                            if(result.contains("操作成功")) {
+            Handler(Looper.getMainLooper()).post {
+                vm.CardData.observeForever { result ->
+                    if (result != null) {
+                        if(result.contains("操作成功")) {
+                            try {
                                 val yuedata = Gson().fromJson(result, BalanceResponse::class.java).data.card[0]
                                 val limite = transferNum(yuedata.autotrans_limite)
                                 val amt = transferNum(yuedata.autotrans_amt)
                                 val name = yuedata.name
                                 val account = yuedata.account
-                              //  var num = yuedata.db_balance.toString()
-                                //待圈存
-                              //  var num_settle = yuedata.unsettle_amount.toString()
-                              //  var num_float = num.toFloat()
-                            //    var num_settle_float = num_settle.toFloat()
-                              //  num_float /= 100
-                              //  val now = num_float.toString()
                                 var now = transferNum(yuedata.db_balance)
                                 SharePrefs.saveString("card_now", now.toString())
-                            //    num_settle_float /= 100
-                              //  val settle = num_settle_float.toString()
                                 var settle = transferNum(yuedata.unsettle_amount)
                                 SharePrefs.saveString("card_settle", settle.toString())
                                 now += settle
@@ -63,11 +52,10 @@ fun GetZjgdCard(vm : NetWorkViewModel, vmUI : UIViewModel) {
                                 val balance = str
                                 SharePrefs.saveString("card", str)
                                 SharePrefs.saveString("card_account", account)
-                                SharePrefs.saveString("card_limit", limite.toString())
-                                SharePrefs.saveString("card_amt", amt.toString())
+//                                SharePrefs.saveString("card_limit", limite.toString())
+//                                SharePrefs.saveString("card_amt", amt.toString())
                                 vmUI.CardValue.value = ReturnCard(balance, settle.toString(), now.toString(),amt.toString(),limite.toString(),name)
-                                //return ReturnCard(balance, settle, now)
-                            }
+                            } catch (e : Exception) { }
                         }
                     }
                 }

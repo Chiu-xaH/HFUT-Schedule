@@ -68,7 +68,7 @@ import com.hfut.schedule.ui.activity.card.function.main.HomeScreen
 import com.hfut.schedule.ui.activity.card.bills.main.CardBills
 import com.hfut.schedule.ui.activity.card.counts.CardHome
 //import com.hfut.schedule.ui.activity.card.function.main.turnToBottomBar
-import com.hfut.schedule.ui.activity.home.focus.funictions.GetZjgdCard
+import com.hfut.schedule.ui.activity.home.focus.funictions.getZjgdCard
 import com.hfut.schedule.ui.utils.NavigateAnimationManager
 import com.hfut.schedule.ui.utils.NavigateAnimationManager.currentPage
 //import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
@@ -86,83 +86,55 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
+private fun BillItem(vm : NetWorkViewModel) :List<records> {
+    val billjson = vm.BillsData.value
+    try {
+        if(billjson?.contains("操作成功") == true){
+            val bill = Gson().fromJson(billjson, BillResponse::class.java)
+            val data = bill.data.records
+            val msg = bill.data.msg
+            val totalpage = bill.data.pages
+            SharePrefs.saveString("totalpage",totalpage.toString())
+            if (msg != null) {
+                if (msg.contains("成功")) {
+                    val cardAccount = bill.data.records[0].fromAccount
+                    SharePrefs.saveString("cardAccount", cardAccount)
+                } else { Toast.makeText(MyApplication.context,msg, Toast.LENGTH_SHORT).show() }
+            }
+            return data
+        } else {
+            return emptyList()
+        }
+    } catch (e:Exception) {
+        return emptyList()
+    }
+}
+
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("SuspiciousIndentation", "UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
 
-    val showBottomSheet_Bills by remember { mutableStateOf(false) }
-    val animation by remember { mutableStateOf(prefs.getInt("ANIMATION", MyApplication.ANIMATION_SPEED)) }
     val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR", VersionUtils.canBlur)
     val blur by remember { mutableStateOf(switchblur) }
     val hazeState = remember { HazeState() }
     val navController = rememberNavController()
-    var page by remember { mutableStateOf(1) }
-    var loading by remember { mutableStateOf(true) }
+//    var page by remember { mutableStateOf(1) }
     var bottomBarItems by remember { mutableStateOf(CardBarItems.HOME) }
 
     val pagerState = rememberPagerState(pageCount = { 3 })
     val titles = listOf("日","月","学期")
 
+    var refresh by remember { mutableStateOf(false) }
 
-    GetZjgdCard(vm, vmUI)
-
-    fun BillItem() :List<records> {
-        val billjson = vm.BillsData.value
-        try {
-            if(billjson?.contains("操作成功") == true){
-                val bill = Gson().fromJson(billjson, BillResponse::class.java)
-                val data = bill.data.records
-                val msg = bill.data.msg
-                val totalpage = bill.data.pages
-                SharePrefs.saveString("totalpage",totalpage.toString())
-                if (msg != null) {
-                    if (msg.contains("成功")) {
-                        val cardAccount = bill.data.records[0].fromAccount
-                        SharePrefs.saveString("cardAccount", cardAccount)
-                    } else { Toast.makeText(MyApplication.context,msg, Toast.LENGTH_SHORT).show() }
-                }
-                return data
-            } else {
-                return emptyList()
-            }
-        } catch (e:Exception) {
-            return emptyList()
+    LaunchedEffect(refresh) {
+        if(!refresh) {
+            async { getZjgdCard(vm,vmUI) }.await()
+            launch { refresh = true }
         }
     }
 
-
-    if (showBottomSheet_Bills) {
-        CoroutineScope(Job()).apply {
-            launch {
-                async {
-                    Handler(Looper.getMainLooper()).post{
-                        vm.BillsData.value = "{}"
-                    }
-                }.await()
-                async {
-                    //  delay(1000)
-                    Handler(Looper.getMainLooper()).post{
-                        vm.BillsData.observeForever { result ->
-                            if(result != null) {
-                                if(result.contains("操作成功")) {
-                                    loading = false
-                                    if (result.contains("操作成功")) BillItem()
-                                    else {
-                                        val ONE = JxglstuParseUtils.casCookies
-                                        val TGC = prefs.getString("TGC","")
-                                        vm.OneGotoCard(ONE + ";" + TGC)
-                                        MyToast("空数据,请再次尝试或登录")
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }.await()
-            }
-        }
-    }
 
 
 
@@ -270,7 +242,6 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
             modifier = Modifier
                 .hazeSource(
                     state = hazeState
-                    //backgroundColor = MaterialTheme.colorScheme.surface,
                 )
         ) {
             composable(CardBarItems.HOME.name) {

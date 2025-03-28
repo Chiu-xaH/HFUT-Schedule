@@ -8,16 +8,28 @@ import com.hfut.schedule.logic.beans.jxglstu.SelectCourseInfo
 
 fun getSelectCourseList(vm : NetWorkViewModel) : List<SelectCourse> {
     val json = vm.selectCourseData.value
-    val courses: List<SelectCourse> = Gson().fromJson(json, object : TypeToken<List<SelectCourse>>() {}.type)
-    return courses
+    return try {
+        val courses: List<SelectCourse> = Gson().fromJson(json, object : TypeToken<List<SelectCourse>>() {}.type)
+        courses
+    } catch (_: Exception) {
+        emptyList()
+    }
 }
 fun getSelectCourseInfo(vm : NetWorkViewModel) : List<SelectCourseInfo>  {
     val json = vm.selectCourseInfoData.value
-    val courses: List<SelectCourseInfo> = Gson().fromJson(json, object : TypeToken<List<SelectCourseInfo>>() {}.type)
-    return courses
+    return try {
+        val courses: List<SelectCourseInfo> = Gson().fromJson(json, object : TypeToken<List<SelectCourseInfo>>() {}.type)
+        courses
+    } catch (_: Exception) {
+        emptyList()
+    }
 }
 fun getSelectedCourse(vm : NetWorkViewModel) : List<SelectCourseInfo>  {
     val json = vm.selectedData.value
-    val courses: List<SelectCourseInfo> = Gson().fromJson(json, object : TypeToken<List<SelectCourseInfo>>() {}.type)
-    return courses
+    return try {
+        val courses: List<SelectCourseInfo> = Gson().fromJson(json, object : TypeToken<List<SelectCourseInfo>>() {}.type)
+        courses
+    } catch (_: Exception) {
+        emptyList()
+    }
 }

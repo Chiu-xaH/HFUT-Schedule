@@ -67,13 +67,15 @@ fun Update(vm : NetWorkViewModel) {
         async {
             delay(400)
             val json = prefs.getString("LePaoYun", "")
-            val result = Gson().fromJson(json, LePaoYunHomeResponse::class.java)
-            val msg = result.msg
-            if (msg.contains("成功")) {
-                val distance = result.data.distance
-                saveString("distance",distance)
-                saveString("msg",msg)
-            }
+            try {
+                val result = Gson().fromJson(json, LePaoYunHomeResponse::class.java)
+                val msg = result.msg
+                if (msg.contains("成功")) {
+                    val distance = result.data.distance
+                    saveString("distance",distance)
+                    saveString("msg",msg)
+                }
+            } catch (_:Exception) { }
         }
     }
 }
@@ -133,7 +135,6 @@ fun LePaoYunUI() {
     val sheetState_Record = rememberModalBottomSheetState()
     var showBottomSheet_Record by remember { mutableStateOf(false) }
     val json = prefs.getString("LePaoYun","")
-//Log.d("j",json.toString())
     val result = Gson().fromJson(json, LePaoYunHomeResponse::class.java)
     val msg = result.msg
     if (msg.contains("成功")) {

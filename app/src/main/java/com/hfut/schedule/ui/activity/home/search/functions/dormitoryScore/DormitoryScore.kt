@@ -21,6 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
+import com.hfut.schedule.ui.activity.home.search.functions.transfer.Campus
+import com.hfut.schedule.ui.activity.home.search.functions.transfer.getCampus
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.ui.utils.components.ScrollText
@@ -37,7 +39,7 @@ fun DormitoryScoreXuanCheng(vm : NetWorkViewModel,hazeState: HazeState) {
 
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = "寝室评分") },
+        headlineContent = { ScrollText(text = "寝室评分"  + if(getCampus() != Campus.XUANCHENG) "(宣)" else "" ) },
         leadingContent = { Icon(painter = painterResource(R.drawable.psychiatry),"" ) },
         modifier = Modifier.clickable { showBottomSheet_Xuanqu = true }
     )

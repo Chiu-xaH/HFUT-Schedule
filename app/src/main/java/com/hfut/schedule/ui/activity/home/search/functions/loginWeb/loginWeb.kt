@@ -31,6 +31,8 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
+import com.hfut.schedule.ui.activity.home.search.functions.transfer.Campus
+import com.hfut.schedule.ui.activity.home.search.functions.transfer.getCampus
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.components.WebDialog
@@ -62,7 +64,7 @@ fun LoginWeb(vmUI : UIViewModel, card : Boolean,vm :  NetWorkViewModel,hazeState
     val precent = bd2.setScale(1, RoundingMode.HALF_UP).toString()
 
     TransplantListItem(
-        headlineContent = { if(!card)Text(text = "校园网") else ScrollText(text = "${str}GB") },
+        headlineContent = { if(!card)Text(text = "校园网"  + if(getCampus() != Campus.XUANCHENG) "(宣)" else "") else ScrollText(text = "${str}GB") },
         overlineContent = { if(!card) ScrollText(text = "${vmUI.webValue.value?.flow?: memoryWeb}MB") else Text(text = "校园网 ${precent}%")},
         leadingContent = { Icon(
             painterResource(R.drawable.net),

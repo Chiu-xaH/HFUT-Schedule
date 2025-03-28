@@ -46,6 +46,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enums.LibraryItems
 import com.hfut.schedule.logic.utils.Starter
@@ -106,7 +107,7 @@ fun LibraryItem(vm : NetWorkViewModel,hazeState: HazeState) {
                     HazeBottomSheetTopBar("图书") {
                         FilledTonalButton(
                             onClick = {
-                                Starter.startWebUrl("http://210.45.242.5:8080/")
+                                Starter.startWebUrl(MyApplication.LIBRARY_URL)
                             }
                         ) {
                             Text(text = "更多(官网)")

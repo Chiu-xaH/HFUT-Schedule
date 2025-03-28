@@ -22,7 +22,7 @@ fun Huixin() {
 
     var showDialog_Huixin by remember { mutableStateOf(false) }
 
-    val urlHuixin = MyApplication.ZJGD_URL + "plat" + "?synjones-auth=" + auth
+    val urlHuixin = MyApplication.HUIXIN_URL + "plat" + "?synjones-auth=" + auth
 
     WebDialog(showDialog_Huixin,{ showDialog_Huixin = false },urlHuixin,"慧新易校", showTop = false)
 

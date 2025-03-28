@@ -241,9 +241,9 @@ fun PatchUpdateUI(patch: Patch) {
     } else {
         MyCustomCard(hasElevation = false, containerColor = MaterialTheme.colorScheme.surfaceContainer) {
             TransplantListItem(
-                headlineContent = { Text(text = "增量更新(Beta)") },
+                headlineContent = { Text(text = "增量更新") },
                 supportingContent = {
-                    Text(text = "开发者为最新版本的最近若干版本提供补丁包，使用户以更少的下载量获取更新")
+                    Text(text = "开发者为一些版本提供补丁包，使用户以更少的下载量进行更新")
                 },
                 leadingContent = { Icon(painterResource(R.drawable.package_2), contentDescription = "Localized description",) },
             )
@@ -259,7 +259,7 @@ fun PatchUpdateUI(patch: Patch) {
                         MyDownloadManager.downloadPatch(patchFileName,context)
                         able = false
                     },
-                    text = patch.newVersion.let { if(it != getUpdates().version) "更新至${it}" else "增量更新" },
+                    text = patch.newVersion.let { if(it != getUpdates().version) "更新至 ${it}" else "增量更新" },
                     color = MaterialTheme.colorScheme.primary.copy(.07f)
                 )
             }

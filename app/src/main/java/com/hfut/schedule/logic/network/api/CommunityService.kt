@@ -41,19 +41,19 @@ interface CommunityService {
     @GET("api/business/examarrangement/listselect")
     fun getExam(@Header("X-Access-Token") token : String) : Call<ResponseBody>
     //正借书籍
-    @GET("api/business/book/lending/lendingList?name=")
+    @GET("api/business/book/lending/lendingList")
     fun getBorrowedBook(
         @Header("X-Access-Token") token : String,
         @Query("pageNo") page : String,
         @Query("pageSize") size : String) : Call<ResponseBody>
     //借阅历史
     @GET("api/business/book/lending/historyList?name=")
-    fun getHistoyBook(
+    fun getHistoryBook(
         @Header("X-Access-Token") token : String,
         @Query("pageNo") page : String,
         @Query("pageSize") size : String) : Call<ResponseBody>
     //逾期书籍
-    @GET("api/business/book/lending/overdueList?name=")
+    @GET("api/business/book/lending/overdueList")
     fun getOverDueBook(
         @Header("X-Access-Token") token : String,
         @Query("pageNo") page : String,

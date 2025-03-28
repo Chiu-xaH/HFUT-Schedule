@@ -52,7 +52,7 @@ fun XuanquNewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
 
     var showDialog by remember { mutableStateOf(false) }
     var url by remember { mutableStateOf("") }
-    val host = MyApplication.NEWS_XUANCHENG_URL
+    val host = MyApplication.NEWS_XC_URL
 
     var page by remember { mutableIntStateOf(1) }
 

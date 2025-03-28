@@ -98,8 +98,7 @@ fun SchoolCardItem(vmUI : UIViewModel,cardBool : Boolean) {
             } else null
         ),
         modifier = Modifier.clickable {
-            val it = Intent(MyApplication.context, CardActivity::class.java).apply { addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) }
-            MyApplication.context.startActivity(it)
+            Starter.startCard()
         }
     )
 }

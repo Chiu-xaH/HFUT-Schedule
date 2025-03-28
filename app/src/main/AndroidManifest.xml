@@ -93,7 +93,7 @@
             android:label="@string/title_activity_card"
             android:theme="@style/Theme.肥工课程表" />
         <activity
-            android:name=".activity.screen.main.SuccessActivity"
+            android:name=".activity.screen.SuccessActivity"
             android:exported="false"
             android:label="@string/title_activity_uiacitivity"
             android:theme="@style/Theme.肥工课程表" />

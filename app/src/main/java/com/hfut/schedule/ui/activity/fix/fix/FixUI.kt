@@ -44,6 +44,7 @@ import com.hfut.schedule.activity.MainActivity
 import com.hfut.schedule.logic.utils.CrashHandler
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.logic.utils.Starter.emailMe
+import com.hfut.schedule.logic.utils.Starter.refreshLogin
 import com.hfut.schedule.logic.utils.VersionUtils
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
@@ -148,11 +149,8 @@ fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel,vm2 : NetWorkViewMode
             headlineContent = { Text(text = "刷新登录状态") },
             leadingContent = { Icon(painterResource(R.drawable.rotate_right), contentDescription = "Localized description",) },
             modifier = Modifier.clickable {
-                val it = Intent(MyApplication.context, MainActivity::class.java).apply {
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    putExtra("nologin",false)
-                }
-                MyApplication.context.startActivity(it) }
+                refreshLogin()
+            }
         )
         TransplantListItem(
             headlineContent = { Text(text = "下载最新版本") },
@@ -166,14 +164,7 @@ fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel,vm2 : NetWorkViewMode
 //            modifier = Modifier.clickable{ showDialog = true }
 //        )
         BugShare()
-        TransplantListItem(
-            headlineContent = { Text(text = "进入主界面") },
-            leadingContent = { Icon(painterResource(R.drawable.login), contentDescription = "Localized description",) },
-            modifier = Modifier.clickable {
-                val it = Intent(MyApplication.context, MainActivity::class.java).apply { addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) }
-                MyApplication.context.startActivity(it)
-            }
-        )
+
         TransplantListItem(
             headlineContent = { Text(text = "开发者接口") },
             overlineContent = { getTimeStamp()?.let { Text(text = it) } },
@@ -254,7 +245,7 @@ fun BugShare() {
                     MyToast("日志抓取已开启,请复现崩溃的操作,当完成后,回此处点击分享")
                 }) { Icon(painter = painterResource(id =  R.drawable.slow_motion_video ), contentDescription = "") }
                 FilledTonalIconButton(onClick = {
-                    Log.d("s",logs.toString())
+//                    Log.d("s",logs.toString())
                     if (logs != null) {
                         if (logs.substringBefore("*").contains("-")) {
                             if (logs != null) showDialog = true else MyToast("日志为空")
@@ -317,13 +308,7 @@ fun questionItem(title : String,
 //    }
 }
 
-fun sendToMe() {
-    val it = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:zsh0908@outlook.com"))
-    it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    MyApplication.context.startActivity(it)
-}
-@RequiresApi(Build.VERSION_CODES.O)
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun feedBackUI(vm : NetWorkViewModel) {
     var input by remember { mutableStateOf("") }

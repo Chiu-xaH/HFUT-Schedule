@@ -1,9 +1,11 @@
 package com.hfut.schedule.activity
 
 import android.content.pm.ActivityInfo
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -22,17 +24,16 @@ import com.hfut.schedule.viewmodel.LoginViewModel
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
 
-open class BaseActivity : ComponentActivity() {
-    val loginVm by lazy { ViewModelProvider(this).get(LoginViewModel::class.java) }
-    open val networkVm by lazy { ViewModelProvider(this, NetworkViewModelFactory(false)).get(NetWorkViewModel::class.java) }
-    val showerVm by lazy { ViewModelProvider(this).get(GuaGuaViewModel::class.java) }
-    val uiVm by lazy { ViewModelProvider(this).get(UIViewModel::class.java) }
-
-    val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR",  VersionUtils.canBlur)
+abstract class BaseActivity : ComponentActivity() {
+    val loginVm by lazy { ViewModelProvider(this)[LoginViewModel::class.java] }
+    open val networkVm by lazy { ViewModelProvider(this, NetworkViewModelFactory(false))[NetWorkViewModel::class.java] }
+    val showerVm by lazy { ViewModelProvider(this)[GuaGuaViewModel::class.java] }
+    val uiVm by lazy { ViewModelProvider(this)[UIViewModel::class.java] }
 
     @Composable
-    open fun UI() {}
+    abstract fun UI()
 
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
@@ -41,13 +42,14 @@ open class BaseActivity : ComponentActivity() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setContent {
             AppTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    TransparentSystemBars()
-                    UI()
-                }
+                UI()
+
+//                Surface(
+//                    modifier = Modifier.fillMaxSize(),
+//                    color = MaterialTheme.colorScheme.background
+//                ) {
+//                    TransparentSystemBars()
+//                }
             }
         }
     }

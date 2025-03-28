@@ -35,6 +35,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -66,11 +67,14 @@ import com.hfut.schedule.ui.activity.card.function.CardLimit
 import com.hfut.schedule.ui.activity.card.function.SearchBillsUI
 import com.hfut.schedule.ui.activity.card.function.SelecctDateRange
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.getUserInfo
-import com.hfut.schedule.ui.activity.home.focus.funictions.GetZjgdCard
+import com.hfut.schedule.ui.activity.home.focus.funictions.getZjgdCard
+import com.hfut.schedule.ui.activity.home.main.saved.initNetworkRefresh
 import com.hfut.schedule.ui.activity.home.search.functions.electric.EleUI
 import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.LoginWebScaUI
 
 import com.hfut.schedule.ui.activity.home.search.functions.shower.ShowerUI
+import com.hfut.schedule.ui.activity.home.search.functions.transfer.Campus
+import com.hfut.schedule.ui.activity.home.search.functions.transfer.getCampus
 //import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
 
 import com.hfut.schedule.ui.utils.components.appHorizontalDp
@@ -105,16 +109,17 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
             async {
                 refreshing = true
                 loading = true
-                GetZjgdCard(vm,vmUI)
             }.await()
+            async { getZjgdCard(vm,vmUI) }.await()
             async {
                 delay(500)
                 refreshing = false
                 loading = false
-               // MyToast("刷新成功")
             }
         }
     })
+
+
 
 
     var showDialog by remember { mutableStateOf(false) }
@@ -194,11 +199,11 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
     val settles = vmUI.CardValue.value?.settle ?: settle
 
     val auth = SharePrefs.prefs.getString("auth","")
-    val url = MyApplication.ZJGD_URL + "plat/pay" + "?synjones-auth=" + auth
+    val url = MyApplication.HUIXIN_URL + "plat/pay" + "?synjones-auth=" + auth
 
     var showDialog_Huixin by remember { mutableStateOf(false) }
 
-    val urlHuixin = MyApplication.ZJGD_URL + "plat" + "?synjones-auth=" + auth
+    val urlHuixin = MyApplication.HUIXIN_URL + "plat" + "?synjones-auth=" + auth
 
 
 
@@ -231,7 +236,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                 ) {
 //                    MyCustomCard {
                         StyleCardListItem(
-                            headlineContent = { Text(text = "电费") },
+                            headlineContent = { Text(text = "电费"  + if(getCampus() != Campus.XUANCHENG) "-宣城校区" else "") },
                             leadingContent = {
                                 Icon(painterResource(id = R.drawable.flash_on), contentDescription = "")
                             },
@@ -240,7 +245,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
 //                    }
 //                    MyCustomCard{
                         StyleCardListItem(
-                            headlineContent = { Text(text = "网费") },
+                            headlineContent = { Text(text = "网费"  + if(getCampus() != Campus.XUANCHENG) "-宣城校区" else "") },
                             leadingContent = {
                                 Icon(painterResource(id = R.drawable.net), contentDescription = "")
                             },
@@ -249,7 +254,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
 //                    }
 //                    MyCustomCard {
                         StyleCardListItem(
-                            headlineContent = { Text(text = "洗浴") },
+                            headlineContent = { Text(text = "洗浴"  + if(getCampus() != Campus.XUANCHENG) "-宣城校区" else "") },
                             leadingContent = {
                                 Icon(painterResource(id = R.drawable.bathtub), contentDescription = "")
                             },
@@ -434,12 +439,10 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                                         scope.launch {
                                             async {
                                                 refreshing = true
-                                                GetZjgdCard(vm,vmUI)
                                             }.await()
                                             async {
                                                 delay(500)
                                                 refreshing = false
-                                                // MyToast("刷新成功")
                                             }
                                         }
                                     }) {
@@ -574,8 +577,8 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
 
 @Composable
 fun limitRow(vmUI : UIViewModel) {
-    val limit by remember { mutableStateOf(vmUI.CardValue.value?.autotrans_limite ?: prefs.getString("card_limit","0")) }
-    val amt by remember { mutableStateOf(vmUI.CardValue.value?.autotrans_amt?: prefs.getString("card_amt","0")) }
+    val limit by remember { mutableStateOf(vmUI.CardValue.value?.autotrans_limite ?: 0) }
+    val amt by remember { mutableStateOf(vmUI.CardValue.value?.autotrans_amt?: 0) }
 
 
     Row {

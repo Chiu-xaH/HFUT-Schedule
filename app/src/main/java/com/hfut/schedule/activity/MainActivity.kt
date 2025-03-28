@@ -110,41 +110,38 @@ class MainActivity : BaseActivity() {
         }
 
         lifecycleScope.launch {
-                //为登录做准备
-                if(!(startActivity && intent.getBooleanExtra("nologin",true))) {
-                    launch { super.loginVm.getCookie() }
-                    launch { SharePrefs.saveString("tip","0") }
-                    launch {  super.loginVm.getKey() }
-                    launch {
-                        async {super.loginVm.getTicket()}.await()
-                        async {
-                            Handler(Looper.getMainLooper()).post{
-                                super.loginVm.webVpnTicket.observeForever { result ->
-                                    if (result != null) {
-                                        if (result.contains("wengine_vpn_ticketwebvpn_hfut_edu_cn")) {
-                                            val ticket = result.substringAfter("wengine_vpn_ticketwebvpn_hfut_edu_cn=").substringBefore(";")
-                                            super.loginVm.putKey(ticket)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        async {
-                            Handler(Looper.getMainLooper()).post{
-                                super.loginVm.status.observeForever { result ->
-                                    // Log.d("sss",result.toString())
-                                    if (result == 200) {
-                                        super.loginVm.getKeyWebVpn()
+            // 如果进入的是登陆界面 未登录做准备
+            if(!(startActivity && intent.getBooleanExtra("nologin",true))) {
+                //从服务器获取信息
+                launch { super.loginVm.My() }
+                launch { super.loginVm.getCookie() }
+                launch { SharePrefs.saveString("tip","0") }
+                launch {  super.loginVm.getKey() }
+                launch {
+                    async {super.loginVm.getTicket()}.await()
+                    async {
+                        Handler(Looper.getMainLooper()).post{
+                            super.loginVm.webVpnTicket.observeForever { result ->
+                                if (result != null) {
+                                    if (result.contains("wengine_vpn_ticketwebvpn_hfut_edu_cn")) {
+                                        val ticket = result.substringAfter("wengine_vpn_ticketwebvpn_hfut_edu_cn=").substringBefore(";")
+                                        super.loginVm.putKey(ticket)
                                     }
                                 }
                             }
                         }
                     }
+                    async {
+                        Handler(Looper.getMainLooper()).post{
+                            super.loginVm.status.observeForever { result ->
+                                if (result == 200) {
+                                    super.loginVm.getKeyWebVpn()
+                                }
+                            }
+                        }
+                    }
                 }
-                //检查更新
-                launch { super.uiVm.getUpdate() }
-                //从服务器获取信息
-                launch { super.loginVm.My() }
+            } else { // 否则进入的是主界面
                 //上传用户统计数据
                 if(switchUpload && value == 0) {
                     launch {
@@ -152,6 +149,7 @@ class MainActivity : BaseActivity() {
                         value++
                     }
                 }
+            }
         }
     }
 

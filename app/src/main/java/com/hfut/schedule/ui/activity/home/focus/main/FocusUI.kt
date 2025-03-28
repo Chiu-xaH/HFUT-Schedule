@@ -24,6 +24,7 @@ import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -52,7 +53,7 @@ import com.hfut.schedule.ui.activity.home.focus.funictions.WangkeItem
 //import com.hfut.schedule.ui.activity.home.focus.getResult
 //import com.hfut.schedule.ui.activity.home.focus.newScheduleItems
 //import com.hfut.schedule.ui.activity.home.focus.newWangkeItem
-import com.hfut.schedule.ui.activity.home.main.saved.NetWorkUpdate
+import com.hfut.schedule.ui.activity.home.main.saved.initNetworkRefresh
 import com.hfut.schedule.ui.activity.home.search.functions.exam.JxglstuExamUI
 import com.hfut.schedule.ui.activity.home.search.functions.exam.getExamJXGLSTU
 import dev.chrisbanes.haze.HazeState
@@ -71,12 +72,8 @@ fun TodayScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding : Padd
     val  TAB_LEFT = 0
     val TAB_RIGHT = 1
 
-/////////////////////////////////////////逻辑函数区/////////////////////////////////////////////////
-    CoroutineScope(Job()).launch{  NetWorkUpdate(vm,vm2,vmUI,ifSaved)  }
-//Today操作区///////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-    //刷新
+//刷新
+    var refresh by remember { mutableStateOf(false) }
     var refreshing by remember { mutableStateOf(false) }
     // 用协程模拟一个耗时加载
     val scope = rememberCoroutineScope()
@@ -84,19 +81,24 @@ fun TodayScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding : Padd
         scope.launch {
             async {
                 refreshing = true
-                NetWorkUpdate(vm,vm2,vmUI,ifSaved)
             }.await()
-            async {
+            async { initNetworkRefresh(vm,vm2,vmUI,ifSaved) }.await()
+            launch {
                 refreshing = false
             }
         }
     })
-
+/////////////////////////////////////////逻辑函数区/////////////////////////////////////////////////
+    LaunchedEffect(refresh) {
+        if(!refresh) {
+            async { initNetworkRefresh(vm,vm2,vmUI,ifSaved) }.await()
+            launch { refresh = true }
+        }
+    }
+//Today操作区///////////////////////////////////////////////////////////////////////////////////////////////////
 
     val context = LocalContext.current
     val activity = context as Activity
-
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //布局///////////////////////////////////////
 

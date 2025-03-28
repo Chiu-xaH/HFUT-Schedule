@@ -12,35 +12,55 @@ import com.hfut.schedule.viewmodel.LoginViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
-import com.hfut.schedule.ui.activity.home.focus.funictions.GetZjgdCard
+import com.hfut.schedule.ui.activity.home.cube.items.subitems.getEleNew
+import com.hfut.schedule.ui.activity.home.cube.items.subitems.getWebInfoFromZJGD
+import com.hfut.schedule.ui.activity.home.focus.funictions.getTodayNet
+import com.hfut.schedule.ui.activity.home.focus.funictions.getZjgdCard
+import com.hfut.schedule.ui.activity.home.search.functions.transfer.Campus
+import com.hfut.schedule.ui.activity.home.search.functions.transfer.getCampus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-suspend fun NetWorkUpdate(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel, ifSaved : Boolean){
-    val CommuityTOKEN = SharePrefs.prefs.getString("TOKEN","")
-//    val auth = prefs.getString("auth","")
 
+fun initNetworkRefresh(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel, ifSaved : Boolean){
+    val CommuityTOKEN = prefs.getString("TOKEN","")
+    val showEle = prefs.getBoolean("SWITCHELE", getCampus() == Campus.XUANCHENG)
+    val showToday = prefs.getBoolean("SWITCHTODAY",true)
+    val showWeb = prefs.getBoolean("SWITCHWEB",getCampus() == Campus.XUANCHENG)
+    val showCard = prefs.getBoolean("SWITCHCARD",true)
     val cookie = if(!vm.webVpn) prefs.getString("redirect", "")  else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket","")
     CoroutineScope(Job()).apply {
+        // 刷新个人接口
         launch { vm2.My() }
-        launch { vm.getExamJXGLSTU(cookie!!) } //用于更新ifSaved
-        launch {
-            if(!ifSaved) {
-                UpdateCourses(vm)
-            }
+        // 用于更新ifSaved
+        launch { vm.getExamJXGLSTU(cookie!!) }
+        // 更新课程表
+        if(!ifSaved)
+            launch { updateCourses(vm) }
+        // 更新社区
+        CommuityTOKEN?.let {
+            launch { vm.getBorrowed(CommuityTOKEN = it,"1") }
+            launch { vm.getHistory(CommuityTOKEN = it,"1") }
+            launch { vm.GetCourse(it) }
+            launch { vm.getFriends(it) }
         }
-        launch { CommuityTOKEN?.let { vm.GetBorrowed(CommuityTOKEN = it,"1") } }
-        launch { CommuityTOKEN?.let { vm.GetHistory(CommuityTOKEN = it,"1") } }
-
-        launch { CommuityTOKEN?.let { vm.GetCourse(it) } }
-        async { GetZjgdCard(vm,vmUI) }.await()
-        launch { CommuityTOKEN?.let { vm.getFriends(it) } }
+        //检查更新
+        launch { vmUI.getUpdate() }
+        // 更新聚焦卡片
+        if(showWeb)
+            launch { getWebInfoFromZJGD(vm,vmUI) }
+        if(showEle)
+            launch { getEleNew(vm, vmUI) }
+        if(showToday)
+            launch { getTodayNet(vm) }
+        if(showCard)
+            launch { getZjgdCard(vm,vmUI) }
     }
 }
 //更新教务课表与课程汇总
-fun UpdateCourses(vm: NetWorkViewModel) {
+fun updateCourses(vm: NetWorkViewModel) {
     val cookie = if (!vm.webVpn) prefs.getString(
         "redirect",
         ""

@@ -411,7 +411,7 @@ fun CustomSchedules(showAll : Boolean,
             }
         } catch (e : Exception) {
             e.printStackTrace()
-            Log.d("错误","错误")
+//            Log.d("错误","错误")
         }
 
     }

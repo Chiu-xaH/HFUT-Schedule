@@ -4,8 +4,10 @@ import androidx.camera.core.processing.SurfaceProcessorNode.In
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -17,6 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -27,6 +30,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -34,6 +38,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.saveBoolean
 import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.TransplantListItem
@@ -42,7 +47,8 @@ import dev.chrisbanes.haze.HazeState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LockUI(hazeState: HazeState) {
+fun LockUI(innerPadding : PaddingValues,hazeState: HazeState) {
+
     val switch_pin = SharePrefs.prefs.getBoolean("SWITCHPIN",false)
     var pin by remember { mutableStateOf(switch_pin) }
     saveBoolean("SWITCHPIN", false,pin)
@@ -54,32 +60,44 @@ fun LockUI(hazeState: HazeState) {
     var showDialog by remember { mutableStateOf(psk == null) }
 
 
-    var sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+//    var sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
+    Column(
+        modifier = Modifier
+            .padding(innerPadding)
+            .fillMaxSize()
+    ) {
+        TransplantListItem(
+            headlineContent = { Text(text = "需要密码") },
+            supportingContent = { Text(text = "在调用支付时选择是否需要验证") },
+            leadingContent = {
+                Icon(painter = painterResource(id = R.drawable.lock), contentDescription = "")
+            },
+            trailingContent = {
+                Switch(checked = pin, onCheckedChange = {_->
+                    showDialog = true
+                })
+            }
+        )
+        if(pin)
+            TransplantListItem(
+                headlineContent = { Text(text = "生物识别") },
+                supportingContent = { Text(text = "调用指纹传感器以免密码") },
+                leadingContent = {
+                    Icon(painter = painterResource(id = R.drawable.how_to_reg), contentDescription = "")
+                },
+                modifier = Modifier.clickable {
+                    MyToast("正在开发")
+                }
+            )
+    }
 
-    TransplantListItem(
-        headlineContent = { Text(text = "需要密码") },
-        supportingContent = { Text(text = "在调用支付时选择是否需要验证") },
-        leadingContent = {
-            Icon(painter = painterResource(id = R.drawable.lock), contentDescription = "")
-        },
-        trailingContent = {
-            Switch(checked = pin, onCheckedChange = {_->
-                showDialog = true
-            })
-        }
-    )
-
-    // if(pin) {
     if (showDialog) {
-        // if(password.length != 6)
         HazeBottomSheet (
             onDismissRequest = { showDialog = false },
             autoShape = false,
             hazeState = hazeState,
             showBottomSheet = showDialog
-//            sheetState = sheetState,
-            // shape = Round(sheetState)
         ) {
             Column {
                 Spacer(Modifier.height(appHorizontalDp()*1.5f))
@@ -120,18 +138,6 @@ fun LockUI(hazeState: HazeState) {
             }
         }
     }
-    if(pin)
-        TransplantListItem(
-            headlineContent = { Text(text = "生物识别") },
-            supportingContent = { Text(text = "调用指纹传感器以免密码") },
-            leadingContent = {
-                Icon(painter = painterResource(id = R.drawable.how_to_reg), contentDescription = "")
-            },
-            modifier = Modifier.clickable {
-                MyToast("正在开发")
-            }
-        )
-    //}
 }
 
 @Composable

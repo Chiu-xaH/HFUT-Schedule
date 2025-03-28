@@ -34,12 +34,11 @@ import com.hfut.schedule.ui.utils.components.TransplantListItem
 fun WebItem() {
     data class WebItemData(val url : String,val icon : Int,val title : String,val remark : String? = null)
     val webs = listOf(
-        WebItemData(title = "信息门户", icon = R.drawable.person, url = "https://one.hfut.edu.cn/"),
-        WebItemData(title = "教务系统", icon = R.drawable.school, url = "http://jxglstu.hfut.edu.cn/eams5-student/home"),
-        WebItemData(title = "就业网", icon = R.drawable.work, url = "https://gdjy.hfut.edu.cn/"),
-        WebItemData(title = "WEBVPN", icon = R.drawable.vpn_key, url = "https://webvpn.hfut.edu.cn/"),
-        WebItemData(title = "服务大厅", icon = R.drawable.credit_card, url = "http://172.31.248.26:8088/", remark = "需接入校园网\n校园卡官方网址"),
-        WebItemData(title = "图书馆", icon = R.drawable.book, url = "http://210.45.242.5:8080/", remark = "需接入校园网")
+        WebItemData(title = "信息门户", icon = R.drawable.person, url = MyApplication.ONE_URL),
+        WebItemData(title = "教务系统", icon = R.drawable.school, url = MyApplication.JXGLSTU_URL),
+        WebItemData(title = "WEBVPN", icon = R.drawable.vpn_key, url = MyApplication.WEBVPN_URL),
+        WebItemData(title = "服务大厅", icon = R.drawable.credit_card, url = MyApplication.CARD_URL, remark = "需接入校园网\n校园卡官方网址"),
+        WebItemData(title = "图书馆", icon = R.drawable.book, url = MyApplication.LIBRARY_URL, remark = "需接入校园网")
     )
 
     Column(modifier = Modifier.padding(horizontal = appHorizontalDp())) {

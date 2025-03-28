@@ -13,6 +13,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -54,7 +55,7 @@ import com.hfut.schedule.logic.utils.DateTimeUtils
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
-import com.hfut.schedule.ui.activity.home.focus.funictions.GetZjgdCard
+import com.hfut.schedule.ui.activity.home.focus.funictions.getZjgdCard
 import com.hfut.schedule.ui.activity.home.focus.funictions.TodayUI
 import com.hfut.schedule.ui.activity.home.focus.funictions.getTodayNet
 import com.hfut.schedule.ui.activity.home.search.functions.electric.Electric
@@ -64,6 +65,8 @@ import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.getWebInfoOl
 import com.hfut.schedule.ui.activity.home.search.functions.card.SchoolCardItem
 import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.getWebInfo
 import com.hfut.schedule.ui.activity.home.search.functions.shower.getInGuaGua
+import com.hfut.schedule.ui.activity.home.search.functions.transfer.Campus
+import com.hfut.schedule.ui.activity.home.search.functions.transfer.getCampus
 import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.cardNormalColor
 import com.hfut.schedule.ui.utils.components.cardNormalDp
@@ -83,16 +86,16 @@ import java.math.RoundingMode
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FocusCardSettings() {
+fun FocusCardSettings(innerPadding : PaddingValues) {
 
     var showBottomSheet by remember { mutableStateOf(false) }
     var sheetState = rememberModalBottomSheetState()
 
-    val switch_ele = SharePrefs.prefs.getBoolean("SWITCHELE", true)
+    val switch_ele = SharePrefs.prefs.getBoolean("SWITCHELE", getCampus() == Campus.XUANCHENG)
     var showEle by remember { mutableStateOf(switch_ele) }
     SharePrefs.saveBoolean("SWITCHELE", true, showEle)
 
-    val switch_web = SharePrefs.prefs.getBoolean("SWITCHWEB", true)
+    val switch_web = SharePrefs.prefs.getBoolean("SWITCHWEB", getCampus() == Campus.XUANCHENG)
     var showWeb by remember { mutableStateOf(switch_web) }
     SharePrefs.saveBoolean("SWITCHWEB", true, showWeb)
 
@@ -118,61 +121,62 @@ fun FocusCardSettings() {
     SharePrefs.saveBoolean("SWITCHSHORTCUT", false, showShortCut)
 
 
-//    MyCustomCard{
-    StyleCardListItem(headlineContent = { Text(text = "打开开关则会在APP启动时自动获取信息,并显示在聚焦即时卡片内，如需减少性能开销可按需开启或关闭") }, leadingContent = { Icon(
+    Column(modifier = Modifier.padding(innerPadding)) {
+        StyleCardListItem(headlineContent = { Text(text = "打开开关则会在APP启动时自动获取信息,并显示在聚焦即时卡片内，如需减少性能开销可按需开启或关闭") }, leadingContent = { Icon(
             painter = painterResource(id = R.drawable.info),
             contentDescription = ""
         )})
-//    }
 
 
-    Spacer(modifier = Modifier.height(5.dp))
+        Spacer(modifier = Modifier.height(5.dp))
 
-    TransplantListItem(
-        headlineContent = { Text(text = "一卡通")} ,
-        leadingContent = { Icon(painter = painterResource(id = R.drawable.credit_card), contentDescription = "")},
-        trailingContent = {
-            Row {
-                Switch(checked = showCardAdd, onCheckedChange = {showch -> showCardAdd = showch}, thumbContent = { Icon(painter = painterResource(id = R.drawable.add), contentDescription = "")})
-                Spacer(modifier = Modifier.width(10.dp))
-                Switch(checked = showCard, onCheckedChange = {showch -> showCard = showch})
+        TransplantListItem(
+            headlineContent = { Text(text = "一卡通")} ,
+            leadingContent = { Icon(painter = painterResource(id = R.drawable.credit_card), contentDescription = "")},
+            trailingContent = {
+                Row {
+                    Switch(checked = showCardAdd, onCheckedChange = {showch -> showCardAdd = showch}, thumbContent = { Icon(painter = painterResource(id = R.drawable.add), contentDescription = "")})
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Switch(checked = showCard, onCheckedChange = {showch -> showCard = showch})
+                }
             }
-        }
-    )
-    TransplantListItem(
-        headlineContent = { Text(text = "寝室电费")} ,
-        leadingContent = { Icon(painter = painterResource(id = R.drawable.flash_on), contentDescription = "")},
-        trailingContent = {
-            Switch(checked = showEle, onCheckedChange = {showch -> showEle = showch })
-        }
-    )
-    TransplantListItem(
-        headlineContent = { Text(text = "校园网")} ,
-        leadingContent = { Icon(painter = painterResource(id = R.drawable.net), contentDescription = "")},
-        trailingContent = { Switch(checked = showWeb, onCheckedChange = {showch -> showWeb = showch})}
-    )
-    TransplantListItem(
-        headlineContent = { Text(text = "聚焦通知")} ,
-        supportingContent = { Text(text = "明日早八,临近课程,催还图书,临近考试")},
-        leadingContent = { Icon(painter = painterResource(id = R.drawable.sentiment_very_satisfied), contentDescription = "")},
-        trailingContent = { Switch(checked = showToday, onCheckedChange = {showch -> showToday = showch})}
-    )
-    TransplantListItem(
-        headlineContent = { Text(text = "倒计时")} ,
-        leadingContent = { Icon(painter = painterResource(id = R.drawable.schedule), contentDescription = "")},
-        trailingContent = { Switch(checked = showCountDown, onCheckedChange = {showch -> showCountDown = showch},enabled = false)}
-    )
-    TransplantListItem(
-        headlineContent = { Text(text = "绩点排名")} ,
-        leadingContent = { Icon(painter = painterResource(id = R.drawable.filter_vintage), contentDescription = "")},
-        trailingContent = { Switch(checked = false, onCheckedChange = {}, enabled = false)}
-    )
-    TransplantListItem(
-        headlineContent = { Text(text = "预留项")} ,
-        leadingContent = { Icon(painter = painterResource(id = R.drawable.add_circle), contentDescription = "")},
-        modifier = Modifier.clickable { showBottomSheet = true },
-        trailingContent = { Switch(checked = showShortCut, onCheckedChange = {showch -> showShortCut = showch},enabled = false)}
-    )
+        )
+        TransplantListItem(
+            headlineContent = { Text(text = "寝室电费")} ,
+            leadingContent = { Icon(painter = painterResource(id = R.drawable.flash_on), contentDescription = "")},
+            trailingContent = {
+                Switch(checked = showEle, onCheckedChange = {showch -> showEle = showch })
+            }
+        )
+        TransplantListItem(
+            headlineContent = { Text(text = "校园网")} ,
+            leadingContent = { Icon(painter = painterResource(id = R.drawable.net), contentDescription = "")},
+            trailingContent = { Switch(checked = showWeb, onCheckedChange = {showch -> showWeb = showch})}
+        )
+        TransplantListItem(
+            headlineContent = { Text(text = "聚焦通知")} ,
+            supportingContent = { Text(text = "明日早八,临近课程,催还图书,临近考试")},
+            leadingContent = { Icon(painter = painterResource(id = R.drawable.sentiment_very_satisfied), contentDescription = "")},
+            trailingContent = { Switch(checked = showToday, onCheckedChange = {showch -> showToday = showch})}
+        )
+        TransplantListItem(
+            headlineContent = { Text(text = "倒计时")} ,
+            leadingContent = { Icon(painter = painterResource(id = R.drawable.schedule), contentDescription = "")},
+            trailingContent = { Switch(checked = showCountDown, onCheckedChange = {showch -> showCountDown = showch},enabled = false)}
+        )
+//        TransplantListItem(
+//            headlineContent = { Text(text = "绩点排名")} ,
+//            leadingContent = { Icon(painter = painterResource(id = R.drawable.filter_vintage), contentDescription = "")},
+//            trailingContent = { Switch(checked = false, onCheckedChange = {}, enabled = false)}
+//        )
+//        TransplantListItem(
+//            headlineContent = { Text(text = "预留项")} ,
+//            leadingContent = { Icon(painter = painterResource(id = R.drawable.add_circle), contentDescription = "")},
+//            modifier = Modifier.clickable { showBottomSheet = true },
+//            trailingContent = { Switch(checked = showShortCut, onCheckedChange = {showch -> showShortCut = showch},enabled = false)}
+//        )
+
+    }
 
 
     if(showBottomSheet && showShortCut) {
@@ -207,31 +211,14 @@ fun FocusCardSettings() {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel, refreshing : Boolean,hazeState: HazeState) {
-    val showEle = prefs.getBoolean("SWITCHELE",true)
+    val showEle = prefs.getBoolean("SWITCHELE",getCampus() == Campus.XUANCHENG)
     val showToday = prefs.getBoolean("SWITCHTODAY",true)
-    val showWeb = prefs.getBoolean("SWITCHWEB",true)
+    val showWeb = prefs.getBoolean("SWITCHWEB",getCampus() == Campus.XUANCHENG)
     val showCard = prefs.getBoolean("SWITCHCARD",true)
     val showCountDown = prefs.getBoolean("SWITCHCOUNTDOWN",false)
     val showShortCut = prefs.getBoolean("SWITCHSHORTCUT",false)
 
-    CoroutineScope(Job()).launch {
-        async {
-            if(showWeb)
-                getWebInfoFromZJGD(vm,vmUI)
-        }
-        async {
-            if(showEle)
-                getEleNew(vm, vmUI)
-        }
-        async {
-            if(showToday)
-                getTodayNet(vm)
-        }
-        async {
-            if(showCard)
-                GetZjgdCard(vm,vmUI)
-        }
-    }
+
     if(showCard || showEle || showToday || showWeb)
         MyCustomCard(
             containerColor = cardNormalColor(),
@@ -348,12 +335,14 @@ fun getEle(vm : NetWorkViewModel, vmUI : UIViewModel) {
             Handler(Looper.getMainLooper()).post{
                 vm.ElectricData.observeForever { result ->
                     if (result?.contains("query_elec_roominfo") == true) {
-                        var msg = Gson().fromJson(result, SearchEleResponse::class.java).query_elec_roominfo.errmsg
-                        if(msg.contains("剩余金额")) {
-                            val bd = BigDecimal(msg.substringAfter("剩余金额").substringAfter(":"))
-                            vmUI.electricValue.value =  bd.setScale(2, RoundingMode.HALF_UP).toString()
-                            saveString("memoryEle",vmUI.electricValue.value)
-                        }
+                        try {
+                            var msg = Gson().fromJson(result, SearchEleResponse::class.java).query_elec_roominfo.errmsg
+                            if(msg.contains("剩余金额")) {
+                                val bd = BigDecimal(msg.substringAfter("剩余金额").substringAfter(":"))
+                                vmUI.electricValue.value =  bd.setScale(2, RoundingMode.HALF_UP).toString()
+                                saveString("memoryEle",vmUI.electricValue.value)
+                            }
+                        } catch (_:Exception) { }
                     }
                 }
             }
@@ -374,12 +363,14 @@ fun getEleNew(vm : NetWorkViewModel, vmUI : UIViewModel) {
             Handler(Looper.getMainLooper()).post{
                 vm.ElectricData.observeForever { result ->
                     if (result?.contains("success") == true) {
-                        val data = Gson().fromJson(result,FeeResponse::class.java).map.showData
-                        for ((key, value) in data) {
-                            val bd = BigDecimal(value.substringAfter("剩余金额:"))
-                            vmUI.electricValue.value = bd.setScale(2, RoundingMode.HALF_UP).toString()
-                            saveString("memoryEle",vmUI.electricValue.value)
-                        }
+                        try {
+                            val data = Gson().fromJson(result,FeeResponse::class.java).map.showData
+                            for ((_, value) in data) {
+                                val bd = BigDecimal(value.substringAfter("剩余金额:"))
+                                vmUI.electricValue.value = bd.setScale(2, RoundingMode.HALF_UP).toString()
+                                saveString("memoryEle",vmUI.electricValue.value)
+                            }
+                        } catch (_:Exception) { }
                     }
                 }
             }

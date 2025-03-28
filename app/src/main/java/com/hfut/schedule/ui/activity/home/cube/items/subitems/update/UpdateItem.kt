@@ -38,7 +38,7 @@ fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-03-24") },
+                overlineContent = { Text(text = "2025-03-28") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${VersionUtils.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -63,7 +63,18 @@ fun VersionInfo() {
         VersionInfoCard()
     }
     DividerTextExpandedWith(text = "新特性") {
-        UpdateItems("优化 打包机制，精简包体为原包的约48.77%大小", null,UpdateType.OPTIMIZE)
+        UpdateItems("新增 若干网页链接", "就业信息网、合肥校区智慧后勤、大创系统",UpdateType.ADD)
+        UpdateItems("新增 纯黑深色背景", "位于 选项-界面显示",UpdateType.ADD)
+        UpdateItems("新增 请求范围对开课查询、教师检索的适配", null,UpdateType.ADD)
+        UpdateItems("新增 深浅色切换", "位于 选项-界面显示",UpdateType.ADD)
+        UpdateItems("新增 功能可用性展示", "位于 选项-维护关于",UpdateType.ADD)
+        UpdateItems("新增 校历中的合肥校区", null,UpdateType.ADD)
+        UpdateItems("修复 早期经验不足而写的某些代码健壮性不足导致的崩溃Bug", null,UpdateType.FIX)
+        UpdateItems("修复 已借图书接口错误的Bug", "修不修也没信息，智慧社区的图书借阅接口似乎都不更新信息了，后期酌情替换掉",UpdateType.FIX)
+        UpdateItems("优化 合肥校区用户和宣城校区用户的差异性显示", null,UpdateType.OPTIMIZE)
+        UpdateItems("优化 部分界面的显示", null,UpdateType.OPTIMIZE)
+        UpdateItems("优化 冷启动初始化时的一些冗余网络请求，优化性能", null,UpdateType.OPTIMIZE)
+        UpdateItems("优化 选项中一些页面的层级显示", null,UpdateType.OPTIMIZE)
     }
 }
 

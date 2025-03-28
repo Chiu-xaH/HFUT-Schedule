@@ -385,15 +385,20 @@ fun TransferStatusUI(vm : NetWorkViewModel,batchId: String,id: Int,phoneNumber :
     val postObserver = Observer<String?> { result ->
         if (result != null) {
             if(result.contains("result")) {
-                val data =  Gson().fromJson(result,TransferPostResponse::class.java)
-                if(data.result) {
-                    msg = "成功"
-                } else {
-                    val errors = data.errors
-                    errors.forEach { item ->
-                        msg += item.textZh + " "
+                try {
+                    val data =  Gson().fromJson(result,TransferPostResponse::class.java)
+                    if(data.result) {
+                        msg = "成功"
+                    } else {
+                        val errors = data.errors
+                        errors.forEach { item ->
+                            msg += item.textZh + " "
+                        }
                     }
+                } catch (_: Exception) {
+                    msg = "错误"
                 }
+
                 refresh = false
                 loading = false
             }

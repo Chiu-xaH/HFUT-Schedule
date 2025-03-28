@@ -61,7 +61,23 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+
+private fun Items(vm: NetWorkViewModel) : List<records> {
+    val result = vm.SearchBillsData.value
+    if(result?.contains("操作成功") == true) {
+        try {
+            val data = Gson().fromJson(result,BillResponse::class.java)
+            val records = data.data.records
+            val totalpage = data.data.pages
+            if(prefs.getInt("totalsearch",0) != totalpage)
+                SharePrefs.saveInt("totalsearch", totalpage)
+            return records
+        } catch (_:Exception) {
+            return emptyList()
+        }
+    }
+    return emptyList()
+}
 @Composable
 fun SearchBillsUI(vm : NetWorkViewModel) {
 
@@ -72,29 +88,8 @@ fun SearchBillsUI(vm : NetWorkViewModel) {
     var input by remember { mutableStateOf("") }
     var page by remember { mutableStateOf(1) }
 
-  fun Items() : List<records> {
-    val result = vm.SearchBillsData.value
-      if(result?.contains("操作成功") == true) {
-          val data = Gson().fromJson(result,BillResponse::class.java)
-          val records = data.data.records
-          val totalpage = data.data.pages
-          val sp = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
-          if(sp.getInt("totalsearch",0) != totalpage){ sp.edit().putInt("totalsearch", totalpage).apply() }
-          return records
-      }
-      return emptyList()
-//    return BillItems
-  }
 
-    fun get()  {
-        val result = prefs.getString("searchbills","")
-        if (result != null) {
-            if (result.contains("操作成功")) { Items() }
-        }
-    }
-
-
-    fun Click() {
+    val Click =  {
         CoroutineScope(Job()).apply {
             launch {
                 async {
@@ -103,12 +98,11 @@ fun SearchBillsUI(vm : NetWorkViewModel) {
                     Handler(Looper.getMainLooper()).post{
                         vm.SearchBillsData.value = "{}"
                     }
-                    vm.searchBills("bearer " + auth,input,page) }.await()
+                    vm.searchBills("bearer $auth",input,page) }.await()
                 async {
                     Handler(Looper.getMainLooper()).post{
                         vm.SearchBillsData.observeForever { result ->
                             loading = false
-                            get()
                         }
                     }
                 }
@@ -132,7 +126,6 @@ fun SearchBillsUI(vm : NetWorkViewModel) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
 
                 TextField(
-                    //  modifier = Modifier.size(width = 170.dp, height = 70.dp).padding(horizontal = AppHorizontalDp(), vertical = 5.dp),
                     modifier = Modifier
                         .weight(1f)
                         .padding(horizontal = appHorizontalDp(), vertical = 5.dp),
@@ -207,15 +200,16 @@ fun SearchBillsUI(vm : NetWorkViewModel) {
                                     }
 
                                 }
+                                val list = Items(vm)
 
-                                items(Items().size) { item ->
-
-                                    var name = Items()[item].resume
+                                items(list.size) { index ->
+                                    val item = list[index]
+                                    var name = item.resume
                                     if (name.contains("有限公司")) name = name.replace("有限公司","")
                                     StyleCardListItem(
                                         headlineContent = { Text(text = name) },
-                                        supportingContent = {Text(text = processTranamt(getBills(vm)[item]))},
-                                        overlineContent = {Text(text = Items()[item].effectdateStr)},
+                                        supportingContent = {Text(text = processTranamt(getBills(vm)[index]))},
+                                        overlineContent = {Text(text = item.effectdateStr)},
                                         leadingContent = { BillsIcons(name) }
                                     )
                                 }
@@ -231,14 +225,13 @@ fun SearchBillsUI(vm : NetWorkViewModel) {
                                                             if(page > 1) {
                                                                 page--
                                                                 loading = true
-                                                                vm.searchBills("bearer " + auth,input,page)
+                                                                vm.searchBills("bearer $auth",input,page)
                                                             }
                                                         }.await()
                                                         async {
                                                             Handler(Looper.getMainLooper()).post{
                                                                 vm.SearchBillsData.observeForever { result ->
                                                                     loading = false
-                                                                    get()
                                                                 }
                                                             }
                                                         }
@@ -255,20 +248,19 @@ fun SearchBillsUI(vm : NetWorkViewModel) {
                                                     async {
                                                         page = 1
                                                         loading = true
-                                                        vm.searchBills("bearer " + auth,input,page)
+                                                        vm.searchBills("bearer $auth",input,page)
                                                     }.await()
                                                     async {
                                                         Handler(Looper.getMainLooper()).post{
                                                             vm.SearchBillsData.observeForever { result ->
                                                                 loading = false
-                                                                get()
                                                             }
                                                         }
                                                     }
                                                 }
 
                                             }
-                                        ) { Text(text = "${page} / ${prefs.getInt("totalsearch",1)}") }
+                                        ) { Text(text = "$page / ${prefs.getInt("totalsearch",1)}") }
 
                                         Spacer(modifier = Modifier.width(appHorizontalDp()))
 
@@ -280,7 +272,7 @@ fun SearchBillsUI(vm : NetWorkViewModel) {
                                                             if ( page < prefs.getInt("totalsearch",1)) {
                                                                 page++
                                                                 loading = true
-                                                                vm.searchBills("bearer " + auth,input,page)
+                                                                vm.searchBills("bearer $auth",input,page)
                                                             }
 
                                                         }.await()
@@ -288,7 +280,6 @@ fun SearchBillsUI(vm : NetWorkViewModel) {
                                                             Handler(Looper.getMainLooper()).post{
                                                                 vm.SearchBillsData.observeForever { result ->
                                                                     loading = false
-                                                                    get()
                                                                 }
                                                             }
                                                         }

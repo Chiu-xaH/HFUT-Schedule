@@ -60,7 +60,7 @@ import com.hfut.schedule.logic.utils.parse.Encrypt
 import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter.loginGuaGua
-import com.hfut.schedule.logic.utils.Starter.startGuagua
+import com.hfut.schedule.logic.utils.Starter.startGuaGua
 import com.hfut.schedule.ui.activity.shower.function.EditLoginCode
 
 import com.hfut.schedule.ui.utils.components.BottomTip

@@ -72,7 +72,7 @@ import com.hfut.schedule.logic.beans.jxglstu.SelectPostResponse
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
-import com.hfut.schedule.ui.activity.home.main.saved.UpdateCourses
+import com.hfut.schedule.ui.activity.home.main.saved.updateCourses
 import com.hfut.schedule.ui.activity.home.search.functions.failRate.ApiToFailRate
 import com.hfut.schedule.ui.activity.home.search.functions.failRate.permit
 import com.hfut.schedule.ui.activity.home.search.functions.teacherSearch.ApiToTeacherSearch
@@ -144,7 +144,7 @@ fun SelectCourse(ifSaved : Boolean, vm : NetWorkViewModel,hazeState: HazeState) 
                             }
                             Spacer(modifier = Modifier.width(5.dp))
                             FilledTonalButton(onClick = {
-                                UpdateCourses(vm)
+                                updateCourses(vm)
                                 MyToast("已刷新课表与课程汇总")
                             }) {
                                 Text(text = "刷新课表")
@@ -166,7 +166,7 @@ fun SelectCourse(ifSaved : Boolean, vm : NetWorkViewModel,hazeState: HazeState) 
         HazeBottomSheet(
             onDismissRequest = {
                 showBottomSheet_info = false
-                UpdateCourses(vm)
+                updateCourses(vm)
                                },
             hazeState = hazeState,
             showBottomSheet = showBottomSheet_info
@@ -643,20 +643,21 @@ fun selectCourseResultLoad(vm : NetWorkViewModel, courseId : Int, lessonId : Int
                 Handler(Looper.getMainLooper()).post{
                     vm.selectResultData.observeForever { result ->
                         if (result != null) {
-                            Log.d("e",result)
                             if (result.contains("{")) {
                                 loading = false
                                 refresh = false
-                                val data = Gson().fromJson(result, SelectPostResponse::class.java)
-                                val status = data.success
-                                statusBoolean = status
-                                if(status) {
-                                    statusText = "成功"
-                                } else {
-                                    val errorText = data.errorMessage?.textZh
-                                    statusText = if (errorText != null) {
-                                        errorText
-                                    } else "失败"
+                                try {
+                                    val data = Gson().fromJson(result, SelectPostResponse::class.java)
+                                    val status = data.success
+                                    statusBoolean = status
+                                    statusText = if(status) {
+                                        "成功"
+                                    } else {
+                                        data.errorMessage?.textZh ?: "失败"
+                                    }
+                                } catch (e : Exception) {
+                                    statusBoolean = false
+                                    statusText = "失败"
                                 }
                             }
                         }

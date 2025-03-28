@@ -2,6 +2,7 @@ package com.hfut.schedule.activity.ui.theme
 
 import android.app.Activity
 import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -10,47 +11,65 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import com.hfut.schedule.logic.utils.DataStoreManager
+import com.hfut.schedule.logic.utils.VersionUtils
+import com.hfut.schedule.ui.utils.style.TransparentSystemBars
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+private val DarkColorScheme = darkColorScheme()
+
+private val LightColorScheme = lightColorScheme()
+
+private val OLEDColorScheme = darkColorScheme(
+    background = Color.Black, // 纯黑背景
+    surface = Color.Black, // 纯黑表面
 )
 
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
 
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
-)
 
+@RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun AppTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
+    // 跟随系统深色模式
+    val currentColorModeIndex by DataStoreManager.colorModeFlow.collectAsState(initial = DataStoreManager.ColorMode.AUTO.code)
+    val darkTheme = when(currentColorModeIndex) {
+        DataStoreManager.ColorMode.DARK.code -> true
+        DataStoreManager.ColorMode.LIGHT.code -> false
+        else -> isSystemInDarkTheme()
+    }
+    // 是否使用 OLED 纯黑
+    val usePureBlack by DataStoreManager.pureDarkFlow.collectAsState(initial = false)
+
     val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+        dynamicColor && VersionUtils.canMonet -> {
             val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+            val defaultDynamicScheme = if (darkTheme) {
+                dynamicDarkColorScheme(context)
+            } else {
+                dynamicLightColorScheme(context)
+            }
+
+            if (darkTheme && usePureBlack) {
+                // 复制动态取色方案，并将背景设为纯黑
+                defaultDynamicScheme.copy(
+                    background = Color.Black,
+                    surface = Color.Black,
+                )
+            } else {
+                defaultDynamicScheme
+            }
         }
 
-        darkTheme -> DarkColorScheme
+        darkTheme -> if (usePureBlack) OLEDColorScheme else DarkColorScheme
         else -> LightColorScheme
     }
     val view = LocalView.current
@@ -67,5 +86,6 @@ fun AppTheme(
         typography = Typography,
         content = content
     )
+    TransparentSystemBars(!darkTheme)
 }
 

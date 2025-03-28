@@ -71,8 +71,10 @@ import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.Starter.loginGuaGua
-import com.hfut.schedule.logic.utils.Starter.startGuagua
+import com.hfut.schedule.logic.utils.Starter.startGuaGua
 import com.hfut.schedule.ui.activity.home.search.functions.electric.PayFor
+import com.hfut.schedule.ui.activity.home.search.functions.transfer.Campus
+import com.hfut.schedule.ui.activity.home.search.functions.transfer.getCampus
 import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
@@ -103,7 +105,7 @@ fun getInGuaGua(vm: NetWorkViewModel) {
         if (result?.contains("成功") == true) {
             saveString("GuaGuaPersonInfo", result)
             vm.guaguaUserInfo.removeObserver(guaguaUserInfoObserver) // 正常移除观察者
-            startGuagua()
+            startGuaGua()
         } else if (result?.contains("error") == true) {
             vm.guaguaUserInfo.removeObserver(guaguaUserInfoObserver) // 正常移除观察者
             loginGuaGua()
@@ -125,7 +127,7 @@ fun getInGuaGua(vm: NetWorkViewModel) {
 fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false,hazeState: HazeState) {
 //    val hazeState = remember { HazeState() }
     val auth = SharePrefs.prefs.getString("auth","")
-    val zjgdUrl = MyApplication.ZJGD_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${FeeType.SHOWER.code}&name=pays&paymentUrl=${MyApplication.ZJGD_URL}plat&token=" + auth
+    val zjgdUrl = MyApplication.HUIXIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${FeeType.SHOWER.code}&name=pays&paymentUrl=${MyApplication.HUIXIN_URL}plat&token=" + auth
     var showDialogWeb by remember { mutableStateOf(false) }
     WebDialog(showDialogWeb, url = zjgdUrl, title = "慧新易校",showChanged = { showDialogWeb = false }, showTop = false)
     val savedPhoneNumber = prefs.getString("PhoneNumber","")
@@ -150,7 +152,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false,hazeState: Haze
 
 
 
-    val url = MyApplication.ZJGD_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=223&name=pays&paymentUrl=http://121.251.19.62/plat&token=" + auth
+    val url = MyApplication.HUIXIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=223&name=pays&paymentUrl=http://121.251.19.62/plat&token=" + auth
     var showDialog2 by remember { mutableStateOf(false) }
 
     if (showBottomSheet) {
@@ -254,7 +256,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false,hazeState: Haze
 
     //布局///////////////////////////////////////////////////////////////////////////
     Column() {
-        HazeBottomSheetTopBar("洗浴-宣城校区", isPaddingStatusBar = false) {
+        HazeBottomSheetTopBar("洗浴" + if(getCampus() != Campus.XUANCHENG) "-宣城校区" else "", isPaddingStatusBar = false) {
             Row {
                 if(showitem4)
                     IconButton(onClick = {phoneNumber = phoneNumber.replaceFirst(".$".toRegex(), "")}) {
@@ -275,8 +277,9 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false,hazeState: Haze
                                 vm.showerData.observeForever { result ->
                                     if (result?.contains("success") == true) {
                                         showButton = true
-                                        val jsons = Gson().fromJson(result, ShowerFeeResponse::class.java).map.data
                                         try {
+                                            val jsons = Gson().fromJson(result, ShowerFeeResponse::class.java).map.data
+
                                             studentID = jsons.identifier.toString()
                                             balance = jsons.accountMoney
                                             givenBalance = jsons.accountGivenMoney
@@ -286,7 +289,6 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false,hazeState: Haze
                                             json = dataObject.toString()
                                             show = true
                                         } catch (e:Exception) {
-                                            Log.d("JSON",result)
                                             e.printStackTrace()
                                         }
                                     }
@@ -407,6 +409,8 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false,hazeState: Haze
                 ) {
                     Text(text = "进入呱呱物联")
                 }
+            } else {
+                Spacer(Modifier.height(40.dp))
             }
         }
 

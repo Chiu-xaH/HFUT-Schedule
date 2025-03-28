@@ -9,7 +9,7 @@ interface TeachersService {
     @GET("system/resource/tsites/advancesearch.jsp")
     fun searchTeacher(
         @Query("teacherName") name : String = "",
-        @Query("pagesize") size : Int = 20,
+        @Query("pagesize") size : String,
         @Query("pageindex") page : Int = 1,
         @Query("showlang") language : String = "zh_CN",
         @Query("searchDirection") direction : String = ""

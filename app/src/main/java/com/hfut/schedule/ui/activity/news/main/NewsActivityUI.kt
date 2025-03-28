@@ -47,6 +47,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -102,11 +103,11 @@ import org.json.JSONArray
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewsActivityUI(vm: NetWorkViewModel) {
-    val animation by remember { mutableStateOf(SharePrefs.prefs.getInt("ANIMATION", MyApplication.ANIMATION_SPEED)) }
+//    val animation by remember { mutableStateOf(SharePrefs.prefs.getInt("ANIMATION", MyApplication.ANIMATION_SPEED)) }
     val navController = rememberNavController()
     val context = LocalContext.current
-    val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR",  VersionUtils.canBlur)
-    val blur by remember { mutableStateOf(switchblur) }
+//    val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR",  VersionUtils.canBlur)
+//    val blur by remember { mutableStateOf(switchblur) }
     val hazeState = remember { HazeState() }
 //    var bottomBarItems by remember { mutableStateOf(NewsBarItems.News) }
     val currentAnimationIndex by DataStoreManager.animationTypeFlow.collectAsState(initial = 0)
@@ -126,10 +127,10 @@ fun NewsActivityUI(vm: NetWorkViewModel) {
             Column {
                 TopAppBar(
                     modifier = Modifier.topBarBlur(hazeState,),
-                    colors = TopAppBarDefaults.mediumTopAppBarColors(
-                        containerColor = Color.Transparent,
-                        titleContentColor = MaterialTheme.colorScheme.primary,
-                    ),
+                    colors = topAppBarColors(
+        containerColor = Color.Transparent,
+        titleContentColor = MaterialTheme.colorScheme.primary
+        ),
                     title = { Text("通知公告") },
                     actions = {
                         if(targetPage == NewsBarItems.XuanCheng) {

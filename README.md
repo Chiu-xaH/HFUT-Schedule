@@ -64,10 +64,6 @@ UI: Material You (Material Design 3)
 
 [Accompanist](https://github.com/google/accompanist) 用做实现透明状态栏
 
-[//]: # ([Monet]&#40;https://github.com/Kyant0/Monet&#41; 莫奈取色&#40;供SDK<32不支持MY取色平替&#41;)
-
-[//]: # ([Dagger]&#40;https://github.com/google/dagger&#41; Hilt注入,辅助莫奈取色功能)
-
 [Glide](https://github.com/bumptech/glide) 网络图片
 
 [EdDSA Java](https://github.com/str4d/ed25519-java) 加密(供和风天气API使用)
@@ -98,6 +94,9 @@ UI: Material You (Material Design 3)
 #### [Material3 一些自己写的组件与动效](/material3)
 
 ### [工具](/tools)
+
+### 开发记录
+#### [如何克服越来越大的包体](/markdown/ARTICLE.md)
 
 
 

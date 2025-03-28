@@ -96,7 +96,7 @@ fun ProgramPerformance(vm : NetWorkViewModel,hazeState: HazeState) {
 
     if(countFunc == 0) {
         CoroutineScope(Job()).launch{
-            async{ cookie?.let { vm.getProgramPerformance(it)} }.await()
+            async{ cookie?.let { vm.searchTeacher(it)} }.await()
             async {
                 Handler(Looper.getMainLooper()).post{
                     vm.programPerformanceData.observeForever { result ->

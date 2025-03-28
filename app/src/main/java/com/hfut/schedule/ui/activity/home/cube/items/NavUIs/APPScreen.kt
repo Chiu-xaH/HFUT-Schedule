@@ -49,6 +49,7 @@ import com.hfut.schedule.ui.activity.home.cube.items.subitems.LockUI
 import com.hfut.schedule.ui.activity.home.main.saved.COMMUNITY
 import com.hfut.schedule.ui.activity.home.main.saved.JXGLSTU
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
+import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.TransplantListItem
@@ -59,14 +60,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun APPScreen(navController: NavController,
               innerPaddings : PaddingValues,
               ifSaved : Boolean,
               hazeState: HazeState
               ) {
-    // Design your second screen here
     Column(modifier = Modifier
         .verticalScroll(rememberScrollState())
         .fillMaxSize()
@@ -93,89 +92,15 @@ fun APPScreen(navController: NavController,
         saveBoolean("SWITCHSHOWENDED",true,showEnded)
 
         saveBoolean("SWITCHFOCUS",true,showfocus)
-        var showBottomSheet_card by remember { mutableStateOf(false) }
-        var sheetState_card = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+//        var showBottomSheet_card by remember { mutableStateOf(false) }
 
         val switch_default = prefs.getInt("SWITCH_DEFAULT_CALENDAR", COMMUNITY)
         var currentDefaultCalendar by remember { mutableStateOf(switch_default) }
         saveInt("SWITCH_DEFAULT_CALENDAR",currentDefaultCalendar)
 
 
-        if (showBottomSheet_card) {
-            HazeBottomSheet (
-                onDismissRequest = { showBottomSheet_card = false },
-//                sheetState = sheetState_card,
-//                shape = bottomSheetRound(sheetState_card),
-                showBottomSheet = showBottomSheet_card,
-                hazeState = hazeState,
-            ) {
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    containerColor = Color.Transparent,
-                    topBar = {
-                        HazeBottomSheetTopBar("即时卡片")
-                    },
-                ) { innerPadding ->
-                    Column(
-                        modifier = Modifier
-                            .padding(innerPadding)
-                            .fillMaxSize()
-                    ) {
-                        FocusCardSettings()
-                        Spacer(modifier = Modifier.height(100.dp))
-                    }
-                }
-            }
-        }
-        var showBottomSheet_lock by remember { mutableStateOf(false) }
-        var sheetState_lock = rememberModalBottomSheetState()
 
-        if (showBottomSheet_lock) {
-            HazeBottomSheet (
-                onDismissRequest = { showBottomSheet_lock = false },
-                isFullExpand = false,
-                showBottomSheet = showBottomSheet_lock,
-                hazeState = hazeState
-//                sheetState = sheetState_lock,
-//                shape = bottomSheetRound(sheetState_lock)
-            ) {
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    containerColor = Color.Transparent,
-                    topBar = {
-                        HazeBottomSheetTopBar("支付设置")
-                    },
-                ) { innerPadding ->
-                    Column(
-                        modifier = Modifier
-                            .padding(innerPadding)
-                            .fillMaxSize()
-                    ) {
-                        LockUI(hazeState)
-                        Spacer(modifier = Modifier.height(100.dp))
-                    }
-                }
-            }
-        }
-
-
-        TransplantListItem(
-            headlineContent = { Text(text = "快速启动") },
-            supportingContent = { Text(text = "打开后,再次打开应用时将默认打开免登录二级界面,而不是登陆教务页面,但您仍可通过查询中心中的选项以登录") },
-            leadingContent = { Icon(painterResource(R.drawable.speed), contentDescription = "Localized description",) },
-            trailingContent = { Switch(checked = faststart, onCheckedChange = {faststartch -> faststart = faststartch }) },
-            modifier = Modifier.clickable { faststart = !faststart }
-        )
-
-        TransplantListItem(
-            headlineContent = { Text(text = "聚焦展示今天已上完的课程") },
-            leadingContent = { Icon(painterResource(R.drawable.search_activity), contentDescription = "Localized description",) },
-            trailingContent = { Switch(checked = showEnded, onCheckedChange = { ch -> showEnded = ch}) },
-            modifier = Modifier.clickable { showEnded = !showEnded }
-        )
-
-
-        if(ifSaved)
+        DividerTextExpandedWith("偏好") {
             TransplantListItem(
                 headlineContent = { Text(text = "主页面") },
                 supportingContent = {
@@ -205,42 +130,32 @@ fun APPScreen(navController: NavController,
                     saveBoolean("SWITCHFOCUS",true,showfocus)
                 }
             )
-
-        TransplantListItem(
-            headlineContent = { Text(text = "默认课程表") },
-            supportingContent = {
-                Column {
-                    Text(text = "您希望打开APP后课程表首先展示的是")
-                    Row {
-                        FilterChip(
-                            onClick = {
-                                currentDefaultCalendar = COMMUNITY
-                                saveInt("SWITCH_DEFAULT_CALENDAR", COMMUNITY)
-                            },
-                            label = { Text(text = "智慧社区") }, selected = currentDefaultCalendar == COMMUNITY)
-                        Spacer(modifier = Modifier.width(10.dp))
-                        FilterChip(
-                            onClick = {
-                                currentDefaultCalendar = JXGLSTU
-                                saveInt("SWITCH_DEFAULT_CALENDAR", JXGLSTU)
-                            },
-                            label = { Text(text = "教务(缓存)") }, selected = currentDefaultCalendar == JXGLSTU)
+            TransplantListItem(
+                headlineContent = { Text(text = "默认课程表") },
+                supportingContent = {
+                    Column {
+                        Text(text = "您希望打开APP后课程表首先展示的是")
+                        Row {
+                            FilterChip(
+                                onClick = {
+                                    currentDefaultCalendar = COMMUNITY
+                                    saveInt("SWITCH_DEFAULT_CALENDAR", COMMUNITY)
+                                },
+                                label = { Text(text = "智慧社区") }, selected = currentDefaultCalendar == COMMUNITY)
+                            Spacer(modifier = Modifier.width(10.dp))
+                            FilterChip(
+                                onClick = {
+                                    currentDefaultCalendar = JXGLSTU
+                                    saveInt("SWITCH_DEFAULT_CALENDAR", JXGLSTU)
+                                },
+                                label = { Text(text = "教务(缓存)") }, selected = currentDefaultCalendar == JXGLSTU)
+                        }
+                        Text(text = if(currentDefaultCalendar == COMMUNITY)"(荐)智慧社区课程表随时更新,若发生调选退课会有一定延迟,但会自动更新" else "教务课表跟随每次刷新登陆状态而更新,在登陆教务后,发生调选退课立即发生变动,登录过期后缓存在本地,并支持冲突课程的显示" )
                     }
-                    Text(text = if(currentDefaultCalendar == COMMUNITY)"(荐)智慧社区课程表随时更新,若发生调选退课会有一定延迟,但会自动更新" else "教务课表跟随每次刷新登陆状态而更新,在登陆教务后,发生调选退课立即发生变动,登录过期后缓存在本地,并支持冲突课程的显示" )
-                }
-            },
-            leadingContent = { Icon(painterResource(R.drawable.calendar), contentDescription = "Localized description",) },
-            modifier = Modifier.clickable {
-                currentDefaultCalendar = when(currentDefaultCalendar) {
-                    JXGLSTU -> COMMUNITY
-                    COMMUNITY -> JXGLSTU
-                    else -> COMMUNITY
-                }
-                saveInt("SWITCH_DEFAULT_CALENDAR",currentDefaultCalendar)
-            }
-        )
-
-        TransplantListItem(
+                },
+                leadingContent = { Icon(painterResource(R.drawable.calendar), contentDescription = "Localized description",) },
+            )
+            TransplantListItem(
                 headlineContent = { Text(text = "打开网页链接方式") },
                 supportingContent = {
                     Column {
@@ -262,47 +177,71 @@ fun APPScreen(navController: NavController,
                     }
                 },
                 leadingContent = { Icon(painterResource(R.drawable.net), contentDescription = "Localized description",) },
-                modifier = Modifier.clickable {
-                    showStartUri = !showStartUri
-                    saveBoolean("SWITCHSTARTURI",true,showStartUri)
+            )
+        }
+        DividerTextExpandedWith("显示") {
+            TransplantListItem(
+                headlineContent = { Text(text = "聚焦展示今天已上完的课程") },
+                leadingContent = { Icon(painterResource(R.drawable.search_activity), contentDescription = "Localized description",) },
+                trailingContent = { Switch(checked = showEnded, onCheckedChange = { ch -> showEnded = ch}) },
+                modifier = Modifier.clickable { showEnded = !showEnded }
+            )
+
+            TransplantListItem(
+                headlineContent = { Text(text = "即时卡片") },
+                supportingContent = { Text(text = "启动APP时会自动加载或更新一些即时数据,您可按需调整") },
+                leadingContent = { Icon(painterResource(R.drawable.reset_iso), contentDescription = "Localized description",) },
+                modifier = Modifier.clickable { navController.navigate(Screen.FocusCardScreen.route) }
+            )
+
+        }
+        DividerTextExpandedWith("配置") {
+            TransplantListItem(
+                headlineContent = { Text(text = "快速启动") },
+                supportingContent = { Text(text = "打开后,再次打开应用时将默认打开免登录二级界面,而不是登陆教务页面,但您仍可通过查询中心中的选项以登录") },
+                leadingContent = { Icon(painterResource(R.drawable.speed), contentDescription = "Localized description",) },
+                trailingContent = { Switch(checked = faststart, onCheckedChange = {faststartch -> faststart = faststartch }) },
+                modifier = Modifier.clickable { faststart = !faststart }
+            )
+            TransplantListItem(
+                headlineContent = { Text(text = "支付验证") },
+                supportingContent = {
+                    Text(text = "调用校园卡进行网电缴费时,启用生物识别快速验证")
+                },
+                leadingContent = { Icon(painterResource(R.drawable.lock), contentDescription = "Localized description",) },
+                modifier = Modifier.clickable { navController.navigate(Screen.LockScreen.route) }
+            )
+            TransplantListItem(
+                headlineContent = { Text(text = "图片验证码自动填充") },
+                supportingContent = {
+                    Text(text = "登录教务时,使用Tesseract库提供的机器学习OCR能力,填充验证码")
+                },
+                leadingContent = { Icon(painterResource(R.drawable.center_focus_strong), contentDescription = "Localized description",) },
+                modifier = Modifier.clickable { navController.navigate(Screen.DownloadScreen.route) }
+            )
+            TransplantListItem(
+                headlineContent = { Text(text = "学期") },
+                leadingContent = {
+                    Icon(painter = painterResource(id = R.drawable.approval), contentDescription = "")
+                },
+                supportingContent = {
+                    Column {
+                        Text(text = "全局学期 ${parseSemseter(getSemseter())}", fontWeight = FontWeight.Bold)
+                        Text(text = "其他部分功能如教评、成绩等需要在全局学期下切换学期的，可在相应功能区切换\n由本地函数计算，每年的2~7月为第二学期，8~次1月为第一学期")
+                    }
                 }
-        )
+            )
+        }
 
-        TransplantListItem(
-            headlineContent = { Text(text = "支付验证") },
-            supportingContent = {
-                Text(text = "调用校园卡进行网电缴费时,启用生物识别快速验证")
-            },
-            leadingContent = { Icon(painterResource(R.drawable.lock), contentDescription = "Localized description",) },
-            modifier = Modifier.clickable { showBottomSheet_lock = true }
-        )
 
-        TransplantListItem(
-            headlineContent = { Text(text = "即时卡片") },
-            supportingContent = { Text(text = "启动APP时会自动加载或更新一些即时数据,您可按需调整") },
-            leadingContent = { Icon(painterResource(R.drawable.reset_iso), contentDescription = "Localized description",) },
-            modifier = Modifier.clickable { showBottomSheet_card = true }
-        )
 
-        TransplantListItem(
-            headlineContent = { Text(text = "图片验证码自动填充") },
-            supportingContent = {
-                Text(text = "登录教务时,使用Tesseract库提供的机器学习OCR能力,填充验证码")
-            },
-            leadingContent = { Icon(painterResource(R.drawable.center_focus_strong), contentDescription = "Localized description",) },
-            modifier = Modifier.clickable { navController.navigate(Screen.DownloadScreen.route) }
-        )
-        TransplantListItem(
-            headlineContent = { Text(text = "学期") },
-            leadingContent = {
-                Icon(painter = painterResource(id = R.drawable.approval), contentDescription = "")
-            },
-            supportingContent = {
-                Column {
-                    Text(text = "全局学期 ${parseSemseter(getSemseter())}", fontWeight = FontWeight.Bold)
-                    Text(text = "其他部分功能如教评、成绩等需要在全局学期下切换学期的，可在相应功能区切换\n由本地函数计算，每年的2~7月为第二学期，8~次1月为第一学期")
-                }
-            }
-        )
+
+
+
+
+
+
+
+
     }
 }

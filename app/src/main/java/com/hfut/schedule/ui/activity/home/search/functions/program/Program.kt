@@ -192,7 +192,9 @@ fun ProgramUI(vm: NetWorkViewModel,ifSaved: Boolean,hazeState: HazeState) {
         val json = prefs.getString("programJSON","")
        // try {
             val listType = object : TypeToken<List<ProgramShow>>() {}.type
-            val list: List<ProgramShow> = Gson().fromJson(json,listType)
+            val list: List<ProgramShow> = try {
+                Gson().fromJson(json,listType)
+            } catch (_:Exception) { emptyList() }
       //  }
 
     var sum = 0.0

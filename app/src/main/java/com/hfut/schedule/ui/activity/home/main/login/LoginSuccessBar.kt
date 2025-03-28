@@ -41,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Observer
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -282,17 +283,13 @@ fun SuccessUI(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel, w
                                     IconButton(onClick = { showSearch = !showSearch }) {
                                         Icon(painter = painterResource(id =  R.drawable.search), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
                                     }
+                                    Spacer(modifier = Modifier.width(7.5.dp))
 
-//                                    if(ifSaved) {
-//                                        TextButton(onClick = { Login() }) {
-//                                            Icon(painter = painterResource(id =  R.drawable.login), contentDescription = "")
-//                                        }
-//                                    } else {
-                                        Text(text =if(webVpn) "WEBVPN" else "已登录",Modifier.padding(horizontal = appHorizontalDp()), color = MaterialTheme.colorScheme.primary)
-//                                    }
+
+                                    Text(text =if(webVpn) "WEBVPN" else "已登录", color = MaterialTheme.colorScheme.primary)
                                 }
                                 Spacer(modifier = Modifier.width(appHorizontalDp()))
-                                //null
+
                             }
                             SETTINGS -> null
                         }

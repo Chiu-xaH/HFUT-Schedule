@@ -41,6 +41,9 @@ import com.hfut.schedule.ui.activity.home.cube.items.NavUIs.NetWorkScreen
 import com.hfut.schedule.ui.activity.home.cube.items.main.Screen
 import com.hfut.schedule.ui.activity.home.cube.items.NavUIs.UIScreen
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.DownloadMLUI
+import com.hfut.schedule.ui.activity.home.cube.items.subitems.FocusCardSettings
+import com.hfut.schedule.ui.activity.home.cube.items.subitems.LockUI
+import com.hfut.schedule.ui.activity.home.cube.items.subitems.RequestArrange
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.TEST
 import com.hfut.schedule.ui.utils.NavigateAnimationManager
 import dev.chrisbanes.haze.HazeState
@@ -92,9 +95,9 @@ fun SettingsScreen(vm : NetWorkViewModel
                     }
                 }
                 composable(Screen.UIScreen.route) {
-                Scaffold {
-                    UIScreen(navController, innerPaddings,showlable, showlablechanged,blur, blurchanged)
-                  }
+                    Scaffold {
+                        UIScreen(navController, innerPaddings,showlable, showlablechanged,blur, blurchanged)
+                    }
                 }
                 composable(Screen.APPScreen.route) {
                     Scaffold {
@@ -102,25 +105,20 @@ fun SettingsScreen(vm : NetWorkViewModel
                     }
                 }
                 composable(Screen.FIxAboutScreen.route) {
-                Scaffold {
-                    AboutUI(innerPadding = innerPaddings, vm1,true,navController,hazeState)
-                }
+                    Scaffold {
+                        AboutUI(innerPadding = innerPaddings, vm1,true,navController,hazeState)
+                    }
                 }
                 composable(Screen.NetWorkScreen.route) {
-                Scaffold {
-                    NetWorkScreen(navController, innerPaddings,ifSaved,hazeState)
-                   }
+                    Scaffold {
+                        NetWorkScreen(navController, innerPaddings,ifSaved,hazeState)
+                    }
                 }
                 composable(FixBarItems.Fix.name) {
-                Scaffold {
-                    FixUI(innerPadding = innerPaddings,vm1,vm,hazeState)
+                    Scaffold {
+                        FixUI(innerPadding = innerPaddings,vm1,vm,hazeState)
+                    }
                 }
-                }
-//                composable(FixBarItems.About.name) {
-//                    Scaffold {
-//
-//                    }
-//                }
                 composable("DEBUG") {
                     Scaffold {
                         TEST(innerPadding)
@@ -129,6 +127,21 @@ fun SettingsScreen(vm : NetWorkViewModel
                 composable(Screen.DownloadScreen.route) {
                     Scaffold {
                         DownloadMLUI(innerPaddings)
+                    }
+                }
+                composable(Screen.LockScreen.route) {
+                    Scaffold {
+                        LockUI(innerPaddings,hazeState)
+                    }
+                }
+                composable(Screen.FocusCardScreen.route) {
+                    Scaffold {
+                        FocusCardSettings(innerPaddings)
+                    }
+                }
+                composable(Screen.RequestRangeScreen.route) {
+                    Scaffold {
+                        RequestArrange(innerPaddings)
                     }
                 }
             }

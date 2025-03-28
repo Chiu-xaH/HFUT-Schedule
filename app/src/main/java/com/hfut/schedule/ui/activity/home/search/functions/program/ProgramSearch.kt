@@ -50,9 +50,9 @@ import com.hfut.schedule.logic.beans.jxglstu.Type
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.logic.utils.data.reEmptyLiveDta
 import com.hfut.schedule.ui.activity.home.search.functions.courseSearch.ApiForCourseSearch
-import com.hfut.schedule.ui.activity.home.search.functions.transfer.CampusId
-import com.hfut.schedule.ui.activity.home.search.functions.transfer.CampusId.HEFEI
-import com.hfut.schedule.ui.activity.home.search.functions.transfer.CampusId.XUANCHENG
+import com.hfut.schedule.ui.activity.home.search.functions.transfer.Campus
+import com.hfut.schedule.ui.activity.home.search.functions.transfer.Campus.HEFEI
+import com.hfut.schedule.ui.activity.home.search.functions.transfer.Campus.XUANCHENG
 import com.hfut.schedule.ui.activity.home.search.functions.transfer.getCampus
 import com.hfut.schedule.ui.utils.components.AnimationCardListItem
 import com.hfut.schedule.ui.utils.components.appHorizontalDp
@@ -270,7 +270,7 @@ fun ProgramSearch(vm : NetWorkViewModel,ifSaved: Boolean,hazeState: HazeState) {
 }
 
 @Composable
-private fun ProgramSearchInfo(vm: NetWorkViewModel,item: ProgramListBean,campus: CampusId,ifSaved: Boolean,hazeState: HazeState) {
+private fun ProgramSearchInfo(vm: NetWorkViewModel, item: ProgramListBean, campus: Campus, ifSaved: Boolean, hazeState: HazeState) {
     val id = item.id
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }

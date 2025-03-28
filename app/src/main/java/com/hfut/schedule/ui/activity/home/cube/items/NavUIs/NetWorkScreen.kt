@@ -29,9 +29,11 @@ import androidx.navigation.NavController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.activity.MainActivity
+import com.hfut.schedule.logic.utils.Starter.refreshLogin
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.saveBoolean
+import com.hfut.schedule.ui.activity.home.cube.items.main.Screen
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.RequestArrange
 import com.hfut.schedule.ui.activity.home.search.functions.lepaoYun.InfoSet
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
@@ -71,44 +73,33 @@ fun NetWorkScreen(navController: NavController,
         saveBoolean("SWITCHSERVER",false,server)
 
 
-//
-//        var showBottomSheet_input by remember { mutableStateOf(false) }
-//        val sheetState_input = rememberModalBottomSheetState()
-//        if (showBottomSheet_input) {
-//            ModalBottomSheet(
-//                onDismissRequest = { showBottomSheet_input = false },
-//                sheetState = sheetState_input,
-//                shape = bottomSheetRound(sheetState_input)
+
+
+//        var showBottomSheet_arrange by remember { mutableStateOf(false) }
+//        var sheetState_arrange = rememberModalBottomSheetState()
+//        if (showBottomSheet_arrange) {
+//            HazeBottomSheet (
+//                onDismissRequest = { showBottomSheet_arrange = false },
+//                showBottomSheet = showBottomSheet_arrange,
+//                hazeState = hazeState,
+//                isFullExpand = false
+////                sheetState = sheetState_arrange,
+////                shape = bottomSheetRound(sheetState_arrange)
 //            ) {
-//                InfoSet()
+//
 //                Spacer(modifier = Modifier.height(100.dp))
 //            }
 //        }
 
 
-
-        var showBottomSheet_arrange by remember { mutableStateOf(false) }
-        var sheetState_arrange = rememberModalBottomSheetState()
-        if (showBottomSheet_arrange) {
-            HazeBottomSheet (
-                onDismissRequest = { showBottomSheet_arrange = false },
-                showBottomSheet = showBottomSheet_arrange,
-                hazeState = hazeState,
-                isFullExpand = false
-//                sheetState = sheetState_arrange,
-//                shape = bottomSheetRound(sheetState_arrange)
-            ) {
-                RequestArrange()
-                Spacer(modifier = Modifier.height(100.dp))
-            }
-        }
-
         TransplantListItem(
             headlineContent = { Text(text = "请求范围") },
             supportingContent = { Text(text = "自定义加载一页时出现的数目,数目越大,加载时间相应地会更长,但可显示更多信息") },
             leadingContent = { Icon(painterResource(R.drawable.settings_ethernet), contentDescription = "Localized description",) },
-            modifier = Modifier.clickable {  showBottomSheet_arrange = true }
+            modifier = Modifier.clickable {  navController.navigate(Screen.RequestRangeScreen.route) }
         )
+
+
         if(isFocus())
             TransplantListItem(
                 headlineContent = { Text(text = "网络接口") },
@@ -125,11 +116,8 @@ fun NetWorkScreen(navController: NavController,
                 supportingContent = { Text(text = "如果一卡通或者考试成绩等无法查询,可能是登陆过期,需重新登录一次") },
                 leadingContent = { Icon(painterResource(R.drawable.rotate_right), contentDescription = "Localized description",) },
                 modifier = Modifier.clickable {
-                    val it = Intent(MyApplication.context, MainActivity::class.java).apply {
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        putExtra("nologin",false)
-                    }
-                    MyApplication.context.startActivity(it) }
+                    refreshLogin()
+                }
             )
 
         TransplantListItem(

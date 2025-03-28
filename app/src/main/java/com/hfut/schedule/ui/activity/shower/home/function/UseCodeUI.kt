@@ -144,9 +144,12 @@ fun UseCodeUI(vm: GuaGuaViewModel,hazeState: HazeState,navController: NavHostCon
                         Handler(Looper.getMainLooper()).post{
                             vm.reSetCodeResult.observeForever { result ->
                                 if (result != null) {
-                                    Log.d("ss",result)
                                     if(result.contains("message")) {
-                                        msg = Gson().fromJson(result,StatusMsgResponse::class.java).message
+                                        msg = try {
+                                            Gson().fromJson(result,StatusMsgResponse::class.java).message
+                                        } catch (_: Exception) {
+                                            "错误"
+                                        }
                                         loading = false
                                     }
                                 }
@@ -193,7 +196,12 @@ fun UseCodeUI(vm: GuaGuaViewModel,hazeState: HazeState,navController: NavHostCon
                     vm.userCode.observeForever { result ->
                         if (result != null) {
                             if(result.contains("成功")) {
-                                useCode = Gson().fromJson(result,UseCodeResponse::class.java).data.randomCode
+
+                                useCode = try {
+                                    Gson().fromJson(result,UseCodeResponse::class.java).data.randomCode
+                                } catch (_: Exception) {
+                                    "错误"
+                                }
                                 refresh = false
                                 loading = false
                             }

@@ -86,8 +86,10 @@ fun About(vm : LoginViewModel) {
                     vm.githubData.observeForever { result ->
                         if (result != null) {
                             if(result.contains("stargazers_count")) {
-                                starsNum = (Gson().fromJson(result,GithubBean::class.java).stargazers_count).toString()
-                                loading = false
+                                try {
+                                    starsNum = (Gson().fromJson(result,GithubBean::class.java).stargazers_count).toString()
+                                    loading = false
+                                } catch (_:Exception) { }
                             }
                         }
                     }

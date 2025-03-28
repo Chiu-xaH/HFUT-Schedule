@@ -25,6 +25,7 @@ import com.hfut.schedule.logic.utils.Starter.refreshLogin
 import com.hfut.schedule.ui.activity.home.search.functions.bus.SchoolBus
 import com.hfut.schedule.ui.activity.home.search.functions.dormitoryScore.DormitoryScoreXuanCheng
 import com.hfut.schedule.ui.activity.home.search.functions.hotWater.HotWater
+import com.hfut.schedule.ui.activity.home.search.functions.ietp.IETP
 import com.hfut.schedule.ui.activity.home.search.functions.lepaoYun.LePaoYun
 import com.hfut.schedule.ui.activity.home.search.functions.life.Life
 import com.hfut.schedule.ui.activity.home.search.functions.news.News
@@ -35,6 +36,7 @@ import com.hfut.schedule.ui.activity.home.search.functions.schoolCalendar.School
 import com.hfut.schedule.ui.activity.home.search.functions.shower.Shower
 import com.hfut.schedule.ui.activity.home.search.functions.teacherSearch.TeacherSearch
 import com.hfut.schedule.ui.activity.home.search.functions.webLab.WebUI
+import com.hfut.schedule.ui.activity.home.search.functions.work.Work
 import com.hfut.schedule.ui.activity.home.search.functions.xuexin.XueXin
 import com.hfut.schedule.ui.utils.components.SmallCard
 import com.hfut.schedule.viewmodel.NetWorkViewModel
@@ -71,7 +73,7 @@ fun SearchScreenNoLogin(vm : NetWorkViewModel, ifSaved : Boolean, innerPaddings 
 //        "课程汇总" to { CourseTotal(vm) },
 //        "个人信息" to { PersonUI(ifSaved) },
         "网址导航 实验室 收纳" to { WebUI(hazeState) },
-        "报修 维修" to { Repair() },
+        "报修 维修 后勤" to { Repair(hazeState) },
 //        "选课" to { SelectCourse(ifSaved, vm) },
         "寝室卫生评分 寝室卫生分数" to { DormitoryScoreXuanCheng(vm,hazeState) },
         "消息中心 通知中心 收纳" to { NotificationsCenter(hazeState) },
@@ -91,6 +93,8 @@ fun SearchScreenNoLogin(vm : NetWorkViewModel, ifSaved : Boolean, innerPaddings 
 //        "转专业" to { Transfer(ifSaved, vm) },
 //        "开课查询 全校开课" to { CoursesSearch(ifSaved, vm) },
         "教师 老师" to { TeacherSearch(vm,hazeState) },
+        "大创 大学生创新创业" to { IETP() },
+        "就业 实习 春招 双选 秋招" to { Work(hazeState) },
 //        "学费 费用 欠缴学费" to { Pay(ifSaved, vm) },
 //        "实习" to { Work(ifSaved) },
 //        "第二课堂" to { Second() }

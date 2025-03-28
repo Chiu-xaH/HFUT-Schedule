@@ -40,6 +40,7 @@ import com.hfut.schedule.ui.activity.home.search.functions.exam.Exam
 import com.hfut.schedule.ui.activity.home.search.functions.failRate.FailRate
 import com.hfut.schedule.ui.activity.home.search.functions.grade.Grade
 import com.hfut.schedule.ui.activity.home.search.functions.hotWater.HotWater
+import com.hfut.schedule.ui.activity.home.search.functions.ietp.IETP
 import com.hfut.schedule.ui.activity.home.search.functions.lepaoYun.LePaoYun
 import com.hfut.schedule.ui.activity.home.search.functions.library.LibraryItem
 import com.hfut.schedule.ui.activity.home.search.functions.life.Life
@@ -62,6 +63,7 @@ import com.hfut.schedule.ui.activity.home.search.functions.todayCampus.ToadyCamp
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotal
 import com.hfut.schedule.ui.activity.home.search.functions.transfer.Transfer
 import com.hfut.schedule.ui.activity.home.search.functions.webLab.WebUI
+import com.hfut.schedule.ui.activity.home.search.functions.practice.Practice
 import com.hfut.schedule.ui.activity.home.search.functions.work.Work
 import com.hfut.schedule.ui.activity.home.search.functions.xuexin.XueXin
 import com.hfut.schedule.ui.utils.components.cardNormalColor
@@ -129,7 +131,7 @@ fun SearchScreen(
         "培养方案" to { Program(vm, ifSaved,hazeState) },// 适配实时模糊完毕
         "校历" to { SchoolCalendar() },// 适配实时模糊完毕
         "校车" to { SchoolBus() },// 适配实时模糊完毕
-        "报修 维修" to { Repair() },// 适配实时模糊完毕
+        "报修 维修 后勤" to { Repair(hazeState) },// 适配实时模糊完毕
         "下学期课程表 下学期课表" to { NextCourse(ifSaved, vmUI,vm, hazeState) },// 适配实时模糊完毕
         "热水机 趣智校园" to { HotWater() },// 适配实时模糊完毕
         "空教室" to { EmptyRoom(vm, ifSaved,hazeState) },// 适配实时模糊完毕
@@ -141,9 +143,11 @@ fun SearchScreen(
         "开课查询 全校开课" to { CoursesSearch(ifSaved, vm,hazeState) },// 适配实时模糊完毕
         "教师 老师" to { TeacherSearch(vm,hazeState) },// 适配实时模糊完毕
         "学费 费用 欠缴学费" to { Pay(ifSaved, vm,hazeState) },// 适配实时模糊完毕
-        "实习" to { Work(ifSaved) },// 适配实时模糊完毕
+        "实习" to { Practice(ifSaved) },// 适配实时模糊完毕
         "第二课堂" to { Second() },// 适配实时模糊完毕
         "今日校园 学工系统 请假 助学金 奖学金 贫困 寝室 心理 日常" to { ToadyCampus(ifSaved,vm) },// 适配实时模糊完毕
+        "大创 大学生创新创业" to { IETP() },// 适配实时模糊完毕
+        "就业 实习 春招 双选 秋招" to { Work(hazeState) },// 适配实时模糊完毕
     )
 
     val funcList = funcMaps.values.toList()

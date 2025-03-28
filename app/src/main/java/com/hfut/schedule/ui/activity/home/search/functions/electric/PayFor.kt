@@ -63,6 +63,7 @@ import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LittleDialog
+import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.ui.utils.components.statusUI
 import com.hfut.schedule.ui.utils.style.HazeBottomSheet
@@ -244,8 +245,12 @@ private fun PayStatusUI(vm : NetWorkViewModel, payNumber : Float, json: String, 
                     vm.orderIdData.observeForever { result ->
                         if (result != null) {
                             if(result.contains("操作成功")) {
-                                orderid = Gson().fromJson(result, PayStep1Response::class.java).data.orderid
-                                vm.payStep2(auth,orderid,type)
+                                try {
+                                    orderid = Gson().fromJson(result, PayStep1Response::class.java).data.orderid
+                                    vm.payStep2(auth,orderid,type)
+                                } catch (e : Exception) {
+                                    MyToast("服务器错误，终止支付")
+                                }
                             }
                         }
                     }
@@ -257,17 +262,21 @@ private fun PayStatusUI(vm : NetWorkViewModel, payNumber : Float, json: String, 
                     vm.uuIdData.observeForever { result ->
                         if (result != null) {
                             if(result.contains("操作成功")) {
-                                val map = Gson().fromJson(result, PayStep2Response::class.java).data.passwordMap
-                                var uuid = ""
-                                var passwordKey = ""
-                                for((key,value) in map) {
-                                    uuid = key
-                                    passwordKey = value
-                                }
-                                //正式支付
-                                if(count == 0) {
-                                    vm.payStep3(auth,orderid,getPsk(passwordKey),uuid,type)
-                                    count++
+                                try {
+                                    val map = Gson().fromJson(result, PayStep2Response::class.java).data.passwordMap
+                                    var uuid = ""
+                                    var passwordKey = ""
+                                    for((key,value) in map) {
+                                        uuid = key
+                                        passwordKey = value
+                                    }
+                                    //正式支付
+                                    if(count == 0) {
+                                        vm.payStep3(auth,orderid,getPsk(passwordKey),uuid,type)
+                                        count++
+                                    }
+                                } catch (e : Exception) {
+                                    MyToast("服务器错误，终止支付")
                                 }
                             }
                         }
@@ -280,7 +289,11 @@ private fun PayStatusUI(vm : NetWorkViewModel, payNumber : Float, json: String, 
                     vm.payResultData.observeForever { result ->
                         if (result != null) {
                             if(result.contains("success")) {
-                                msg = Gson().fromJson(result, PayStep3Response::class.java).msg
+                                msg = try {
+                                    Gson().fromJson(result, PayStep3Response::class.java).msg
+                                } catch (_:Exception) {
+                                    "错误"
+                                }
                                 refresh = false
                                 loading = false
                             }

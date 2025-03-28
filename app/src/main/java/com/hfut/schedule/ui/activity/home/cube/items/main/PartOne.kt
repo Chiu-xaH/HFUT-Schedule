@@ -37,6 +37,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.activity.MainActivity
 import com.hfut.schedule.logic.enums.CardBarItems
 import com.hfut.schedule.logic.enums.FixBarItems
+import com.hfut.schedule.logic.utils.Starter.refreshLogin
 import com.hfut.schedule.logic.utils.Starter.startWebUrl
 import com.hfut.schedule.logic.utils.VersionUtils
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.MyAPIItem
@@ -111,21 +112,17 @@ enum class DetailSettings {
     Home,UI,APP,NetWork,FIxAbout
 }
 sealed class Screen(val route: String) {
-    object HomeScreen : Screen(DetailSettings.Home.name)
-    object UIScreen : Screen(DetailSettings.UI.name)
-    object NetWorkScreen : Screen(DetailSettings.NetWork.name)
-    object APPScreen : Screen(DetailSettings.APP.name)
-    object FIxAboutScreen : Screen(DetailSettings.FIxAbout.name)
-    object FIxScreen : Screen(FixBarItems.Fix.name)
-    object AboutScreen : Screen(FixBarItems.About.name)
-
-    object DebugScreen : Screen("DEBUG")
-    object CardBillsScreen : Screen(CardBarItems.BILLS.name)
-
-    object CardCountScreen : Screen(CardBarItems.COUNT.name)
-    object CardHomeScreen : Screen(CardBarItems.HOME.name)
-    object DownloadScreen : Screen("Download")
-
+    data object HomeScreen : Screen(DetailSettings.Home.name)
+    data object UIScreen : Screen(DetailSettings.UI.name)
+    data object NetWorkScreen : Screen(DetailSettings.NetWork.name)
+    data object APPScreen : Screen(DetailSettings.APP.name)
+    data object FIxAboutScreen : Screen(DetailSettings.FIxAbout.name)
+    data object FIxScreen : Screen(FixBarItems.Fix.name)
+    data object DebugScreen : Screen("DEBUG")
+    data object DownloadScreen : Screen("Download")
+    data object LockScreen : Screen("Lock")
+    data object FocusCardScreen : Screen("FocusCard")
+    data object RequestRangeScreen : Screen("RequestRange")
 }
 
 
@@ -228,11 +225,8 @@ fun AlwaysItem(hazeState: HazeState) {
         supportingContent = { Text(text = "如果一卡通或者考试成绩等无法查询,可能是登陆过期,需重新登录一次") },
         leadingContent = { Icon(painterResource(R.drawable.rotate_right), contentDescription = "Localized description",) },
         modifier = Modifier.clickable {
-            val it = Intent(MyApplication.context, MainActivity::class.java).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                putExtra("nologin",false)
-            }
-            MyApplication.context.startActivity(it) }
+            refreshLogin()
+             }
     )
     if (VersionUtils.getVersionName() == getUpdates().version)
         TransplantListItem(

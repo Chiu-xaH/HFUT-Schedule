@@ -45,6 +45,7 @@ import com.hfut.schedule.logic.utils.data.reEmptyLiveDta
 import com.hfut.schedule.ui.activity.home.search.functions.failRate.permit
 import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
+import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.HazeBottomSheet
 import com.hfut.schedule.ui.utils.style.bottomSheetRound
@@ -92,7 +93,7 @@ fun SearchTeachersUI(vm : NetWorkViewModel) {
         CoroutineScope(Job()).launch{
             async { loading = true }.await()
             async { reEmptyLiveDta(vm.teacherSearchData) }
-            async{ vm.getProgramPerformance(name, direction) }.await()
+            async{ vm.searchTeacher(name, direction) }.await()
             async {
                 Handler(Looper.getMainLooper()).post{
                     vm.teacherSearchData.observeForever { result ->
@@ -111,7 +112,7 @@ fun SearchTeachersUI(vm : NetWorkViewModel) {
         modifier = Modifier.fillMaxSize(),
         containerColor = Color.Transparent,
         topBar = {
-            BottomSheetTopBar("教师") {
+            HazeBottomSheetTopBar("教师") {
                 FilledTonalIconButton(
                     onClick = { onClick() },
 //                    modifier = Modifier.padding(horizontal = AppHorizontalDp())
@@ -197,7 +198,7 @@ fun ApiToTeacherSearch(input : String,vm: NetWorkViewModel) {
         CoroutineScope(Job()).launch{
             async { loading = true }.await()
             async { reEmptyLiveDta(vm.teacherSearchData) }
-            async{ vm.getProgramPerformance(name = input) }.await()
+            async{ vm.searchTeacher(name = input) }.await()
             async {
                 Handler(Looper.getMainLooper()).post{
                     vm.teacherSearchData.observeForever { result ->

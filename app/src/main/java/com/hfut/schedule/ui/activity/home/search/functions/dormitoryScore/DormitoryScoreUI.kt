@@ -63,6 +63,8 @@ import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
+import com.hfut.schedule.ui.activity.home.search.functions.transfer.Campus
+import com.hfut.schedule.ui.activity.home.search.functions.transfer.getCampus
 import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.cardNormalDp
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
@@ -141,7 +143,7 @@ fun DormitoryScoreUI(vm : NetWorkViewModel) {
         modifier = Modifier.fillMaxSize(),
         containerColor = Color.Transparent,
         topBar = {
-            HazeBottomSheetTopBar("寝室评分-宣城校区") {
+            HazeBottomSheetTopBar("寝室评分"  + if(getCampus() != Campus.XUANCHENG) "-宣城校区" else "") {
                 Row() {
                     if(showitem4)
                         IconButton(onClick = {RoomNumber = RoomNumber.replaceFirst(".$".toRegex(), "")}) {

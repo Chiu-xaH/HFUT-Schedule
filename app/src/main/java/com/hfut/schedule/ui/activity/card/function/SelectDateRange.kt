@@ -87,10 +87,14 @@ fun SelecctDateRange(vm : NetWorkViewModel) {
                                     Handler(Looper.getMainLooper()).post{
                                         vm.RangeData.observeForever { result ->
                                             if(result.contains("操作成功")){
-                                                val data = Gson().fromJson(result, BillRangeResponse::class.java)
-                                                var zhichu = data.data.expenses
-                                                zhichu = zhichu / 100
-                                                MyToast("共支出 ${zhichu} 元")
+                                                try {
+                                                    val data = Gson().fromJson(result, BillRangeResponse::class.java)
+                                                    var zhichu = data.data.expenses
+                                                    zhichu /= 100
+                                                    MyToast("共支出 $zhichu 元")
+                                                } catch (e : Exception) {
+                                                    MyToast("错误")
+                                                }
                                             }
                                         }
                                     }

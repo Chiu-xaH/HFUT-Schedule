@@ -39,6 +39,7 @@ import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.beans.one.EmptyRoomResponse
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import kotlinx.coroutines.CoroutineScope
@@ -46,6 +47,21 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+private fun search() : MutableList<String> {
+    val rooms = mutableListOf<String>()
+
+    val Roomjson = prefs.getString("emptyjson", "{\"data\": {\"records\": [{ \"nameZh\": \"请选择楼栋\"}] }}")
+    try {
+        val data = Gson().fromJson(Roomjson, EmptyRoomResponse::class.java)
+        val record = data.data.records
+        for (element in record) {
+            var room = element.nameZh
+            room = room.replace("学堂"," ")
+            rooms.add(room)
+        }
+    } catch (_ : Exception) { }
+    return rooms
+}
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun emptyRoomUI(vm : NetWorkViewModel) {
@@ -54,23 +70,6 @@ fun emptyRoomUI(vm : NetWorkViewModel) {
     var selected3 by remember { mutableStateOf(false) }
     var selected4 by remember { mutableStateOf(false) }
     var selected5 by remember { mutableStateOf(false) }
-
-    fun search() : MutableList<String> {
-        val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
-        val Roomjson = prefs.getString("emptyjson", "{\"data\": {\"records\": [{ \"nameZh\": \"请选择楼栋\"}] }}")
-        //  if (Roomjson != null) {
-        val data = Gson().fromJson(Roomjson, EmptyRoomResponse::class.java)
-        val record = data.data.records
-        var rooms = mutableListOf<String>()
-        //val room =  data.data.
-        for (i in 0 until record.size) {
-            var room = record[i].nameZh
-            room = room.replace("学堂"," ")
-            // Log.d("教室",room)
-            rooms.add(room)
-        }
-        return rooms
-    }
 
 
     Scaffold(

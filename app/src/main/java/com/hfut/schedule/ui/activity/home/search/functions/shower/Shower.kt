@@ -18,6 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
+import com.hfut.schedule.ui.activity.home.search.functions.transfer.Campus
+import com.hfut.schedule.ui.activity.home.search.functions.transfer.getCampus
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.NetWorkViewModel
@@ -43,7 +45,7 @@ fun Shower(vm: NetWorkViewModel,hazeState: HazeState) {
 
 
     TransplantListItem(
-        headlineContent = { Text(text = "洗浴") },
+        headlineContent = { Text(text = "洗浴" + if(getCampus() != Campus.XUANCHENG) "(宣)" else "") },
         leadingContent = {
             Icon(painterResource(id = R.drawable.bathtub), contentDescription = "")
         },

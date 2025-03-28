@@ -80,23 +80,25 @@ import java.math.BigDecimal
 
 fun getBills(vm : NetWorkViewModel) : List<records> {
     val billjson = vm.BillsData.value
-//    var BillItems = mutableListOf<records>()
     if(billjson?.contains("操作成功") == true){
-        val bill = Gson().fromJson(billjson, BillResponse::class.java)
-        val data = bill.data.records
-        val msg = bill.data.msg
-        val totalpage = bill.data.pages
-        SharePrefs.saveString("totalpage",totalpage.toString())
-        if (msg != null) {
-            if (msg.contains("成功")) {
-                val cardAccount = bill.data.records[0].fromAccount
-                SharePrefs.saveString("cardAccount", cardAccount)
-            } else {
-                MyToast(msg)
+        try {
+            val bill = Gson().fromJson(billjson, BillResponse::class.java)
+            val data = bill.data.records
+            val msg = bill.data.msg
+            val totalpage = bill.data.pages
+            SharePrefs.saveString("totalpage",totalpage.toString())
+            if (msg != null) {
+                if (msg.contains("成功")) {
+                    val cardAccount = bill.data.records[0].fromAccount
+                    SharePrefs.saveString("cardAccount", cardAccount)
+                } else {
+                    MyToast(msg)
+                }
             }
+            return data
+        } catch (e : Exception) {
+            return emptyList()
         }
-        return data
-//        data.forEach {  BillItems.add(it) }
     }
     return emptyList()
 }

@@ -60,7 +60,7 @@ fun loadImage(
                 override fun onLoadCleared(placeholder: Drawable?) {}
             })
     } catch (glideException: GlideException) {
-        Log.d(TAG, "error: ${glideException.rootCauses}")
+//        Log.d(TAG, "error: ${glideException.rootCauses}")
     }
 
     return bitmapState

@@ -16,6 +16,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.activity.screen.GradeActivity
 import com.hfut.schedule.logic.utils.DateTimeUtils
+import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.data.WebVpn
@@ -65,16 +66,8 @@ fun Grade(vm : NetWorkViewModel, ifSaved : Boolean)  {
             }) { Icon(painterResource(R.drawable.article), contentDescription = "Localized description",) }
                          },
         modifier = Modifier.clickable {
-//            getGrade()
             saveString("GradeNum", getGrade().size.toString())
-            //showBottomSheet_Grade = true
-            val it = Intent(MyApplication.context, GradeActivity::class.java).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                WebVpn.webVpn = vm.webVpn
-                putExtra("saved",ifSaved)
-//                putExtra("webVpn",webVpn)
-            }
-            MyApplication.context.startActivity(it)
+            Starter.startGrade(vm,ifSaved)
         }
     )
 

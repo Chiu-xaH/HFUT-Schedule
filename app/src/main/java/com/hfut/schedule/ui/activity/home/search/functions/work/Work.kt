@@ -2,18 +2,13 @@ package com.hfut.schedule.ui.activity.home.search.functions.work
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,45 +17,62 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.TransplantListItem
+import com.hfut.schedule.ui.utils.components.WebDialog
+import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import dev.chrisbanes.haze.HazeState
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Work(ifSaved : Boolean){
-    val sheetState = rememberModalBottomSheetState()
+fun Work(hazeState : HazeState) {
     var showBottomSheet by remember { mutableStateOf(false) }
 
+    var showDialog by remember { mutableStateOf(false) }
+    var url by remember { mutableStateOf("") }
+    WebDialog(showDialog,{ showDialog = false }, url,"就业网")
+
     TransplantListItem(
-        headlineContent = { Text(text = "实习") },
-        leadingContent = { Icon(painter = painterResource(id = R.drawable.work), contentDescription = "") },
+        headlineContent = { Text(text = "就业信息网") },
+        leadingContent = { Icon(painter = painterResource(id = R.drawable.azm), contentDescription = "") },
         modifier = Modifier.clickable {
-            //if(ifSaved) Login() else
-               // showBottomSheet = true
-            MyToast("暂未开发")
+            showBottomSheet = true
         }
     )
-    if (showBottomSheet) {
-        ModalBottomSheet(
+    if (showBottomSheet ) {
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState
+            hazeState = hazeState,
+            isFullExpand = true,
+            autoShape = false,
+            showBottomSheet = showBottomSheet
         ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    BottomSheetTopBar("实习")
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
+            Column(
+            ){
+                HazeBottomSheetTopBar("选择校区", isPaddingStatusBar = false)
 
-                }
+                StyleCardListItem(
+                    headlineContent = {
+                        Text("宣城校区")
+                    },
+                    modifier = Modifier.clickable {
+                        url = MyApplication.WORK_XC_URL
+                        showDialog = true
+                    }
+                )
+                StyleCardListItem(
+                    headlineContent = {
+                        Text("总网")
+                    },
+                    modifier = Modifier.clickable {
+                        url = MyApplication.WORK_URL
+                        showDialog = true
+                    }
+                )
+                Spacer(modifier = Modifier.height(20.dp))
             }
         }
     }

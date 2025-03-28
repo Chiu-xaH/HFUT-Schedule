@@ -72,6 +72,8 @@ import com.hfut.schedule.logic.beans.zjgd.FeeResponse
 import com.hfut.schedule.logic.beans.zjgd.FeeType
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
+import com.hfut.schedule.ui.activity.home.search.functions.transfer.Campus
+import com.hfut.schedule.ui.activity.home.search.functions.transfer.getCampus
 import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
@@ -100,7 +102,7 @@ import java.math.RoundingMode
 @Composable
 fun EleUI(vm : NetWorkViewModel,hazeState: HazeState) {
     val auth = SharePrefs.prefs.getString("auth","")
-    val zjgdUrl = MyApplication.ZJGD_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${FeeType.ELECTRIC.code}&name=pays&paymentUrl=${MyApplication.ZJGD_URL}plat&token=" + auth
+    val zjgdUrl = MyApplication.HUIXIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${FeeType.ELECTRIC.code}&name=pays&paymentUrl=${MyApplication.HUIXIN_URL}plat&token=" + auth
     var showDialogWeb by remember { mutableStateOf(false) }
     WebDialog(showDialogWeb, url = zjgdUrl, title = "慧新易校",showChanged = { showDialogWeb = false }, showTop = false)
 
@@ -167,7 +169,7 @@ fun EleUI(vm : NetWorkViewModel,hazeState: HazeState) {
 
     Column() {
 
-        HazeBottomSheetTopBar("寝室电费-宣城校区", isPaddingStatusBar = false) {
+        HazeBottomSheetTopBar("寝室电费" + if(getCampus() != Campus.XUANCHENG) "-宣城校区" else "", isPaddingStatusBar = false) {
             Row() {
                 if(showitem4)
                     IconButton(onClick = {RoomNumber = RoomNumber.replaceFirst(".$".toRegex(), "")}) {
@@ -192,12 +194,14 @@ fun EleUI(vm : NetWorkViewModel,hazeState: HazeState) {
                                 vm.ElectricData.observeForever { result ->
                                     if (result?.contains("success") == true) {
                                         showButton = true
-                                        val jsons = Gson().fromJson(result, FeeResponse::class.java).map
-                                        val data = jsons.showData
-                                        for ((_, value) in data) {
-                                            Result = value
-                                        }
-
+                                        try {
+                                            val jsons = Gson().fromJson(result, FeeResponse::class.java).map
+                                            val data = jsons.showData
+                                            for ((_, value) in data) {
+                                                Result = value
+                                            }
+                                        } catch (e : Exception) {
+                                            MyToast("错误") }
                                         val jsonObject = JSONObject(result)
                                         val dataObject = jsonObject.getJSONObject("map").getJSONObject("data")
                                         dataObject.put("myCustomInfo", "房间：$input")

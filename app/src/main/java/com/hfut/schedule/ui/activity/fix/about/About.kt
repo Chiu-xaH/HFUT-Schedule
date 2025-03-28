@@ -122,17 +122,32 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean
             }
         }
 
-        val sheetState_info = rememberModalBottomSheetState(skipPartiallyExpanded = true)
         var showBottomSheet_info by remember { mutableStateOf(false) }
         if (showBottomSheet_info) {
             HazeBottomSheet(
                 onDismissRequest = { showBottomSheet_info = false },
                 hazeState = hazeState,
                 showBottomSheet = showBottomSheet_info,
-//                sheetState = sheetState_info,
-//                shape = bottomSheetRound(sheetState_info)
             ) {
                 About(vm)
+            }
+        }
+
+        var showBottomSheet_support by remember { mutableStateOf(false) }
+        if (showBottomSheet_support) {
+            HazeBottomSheet(
+                onDismissRequest = { showBottomSheet_support = false },
+                hazeState = hazeState,
+                showBottomSheet = showBottomSheet_support,
+            ) {
+                Scaffold(
+                    containerColor = androidx.compose.ui.graphics.Color.Transparent,
+                    topBar = {
+                        HazeBottomSheetTopBar("功能可用性支持")
+                    },
+                ) { innerPadding ->
+                    Support(hazeState,innerPadding)
+                }
             }
         }
 
@@ -176,6 +191,13 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean
             modifier = Modifier.clickable { showBottomSheet_info = true },
             leadingContent = { Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")}
         )
+        TransplantListItem(
+            headlineContent = { Text(text = "功能可用性支持") },
+            supportingContent = { Text(text = "根据Android版本与国内不同厂商定制UI的不同，APP会有若干功能不被支持")},
+            modifier = Modifier.clickable { showBottomSheet_support = true },
+            leadingContent = { Icon(painter = painterResource(id = R.drawable.support), contentDescription = "")}
+        )
+
 
 
         if(cubeShow) {

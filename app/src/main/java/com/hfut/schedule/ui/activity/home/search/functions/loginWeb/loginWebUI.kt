@@ -61,7 +61,7 @@ import com.hfut.schedule.logic.utils.data.reEmptyLiveDta
 import com.hfut.schedule.logic.utils.parse.formatDecimal
 import com.hfut.schedule.ui.activity.home.search.functions.electric.PayFor
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
-import com.hfut.schedule.ui.activity.home.search.functions.transfer.CampusId
+import com.hfut.schedule.ui.activity.home.search.functions.transfer.Campus
 import com.hfut.schedule.ui.activity.home.search.functions.transfer.getCampus
 import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomButton
@@ -103,7 +103,7 @@ fun LoginWebScaUI(vmUI : UIViewModel, vm : NetWorkViewModel,hazeState: HazeState
 @Composable
 fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel,hazeState: HazeState) {
     val auth = prefs.getString("auth","")
-    val zjgdUrl = MyApplication.ZJGD_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${FeeType.WEB.code}&name=pays&paymentUrl=${MyApplication.ZJGD_URL}plat&token=" + auth
+    val zjgdUrl = MyApplication.HUIXIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${FeeType.WEB.code}&name=pays&paymentUrl=${MyApplication.HUIXIN_URL}plat&token=" + auth
     var showDialogWeb by remember { mutableStateOf(false) }
     WebDialog(showDialogWeb, url = zjgdUrl, title = "慧新易校",showChanged = { showDialogWeb = false }, showTop = false)
     // 支付用的变量
@@ -113,7 +113,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel,hazeState: HazeState) {
     var showBottomSheet by remember { mutableStateOf(false) }
     var json by remember { mutableStateOf("") }
     // 校园网用的变量
-    val isXuancheng = getCampus() == CampusId.XUANCHENG
+    val isXuancheng = getCampus() == Campus.XUANCHENG
     val memoryWeb = SharePrefs.prefs.getString("memoryWeb","0")
     var flow by remember { mutableStateOf(vmUI.webValue.value?.flow ?: memoryWeb) }
     var fee by remember { mutableStateOf(vmUI.webValue.value?.fee?: "0") }
@@ -303,7 +303,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel,hazeState: HazeState) {
     }
 //////////////////////////////布局区///////////////////////////////////
     Column() {
-        HazeBottomSheetTopBar("校园网-宣城校区", isPaddingStatusBar = false) {
+        HazeBottomSheetTopBar("校园网" + if(getCampus() != Campus.XUANCHENG) "-宣城校区" else "", isPaddingStatusBar = false) {
             Row {
                 FilledTonalIconButton(
                     onClick = {

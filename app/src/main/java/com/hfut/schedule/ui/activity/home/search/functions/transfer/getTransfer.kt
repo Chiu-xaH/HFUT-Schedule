@@ -11,14 +11,14 @@ import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
 import org.jsoup.Jsoup
 
-enum class CampusId {
+enum class Campus {
     HEFEI,XUANCHENG
 }
-fun getCampus() : CampusId {
+fun getCampus() : Campus {
     return if(getPersonInfo().school?.contains("宣城") == true) {
-        CampusId.XUANCHENG
+        Campus.XUANCHENG
     } else {
-        CampusId.HEFEI
+        Campus.HEFEI
     }
 }
 
@@ -35,7 +35,6 @@ fun getTransfer(vm : NetWorkViewModel) : List<TransferData> {
 
 
 fun getMyTransferPre(vm : NetWorkViewModel) : List<MyApplyModels>? {
-    //  val list = mutableListOf<TransferData>()
     return try {
         val json = vm.myApplyData.value
 

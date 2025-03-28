@@ -19,7 +19,7 @@ object JxglstuParseUtils {
                     if(id != null) {
                         bizTypeId = id
                     }
-                    Log.d("bizTypeId", id.toString())
+//                    Log.d("bizTypeId", id.toString())
                     return id
                 }
             }

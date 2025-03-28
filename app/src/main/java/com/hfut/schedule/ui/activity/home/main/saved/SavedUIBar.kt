@@ -342,15 +342,17 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
                                     }
 
                                     if(ifSaved) {
-                                        TextButton(onClick = { refreshLogin() }) {
-                                            Icon(painter = painterResource(id =  R.drawable.login), contentDescription = "")
+                                        IconButton (onClick = { refreshLogin() }) {
+                                            Icon(painter = painterResource(id =  R.drawable.login), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
                                         }
                                     } else {
-                                        Text(text = "已登录",Modifier.padding(horizontal = appHorizontalDp()), color = MaterialTheme.colorScheme.primary)
+                                        Spacer(modifier = Modifier.width(7.5.dp))
+                                        Text(text = "已登录", color = MaterialTheme.colorScheme.primary)
+                                        Spacer(modifier = Modifier.width(appHorizontalDp()))
                                     }
+                                } else {
+                                    Spacer(modifier = Modifier.width(appHorizontalDp()))
                                 }
-                                Spacer(modifier = Modifier.width(appHorizontalDp()))
-                                //null
                             }
                             SETTINGS -> null
                         }

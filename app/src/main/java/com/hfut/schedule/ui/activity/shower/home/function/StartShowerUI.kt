@@ -111,7 +111,11 @@ fun ShowerStatusUI(vm : GuaGuaViewModel) {
                     vm.startShowerData.observeForever { result ->
                         if (result != null) {
                             if(result.contains("message")) {
-                                msg = Gson().fromJson(result, StatusMsgResponse::class.java).message
+                                msg = try {
+                                    Gson().fromJson(result, StatusMsgResponse::class.java).message
+                                } catch (_: Exception) {
+                                    "错误"
+                                }
                                 refresh = false
                                 loading = false
                             }

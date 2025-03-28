@@ -4,24 +4,15 @@ import android.os.Handler
 import android.os.Looper
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
-import com.hfut.schedule.ui.utils.components.LoadingUI
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,24 +24,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DialogProperties
 import com.google.gson.Gson
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.utils.data.SharePrefs
-import com.hfut.schedule.viewmodel.NetWorkViewModel
-import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
-import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.data.reEmptyLiveDta
-import com.hfut.schedule.ui.utils.components.BottomTip
-import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.utils.style.RowHorizontal
+import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.components.WebDialog
-import com.hfut.schedule.ui.utils.components.WebViewScreen
 import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import com.hfut.schedule.ui.utils.style.RowHorizontal
+import com.hfut.schedule.viewmodel.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -61,9 +47,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Mail(ifSaved : Boolean,vm : NetWorkViewModel,hazeState: HazeState) {
-    val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
-    val savedUsername = prefs.getString("Username", "")
     val mail = "@mail.hfut.edu.cn"
     TransplantListItem(
         headlineContent = { Text(text = "邮箱") },
@@ -82,7 +66,6 @@ fun Mail(ifSaved : Boolean,vm : NetWorkViewModel,hazeState: HazeState) {
             hazeState = hazeState,
             isFullExpand = false,
             showBottomSheet = showBottomSheet
-//            sheetState = sheetState
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
@@ -103,7 +86,6 @@ fun Mail(ifSaved : Boolean,vm : NetWorkViewModel,hazeState: HazeState) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MailUI(vm: NetWorkViewModel) {
     val token = prefs.getString("bearer","")
