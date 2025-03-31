@@ -153,20 +153,22 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    @Deprecated("Deprecated in Java")
+    @Deprecated("Deprecated in Java",
+        ReplaceWith("super.onRequestPermissionsResult(requestCode, permissions, grantResults)")
+    )
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when(requestCode) {
-            1 -> {
-                if(grantResults.isNotEmpty() && grantResults[0]  == PackageManager.PERMISSION_GRANTED) {
-
-                } else Toast.makeText(this,"拒绝权限后某些功能将不可用",Toast.LENGTH_SHORT).show()
-            }
-        }
+//        when(requestCode) {
+//            1 -> {
+//                if(grantResults.isNotEmpty() && grantResults[0]  == PackageManager.PERMISSION_GRANTED) {
+//
+//                } else Toast.makeText(this,"拒绝权限后某些功能将不可用",Toast.LENGTH_SHORT).show()
+//            }
+//        }
     }
 }
 

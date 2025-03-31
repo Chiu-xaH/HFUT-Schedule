@@ -299,7 +299,6 @@ suspend fun delCourseEvents(activity: Activity)  = withContext(Dispatchers.IO) {
 
                 var endTime = item.endTime.toString()
                 endTime = endTime.substring(0, endTime.length - 2) + ":" + endTime.substring(endTime.length - 2)
-                val room = item.room.nameZh
                 var courseId = item.lessonId.toString()
 
                 for (j in lessonList.indices) {
