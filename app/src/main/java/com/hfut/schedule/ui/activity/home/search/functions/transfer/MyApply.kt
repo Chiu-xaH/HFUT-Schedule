@@ -77,7 +77,7 @@ import com.hfut.schedule.ui.utils.components.DepartmentIcons
 import com.hfut.schedule.ui.utils.components.EmptyUI
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LoadingLargeCard
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.components.statusUI2

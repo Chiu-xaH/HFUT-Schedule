@@ -35,7 +35,7 @@ import com.hfut.schedule.logic.utils.data.reEmptyLiveDta
 import com.hfut.schedule.ui.utils.components.AnimationCardListItem
 import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.LoadingUI
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.components.WebDialog
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -163,7 +163,7 @@ fun XuanquNewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                         page--
                         refresh()
                     } else {
-                        MyToast("第一页")
+                        showToast("第一页")
                     }
                 },
             ) { Icon(Icons.Filled.ArrowBack, "Add Button") }

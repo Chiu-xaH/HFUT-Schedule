@@ -3,6 +3,7 @@ package com.hfut.schedule.ui.activity.fix.main
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Build
+import androidx.activity.compose.LocalActivity
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
@@ -86,7 +87,7 @@ fun Fix(vm : LoginViewModel,vm2 : NetWorkViewModel) {
     }
 
 
-    val context = LocalContext.current
+    val context = LocalActivity.current
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -100,7 +101,7 @@ fun Fix(vm : LoginViewModel,vm2 : NetWorkViewModel) {
                     title = { Text("修复与检测") },
                     actions = {
                         IconButton(onClick = {
-                            (context as? Activity)?.finish()
+                            context?.finish()
                         }) {
                             Icon(Icons.Filled.Close, contentDescription = "")
                         }

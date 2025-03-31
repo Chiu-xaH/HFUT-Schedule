@@ -28,6 +28,7 @@ object PermissionManager {
             )
         }
     }
+
     @JvmStatic
     fun checkAndRequestCalendarPermission(activity: Activity) {
         if(
@@ -37,14 +38,12 @@ object PermissionManager {
                 Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED) {
             return
         }
-//    MyToast("请授予日历权限")
-        if(ContextCompat.checkSelfPermission(activity,
-                Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED)
-            ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.WRITE_CALENDAR),1)
-
         if(ContextCompat.checkSelfPermission(activity,
                 Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED)
             ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.READ_CALENDAR),1)
+        if(ContextCompat.checkSelfPermission(activity,
+                Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED)
+            ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.WRITE_CALENDAR),1)
     }
     @JvmStatic
     fun checkAndRequestCameraPermission(activity: Activity) {

@@ -36,7 +36,7 @@ import com.hfut.schedule.ui.activity.home.main.saved.isNextOpen
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotalForApi
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.TransplantListItem
@@ -105,7 +105,7 @@ fun NextCourse(ifSaved : Boolean,vmUI : UIViewModel,vm : NetWorkViewModel,hazeSt
                     else refreshLogin()
                 } else showBottomSheet_next = true
             } else {
-                MyToast("入口暂未开放")
+                showToast("入口暂未开放")
             }
         }
     )

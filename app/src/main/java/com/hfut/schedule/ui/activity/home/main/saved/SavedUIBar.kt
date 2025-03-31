@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.rememberPagerState
@@ -175,8 +176,8 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
     var showBottomSheet by remember { mutableStateOf(false) }
 
     var ifSaved by remember { mutableStateOf(true) }
-    val defaultCalendar = prefs.getInt("SWITCH_DEFAULT_CALENDAR", COMMUNITY)
-    var swapUI by remember { mutableIntStateOf(if(ifSaved) defaultCalendar else JXGLSTU) }
+    val defaultCalendar = prefs.getInt("SWITCH_DEFAULT_CALENDAR", CourseType.COMMUNITY.code)
+    var swapUI by remember { mutableIntStateOf(if(ifSaved) defaultCalendar else CourseType.JXGLSTU.code) }
     var isFriend by remember { mutableStateOf(false) }
 
     val sheetState_multi = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -242,7 +243,6 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
         )
         {
             Column(
-//                modifier = Modifier.bottomSheetBlur(hazeState)
             ){
                 MultiScheduleSettings(ifSaved,swapUI,
                     onSelectedChange = { newSelected ->
@@ -255,6 +255,8 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
                     vmUI,
                     hazeState
                 )
+                Spacer(modifier = Modifier.height(appHorizontalDp()))
+
             }
         }
     }
@@ -442,8 +444,8 @@ fun NoNetWork(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel) {
                 }) {
                     if(!isFriend)
                         when (swapUI) {
-                            COMMUNITY -> SaveCourse(showAll, innerPadding,vmUI, onDateChange = { new -> today = new}, today = today, vm = vm, hazeState = hazeState)
-                            JXGLSTU -> CalendarScreen(showAll,vm,innerPadding,vmUI,false,vm2,false,{newDate -> today = newDate},today,hazeState)
+                            CourseType.COMMUNITY.code -> SaveCourse(showAll, innerPadding,vmUI, onDateChange = { new -> today = new}, today = today, vm = vm, hazeState = hazeState)
+                            CourseType.JXGLSTU.code -> CalendarScreen(showAll,vm,innerPadding,vmUI,false,vm2,false,{newDate -> today = newDate},today,hazeState)
                             else -> {
                                 CustomSchedules(showAll,innerPadding,vmUI,swapUI-2,{newDate-> today = newDate}, today)
                             }

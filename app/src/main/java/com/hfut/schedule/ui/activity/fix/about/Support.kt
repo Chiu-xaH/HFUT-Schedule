@@ -46,13 +46,13 @@ fun Support(hazeState: HazeState,innerPadding : PaddingValues) {
             false,true,true,true,false,true,null,true
         )),
         SupportItemBean("图标动态取色","Android 12+","https://github.com/Chiu-xaH/HFUT-Schedule/blob/main/markdown/CONTRAST.md?plain=1#L8", listOf(
-            false,true,null,true,false,true,false,true
+            false,true,null,false,false,true,false,true
         )),
         SupportItemBean("层级实时模糊","Android 13+","https://github.com/Chiu-xaH/HFUT-Schedule/blob/main/markdown/CONTRAST.md?plain=1#L3", listOf(
             false,true,true,true,true,true,true,true
         )),
         SupportItemBean("预测式返回","Android 13+","https://github.com/Chiu-xaH/HFUT-Schedule/blob/main/markdown/CONTRAST.md?plain=1#L11", listOf(
-            false,false,true,true,false,true,null,true
+            false,false,true,false,false,true,null,true
         )),
         SupportItemBean("16KB页大小","Android 15+","https://github.com/Chiu-xaH/HFUT-Schedule/blob/main/markdown/CONTRAST.md?plain=1#L14", listOf(
             false,false,null,null,null,null,null,true
@@ -60,7 +60,7 @@ fun Support(hazeState: HazeState,innerPadding : PaddingValues) {
     )
     LazyColumn(modifier = Modifier.padding(innerPadding)) {
         item {
-            StyleCardListItem(
+            TransplantListItem(
                 headlineContent = { Text("聚在工大致力于为每个用户提供平等的服务，但由于不同手机厂商对Android系统的定制，以及Android版本的不同，导致最终效果往往不同，但以下的特性均不影响APP的功能") },
                 leadingContent = {
                     Icon(painterResource(R.drawable.info),null)
@@ -72,7 +72,6 @@ fun Support(hazeState: HazeState,innerPadding : PaddingValues) {
             val item = items[index]
             SupportItem(item)
         }
-//        item { Spacer(Modifier.height(innerPadding.calculateBottomPadding())) }
     }
 }
 
@@ -112,20 +111,20 @@ private fun SupportItem(item : SupportItemBean) {
                         Row {
                             SupportChip("HUAWEI",isSupported = list[0])
                             Spacer(Modifier.width(10.dp))
-                            SupportChip("HONOR",isSupported = list[1])
+                            SupportChip("MI",isSupported = list[1])
                         }
                         Row {
-                            SupportChip("vivo",isSupported = list[2])
+                            SupportChip("OPPO",isSupported = list[2])
                             Spacer(Modifier.width(10.dp))
-                            SupportChip("MI",isSupported = list[3])
+                            SupportChip("vivo",isSupported = list[3])
                         }
                         Row {
-                            SupportChip("SAMSUNG",isSupported = list[4])
+                            SupportChip("HONOR",isSupported = list[4])
                             Spacer(Modifier.width(10.dp))
-                            SupportChip("MEIZU",isSupported = list[5])
+                            SupportChip("SAMSUNG",isSupported = list[5])
                         }
                         Row {
-                            SupportChip("OPPO",isSupported = list[6])
+                            SupportChip("MEIZU",isSupported = list[6])
                             Spacer(Modifier.width(10.dp))
                             SupportChip("(类)原生",isSupported = list[7])
                         }

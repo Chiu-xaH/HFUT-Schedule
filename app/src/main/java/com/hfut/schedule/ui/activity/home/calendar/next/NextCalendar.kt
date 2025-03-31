@@ -54,7 +54,7 @@ import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.ui.activity.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.activity.home.calendar.next.DatumMode.*
 import com.hfut.schedule.ui.utils.components.appHorizontalDp
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.style.HazeBottomSheet
 import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.viewmodel.NetWorkViewModel

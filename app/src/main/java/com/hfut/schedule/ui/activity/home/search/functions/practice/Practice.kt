@@ -20,7 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,7 +35,7 @@ fun Practice(ifSaved : Boolean){
         modifier = Modifier.clickable {
             //if(ifSaved) Login() else
                // showBottomSheet = true
-            MyToast("暂未开发")
+            showToast("暂未开发")
         }
     )
     if (showBottomSheet) {

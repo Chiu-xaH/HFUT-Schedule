@@ -40,7 +40,7 @@ import com.hfut.schedule.logic.utils.data.SharePrefs.saveBoolean
 import com.hfut.schedule.logic.utils.Starter.loginGuaGua
 import com.hfut.schedule.ui.utils.components.appHorizontalDp
 
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.navigateAndClear
 import com.hfut.schedule.ui.utils.navigateAndSave

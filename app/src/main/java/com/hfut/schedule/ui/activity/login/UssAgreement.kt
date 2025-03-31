@@ -1,6 +1,7 @@
 package com.hfut.schedule.ui.activity.login
 
 import android.app.Activity
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,7 +38,7 @@ import com.hfut.schedule.logic.utils.VersionUtils
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.utils.components.appHorizontalDp
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.navigateAndClear
 import com.hfut.schedule.ui.utils.style.bottomBarBlur
@@ -63,7 +64,7 @@ fun UseAgreementUI(navController : NavHostController) {
         "最后编辑于 2025-03-23 16:42 v4"
     )
 
-    val context = LocalContext.current
+    val context = LocalActivity.current
 
 
     androidx.compose.material3.Scaffold(
@@ -86,7 +87,7 @@ fun UseAgreementUI(navController : NavHostController) {
                 actions = {
                     //  Row {
                     IconButton(onClick = {
-                        (context as? Activity)?.finish()
+                        context?.finish()
                     }) {
                         Icon(
                             painterResource(id = R.drawable.close),
@@ -121,8 +122,8 @@ fun UseAgreementUI(navController : NavHostController) {
                     Spacer(modifier = Modifier.width(appHorizontalDp()))
                     FilledTonalButton(
                         onClick = {
-                            MyToast("已关闭APP")
-                            (context as Activity).finish()
+                            showToast("已关闭APP")
+                            context?.finish()
                         },
                         modifier = Modifier
                             .fillMaxWidth()

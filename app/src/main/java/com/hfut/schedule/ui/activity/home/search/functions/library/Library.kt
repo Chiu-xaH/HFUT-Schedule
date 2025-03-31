@@ -59,7 +59,7 @@ import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LoadingUI
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.HazeBottomSheet
@@ -288,7 +288,7 @@ fun BooksUI(vm: NetWorkViewModel,hazeState: HazeState) {
                                 page--
                                 refresh = true
                             } else {
-                                MyToast("第一页")
+                                showToast("第一页")
                             }
                         },
                     ) {

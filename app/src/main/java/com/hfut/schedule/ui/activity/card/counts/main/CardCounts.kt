@@ -66,7 +66,7 @@ import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.cardNormalColor
 import com.hfut.schedule.ui.utils.components.cardNormalDp
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.components.SmallCard
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.bottomSheetRound
@@ -339,7 +339,7 @@ fun monthCount(vm : NetWorkViewModel, innerPadding : PaddingValues) {
                             onClick = {
                                 if(Months.toInt() > 1)
                                     Click(-1)
-                                else MyToast("请切换年份")
+                                else showToast("请切换年份")
                             },
                         ) { Icon(Icons.Filled.ArrowBack, contentDescription = "") }
                         Spacer(modifier = Modifier.padding(horizontal =appHorizontalDp()))

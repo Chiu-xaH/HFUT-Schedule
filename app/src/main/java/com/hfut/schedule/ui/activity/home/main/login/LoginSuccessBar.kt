@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.rememberPagerState
@@ -66,8 +67,7 @@ import com.hfut.schedule.ui.activity.home.cube.items.subitems.MyAPIItem
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.getUpdates
 import com.hfut.schedule.ui.activity.home.cube.main.SettingsScreen
 import com.hfut.schedule.ui.activity.home.focus.main.TodayScreen
-import com.hfut.schedule.ui.activity.home.main.saved.COMMUNITY
-import com.hfut.schedule.ui.activity.home.main.saved.JXGLSTU
+import com.hfut.schedule.ui.activity.home.main.saved.CourseType
 import com.hfut.schedule.ui.activity.home.main.saved.MultiScheduleSettings
 import com.hfut.schedule.ui.activity.home.main.saved.texts
 import com.hfut.schedule.ui.activity.home.search.functions.life.ApiFromLife
@@ -84,7 +84,7 @@ import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.CustomTabRow
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.navigateAndSave
 import com.hfut.schedule.ui.utils.style.bottomBarBlur
@@ -132,7 +132,7 @@ fun SuccessUI(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel, w
         val json = prefs.getString("json","")
         if (json != null) {
             if (card == "请登录刷新" || !json.contains("课")) {
-                MyToast("正在后台登录其他接口，请稍作等待再切换界面")
+                showToast("正在后台登录其他接口，请稍作等待再切换界面")
                 delay(8000)
                 isEnabled = true
             } else {
@@ -182,7 +182,7 @@ fun SuccessUI(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel, w
 
 
 
-    var swapUI by remember { mutableStateOf(JXGLSTU) }
+    var swapUI by remember { mutableStateOf(CourseType.JXGLSTU.code) }
     var isFriend by remember { mutableStateOf(false) }
     var bottomBarItems by remember { mutableStateOf(COURSES) }
     val sheetState_multi = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -205,6 +205,8 @@ fun SuccessUI(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel, w
                     vmUI,
                     hazeState
                 )
+                Spacer(modifier = Modifier.height(appHorizontalDp()))
+
             }
         }
     }
@@ -383,8 +385,8 @@ fun SuccessUI(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel, w
 
                     if(!isFriend)
                         when (swapUI) {
-                            COMMUNITY -> SaveCourse(showAll, innerPadding,vmUI, onDateChange = { new -> today = new}, today = today, vm = vm, hazeState = hazeState)
-                            JXGLSTU -> CalendarScreen(showAll,vm,innerPadding,vmUI,webVpn,vm2,true,{newDate -> today = newDate},today, hazeState)
+                            CourseType.COMMUNITY.code -> SaveCourse(showAll, innerPadding,vmUI, onDateChange = { new -> today = new}, today = today, vm = vm, hazeState = hazeState)
+                            CourseType.JXGLSTU.code -> CalendarScreen(showAll,vm,innerPadding,vmUI,webVpn,vm2,true,{newDate -> today = newDate},today, hazeState)
                             ///CustomSchedules(showAll,innerPadding,vmUI,-1)
 //                        NEXT -> {
 //                            Column(modifier = Modifier.padding(innerPadding)) {

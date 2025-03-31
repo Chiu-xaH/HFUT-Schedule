@@ -32,9 +32,8 @@ import com.hfut.schedule.logic.utils.VersionUtils
 import com.hfut.schedule.logic.utils.data.SharePrefs.saveBoolean
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.AnimationSetting
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.components.TransplantListItem
-import com.hfut.schedule.ui.utils.components.num
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
@@ -134,7 +133,7 @@ fun UIScreen(navController: NavController, innerPaddings : PaddingValues,
                 },
                 leadingContent = { Icon(painterResource(R.drawable.deblur), contentDescription = "Localized description",) },
                 trailingContent = {  Switch(checked = true, onCheckedChange = {}, enabled =false) },
-                modifier = Modifier.clickable { MyToast("默认开启") }
+                modifier = Modifier.clickable { showToast("默认开启") }
             )
 
             TransplantListItem(

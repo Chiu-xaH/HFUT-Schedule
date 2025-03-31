@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -66,7 +67,7 @@ import com.hfut.schedule.ui.activity.shower.function.EditLoginCode
 import com.hfut.schedule.ui.utils.components.BottomTip
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.navigateAndClear
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.NetWorkViewModel
@@ -79,7 +80,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun ShowerLogin(vm : GuaGuaViewModel,netVm : NetWorkViewModel,navHostController: NavHostController) {
 
-    val context = LocalContext.current
+    val context = LocalActivity.current
 
 
     Scaffold(
@@ -102,7 +103,7 @@ fun ShowerLogin(vm : GuaGuaViewModel,netVm : NetWorkViewModel,navHostController:
                 actions = {
                     Row {
                         IconButton(onClick = {
-                            (context as? Activity)?.finish()
+                            context?.finish()
                         }) {
                             Icon(painterResource(id = R.drawable.logout), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
                         }
@@ -249,7 +250,7 @@ fun GuaGuaLoginUI(vm : GuaGuaViewModel,netVm : NetWorkViewModel,navHostControlle
                                         saveString("GuaGuaPersonInfo",result)
                                         navHostController.navigateAndClear(ShowerScreen.HOME.name)
                                     } else if(result?.contains("error") == true) {
-                                        MyToast("登陆失败")
+                                        showToast("登陆失败")
                                     }
                                 }
                             }
@@ -274,9 +275,9 @@ fun LoginGuaGuaClick(phoneNumber : String,psk : String,vm: GuaGuaViewModel,navHo
                     if (result != null && result.contains("成功")) {
                         saveLoginCode(result)
                         navHostController.navigateAndClear(ShowerScreen.HOME.name)
-                        MyToast("登录成功")
+                        showToast("登录成功")
                     } else if(result != null && result.contains("error")) {
-                        MyToast(getLoginedMsg(result))
+                        showToast(getLoginedMsg(result))
                     }
                 }
             }

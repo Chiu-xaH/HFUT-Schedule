@@ -61,17 +61,17 @@
             android:name=".activity.shower.ShowerActivity"
             android:exported="true"
             android:label="@string/title_activity_shower"
-            android:theme="@style/Theme.肥工课程表" />
+            android:theme="@style/Theme.App" />
         <activity
             android:name=".activity.screen.FixActivity"
             android:exported="true"
             android:label="@string/title_activity_fix"
-            android:theme="@style/Theme.肥工课程表" />
+            android:theme="@style/Theme.App" />
         <activity
             android:name=".activity.screen.GradeActivity"
             android:exported="true"
             android:label="@string/title_activity_grade"
-            android:theme="@style/Theme.肥工课程表" />
+            android:theme="@style/Theme.App" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -91,12 +91,12 @@
             android:name=".activity.screen.CardActivity"
             android:exported="true"
             android:label="@string/title_activity_card"
-            android:theme="@style/Theme.肥工课程表" />
+            android:theme="@style/Theme.App" />
         <activity
             android:name=".activity.screen.SuccessActivity"
             android:exported="false"
             android:label="@string/title_activity_uiacitivity"
-            android:theme="@style/Theme.肥工课程表" />
+            android:theme="@style/Theme.App" />
         <activity
             android:name=".activity.MainActivity"
             android:exported="true"

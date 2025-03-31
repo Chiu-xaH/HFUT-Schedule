@@ -14,7 +14,7 @@ import com.hfut.schedule.activity.screen.SuccessActivity
 import com.hfut.schedule.activity.shower.ShowerActivity
 import com.hfut.schedule.logic.enums.ShowerScreen
 import com.hfut.schedule.logic.utils.data.WebVpn
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 
 object Starter {
@@ -24,10 +24,10 @@ object Starter {
     fun startLaunchAPK(packageName: String,appName : String = "应用") {
         try {
             val intent = MyApplication.context.packageManager.getLaunchIntentForPackage(packageName)
-            if(intent == null) MyToast("未安装${appName}")
+            if(intent == null) showToast("未安装${appName}")
             else  MyApplication.context.startActivity(intent)
         } catch (_: Exception) {
-            MyToast("启动外部应用失败")
+            showToast("启动外部应用失败")
         }
     }
     //传入应用URL打开
@@ -38,7 +38,7 @@ object Starter {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             MyApplication.context.startActivity(intent)
         } catch (e : Exception) {
-            MyToast("打开支付宝失败")
+            showToast("打开支付宝失败")
         }
     }
     //传入网页URL打开
@@ -55,7 +55,7 @@ object Starter {
 
             MyApplication.context.startActivity(it)
         } catch (e : Exception) {
-            MyToast("启动浏览器失败")
+            showToast("启动浏览器失败")
         }
     }
     //跳转Activity

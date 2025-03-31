@@ -81,7 +81,7 @@ import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LoadingLargeCard
 import com.hfut.schedule.ui.utils.components.MenuChip
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.components.WebDialog
 import com.hfut.schedule.ui.utils.style.CardForListColor
@@ -152,7 +152,7 @@ fun EleUI(vm : NetWorkViewModel,hazeState: HazeState) {
                     val int by remember { mutableStateOf(payNumber.toFloat()) }
                     if(int > 0) {
                         PayFor(vm,int,roomInfo,json,FeeType.ELECTRIC,hazeState)
-                    } else MyToast("输入数值")
+                    } else showToast("输入数值")
                 }
         }
     }
@@ -201,7 +201,7 @@ fun EleUI(vm : NetWorkViewModel,hazeState: HazeState) {
                                                 Result = value
                                             }
                                         } catch (e : Exception) {
-                                            MyToast("错误") }
+                                            showToast("错误") }
                                         val jsonObject = JSONObject(result)
                                         val dataObject = jsonObject.getJSONObject("map").getJSONObject("data")
                                         dataObject.put("myCustomInfo", "房间：$input")

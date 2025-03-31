@@ -3,6 +3,7 @@ package com.hfut.schedule.ui.activity.nologin
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Build
+import androidx.activity.compose.LocalActivity
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
@@ -87,8 +88,8 @@ fun TodayScreenNoLogin(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding
 
 //    val switch_server = false
 
-    val context = LocalContext.current
-    val activity = context as Activity
+//    val context = LocalContext.current
+    val activity = LocalActivity.current
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -121,15 +122,15 @@ fun TodayScreenNoLogin(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding
                         item { Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding())) }
                         when(page) {
                             TAB_LEFT -> {
-                                    items(MySchedule().size) { item -> MyScheuleItem(item = item, MySchedule = MySchedule(),false,activity) }
+                                    items(MySchedule().size) { item -> activity?.let { MyScheuleItem(item = item, MySchedule = MySchedule(),false,it) } }
 
-                                    items(MyWangKe().size) { item -> WangkeItem(item = item, MyWangKe = MyWangKe(),false,activity) }
+                                    items(MyWangKe().size) { item -> activity?.let { WangkeItem(item = item, MyWangKe = MyWangKe(),false,it) } }
                             }
                             TAB_RIGHT -> {
                                     //日程
-                                    items(MySchedule().size) { item -> MyScheuleItem(item = item, MySchedule = MySchedule(),true,activity)  }
+                                    items(MySchedule().size) { item -> activity?.let { MyScheuleItem(item = item, MySchedule = MySchedule(),true,it) }  }
                                     //网课
-                                    items(MyWangKe().size) { item -> WangkeItem(item = item, MyWangKe = MyWangKe(),true,activity) }
+                                    items(MyWangKe().size) { item -> activity?.let { WangkeItem(item = item, MyWangKe = MyWangKe(),true,it) } }
 
                                     items(AddedItems().size){ item -> AddItem(item = item, AddedItems = AddedItems()) }
 

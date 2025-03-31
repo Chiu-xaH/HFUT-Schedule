@@ -2,6 +2,7 @@ package com.hfut.schedule.ui.activity.grade.main
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
@@ -88,7 +89,7 @@ fun GradeUI(ifSaved : Boolean,vm : NetWorkViewModel) {
     val blur by remember { mutableStateOf(switchblur) }
     val hazeState = remember { HazeState() }
     val navController = rememberNavController()
-    val context = LocalContext.current
+    val context = LocalActivity.current
     val animation by remember { mutableIntStateOf(prefs.getInt("ANIMATION", MyApplication.ANIMATION_SPEED)) }
 
     var showSearch by remember { mutableStateOf(false) }
@@ -155,7 +156,7 @@ fun GradeUI(ifSaved : Boolean,vm : NetWorkViewModel) {
                                 Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")
                             }
                             IconButton(onClick = {
-                                (context as? Activity)?.finish()
+                                context?.finish()
                             }) {
                                 Icon(Icons.Filled.Close, contentDescription = "")
                             }

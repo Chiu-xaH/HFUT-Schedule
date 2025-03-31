@@ -69,7 +69,7 @@ import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.EmptyUI
 import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.MyCustomCard
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.components.RotatingIcon
 import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.ui.utils.components.ScrollText
@@ -422,7 +422,7 @@ fun DetailItems(lessons: lessons,vm : NetWorkViewModel,hazeState: HazeState) {
                             },
                             modifier = Modifier
                                 .clickable {
-                                    MyToast("正在开发")
+                                    showToast("正在开发")
                                 }
                                 .weight(.5f),
                         )
@@ -456,7 +456,7 @@ fun DetailItems(lessons: lessons,vm : NetWorkViewModel,hazeState: HazeState) {
                                 )
                             },
                             modifier = Modifier
-                                .clickable { MyToast("请前往 合工大教务 微信公众号") }
+                                .clickable { showToast("请前往 合工大教务 微信公众号") }
                                 .weight(.5f),
                         )
 //                        ListItem(

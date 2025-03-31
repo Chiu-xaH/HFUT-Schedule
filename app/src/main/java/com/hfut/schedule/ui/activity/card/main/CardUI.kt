@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
+import androidx.activity.compose.LocalActivity
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
@@ -74,7 +75,7 @@ import com.hfut.schedule.ui.utils.NavigateAnimationManager.currentPage
 //import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
 
 import com.hfut.schedule.ui.utils.components.CustomTabRow
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.navigateAndSave
 import com.hfut.schedule.ui.utils.style.bottomBarBlur
 import com.hfut.schedule.ui.utils.style.topBarBlur
@@ -146,7 +147,7 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
         }
     }
 
-    val context = LocalContext.current
+    val context = LocalActivity.current
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -159,7 +160,7 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
                     title = { Text("一卡通") },
                     actions = {
                         IconButton(onClick = {
-                            (context as? Activity)?.finish()
+                            context?.finish()
                         }) {
                             Icon(Icons.Filled.Close, contentDescription = "")
                         }

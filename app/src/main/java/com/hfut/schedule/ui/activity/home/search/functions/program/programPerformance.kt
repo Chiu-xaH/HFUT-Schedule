@@ -64,7 +64,7 @@ import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LargeCard
 import com.hfut.schedule.ui.utils.components.MyCustomCard
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.ui.utils.style.RowHorizontal
 import com.hfut.schedule.ui.utils.components.ScrollText

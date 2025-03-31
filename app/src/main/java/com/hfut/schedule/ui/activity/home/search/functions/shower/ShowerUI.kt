@@ -81,7 +81,7 @@ import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LoadingLargeCard
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.components.WebDialog
@@ -172,7 +172,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false,hazeState: Haze
                 var int by remember { mutableStateOf(payNumber.toFloat()) }
                 if(int > 0) {
                     PayFor(vm,int,info,json, FeeType.SHOWER, hazeState)
-                } else MyToast("输入数值")
+                } else showToast("输入数值")
             }
 
         }

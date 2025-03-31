@@ -83,7 +83,7 @@ import com.hfut.schedule.ui.activity.home.search.functions.exam.getExamJXGLSTU
 import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.style.HazeBottomSheet
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
@@ -640,7 +640,7 @@ fun SaveCourse(
 //            sheetState = sheetState,
             //shape = Round(sheetState)
         ) {
-            HazeBottomSheetTopBar(if(showAll) sheetall[num].name else sheet[num].name)
+            HazeBottomSheetTopBar(if(showAll) sheetall[num].name else sheet[num].name, isPaddingStatusBar = false)
             DetailInfos(if(showAll) sheetall[num] else sheet[num],friendUserName != null, vm = vm, hazeState )
         }
     }

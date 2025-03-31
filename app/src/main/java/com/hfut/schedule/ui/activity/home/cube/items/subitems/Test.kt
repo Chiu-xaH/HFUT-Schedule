@@ -197,7 +197,7 @@ fun SharedTransitionScope.SecondUI(
         },
     ) { innerPadding ->
         val context = LocalContext.current
-        val activity = context as Activity
+//        val activity = context as Activity
         Box(
             modifier = Modifier
                 .padding(innerPadding)

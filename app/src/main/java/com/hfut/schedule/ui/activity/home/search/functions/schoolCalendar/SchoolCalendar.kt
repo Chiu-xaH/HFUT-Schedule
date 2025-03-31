@@ -32,7 +32,7 @@ import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.logic.utils.parse.ParseJsons.getMy
 import com.hfut.schedule.ui.utils.components.WebViewScreen
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.components.WebDialog
 import java.io.File
@@ -52,10 +52,10 @@ fun SchoolCalendar() {
         leadingContent = { Icon(painter = painterResource(id = R.drawable.calendar_view_day), contentDescription = "")},
         modifier = Modifier.clickable {
             if(url == null) {
-                MyToast("正在从云端获取数据")
+                showToast("正在从云端获取数据")
             } else {
                 showDialog = true
-                MyToast("即将打开网页链接,可自行下载保存图片")
+                showToast("即将打开网页链接,可自行下载保存图片")
             }
         }
     )

@@ -76,7 +76,7 @@ import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LoadingLargeCard
 import com.hfut.schedule.ui.utils.components.LoadingUI
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.TransplantListItem
@@ -605,7 +605,7 @@ fun ProgramUIInfo2(num1 : Int, num2 : Int, vm : NetWorkViewModel, ifSaved : Bool
                                 courseName = name
                                 showBottomSheet_Search = true
                             } else {
-                                MyToast("登录教务后可查询开课")
+                                showToast("登录教务后可查询开课")
                                 Starter.refreshLogin()
                             }
                         },

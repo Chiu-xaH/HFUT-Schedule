@@ -55,7 +55,7 @@ import com.hfut.schedule.ui.activity.home.cube.items.subitems.update.getUpdates
 import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.HazeBottomSheet
 import com.hfut.schedule.ui.utils.style.bottomSheetRound
@@ -133,6 +133,17 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean
             }
         }
 
+        var showBottomSheet_icon by remember { mutableStateOf(false) }
+        if (showBottomSheet_icon) {
+            HazeBottomSheet(
+                onDismissRequest = { showBottomSheet_icon = false },
+                hazeState = hazeState,
+                showBottomSheet = showBottomSheet_icon,
+            ) {
+                Egg()
+            }
+        }
+
         var showBottomSheet_support by remember { mutableStateOf(false) }
         if (showBottomSheet_support) {
             HazeBottomSheet(
@@ -196,6 +207,11 @@ fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel,cubeShow : Boolean
             supportingContent = { Text(text = "根据Android版本与国内不同厂商定制UI的不同，APP会有若干功能不被支持")},
             modifier = Modifier.clickable { showBottomSheet_support = true },
             leadingContent = { Icon(painter = painterResource(id = R.drawable.support), contentDescription = "")}
+        )
+        TransplantListItem(
+            headlineContent = { Text(text = "彩蛋") },
+            modifier = Modifier.clickable { showBottomSheet_icon = true },
+            leadingContent = { Icon(painter = painterResource(id = R.drawable.celebration), contentDescription = "")}
         )
 
 

@@ -75,9 +75,7 @@ object MyDownloadManager {
             url = "${MyApplication.GITEE_UPDATE_URL}releases/download/Android/$filename",
             dlId= DownloadIds.PATCH,
             destinationDir = Environment.DIRECTORY_DOWNLOADS
-        ) { uri ->
-//            if (uri != null) installApk()
-        }
+        ) { _ -> }
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -96,11 +94,21 @@ object MyDownloadManager {
 
     @SuppressLint("Range")
     fun getDownloadProgress(downloadId: Long): Int {
-//        val downloadManager = MyApplication.context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         val query = DownloadManager.Query().setFilterById(downloadId)
         val cursor = dlManager.query(query)
 
         if (cursor != null && cursor.moveToFirst()) {
+            // 获取文件本地路径
+            val fileUri = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI))
+            val filePath = fileUri?.let { Uri.parse(it).path }  // 解析文件路径
+            val file = filePath?.let { File(it) }
+
+            // 如果文件不存在，直接返回 0
+            if (file == null || !file.exists()) {
+                cursor.close()
+                return 0
+            }
+
             val totalSize = cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
             val downloadedSize = cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR))
             cursor.close()
@@ -109,6 +117,27 @@ object MyDownloadManager {
             }
         }
         return 0
+    }
+
+    @JvmStatic
+    fun isExistFile(fileName : String) : String? {
+        // 判断内部存储的文件下载文件夹是否存在此文件
+        // 获取 Download 目录
+        val downloadDir = getDownloadDirectory() ?: return null
+        // 拼接文件路径
+        val patchFile = File(downloadDir, fileName)
+        // 检查文件是否存在
+        return if (patchFile.exists()) patchFile.absolutePath else null
+    }
+
+    @JvmStatic
+    private fun getDownloadDirectory(): File? {
+        // 获取设备内部存储的Download文件夹路径
+        val downloadDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+        if (downloadDirectory.exists()) {
+            return downloadDirectory
+        }
+        return null
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -126,9 +155,8 @@ object MyDownloadManager {
         }
     }
 
-    fun getDownloadId(dlId : DownloadIds) : Long {
-        return SharePrefs.prefs.getLong("download_${dlId.id}",-1)
-    }
+    @JvmStatic
+    fun getDownloadId(dlId : DownloadIds) : Long = SharePrefs.prefs.getLong("download_${dlId.id}",-1)
 
     fun installApk() {
         val id = getDownloadId(DownloadIds.UPDATE)
@@ -164,6 +192,7 @@ object MyDownloadManager {
         DOWNLOADING,STOPPED,WAITING,OK,FAILURE,UNKNOWN,NOT_FOUND
     }
 
+
     fun getDownloadStatus(downloadId: Long): DownloadStatus {
         val query = DownloadManager.Query().setFilterById(downloadId)
         val cursor: Cursor? = dlManager.query(query)
@@ -186,6 +215,7 @@ object MyDownloadManager {
         return DownloadStatus.NOT_FOUND
     }
 
+    @JvmStatic
     fun noticeInstall() {
         val intent = Intent(MyApplication.context, UpdateReceiver::class.java).apply {
             action = BroadcastAction.INSTALL_APK.name

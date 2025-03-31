@@ -64,7 +64,7 @@ import com.hfut.schedule.ui.utils.components.EmptyUI
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LittleDialog
 import com.hfut.schedule.ui.utils.components.MyCustomCard
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.style.HazeBottomSheet
 import com.hfut.schedule.ui.utils.style.bottomSheetRound
@@ -283,7 +283,7 @@ fun teacherList(vm : NetWorkViewModel,hazeState: HazeState, refresh : (Boolean) 
                                 id = list[item].id
                                 SharePrefs.saveInt("teacherID",id)
                                 showBottomSheet = true
-                            } else MyToast("已评教")
+                            } else showToast("已评教")
                         },
                         index = item
                     )

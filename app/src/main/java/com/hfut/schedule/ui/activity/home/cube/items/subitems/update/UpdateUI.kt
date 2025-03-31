@@ -6,6 +6,7 @@ import android.content.Context
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import androidx.activity.compose.LocalActivity
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -67,10 +68,12 @@ import com.hfut.schedule.ui.utils.NavigateAnimationManager
 import com.hfut.schedule.ui.utils.components.BottomButton
 import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.MyCustomCard
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.xah.bsdiffs.BsdiffUpdate
+import com.xah.bsdiffs.model.Patch
+import com.xah.bsdiffs.parsePatch
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
@@ -99,7 +102,7 @@ fun UpdateUI() {
         }
     }
 
-    val context = LocalContext.current as Activity
+    val activity = LocalActivity.current
 
 
     val version by remember { mutableStateOf(getUpdates()) }
@@ -108,7 +111,7 @@ fun UpdateUI() {
 
     MyCustomCard(hasElevation = false, containerColor = MaterialTheme.colorScheme.errorContainer) {
         TransplantListItem(
-            headlineContent = { Text(text = "发现新版本") },
+            headlineContent = { Text(text = "最新版本") },
             supportingContent = { Text(text = "${VersionUtils.getVersionName()} → ${version.version}") },
             leadingContent = { Icon(painterResource(R.drawable.arrow_upward), contentDescription = "Localized description",) },
             trailingContent = {
@@ -147,11 +150,12 @@ fun UpdateUI() {
         ) {
             BottomButton(
                 onClick = {
-                    getUpdates().version?.let { MyDownloadManager.update(it,context as Activity) }
-                    able = false
-//                    expandItems = true
+                    activity?.let { ac ->
+                        getUpdates().version?.let { MyDownloadManager.update(it,ac) }
+                        able = false
+                    }
                 },
-                text = "下载更新",
+                text = "下载并安装",
                 color = MaterialTheme.colorScheme.error.copy(.07f)
             )
         }
@@ -165,7 +169,9 @@ fun UpdateUI() {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center)  {
                 Button(
                     onClick = {
-                        getUpdates().version?.let { MyDownloadManager.update(it,context) }
+                        activity?.let { ac ->
+                            getUpdates().version?.let { MyDownloadManager.update(it,ac) }
+                        }
                     },
                     modifier = Modifier
                         .weight(.5f)
@@ -209,7 +215,7 @@ fun UpdateUI() {
 fun PatchUpdateUI(patch: Patch) {
     var loadingPatch by remember { mutableStateOf(false) }
 
-    val context = LocalContext.current as Activity
+    val context = LocalActivity.current
     val handler = Handler(Looper.getMainLooper())
     var pro by remember { mutableFloatStateOf(0f) }
     var able by remember { mutableStateOf(true) }
@@ -224,12 +230,12 @@ fun PatchUpdateUI(patch: Patch) {
             }
         }
     }
-    val patchFileName = patch.oldVersion + "_to_" + patch.newVersion + ".patch"
+    val patchFileName = parsePatch(patch)
     handler.post(runnable)
     // 下载完成后触发
     LaunchedEffect(pro) {
         if(pro == 1f && !refused) {
-            MyToast("补丁包下载完成，请点击安装按钮")
+            showToast("补丁包下载完成，请点击安装按钮")
             refused = true
         }
     }
@@ -243,7 +249,7 @@ fun PatchUpdateUI(patch: Patch) {
             TransplantListItem(
                 headlineContent = { Text(text = "增量更新") },
                 supportingContent = {
-                    Text(text = "开发者为一些版本提供补丁包，使用户以更少的下载量进行更新")
+                    Text(text = "开发者为若干最近版本提供补丁包，使用户以更少的下载流量实现版本更新")
                 },
                 leadingContent = { Icon(painterResource(R.drawable.package_2), contentDescription = "Localized description",) },
             )
@@ -256,10 +262,12 @@ fun PatchUpdateUI(patch: Patch) {
             ) {
                 BottomButton(
                     onClick = {
-                        MyDownloadManager.downloadPatch(patchFileName,context)
-                        able = false
+                        context?.let {
+                            MyDownloadManager.downloadPatch(patchFileName, it)
+                            able = false
+                        }
                     },
-                    text = patch.newVersion.let { if(it != getUpdates().version) "更新至 ${it}" else "增量更新" },
+                    text = patch.newVersion.let { if(it != getUpdates().version) "更新至 $it" else "下载增量包" },
                     color = MaterialTheme.colorScheme.primary.copy(.07f)
                 )
             }
@@ -274,7 +282,7 @@ fun PatchUpdateUI(patch: Patch) {
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center)  {
                     Button(
                         onClick = {
-                            MyDownloadManager.downloadPatch(patchFileName,context )
+                            context?.let { MyDownloadManager.downloadPatch(patchFileName, it) }
                         },
                         modifier = Modifier
                             .weight(.5f)
@@ -297,7 +305,7 @@ fun PatchUpdateUI(patch: Patch) {
                     if(pro > 0)
                         FilledTonalButton(onClick = {
                             if (pro == 1f) {
-                                BsdiffUpdate.mergePatchApk(MyApplication.context,patchFileName , onLoad = { load -> loadingPatch = load })
+                                BsdiffUpdate.mergePatchApk(MyApplication.context,patch,onLoad = { load -> loadingPatch = load })
                             } else {
                                 openDownload()
                             }

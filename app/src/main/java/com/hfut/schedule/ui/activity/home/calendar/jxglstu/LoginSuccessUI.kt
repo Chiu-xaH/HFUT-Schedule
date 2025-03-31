@@ -31,13 +31,11 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import com.hfut.schedule.ui.utils.components.LoadingUI
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -65,32 +63,31 @@ import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
-import com.hfut.schedule.viewmodel.NetWorkViewModel
-import com.hfut.schedule.viewmodel.LoginViewModel
-import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.beans.community.LoginCommunityResponse
 import com.hfut.schedule.logic.beans.jxglstu.datumResponse
 import com.hfut.schedule.logic.utils.DateTimeUtils
 import com.hfut.schedule.logic.utils.data.JxglstuParseUtils
-import com.hfut.schedule.logic.utils.parse.SemseterParser.parseSemseter
-import com.hfut.schedule.logic.utils.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.utils.data.SharePrefs
-import com.hfut.schedule.logic.utils.data.SharePrefs.saveInt
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.saveInt
+import com.hfut.schedule.logic.utils.parse.SemseterParser.getSemseter
+import com.hfut.schedule.logic.utils.parse.SemseterParser.parseSemseter
 import com.hfut.schedule.ui.activity.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.activity.home.calendar.examToCalendar
 import com.hfut.schedule.ui.activity.home.calendar.getScheduleDate
 import com.hfut.schedule.ui.activity.home.calendar.next.parseCourseName
 import com.hfut.schedule.ui.activity.home.main.saved.isNextOpen
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.getTotalCourse
-import com.hfut.schedule.ui.utils.components.appHorizontalDp
-import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LargeCard
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.TransplantListItem
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.style.HazeBottomSheet
-import com.hfut.schedule.ui.utils.style.bottomSheetRound
+import com.hfut.schedule.viewmodel.LoginViewModel
+import com.hfut.schedule.viewmodel.NetWorkViewModel
+import com.hfut.schedule.viewmodel.UIViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -479,7 +476,7 @@ fun CalendarScreen(
                                val tokens = Gson().fromJson(result, LoginCommunityResponse::class.java).result.token
                                SharePrefs.saveString("TOKEN", tokens)
                                if (num2 == 1) {
-                                   MyToast("Community登陆成功")
+                                   showToast("Community登陆成功")
                                    num2++
                                }
                            }catch (_:Exception) {}
@@ -634,7 +631,7 @@ fun CalendarScreen(
                                     loading = false
                                 }
                             }
-                        } else MyToast("数据为空,尝试刷新")
+                        } else showToast("数据为空,尝试刷新")
                     }
                 }
 

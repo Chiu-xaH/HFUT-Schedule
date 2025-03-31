@@ -4,7 +4,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import com.hfut.schedule.App.MyApplication
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 
 object ClipBoard {
     @JvmStatic
@@ -13,9 +13,9 @@ object ClipBoard {
             val clipboard = MyApplication.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clipData = ClipData.newPlainText(null, str)
             clipboard.setPrimaryClip(clipData)
-            MyToast(tip)
+            showToast(tip)
         } catch (e:Exception) {
-            MyToast("复制到剪切板失败")
+            showToast("复制到剪切板失败")
         }
     }
     @JvmStatic
@@ -28,7 +28,7 @@ object ClipBoard {
                 ""
             }
         } catch (e: Exception) {
-            MyToast("获取剪切板内容失败")
+            showToast("获取剪切板内容失败")
             ""
         }
     }

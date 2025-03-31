@@ -35,7 +35,7 @@ import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -91,9 +91,9 @@ fun SelecctDateRange(vm : NetWorkViewModel) {
                                                     val data = Gson().fromJson(result, BillRangeResponse::class.java)
                                                     var zhichu = data.data.expenses
                                                     zhichu /= 100
-                                                    MyToast("共支出 $zhichu 元")
+                                                    showToast("共支出 $zhichu 元")
                                                 } catch (e : Exception) {
-                                                    MyToast("错误")
+                                                    showToast("错误")
                                                 }
                                             }
                                         }

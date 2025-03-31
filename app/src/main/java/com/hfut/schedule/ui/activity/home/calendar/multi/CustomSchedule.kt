@@ -63,7 +63,7 @@ import com.hfut.schedule.logic.utils.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.ui.activity.home.calendar.jxglstu.getNewWeek
 import com.hfut.schedule.ui.utils.components.appHorizontalDp
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -745,8 +745,8 @@ fun CustomSchedules(showAll : Boolean,
                                     .padding(if (showAll) 1.dp else 2.dp)
                                     .clickable {
                                         if ((if (showAll) sheetall[cell] else sheet[cell]) != "")
-                                            MyToast(if (showAll) sheetall[cell] else sheet[cell])
-                                        else MyToast("空数据")
+                                            showToast(if (showAll) sheetall[cell] else sheet[cell])
+                                        else showToast("空数据")
                                     }
                             ) {
                                 Column(

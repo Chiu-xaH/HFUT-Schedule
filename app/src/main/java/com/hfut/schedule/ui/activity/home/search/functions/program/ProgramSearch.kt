@@ -64,7 +64,7 @@ import com.hfut.schedule.ui.utils.components.EmptyUI
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.MyCustomCard
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.statusUI
@@ -487,7 +487,7 @@ fun SearchProgramUIInfo2(num1 : Int, num2 : Int, vm : NetWorkViewModel,ifSaved :
                                 courseName = name
                                 showBottomSheet_Search = true
                             } else {
-                                MyToast("登录教务后可查询开课")
+                                showToast("登录教务后可查询开课")
                                 Starter.refreshLogin()
                             }
                         },

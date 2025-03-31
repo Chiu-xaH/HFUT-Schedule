@@ -35,7 +35,7 @@ import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.beans.zjgd.ChangeLimitResponse
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -69,9 +69,9 @@ fun Click(vm : NetWorkViewModel, limit : String, amt : String) {
             Handler(Looper.getMainLooper()).post {
                 try {
                     val msg = Gson().fromJson(result,ChangeLimitResponse::class.java).msg
-                    MyToast(msg)
+                    showToast(msg)
                 } catch (e : Exception) {
-                    MyToast("错误")
+                    showToast("错误")
                 }
             }
         }

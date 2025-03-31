@@ -26,7 +26,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.Starter
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.components.WebViewScreen
 
@@ -47,7 +47,7 @@ fun Second() {
             )
         },
         modifier = Modifier.clickable {
-            MyToast("请前往 第二课堂 微信小程序")
+            showToast("请前往 第二课堂 微信小程序")
         }
     )
 }

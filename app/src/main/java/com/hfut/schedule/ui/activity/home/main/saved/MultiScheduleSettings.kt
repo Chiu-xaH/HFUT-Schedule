@@ -1,7 +1,9 @@
 package com.hfut.schedule.ui.activity.home.main.saved
 
+import android.app.Activity
 import android.content.ContentValues
 import android.content.Intent
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -17,71 +19,79 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
-import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.dao.dataBaseSchedule
-import com.hfut.schedule.logic.beans.MyAPIResponse
-import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
-import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
+import com.hfut.schedule.logic.utils.addCourseToEvent
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
+import com.hfut.schedule.logic.utils.delCourseEvents
 import com.hfut.schedule.logic.utils.parse.ParseJsons.getMy
 import com.hfut.schedule.ui.activity.home.calendar.multi.AddCourseUI
-import com.hfut.schedule.ui.activity.home.calendar.multi.getFriendsList
 import com.hfut.schedule.ui.activity.home.calendar.multi.getFriendsCourse
+import com.hfut.schedule.ui.activity.home.calendar.multi.getFriendsList
 import com.hfut.schedule.ui.activity.home.calendar.next.DatumUI
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotalForApi
-import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
-
-import com.hfut.schedule.ui.utils.components.DividerText
+import com.hfut.schedule.ui.utils.components.DevelopingUI
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LittleDialog
+import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.MyCustomCard
-import com.hfut.schedule.ui.utils.components.MyToast
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.TransplantListItem
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
+import com.hfut.schedule.ui.utils.components.showToast
+import com.hfut.schedule.ui.utils.components.statusUI2
 import com.hfut.schedule.ui.utils.style.HazeBottomSheet
-import com.hfut.schedule.ui.utils.style.bottomSheetRound
+import com.hfut.schedule.ui.utils.style.RowHorizontal
+import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
 import dev.chrisbanes.haze.HazeState
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import java.io.File
 
 
-val JXGLSTU = 0
-val COMMUNITY = 1
-val NEXT = 2
+enum class CourseType(val code : Int) {
+    JXGLSTU(0),
+    COMMUNITY(1),
+    NEXT(2)
+}
+//const val JXGLSTU = 0
+//const val COMMUNITY = 1
+//const val NEXT = 2
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun MultiScheduleSettings(
@@ -93,7 +103,7 @@ fun MultiScheduleSettings(
     vmUI : UIViewModel,
     hazeState: HazeState
 ) {
-
+    val context = LocalActivity.current
     var num  by remember { mutableStateOf(getNum()) }
     var showDialog by remember { mutableStateOf(false) }
     var showDialog_Del by remember { mutableStateOf(false) }
@@ -179,8 +189,12 @@ fun MultiScheduleSettings(
         }
     }
 
-    val sheetState_next = rememberModalBottomSheetState(true)
+
+
+
     var showBottomSheet_next by remember { mutableStateOf(false) }
+
+    var showBottomSheet_loading by remember { mutableStateOf(false) }
 
     var next by remember { mutableStateOf(isNextOpen()) }
 
@@ -190,8 +204,6 @@ fun MultiScheduleSettings(
     if (showBottomSheet_next) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet_next = false },
-//            sheetState = sheetState_next,
-//            shape = bottomSheetRound(sheetState_next)
             showBottomSheet = showBottomSheet_next,
             hazeState = hazeState
         ) {
@@ -216,6 +228,23 @@ fun MultiScheduleSettings(
                     DatumUI(showAll, innerPadding, vmUI,vm,hazeState)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
+            }
+        }
+    }
+
+    if (showBottomSheet_loading) {
+        HazeBottomSheet (
+            onDismissRequest = { showBottomSheet_loading = false },
+            showBottomSheet = showBottomSheet_loading,
+            hazeState = hazeState,
+            autoShape = false
+        ) {
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState())
+            ) {
+                HazeBottomSheetTopBar("写入日历日程", isPaddingStatusBar = false)
+                EventUI(context)
+                Spacer(modifier = Modifier.height(appHorizontalDp()))
             }
         }
     }
@@ -245,13 +274,13 @@ fun MultiScheduleSettings(
                         .padding(horizontal = 4.dp)
                         .clickable {
                             isFriendMode = false
-                            selected = JXGLSTU
+                            selected = CourseType.JXGLSTU.code
                         },
-                    colors = if(selected == JXGLSTU) selectedColor else normalColor
+                    colors = if(selected == CourseType.JXGLSTU.code) selectedColor else normalColor
                 ) {
                     Box(modifier = Modifier.fillMaxSize()) {
                         Text("教务系统", modifier = Modifier.align(Alignment.Center)
-                            , fontWeight = if(selected == JXGLSTU) FontWeight.Bold else FontWeight.Thin)
+                            , fontWeight = if(selected == CourseType.JXGLSTU.code) FontWeight.Bold else FontWeight.Thin)
                     }
                 }
             }
@@ -263,13 +292,13 @@ fun MultiScheduleSettings(
                         .padding(horizontal = 4.dp)
                         .clickable {
                             isFriendMode = false
-                            selected = COMMUNITY
+                            selected = CourseType.COMMUNITY.code
                         },
-                    colors = if(selected == COMMUNITY) selectedColor else normalColor
+                    colors = if(selected == CourseType.COMMUNITY.code) selectedColor else normalColor
                 ) {
                     Box(modifier = Modifier.fillMaxSize()) {
                         Text("智慧社区", modifier = Modifier.align(Alignment.Center)
-                            , fontWeight = if(selected == COMMUNITY) FontWeight.Bold else FontWeight.Thin
+                            , fontWeight = if(selected == CourseType.COMMUNITY.code) FontWeight.Bold else FontWeight.Thin
                         )
                     }
                 }
@@ -283,20 +312,20 @@ fun MultiScheduleSettings(
                         .clickable {
                             if (isNextOpen()) {
                                 isFriendMode = false
-                                if(ifSaved) {
-                                    if(prefs.getInt("FIRST",0) != 0)
+                                if (ifSaved) {
+                                    if (prefs.getInt("FIRST", 0) != 0)
                                         showBottomSheet_next = true
                                     else refreshLogin()
                                 } else showBottomSheet_next = true
                             } else {
-                                MyToast("入口暂未开放")
+                                showToast("入口暂未开放")
                             }
                         },
-                    colors = if(selected == NEXT) selectedColor else normalColor
+                    colors = if(selected == CourseType.NEXT.code) selectedColor else normalColor
                 ) {
                     Box(modifier = Modifier.fillMaxSize()) {
                         Text("下学期", modifier = Modifier.align(Alignment.Center)
-                            , fontWeight = if(selected == NEXT) FontWeight.Bold else FontWeight.Thin
+                            , fontWeight = if(selected == CourseType.NEXT.code) FontWeight.Bold else FontWeight.Thin
                         )
                     }
                 }
@@ -401,7 +430,7 @@ fun MultiScheduleSettings(
                 modifier = Modifier.clickable {
                     if(ifSaved)
                         refreshLogin()
-                    else MyToast("目前已是登陆状态")
+                    else showToast("目前已是登陆状态")
                 }
             )
             TransplantListItem(
@@ -409,7 +438,9 @@ fun MultiScheduleSettings(
                 leadingContent = {
                     Icon(painterResource(id = R.drawable.calendar), contentDescription = "")
                 },
-                modifier = Modifier.clickable { MyToast("正在开发") }
+                modifier = Modifier.clickable {
+                    showBottomSheet_loading = true
+                }
             )
             TransplantListItem(
                 headlineContent = { Text(text = "恢复默认状态") },
@@ -530,3 +561,108 @@ fun InfoUI() {
 //    }
 }
 
+
+@Composable
+private fun EventUI(context : Activity?) {
+    var time by remember { mutableIntStateOf(20) }
+    val cor = rememberCoroutineScope()
+    var loading by remember { mutableStateOf(false) }
+    TransplantListItem(
+        headlineContent = {
+            Text("为解决APP无法推送通知提醒用户上课，可以将教务课表导入系统本地日历，定时提前提醒")
+        },
+        leadingContent = {
+            Icon(painterResource(R.drawable.info),null)
+        }
+    )
+    if(loading) {
+        LoadingUI("勿动稍等")
+    } else {
+        StyleCardListItem(
+            overlineContent = {
+                Text("提醒时间")
+            },
+            headlineContent = {
+                Text("上课前${time}min")
+            },
+            trailingContent = {
+                Row {
+                    FilledTonalIconButton(
+                        onClick = {
+                            time += 5
+                        }
+                    ) {
+                        Icon(painterResource(R.drawable.add),null)
+                    }
+                    time.let {
+                        if(it >= 5) {
+                            FilledTonalIconButton(
+                                onClick = {
+                                    time -= 5
+                                }
+                            ) {
+                                Icon(painterResource(R.drawable.remove),null)
+                            }
+                        }
+                    }
+                }
+            },
+            leadingContent = { Icon(painterResource(R.drawable.schedule),null) },
+            modifier = Modifier.clickable {
+                time = 20
+            }
+        )
+        StyleCardListItem(
+            headlineContent = {
+                Text("更新日程(清空+导入)")
+            },
+            leadingContent = { Icon(painterResource(R.drawable.event_repeat),null) },
+            modifier = Modifier.clickable {
+                context?.let {
+                    cor.launch {
+                        async { loading = true }.await()
+                        async { delCourseEvents(activity = it) }.await()
+                        async { addCourseToEvent(activity = it,time) }.await()
+                        launch { loading = false }
+                    }
+                }
+            }
+        )
+        StyleCardListItem(
+            headlineContent = {
+                Text("导入")
+            },
+            overlineContent = {
+                Text("跳过已导入日程")
+            },
+            leadingContent = { Icon(painterResource(R.drawable.event_upcoming),null) },
+            modifier = Modifier.clickable {
+                context?.let {
+                    cor.launch {
+                        async { loading = true }.await()
+                        async { addCourseToEvent(activity = it,time) }.await()
+                        launch { loading = false }
+                    }
+                }
+            }
+        )
+        StyleCardListItem(
+            headlineContent = {
+                Text("清空")
+            },
+            overlineContent = {
+                Text("只清空上面导入日程")
+            },
+            leadingContent = { Icon(painterResource(R.drawable.event_busy),null) },
+            modifier = Modifier.clickable {
+                context?.let {
+                    cor.launch {
+                        async { loading = true }.await()
+                        async { delCourseEvents(activity = it) }.await()
+                        launch { loading = false }
+                    }
+                }
+            }
+        )
+    }
+}

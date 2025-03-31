@@ -4,6 +4,7 @@ import android.app.Activity
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import androidx.activity.compose.LocalActivity
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
@@ -39,16 +40,15 @@ import com.hfut.schedule.logic.utils.ocr.TesseractUtils
 import com.hfut.schedule.logic.utils.ocr.TesseractUtils.isModelInDownloadFolder
 import com.hfut.schedule.logic.utils.ocr.TesseractUtils.moveDownloadedModel
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 
 @OptIn(ExperimentalFoundationApi::class)
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun DownloadMLUI(innerPadding : PaddingValues) {
-    val context = LocalContext.current
-    val activity = context as Activity
-    PermissionManager.checkAndRequestStoragePermission(activity)
+    val activity = LocalActivity.current
+    activity?.let { PermissionManager.checkAndRequestStoragePermission(it) }
 
 
     val switch_open = prefs.getBoolean("SWITCH_ML",false)
@@ -113,7 +113,7 @@ fun DownloadMLUI(innerPadding : PaddingValues) {
                                             moveDownloadedModel()
                                             isExistModule = TesseractUtils.isExistModule()
                                         } else {
-                                            MyToast("请将eng.traineddata放置在存储/Download/,然后点击此按钮")
+                                            showToast("请将eng.traineddata放置在存储/Download/,然后点击此按钮")
                                         }
                                     }
                                 ) {
@@ -129,17 +129,17 @@ fun DownloadMLUI(innerPadding : PaddingValues) {
                 modifier = Modifier.combinedClickable(
                     onClick = {
                         if(isExistModule) {
-                            MyToast("长按删除")
+                            showToast("长按删除")
                         }
                     },
                     onLongClick = {
                         if(isExistModule) {
                             val res = TesseractUtils.deleteModel()
                             if(res) {
-                                MyToast("删除成功")
+                                showToast("删除成功")
                                 isExistModule = TesseractUtils.isExistModule()
                             } else {
-                                MyToast("删除失败")
+                                showToast("删除失败")
                             }
                         }
                     }

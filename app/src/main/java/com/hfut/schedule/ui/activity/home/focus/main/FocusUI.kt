@@ -3,6 +3,7 @@ package com.hfut.schedule.ui.activity.home.focus.main
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Build
+import androidx.activity.compose.LocalActivity
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
@@ -97,8 +98,7 @@ fun TodayScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding : Padd
     }
 //Today操作区///////////////////////////////////////////////////////////////////////////////////////////////////
 
-    val context = LocalContext.current
-    val activity = context as Activity
+    val activity = LocalActivity.current
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //布局///////////////////////////////////////
 
@@ -146,17 +146,17 @@ fun TodayScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding : Padd
                                     else
                                         items(todayCourseList.size) { item -> TodayCourseItem(item = item,vm, hazeState) }
                                     //日程
-                                    items(MySchedule().size) { item -> MyScheuleItem(item = item, MySchedule = MySchedule(),false,activity) }
+                                    items(MySchedule().size) { item -> activity?.let { MyScheuleItem(item = item, MySchedule = MySchedule(),false,it) } }
                                     //考试
                                     items(getExamJXGLSTU()) { item -> JxglstuExamUI(item,false) }
                                     //网课
-                                    items(MyWangKe().size) { item -> WangkeItem(item = item, MyWangKe = MyWangKe(),false,activity) }
+                                    items(MyWangKe().size) { item -> activity?.let { WangkeItem(item = item, MyWangKe = MyWangKe(),false,it) } }
                                 }
                                 TAB_RIGHT -> {
                                     //日程
-                                    items(MySchedule().size) { item -> MyScheuleItem(item = item, MySchedule = MySchedule(),true,activity)  }
+                                    items(MySchedule().size) { item -> activity?.let { MyScheuleItem(item = item, MySchedule = MySchedule(),true,it) }  }
                                     //网课
-                                    items(MyWangKe().size) { item -> WangkeItem(item = item, MyWangKe = MyWangKe(),true,activity) }
+                                    items(MyWangKe().size) { item -> activity?.let { WangkeItem(item = item, MyWangKe = MyWangKe(),true,it) } }
                                     //第二天课表
                                     if (DateTimeUtils.compareTimes(lastTime) == DateTimeUtils.TimeState.NOT_STARTED)
                                         items(getCourseINFO(weekdaytomorrow,Nextweek).size) { item -> TomorrowCourseItem(item = item,vm,hazeState) }

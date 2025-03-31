@@ -63,7 +63,7 @@ import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LittleDialog
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.ui.utils.components.statusUI
 import com.hfut.schedule.ui.utils.style.HazeBottomSheet
@@ -249,7 +249,7 @@ private fun PayStatusUI(vm : NetWorkViewModel, payNumber : Float, json: String, 
                                     orderid = Gson().fromJson(result, PayStep1Response::class.java).data.orderid
                                     vm.payStep2(auth,orderid,type)
                                 } catch (e : Exception) {
-                                    MyToast("服务器错误，终止支付")
+                                    showToast("服务器错误，终止支付")
                                 }
                             }
                         }
@@ -276,7 +276,7 @@ private fun PayStatusUI(vm : NetWorkViewModel, payNumber : Float, json: String, 
                                         count++
                                     }
                                 } catch (e : Exception) {
-                                    MyToast("服务器错误，终止支付")
+                                    showToast("服务器错误，终止支付")
                                 }
                             }
                         }

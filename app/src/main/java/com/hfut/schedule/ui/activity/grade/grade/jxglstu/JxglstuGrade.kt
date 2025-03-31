@@ -62,7 +62,7 @@ import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LargeCard
 import com.hfut.schedule.ui.utils.components.LittleDialog
 import com.hfut.schedule.ui.utils.components.LoadingUI
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.HazeBottomSheet
@@ -256,7 +256,7 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel,showSea
                                 supportingContent = { Text(grade.grade) },
                                 modifier = Modifier.clickable {
                                     if(grade.grade.contains("评教")) {
-                                        MyToast("请为任课老师评教(存在多位老师需全评教，老师列表可在课程汇总查看)")
+                                        showToast("请为任课老师评教(存在多位老师需全评教，老师列表可在课程汇总查看)")
                                         showBottomSheet_Survey = true
                                     } else {
                                         title = grade.title

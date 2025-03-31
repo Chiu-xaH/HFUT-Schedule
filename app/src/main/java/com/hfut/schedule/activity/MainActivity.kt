@@ -27,7 +27,7 @@ import com.hfut.schedule.ui.activity.login.LoginUI
 import com.hfut.schedule.ui.activity.login.UseAgreementUI
 import com.hfut.schedule.ui.activity.nologin.NoLoginUI
 import com.hfut.schedule.ui.utils.NavigateAnimationManager
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.components.Party
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -106,7 +106,7 @@ class MainActivity : BaseActivity() {
             // 处理读取到的文本内容
             Add("课表"+(getNum() +4).toString())
             SharePrefs.saveString("SCHEDULE" + getNum(), content)
-            MyToast("导入课表${getNum() +3}成功 请于课程表右上角切换")
+            showToast("导入课表${getNum() +3}成功 请于课程表右上角切换")
         }
 
         lifecycleScope.launch {

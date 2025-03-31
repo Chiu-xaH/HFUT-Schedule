@@ -164,11 +164,12 @@ fun HomeSettingScreen(navController: NavController,
                 }
                 if (patchItem != null) {
                     PatchUpdateUI(patchItem)
+                } else {
+                    // 清理
+                    if(!hasCleaned) {
+                        hasCleaned = BsdiffUpdate.deleteCache(context)
+                    }
                 }
-            }
-        } else {
-            if(!hasCleaned) {
-                hasCleaned = BsdiffUpdate.deleteCache(context)
             }
         }
 

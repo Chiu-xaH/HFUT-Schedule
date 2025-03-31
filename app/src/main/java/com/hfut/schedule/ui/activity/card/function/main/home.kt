@@ -81,7 +81,7 @@ import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.largeCardColor
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.components.WebDialog
@@ -466,7 +466,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                                                 } else if (test == "00") {
                                                     refreshLogin()
                                                 } else {
-                                                    MyToast("未检测出问题,若实体卡仍异常请咨询有关人士")
+                                                    showToast("未检测出问题,若实体卡仍异常请咨询有关人士")
                                                 }
                                             }
                                         },
@@ -531,7 +531,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                         headlineContent = { Text(text = "卡状态") },
                         supportingContent = { Text(text = "挂失 解挂 冻结")},
                         leadingContent = { Icon(painter = painterResource(id = R.drawable.pie_chart), contentDescription = "")},
-                        modifier = Modifier.clickable { MyToast("暂未开发") }
+                        modifier = Modifier.clickable { showToast("暂未开发") }
                     )
                     TransplantListItem(
                         headlineContent = { Text(text = "付款码") },

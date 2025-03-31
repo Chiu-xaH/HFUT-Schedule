@@ -61,7 +61,7 @@ import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.MyCustomCard
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
@@ -128,7 +128,7 @@ fun AddCourseUI(vm: NetWorkViewModel,hazeState: HazeState) {
                 Icon(painterResource(id = R.drawable.attach_file), contentDescription = "")
             },
             modifier = Modifier.clickable {
-                MyToast("请在外部应用选择文件以本应用打开")
+                showToast("请在外部应用选择文件以本应用打开")
             }
         )
 //    }
@@ -237,7 +237,7 @@ fun FriendsSetting(vm : NetWorkViewModel) {
                     overlineContent = { friendList[i]?.let { Text(text = it.userId) }},
                     trailingContent = {
                         FilledTonalIconButton(onClick = {
-                            MyToast("正在开发")
+                            showToast("正在开发")
                         }) {
                             Icon(painterResource(id = R.drawable.delete), contentDescription = "")
                         }

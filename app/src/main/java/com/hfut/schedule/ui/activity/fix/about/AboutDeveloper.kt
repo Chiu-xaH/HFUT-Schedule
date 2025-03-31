@@ -2,6 +2,7 @@ package com.hfut.schedule.ui.activity.fix.about
 
 import android.os.Handler
 import android.os.Looper
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -42,6 +43,7 @@ import com.hfut.schedule.ui.utils.components.Party
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.components.URLImage
+import com.hfut.schedule.ui.utils.style.RowHorizontal
 import com.hfut.schedule.viewmodel.LoginViewModel
 import kotlinx.coroutines.async
 

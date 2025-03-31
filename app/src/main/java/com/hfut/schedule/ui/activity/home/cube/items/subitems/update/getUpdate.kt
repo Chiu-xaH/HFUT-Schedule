@@ -1,16 +1,10 @@
 package com.hfut.schedule.ui.activity.home.cube.items.subitems.update
 
-import android.content.Context
-import android.content.Intent
-import android.os.Environment
-import androidx.core.content.FileProvider
-import com.hfut.schedule.App.MyApplication
-import com.hfut.schedule.App.MyApplication.Companion.context
 import com.hfut.schedule.logic.beans.Update
-import com.hfut.schedule.logic.utils.VersionUtils
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
+import com.xah.bsdiffs.model.Patch
+import com.xah.bsdiffs.parsePatchFile
 import org.jsoup.Jsoup
-import java.io.File
 
 
 fun getUpdates() : Update {
@@ -30,27 +24,14 @@ fun getUpdates() : Update {
     }
 }
 
-data class Patch(val oldVersion : String,val newVersion : String)
-
 fun getPatchVersions() : List<Patch> {
     val html = prefs.getString("versions","")
-    val e = ".patch"
     return try {
-        // 解析 HTML
         val document = Jsoup.parse(html)
-
-        // 获取所有 <a> 标签，并提取它们的文本内容
         val versions = document.select("a[href]").mapNotNull { element ->
             // 只提取补丁包
             val text = element.text().trim()
-            if (text.endsWith(e)) {
-                val str = text.substringBefore(e)
-                val old = str.substringBefore("_to_")
-                val new = str.substringAfter("_to_")
-                Patch(old,new)
-            } else {
-                null
-            }
+            parsePatchFile(text)
         }
         versions
     } catch (e : Exception) {

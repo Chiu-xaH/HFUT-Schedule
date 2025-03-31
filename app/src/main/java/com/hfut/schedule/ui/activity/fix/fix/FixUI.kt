@@ -54,7 +54,7 @@ import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LittleDialog
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.HazeBottomSheet
@@ -171,7 +171,7 @@ fun FixUI(innerPadding : PaddingValues,vm : LoginViewModel,vm2 : NetWorkViewMode
             leadingContent = { Icon(painterResource(R.drawable.api), contentDescription = "Localized description",) },
             modifier = Modifier.clickable {
                 vm.My()
-                MyToast("正在更新信息")
+                showToast("正在更新信息")
             }
         )
         TransplantListItem(
@@ -208,7 +208,7 @@ fun BugShare() {
                             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         }
                         MyApplication.context.startActivity(Intent.createChooser(shareIntent, "发送给开发者").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-                    } catch (e : Exception) { MyToast("分享失败") }
+                    } catch (e : Exception) { showToast("分享失败") }
                 },
                 dialogTitle = "日志内容",
                 dialogText = it,
@@ -236,21 +236,21 @@ fun BugShare() {
         leadingContent = { Icon(painterResource(R.drawable.monitor_heart), contentDescription = "Localized description",) },
         modifier = Modifier.clickable {
             times--
-            MyToast("点击${times}次后应用会崩溃,生成测试日志")
+            showToast("点击${times}次后应用会崩溃,生成测试日志")
         },
         trailingContent = {
             Row{
                 FilledTonalIconButton(onClick = {
                     CrashHandler().enableLogging()
-                    MyToast("日志抓取已开启,请复现崩溃的操作,当完成后,回此处点击分享")
+                    showToast("日志抓取已开启,请复现崩溃的操作,当完成后,回此处点击分享")
                 }) { Icon(painter = painterResource(id =  R.drawable.slow_motion_video ), contentDescription = "") }
                 FilledTonalIconButton(onClick = {
 //                    Log.d("s",logs.toString())
                     if (logs != null) {
                         if (logs.substringBefore("*").contains("-")) {
-                            if (logs != null) showDialog = true else MyToast("日志为空")
-                        } else MyToast("日志为空")
-                    } else MyToast("日志为空")
+                            if (logs != null) showDialog = true else showToast("日志为空")
+                        } else showToast("日志为空")
+                    } else showToast("日志为空")
                 }) { Icon(painter = painterResource(id =  R.drawable.ios_share ), contentDescription = "") }
             }
         }
@@ -323,10 +323,10 @@ fun feedBackUI(vm : NetWorkViewModel) {
                 FilledTonalIconButton(
                     onClick = {
                         if(input == "") {
-                            MyToast("请输入内容")
+                            showToast("请输入内容")
                         } else {
                             vm.feedBack(input,inputContact)
-                            MyToast("已提交,可关闭此界面")
+                            showToast("已提交,可关闭此界面")
                         }
                     }) {
                     Icon(Icons.Filled.Check, contentDescription = "")

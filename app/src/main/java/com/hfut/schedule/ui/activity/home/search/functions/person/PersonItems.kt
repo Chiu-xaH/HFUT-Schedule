@@ -46,7 +46,7 @@ import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.DepartmentIcons
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import org.jsoup.Jsoup
 
@@ -334,7 +334,7 @@ fun PersonItems(ifSaved : Boolean) {
                         )
                     },
                     modifier = Modifier.clickable {
-                        MyToast("前往 查询中心-培养方案查看详情")
+                        showToast("前往 查询中心-培养方案查看详情")
                     }
                 )
                 home?.let {

@@ -6,6 +6,7 @@ import android.app.Activity
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import androidx.activity.compose.LocalActivity
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
@@ -84,7 +85,7 @@ import com.hfut.schedule.ui.utils.NavigateAnimationManager.currentPage
 import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.cardNormalDp
 import com.hfut.schedule.ui.utils.components.CenterLoadingUI
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.navigateAndSave
 import com.hfut.schedule.ui.utils.style.bottomBarBlur
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
@@ -105,7 +106,7 @@ import org.json.JSONArray
 fun NewsActivityUI(vm: NetWorkViewModel) {
 //    val animation by remember { mutableStateOf(SharePrefs.prefs.getInt("ANIMATION", MyApplication.ANIMATION_SPEED)) }
     val navController = rememberNavController()
-    val context = LocalContext.current
+    val context = LocalActivity.current
 //    val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR",  VersionUtils.canBlur)
 //    val blur by remember { mutableStateOf(switchblur) }
     val hazeState = remember { HazeState() }
@@ -135,13 +136,13 @@ fun NewsActivityUI(vm: NetWorkViewModel) {
                     actions = {
                         if(targetPage == NewsBarItems.XuanCheng) {
                             IconButton(onClick = {
-                                MyToast("正在开发")
+                                showToast("正在开发")
                             }) {
                                 Icon(Icons.Filled.Search, contentDescription = "")
                             }
                         }
                         IconButton(onClick = {
-                            (context as? Activity)?.finish()
+                            context?.finish()
                         }) {
                             Icon(Icons.Filled.Close, contentDescription = "")
                         }
@@ -346,7 +347,7 @@ fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                         page--
                         refresh()
                     } else {
-                        MyToast("第一页")
+                        showToast("第一页")
                     }
                 },
             ) { Icon(Icons.Filled.ArrowBack, "Add Button") }

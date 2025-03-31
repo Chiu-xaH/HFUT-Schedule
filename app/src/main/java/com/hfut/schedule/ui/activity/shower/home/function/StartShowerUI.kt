@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Handler
 import android.os.Looper
+import androidx.activity.compose.LocalActivity
 import androidx.camera.core.ImageAnalysis
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -72,7 +73,7 @@ import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.LittleDialog
 import com.hfut.schedule.ui.utils.components.LoadingUI
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.components.statusUI2
 import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.ui.utils.style.RowHorizontal
@@ -163,7 +164,7 @@ data class StatusMsgResponse(val message : String)
 @Composable
 fun StartShowerUI(vm: GuaGuaViewModel,hazeState: HazeState) {
     val context = LocalContext.current
-    val activity = context as Activity
+    val activity = LocalActivity.current
 
     var input by remember { mutableStateOf("") }
     var id by remember { mutableStateOf(-1) }
@@ -187,7 +188,7 @@ fun StartShowerUI(vm: GuaGuaViewModel,hazeState: HazeState) {
                         input = list[2]
                         show = false
                     } catch (_:Exception) {
-                        MyToast("解析出错")
+                        showToast("解析出错")
                     }
                 }
             }
@@ -337,8 +338,10 @@ fun StartShowerUI(vm: GuaGuaViewModel,hazeState: HazeState) {
             trailingIcon = {
                 IconButton(
                     onClick = {
-                        checkAndRequestCameraPermission(activity)
-                        show = true
+                        activity?.let {
+                            checkAndRequestCameraPermission(it)
+                            show = true
+                        }
                     }) {
                     Icon(painter = painterResource(R.drawable.qr_code_scanner), contentDescription = "description")
                 }
@@ -352,9 +355,9 @@ fun StartShowerUI(vm: GuaGuaViewModel,hazeState: HazeState) {
         .fillMaxWidth()
         .padding(horizontal = appHorizontalDp()),horizontalArrangement = Arrangement.Center) {
         FilledTonalButton(onClick = {
-            if(input == "") MyToast("请扫码或填写二维码贴纸下的MAC地址")
+            if(input == "") showToast("请扫码或填写二维码贴纸下的MAC地址")
             else if(input.length != 12) {
-                MyToast("MAC地址为12位")
+                showToast("MAC地址为12位")
             }
             else {
                 showDialog = true
@@ -367,9 +370,9 @@ fun StartShowerUI(vm: GuaGuaViewModel,hazeState: HazeState) {
         }
         Spacer(modifier = Modifier.width(10.dp))
         Button(onClick = {
-            if(input == "") MyToast("请扫码或填写二维码贴纸下的MAC地址")
+            if(input == "") showToast("请扫码或填写二维码贴纸下的MAC地址")
             else if(input.length != 12) {
-                MyToast("MAC地址为12位")
+                showToast("MAC地址为12位")
             }
             else {
                 startShower(vm,input)

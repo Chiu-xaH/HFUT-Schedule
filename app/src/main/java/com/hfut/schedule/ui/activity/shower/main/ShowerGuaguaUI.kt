@@ -2,6 +2,7 @@ package com.hfut.schedule.ui.activity.shower.main
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -74,7 +75,7 @@ import dev.chrisbanes.haze.haze
 fun ShowerGuaGua(vm: GuaGuaViewModel,netVm : NetWorkViewModel,navHostController: NavHostController) {
     val animation by remember { mutableStateOf(SharePrefs.prefs.getInt("ANIMATION", MyApplication.ANIMATION_SPEED)) }
     val navController = rememberNavController()
-    val context = LocalContext.current
+    val context = LocalActivity.current
     val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR",  VersionUtils.canBlur)
     val blur by remember { mutableStateOf(switchblur) }
     val hazeState = remember { HazeState() }
@@ -102,7 +103,7 @@ fun ShowerGuaGua(vm: GuaGuaViewModel,netVm : NetWorkViewModel,navHostController:
                     title = { Text("洗浴-呱呱物联") },
                     actions = {
                         IconButton(onClick = {
-                            (context as? Activity)?.finish()
+                            context?.finish()
                         }) {
                             Icon(Icons.Filled.Close, contentDescription = "")
                         }

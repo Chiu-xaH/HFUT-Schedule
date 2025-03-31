@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import androidx.activity.compose.LocalActivity
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -17,6 +18,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.with
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -83,7 +85,7 @@ import com.hfut.schedule.logic.utils.parse.ParseJsons.useCaptcha
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.DownloadMLUI
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LoadingUI
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.components.URLImageWithOCR
 import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.navigateAndClear
@@ -112,7 +114,7 @@ private fun loginClick(vm : LoginViewModel, username : String, inputAES : String
         }
         async {
             //登录
-            if (username.length != 10) MyToast("请输入正确的账号")
+            if (username.length != 10) showToast("请输入正确的账号")
             else outputAES?.let { it1 -> vm.login(username, it1,ONE,code,webVpn) }
         }.await()
         async { onLoad(true) }.await()
@@ -229,13 +231,9 @@ enum class First {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginUI(vm : LoginViewModel,navController : NavHostController) {
-
-    val sheetState = rememberModalBottomSheetState()
-    var showBottomSheet by remember { mutableStateOf(false) }
-    val context = LocalContext.current
+    val context = LocalActivity.current
     var showBadge by remember { mutableStateOf(false) }
     if (VersionUtils.getVersionName() != prefs.getString("version", VersionUtils.getVersionName())) showBadge = true
-  //  val hazeState = remember { HazeState() }
 
 
 
@@ -259,7 +257,7 @@ fun LoginUI(vm : LoginViewModel,navController : NavHostController) {
                         },
                 actions = {
                     IconButton(onClick = {
-                        (context as? Activity)?.finish()
+                        context?.finish()
                     }) {
                         Icon(painterResource(id = R.drawable.logout), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
                     }
@@ -357,7 +355,7 @@ fun TwoTextField(vm : LoginViewModel,navHostController: NavHostController) {
     var status by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(status) {
-        status?.let { MyToast(it) }
+        status?.let { showToast(it) }
     }
 
 
@@ -518,7 +516,6 @@ fun TwoTextField(vm : LoginViewModel,navHostController: NavHostController) {
                 )
             }
         }
-
     }
 }
 

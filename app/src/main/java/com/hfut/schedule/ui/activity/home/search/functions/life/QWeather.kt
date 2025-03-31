@@ -57,7 +57,7 @@ import com.hfut.schedule.ui.utils.components.DevelopingUI
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.LoadingLargeCard
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.viewmodel.NetWorkViewModel
@@ -185,7 +185,7 @@ fun LifeUIS(vm : NetWorkViewModel) {
                     },
                     trailingContent = {
                         Button(onClick = {
-                            MyToast("正在开发")
+                            showToast("正在开发")
 //                            countWeather = 0
 //                            showBottomSheet_Weather = true
                         }) {

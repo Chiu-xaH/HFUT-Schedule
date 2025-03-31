@@ -84,7 +84,7 @@ import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LittleDialog
 import com.hfut.schedule.ui.utils.components.MyCustomCard
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
@@ -145,7 +145,7 @@ fun SelectCourse(ifSaved : Boolean, vm : NetWorkViewModel,hazeState: HazeState) 
                             Spacer(modifier = Modifier.width(5.dp))
                             FilledTonalButton(onClick = {
                                 updateCourses(vm)
-                                MyToast("已刷新课表与课程汇总")
+                                showToast("已刷新课表与课程汇总")
                             }) {
                                 Text(text = "刷新课表")
                             }

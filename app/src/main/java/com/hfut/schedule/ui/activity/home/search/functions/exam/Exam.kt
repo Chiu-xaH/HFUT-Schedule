@@ -2,6 +2,7 @@ package com.hfut.schedule.ui.activity.home.search.functions.exam
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -35,7 +36,7 @@ import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.DateTimeUtils
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
-import com.hfut.schedule.logic.utils.addToCalendar
+import com.hfut.schedule.logic.utils.addToCalendars
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
@@ -172,8 +173,7 @@ fun JxglstuExamUI(item : Map<String,String>,status : Boolean) {
     val examDateNum = examDate?.substringBefore(" ")?.replace("-","")?.toLongOrNull() ?: 0
 
 
-    val context = LocalContext.current
-    val activity = context as Activity
+    val activity = LocalActivity.current
 //    var date = DateTimeManager.Date_MM_dd
 //    val todaydate = (date?.substring(0, 2) ) + date?.substring(3, 5)
 //    val get = item["日期时间"]
@@ -274,10 +274,8 @@ fun JxglstuExamUI(item : Map<String,String>,status : Boolean) {
                                                                 }
                                                             }
                                                         } }
-                                                        course?.let { place?.let { it1 -> startDateList?.let { it2 -> endDateList?.let { it3 -> addToCalendar(it2, it3, it1, it,"考试", activity) } } } }
-//                                                    MyToast("添加到系统日历成功")
+                                                        activity?.let { it0 -> course?.let { place?.let { it1 -> startDateList?.let { it2 -> endDateList?.let { it3 -> addToCalendars(it2, it3, it1, it,"考试", it0) } } } } }
                                                     } catch (e : Exception) {
-//                                                    MyToast("未授予权限")
                                                         e.printStackTrace()
                                                     }
                                                 }) {

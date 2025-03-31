@@ -15,7 +15,7 @@ import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.beans.Notifications
 import com.hfut.schedule.ui.utils.components.EmptyUI
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.WebDialog
 
@@ -41,7 +41,7 @@ fun NotificationItems() {
                             notice = list[item]
                             showDialog = true
                         } else {
-                            MyToast("暂无点击操作")
+                            showToast("暂无点击操作")
                         }
                     }
                 )

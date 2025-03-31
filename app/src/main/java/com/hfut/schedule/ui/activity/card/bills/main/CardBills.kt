@@ -65,7 +65,7 @@ import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.MyCustomCard
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.HazeBottomSheet
@@ -92,7 +92,7 @@ fun getBills(vm : NetWorkViewModel) : List<records> {
                     val cardAccount = bill.data.records[0].fromAccount
                     SharePrefs.saveString("cardAccount", cardAccount)
                 } else {
-                    MyToast(msg)
+                    showToast(msg)
                 }
             }
             return data
@@ -138,7 +138,7 @@ fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVie
                                         val ONE = JxglstuParseUtils.casCookies
                                         val TGC = prefs.getString("TGC", "")
                                         vm.OneGotoCard("$ONE;$TGC")
-                                        MyToast("空数据,请再次尝试或登录")
+                                        showToast("空数据,请再次尝试或登录")
                                     }
                                 }
                             }

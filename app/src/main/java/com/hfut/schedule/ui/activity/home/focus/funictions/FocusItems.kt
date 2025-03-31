@@ -64,7 +64,7 @@ import com.hfut.schedule.logic.beans.community.TodayResponse
 import com.hfut.schedule.logic.beans.community.TodayResult
 import com.hfut.schedule.logic.beans.focus.AddFocus
 import com.hfut.schedule.logic.beans.Schedule
-import com.hfut.schedule.logic.utils.addToCalendar
+import com.hfut.schedule.logic.utils.addToCalendars
 import com.hfut.schedule.logic.utils.DateTimeUtils
 import com.hfut.schedule.logic.utils.DateTimeUtils.TimeState.*
 import com.hfut.schedule.logic.utils.parse.SemseterParser.parseSemseter
@@ -82,7 +82,7 @@ import com.hfut.schedule.ui.utils.components.BottomTip
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.MyCustomCard
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.components.RotatingIcon
 import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.ui.utils.components.ScheduleIcons
@@ -163,10 +163,10 @@ fun ScheduleItems(MySchedule: MutableList<Schedule>, item : Int,Future : Boolean
                                 try {
                                     var startTime = MySchedules.startTime
                                     var endTime = MySchedules.endTime
-                                    addToCalendar(startTime,endTime, info, title,time,activity)
-                                    MyToast("添加到系统日历成功")
+                                    addToCalendars(startTime,endTime, info, title,time,activity)
+                                    showToast("添加到系统日历成功")
                                 } catch (e : SecurityException) {
-                                    MyToast("未授予权限")
+                                    showToast("未授予权限")
                                     e.printStackTrace()
                                 }
                             }
@@ -245,7 +245,7 @@ fun WangkeItem(item : Int, MyWangKe: MutableList<Schedule>,Future: Boolean,activ
                             trailingContent = {
                                 FilledTonalIconButton(
                                     onClick = {
-                                        addToCalendar(startTime,endTime, info, title,time,activity)
+                                        addToCalendars(startTime,endTime, info, title,time,activity)
 
                                     }
                                 ) {
@@ -329,7 +329,7 @@ fun TodayCourseItem(item : Int,vm : NetWorkViewModel,hazeState: HazeState) {
             hazeState = hazeState,
             autoShape = false
         ) {
-            HazeBottomSheetTopBar(list.name)
+            HazeBottomSheetTopBar(list.name, isPaddingStatusBar = false)
             DetailInfos(list,vm = vm, hazeState = hazeState)
         }
     }
@@ -417,7 +417,7 @@ fun TomorrowCourseItem(item : Int,vm: NetWorkViewModel,hazeState: HazeState) {
             hazeState = hazeState,
             autoShape = false
         ) {
-            HazeBottomSheetTopBar(list.name)
+            HazeBottomSheetTopBar(list.name, isPaddingStatusBar = false)
             DetailInfos(list,vm = vm, hazeState = hazeState)
         }
     }
@@ -452,7 +452,7 @@ fun AddItem(item : Int, AddedItems : MutableList<AddFocus>) {
         },
         color = if (isClicked) MaterialTheme.colorScheme.errorContainer else null,
         modifier = Modifier.combinedClickable(
-            onClick = { MyToast("长按删除") },
+            onClick = { showToast("长按删除") },
             onDoubleClick = {
                 //双击操作
             },
@@ -463,7 +463,7 @@ fun AddItem(item : Int, AddedItems : MutableList<AddFocus>) {
                 removeItems(AddedItems[item].id)
 
                 // AddedItems().removeAt(item)
-                MyToast("下次数据刷新时将删除")
+                showToast("下次数据刷新时将删除")
                 //EditItems(AddedItems[item].id,AddedItems[item].title,AddedItems[item].info,AddedItems[item].remark)
                 // MyToast("就那几个字删了重新添加吧")
 

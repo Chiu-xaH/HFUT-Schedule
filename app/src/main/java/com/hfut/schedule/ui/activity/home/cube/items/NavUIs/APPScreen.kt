@@ -46,12 +46,11 @@ import com.hfut.schedule.logic.utils.data.SharePrefs.saveInt
 import com.hfut.schedule.ui.activity.home.cube.items.main.Screen
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.FocusCardSettings
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.LockUI
-import com.hfut.schedule.ui.activity.home.main.saved.COMMUNITY
-import com.hfut.schedule.ui.activity.home.main.saved.JXGLSTU
+import com.hfut.schedule.ui.activity.home.main.saved.CourseType
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.HazeBottomSheet
 import com.hfut.schedule.ui.utils.style.bottomSheetRound
@@ -94,7 +93,7 @@ fun APPScreen(navController: NavController,
         saveBoolean("SWITCHFOCUS",true,showfocus)
 //        var showBottomSheet_card by remember { mutableStateOf(false) }
 
-        val switch_default = prefs.getInt("SWITCH_DEFAULT_CALENDAR", COMMUNITY)
+        val switch_default = prefs.getInt("SWITCH_DEFAULT_CALENDAR", CourseType.COMMUNITY.code)
         var currentDefaultCalendar by remember { mutableStateOf(switch_default) }
         saveInt("SWITCH_DEFAULT_CALENDAR",currentDefaultCalendar)
 
@@ -138,19 +137,19 @@ fun APPScreen(navController: NavController,
                         Row {
                             FilterChip(
                                 onClick = {
-                                    currentDefaultCalendar = COMMUNITY
-                                    saveInt("SWITCH_DEFAULT_CALENDAR", COMMUNITY)
+                                    currentDefaultCalendar = CourseType.COMMUNITY.code
+                                    saveInt("SWITCH_DEFAULT_CALENDAR", CourseType.COMMUNITY.code)
                                 },
-                                label = { Text(text = "智慧社区") }, selected = currentDefaultCalendar == COMMUNITY)
+                                label = { Text(text = "智慧社区") }, selected = currentDefaultCalendar == CourseType.COMMUNITY.code)
                             Spacer(modifier = Modifier.width(10.dp))
                             FilterChip(
                                 onClick = {
-                                    currentDefaultCalendar = JXGLSTU
-                                    saveInt("SWITCH_DEFAULT_CALENDAR", JXGLSTU)
+                                    currentDefaultCalendar = CourseType.JXGLSTU.code
+                                    saveInt("SWITCH_DEFAULT_CALENDAR", CourseType.JXGLSTU.code)
                                 },
-                                label = { Text(text = "教务(缓存)") }, selected = currentDefaultCalendar == JXGLSTU)
+                                label = { Text(text = "教务(缓存)") }, selected = currentDefaultCalendar == CourseType.JXGLSTU.code)
                         }
-                        Text(text = if(currentDefaultCalendar == COMMUNITY)"(荐)智慧社区课程表随时更新,若发生调选退课会有一定延迟,但会自动更新" else "教务课表跟随每次刷新登陆状态而更新,在登陆教务后,发生调选退课立即发生变动,登录过期后缓存在本地,并支持冲突课程的显示" )
+                        Text(text = if(currentDefaultCalendar == CourseType.COMMUNITY.code)"(荐)智慧社区课程表随时更新,若发生调选退课会有一定延迟,但会自动更新" else "教务课表跟随每次刷新登陆状态而更新,在登陆教务后,发生调选退课立即发生变动,登录过期后缓存在本地,并支持冲突课程的显示" )
                     }
                 },
                 leadingContent = { Icon(painterResource(R.drawable.calendar), contentDescription = "Localized description",) },

@@ -36,7 +36,7 @@ import com.hfut.schedule.logic.beans.jxglstu.PostSurvey
 import com.hfut.schedule.logic.beans.jxglstu.blankQuestionAnswer
 import com.hfut.schedule.logic.beans.jxglstu.radioQuestionAnswer
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.style.RowHorizontal
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -255,19 +255,19 @@ fun selectMode(vm : NetWorkViewModel, mode : PostMode) : Boolean {
         PostMode.NORMAL -> {
             //vm.postSurvey("$cookie;$token", postResultNormal(vm))
             
-            MyToast("提交完成")
+            showToast("提交完成")
             true
         }
 
         PostMode.GOOD ->  {
             vm.postSurvey("$cookie;$token", postResult(vm,true))
-            MyToast("提交完成")
+            showToast("提交完成")
             true
         }
 
         PostMode.BAD -> {
             vm.postSurvey("$cookie;$token", postResult(vm,false))
-            MyToast("提交完成")
+            showToast("提交完成")
             true
         }
     }

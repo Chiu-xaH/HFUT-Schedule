@@ -1,7 +1,7 @@
 package com.hfut.schedule.logic.network.interceptor
 
 import com.hfut.schedule.logic.utils.data.SharePrefs
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import okhttp3.Interceptor
 import okhttp3.Response
 
@@ -22,7 +22,7 @@ class GotoInterceptor : Interceptor {
                 key = key.substringBefore("]")
                 SharePrefs.saveString("auth",key)
                 if(num == 1) {
-                    MyToast("一卡通登录成功")
+                    showToast("一卡通登录成功")
                     num++
                 }
             }

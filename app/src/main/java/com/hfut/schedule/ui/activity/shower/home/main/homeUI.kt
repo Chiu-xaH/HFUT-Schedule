@@ -33,7 +33,7 @@ import com.hfut.schedule.ui.activity.shower.home.function.StartShowerUI
 import com.hfut.schedule.ui.activity.shower.home.function.UseCodeUI
 import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource

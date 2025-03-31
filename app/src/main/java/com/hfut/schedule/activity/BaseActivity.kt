@@ -43,13 +43,6 @@ abstract class BaseActivity : ComponentActivity() {
         setContent {
             AppTheme {
                 UI()
-
-//                Surface(
-//                    modifier = Modifier.fillMaxSize(),
-//                    color = MaterialTheme.colorScheme.background
-//                ) {
-//                    TransparentSystemBars()
-//                }
             }
         }
     }

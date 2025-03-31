@@ -40,7 +40,7 @@ import com.hfut.schedule.logic.utils.data.SharePrefs.saveBoolean
 import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.appHorizontalDp
-import com.hfut.schedule.ui.utils.components.MyToast
+import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.HazeBottomSheet
 import dev.chrisbanes.haze.HazeState
@@ -87,7 +87,7 @@ fun LockUI(innerPadding : PaddingValues,hazeState: HazeState) {
                     Icon(painter = painterResource(id = R.drawable.how_to_reg), contentDescription = "")
                 },
                 modifier = Modifier.clickable {
-                    MyToast("正在开发")
+                    showToast("正在开发")
                 }
             )
     }
@@ -115,7 +115,7 @@ fun LockUI(innerPadding : PaddingValues,hazeState: HazeState) {
                                 if(input == psk) {
                                     saveString("pins",null)
                                     pin = false
-                                    MyToast("已移除密码")
+                                    showToast("已移除密码")
                                     showDialog = false
                                 } else {
                                     input = ""
@@ -125,7 +125,7 @@ fun LockUI(innerPadding : PaddingValues,hazeState: HazeState) {
                                 saveString("pins",input)
                                 pin = true
                                 showDialog = false
-                                MyToast("新建密码成功 密码为${input}")
+                                showToast("新建密码成功 密码为${input}")
                             }
                         }
                     },
