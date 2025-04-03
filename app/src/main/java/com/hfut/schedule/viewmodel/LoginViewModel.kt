@@ -20,7 +20,7 @@ import org.jsoup.Jsoup
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-
+// 9个函数
 class LoginViewModel : ViewModel() {
     var sessionLiveData = MutableLiveData<String>() //SESSIONID
     var jsessionid = MutableLiveData<String>() // JESSIONID
@@ -28,18 +28,15 @@ class LoginViewModel : ViewModel() {
     var location = MutableLiveData<String>()
     var execution = MutableLiveData<String>()
 
-
     private val LoginWebVpn = LoginWebVpnServiceCreator.create(WebVpnService::class.java)
     private val Login = LoginServiceCreator.create(LoginService::class.java)
     private val GetCookie = GetCookieServiceCreator.create(LoginService::class.java)
     private val GetAESKey = GetAESKeyServiceCreator.create(LoginService::class.java)
     private val MyAPI = MyServiceCreator.create(MyService::class.java)
-
-
     private val github = GithubServiceCreator.create(GithubService::class.java)
+
     var githubData = MutableLiveData<String?>()
     fun getStarsNum() = NetWork.makeRequest(github.getRepoInfo(),githubData)
-
 
     var TICKET = MutableLiveData<String?>()
     fun login(username : String,password : String,keys : String,imageCode : String,webVpn : Boolean)  {
@@ -74,6 +71,7 @@ class LoginViewModel : ViewModel() {
             })
         }
     }
+
     fun getKey() {
 
         val call = GetAESKey.getKey()
@@ -91,8 +89,8 @@ class LoginViewModel : ViewModel() {
             }
         })
     }
-    var webVpnTicket = MutableLiveData<String?>()
 
+    var webVpnTicket = MutableLiveData<String?>()
     fun getKeyWebVpn() {
     //    val ticketWebVpn = prefs.getString("WebVpn","")
     val ticket = webVpnTicket.value?.substringAfter("wengine_vpn_ticketwebvpn_hfut_edu_cn=")
@@ -133,6 +131,7 @@ class LoginViewModel : ViewModel() {
             }
         })
     }
+
     fun getTicket() {
 
         val call = LoginWebVpn.getTicket()
@@ -155,6 +154,7 @@ class LoginViewModel : ViewModel() {
             }
         })
     }
+
     fun loginJxglstu() {
         val ticket = webVpnTicket.value?.substringAfter("wengine_vpn_ticketwebvpn_hfut_edu_cn=")
             ?.substringBefore(";")
@@ -192,7 +192,6 @@ class LoginViewModel : ViewModel() {
         })
     }
 
-
     fun My() {
         val call = MyAPI.my()
         call.enqueue(object : Callback<ResponseBody> {
@@ -202,9 +201,7 @@ class LoginViewModel : ViewModel() {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
-
-
-    }
+}
 
 
 

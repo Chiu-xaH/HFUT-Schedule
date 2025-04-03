@@ -13,11 +13,11 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.Locale
-
+// 5个函数
 class GuaGuaViewModel : ViewModel() {
     private val guaGua = GuaGuaServiceCreator.create(GuaGuaService::class.java)
-    private val loginCode = SharePrefs.prefs.getString("loginCode","") ?: ""
-    private val phoneNumber = SharePrefs.prefs.getString("PHONENUM","") ?: ""
+    private val loginCode = prefs.getString("loginCode","") ?: ""
+    private val phoneNumber = prefs.getString("PHONENUM","") ?: ""
 
     var loginResult = MutableLiveData<String?>()
     fun login(phoneNumber : String,password : String) = NetWork.makeRequest(guaGua.login(phoneNumber,password),loginResult)

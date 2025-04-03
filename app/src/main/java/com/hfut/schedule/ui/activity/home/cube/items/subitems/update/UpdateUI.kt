@@ -1,8 +1,5 @@
 package com.hfut.schedule.ui.activity.home.cube.items.subitems.update
 
-import android.app.Activity
-import android.app.DownloadManager
-import android.content.Context
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -33,8 +30,6 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,26 +38,22 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.utils.VersionUtils
 import com.hfut.schedule.logic.utils.MyDownloadManager
-import com.hfut.schedule.logic.utils.MyDownloadManager.downloadManage
 import com.hfut.schedule.logic.utils.MyDownloadManager.getDownloadProgress
-import com.hfut.schedule.logic.utils.MyDownloadManager.getDownloadStatus
 import com.hfut.schedule.logic.utils.MyDownloadManager.installApk
 import com.hfut.schedule.logic.utils.MyDownloadManager.noticeInstall
 import com.hfut.schedule.logic.utils.MyDownloadManager.openDownload
 import com.hfut.schedule.logic.utils.MyDownloadManager.refused
-import com.hfut.schedule.logic.utils.PermissionManager
-import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.Starter
 import com.hfut.schedule.ui.utils.NavigateAnimationManager
 import com.hfut.schedule.ui.utils.components.BottomButton
@@ -70,11 +61,13 @@ import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.components.TransplantListItem
-import com.hfut.schedule.ui.utils.components.appHorizontalDp
-import com.xah.bsdiffs.BsdiffUpdate
 import com.xah.bsdiffs.model.Patch
-import com.xah.bsdiffs.parsePatch
+import com.xah.bsdiffs.util.BsdiffUpdate
+import com.xah.bsdiffs.util.parsePatch
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
+// 全量更新UI
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun UpdateUI() {
@@ -209,13 +202,14 @@ fun UpdateUI() {
     }
 }
 
-
+// 增量更新UI
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun PatchUpdateUI(patch: Patch) {
+    val coroutineScope = rememberCoroutineScope()
     var loadingPatch by remember { mutableStateOf(false) }
 
-    val context = LocalActivity.current
+    val activity = LocalActivity.current
     val handler = Handler(Looper.getMainLooper())
     var pro by remember { mutableFloatStateOf(0f) }
     var able by remember { mutableStateOf(true) }
@@ -262,7 +256,7 @@ fun PatchUpdateUI(patch: Patch) {
             ) {
                 BottomButton(
                     onClick = {
-                        context?.let {
+                        activity?.let {
                             MyDownloadManager.downloadPatch(patchFileName, it)
                             able = false
                         }
@@ -282,7 +276,7 @@ fun PatchUpdateUI(patch: Patch) {
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center)  {
                     Button(
                         onClick = {
-                            context?.let { MyDownloadManager.downloadPatch(patchFileName, it) }
+                            activity?.let { MyDownloadManager.downloadPatch(patchFileName, it) }
                         },
                         modifier = Modifier
                             .weight(.5f)
@@ -305,7 +299,11 @@ fun PatchUpdateUI(patch: Patch) {
                     if(pro > 0)
                         FilledTonalButton(onClick = {
                             if (pro == 1f) {
-                                BsdiffUpdate.mergePatchApk(MyApplication.context,patch,onLoad = { load -> loadingPatch = load })
+                                coroutineScope.launch {
+                                    async { loadingPatch = true }.await()
+                                    async { BsdiffUpdate.mergePatchApk(MyApplication.context,patch) }.await()
+                                    launch { loadingPatch = false }
+                                }
                             } else {
                                 openDownload()
                             }

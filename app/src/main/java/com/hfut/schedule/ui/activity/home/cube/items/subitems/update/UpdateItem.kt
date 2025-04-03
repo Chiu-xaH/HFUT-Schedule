@@ -25,7 +25,7 @@ fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-03-31") },
+                overlineContent = { Text(text = "2025-04-02") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${VersionUtils.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -51,16 +51,12 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
 //        UpdateItems("新增 教务课程表导出为ics文件", "位于 课程表-多课表-写入日历日程",UpdateType.ADD)
-        UpdateItems("新增 教务课程表导出至系统日历", "位于 课程表-多课表",UpdateType.ADD)
-        UpdateItems("新增 彩蛋", "位于 选项-维护关于",UpdateType.ADD)
-        UpdateItems("修复 增量更新时由于补丁包找不到而崩溃的Bug", null,UpdateType.FIX)
-        UpdateItems("修复 第二次使用增量更新或全量更新时错误显示100%进度的Bug", null,UpdateType.FIX)
-        UpdateItems("修复 部分区块由于未初始化完成而崩溃的Bug", null,UpdateType.FIX)
-        UpdateItems("修复 功能性可用性支持显示信息错乱的Bug", null,UpdateType.FIX)
-        UpdateItems("优化 开屏界面的显示", null,UpdateType.OPTIMIZE)
-        UpdateItems("优化 部分界面的显示", null,UpdateType.OPTIMIZE)
-        UpdateItems("优化 重复添加日程的处理", null,UpdateType.OPTIMIZE)
-        UpdateItems("优化 添加日程时的提醒", null,UpdateType.OPTIMIZE)
+        UpdateItems("重构 一共107个网络请求函数，全部换新，优化性能", null,UpdateType.OPTIMIZE)
+        UpdateItems("优化 压缩冷启动时的网络请求，由最初的32个压缩至15个，到目前最低4个，提高性能", null,UpdateType.OPTIMIZE)
+        UpdateItems("优化 主界面页面切换时重复发送网络请求而导致占用线程进而UI动画卡顿的问题", null,UpdateType.OPTIMIZE)
+        UpdateItems("优化 部分界面在重组时重复发送网络请求的问题", null,UpdateType.OPTIMIZE)
+        UpdateItems("优化 性能", null,UpdateType.OPTIMIZE)
+        UpdateItems("优化 冗余的网络请求", null,UpdateType.OPTIMIZE)
     }
 }
 

@@ -53,7 +53,7 @@ import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.NetWorkViewModel
-import com.xah.bsdiffs.BsdiffUpdate
+import com.xah.bsdiffs.util.BsdiffUpdate
 import dev.chrisbanes.haze.HazeState
 
 

@@ -3,12 +3,9 @@ buildscript {
     ext {
     }
     dependencies {
-//        var hilt_version = '2.52'
-//        classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_version"
     }
     repositories {
         maven { url 'https://maven.aliyun.com/repository/google' }
-//        maven { url 'https://maven.aliyun.com/repository/jcenter' }
         maven { url 'https://maven.aliyun.com/nexus/content/groups/public' }
         google()
     }

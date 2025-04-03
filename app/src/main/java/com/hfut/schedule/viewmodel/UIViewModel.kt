@@ -3,21 +3,20 @@ package com.hfut.schedule.viewmodel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.hfut.schedule.logic.beans.zjgd.ReturnCard
-import com.hfut.schedule.logic.network.NetWork
+import com.hfut.schedule.logic.network.api.GiteeService
+import com.hfut.schedule.logic.network.api.LoginWebsService
 import com.hfut.schedule.logic.network.servicecreator.GiteeServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.Login.LoginWeb2ServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.Login.LoginWebServiceCreator
-import com.hfut.schedule.logic.network.api.GiteeService
-import com.hfut.schedule.logic.network.api.LoginWebsService
-import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
-import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.getIdentifyID
+import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
 import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.WebInfo
+import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.getIdentifyID
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-
+// 6个函数
 class UIViewModel : ViewModel()  {
     private val Gitee = GiteeServiceCreator.create(GiteeService::class.java)
     private val LoginWeb = LoginWebServiceCreator.create(LoginWebsService::class.java)
@@ -40,6 +39,7 @@ class UIViewModel : ViewModel()  {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
+
     val resultValue = MutableLiveData<String?>()
     val username = prefs.getString("Username","")
     fun loginWeb() {
@@ -58,6 +58,7 @@ class UIViewModel : ViewModel()  {
             })
         }
     }
+
     val result2Value = MutableLiveData<String?>()
     fun loginWeb2() {
 
@@ -89,6 +90,7 @@ class UIViewModel : ViewModel()  {
         })
     }
     val infoValue = MutableLiveData<String?>()
+
     fun getWebInfo() {
         val call =  LoginWeb.getInfo()
         call.enqueue(object : Callback<ResponseBody> {
@@ -101,6 +103,7 @@ class UIViewModel : ViewModel()  {
             }
         })
     }
+
     fun getWebInfo2() {
         val call =  LoginWeb2.getInfo()
         call.enqueue(object : Callback<ResponseBody> {

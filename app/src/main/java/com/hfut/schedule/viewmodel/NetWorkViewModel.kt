@@ -1,76 +1,72 @@
 package com.hfut.schedule.viewmodel
 
-//import com.hfut.schedule.logic.network.ServiceCreator.Login.OneGetNewTicketServiceCreator.client
 import android.annotation.SuppressLint
-import android.os.Build
 import android.util.Base64
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import com.hfut.schedule.App.MyApplication
-import com.hfut.schedule.logic.enums.LibraryItems
 import com.hfut.schedule.logic.beans.jxglstu.lessonResponse
 import com.hfut.schedule.logic.beans.one.BorrowBooksResponse
 import com.hfut.schedule.logic.beans.one.SubBooksResponse
 import com.hfut.schedule.logic.beans.one.getTokenResponse
 import com.hfut.schedule.logic.beans.zjgd.FeeType
-import com.hfut.schedule.logic.beans.zjgd.FeeType.*
+import com.hfut.schedule.logic.beans.zjgd.FeeType.ELECTRIC
+import com.hfut.schedule.logic.beans.zjgd.FeeType.SHOWER
+import com.hfut.schedule.logic.beans.zjgd.FeeType.WEB
+import com.hfut.schedule.logic.enums.LibraryItems
 import com.hfut.schedule.logic.enums.LoginType
 import com.hfut.schedule.logic.network.NetWork
-import com.hfut.schedule.logic.network.servicecreator.CommunitySreviceCreator
-import com.hfut.schedule.logic.network.servicecreator.GuaGuaServiceCreator
-import com.hfut.schedule.logic.network.servicecreator.Jxglstu.JxglstuHTMLServiceCreator
-import com.hfut.schedule.logic.network.servicecreator.Jxglstu.JxglstuJSONServiceCreator
-import com.hfut.schedule.logic.network.servicecreator.Jxglstu.JxglstuSurveyServiceCreator
-import com.hfut.schedule.logic.network.servicecreator.LePaoYunServiceCreator
-import com.hfut.schedule.logic.network.servicecreator.Login.LoginServiceCreator
-import com.hfut.schedule.logic.network.servicecreator.NewsServiceCreator
-import com.hfut.schedule.logic.network.servicecreator.OneServiceCreator
-import com.hfut.schedule.logic.network.servicecreator.OneGotoServiceCreator
-import com.hfut.schedule.logic.network.servicecreator.SearchEleServiceCreator
-import com.hfut.schedule.logic.network.servicecreator.ServerServiceCreator
-import com.hfut.schedule.logic.network.servicecreator.DormitoryScoreServiceCreator
-import com.hfut.schedule.logic.network.servicecreator.TeacherServiceCreator
-import com.hfut.schedule.logic.network.servicecreator.XuanChengServiceCreator
-import com.hfut.schedule.logic.network.servicecreator.ZJGDBillServiceCreator
 import com.hfut.schedule.logic.network.api.CommunityService
+import com.hfut.schedule.logic.network.api.DormitoryScore
 import com.hfut.schedule.logic.network.api.FWDTService
 import com.hfut.schedule.logic.network.api.GuaGuaService
 import com.hfut.schedule.logic.network.api.JxglstuService
 import com.hfut.schedule.logic.network.api.LePaoYunService
 import com.hfut.schedule.logic.network.api.LoginService
+import com.hfut.schedule.logic.network.api.MyService
 import com.hfut.schedule.logic.network.api.NewsService
 import com.hfut.schedule.logic.network.api.OneService
-import com.hfut.schedule.logic.network.api.ServerService
-import com.hfut.schedule.logic.network.api.DormitoryScore
-import com.hfut.schedule.logic.network.api.GithubService
-import com.hfut.schedule.logic.network.api.MyService
 import com.hfut.schedule.logic.network.api.QWeatherService
+import com.hfut.schedule.logic.network.api.ServerService
 import com.hfut.schedule.logic.network.api.StuService
 import com.hfut.schedule.logic.network.api.TeachersService
 import com.hfut.schedule.logic.network.api.XuanChengService
 import com.hfut.schedule.logic.network.api.ZJGDBillService
-import com.hfut.schedule.logic.network.servicecreator.GithubServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.CommunitySreviceCreator
+import com.hfut.schedule.logic.network.servicecreator.DormitoryScoreServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.GuaGuaServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.Jxglstu.JxglstuHTMLServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.Jxglstu.JxglstuJSONServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.LePaoYunServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.Login.LoginServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.MyServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.NewsServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.OneGotoServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.OneServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.QWeatherServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.SearchEleServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.ServerServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.StuServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.TeacherServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.XuanChengServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.ZJGDBillServiceCreator
+import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.data.SharePrefs.saveInt
+import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.parse.Encrypt
 import com.hfut.schedule.logic.utils.parse.SemseterParser
-import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
-import com.hfut.schedule.logic.utils.data.SharePrefs.saveInt
-import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.getUserInfo
 import com.hfut.schedule.ui.activity.home.search.functions.person.getPersonInfo
-import com.hfut.schedule.ui.activity.news.main.transferToPostData
 import com.hfut.schedule.ui.activity.home.search.functions.transfer.Campus
-import com.hfut.schedule.ui.activity.home.search.functions.transfer.Campus.*
+import com.hfut.schedule.ui.activity.home.search.functions.transfer.Campus.HEFEI
+import com.hfut.schedule.ui.activity.home.search.functions.transfer.Campus.XUANCHENG
+import com.hfut.schedule.ui.activity.news.main.transferToPostData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -83,32 +79,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-
+// 87个函数
 class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
-
-    // 通用网络请求处理函数
-    private fun launchRequest(
-        flow: MutableStateFlow<String?>? = null,
-        sharedFlow: MutableSharedFlow<String?>? = null,
-        request: suspend () -> Response<ResponseBody>
-    ) {
-        viewModelScope.launch {
-            val result: String? = try {
-                val response = withContext(Dispatchers.IO) { request() } // 网络请求
-                if (response.isSuccessful) {
-                    response.body()?.string() // 返回 JSON 字符串
-                } else {
-                    null // 请求失败时返回 null
-                }
-            } catch (e: Exception) {
-                null
-            }
-
-            flow?.value = result       // 更新 StateFlow
-            sharedFlow?.emit(result)   // SharedFlow 发送数据
-        }
-    }
-
     private val JxglstuJSON = JxglstuJSONServiceCreator.create(JxglstuService::class.java,webVpn)
     private val JxglstuHTML = JxglstuHTMLServiceCreator.create(JxglstuService::class.java,webVpn)
     private val OneGoto = OneGotoServiceCreator.create(LoginService::class.java)
@@ -118,12 +90,9 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     private val LePaoYun = LePaoYunServiceCreator.create(LePaoYunService::class.java)
     private val searchEle = SearchEleServiceCreator.create(FWDTService::class.java)
     private val login = LoginServiceCreator.create(LoginService::class.java)
-   /// private val JwglappLogin = JwglappServiceCreator.create(JwglappService::class.java)
     private val Community = CommunitySreviceCreator.create(CommunityService::class.java)
-  //  private val Jwglapp = JwglappServiceCreator.create(JwglappService::class.java)
     private val News = NewsServiceCreator.create(NewsService::class.java)
     private val xuanCheng = XuanChengServiceCreator.create(XuanChengService::class.java)
-    private val JxglstuSurvey = JxglstuSurveyServiceCreator.create(JxglstuService::class.java,webVpn)
     private val server = ServerServiceCreator.create(ServerService::class.java)
     private val guagua = GuaGuaServiceCreator.create(GuaGuaService::class.java)
     private val teacher = TeacherServiceCreator.create(TeachersService::class.java)
@@ -131,12 +100,9 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     private val stu = StuServiceCreator.create(StuService::class.java)
     private val qWeather = QWeatherServiceCreator.create(QWeatherService::class.java)
 
-
     var studentId = MutableLiveData<Int>(prefs.getInt("STUDENTID",0))
     var lessonIds = MutableLiveData<List<Int>>()
     var token = MutableLiveData<String>()
-
-
 
     var programList = MutableLiveData<String?>()
     fun getProgramList(campus : Campus) {
@@ -155,8 +121,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         }
         NetWork.makeRequest(MyAPI.getProgram(id,campusText),programSearchData)
     }
-
-
 
     val postTransferResponse = MutableLiveData<String?>()
     fun postTransfer(
@@ -279,7 +243,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             }
         })
     }
-
 
     val selectCourseData = MutableLiveData<String?>()
     @SuppressLint("SuspiciousIndentation")
@@ -406,7 +369,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     val transferListData = MutableLiveData<String?>()
     fun getTransferList(cookie: String) = studentId.value?.let { NetWork.makeRequest(JxglstuHTML.getTransferList(cookie,it),transferListData) }
 
-
     val myApplyData = MutableLiveData<String?>()
     fun getMyApply(cookie: String,batchId: String) {
 
@@ -439,7 +401,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         }
     }
 
-
     val NewsData = MutableLiveData<String?>()
     fun searchNews(title : String,page: Int = 1) {
 
@@ -453,7 +414,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
-
 
     val NewsXuanChengData = MutableLiveData<String?>()
     fun searchXuanChengNews(title : String, page: Int = 1) {
@@ -489,7 +449,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         })
     }
 
-
     fun GotoCommunity(cookie : String) {
 
         val call = login.loginGoTo(service = LoginType.COMMUNITY.service,cookie = cookie)
@@ -516,7 +475,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     }
 
     val jxglstuGradeData = MutableLiveData<String?>()
-
     fun getGrade(cookie: String,semester: Int?) {
         val call = JxglstuJSON.getGrade(cookie,studentId.value.toString(), semester)
 
@@ -615,6 +573,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
+
     fun getInfo(cookie : String) {
 
         val call = JxglstuHTML.getInfo(cookie,studentId.value.toString())
@@ -637,8 +596,8 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
-    val ProgramData = MutableLiveData<String?>()
 
+    val ProgramData = MutableLiveData<String?>()
     fun getProgram(cookie: String) {
         val call = JxglstuJSON.getProgram(cookie,studentId.value.toString())
 
@@ -655,7 +614,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     }
 
     val ProgramCompletionData = MutableLiveData<String?>()
-
     fun getProgramCompletion(cookie: String) {
         val call = JxglstuJSON.getProgramCompletion(cookie)
 
@@ -670,7 +628,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     }
 
     val programPerformanceData = MutableLiveData<String?>()
-
     fun searchTeacher(cookie: String) {
         val call = studentId.value?.let { JxglstuJSON.getProgramPerformance(cookie, it) }
 
@@ -688,7 +645,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
 
     val teacherSearchData = MutableLiveData<String?>()
-
     fun searchTeacher(name: String = "", direction: String = "") {
         val call = teacher.searchTeacher(name=name, direction = direction, size = prefs.getString("TeacherSearchRequest",MyApplication.PAGE_SIZE.toString()) ?: MyApplication.PAGE_SIZE.toString() )
 
@@ -716,6 +672,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
+
     val surveyListData = MutableLiveData<String?>()
     fun getSurveyList(cookie: String, semester : Int) {
         val call = JxglstuJSON.getSurveyList(cookie,studentId.value.toString(),semester)
@@ -728,6 +685,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
+
     val surveyData = MutableLiveData<String?>()
     fun getSurvey(cookie: String, id : String) {
         val call = JxglstuJSON.getSurveyInfo(cookie,id)
@@ -740,6 +698,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
+
     fun getSurveyToken(cookie: String, id : String) {
         val call = JxglstuJSON.getSurveyToken(cookie,id,"/for-std/lesson-survey/semester-index/${studentId.value}")
 
@@ -765,7 +724,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
-    //val photo = MutableLiveData<ByteArray>()
+
     fun getPhoto(cookie : String){
         val call = JxglstuJSON.getPhoto(cookie,studentId.value.toString())
 
@@ -787,7 +746,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
-
 
     fun OneGoto(cookie : String)  {// 创建一个Call对象，用于发送异步请求
 
@@ -829,6 +787,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
 
     }
+
     val CardData = MutableLiveData<String?>()
     fun getyue(auth : String) {
         val call = ZJGDBill.getYue(auth)
@@ -847,7 +806,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     }
 
     val infoValue = MutableLiveData<String?>()
-
     val showerData = MutableLiveData<String?>()
     fun getFee(auth: String,type : FeeType,level : String? = null,room : String? = null,phoneNumber : String? = null) {
 
@@ -923,6 +881,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
+
     val uuIdData = MutableLiveData<String?>()
     fun payStep2(auth: String,orderId : String,type : FeeType) {
 
@@ -949,6 +908,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
+
     val payResultData = MutableLiveData<String?>()
     fun payStep3(auth: String,orderId : String,password : String,uuid : String,type: FeeType) {
 
@@ -975,7 +935,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
-
 
     fun changeLimit(auth: String,json: JsonObject) {
 
@@ -1020,7 +979,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         }
     }
 
-
     var MonthData = MutableLiveData<String?>()
     fun getMonthBills(auth : String, dateStr: String) {
         val call = ZJGDBill.getMonthYue(auth,dateStr)
@@ -1033,6 +991,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
+
     fun getToken()  {
 
         val codehttp = prefs.getString("code", "")
@@ -1120,8 +1079,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         })
     }
 
-
-
     fun searchEmptyRoom(building_code : String,token : String)  {
 
         val call = One.searchEmptyRoom(building_code, "Bearer $token")
@@ -1134,7 +1091,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
-
 
     val mailData = MutableLiveData<String?>()
     fun getMailURL(token : String)  {
@@ -1196,7 +1152,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         })
     }
 
-
     val FailRateData = MutableLiveData<String>()
     fun SearchFailRate(CommuityTOKEN : String,name: String,page : String) {
         val size = prefs.getString("FailRateRequest","15")
@@ -1236,6 +1191,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             })
         }
     }
+
     val examCode = MutableLiveData<Int>()
     fun getExamJXGLSTU(cookie: String) {
         val call = JxglstuJSON.getExam(cookie,studentId.value.toString())
@@ -1272,6 +1228,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             })
         }
     }
+
     fun getAvgGrade(CommuityTOKEN: String) {
 
         val call = CommuityTOKEN?.let { Community.getAvgGrade(it) }
@@ -1289,6 +1246,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             })
         }
     }
+
     fun getAllAvgGrade(CommuityTOKEN: String) {
 
         val call = CommuityTOKEN?.let { Community.getAllAvgGrade(it) }
@@ -1360,6 +1318,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             })
         }
     }
+
     val applyResponseMsg = MutableLiveData<String>()
     fun addApply(CommuityTOKEN : String,username : String) {
 
@@ -1368,6 +1327,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         NetWork.makeRequest(call,applyResponseMsg)
 
     }
+
     val applyData = MutableLiveData<String>()
     fun getApplying(CommuityTOKEN : String) {
         val size = prefs.getString("CardRequest","15")
@@ -1376,6 +1336,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         call?.let { NetWork.makeRequest(it,applyData) }
 
     }
+
     fun getBorrowed(CommuityTOKEN: String, page : String) {
         val call = CommuityTOKEN?.let { it1 -> Community.getBorrowedBook(size = "100",page = page, token = it1)  }
 
@@ -1401,6 +1362,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
+
     fun getOverDueBook(CommuityTOKEN: String,page : String) {
         val size = prefs.getString("BookRequest","15")
         val call = CommuityTOKEN?.let { size?.let { it1 -> Community.getOverDueBook(it,page, it1) } }
@@ -1445,6 +1407,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             })
         }
     }
+
     fun checkApplying(CommuityTOKEN : String,id : String,isOk : Boolean) {
 
         val call = CommuityTOKEN?.let { Community.checkApplying(it,CommunityService.RequestApplyingJson(id,if(isOk) 1 else 0)) }
@@ -1459,7 +1422,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             })
         }
     }
-
 
     var lessonIdsNext = MutableLiveData<List<Int>>()
     fun getLessonIdsNext(cookie : String, bizTypeId : Int,studentid : String) {
@@ -1483,7 +1445,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         }
     }
 
-   // val datumDataNext = MutableLiveData<String?>()
     fun getDatumNext(cookie : String,lessonid: JsonObject) {
 
         val lessonIdsArray = JsonArray()
@@ -1504,6 +1465,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
     val weatherWarningData = MutableLiveData<String?>()
     fun getWeatherWarn() = NetWork.makeRequest(qWeather.getWeatherWarn(),weatherWarningData)
+
     val weatherData = MutableLiveData<String?>()
     fun getWeather() = NetWork.makeRequest(qWeather.getWeather(),weatherData)
 
@@ -1524,6 +1486,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
+
     val loginStuResponse = MutableLiveData<String?>()
     fun loginRefreshStu(ticket : String?,cookie: String?) {
         val call = stu.login(cookie,ticket)

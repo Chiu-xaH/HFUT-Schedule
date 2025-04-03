@@ -1,0 +1,13 @@
+
+GET http://jxglstu.hfut.edu.cn/eams5-student/login-salt HTTP/1.1
+Cookie: SESSION=ad66b1fc-c7cd-434d-8f20-a1cf3cf67faa; SRVID=s110
+
+
+给的TOKEN+“-”+“密码”
+
+SHA1加密
+
+POST http://jxglstu.hfut.edu.cn/eams5-student/login
+Cookie: SESSION=ad66b1fc-c7cd-434d-8f20-a1cf3cf67faa; SRVID=s110
+
+{"username":"2023218529","password":"015e92a6b366c647be3193db11f4f859f0a198c3","captcha":""}
