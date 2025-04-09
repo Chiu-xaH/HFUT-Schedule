@@ -9,9 +9,13 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -24,6 +28,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -46,38 +52,37 @@ import com.hfut.schedule.ui.activity.home.cube.items.subitems.LockUI
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.RequestArrange
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.TEST
 import com.hfut.schedule.ui.utils.NavigateAnimationManager
+import com.hfut.schedule.ui.utils.isCurrentRoute
 import dev.chrisbanes.haze.HazeState
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @SuppressLint("SuspiciousIndentation", "UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(vm : NetWorkViewModel
                    ,showlable : Boolean,
                    showlablechanged: (Boolean) -> Unit,
                    ifSaved : Boolean,
                    innerPaddings : PaddingValues,
-                   blur : Boolean,
-                   blurchanged : (Boolean) -> Unit,
                    vm1 : LoginViewModel,
-                   hazeState: HazeState
+                   hazeState: HazeState,
 ) {
-
     val navController = rememberNavController()
+    Box {
+        Scaffold(
 
-    Box{
-        Scaffold(floatingActionButton = {
-            //如果界面处于Screen.HomeScreen.route则不显示
-            if(navController.currentBackStackEntryAsState().value?.destination?.route != Screen.HomeScreen.route)
-                FloatingActionButton(
-                    onClick = { navController.popBackStack() },
-                    modifier = Modifier
-                        .padding(innerPaddings)
-                        .align(Alignment.BottomEnd)
-                ) {
-                    Icon(Icons.Filled.ArrowBack, contentDescription = "")
+            floatingActionButton = {
+                navController.let {
+                    if(it.isCurrentRoute(Screen.HomeScreen.route)) {
+                        FloatingActionButton (
+                            modifier = Modifier.padding(innerPaddings),
+                            onClick = { it.popBackStack() },
+                        ) {
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "")
+                        }
+                    }
                 }
-        }) { innerPadding ->
+            }
+        ) { innerPadding ->
             NavHost(
                 navController = navController,
                 startDestination = Screen.HomeScreen.route,
@@ -91,12 +96,12 @@ fun SettingsScreen(vm : NetWorkViewModel
 
                 composable(Screen.HomeScreen.route) {
                     Scaffold {
-                        HomeSettingScreen(navController,vm, showlable, showlablechanged, ifSaved, innerPaddings, blur, blurchanged,hazeState)
+                        HomeSettingScreen(navController,vm, showlable, showlablechanged, ifSaved, innerPaddings,hazeState)
                     }
                 }
                 composable(Screen.UIScreen.route) {
                     Scaffold {
-                        UIScreen(navController, innerPaddings,showlable, showlablechanged,blur, blurchanged)
+                        UIScreen(navController, innerPaddings,showlable, showlablechanged)
                     }
                 }
                 composable(Screen.APPScreen.route) {

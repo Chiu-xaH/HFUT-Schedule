@@ -78,7 +78,6 @@ enum class ShareBarRoutes {
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @OptIn(ExperimentalSharedTransitionApi::class)
-//@Preview
 @Composable
 fun ShareUI() {
     SharedTransitionLayout {
@@ -145,47 +144,20 @@ private fun SharedTransitionScope.FirstUI(
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalHazeMaterialsApi::class)
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun SharedTransitionScope.SecondUI(
     navController: NavController,
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope) {
-    var showDialog by remember { mutableStateOf(false) }
 
-    val hazeState = remember { HazeState() }
-    if(showDialog) {
-        HazeDialog(
-            hazeState = hazeState,
-            onDismissRequest = { showDialog = false },
-        ) {
-            Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(fraction = .5f),
-                shape = MaterialTheme.shapes.extraLarge,
-                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.2f),
-                contentColor = MaterialTheme.colorScheme.onSurface,
-            ) {
-                Box(Modifier.dialogBlur(hazeState))
-                {
-                    TransplantListItem(
-                        headlineContent = {
-                            Text("示例")
-                        }
-                    )
-                    // empty
-                }
-            }
-        }
-    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize().sharedBounds(
             sharedContentState = rememberSharedContentState(key = "container"),
             animatedVisibilityScope = animatedContentScope,
             resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds
-        ).hazeSource(state = hazeState),
+        ),
         containerColor = MaterialTheme.colorScheme.primaryContainer,
         topBar = {
             SharedTopBar(
@@ -196,8 +168,6 @@ fun SharedTransitionScope.SecondUI(
             )
         },
     ) { innerPadding ->
-        val context = LocalContext.current
-//        val activity = context as Activity
         Box(
             modifier = Modifier
                 .padding(innerPadding)
@@ -205,69 +175,11 @@ fun SharedTransitionScope.SecondUI(
         ){
             Button(
                 onClick = {
-                    showDialog = true
                 },
                 modifier = Modifier.align(Alignment.Center)
             ) {
                 Text("打开Dialog")
             }
         }
-    }
-}
-
-
-@Composable
-fun AnimatedColorBackground(content : @Composable () -> Unit) {
-    val infiniteTransition = rememberInfiniteTransition(label = "")
-
-    val color1 by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(5000, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse
-        ), label = ""
-    )
-
-    val color2 by infiniteTransition.animateFloat(
-        initialValue = 1f,
-        targetValue = 0f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(5000, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse
-        ), label = ""
-    )
-
-    val gradient = Brush.linearGradient(
-        colors = listOf(
-            Color(1f, abs(color1 - 0.5f), abs(color2 - 0.5f)),
-            Color(abs(color2 - 0.5f), 1f, abs(color1 - 0.5f))
-        )
-    )
-
-    BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
-        val density = LocalDensity.current
-        with(density) {
-            val contentHeight = constraints.maxHeight.toDp()
-
-            Box(modifier = Modifier.height(contentHeight).fillMaxWidth()) {
-                Canvas(modifier = Modifier.matchParentSize()) {
-                    drawRect(brush = gradient)
-                }
-                content()
-            }
-        }
-    }
-}
-
-//@Preview
-@Composable
-fun PreviewAnimatedColorBackground() {
-    AnimatedColorBackground {
-        TransplantListItem(
-            headlineContent = {
-                Text("Hello")
-            }
-        )
     }
 }

@@ -1,6 +1,8 @@
 package com.hfut.schedule.ui.utils
 
+import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 
 fun NavController.navigateAndClear(route: String) {
     navigate(route) {
@@ -18,3 +20,9 @@ fun NavController.navigateAndSave(route: String) {
         restoreState = true
     }
 }
+
+
+@Composable
+fun NavController.currentRoute() : String? = this.currentBackStackEntryAsState().value?.destination?.route
+@Composable
+fun NavController.isCurrentRoute(route: String) : Boolean = currentRoute() != route

@@ -221,8 +221,8 @@ fun isAnonymity() : Boolean {
 }
 
 
-enum class First {
-    HOME,USE_AGREEMENT,GUEST
+enum class MainNav {
+    HOME,USE_AGREEMENT,GUEST,GRADE
 }
 
 
@@ -230,7 +230,7 @@ enum class First {
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginUI(vm : LoginViewModel,navController : NavHostController) {
+fun LoginScreen(vm : LoginViewModel, navController : NavHostController) {
     val context = LocalActivity.current
     var showBadge by remember { mutableStateOf(false) }
     if (VersionUtils.getVersionName() != prefs.getString("version", VersionUtils.getVersionName())) showBadge = true
@@ -488,7 +488,7 @@ fun TwoTextField(vm : LoginViewModel,navHostController: NavHostController) {
                         onClick = {
 
 //                            noLogin(navHostController =navHostController )
-                            navHostController.navigateAndClear(First.GUEST.name)
+                            navHostController.navigateAndClear(MainNav.GUEST.name)
                         },
                         modifier = Modifier.scale(scale2.value),
                         interactionSource = interactionSource2,

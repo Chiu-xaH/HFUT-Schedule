@@ -1,7 +1,6 @@
-package com.hfut.schedule.ui.activity.home.main.saved
+package com.hfut.schedule.ui.activity.home.calendar.multi
 
 import android.app.Activity
-import android.content.ContentValues
 import android.content.Intent
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -19,9 +18,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
@@ -31,7 +27,6 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -43,39 +38,32 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.dao.dataBaseSchedule
+import com.hfut.schedule.logic.db.RoomDataBaseManager
+import com.hfut.schedule.logic.db.entity.CustomCourseTableSummary
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
 import com.hfut.schedule.logic.utils.addCourseToEvent
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
-import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.delCourseEvents
 import com.hfut.schedule.logic.utils.parse.ParseJsons.getMy
-import com.hfut.schedule.ui.activity.home.calendar.multi.AddCourseUI
-import com.hfut.schedule.ui.activity.home.calendar.multi.getFriendsCourse
-import com.hfut.schedule.ui.activity.home.calendar.multi.getFriendsList
+import com.hfut.schedule.logic.utils.parse.ParseJsons.isNextOpen
 import com.hfut.schedule.ui.activity.home.calendar.next.DatumUI
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.CourseTotalForApi
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
-import com.hfut.schedule.ui.utils.components.DevelopingUI
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LittleDialog
 import com.hfut.schedule.ui.utils.components.LoadingUI
-import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.showToast
-import com.hfut.schedule.ui.utils.components.statusUI2
 import com.hfut.schedule.ui.utils.style.HazeBottomSheet
-import com.hfut.schedule.ui.utils.style.RowHorizontal
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
 import dev.chrisbanes.haze.HazeState
@@ -89,10 +77,7 @@ enum class CourseType(val code : Int) {
     COMMUNITY(1),
     NEXT(2)
 }
-//const val JXGLSTU = 0
-//const val COMMUNITY = 1
-//const val NEXT = 2
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MultiScheduleSettings(
     ifSaved : Boolean,
@@ -104,34 +89,37 @@ fun MultiScheduleSettings(
     hazeState: HazeState
 ) {
     val context = LocalActivity.current
-    var num  by remember { mutableStateOf(getNum()) }
+    var customList by remember { mutableStateOf<List<CustomCourseTableSummary>>(emptyList()) }
     var showDialog by remember { mutableStateOf(false) }
     var showDialog_Del by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
 
-    val sheetState_add = rememberModalBottomSheetState()
     var showBottomSheet_add by remember { mutableStateOf(false) }
-
+    val scope = rememberCoroutineScope()
     var isFriendMode by remember { mutableStateOf(false) }
 
     //已选择
-    var selected  by remember { mutableStateOf(select) }
+    var selected  by remember { mutableIntStateOf(select) }
     //长按要删除的
-    var selectedDel  by remember { mutableStateOf(select) }
+    var selectedDelTitle  by remember { mutableStateOf("课表") }
+    var selectedDelId  by remember { mutableIntStateOf(0) }
+    LaunchedEffect(showDialog,showDialog_Del) {
+        customList = RoomDataBaseManager.customCourseTableDao.get()
+    }
     LaunchedEffect(selected,isFriendMode) {
         onSelectedChange(selected)
         onFriendChange(isFriendMode)
     }
-    num = getNum()
     if(showDialog) {
         LittleDialog(
             onDismissRequest = { showDialog = false },
             onConfirmation = {
-                showDialog = false
-                Remove(selectedDel)
+                scope.launch {
+                    async { RoomDataBaseManager.customCourseTableDao.del(selectedDelId) }.await()
+                    launch { showDialog = false }
+                }
             },
-            dialogText = "要删除课表 ${getIndex(num)} 吗",
+            dialogText = "要删除 $selectedDelTitle 吗",
             hazeState = hazeState
         )
     }
@@ -140,8 +128,10 @@ fun MultiScheduleSettings(
         LittleDialog(
             onDismissRequest = { showDialog_Del = false },
             onConfirmation = {
-                showDialog_Del = false
-                DeleteAll()
+                scope.launch {
+                    async { RoomDataBaseManager.customCourseTableDao.clearAll() }.await()
+                    launch { showDialog_Del = false }
+                }
             },
             dialogText = "要删除自定义添加的全部课表吗",
             hazeState = hazeState
@@ -243,7 +233,7 @@ fun MultiScheduleSettings(
                 modifier = Modifier.verticalScroll(rememberScrollState())
             ) {
                 HazeBottomSheetTopBar("写入日历日程", isPaddingStatusBar = false)
-                EventUI(context)
+                EventUI(vmUI,context)
                 Spacer(modifier = Modifier.height(appHorizontalDp()))
             }
         }
@@ -365,7 +355,9 @@ fun MultiScheduleSettings(
                 }
             }
             //文件导入课表
-            items(num) { item ->
+            items(customList.size) { index ->
+                val item = customList[index]
+                val indexOffset = index + 4
                 OutlinedCard (
                     modifier = Modifier
                         .size(width = 100.dp, height = 70.dp)
@@ -373,20 +365,21 @@ fun MultiScheduleSettings(
                         .combinedClickable(
                             onClick = {
                                 isFriendMode = false
-                                selected = item + 1 + 2
+                                selected = indexOffset
                             },
-                            //  onDoubleClick = {},
                             onLongClick = {
                                 //s删除
-                                selectedDel = item + 1
+                                selectedDelTitle = item.title
+                                selectedDelId = item.id
                                 showDialog = true
                             }
                         ),
-                    colors = if(selected == item+1+2) selectedColor else normalColor
+                    colors = if(selected == indexOffset) selectedColor else normalColor
                 ) {
                     Box(modifier = Modifier.fillMaxSize()) {
-                        Text(getIndex(item+1).toString(), modifier = Modifier.align(Alignment.Center),
-                            fontWeight = if(selected == item+1+2) FontWeight.Bold else FontWeight.Thin)
+                        Text(
+                            item.title, modifier = Modifier.align(Alignment.Center),
+                            fontWeight = if(selected == indexOffset) FontWeight.Bold else FontWeight.Thin)
                     }
                 }
             }
@@ -457,63 +450,63 @@ fun MultiScheduleSettings(
 }
 
 
-fun Add(title : String) {
-    val dbwritableDatabase =  dataBaseSchedule.writableDatabase
-    dataBaseSchedule.writableDatabase
-    val values1 = ContentValues().apply {
-        put("title", title)
-    }
-    dbwritableDatabase.insert("Schedule", null, values1)
-}
+//fun Add(title : String) {
+//    val dbwritableDatabase =  dataBaseSchedule.writableDatabase
+//    dataBaseSchedule.writableDatabase
+//    val values1 = ContentValues().apply {
+//        put("title", title)
+//    }
+//    dbwritableDatabase.insert("Schedule", null, values1)
+//}
 
-fun Remove(id : Int) {
-    saveString("SCHEDULE" + getIndex(id),null)
-    val dbwritableDatabase = dataBaseSchedule.writableDatabase
-    // 执行删除操作
-    dbwritableDatabase.delete("Schedule", "id = ?", arrayOf(id.toString()))
-}
+//fun Remove(id : Int) {
+//    saveString("SCHEDULE" + getIndex(id),null)
+//    val dbwritableDatabase = dataBaseSchedule.writableDatabase
+//    // 执行删除操作
+//    dbwritableDatabase.delete("Schedule", "id = ?", arrayOf(id.toString()))
+//}
 
-fun getNum() : Int {
-    return try {
-        val db =  dataBaseSchedule.readableDatabase
-        val cursor = db.rawQuery("SELECT COUNT(*) FROM Schedule", null)
-        cursor.moveToFirst()
-        val count = cursor.getInt(0)
-        cursor.close()
-        db.close()
-        count
-    } catch (_:Exception) {
-        0
-    }
-}
+//fun getNum() : Int {
+//    return try {
+//        val db =  dataBaseSchedule.readableDatabase
+//        val cursor = db.rawQuery("SELECT COUNT(*) FROM Schedule", null)
+//        cursor.moveToFirst()
+//        val count = cursor.getInt(0)
+//        cursor.close()
+//        db.close()
+//        count
+//    } catch (_:Exception) {
+//        0
+//    }
+//}
 
-fun getIndex(id : Int) : String? {
-    return try {
-        val db = dataBaseSchedule.readableDatabase
-        val cursor = db.rawQuery("SELECT title FROM Schedule WHERE id = ?", arrayOf(id.toString()))
-        var title: String? = null
-        if (cursor.moveToFirst()) {
-            title = cursor.getString(cursor.getColumnIndexOrThrow("title"))
-        }
-        cursor.close()
-        db.close()
-        return title
-    } catch (_:Exception) {
-        null
-    }
-}
+//fun getIndex(id : Int) : String? {
+//    return try {
+//        val db = dataBaseSchedule.readableDatabase
+//        val cursor = db.rawQuery("SELECT title FROM Schedule WHERE id = ?", arrayOf(id.toString()))
+//        var title: String? = null
+//        if (cursor.moveToFirst()) {
+//            title = cursor.getString(cursor.getColumnIndexOrThrow("title"))
+//        }
+//        cursor.close()
+//        db.close()
+//        return title
+//    } catch (_:Exception) {
+//        null
+//    }
+//}
 
-fun isNextOpen() : Boolean {
-    return try {
-        getMy()!!.Next
-    } catch (_:Exception) {
-        false
-    }
-}
+//fun isNextOpen() : Boolean {
+//    return try {
+//        getMy()!!.Next
+//    } catch (_:Exception) {
+//        false
+//    }
+//}
 
-fun DeleteAll() {
-    MyApplication.context.deleteDatabase("Schedule.db")
-}
+//fun DeleteAll() {
+//    MyApplication.context.deleteDatabase("Schedule.db")
+//}
 
 
 fun saveTextToFile( fileName: String, content: String) {
@@ -563,7 +556,7 @@ fun InfoUI() {
 
 
 @Composable
-private fun EventUI(context : Activity?) {
+private fun EventUI(vmUI: UIViewModel,context : Activity?) {
     var time by remember { mutableIntStateOf(20) }
     val cor = rememberCoroutineScope()
     var loading by remember { mutableStateOf(false) }
@@ -621,8 +614,8 @@ private fun EventUI(context : Activity?) {
                 context?.let {
                     cor.launch {
                         async { loading = true }.await()
-                        async { delCourseEvents(activity = it) }.await()
-                        async { addCourseToEvent(activity = it,time) }.await()
+                        async { delCourseEvents(vmUI,activity = it) }.await()
+                        async { addCourseToEvent(vmUI,activity = it,time) }.await()
                         launch { loading = false }
                     }
                 }
@@ -640,7 +633,7 @@ private fun EventUI(context : Activity?) {
                 context?.let {
                     cor.launch {
                         async { loading = true }.await()
-                        async { addCourseToEvent(activity = it,time) }.await()
+                        async { addCourseToEvent(vmUI,activity = it,time) }.await()
                         launch { loading = false }
                     }
                 }
@@ -658,7 +651,7 @@ private fun EventUI(context : Activity?) {
                 context?.let {
                     cor.launch {
                         async { loading = true }.await()
-                        async { delCourseEvents(activity = it) }.await()
+                        async { delCourseEvents(vmUI,activity = it) }.await()
                         launch { loading = false }
                     }
                 }

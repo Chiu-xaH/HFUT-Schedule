@@ -1,5 +1,8 @@
 package com.hfut.schedule.viewmodel
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.hfut.schedule.logic.beans.zjgd.ReturnCard
@@ -8,8 +11,10 @@ import com.hfut.schedule.logic.network.api.LoginWebsService
 import com.hfut.schedule.logic.network.servicecreator.GiteeServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.Login.LoginWeb2ServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.Login.LoginWebServiceCreator
+import com.hfut.schedule.logic.utils.JxglstuCourseSchedule
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
+import com.hfut.schedule.logic.utils.getJxglstuCourseSchedule
 import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.WebInfo
 import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.getIdentifyID
 import okhttp3.ResponseBody
@@ -23,9 +28,21 @@ class UIViewModel : ViewModel()  {
     private val LoginWeb2 = LoginWeb2ServiceCreator.create(LoginWebsService::class.java)
 
     val findNewCourse = MutableLiveData<Boolean>()
-    var CardValue = MutableLiveData<ReturnCard>()
+    var cardValue by mutableStateOf<ReturnCard?>(null)
     var electricValue = MutableLiveData<String?>()
     var webValue = MutableLiveData<WebInfo>()
+
+    var isAddUIExpanded by mutableStateOf(false)
+
+    // 缓存复用 由于数据过大
+    var jxglstuCourseScheduleList by mutableStateOf(
+        getJxglstuCourseSchedule()
+    )
+    fun refreshJxglstuCourseScheduleList(json : String) {
+        jxglstuCourseScheduleList = getJxglstuCourseSchedule(json)
+    }
+
+
 
     fun getUpdate() {
 

@@ -104,13 +104,9 @@ import org.json.JSONArray
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewsActivityUI(vm: NetWorkViewModel) {
-//    val animation by remember { mutableStateOf(SharePrefs.prefs.getInt("ANIMATION", MyApplication.ANIMATION_SPEED)) }
     val navController = rememberNavController()
     val context = LocalActivity.current
-//    val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR",  VersionUtils.canBlur)
-//    val blur by remember { mutableStateOf(switchblur) }
     val hazeState = remember { HazeState() }
-//    var bottomBarItems by remember { mutableStateOf(NewsBarItems.News) }
     val currentAnimationIndex by DataStoreManager.animationTypeFlow.collectAsState(initial = 0)
     var targetPage by remember { mutableStateOf(NewsBarItems.News) }
     // 保存上一页页码 用于决定左右动画

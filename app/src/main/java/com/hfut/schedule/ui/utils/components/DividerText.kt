@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,6 +31,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.logic.utils.DataStoreManager
 
 // 小标题
 @Composable
@@ -79,6 +81,8 @@ fun DividerTextExpandedWith(
 
     val speed = MyApplication.ANIMATION_SPEED
 
+    val motionBlur by DataStoreManager.motionBlurFlow.collectAsState(initial = true)
+
     var expanded by remember { mutableStateOf(defaultIsExpanded) }
     fun set() {
         expanded = !expanded
@@ -104,7 +108,7 @@ fun DividerTextExpandedWith(
                 shrinkOut(shrinkTowards = Alignment.BottomCenter,animationSpec = tween(durationMillis = speed))
         ,
         visible = expanded,
-        modifier = if (openBlurAnimation) Modifier.blur(blurSize) else Modifier
+        modifier = if(!motionBlur) Modifier else { if (openBlurAnimation) Modifier.blur(blurSize) else Modifier }
     ) {
         Column {
             content()

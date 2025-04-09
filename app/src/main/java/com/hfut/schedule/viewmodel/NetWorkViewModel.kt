@@ -564,9 +564,8 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 val body = response.body()?.string()
                 datumData.value = body
-                if (body != null) {
-                    if(body.contains("result"))
-                        saveString("json", body)
+                if (body != null && body.contains("result")) {
+                    saveString("json", body)
                 }
             }
 
@@ -1210,60 +1209,13 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     }
 
     var GradeData = MutableLiveData<String?>()
-    fun getGrade(CommuityTOKEN: String,year : String,term : String) {
+    fun getGrade(CommuityTOKEN: String,year : String,term : String) = NetWork.makeRequest(Community.getGrade(CommuityTOKEN,year,term),GradeData)
+    var avgData = MutableLiveData<String?>()
+    fun getAvgGrade(CommuityTOKEN: String) = NetWork.makeRequest(Community.getAvgGrade(CommuityTOKEN),avgData)
 
-        val call = CommuityTOKEN?.let { Community.getGrade(it,year,term) }
+    var allAvgData = MutableLiveData<String?>()
 
-        if (call != null) {
-            call.enqueue(object : Callback<ResponseBody> {
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                        val responses = response.body()?.string()
-                        saveString("Grade",responses )
-                        GradeData.value = responses
-                }
-
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    GradeData.value = "错误"
-                    t.printStackTrace() }
-            })
-        }
-    }
-
-    fun getAvgGrade(CommuityTOKEN: String) {
-
-        val call = CommuityTOKEN?.let { Community.getAvgGrade(it) }
-
-        if (call != null) {
-            call.enqueue(object : Callback<ResponseBody> {
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    val responses = response.body()?.string()
-                    saveString("Avg",responses )
-                }
-
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    t.printStackTrace()
-                }
-            })
-        }
-    }
-
-    fun getAllAvgGrade(CommuityTOKEN: String) {
-
-        val call = CommuityTOKEN?.let { Community.getAllAvgGrade(it) }
-
-        if (call != null) {
-            call.enqueue(object : Callback<ResponseBody> {
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    val responses = response.body()?.string()
-                    saveString("AvgAll",responses )
-                }
-
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    t.printStackTrace()
-                }
-            })
-        }
-    }
+    fun getAllAvgGrade(CommuityTOKEN: String) = NetWork.makeRequest(Community.getAllAvgGrade(CommuityTOKEN),allAvgData)
 
     val libraryData = MutableLiveData<String?>()
     fun SearchBooks(CommuityTOKEN: String,name: String,page: Int) {
@@ -1337,46 +1289,21 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
     }
 
-    fun getBorrowed(CommuityTOKEN: String, page : String) {
-        val call = CommuityTOKEN?.let { it1 -> Community.getBorrowedBook(size = "100",page = page, token = it1)  }
+    val booksChipData = MutableLiveData<String?>()
 
-        if (call != null) {
-            call.enqueue(object : Callback<ResponseBody> {
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    saveString(LibraryItems.BORROWED.name, response.body()?.string())
-                }
-
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-            })
-        }
+    fun communityBooks(token : String,type : LibraryItems,page : Int = 1) {
+        val size = 500
+        NetWork.makeRequest(
+            when(type) {
+                LibraryItems.OVERDUE -> Community.getOverDueBook(token, page.toString(),size.toString())
+                LibraryItems.HISTORY -> Community.getHistoryBook(token, page.toString(),size.toString())
+                LibraryItems.BORROWED -> Community.getBorrowedBook(token, page.toString(),size.toString())
+            },
+            booksChipData
+        )
     }
 
-    fun getHistory(CommuityTOKEN: String, page : String) {
-        val call =  Community.getHistoryBook(token = CommuityTOKEN, size = "100", page = page)
 
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                saveString(LibraryItems.HISTORY.name, response.body()?.string())
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
-    }
-
-    fun getOverDueBook(CommuityTOKEN: String,page : String) {
-        val size = prefs.getString("BookRequest","15")
-        val call = CommuityTOKEN?.let { size?.let { it1 -> Community.getOverDueBook(it,page, it1) } }
-
-        if (call != null) {
-            call.enqueue(object : Callback<ResponseBody> {
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    saveString(LibraryItems.OVERDUE.name, response.body()?.string())
-                }
-
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-            })
-        }
-    }
 
     fun getToday(CommuityTOKEN : String) {
 

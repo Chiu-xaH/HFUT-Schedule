@@ -19,6 +19,7 @@
         <package android:name="com.wisedu.cpdaily" />
         <package android:name="com.xuetangx.ykt" />
         <package android:name="com.chaoxing.mobile" />
+        <package android:name="com.netease.edu.ucmooc" />
     </queries>
 
     <application

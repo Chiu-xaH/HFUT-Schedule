@@ -81,8 +81,8 @@ data class NavigationBarItemData(val route: String, val label: String, val icon:
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainUI(vm : NetViewModel) {
-    val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR", AndroidVersion.sdkInt >= 32)
-    var blur by remember { mutableStateOf(switchblur) }
+    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = VersionUtils.canBlur)
+
     val hazeState = remember { HazeState() }
     val navController = rememberNavController()
     Scaffold(

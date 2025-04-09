@@ -151,7 +151,7 @@ fun PersonPart() {
 fun getUserInfo() : UserInfo {
 
     val date = DateTimeUtils.Date_yyyy_MM_dd
-    val time = "${DateTimeUtils.formattedTime_Hour}:${DateTimeUtils.formattedTime_Minute}:00"
+    val time = "${DateTimeUtils.Time_Hour}:${DateTimeUtils.Time_Minute}:00"
     val dateTime = "$date $time"
 
 

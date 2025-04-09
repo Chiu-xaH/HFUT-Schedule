@@ -75,6 +75,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -263,7 +264,7 @@ fun GuaGuaLoginUI(vm : GuaGuaViewModel,netVm : NetWorkViewModel,navHostControlle
 }
 
 fun LoginGuaGuaClick(phoneNumber : String,psk : String,vm: GuaGuaViewModel,navHostController: NavHostController) {
-    val inputPSK = Encrypt.md5Hash(psk).toUpperCase()
+    val inputPSK = Encrypt.md5Hash(psk).uppercase(Locale.getDefault())
     saveString("PHONENUM",phoneNumber)
     saveString("GuaGuaPsk",psk)
 

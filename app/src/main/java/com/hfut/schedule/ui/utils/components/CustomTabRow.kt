@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -20,15 +22,25 @@ import com.hfut.schedule.ui.utils.style.RowHorizontal
 import kotlinx.coroutines.launch
 
 @Composable
-fun CustomTabRow(pagerState: PagerState, titles: List<String>, blur: Boolean) {
+fun CustomTabRow(pagerState: PagerState, titles: List<String>) {
     val scope = rememberCoroutineScope()
     Column(modifier = Modifier.background(Color.Transparent).padding(horizontal = 10.dp)) {
-        TabRow(selectedTabIndex = pagerState.currentPage,indicator = {}, containerColor = Color.Transparent, divider = {  }) {
+        SecondaryTabRow(
+            selectedTabIndex = pagerState.currentPage,
+            containerColor = Color.Transparent,
+            contentColor = TabRowDefaults.primaryContentColor,
+            indicator = {},
+            divider = {  }) {
             titles.forEachIndexed { index, title ->
                 val selected = pagerState.currentPage == index
                 Tab(
                     selected = selected,
-                    text = { Text(text = title, style = TextStyle(fontWeight = if(selected) FontWeight.Bold else FontWeight.Normal)) },
+                    text = {
+                        Text(
+                            text = title,
+                            style = TextStyle(fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal)
+                        )
+                    },
                     modifier = Modifier
                         .padding(5.dp)
                         .background(

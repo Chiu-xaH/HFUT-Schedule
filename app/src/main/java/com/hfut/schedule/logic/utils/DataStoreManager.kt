@@ -21,6 +21,12 @@ object DataStoreManager {
     private val STU_COOKIE = stringPreferencesKey("stu_cookie")
     private val PURE_DARK = booleanPreferencesKey("pure_dark")
     private val COLOR_MODE = intPreferencesKey("color_mode")
+    private val MOTION_BLUR = booleanPreferencesKey("motion_blur")
+    private val HAZE_BLUR = booleanPreferencesKey("haze_blur")
+    private val TRANSITION = booleanPreferencesKey("transition")
+    private val MOTION_ANIMATION_TYPE = booleanPreferencesKey("motion_animation_type")
+
+
 
 
     enum class ColorMode(val code : Int) {
@@ -47,6 +53,29 @@ object DataStoreManager {
             preferences[COLOR_MODE] = switch.code
         }
     }
+    suspend fun saveMotionBlur(switch: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[MOTION_BLUR] = switch
+        }
+    }
+    suspend fun saveHazeBlur(switch: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[HAZE_BLUR] = switch
+        }
+    }
+    suspend fun saveMotionAnimation(switch: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[MOTION_ANIMATION_TYPE] = switch
+        }
+    }
+    suspend fun saveTransition(switch: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[TRANSITION] = switch
+        }
+    }
+
+
+
 
 
     val animationTypeFlow: Flow<Int> = dataStore.data
@@ -65,8 +94,24 @@ object DataStoreManager {
         .map { preferences ->
             preferences[COLOR_MODE] ?: ColorMode.AUTO.code
         }
+    val motionBlurFlow: Flow<Boolean> = dataStore.data
+        .map { preferences ->
+            preferences[MOTION_BLUR] ?: true
+        }
+    val hazeBlurFlow: Flow<Boolean> = dataStore.data
+        .map { preferences ->
+            preferences[HAZE_BLUR] ?: VersionUtils.canBlur
+        }
+    val motionAnimationTypeFlow: Flow<Boolean> = dataStore.data
+        .map { preferences ->
+            preferences[MOTION_ANIMATION_TYPE] ?: false
+        }
+    val transitionFlow: Flow<Boolean> = dataStore.data
+        .map { preferences ->
+            preferences[TRANSITION] ?: false
+        }
     /* 用法
-    val currentAnimationIndex by DataStoreManager.XXX.collectAsState(initial = 默认值)
+    val XXX by DataStoreManager.XXX.collectAsState(initial = 默认值)
      */
 }
 

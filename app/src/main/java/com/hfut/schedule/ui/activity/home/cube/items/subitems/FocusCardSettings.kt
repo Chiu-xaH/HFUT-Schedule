@@ -5,32 +5,22 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -38,49 +28,40 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
-import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.viewmodel.NetWorkViewModel
-import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.beans.SearchEleResponse
 import com.hfut.schedule.logic.beans.zjgd.FeeResponse
 import com.hfut.schedule.logic.beans.zjgd.FeeType
 import com.hfut.schedule.logic.utils.DateTimeUtils
 import com.hfut.schedule.logic.utils.data.SharePrefs
-import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
-import com.hfut.schedule.ui.activity.home.focus.funictions.getZjgdCard
+import com.hfut.schedule.logic.utils.data.SharePrefs.saveString
 import com.hfut.schedule.ui.activity.home.focus.funictions.TodayUI
-import com.hfut.schedule.ui.activity.home.focus.funictions.getTodayNet
+import com.hfut.schedule.ui.activity.home.search.functions.card.SchoolCardItem
 import com.hfut.schedule.ui.activity.home.search.functions.electric.Electric
 import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.LoginWeb
-import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.WebInfo
-import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.getWebInfoOld
-import com.hfut.schedule.ui.activity.home.search.functions.card.SchoolCardItem
 import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.getWebInfo
+import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.getWebInfoOld
 import com.hfut.schedule.ui.activity.home.search.functions.shower.getInGuaGua
 import com.hfut.schedule.ui.activity.home.search.functions.transfer.Campus
 import com.hfut.schedule.ui.activity.home.search.functions.transfer.getCampus
-import com.hfut.schedule.ui.utils.components.appHorizontalDp
-import com.hfut.schedule.ui.utils.components.cardNormalColor
-import com.hfut.schedule.ui.utils.components.cardNormalDp
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.MyCustomCard
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
 import com.hfut.schedule.ui.utils.components.TransplantListItem
+import com.hfut.schedule.ui.utils.components.cardNormalColor
 import com.hfut.schedule.ui.utils.style.bottomSheetRound
+import com.hfut.schedule.viewmodel.NetWorkViewModel
+import com.hfut.schedule.viewmodel.UIViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -164,6 +145,7 @@ fun FocusCardSettings(innerPadding : PaddingValues) {
             leadingContent = { Icon(painter = painterResource(id = R.drawable.schedule), contentDescription = "")},
             trailingContent = { Switch(checked = showCountDown, onCheckedChange = {showch -> showCountDown = showch},enabled = false)}
         )
+
 //        TransplantListItem(
 //            headlineContent = { Text(text = "绩点排名")} ,
 //            leadingContent = { Icon(painter = painterResource(id = R.drawable.filter_vintage), contentDescription = "")},
@@ -210,7 +192,7 @@ fun FocusCardSettings(innerPadding : PaddingValues) {
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel, refreshing : Boolean,hazeState: HazeState) {
+fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel,hazeState: HazeState) {
     val showEle = prefs.getBoolean("SWITCHELE",getCampus() == Campus.XUANCHENG)
     val showToday = prefs.getBoolean("SWITCHTODAY",true)
     val showWeb = prefs.getBoolean("SWITCHWEB",getCampus() == Campus.XUANCHENG)
@@ -261,7 +243,7 @@ fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel, refreshing : Boolean,ha
                                 shortCut()
                             }
                     }
-                if(DateTimeUtils.formattedTime_Hour.toInt() in 22 until 25) {
+                if(DateTimeUtils.Time_Hour.toInt() in 22 until 25) {
                     Row(
                         modifier = Modifier.clickable {
                             getInGuaGua(vm)

@@ -1,5 +1,6 @@
 package com.hfut.schedule.logic.network.servicecreator
 
-import com.hfut.schedule.ui.activity.home.focus.getURL
+import com.hfut.schedule.logic.utils.parse.ParseJsons.getURL
+
 
 object ServerServiceCreator : BaseServiceCreator(getURL())

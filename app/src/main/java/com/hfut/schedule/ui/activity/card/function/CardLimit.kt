@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -81,8 +82,10 @@ fun Click(vm : NetWorkViewModel, limit : String, amt : String) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CardLimit(vm : NetWorkViewModel, vmUI : UIViewModel) {
-    var limit by remember { mutableStateOf((vmUI.CardValue.value?.autotrans_limite ?: SharePrefs.prefs.getString("card_limit","0"))) }
-    var amt by remember { mutableStateOf(vmUI.CardValue.value?.autotrans_amt?: SharePrefs.prefs.getString("card_amt","0")) }
+    val cardValue by remember { derivedStateOf { vmUI.cardValue } }
+
+    var limit by remember { mutableStateOf((cardValue?.autotrans_limite ?: SharePrefs.prefs.getString("card_limit","0"))) }
+    var amt by remember { mutableStateOf(cardValue?.autotrans_amt?: SharePrefs.prefs.getString("card_amt","0")) }
 
 
     var limitFloat = limit?.toFloat()

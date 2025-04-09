@@ -23,10 +23,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.hfut.schedule.logic.utils.DataStoreManager
 import com.hfut.schedule.logic.utils.VersionUtils
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.utils.style.dialogBlur
@@ -44,7 +47,7 @@ fun LittleDialog(
     dismissText : String = "取消",
     hazeState: HazeState? = null
 ) {
-    val blur = prefs.getBoolean("SWITCHBLUR", VersionUtils.canBlur)
+    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = VersionUtils.canBlur)
     val modifier = if(blur && hazeState != null) {
         Modifier.dialogBlur(hazeState)
     } else {

@@ -22,7 +22,7 @@ import com.hfut.schedule.ui.utils.components.EmptyUI
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CardHome(innerPadding : PaddingValues, vm : NetWorkViewModel, blur : Boolean, pagerState : PagerState) {
+fun CardHome(innerPadding : PaddingValues, vm : NetWorkViewModel,pagerState : PagerState) {
     val TAB_DAY = 0
    // val TAB_WEEK = 1
     val TAB_MONTH = 1

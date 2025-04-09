@@ -351,11 +351,11 @@ fun PersonItems(ifSaved : Boolean) {
                     )
                 }
                 photo?.let {
-                    var show by remember { mutableStateOf(false) }
+                    var showPhoto by remember { mutableStateOf(false) }
                     TransplantListItem(
                         headlineContent = { Text(text = "学籍照") },
                         trailingContent = {
-                            if(show) {
+                            if(showPhoto) {
                                 val byteArray = Base64.decode(it, Base64.DEFAULT)
                                 val bitmap = BitmapFactory.decodeByteArray(byteArray , 0, byteArray.size)
                                 val imageBitmap = bitmap.asImageBitmap()
@@ -366,7 +366,7 @@ fun PersonItems(ifSaved : Boolean) {
                                         .padding(10.dp))
                             } else {
                                 FilledTonalButton(
-                                    onClick = { show = !show },
+                                    onClick = { showPhoto = !showPhoto },
                                 ) {
                                     Text("显示")
                                 }
@@ -379,7 +379,7 @@ fun PersonItems(ifSaved : Boolean) {
                             )
                         },
                         modifier = Modifier.clickable {
-                            show = !show
+                            showPhoto = !showPhoto
                         }
                     )
                 }

@@ -28,7 +28,7 @@ fun Huixin() {
 
     TransplantListItem(
         headlineContent = { Text(text = "生活缴费") },
-        overlineContent = { Text("惠新易校官方平台") },
+        overlineContent = { Text("慧新易校") },
         leadingContent = {
             Icon(
                 painterResource(R.drawable.corporate_fare),

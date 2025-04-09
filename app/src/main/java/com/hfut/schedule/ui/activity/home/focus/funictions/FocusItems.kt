@@ -1,24 +1,28 @@
 package com.hfut.schedule.ui.activity.home.focus.funictions
 
-import android.annotation.SuppressLint
 import android.app.Activity
-import android.os.Build
-import android.widget.Toast
-import androidx.annotation.RequiresApi
+import android.util.Log
+import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalActivity
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.BoundsTransform
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.Spring.StiffnessMediumLow
+import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -30,82 +34,101 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.viewmodel.NetWorkViewModel
+import com.hfut.schedule.logic.beans.Schedule
 import com.hfut.schedule.logic.beans.community.TodayResponse
 import com.hfut.schedule.logic.beans.community.TodayResult
 import com.hfut.schedule.logic.beans.focus.AddFocus
-import com.hfut.schedule.logic.beans.Schedule
-import com.hfut.schedule.logic.utils.addToCalendars
+import com.hfut.schedule.logic.db.RoomDataBaseManager
+import com.hfut.schedule.logic.db.entity.CustomEventDTO
+import com.hfut.schedule.logic.db.entity.CustomEventType
+import com.hfut.schedule.logic.db.util.CustomEventMapper
+import com.hfut.schedule.logic.utils.DataStoreManager
 import com.hfut.schedule.logic.utils.DateTimeUtils
-import com.hfut.schedule.logic.utils.DateTimeUtils.TimeState.*
-import com.hfut.schedule.logic.utils.parse.SemseterParser.parseSemseter
-import com.hfut.schedule.logic.utils.parse.SemseterParser.getSemseter
-import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.utils.DateTimeUtils.TimeState.ENDED
+import com.hfut.schedule.logic.utils.DateTimeUtils.TimeState.NOT_STARTED
+import com.hfut.schedule.logic.utils.DateTimeUtils.TimeState.ONGOING
+import com.hfut.schedule.logic.utils.JxglstuCourseSchedule
+import com.hfut.schedule.logic.utils.addToCalendars
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.parse.ParseJsons.getSchedule
+import com.hfut.schedule.logic.utils.parse.ParseJsons.getTimeStamp
+import com.hfut.schedule.logic.utils.parse.SemseterParser.getSemseter
+import com.hfut.schedule.logic.utils.parse.SemseterParser.parseSemseter
+import com.hfut.schedule.logic.utils.parseToDateTime
 import com.hfut.schedule.ui.activity.home.calendar.communtiy.DetailInfos
 import com.hfut.schedule.ui.activity.home.calendar.communtiy.getCourseINFO
 import com.hfut.schedule.ui.activity.home.cube.items.main.apiCheck
-import com.hfut.schedule.logic.dao.FocusDataBaseManager.addItems
-import com.hfut.schedule.logic.dao.FocusDataBaseManager.removeItems
 import com.hfut.schedule.ui.activity.home.search.functions.card.TodayInfo
-import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomTip
-import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
+import com.hfut.schedule.ui.utils.components.DateRangePickerModal
+import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.utils.components.MyCustomCard
-import com.hfut.schedule.ui.utils.components.showToast
+import com.hfut.schedule.ui.utils.components.LittleDialog
 import com.hfut.schedule.ui.utils.components.RotatingIcon
-import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.ui.utils.components.ScheduleIcons
 import com.hfut.schedule.ui.utils.components.ScrollText
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
+import com.hfut.schedule.ui.utils.components.TimeRangePickerDialog
 import com.hfut.schedule.ui.utils.components.TransplantListItem
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
+import com.hfut.schedule.ui.utils.components.showToast
+import com.hfut.schedule.ui.utils.style.ColumnVertical
 import com.hfut.schedule.ui.utils.style.HazeBottomSheet
+import com.hfut.schedule.ui.utils.style.RowHorizontal
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
+import com.hfut.schedule.viewmodel.NetWorkViewModel
+import com.hfut.schedule.viewmodel.UIViewModel
+import dev.chrisbanes.haze.HazeDialog
 import dev.chrisbanes.haze.HazeState
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
-fun MyScheuleItem(item : Int, MySchedule : MutableList<Schedule>,Future: Boolean,activity : Activity ) {
+fun ScheduleItem(listItem : Schedule, isFuture: Boolean, activity : Activity) {
 
-    val MySchedules = MySchedule[item]
     if(prefs.getString("my","")?.contains("Schedule") == true) {
-        val startTime = MySchedules.startTime
-        val endTime = MySchedules.endTime
+        val startTime = listItem.startTime
+        val endTime = listItem.endTime
 
         //判断过期不显示信息
-
         val startYear = startTime[0]
-        var startMonth = startTime[1]
-        var startDay = startTime[2]
+        val startMonth = startTime[1]
+        val startDay = startTime[2]
         var startDateStr = startTime[2].toString()
         var startMonthStr = startTime[1].toString()
         if(startDay < 10) startDateStr = "0$startDay"
@@ -113,43 +136,37 @@ fun MyScheuleItem(item : Int, MySchedule : MutableList<Schedule>,Future: Boolean
         val getStartTime = "${startYear}${startMonthStr}${startDateStr}".toInt()
 
         val endYear = endTime[0]
-        var endMonth = endTime[1]
-        var endDay = endTime[2]
+        val endMonth = endTime[1]
+        val endDay = endTime[2]
         var endDateStr = endTime[2].toString()
         var endMonthStr = endTime[1].toString()
         if(endDay < 10) endDateStr = "0$endDay"
         if(endMonth < 10) endMonthStr = "0$endMonth"
-        val getEndTime = "${endYear}${endMonthStr}${endDateStr}".toInt()
+        val getEndTime = "${endYear}${endMonthStr}${endDateStr}".toLong()
 
 
-        val nowTime = DateTimeUtils.Date_yyyy_MM_dd.replace("-","").toInt()
+        val nowTime = DateTimeUtils.Date_yyyy_MM_dd.replace("-","").toLong()
 
 
-        if(!Future) {
+        if(!isFuture) {
             if(nowTime in getStartTime .. getEndTime)
-                ScheduleItems(MySchedule = MySchedule, item = item, false,activity)
+                ScheduleItemUI(listItem,false,activity)
         }
         else {
             if(nowTime < getStartTime)
-                ScheduleItems(MySchedule = MySchedule, item = item,true,activity)
+                ScheduleItemUI(listItem,true,activity)
         }
     }
 }
 
-
-@SuppressLint("SuspiciousIndentation")
 @Composable
-fun ScheduleItems(MySchedule: MutableList<Schedule>, item : Int,Future : Boolean,activity : Activity) {
-    val MySchedules = MySchedule[item]
-    val time = MySchedules.time
-    val info = MySchedules.info
-    val title = MySchedules.title
-    val showPublic = MySchedules.showPublic
-    val switch_api = SharePrefs.prefs.getBoolean("SWITCHMYAPIS", apiCheck())
+private fun ScheduleItemUI(listItem: Schedule, isFuture : Boolean, activity : Activity) {
+    val time = listItem.time
+    val info = listItem.info
+    val title = listItem.title
+    val showPublic = listItem.showPublic
 
-
-    val Item = @Composable {
-//        MyCustomCard {
+    val itemUI = @Composable {
             StyleCardListItem(
                 headlineContent = {  Text(text = title) },
                 overlineContent = {Text(text = time)},
@@ -157,12 +174,12 @@ fun ScheduleItems(MySchedule: MutableList<Schedule>, item : Int,Future : Boolean
                 leadingContent = { ScheduleIcons(title = title) },
                 modifier = Modifier.clickable {},
                 trailingContent = {
-                    if(Future)
+                    if(isFuture)
                         FilledTonalIconButton(
                             onClick = {
                                 try {
-                                    var startTime = MySchedules.startTime
-                                    var endTime = MySchedules.endTime
+                                    val startTime = listItem.startTime
+                                    val endTime = listItem.endTime
                                     addToCalendars(startTime,endTime, info, title,time,activity)
                                     showToast("添加到系统日历成功")
                                 } catch (e : SecurityException) {
@@ -179,59 +196,46 @@ fun ScheduleItems(MySchedule: MutableList<Schedule>, item : Int,Future : Boolean
 //        }
     }
 
-    if(switch_api) {
+    if(prefs.getBoolean("SWITCHMYAPIS", apiCheck())) {
         //正常接受所有来自服务器的信息
-        Item()
+        itemUI()
     } else {
         //仅接受showPublic为true
         if(showPublic) {
-            Item()
+            itemUI()
         }
     }
 }
 
-
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun WangkeItem(item : Int, MyWangKe: MutableList<Schedule>,Future: Boolean,activity: Activity) {
-    val MyWangKes = MyWangKe[item]
-    val time = MyWangKes.time
-    val info = MyWangKes.info
-    val title = MyWangKes.title
-    val showPublic = MyWangKes.showPublic
+fun NetCourseItem(listItem : Schedule, isFuture: Boolean, activity: Activity) {
+    val time = listItem.time
+    val info = listItem.info
+    val title = listItem.title
+    val showPublic = listItem.showPublic
 
 
-    val Item = @Composable {
+    val itemUI = @Composable {
         if(prefs.getString("my","")?.contains("Schedule") == true) {
-            val startTime = MyWangKes.startTime
-            val endTime = MyWangKes.endTime
+            val startTime = listItem.startTime
+            val endTime = listItem.endTime
 
             //判断过期不显示信息
-            val startYear = startTime[0]
-            var startMonth = startTime[1]
-            var startDay = startTime[2]
-            var startDateStr = startTime[2].toString()
-            var startMonthStr = startTime[1].toString()
-            if(startDay < 10) startDateStr = "0$startDay"
-            if(startMonth < 10) startMonthStr = "0$startMonth"
-            val getStartTime = "${startYear}${startMonthStr}${startDateStr}".toInt()
-
             val endYear = endTime[0]
-            var endMonth = endTime[1]
-            var endDay = endTime[2]
+            val endMonth = endTime[1]
+            val endDay = endTime[2]
             var endDateStr = endTime[2].toString()
             var endMonthStr = endTime[1].toString()
             if(endDay < 10) endDateStr = "0$endDay"
             if(endMonth < 10) endMonthStr = "0$endMonth"
-            val getEndTime = "${endYear}${endMonthStr}${endDateStr}".toInt()
+            val getEndTime = "${endYear}${endMonthStr}${endDateStr}".toLong()
 
 
-            val nowTime = DateTimeUtils.Date_yyyy_MM_dd.replace("-","").toInt()
+            val nowTime = DateTimeUtils.Date_yyyy_MM_dd.replace("-","").toLong()
 
 
-            if(Future) {
+            if(isFuture) {
                 if(nowTime < getEndTime) {
-//                    MyCustomCard {
                         StyleCardListItem(
                             headlineContent = {  Text(text = title) },
                             overlineContent = { Text(text = time) },
@@ -255,11 +259,9 @@ fun WangkeItem(item : Int, MyWangKe: MutableList<Schedule>,Future: Boolean,activ
                             },
                             modifier = Modifier.clickable { openOperation(info) }
                         )
-//                    }
                 }
             } else {
                 if(nowTime == getEndTime) {
-//                    MyCustomCard {
                         StyleCardListItem(
                             headlineContent = {  Text(text = title) },
                             overlineContent = { Text(text = time) },
@@ -275,56 +277,46 @@ fun WangkeItem(item : Int, MyWangKe: MutableList<Schedule>,Future: Boolean,activ
                             },
                             modifier = Modifier.clickable { openOperation(info) }
                         )
-//                    }
                 }
             }
         }
     }
 
-    val switch_api = SharePrefs.prefs.getBoolean("SWITCHMYAPIS", apiCheck())
-
-
-    if(switch_api) {
+    if(prefs.getBoolean("SWITCHMYAPIS", apiCheck())) {
         //正常接受所有来自服务器的信息
-        Item()
+        itemUI()
     } else {
         //仅接受showPublic为true
         if(showPublic) {
-            Item()
+            itemUI()
         }
     }
 }
 
-
-
-@OptIn(ExperimentalMaterial3Api::class)
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun TodayCourseItem(item : Int,vm : NetWorkViewModel,hazeState: HazeState) {
+fun CommunityTodayCourseItem(index : Int, vm : NetWorkViewModel, hazeState: HazeState, timeNow : String) {
 
+    val switchShowEnded = prefs.getBoolean("SWITCHSHOWENDED",true)
 
-    val switch_show_ended = prefs.getBoolean("SWITCHSHOWENDED",true)
+    val week = DateTimeUtils.weeksBetween.toInt()
 
-
-    var week = DateTimeUtils.weeksBetween.toInt()
-
-    var weekday = DateTimeUtils.dayweek
+    var weekday = DateTimeUtils.dayWeek
     if(weekday == 0) weekday = 7
     //课程详情
-    val list = getCourseINFO(weekday,week)[item][0]
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val list = getCourseINFO(weekday,week)[index][0]
     var showBottomSheet by remember { mutableStateOf(false) }
     val time = list.classTime
 
     val startTime = time.substringBefore("-")
     val endTime = time.substringAfter("-")
-    val state = DateTimeUtils.getTimeState(startTime, endTime)
+
+
+    val state = DateTimeUtils.getTimeState(startTime, endTime,timeNow)
 
     if (showBottomSheet) {
 
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-//            sheetState = sheetState,
             showBottomSheet = showBottomSheet,
             hazeState = hazeState,
             autoShape = false
@@ -333,8 +325,8 @@ fun TodayCourseItem(item : Int,vm : NetWorkViewModel,hazeState: HazeState) {
             DetailInfos(list,vm = vm, hazeState = hazeState)
         }
     }
-    @Composable
-    fun Item() {
+
+    val itemUI = @Composable {
         StyleCardListItem(
             headlineContent = { Text(text = list.name) },
             overlineContent = { Text(text = time)},
@@ -348,10 +340,6 @@ fun TodayCourseItem(item : Int,vm : NetWorkViewModel,hazeState: HazeState) {
                         )
                     }
                     ONGOING -> {
-//                                Icon(
-//                                    painterResource(R.drawable.progress_activity),
-//                                    contentDescription = "Localized description",
-//                                )
                         RotatingIcon(R.drawable.progress_activity)
                     }
                     ENDED -> {
@@ -375,44 +363,35 @@ fun TodayCourseItem(item : Int,vm : NetWorkViewModel,hazeState: HazeState) {
                     }
                 )
             },
-//                colors = when(state) {
-//                    ONGOING -> ListItemDefaults.colors()
-//                    NOT_STARTED -> ListItemDefaults.colors(MaterialTheme.colorScheme.primaryContainer)
-//                    ENDED -> ListItemDefaults.colors(MaterialTheme.colorScheme.surfaceVariant.copy(.5f))
-//                }
         )
     }
 
-    if(switch_show_ended) {
-        Item()
+    if(switchShowEnded) {
+        itemUI()
     } else {
-        if(state != DateTimeUtils.TimeState.ENDED) {
-            Item()
+        if(state != ENDED) {
+            itemUI()
         }
     }
 }
 
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TomorrowCourseItem(item : Int,vm: NetWorkViewModel,hazeState: HazeState) {
+fun CommunityTomorrowCourseItem(index : Int, vm: NetWorkViewModel, hazeState: HazeState) {
 
-    var weekdaytomorrow = DateTimeUtils.dayweek + 1
+    val weekdayTomorrow = DateTimeUtils.dayWeek + 1
     var week = DateTimeUtils.weeksBetween.toInt()
     //当第二天为下一周的周一时，周数+1
-    when(weekdaytomorrow) {
+    when(weekdayTomorrow) {
         1 -> week += 1
     }
 
     //课程详情
-    val list = getCourseINFO(weekdaytomorrow,week)[item][0]
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val list = getCourseINFO(weekdayTomorrow,week)[index][0]
     var showBottomSheet by remember { mutableStateOf(false) }
     if (showBottomSheet) {
 
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-//            sheetState = sheetState,
             showBottomSheet = showBottomSheet,
             hazeState = hazeState,
             autoShape = false
@@ -426,7 +405,7 @@ fun TomorrowCourseItem(item : Int,vm: NetWorkViewModel,hazeState: HazeState) {
         headlineContent = { Text(text = list.name) },
         overlineContent = {Text(text = list.classTime)},
         supportingContent = { list.place?.let { Text(text = it) } },
-        leadingContent = { Icon(painterResource(R.drawable.exposure_plus_1), contentDescription = "Localized description",) },
+        leadingContent = { Icon(painterResource(R.drawable.exposure_plus_1), contentDescription = "Localized description") },
         modifier = Modifier.clickable {
             showBottomSheet = true
         },
@@ -434,203 +413,321 @@ fun TomorrowCourseItem(item : Int,vm: NetWorkViewModel,hazeState: HazeState) {
     )
 }
 
-
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
-@SuppressLint("Range")
 @Composable
-fun AddItem(item : Int, AddedItems : MutableList<AddFocus>) {
-    var isClicked by remember { mutableStateOf(false) }
+fun CustomItem(item : CustomEventDTO,hazeState: HazeState,isFuture: Boolean,activity: Activity,refresh : () -> Unit) {
+    val dateTime = item.dateTime
+    val nowTimeNum = DateTimeUtils.Date_yyyy_MM_dd.replace("-","").toLong()
+    val endNum = with(dateTime.end) { "$year${parseTimeItem(month)}${parseTimeItem(day)}" }.toLong()
+
+    if(item.type == CustomEventType.SCHEDULE) {
+        val startNum = with(dateTime.start) { "$year${parseTimeItem(month)}${parseTimeItem(day)}" }.toLong()
+        if(nowTimeNum in startNum .. endNum) {
+            // 显示在首页
+            if(!isFuture)
+                CustomItemUI(item, isFuture, activity, hazeState, refresh = refresh)
+        } else {
+            // 显示在第二页
+            if(isFuture)
+                // 判断是否过期
+                CustomItemUI(item, isFuture, activity, hazeState, isOutOfDate = nowTimeNum > endNum, refresh)
+        }
+    } else {
+        if(endNum == nowTimeNum) {
+            // 显示在首页
+            if(!isFuture)
+                CustomItemUI(item, isFuture, activity, hazeState, refresh = refresh)
+        } else {
+            // 显示在第二页
+            if(isFuture)
+                // 判断是否过期
+                CustomItemUI(item, isFuture, activity, hazeState, isOutOfDate = endNum > nowTimeNum, refresh = refresh)
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun CustomItemUI(item: CustomEventDTO,isFuture: Boolean,activity: Activity,hazeState: HazeState,isOutOfDate : Boolean = false,refresh: () -> Unit) {
+    val title = item.title
+    val description = item.description
+    val dateTime = item.dateTime
+    var id by remember { mutableIntStateOf(-1) }
+    var showDialog by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    if(showDialog)
+        LittleDialog(
+            onDismissRequest = { showDialog = false },
+            onConfirmation = {
+                if(id > 0) {
+                    scope.launch {
+                        async { RoomDataBaseManager.customEventDao.del(id) }.await()
+                        launch { refresh() }
+                        launch { showDialog = false }
+                    }
+                } else {
+                    showToast("id错误")
+                }
+            },
+            dialogText = "要删除此项吗",
+            hazeState = hazeState
+        )
+
+
     StyleCardListItem(
-        headlineContent = { Text(text = AddedItems[item].title) },
-        overlineContent = { Text(text = AddedItems[item].remark) },
-        supportingContent = { Text(text = AddedItems[item].info) },
+        headlineContent = { Text(text = title, textDecoration = if(isOutOfDate) TextDecoration.LineThrough else TextDecoration.None) },
+        overlineContent = { Text(text = item.remark,textDecoration = if(isOutOfDate) TextDecoration.LineThrough else TextDecoration.None) },
+        supportingContent = { description?.let { Text(text = it,textDecoration = if(isOutOfDate) TextDecoration.LineThrough else TextDecoration.None) } },
         leadingContent = {
             Icon(
-                painterResource(R.drawable.lightbulb),
+                painterResource(if(item.type == CustomEventType.SCHEDULE) R.drawable.calendar else R.drawable.net),
                 contentDescription = "Localized description",
             )
         },
-        color = if (isClicked) MaterialTheme.colorScheme.errorContainer else null,
+        trailingContent = {
+            ColumnVertical {
+                if(isOutOfDate) {
+                    FilledTonalIconButton(
+                        onClick = {
+                            id = item.id
+                            showDialog = true
+                        }
+                    ) { Icon(painterResource(R.drawable.delete), null) }
+                } else {
+                    if(isFuture) {
+                        FilledTonalIconButton(
+                            onClick = {
+                                addToCalendars(
+                                    dateTime,
+                                    description,
+                                    title,
+                                    null,
+                                    activity
+                                )
+                            }
+                        ) { Icon(painterResource(R.drawable.event_upcoming), null) }
+                    } else {
+                        if(item.type == CustomEventType.NET_COURSE) {
+                            Text("今日截止")
+                        }
+                    }
+                }
+                Text("本地")
+            }
+        },
         modifier = Modifier.combinedClickable(
-            onClick = { showToast("长按删除") },
+            onClick = { description?.let { openOperation(it) } },
             onDoubleClick = {
                 //双击操作
             },
             onLongClick = {
                 //长按操作
-                isClicked = true
-
-                removeItems(AddedItems[item].id)
-
-                // AddedItems().removeAt(item)
-                showToast("下次数据刷新时将删除")
-                //EditItems(AddedItems[item].id,AddedItems[item].title,AddedItems[item].info,AddedItems[item].remark)
-                // MyToast("就那几个字删了重新添加吧")
-
+                id = item.id
+                showDialog = true
             })
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@SuppressLint("Range")
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun BoxScope.AddButton(isVisible: Boolean,innerPaddings : PaddingValues,hazeState: HazeState) {
+fun AddEventFloatButton(
+    isVisible: Boolean,
+    hazeState: HazeState,
+    vmUI : UIViewModel,
+    innerPaddings: PaddingValues,
+) {
+    // 懒加载
+    var showSurface by remember { mutableStateOf(false) }
+
+    var showAddUI by remember { mutableStateOf(false) }
+    // 容器转换动画
+    val isCenterAnimation by DataStoreManager.motionAnimationTypeFlow.collectAsState(initial = false)
+    val boundsTransform by remember { mutableStateOf(
+        BoundsTransform { _, _ ->
+            if(!isCenterAnimation) {
+                spring(
+                    stiffness = StiffnessMediumLow,
+                    visibilityThreshold = Rect.VisibilityThreshold
+                )
+            } else {
+                tween(durationMillis = MyApplication.ANIMATION_SPEED, easing = FastOutSlowInEasing)
+            }
+        }
+    ) }
+    // 通知父布局开始进行模糊和缩放，同时暂时关闭topBar和bottomBar的实时模糊
+    LaunchedEffect(showAddUI) {
+        vmUI.isAddUIExpanded = showAddUI
+        if(showAddUI) {
+            // 进入
+            showSurface = false
+            delay(MyApplication.ANIMATION_SPEED * 1L)
+            showSurface = true
+        } else {
+            // 退出
+            showSurface = false
+        }
+    }
+
+    SharedTransitionLayout {
+        AnimatedContent(
+//            modifier = Modifier.background(Color.Transparent).clip(RoundedCornerShape(appHorizontalDp())),
+            targetState = showAddUI,
+            transitionSpec = {
+                fadeIn(animationSpec = tween(durationMillis = MyApplication.ANIMATION_SPEED)) togetherWith fadeOut(animationSpec = tween(durationMillis = MyApplication.ANIMATION_SPEED*2))
+            },
+            label = ""
+        ) { targetShowAddUI ->
+            // 这里是 AnimatedContentScope 的作用域
+            if (targetShowAddUI) {
+                SurfaceUI(
+                    sharedTransitionScope = this@SharedTransitionLayout,
+                    animatedContentScope = this,
+                    showSurface = showSurface,
+                    showChange = { showAddUI = it },
+                    boundsTransform
+                )
+            } else {
+                ButtonUI(
+                    isVisible = isVisible,
+                    innerPaddings = innerPaddings,
+                    sharedTransitionScope = this@SharedTransitionLayout,
+                    animatedContentScope = this,
+                    showAddUI,
+                    showChange = { showAddUI = it },
+                    boundsTransform
+                )
+            }
+        }
+    }
+}
 
 
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var showBottomSheet by remember { mutableStateOf(false) }
-    val interactionSource = remember { MutableInteractionSource() }
-    val isPressed by interactionSource.collectIsPressedAsState()
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+private fun SharedTransitionScope.ButtonUI(
+    isVisible: Boolean,
+    innerPaddings : PaddingValues,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+    showAddUI : Boolean,
+    showChange : (Boolean) -> Unit,
+    boundsTransform: BoundsTransform
+) {
+    if (isVisible) {
+        FloatingActionButton(
+            modifier = Modifier
+                .padding(innerPaddings)
+                .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
+                .sharedBounds(
+                    boundsTransform = boundsTransform,
+                    enter = fadeIn(tween(durationMillis = MyApplication.ANIMATION_SPEED)),
+                    exit = fadeOut(tween(durationMillis = MyApplication.ANIMATION_SPEED)),
+                    sharedContentState = rememberSharedContentState(key = "container"),
+                    animatedVisibilityScope = animatedContentScope,
+                    resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds
+                ),
+            elevation =  FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp),
+            onClick = { showChange(true) },
+        ) { Icon(Icons.Filled.Add, "Add Button") }
+    }
+}
 
-    val scale = animateFloatAsState(
-        targetValue = if (isPressed) 0.9f else 1f, // 按下时为0.9，松开时为1
-        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-        label = "" // 使用弹簧动画
-    )
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
+@Composable
+private fun SharedTransitionScope.SurfaceUI(
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+    showSurface : Boolean,
+    showChange: (Boolean) -> Unit,
+    boundsTransform: BoundsTransform
+) {
+    var enabled by remember { mutableStateOf(false) }
+    var entity by remember { mutableStateOf<CustomEventDTO?>(null) }
 
-    var title by remember { mutableStateOf( "") }
-    var info by remember { mutableStateOf( "") }
-    var remark by remember { mutableStateOf( "") }
-
-
-    if (showBottomSheet) {
-        HazeBottomSheet (
-            onDismissRequest = { showBottomSheet = false },
-            hazeState = hazeState,
-            showBottomSheet = showBottomSheet
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("添加聚焦卡片") {
-                        FilledTonalIconButton(
-                            modifier = Modifier
-                                .scale(scale.value),
-//                                .padding(25.dp),
-                            interactionSource = interactionSource,
-                            onClick = {
-                                addItems(title,info,remark)
-                                showBottomSheet = false
-                                Toast.makeText(MyApplication.context,"添加成功", Toast.LENGTH_SHORT).show()
-                            }
-                        ) { Icon(Icons.Filled.Check, contentDescription = "") }
+    val scope = rememberCoroutineScope()
+    BackHandler {
+        showChange(false)
+    }
+    Scaffold(
+        modifier = Modifier
+            .fillMaxSize()
+//            .skipToLookaheadSize()
+            .sharedBounds(
+                enter = fadeIn(tween(durationMillis = MyApplication.ANIMATION_SPEED)),
+                exit = fadeOut(tween(durationMillis = MyApplication.ANIMATION_SPEED)),
+                sharedContentState = rememberSharedContentState(key = "container"),
+                animatedVisibilityScope = animatedContentScope,
+                boundsTransform = boundsTransform,
+                resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds
+            ),
+        topBar = {
+            TopAppBar(
+                colors = topAppBarColors(
+                    containerColor = Color.Transparent,
+                    titleContentColor = MaterialTheme.colorScheme.primary,
+                    scrolledContainerColor = Color.Transparent,
+                ),
+                title = { Text("添加日程") },
+                actions = {
+                    IconButton(
+                        onClick = {
+                            showChange(false)
+                        }
+                    ) {
+                        Icon(Icons.Filled.Close,null)
                     }
                 },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-
-                    Spacer(modifier = Modifier.height(10.dp))
-//                    MyCustomCard {
-                        StyleCardListItem(
-                            headlineContent = {  Text(text = title) },
-                            overlineContent = {Text(text = remark)},
-                            supportingContent = { Text(text = info)},
-                            leadingContent = { Icon(painterResource(R.drawable.lightbulb), contentDescription = "Localized description",) },
-                            modifier = Modifier.clickable {}
-                        )
-//                    }
-
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
-                    ) {
-                        TextField(
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(horizontal = appHorizontalDp()),
-                            value = title,
-                            onValueChange = { title = it },
-                            leadingIcon = { Icon( painterResource(R.drawable.title), contentDescription = "Localized description") },
-                            label = { Text("标题" ) },
-                            singleLine = true,
-                            shape = MaterialTheme.shapes.medium,
-                            colors = textFiledTransplant(),
-                        )
+            )
+        },
+        bottomBar = {
+            Button(
+                onClick = {
+                    scope.launch {
+                        async {
+                            if(enabled && entity != null) {
+                                // 添加到数据库
+                                RoomDataBaseManager.customEventDao.insert(CustomEventMapper.dtoToEntity(entity!!))
+                                showToast("执行完成 请检查是否显示")
+                            }
+                        }.await()
+                        // 关闭
+                        launch { showChange(false)  }
                     }
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
-                    ) {
-                        TextField(
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(horizontal = appHorizontalDp()),
-                            value = info,
-                            onValueChange = { info = it },
-                            leadingIcon = { Icon( painterResource(R.drawable.info_i), contentDescription = "Localized description") },
-                            label = { Text("内容" ) },
-                            singleLine = true,
-                            shape = MaterialTheme.shapes.medium,
-                            colors = textFiledTransplant(),
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
-                    ) {
-                        TextField(
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(horizontal = appHorizontalDp()),
-                            value = remark,
-                            onValueChange = { remark = it },
-                            leadingIcon = { Icon( painterResource(R.drawable.format_italic), contentDescription = "Localized description") },
-                            label = { Text("备注" ) },
-                            singleLine = true,
-                            shape = MaterialTheme.shapes.medium,
-                            colors = textFiledTransplant(),
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(100.dp))
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(appHorizontalDp()))
+            {
+                Text(if(enabled) "添加" else "关闭")
+            }
+        }
+    ) { innerPadding ->
+        if(showSurface) {
+            AnimatedVisibility(
+                visible = true,
+                enter  = fadeIn(),
+                exit = fadeOut()
+            ) {
+                Column(modifier = Modifier.padding(innerPadding)) {
+                    AddEventUI(enabled,{ enabled = it },{ entity = it })
                 }
             }
         }
     }
-
-
-    AnimatedVisibility(
-        visible = isVisible,
-        enter = scaleIn() ,
-        exit = scaleOut(),
-        modifier = Modifier
-            .align(Alignment.BottomEnd)
-            .padding(innerPaddings)
-            .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
-    ) {
-        if (isVisible) {
-            FloatingActionButton(
-                onClick = { showBottomSheet = true },
-            ) { Icon(Icons.Filled.Add, "Add Button") }
-        }
-    }
 }
 
 @Composable
-fun TimeStampItem() {
-    BottomTip(getTimeStamp())
-}
+fun TimeStampItem() = BottomTip(getTimeStamp())
 
 @Composable
-fun SemsterTip() {
-    BottomTip(parseSemseter(getSemseter()))
-}
+fun TermTip() = BottomTip(parseSemseter(getSemseter()))
 
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TodayUI(hazeState: HazeState) {
-    ////////////////////////////////////////////////////////////
-    val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by  remember { mutableStateOf(false) }
+
     if (showBottomSheet ) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-//            sheetState = sheetState,
-//            shape = bottomSheetRound(sheetState),
             isFullExpand = false,
             showBottomSheet = showBottomSheet,
             hazeState = hazeState
@@ -653,30 +750,26 @@ fun TodayUI(hazeState: HazeState) {
         }
     }
 
-    //////////////////////////////////////////////////////////////////////////
     //判断明天是否有早八
-    var weekdaytomorrow = DateTimeUtils.dayweek + 1
+    val weekdayTomorrow = DateTimeUtils.dayWeek + 1
     var week = DateTimeUtils.weeksBetween.toInt()
     //当第二天为下一周的周一时，周数+1
-    when(weekdaytomorrow) {
+    when(weekdayTomorrow) {
         1 -> week += 1
     }
 
-    val list = getCourseINFO(weekdaytomorrow,week)
+    val list = getCourseINFO(weekdayTomorrow,week)
     val time = if(list.size < 1)
         ""
     else list[0][0].classTime.substringBefore(":")
 
     //判断明天是否需要调休
-    var tiaoXiu by  remember { mutableStateOf(false) }
-  ///  var tiaoXiuInfo by remember { mutableStateOf("") }
-    val schedule = MySchedule()
-    for(i in 0 until schedule.size) {
-        val schedules = schedule[i]
-        if(schedules.title.contains("调休")) {
-            if(schedules.time.substringBefore(" ") == DateTimeUtils.tomorrow) {
-                tiaoXiu = true
-            //    tiaoXiuInfo = schedules.info
+    var rest by  remember { mutableStateOf(false) }
+    val schedule = getSchedule()
+    for(element in schedule) {
+        if(element.title.contains("调休")) {
+            if(element.time.substringBefore(" ") == DateTimeUtils.tomorrow_MM_DD) {
+                rest = true
             }
         }
     }
@@ -688,9 +781,9 @@ fun TodayUI(hazeState: HazeState) {
             getToday()?.bookLending?.bookName == null) {
 
             TransplantListItem(
-                headlineContent = { ScrollText(text = if(tiaoXiu) "有调休安排" else if( time == "08")"明天有早八" else if(time == "10") "明天有早十"  else if(time == "14" || time == "16" || time == "19" )  "明天睡懒觉" else "明天没有课") },
+                headlineContent = { ScrollText(text = if(rest) "有调休安排" else if( time == "08")"明天有早八" else if(time == "10") "明天有早十"  else if(time == "14" || time == "16" || time == "19" )  "明天睡懒觉" else "明天没有课") },
                 overlineContent = { ScrollText(text = "明天") },
-                leadingContent = { Icon(painter = painterResource(  if(tiaoXiu) R.drawable.error else if( time == "08") R.drawable.sentiment_sad else if (time == "10") R.drawable.sentiment_dissatisfied else R.drawable.sentiment_very_satisfied) , contentDescription = "")},
+                leadingContent = { Icon(painter = painterResource(  if(rest) R.drawable.error else if( time == "08") R.drawable.sentiment_sad else if (time == "10") R.drawable.sentiment_dissatisfied else R.drawable.sentiment_very_satisfied) , contentDescription = "")},
             )
         } else {
             if(getToday()?.todayExam?.courseName != null) {
@@ -724,7 +817,6 @@ fun TodayUI(hazeState: HazeState) {
 
         }
     }
-
 }
 
 fun getToday() : TodayResult? {
@@ -741,5 +833,272 @@ fun getToday() : TodayResult? {
     }
 }
 
+@Composable
+fun AddEventUI(enabled: Boolean,onEnabled : (Boolean) -> Unit,onEntity : (CustomEventDTO?) -> Unit) {
+    val activity = LocalActivity.current
+    var isScheduleType by remember { mutableStateOf(true) }
+    var title by remember { mutableStateOf("事件") }
+    var description by remember { mutableStateOf("") }
+    var remark by remember { mutableStateOf("") }
+
+    var time by remember { mutableStateOf(Pair("","")) }
+    var date by remember { mutableStateOf(Pair("","")) }
+
+    var showSelectDateDialog by remember { mutableStateOf(false) }
+    var showSelectTimeDialog by remember { mutableStateOf(false) }
 
 
+    LaunchedEffect(date,time) {
+        remark = if(date.first == date.second) { // 当天日程
+            "${date.first.substringAfter("-")} " +
+            // 同时间
+            if(time.first == time.second) {
+                time.first
+            } else {
+                time.first + " ~ " + time.second
+            }
+        } else {
+            "${date.first.substringAfter("-") + " " + time.first} ~ ${date.second.substringAfter("-") + " " + time.second}"
+        }
+    }
+
+
+    LaunchedEffect(title,time,date,remark) {
+        onEnabled(title.isNotBlank() && title.isNotEmpty() && time.first.isNotEmpty() && time.second.isNotEmpty() && date.first.isNotEmpty() && date.second.isNotEmpty() && remark.isNotBlank() && remark.isNotEmpty())
+    }
+
+    // 向上回传数据
+    LaunchedEffect(enabled) {
+        if(enabled) {
+            onEntity(
+                parseToDateTime(startDate = date.first, startTime = time.first, endDate = date.second, endTime = time.second)?.let {
+                    CustomEventDTO(
+                        title = title,
+                        dateTime = it,
+                        type = if(isScheduleType) CustomEventType.SCHEDULE else CustomEventType.NET_COURSE,
+                        description = description.let { desp -> if(desp.isNotEmpty() && desp.isNotBlank()) desp else null },
+                        remark = remark
+                    )
+                }
+            )
+        } else {
+            onEntity(null)
+        }
+    }
+
+
+    val typeIcon = @Composable {
+        Icon(painterResource(if(isScheduleType) R.drawable.calendar else R.drawable.net),null)
+    }
+
+    if(showSelectDateDialog)
+        DateRangePickerModal(onSelected = { date = it }) { showSelectDateDialog = false }
+    if(showSelectTimeDialog)
+        TimeRangePickerDialog(onSelected = { time = it }) { showSelectTimeDialog = false }
+
+
+    DividerTextExpandedWith("预览") {
+        StyleCardListItem(
+            headlineContent = { Text(title) },
+            leadingContent = typeIcon,
+            overlineContent = { Text(remark) },
+            supportingContent =  if(description.isNotBlank() && description.isNotEmpty()) { { Text(description) } } else null,
+            trailingContent = { FilledTonalIconButton(
+                onClick = {
+                    activity?.let { addToCalendars(startDate = date.first, startTime = time.first, endDate = date.second, endTime = time.second, description, title,null, it) }
+                }, enabled = enabled
+            ) { Icon(painterResource(R.drawable.event_upcoming),null) } },
+            modifier = Modifier.clickable { openOperation(description) }
+        )
+    }
+    DividerTextExpandedWith("配置") {
+        TransplantListItem(
+            headlineContent = { Text("类型：" + if(isScheduleType) "日程/课程" else "网课" ) },
+            supportingContent = { Text(if(isScheduleType) "日程类型旨在用户自行添加新加课程、实验、会议等，添加后，同步显示在课程表方格中；在未开始时位于其他事项，进行期间会显示为重要事项，结束后位于其他事项并划线标记" else "网课类型旨在用户自行添加需要在截止日期之前的网络作业等，添加后，在未开始和进行期间位于其他事项，截止日期当天会显示为重要事项，结束后位于其他事项并划线标记" ) },
+            leadingContent = {
+                FilledTonalIconButton(
+                    onClick = { isScheduleType = !isScheduleType },
+                    content = typeIcon
+                )
+            } ,
+            modifier = Modifier.clickable {
+                isScheduleType = !isScheduleType
+            }
+        )
+
+        Spacer(Modifier.height(5.dp))
+
+        CustomTextField(input = title, label = { Text("标题") }) { title = it }
+        Spacer(Modifier.height(15.dp))
+        CustomTextField(input = description, label = { Text("备注(可空)") }) { description = it }
+        Spacer(Modifier.height(10.dp))
+        CustomTextField(input = remark, label = { Text("自定义时间显示(可选)") }) { remark = it }
+        Spacer(Modifier.height(10.dp))
+        TransplantListItem(
+            headlineContent = { Text("开始 ${date.first + " " + time.first}\n结束 ${date.second + " " + time.second}") },
+            leadingContent = { Icon(painterResource(R.drawable.schedule),null) }
+        )
+        RowHorizontal {
+            TextButton(
+                onClick = { showSelectDateDialog = true }
+            ) { Text("选择日期范围") }
+            TextButton(
+                onClick = { showSelectTimeDialog = true }
+            ) { Text("选择时间范围") }
+        }
+    }
+}
+
+
+@Composable
+fun CustomTextField(
+    input : String = "",
+    label : @Composable (() -> Unit)? = null,
+    leadingIcon: @Composable (() -> Unit)? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    supportingText: @Composable (() -> Unit)? = null,
+    enabled: Boolean = true,
+    isError: Boolean = false,
+    singleLine: Boolean = true,
+    modifier: Modifier = Modifier,
+    onValueChange : (String) -> Unit
+) {
+    Row {
+        TextField(
+            modifier = modifier
+                .weight(1f)
+                .padding(horizontal = appHorizontalDp()),
+            value = input,
+            onValueChange = onValueChange,
+            label = label,
+            trailingIcon = trailingIcon,
+            leadingIcon = leadingIcon,
+            supportingText = supportingText,
+            isError = isError,
+            singleLine = singleLine,
+            enabled = enabled,
+            shape = MaterialTheme.shapes.medium,
+            colors = textFiledTransplant(),
+        )
+    }
+}
+
+fun parseTimeItem(item : Int) : String = item.let {
+    if(it < 10) {
+        "0$it"
+    } else {
+        it.toString()
+    }
+}
+
+@Composable
+fun JxglstuTodayCourseItem(item : JxglstuCourseSchedule, vmUI : UIViewModel, hazeState: HazeState, timeNow : String) {
+
+    val switchShowEnded = prefs.getBoolean("SWITCHSHOWENDED",true)
+    //课程详情
+    var showBottomSheet by remember { mutableStateOf(false) }
+    val time = item.time
+
+    val startTime = with(time.start) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
+    val endTime = with(time.end) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
+
+
+    val state = DateTimeUtils.getTimeState(startTime, endTime,timeNow)
+
+
+    val itemUI = @Composable {
+        StyleCardListItem(
+            headlineContent = { Text(text = item.courseName) },
+            overlineContent = { Text(text = "$startTime-$endTime")},
+            supportingContent = { Text(text = item.place) },
+            leadingContent = {
+                when(state) {
+                    NOT_STARTED -> {
+                        Icon(
+                            painterResource(R.drawable.schedule),
+                            contentDescription = "Localized description",
+                        )
+                    }
+                    ONGOING -> {
+                        RotatingIcon(R.drawable.progress_activity)
+                    }
+                    ENDED -> {
+                        Icon(
+                            Icons.Filled.Check,
+                            contentDescription = "Localized description",
+                        )
+                    }
+                }
+
+            },
+            modifier = Modifier.clickable {
+                showBottomSheet = true
+            },
+            trailingContent = {
+                Text(
+                    when(state) {
+                        NOT_STARTED -> "未开始"
+                        ONGOING -> "上课中"
+                        ENDED -> "已下课"
+                    }
+                )
+            },
+        )
+    }
+
+    if(switchShowEnded) {
+        itemUI()
+    } else {
+        if(state != ENDED) {
+            itemUI()
+        }
+    }
+}
+
+@Composable
+fun JxglstuTomorrowCourseItem(item : JxglstuCourseSchedule, vmUI : UIViewModel, hazeState: HazeState) {
+    var showBottomSheet by remember { mutableStateOf(false) }
+
+    val time = item.time
+
+    val startTime = with(time.start) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
+    val endTime = with(time.end) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
+
+    StyleCardListItem(
+        headlineContent = { Text(text = item.courseName) },
+        overlineContent = {Text(text = "$startTime-$endTime")},
+        supportingContent = { Text(text = item.place) },
+        leadingContent = { Icon(painterResource(R.drawable.exposure_plus_1), contentDescription = "Localized description") },
+        modifier = Modifier.clickable {
+            showBottomSheet = true
+        },
+        trailingContent = { Text(text = "明日")}
+    )
+}
+
+
+// 传入今天日期 YYYY-MM-DD 返回当天课程
+private fun getJxglstuCourse(date : String,vmUI : UIViewModel) : List<JxglstuCourseSchedule> {
+    val list = vmUI.jxglstuCourseScheduleList
+    try {
+        val bean = date.split("-")
+        if(bean.size != 3) return emptyList()
+
+        val currentYear = bean[0].toInt()
+        val currentMonth = bean[1].toInt()
+        val currentDay = bean[2].toInt()
+
+        return list.filter {
+            with(it.time.start) {
+                year == currentYear && month == currentMonth && day == currentDay
+            }
+        }.sortedBy { it.time.start.hour }
+
+    } catch (e : Exception) {
+        return emptyList()
+    }
+}
+
+fun getTodayJxglstuCourse(vmUI : UIViewModel) : List<JxglstuCourseSchedule> = getJxglstuCourse(DateTimeUtils.Date_yyyy_MM_dd,vmUI)
+
+fun getTomorrowJxglstuCourse(vmUI : UIViewModel) : List<JxglstuCourseSchedule> = getJxglstuCourse(DateTimeUtils.tomorrow_YYYY_MM_DD,vmUI)

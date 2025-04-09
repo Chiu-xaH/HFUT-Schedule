@@ -1,7 +1,6 @@
 package com.hfut.schedule.ui.activity.shower.home.function
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.os.Handler
 import android.os.Looper
 import androidx.activity.compose.LocalActivity
@@ -41,14 +40,14 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -61,22 +60,22 @@ import androidx.core.content.ContextCompat
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.db.RoomDataBaseManager
+import com.hfut.schedule.logic.db.entity.ShowerLabelEntity
 import com.hfut.schedule.logic.utils.PermissionManager.checkAndRequestCameraPermission
 import com.hfut.schedule.logic.utils.QRCodeAnalyzer
 import com.hfut.schedule.logic.utils.data.SharePrefs
-import com.hfut.schedule.ui.activity.shower.home.ShowerDataBaseManager
-import com.hfut.schedule.ui.utils.components.appHorizontalDp
+import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.BottomTip
 import com.hfut.schedule.ui.utils.components.CameraScan
-import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
-import com.hfut.schedule.ui.utils.components.DividerText
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.LittleDialog
 import com.hfut.schedule.ui.utils.components.LoadingUI
+import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.components.statusUI2
-import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.ui.utils.style.RowHorizontal
+import com.hfut.schedule.ui.utils.style.bottomSheetRound
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.GuaGuaViewModel
 import dev.chrisbanes.haze.HazeState
@@ -165,9 +164,10 @@ data class StatusMsgResponse(val message : String)
 fun StartShowerUI(vm: GuaGuaViewModel,hazeState: HazeState) {
     val context = LocalContext.current
     val activity = LocalActivity.current
+    val scope = rememberCoroutineScope()
 
     var input by remember { mutableStateOf("") }
-    var id by remember { mutableStateOf(-1) }
+    var id by remember { mutableIntStateOf(-1) }
     var editMode by remember { mutableStateOf(false) }
     var inputName by remember { mutableStateOf("") }
     var show by remember { mutableStateOf(false) }
@@ -193,6 +193,10 @@ fun StartShowerUI(vm: GuaGuaViewModel,hazeState: HazeState) {
                 }
             }
         })
+    }
+    var list by remember { mutableStateOf<List<ShowerLabelEntity>>(emptyList()) }
+    LaunchedEffect(showDialog_Del,showDialog) {
+        list = RoomDataBaseManager.showerLabelDao.getAll()
     }
     var isFull by remember { mutableStateOf(false) }
     val height by animateDpAsState(
@@ -270,8 +274,10 @@ fun StartShowerUI(vm: GuaGuaViewModel,hazeState: HazeState) {
                     }
                     Spacer(modifier = Modifier.width(10.dp))
                     Button(onClick = {
-                        ShowerDataBaseManager.addItems(inputName, input)
-                        showDialog = false
+                        scope.launch {
+                            async { RoomDataBaseManager.showerLabelDao.insert(ShowerLabelEntity(name = inputName, mac = input)) }.await()
+                            launch { showDialog = false }
+                        }
                     },modifier = Modifier
                         .weight(.5f)
                     ) {
@@ -285,9 +291,15 @@ fun StartShowerUI(vm: GuaGuaViewModel,hazeState: HazeState) {
         LittleDialog(
             onDismissRequest = { showDialog_Del = false },
             onConfirmation = {
-                if(id != -1)
-                    ShowerDataBaseManager.removeItems(id)
-                showDialog_Del = false
+                if(id != -1) {
+                    scope.launch {
+                        async { RoomDataBaseManager.showerLabelDao.del(id) }.await()
+                        launch { showDialog_Del = false }
+                    }
+                } else {
+                    showToast("id错误")
+                    showDialog_Del = false
+                }
             },
             dialogText = "要删除这个标签吗",
             hazeState = hazeState
@@ -386,20 +398,21 @@ fun StartShowerUI(vm: GuaGuaViewModel,hazeState: HazeState) {
         }
     }
     BottomTip(str = "开始后预扣￥5,请保证余额>=￥5,否则无法开启洗浴")
-    val list = ShowerDataBaseManager.queryAll()
-    if(list.size != 0) {
+
+    if(list.isNotEmpty()) {
         DividerTextExpandedWith(text = "常用标签") {
             LazyRow(modifier = Modifier.padding(horizontal = appHorizontalDp())) {
                 items(list.size) { index ->
+                    val item = list[index]
                     AssistChip(
                         onClick = {
                             if(!editMode) {
-                                input = list[index].mac
+                                input = item.mac
                             } else {
-                                id = list[index].id
+                                id = item.id
                                 showDialog_Del = true
                             }
-                        }, label = { Text(text = list[index].name) }, trailingIcon = {
+                        }, label = { Text(text = item.name) }, trailingIcon = {
                             if(editMode)
                                 Icon(painterResource(id = R.drawable.close), contentDescription = "")
                         })

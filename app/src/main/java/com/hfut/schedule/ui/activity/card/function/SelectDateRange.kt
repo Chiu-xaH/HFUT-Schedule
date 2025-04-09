@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import com.hfut.schedule.logic.beans.zjgd.BillRangeResponse
+import com.hfut.schedule.logic.utils.DateTimeUtils
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
@@ -66,13 +67,11 @@ fun SelecctDateRange(vm : NetWorkViewModel) {
                     interactionSource = interactionSource,
                     //shape = MaterialTheme.shapes.small,
                     onClick = {
-                        val formatter = SimpleDateFormat("yyyy-MM-dd")
-
                         val startDate = Date(state.selectedStartDateMillis!!)
                         val endDate = Date(state.selectedEndDateMillis!!)
 
-                        val startDateString = formatter.format(startDate)
-                        val endDateString = formatter.format(endDate)
+                        val startDateString = DateTimeUtils.simpleFormatter_YYYY_MM_DD.format(startDate)
+                        val endDateString = DateTimeUtils.simpleFormatter_YYYY_MM_DD.format(endDate)
 
                         val auth = prefs.getString("auth", "")
                         CoroutineScope(Job()).apply {

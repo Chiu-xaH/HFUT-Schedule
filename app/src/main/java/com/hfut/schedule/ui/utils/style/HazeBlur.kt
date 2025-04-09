@@ -1,21 +1,36 @@
 package com.hfut.schedule.ui.utils.style
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.logic.utils.DataStoreManager
 import com.hfut.schedule.logic.utils.VersionUtils
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
-import com.hfut.schedule.ui.activity.home.main.saved.MultiScheduleSettings
+import com.hfut.schedule.ui.activity.home.calendar.multi.MultiScheduleSettings
 import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import dev.chrisbanes.haze.HazeEffectScope
@@ -24,11 +39,12 @@ import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
+import kotlinx.coroutines.delay
 
 @Composable
 fun Modifier.bottomBarBlur(hazeState : HazeState) : Modifier {
     val surfaceColor = MaterialTheme.colorScheme.surface
-    val blur = prefs.getBoolean("SWITCHBLUR", VersionUtils.canBlur)
+    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = VersionUtils.canBlur)
     return if(blur) {
         this.hazeEffect(state = hazeState,
             style = HazeStyle(
@@ -58,7 +74,7 @@ fun Modifier.bottomBarBlur(hazeState : HazeState) : Modifier {
 @Composable
 fun Modifier.topBarBlur(hazeState : HazeState) : Modifier {
     val surfaceColor = MaterialTheme.colorScheme.surface
-    val blur = prefs.getBoolean("SWITCHBLUR", VersionUtils.canBlur)
+    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = VersionUtils.canBlur)
     return if(blur) {
          this.hazeEffect(state = hazeState,
             style = HazeStyle(
@@ -82,7 +98,7 @@ fun Modifier.topBarBlur(hazeState : HazeState) : Modifier {
 
 @Composable
 private fun Modifier.blurStyle(hazeState: HazeState,radius : Float = 1f,tint : Color = Color.Transparent) : Modifier {
-    val blur = prefs.getBoolean("SWITCHBLUR", VersionUtils.canBlur)
+    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = VersionUtils.canBlur)
     return if(blur) {
         this.hazeEffect(state = hazeState, style = HazeStyle(
             tint = HazeTint(color =  tint),
@@ -147,6 +163,42 @@ fun CustomBottomSheet(
     ) {
         content()
     }
+}
+
+// isExpanded=true时，下层背景进入高斯模糊，并用黑色压暗，伴随缩放，上层背景展开
+@Composable
+fun transitionBackground(isExpanded : Boolean) : Modifier {
+    val motionBlur by DataStoreManager.motionBlurFlow.collectAsState(initial = true)
+    val transition by DataStoreManager.transitionFlow.collectAsState(initial = false)
+    // 稍微晚于运动结束
+    val blurSize by animateDpAsState(
+        targetValue = if (isExpanded && motionBlur) 12.dp else 0.dp, label = ""
+        ,animationSpec = tween(MyApplication.ANIMATION_SPEED + 100, easing = LinearOutSlowInEasing),
+    )
+    val scale = animateFloatAsState(
+        targetValue = if (isExpanded) 0.8f else 1f, // 按下时为0.9，松开时为1
+        animationSpec = tween(MyApplication.ANIMATION_SPEED + 100, easing = LinearOutSlowInEasing),
+        label = "" // 使用弹簧动画
+    )
+    val backgroundColor by animateColorAsState(
+        targetValue = if(isExpanded) Color.Black.copy(.3f) else Color.Transparent,
+        animationSpec = tween(MyApplication.ANIMATION_SPEED, easing = LinearOutSlowInEasing),
+        label = "",
+    )
+    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = VersionUtils.canBlur)
+    LaunchedEffect(isExpanded) {
+        if(blur && transition) {
+            DataStoreManager.saveHazeBlur(false)
+            delay((MyApplication.ANIMATION_SPEED + 100)*1L)
+            DataStoreManager.saveHazeBlur(true)
+        }
+    }
+    // 蒙版
+    if(transition)
+        Box(modifier = Modifier.fillMaxSize().background(backgroundColor).zIndex(2f))
+
+    val transitionModifier = if(transition) Modifier.blur(blurSize).scale(scale.value) else Modifier
+    return transitionModifier
 }
 
 

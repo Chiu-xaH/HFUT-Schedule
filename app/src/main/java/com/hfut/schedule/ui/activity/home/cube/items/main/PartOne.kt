@@ -71,12 +71,10 @@ fun PartOne(vm : NetWorkViewModel,
             showlable : Boolean,
             showlablechanged :(Boolean) -> Unit,
             ifSaved : Boolean,
-            blur : Boolean,
-            blurchanged :(Boolean) -> Unit,
             navController: NavController) {
     TransplantListItem(
         headlineContent = { Text(text = "界面显示") },
-        supportingContent = { Text(text = "实时模糊 运动模糊 转场动画")},
+        supportingContent = { Text(text = "实时模糊 运动曲线 转场动画")},
         leadingContent = {
             Icon(painter = painterResource(id = R.drawable.stacks), contentDescription ="" )
         },
@@ -134,8 +132,8 @@ fun HomeSettingScreen(navController: NavController,
                       showlablechanged: (Boolean) -> Unit,
                       ifSaved : Boolean,
                       innerPaddings : PaddingValues,
-                      blur : Boolean,
-                      blurchanged : (Boolean) -> Unit,
+//                      blur : Boolean,
+//                      blurchanged : (Boolean) -> Unit,
                       hazeState: HazeState
 ) {
    //
@@ -179,7 +177,7 @@ fun HomeSettingScreen(navController: NavController,
 
 
         DividerTextExpandedWith(text = "应用设置") {
-            PartOne(vm,showlable,showlablechanged,ifSaved,blur,blurchanged,navController)
+            PartOne(vm,showlable,showlablechanged,ifSaved,navController)
         }
 
         Spacer(modifier = Modifier.height(5.dp))

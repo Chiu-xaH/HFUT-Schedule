@@ -73,11 +73,8 @@ import dev.chrisbanes.haze.haze
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShowerGuaGua(vm: GuaGuaViewModel,netVm : NetWorkViewModel,navHostController: NavHostController) {
-    val animation by remember { mutableStateOf(SharePrefs.prefs.getInt("ANIMATION", MyApplication.ANIMATION_SPEED)) }
     val navController = rememberNavController()
     val context = LocalActivity.current
-    val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR",  VersionUtils.canBlur)
-    val blur by remember { mutableStateOf(switchblur) }
     val hazeState = remember { HazeState() }
 
     val currentAnimationIndex by DataStoreManager.animationTypeFlow.collectAsState(initial = 0)

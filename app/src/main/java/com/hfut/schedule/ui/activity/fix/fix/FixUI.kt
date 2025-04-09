@@ -48,8 +48,8 @@ import com.hfut.schedule.logic.utils.Starter.refreshLogin
 import com.hfut.schedule.logic.utils.VersionUtils
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
+import com.hfut.schedule.logic.utils.parse.ParseJsons.getTimeStamp
 import com.hfut.schedule.ui.activity.home.cube.items.main.apiCheck
-import com.hfut.schedule.ui.activity.home.focus.funictions.getTimeStamp
 import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar

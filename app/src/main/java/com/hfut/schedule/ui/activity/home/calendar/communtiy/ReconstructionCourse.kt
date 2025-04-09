@@ -98,11 +98,8 @@ fun getCourseINFO(weekday : Int,Week : Int,friendUserName : String? = null) : Mu
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailInfos(sheet : courseDetailDTOList,isFriend : Boolean = false,vm: NetWorkViewModel,hazeState: HazeState) {
-    val sheetState_totalCourse = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_totalCourse by remember { mutableStateOf(false) }
-//    val json = SharePrefs.prefs.getString("courses","")
     var courseName by remember { mutableStateOf("") }
-//    val list = getTotalCourse(json)
     if (showBottomSheet_totalCourse) {
         HazeBottomSheet (
             onDismissRequest = {
@@ -110,8 +107,6 @@ fun DetailInfos(sheet : courseDetailDTOList,isFriend : Boolean = false,vm: NetWo
             },
             showBottomSheet = showBottomSheet_totalCourse,
             hazeState = hazeState
-//            sheetState = sheetState_totalCourse,
-//            shape = bottomSheetRound(sheetState_totalCourse)
         ) {
             CourseDetailApi(courseName = courseName, vm = vm, hazeState = hazeState)
         }

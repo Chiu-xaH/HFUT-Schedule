@@ -1,5 +1,5 @@
 # HFUT-Schedule 聚在工大 P2
-## [接口文档](markdown/API.md)
+## [接口文档](/docs/API.md)
 供校内学生们方便参考或学习
 
 ## Material Design 3 设计参考 
@@ -10,7 +10,7 @@
 ## [工具](/tools)
 
 ## 开发纪实
-### [如何克服越来越大的包体](/markdown/ARTICLE.md)
+### [如何克服越来越大的包体](/docs/ARTICLE.md)
 
 ## 统计
 2024-10-07 ~ 2025-01-06、2025-02-14 ~ 2025-03-15

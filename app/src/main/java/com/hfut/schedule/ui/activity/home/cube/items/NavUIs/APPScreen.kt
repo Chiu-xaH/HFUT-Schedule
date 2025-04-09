@@ -46,7 +46,7 @@ import com.hfut.schedule.logic.utils.data.SharePrefs.saveInt
 import com.hfut.schedule.ui.activity.home.cube.items.main.Screen
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.FocusCardSettings
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.LockUI
-import com.hfut.schedule.ui.activity.home.main.saved.CourseType
+import com.hfut.schedule.ui.activity.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.utils.components.BottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
@@ -133,7 +133,7 @@ fun APPScreen(navController: NavController,
                 headlineContent = { Text(text = "默认课程表") },
                 supportingContent = {
                     Column {
-                        Text(text = "您希望打开APP后课程表首先展示的是")
+                        Text(text = "您希望打开APP后聚焦展示的数据源以及课程表首先展示的页面")
                         Row {
                             FilterChip(
                                 onClick = {
@@ -177,22 +177,12 @@ fun APPScreen(navController: NavController,
                 },
                 leadingContent = { Icon(painterResource(R.drawable.net), contentDescription = "Localized description",) },
             )
-        }
-        DividerTextExpandedWith("显示") {
             TransplantListItem(
                 headlineContent = { Text(text = "聚焦展示今天已上完的课程") },
                 leadingContent = { Icon(painterResource(R.drawable.search_activity), contentDescription = "Localized description",) },
                 trailingContent = { Switch(checked = showEnded, onCheckedChange = { ch -> showEnded = ch}) },
                 modifier = Modifier.clickable { showEnded = !showEnded }
             )
-
-            TransplantListItem(
-                headlineContent = { Text(text = "即时卡片") },
-                supportingContent = { Text(text = "启动APP时会自动加载或更新一些即时数据,您可按需调整") },
-                leadingContent = { Icon(painterResource(R.drawable.reset_iso), contentDescription = "Localized description",) },
-                modifier = Modifier.clickable { navController.navigate(Screen.FocusCardScreen.route) }
-            )
-
         }
         DividerTextExpandedWith("配置") {
             TransplantListItem(
@@ -230,17 +220,14 @@ fun APPScreen(navController: NavController,
                     }
                 }
             )
+            TransplantListItem(
+                headlineContent = { Text(text = "BenchMark(编译优化)") },
+                supportingContent = { Text(text = "通过记录用户使用习惯，空闲时间预编译常用部分，以加速应用(效果不显著)") },
+                leadingContent = { Icon(painterResource(R.drawable.rocket_launch), contentDescription = "Localized description",) },
+                trailingContent = { Switch(checked = false, onCheckedChange = {}, enabled = false) },
+            )
+            Spacer(Modifier.height(innerPaddings.calculateBottomPadding()))
+
         }
-
-
-
-
-
-
-
-
-
-
-
     }
 }

@@ -10,6 +10,7 @@ import com.hfut.schedule.logic.beans.jxglstu.datumResponse
 import com.hfut.schedule.logic.utils.PermissionManager.checkAndRequestCalendarPermission
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.ui.utils.components.showToast
+import com.hfut.schedule.viewmodel.UIViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -117,7 +118,46 @@ private fun addEvent(
         if(showToast) showToast("添加失败(可能是权限问题)")
     }
 }
-
+// 使用规范的时间bean 推荐
+fun addToCalendars(
+    bean: DateTime,
+    place : String? = null,
+    title : String,
+    remark : String? = null,
+    activity : Activity
+) {
+    checkAndRequestCalendarPermission(activity)
+    bean.let {
+        // **先检查是否已存在相同日程**
+        if (checkExistEvent(it, title,activity) != null) {
+            return
+        }
+        addEvent(dateTime = it, title = title,place = place, remark = remark)
+    }
+}
+// 传入标准格式化的YYYY-MM-DD与HH:SS
+fun addToCalendars(
+    startDate : String,
+    startTime : String,
+    endDate : String,
+    endTime : String,
+    place : String? = null,
+    title : String,
+    remark : String? = null,
+    activity : Activity
+) {
+    checkAndRequestCalendarPermission(activity)
+    // 解析
+    val bean = parseToDateTime(startDate, startTime, endDate, endTime)
+    bean?.let {
+        // **先检查是否已存在相同日程**
+        if (checkExistEvent(it, title,activity) != null) {
+            return
+        }
+        addEvent(dateTime = it, title = title,place = place, remark = remark)
+    }
+}
+// 旧方法改造
 fun addToCalendars(
     start : List<Int>,
     end : List<Int>,
@@ -130,10 +170,10 @@ fun addToCalendars(
     val bean = parseDateTimeBean(start, end)
     bean?.let {
         // **先检查是否已存在相同日程**
-        if (checkExistEvent(bean, title,activity) != null) {
+        if (checkExistEvent(it, title,activity) != null) {
             return
         }
-        addEvent(dateTime = bean, title = title,place = place, remark = remark)
+        addEvent(dateTime = it, title = title,place = place, remark = remark)
     } ?: showToast("解析日期时间错误")
 }
 
@@ -230,51 +270,86 @@ private fun parseDateTimeBean(start : List<Int>, end : List<Int>) : DateTime? =
         null
     }
 
-suspend fun addCourseToEvent(activity: Activity,time : Int)  = withContext(Dispatchers.IO) {
+fun parseToDateTime(startDate: String,startTime: String,endDate: String,endTime: String) : DateTime? {
+    val startBean = parseStrToDateTimeBean(startDate,startTime) ?: return null
+    val endBean = parseStrToDateTimeBean(endDate,endTime) ?: return null
+    return DateTime(startBean,endBean)
+}
+
+fun parseStrToDateTimeBean(date: String, time: String) : DateTimeBean? {
+    val dates = date.split("-")
+    if(dates.size != 3) return null
+    val year = dates[0].toIntOrNull() ?: return null
+    val month = dates[1].toIntOrNull() ?: return null
+    val day = dates[2].toIntOrNull() ?: return null
+    val times = time.split(":")
+    if(times.size != 2) return null
+    val hour = times[0].toIntOrNull() ?: return null
+    val minute = times[1].toIntOrNull() ?: return null
+    return DateTimeBean(year,month,day,hour,minute)
+}
+
+data class JxglstuCourseSchedule(val time : DateTime,val place : String,val courseName : String)
+
+
+fun getJxglstuCourseSchedule(jstr : String? = null) : List<JxglstuCourseSchedule>  {
+    val json = jstr ?: prefs.getString("json", "")
+    val list = mutableListOf<JxglstuCourseSchedule>()
+    try {
+        val datumResponse = Gson().fromJson(json, datumResponse::class.java)
+        val scheduleList = datumResponse.result.scheduleList
+        val lessonList = datumResponse.result.lessonList
+        for (i in scheduleList.indices) {
+            val item = scheduleList[i]
+            var startTime = item.startTime.toString()
+            startTime = startTime.substring(0, startTime.length - 2) + ":" + startTime.substring(startTime.length - 2)
+
+            var endTime = item.endTime.toString()
+            endTime = endTime.substring(0, endTime.length - 2) + ":" + endTime.substring(endTime.length - 2)
+            val room = item.room.nameZh
+            var courseId = item.lessonId.toString()
+
+            for (j in lessonList.indices) {
+                if (courseId == lessonList[j].id) {
+                    courseId = lessonList[j].courseName
+                }
+            }
+
+            val date = item.date.split("-")
+            if(date.size != 3) {
+                break
+            }
+            val start = startTime.split(":")
+            if(start.size != 2) {
+                break
+            }
+            val end = endTime.split(":")
+            if(end.size != 2) {
+                break
+            }
+
+            val bean = DateTime(
+                DateTimeBean(date[0].toInt(),date[1].toInt(),date[2].toInt(),start[0].toInt(),start[1].toInt()),
+                DateTimeBean(date[0].toInt(),date[1].toInt(),date[2].toInt(),end[0].toInt(),end[1].toInt())
+            )
+            list.add(JxglstuCourseSchedule(bean,room,courseId))
+        }
+    } catch (_ : Exception) { }
+    return list
+}
+
+suspend fun addCourseToEvent(vmUI : UIViewModel,activity: Activity,time : Int)  = withContext(Dispatchers.IO) {
     async { checkAndRequestCalendarPermission(activity) }.await()
     launch {
-        val json = prefs.getString("json", "")
         try {
-            val datumResponse = Gson().fromJson(json, datumResponse::class.java)
-            val scheduleList = datumResponse.result.scheduleList
-            val lessonList = datumResponse.result.lessonList
-            for (i in scheduleList.indices) {
-                val item = scheduleList[i]
-                var startTime = item.startTime.toString()
-                startTime = startTime.substring(0, startTime.length - 2) + ":" + startTime.substring(startTime.length - 2)
-
-                var endTime = item.endTime.toString()
-                endTime = endTime.substring(0, endTime.length - 2) + ":" + endTime.substring(endTime.length - 2)
-                val room = item.room.nameZh
-                var courseId = item.lessonId.toString()
-
-                for (j in lessonList.indices) {
-                    if (courseId == lessonList[j].id) {
-                        courseId = lessonList[j].courseName
-                    }
-                }
-
-                val date = item.date.split("-")
-                if(date.size != 3) {
+            val list = vmUI.jxglstuCourseScheduleList
+            for(item in list) {
+                val itemTime = item.time
+                val itemName = item.courseName
+                if (checkExistEvent(itemTime, itemName,activity,showToast = false) != null) {
                     break
                 }
-                val start = startTime.split(":")
-                if(start.size != 2) {
-                    break
-                }
-                val end = endTime.split(":")
-                if(end.size != 2) {
-                    break
-                }
-
-                val bean = DateTime(
-                    DateTimeBean(date[0].toInt(),date[1].toInt(),date[2].toInt(),start[0].toInt(),start[1].toInt()),
-                    DateTimeBean(date[0].toInt(),date[1].toInt(),date[2].toInt(),end[0].toInt(),end[1].toInt())
-                )
-                if (checkExistEvent(bean, courseId,activity,showToast = false) != null) {
-                    break
-                }
-                addEvent(dateTime = bean, title = courseId,place = room, reminderMinutes = time, showToast = false)
+                addEvent(dateTime = itemTime, title = itemName,place = item.place, reminderMinutes = time, showToast = false)
             }
             showToast("执行完成 请检查日历")
         } catch (e : Exception) {
@@ -284,47 +359,15 @@ suspend fun addCourseToEvent(activity: Activity,time : Int)  = withContext(Dispa
 }
 
 
-suspend fun delCourseEvents(activity: Activity)  = withContext(Dispatchers.IO) {
+suspend fun delCourseEvents(vmUI: UIViewModel,activity: Activity)  = withContext(Dispatchers.IO) {
     async { checkAndRequestCalendarPermission(activity) }.await()
     launch {
-        val json = prefs.getString("json", "")
         try {
-            val datumResponse = Gson().fromJson(json, datumResponse::class.java)
-            val scheduleList = datumResponse.result.scheduleList
-            val lessonList = datumResponse.result.lessonList
-            for (i in scheduleList.indices) {
-                val item = scheduleList[i]
-                var startTime = item.startTime.toString()
-                startTime = startTime.substring(0, startTime.length - 2) + ":" + startTime.substring(startTime.length - 2)
-
-                var endTime = item.endTime.toString()
-                endTime = endTime.substring(0, endTime.length - 2) + ":" + endTime.substring(endTime.length - 2)
-                var courseId = item.lessonId.toString()
-
-                for (j in lessonList.indices) {
-                    if (courseId == lessonList[j].id) {
-                        courseId = lessonList[j].courseName
-                    }
-                }
-
-                val date = item.date.split("-")
-                if(date.size != 3) {
-                    break
-                }
-                val start = startTime.split(":")
-                if(start.size != 2) {
-                    break
-                }
-                val end = endTime.split(":")
-                if(end.size != 2) {
-                    break
-                }
-
-                val bean = DateTime(
-                    DateTimeBean(date[0].toInt(),date[1].toInt(),date[2].toInt(),start[0].toInt(),start[1].toInt()),
-                    DateTimeBean(date[0].toInt(),date[1].toInt(),date[2].toInt(),end[0].toInt(),end[1].toInt())
-                )
-                checkExistEvent(bean, courseId,activity,showToast = false)?.let {
+            val list = vmUI.jxglstuCourseScheduleList
+            for(item in list) {
+                val itemTime = item.time
+                val itemName = item.courseName
+                checkExistEvent(itemTime, itemName,activity,showToast = false)?.let {
                     delEvent(id = it, showToast = false)
                 } ?: break
             }

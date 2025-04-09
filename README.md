@@ -38,7 +38,7 @@
 
 通过Gitee Release通道分发新版本，在启动时检查更新，如有更新会在首页底栏【选项】显示小红点，选项界面会有红色强调卡片，点击下方更新按钮，100%后授权安装未知应用权限
 
-## [更新日志](markdown/UPDATE.md)
+## [更新日志](docs/UPDATE.md)
 
 ## 构建
 Kotlin 2.0
@@ -76,7 +76,7 @@ UI: Material You (Material Design 3)
 
 [Bsdiff-Lib](https://github.com/Chiu-xaH/Bsdiff-Lib) 增量更新
 
-## [其他内容(P2)](/markdown/OTHER.md)
+## [其他内容(P2)](/docs/OTHER.md)
 
 
 

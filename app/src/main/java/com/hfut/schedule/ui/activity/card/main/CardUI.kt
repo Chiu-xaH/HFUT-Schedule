@@ -69,7 +69,7 @@ import com.hfut.schedule.ui.activity.card.function.main.HomeScreen
 import com.hfut.schedule.ui.activity.card.bills.main.CardBills
 import com.hfut.schedule.ui.activity.card.counts.CardHome
 //import com.hfut.schedule.ui.activity.card.function.main.turnToBottomBar
-import com.hfut.schedule.ui.activity.home.focus.funictions.getZjgdCard
+import com.hfut.schedule.ui.activity.home.focus.funictions.initCardNetwork
 import com.hfut.schedule.ui.utils.NavigateAnimationManager
 import com.hfut.schedule.ui.utils.NavigateAnimationManager.currentPage
 //import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
@@ -116,12 +116,8 @@ private fun BillItem(vm : NetWorkViewModel) :List<records> {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
-
-    val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR", VersionUtils.canBlur)
-    val blur by remember { mutableStateOf(switchblur) }
     val hazeState = remember { HazeState() }
     val navController = rememberNavController()
-//    var page by remember { mutableStateOf(1) }
     var bottomBarItems by remember { mutableStateOf(CardBarItems.HOME) }
 
     val pagerState = rememberPagerState(pageCount = { 3 })
@@ -131,7 +127,7 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
 
     LaunchedEffect(refresh) {
         if(!refresh) {
-            async { getZjgdCard(vm,vmUI) }.await()
+            async { initCardNetwork(vm,vmUI) }.await()
             launch { refresh = true }
         }
     }
@@ -171,7 +167,7 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
 //                        Divider()
 //                }
                 if(bottomBarItems == CardBarItems.COUNT) {
-                    CustomTabRow(pagerState, titles, blur)
+                    CustomTabRow(pagerState, titles)
                 }
             }
         },
@@ -258,7 +254,7 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
             }
             composable(CardBarItems.COUNT.name) {
                 Scaffold {
-                    CardHome(innerPadding,vm,blur,pagerState)
+                    CardHome(innerPadding,vm,pagerState)
                 }
             }
         }

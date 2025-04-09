@@ -2,8 +2,8 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-parcelize'
-    // compose?
-    id("org.jetbrains.kotlin.plugin.compose") version "2.0.0"
+    id 'org.jetbrains.kotlin.plugin.compose'
+    id 'com.google.devtools.ksp'
 }
 
 android {
@@ -33,7 +33,7 @@ android {
         minSdk 26
         targetSdk 36
         versionCode 175
-        versionName "4.15 Preview"
+        versionName "4.15"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
@@ -132,13 +132,13 @@ dependencies {
     // 二维码
     implementation libs.core
     // Jsoup
-    implementation(libs.jsoup)
+    implementation libs.jsoup
     // OkHttp
     implementation libs.okhttp
     // Retrofit
-    implementation (libs.converter.scalars)
-    implementation (libs.retrofit)
-    implementation (libs.converter.gson)
+    implementation libs.converter.scalars
+    implementation libs.retrofit
+    implementation libs.converter.gson
     // Material Design 1
     implementation libs.androidx.material
     // Material Design 3
@@ -146,19 +146,18 @@ dependencies {
     // 透明状态栏
     implementation libs.accompanist.systemuicontroller
     // 底栏
-    implementation(libs.androidx.navigation.compose)
+    implementation libs.androidx.navigation.compose
     // 开屏显示
     implementation libs.androidx.core.splashscreen
     // 模糊库
     implementation libs.haze
     implementation libs.haze.materials
-    // 图片库
+    // 图片库  别用Coil，与登录逻辑代码有玄学冲突
     implementation libs.compose
-    // 别用Coil!与登录逻辑代码有玄学冲突 用了就无法登录,用Glide
     // DataStore
     implementation libs.androidx.datastore.preferences
     // 生物识别 指纹
-    //implementation "androidx.biometric:biometric:1.1.0"
+//    implementation libs.androidx.biometric
     // 用于和风天气密钥生成的JWT
     implementation libs.eddsa
     // 礼花
@@ -168,5 +167,11 @@ dependencies {
     // 预编译
     implementation libs.androidx.profileinstaller
     // 增量更新
-    implementation(libs.bsdiff.lib)
+    implementation libs.bsdiff.lib
+    // Room
+    implementation libs.androidx.room.runtime
+    // KSP Room
+    ksp libs.androidx.room.compiler
+    // 协程 Room
+    implementation libs.androidx.room.ktx
 }

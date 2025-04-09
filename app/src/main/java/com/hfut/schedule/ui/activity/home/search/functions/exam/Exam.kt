@@ -50,20 +50,9 @@ import com.hfut.schedule.viewmodel.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 
 @SuppressLint("SuspiciousIndentation")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Exam(vm : NetWorkViewModel, ifSaved : Boolean,hazeState: HazeState) {
-    val sheetState_Exam = rememberModalBottomSheetState()
     var showBottomSheet_Exam by remember { mutableStateOf(false) }
-    val CommuityTOKEN = prefs.getString("TOKEN","")
-
-    val cookie = if (!vm.webVpn) prefs.getString(
-        "redirect",
-        ""
-    ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
-
-    if(ifSaved) CommuityTOKEN?.let { vm.Exam(it) }
-    else vm.getExamJXGLSTU(cookie.toString())
 
     TransplantListItem(
         headlineContent = { Text(text = "考试") },
@@ -89,8 +78,6 @@ fun Exam(vm : NetWorkViewModel, ifSaved : Boolean,hazeState: HazeState) {
             },
             showBottomSheet = showBottomSheet_Exam,
             hazeState = hazeState,
-//            sheetState = sheetState_Exam,
-//            shape = bottomSheetRound(sheetState_Exam)
         ) {
 
             Scaffold(
@@ -225,7 +212,7 @@ fun JxglstuExamUI(item : Map<String,String>,status : Boolean) {
 
             //今天 && 已经考完
             if("$month-$day" == DateTimeUtils.Date_MM_dd
-                && DateTimeUtils.compareTimes("$endTimeHour:$endTimeMinute") == DateTimeUtils.TimeState.ENDED) {
+                && DateTimeUtils.compareTime("$endTimeHour:$endTimeMinute") == DateTimeUtils.TimeState.ENDED) {
 
             } else {
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {

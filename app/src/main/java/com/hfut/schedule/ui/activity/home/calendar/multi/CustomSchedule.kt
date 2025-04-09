@@ -39,6 +39,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -57,17 +58,20 @@ import androidx.compose.ui.unit.sp
 import com.google.gson.Gson
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.beans.jxglstu.datumResponse
+import com.hfut.schedule.logic.db.RoomDataBaseManager
 import com.hfut.schedule.logic.utils.DateTimeUtils
 import com.hfut.schedule.logic.utils.parse.SemseterParser.parseSemseter
 import com.hfut.schedule.logic.utils.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.ui.activity.home.calendar.jxglstu.getNewWeek
+import com.hfut.schedule.ui.utils.components.LoadingUI
 import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.showToast
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 
-@RequiresApi(Build.VERSION_CODES.O)
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalAnimationApi::class, ExperimentalAnimationApi::class)
 @SuppressLint("SuspiciousIndentation", "CoroutineCreationDuringComposition")
 @Composable
 fun CustomSchedules(showAll : Boolean,
@@ -78,6 +82,15 @@ fun CustomSchedules(showAll : Boolean,
                     today: LocalDate
                  ) {
 
+    var json by remember { mutableStateOf<String?>(null) }
+    var loading by remember { mutableStateOf(true) }
+    if(code > 0) {
+        LaunchedEffect(Unit) {
+            async {  json = RoomDataBaseManager.customCourseTableDao.getContent(code) }.await()
+            if(json != null)
+                launch { loading = false }
+        }
+    }
     var table_1_1 by rememberSaveable { mutableStateOf("") }
     var table_1_2 by rememberSaveable { mutableStateOf("") }
     var table_1_3 by rememberSaveable { mutableStateOf("") }
@@ -201,9 +214,6 @@ fun CustomSchedules(showAll : Boolean,
         sheet_5_1, sheet_5_2, sheet_5_3, sheet_5_4, sheet_5_5,
         sheet_6_1, sheet_6_2, sheet_6_3, sheet_6_4, sheet_6_5
     )
-    //  var showAlls by remember { mutableStateOf(false) }
-    //showAlls = showAll
-
 
     var Bianhuaweeks by rememberSaveable { mutableStateOf(
         if(DateTimeUtils.weeksBetween > 20) {
@@ -242,7 +252,7 @@ fun CustomSchedules(showAll : Boolean,
         table_5_5 = ""
         //////////////////////////////////////////////////////////////////////////////////
         try {
-            val json =  SharePrefs.prefs.getString(if(code >= 0)"SCHEDULE$code" else "json", null)
+
             val datumResponse = Gson().fromJson(json, datumResponse::class.java)
             val scheduleList = datumResponse.result.scheduleList
             val lessonList = datumResponse.result.lessonList
@@ -454,8 +464,6 @@ fun CustomSchedules(showAll : Boolean,
         //////////////////////////////////////////////////////////////////////////////////
 
         try {
-            val json = SharePrefs.prefs.getString("SCHEDULE$code", null)
-            // Log.d("测试",json!!)
             val datumResponse = Gson().fromJson(json, datumResponse::class.java)
             val scheduleList = datumResponse.result.scheduleList
             val lessonList = datumResponse.result.lessonList
@@ -679,23 +687,21 @@ fun CustomSchedules(showAll : Boolean,
         }
 
     }
-//////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-//    var today by rememberSaveable { mutableStateOf(LocalDate.now()) }
-//    val mondayOfCurrentWeek = today.minusDays(today.dayOfWeek.value - 1L)
 
 
-    Column(
-        modifier = Modifier
-            // .padding(innerPadding)
-            .fillMaxSize()
-    ) {
-//        Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
-//        Spacer(modifier = Modifier.height(5.dp))
-
-        Column {
+    if(loading) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            Box(modifier = Modifier.align(Alignment.Center)) {
+                LoadingUI()
+            }
+        }
+    } else {
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Column {
 
 //            LazyVerticalGrid(columns = GridCells.Fixed(if(showAll)7 else 5),modifier = Modifier.padding(horizontal = 10.dp)){
 //                items(if(showAll)7 else 5) { item ->
@@ -857,7 +863,6 @@ fun CustomSchedules(showAll : Boolean,
                 }
                 Spacer(modifier = Modifier.height(100.dp))
             }
-
+        }
     }
-
 }

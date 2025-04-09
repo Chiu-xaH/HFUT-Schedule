@@ -10,12 +10,11 @@ import com.hfut.schedule.logic.beans.community.LibraryResponse
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 
-fun getBorrow(PrefsJson : String) : List<BorrowRecords> {
-    try {
-        val json = prefs.getString(PrefsJson,null)
-        return Gson().fromJson(json,BorrowResponse::class.java).result.records
+fun getBorrow(vm: NetWorkViewModel) : List<BorrowRecords> {
+    return try {
+        Gson().fromJson(vm.booksChipData.value,BorrowResponse::class.java).result.records
     } catch (_:Exception) {
-        return emptyList()
+        emptyList()
     }
 }
 

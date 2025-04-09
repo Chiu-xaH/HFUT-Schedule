@@ -74,13 +74,11 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LibraryItem(vm : NetWorkViewModel,hazeState: HazeState) {
-    val sheetState_Library = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_Library by remember { mutableStateOf(false) }
 
 
     TransplantListItem(
         headlineContent = { Text(text = "图书") },
-        overlineContent = { Text(text = "已借 ${getBorrow(LibraryItems.BORROWED.name).size} 本")},
         leadingContent = {
             Icon(
                 painterResource(R.drawable.book),
@@ -97,8 +95,6 @@ fun LibraryItem(vm : NetWorkViewModel,hazeState: HazeState) {
             onDismissRequest = { showBottomSheet_Library = false },
             showBottomSheet = showBottomSheet_Library,
             hazeState = hazeState
-//            sheetState = sheetState_Library,
-//            shape = bottomSheetRound(sheetState_Library)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),

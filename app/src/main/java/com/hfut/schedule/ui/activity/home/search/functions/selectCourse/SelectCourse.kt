@@ -53,6 +53,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -72,7 +73,7 @@ import com.hfut.schedule.logic.beans.jxglstu.SelectPostResponse
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.Starter.refreshLogin
-import com.hfut.schedule.ui.activity.home.main.saved.updateCourses
+import com.hfut.schedule.ui.activity.home.main.updateCourses
 import com.hfut.schedule.ui.activity.home.search.functions.failRate.ApiToFailRate
 import com.hfut.schedule.ui.activity.home.search.functions.failRate.permit
 import com.hfut.schedule.ui.activity.home.search.functions.teacherSearch.ApiToTeacherSearch
@@ -92,6 +93,7 @@ import com.hfut.schedule.ui.utils.components.TransplantListItem
 import com.hfut.schedule.ui.utils.components.WebDialog
 import com.hfut.schedule.ui.utils.style.HazeBottomSheet
 import com.hfut.schedule.ui.utils.style.textFiledTransplant
+import com.hfut.schedule.viewmodel.UIViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -100,13 +102,14 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SelectCourse(ifSaved : Boolean, vm : NetWorkViewModel,hazeState: HazeState) {
+fun SelectCourse(ifSaved : Boolean, vm : NetWorkViewModel,hazeState: HazeState,vmUI: UIViewModel) {
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     var showBottomSheet_info by remember { mutableStateOf(false) }
     val sheetState_info = rememberModalBottomSheetState()
 
+    val scope = rememberCoroutineScope()
     var showDialog by remember { mutableStateOf(false) }
     val cookie = if (!vm.webVpn) prefs.getString(
         "redirect",
@@ -144,7 +147,7 @@ fun SelectCourse(ifSaved : Boolean, vm : NetWorkViewModel,hazeState: HazeState) 
                             }
                             Spacer(modifier = Modifier.width(5.dp))
                             FilledTonalButton(onClick = {
-                                updateCourses(vm)
+                                scope.launch{ updateCourses(vm, vmUI) }
                                 showToast("已刷新课表与课程汇总")
                             }) {
                                 Text(text = "刷新课表")
@@ -166,7 +169,7 @@ fun SelectCourse(ifSaved : Boolean, vm : NetWorkViewModel,hazeState: HazeState) 
         HazeBottomSheet(
             onDismissRequest = {
                 showBottomSheet_info = false
-                updateCourses(vm)
+                scope.launch{ updateCourses(vm,vmUI) }
                                },
             hazeState = hazeState,
             showBottomSheet = showBottomSheet_info
@@ -405,7 +408,6 @@ fun SelectCourseList(vm: NetWorkViewModel,hazeState: HazeState) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SelectCourseInfoLoad(courseId : Int, vm: NetWorkViewModel,hazeState: HazeState) {
     var loading by remember { mutableStateOf(true) }
@@ -792,10 +794,12 @@ fun courseInfo(num : Int,lists : List<SelectCourseInfo>,vm: NetWorkViewModel,haz
                 overlineContent = { Text(text = "教师 ${i+1}")},
                 headlineContent = { Text(text = item.nameZh) },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.person), contentDescription = "")},
-                modifier = Modifier.weight(.5f).clickable {
-                    teacherTitle = item.nameZh
-                    showBottomSheet_Teacher = true
-                }
+                modifier = Modifier
+                    .weight(.5f)
+                    .clickable {
+                        teacherTitle = item.nameZh
+                        showBottomSheet_Teacher = true
+                    }
             )
             if(i+1 < teachers.size) {
                 val item2 = teachers[i+1]
@@ -803,10 +807,12 @@ fun courseInfo(num : Int,lists : List<SelectCourseInfo>,vm: NetWorkViewModel,haz
                     overlineContent = { Text(text = "教师 ${i+2}")},
                     headlineContent = { Text(text = item2.nameZh) },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.person), contentDescription = "")},
-                    modifier = Modifier.weight(.5f).clickable {
-                        teacherTitle = item2.nameZh
-                        showBottomSheet_Teacher = true
-                    }
+                    modifier = Modifier
+                        .weight(.5f)
+                        .clickable {
+                            teacherTitle = item2.nameZh
+                            showBottomSheet_Teacher = true
+                        }
                 )
             }
         }

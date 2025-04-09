@@ -7,7 +7,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.hfut.schedule.activity.BaseActivity
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
-import com.hfut.schedule.ui.activity.home.main.login.SuccessUI
+import com.hfut.schedule.logic.utils.getCelebration
+import com.hfut.schedule.ui.activity.home.main.MainScreen
 import com.hfut.schedule.viewmodel.NetworkViewModelFactory
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import kotlinx.coroutines.launch
@@ -15,14 +16,17 @@ import kotlinx.coroutines.launch
 class SuccessActivity : BaseActivity() {
 
     var webVpn = false
-    val networkVms by lazy { ViewModelProvider(this, NetworkViewModelFactory(webVpn)).get(NetWorkViewModel::class.java) }
+    val networkVms by lazy { ViewModelProvider(this, NetworkViewModelFactory(webVpn))[NetWorkViewModel::class.java] }
+    @SuppressLint("NewApi")
     @Composable
     override fun UI() {
-        SuccessUI(
-            networkVms,
-            super.loginVm,
-            super.uiVm,
-            webVpn
+        MainScreen(
+            vm = networkVms,
+            vm2 = super.loginVm,
+            vmUI = super.uiVm,
+            webVpn = webVpn,
+            celebrationText = getCelebration().str,
+            isLogin = true
         )
     }
 

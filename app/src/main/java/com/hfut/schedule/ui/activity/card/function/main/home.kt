@@ -36,6 +36,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -67,8 +68,8 @@ import com.hfut.schedule.ui.activity.card.function.CardLimit
 import com.hfut.schedule.ui.activity.card.function.SearchBillsUI
 import com.hfut.schedule.ui.activity.card.function.SelecctDateRange
 import com.hfut.schedule.ui.activity.home.cube.items.subitems.getUserInfo
-import com.hfut.schedule.ui.activity.home.focus.funictions.getZjgdCard
-import com.hfut.schedule.ui.activity.home.main.saved.initNetworkRefresh
+import com.hfut.schedule.ui.activity.home.focus.funictions.initCardNetwork
+import com.hfut.schedule.ui.activity.home.main.initNetworkRefresh
 import com.hfut.schedule.ui.activity.home.search.functions.electric.EleUI
 import com.hfut.schedule.ui.activity.home.search.functions.loginWeb.LoginWebScaUI
 
@@ -80,6 +81,7 @@ import com.hfut.schedule.ui.activity.home.search.functions.transfer.getCampus
 import com.hfut.schedule.ui.utils.components.appHorizontalDp
 import com.hfut.schedule.ui.utils.components.DividerTextExpandedWith
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.utils.components.RefreshIndicator
 import com.hfut.schedule.ui.utils.components.largeCardColor
 import com.hfut.schedule.ui.utils.components.showToast
 import com.hfut.schedule.ui.utils.components.StyleCardListItem
@@ -110,7 +112,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                 refreshing = true
                 loading = true
             }.await()
-            async { getZjgdCard(vm,vmUI) }.await()
+            async { initCardNetwork(vm,vmUI) }.await()
             async {
                 delay(500)
                 refreshing = false
@@ -158,14 +160,10 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
     var showBottomSheet_Toady by remember { mutableStateOf(false) }
     val sheetState_Today = rememberModalBottomSheetState()
 
+    val cardValue by remember { derivedStateOf { vmUI.cardValue } }
 
 
-
-    val now = SharePrefs.prefs.getString("card_now","00")
-    val settle = SharePrefs.prefs.getString("card_settle","00")
-
-    var todaypay = 0.0
-    var date = DateTimeUtils.Date_yyyy_MM_dd
+    var todaypay by remember { mutableStateOf(0.0) }
 
     for (item in 0 until getBills(vm).size) {
         val get = getBills(vm)[item].effectdateStr
@@ -182,30 +180,33 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
 
         val num_float = num.toFloat()
 
-        if (date == todaydate) {
+        if ( DateTimeUtils.Date_yyyy_MM_dd == todaydate) {
             if (!name.contains("充值")) todaypay += num_float
         }
 
     }
-    val num = todaypay.toString()
-    val bd = BigDecimal(num)
-    val str= bd.setScale(2, RoundingMode.HALF_UP).toString()
 
-    val card = SharePrefs.prefs.getString("card","00")
+    val str by remember { mutableStateOf(BigDecimal(todaypay.toString()).setScale(2, RoundingMode.HALF_UP).toString()) }
 
-    val test = vmUI.CardValue.value?.balance ?: card
-    val name = vmUI.CardValue.value?.name ?: getUserInfo().name
-    val nows = vmUI.CardValue.value?.now ?: now
-    val settles = vmUI.CardValue.value?.settle ?: settle
+
+    var text by remember { mutableStateOf(cardValue?.balance ?: prefs.getString("card","00")) }
+    var name by remember { mutableStateOf(cardValue?.name ?: getUserInfo().name) }
+    var nows by remember { mutableStateOf(cardValue?.now ?: prefs.getString("card_now","00")) }
+    var settles by remember { mutableStateOf(cardValue?.settle ?: prefs.getString("card_settle","00")) }
 
     val auth = SharePrefs.prefs.getString("auth","")
-    val url = MyApplication.HUIXIN_URL + "plat/pay" + "?synjones-auth=" + auth
+    val url by remember { mutableStateOf(MyApplication.HUIXIN_URL + "plat/pay" + "?synjones-auth=" + auth) }
 
     var showDialog_Huixin by remember { mutableStateOf(false) }
 
     val urlHuixin = MyApplication.HUIXIN_URL + "plat" + "?synjones-auth=" + auth
 
-
+    LaunchedEffect(cardValue) {
+        text = cardValue?.balance ?: prefs.getString("card","00")
+        name = cardValue?.name ?: getUserInfo().name
+        nows = cardValue?.now ?: prefs.getString("card_now","00")
+        settles = cardValue?.settle ?: prefs.getString("card_settle","00")
+    }
 
     WebDialog(showDialog,{ showDialog = false },url,"付款码")
     WebDialog(showDialog_Huixin,{ showDialog_Huixin = false },urlHuixin,"慧新易校", showTop = false)
@@ -450,7 +451,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                                     }
                                 }
                             )
-                            TransplantListItem(headlineContent = { Text(text = "￥$test", fontSize = 28.sp) },
+                            TransplantListItem(headlineContent = { Text(text = "￥$text", fontSize = 28.sp) },
                                 trailingContent = {
                                     Text(text = "待圈存 ￥${settles}\n卡余额 ￥${nows}")
                                 })
@@ -459,11 +460,11 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                                     modifier = Modifier
                                         .weight(.5f)
                                         .clickable {
-                                            if (test != null) {
+                                            if (text != null) {
                                                 //余额不足//未登录//正常
-                                                if (test != "00" && test!!.toDouble() < 10) {
+                                                if (text != "00" && text!!.toDouble() < 10) {
                                                     Starter.startAppUrl(MyApplication.ALIPAY_CARD_URL)
-                                                } else if (test == "00") {
+                                                } else if (text == "00") {
                                                     refreshLogin()
                                                 } else {
                                                     showToast("未检测出问题,若实体卡仍异常请咨询有关人士")
@@ -471,15 +472,15 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                                             }
                                         },
                                     headlineContent = {
-                                        if (test != null)
-                                            Text(text = if(test != "00" && test.toDouble() < 10) "余额不足"  else if(test == "00") "未登录" else "正常")
+                                        if (text != null)
+                                            Text(text = if(text != "00" && text!!.toDouble() < 10) "余额不足"  else if(text == "00") "未登录" else "正常")
                                     },
                                     overlineContent = { Text(text = "状态")},
                                     leadingContent = {
-                                        if (test != null) {
+                                        if (text != null) {
                                             Icon(painter =
                                             painterResource(id =
-                                            if(test != "00" && test!!.toDouble() < 10) R.drawable.add_circle  else if(test == "00") R.drawable.login else R.drawable.check_circle
+                                            if(text != "00" && text!!.toDouble() < 10) R.drawable.add_circle  else if(text == "00") R.drawable.login else R.drawable.check_circle
                                             )  , contentDescription = "")
                                         }
                                     })
@@ -568,7 +569,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                 Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding()))
             }
         }
-        PullRefreshIndicator(refreshing, states,
+        RefreshIndicator(refreshing, states,
             Modifier
                 .align(Alignment.TopCenter)
                 .padding(innerPadding))
@@ -577,8 +578,10 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
 
 @Composable
 fun limitRow(vmUI : UIViewModel) {
-    val limit by remember { mutableStateOf(vmUI.CardValue.value?.autotrans_limite ?: 0) }
-    val amt by remember { mutableStateOf(vmUI.CardValue.value?.autotrans_amt?: 0) }
+    val cardValue by remember { derivedStateOf { vmUI.cardValue } }
+
+    val limit by remember { mutableStateOf(cardValue?.autotrans_limite ?: 0) }
+    val amt by remember { mutableStateOf(cardValue?.autotrans_amt?: 0) }
 
 
     Row {

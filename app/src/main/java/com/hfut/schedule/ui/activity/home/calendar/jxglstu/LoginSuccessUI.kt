@@ -43,6 +43,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -70,13 +71,13 @@ import com.hfut.schedule.logic.utils.data.JxglstuParseUtils
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.saveInt
+import com.hfut.schedule.logic.utils.parse.ParseJsons.isNextOpen
 import com.hfut.schedule.logic.utils.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.utils.parse.SemseterParser.parseSemseter
 import com.hfut.schedule.ui.activity.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.activity.home.calendar.examToCalendar
 import com.hfut.schedule.ui.activity.home.calendar.getScheduleDate
 import com.hfut.schedule.ui.activity.home.calendar.next.parseCourseName
-import com.hfut.schedule.ui.activity.home.main.saved.isNextOpen
 import com.hfut.schedule.ui.activity.home.search.functions.totalCourse.getTotalCourse
 import com.hfut.schedule.ui.utils.components.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.utils.components.LargeCard
@@ -97,7 +98,7 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalAnimationApi::class, ExperimentalAnimationApi::class)
 @SuppressLint("SuspiciousIndentation", "CoroutineCreationDuringComposition")
 @Composable
 fun CalendarScreen(
@@ -112,9 +113,7 @@ fun CalendarScreen(
     today: LocalDate,
     hazeState: HazeState
 ) {
-    val sheetState_totalCourse = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_totalCourse by remember { mutableStateOf(false) }
-    val sheetState_multiCourse = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_multiCourse by remember { mutableStateOf(false) }
     var courseName by remember { mutableStateOf("") }
 
@@ -129,8 +128,6 @@ fun CalendarScreen(
             },
             showBottomSheet = showBottomSheet_totalCourse,
             hazeState = hazeState
-//            sheetState = sheetState_totalCourse,
-//            shape = bottomSheetRound(sheetState_totalCourse)
         ) {
             CourseDetailApi(courseName = courseName, vm = vm, hazeState = hazeState)
         }
@@ -451,64 +448,63 @@ fun CalendarScreen(
             ""
         ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
         var num2 = 1
-        // val grade = intent.getStringExtra("Grade")
         val ONE = JxglstuParseUtils.casCookies
         val TGC = prefs.getString("TGC", "")
         val cardvalue = prefs.getString("borrow", "")
         val cookies = "$ONE;$TGC"
         val ticket = prefs.getString("TICKET", "")
-        // val jsons = prefs.getString("LoginCommunity",MyApplication.NullLoginCommunity)
         val CommuityTOKEN = prefs.getString("TOKEN", "")
-        var a by rememberSaveable { mutableStateOf(0) }
+        var a by rememberSaveable { mutableIntStateOf(0) }
         val job = Job()
         val job2 = Job()
         val scope = CoroutineScope(job)
+        val nextBoolean = isNextOpen()
 
-       if(!webVpn) {
+
+       //检测若登陆成功（200）则解析出CommunityTOKEN
+       val LoginCommunityObserver = Observer<String?> { result ->
+           if (result != null) {
+               if (result.contains("200") && result.contains("token")) {
+                   try {
+                       val tokens = Gson().fromJson(result, LoginCommunityResponse::class.java).result.token
+                       SharePrefs.saveString("TOKEN", tokens)
+                       if (num2 == 1) {
+                           showToast("Community登陆成功")
+                           num2++
+                       }
+                   }catch (_:Exception) {}
+               }
+           }
+       }
+
+       //检测CommunityTOKEN的可用性
+       val ExamObserver = Observer<Int> { result ->
+           if (result == 500) {
+               CoroutineScope(Job()).launch {
+                   async { vm.GotoCommunity(cookies) }.await()
+                   async {
+                       delay(1000)
+                       ticket?.let { vm.LoginCommunity(it) }
+                   }.await()
+                   launch {
+                       Handler(Looper.getMainLooper()).post {
+                           vm.LoginCommunityData.observeForever(LoginCommunityObserver)
+                       }
+                   }
+               }
+           }
+       }
+
+
+       LaunchedEffect(Unit) {
+
+       }
+        if(!webVpn) {
+            val token = prefs.getString("bearer", "")
+            //检测慧新易校可用性
+            if (prefs.getString("auth", "") == "") vm.OneGotoCard("$ONE;$TGC")
            CoroutineScope(job2).launch {
-               val token = prefs.getString("bearer", "")
 
-               //检测若登陆成功（200）则解析出CommunityTOKEN
-               val LoginCommunityObserver = Observer<String?> { result ->
-                   if (result != null) {
-                       if (result.contains("200") && result.contains("token")) {
-                           try {
-                               val tokens = Gson().fromJson(result, LoginCommunityResponse::class.java).result.token
-                               SharePrefs.saveString("TOKEN", tokens)
-                               if (num2 == 1) {
-                                   showToast("Community登陆成功")
-                                   num2++
-                               }
-                           }catch (_:Exception) {}
-                       }
-                   }
-               }
-
-               //检测CommunityTOKEN的可用性
-               val ExamObserver = Observer<Int> { result ->
-//                   Log.d("result",(result == 500).toString())
-                   if (result == 500) {
-                       CoroutineScope(Job()).async {
-                           async { vm.GotoCommunity(cookies) }.await()
-                           async {
-                               delay(1000)
-                               ticket?.let { vm.LoginCommunity(it) }
-                           }.await()
-                           async {
-                               Handler(Looper.getMainLooper()).post {
-                                   vm.LoginCommunityData.observeForever(
-                                       LoginCommunityObserver
-                                   )
-                               }
-                           }
-                       }
-                   }
-               }
-
-
-               //检测慧新易校可用性
-               val auth = prefs.getString("auth", "")
-               if (prefs.getString("auth", "") == "") vm.OneGotoCard("$ONE;$TGC")
 
                async { vm.OneGotoCard("$ONE;$TGC") }
                async { CommuityTOKEN?.let { vm.Exam(it) } }
@@ -534,7 +530,6 @@ fun CalendarScreen(
            }
        }
 
-        val nextBoolean = isNextOpen()
         if (nextBoolean) saveInt("FIRST", 1)
 
 
@@ -543,30 +538,9 @@ fun CalendarScreen(
             async {
                 val studentIdObserver = Observer<Int> { result ->
                     if (result != 0) {
-                        //Log.d("result",result.toString())
                         SharePrefs.saveString("studentId", result.toString())
                         CoroutineScope(Job()).launch {
                             async { vm.getBizTypeId(cookie!!) }.await()
-//                            async {
-//                                bizTypeId?.let {
-//                                    vm.getLessonIds(
-//                                        cookie!!,
-//                                        it,
-//                                        result.toString()
-//                                    )
-//                                }
-//                            }
-//                            if (nextBoolean) {
-//                                async {
-//                                    bizTypeId?.let {
-//                                        vm.getLessonIdsNext(
-//                                            cookie!!,
-//                                            it,
-//                                            result.toString()
-//                                        )
-//                                    }
-//                                }
-//                            }
                             async { vm.getInfo(cookie!!) }
                             if(prefs.getString("photo","") == null || prefs.getString("photo","") == "")
                             async { cookie?.let { vm.getPhoto(it) } }
@@ -580,7 +554,7 @@ fun CalendarScreen(
                         if(bizTypeId != null) {
                             vm.getLessonIds(cookie!!,bizTypeId,vm.studentId.value.toString())
                             if(nextBoolean) {
-                                vm.getLessonIdsNext(cookie!!,bizTypeId,vm.studentId.value.toString())
+                                vm.getLessonIdsNext(cookie,bizTypeId,vm.studentId.value.toString())
                             }
                         }
                     }
@@ -666,7 +640,7 @@ fun CalendarScreen(
                 exit = fadeOut()
             ) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Column() { LoadingUI() }
+                    Column() { LoadingUI(if(webVpn) "若加载时间过长，请重新刷新登陆状态" else null) }
                 }
             }//加载动画居中，3s后消失
 
@@ -858,7 +832,7 @@ fun getNewWeek() : Long {
         val jxglstuJson = prefs.getString("courses","")
         val resultJxglstu = getTotalCourse(jxglstuJson)[0].semester.startDate
         val firstWeekStartJxglstu: LocalDate = LocalDate.parse(resultJxglstu)
-        val weeksBetweenJxglstu = ChronoUnit.WEEKS.between(firstWeekStartJxglstu, DateTimeUtils.today) + 1
+        val weeksBetweenJxglstu = ChronoUnit.WEEKS.between(firstWeekStartJxglstu, DateTimeUtils.getToday()) + 1
         weeksBetweenJxglstu  //固定本周
     } catch (e : Exception) {
         DateTimeUtils.weeksBetween

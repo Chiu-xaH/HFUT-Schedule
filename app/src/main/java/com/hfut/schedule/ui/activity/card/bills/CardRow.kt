@@ -23,6 +23,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,6 +59,7 @@ import java.math.RoundingMode
 fun CardRow(vm : NetWorkViewModel, vmUI : UIViewModel,hazeState: HazeState) {
     var todaypay = 0.0
     var date = DateTimeUtils.Date_yyyy_MM_dd
+    val cardValue by remember { derivedStateOf { vmUI.cardValue } }
 
     for (item in 0 until getBills(vm).size) {
         val get = getBills(vm)[item].effectdateStr
@@ -109,12 +111,12 @@ fun CardRow(vm : NetWorkViewModel, vmUI : UIViewModel,hazeState: HazeState) {
     AnimationCustomCard(containerColor = MaterialTheme.colorScheme.errorContainer) {
         Row {
             TransplantListItem(
-                headlineContent = { ScrollText(text = "余额 ￥${vmUI.CardValue.value?.now ?: now}") },
+                headlineContent = { ScrollText(text = "余额 ￥${cardValue?.now ?: now}") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(.5f)
                     .clickable { Starter.startAppUrl(MyApplication.ALIPAY_CARD_URL) },
-                overlineContent = { ScrollText(text = "待圈存 ￥${vmUI.CardValue.value?.settle ?: settle}") },
+                overlineContent = { ScrollText(text = "待圈存 ￥${cardValue?.settle ?: settle}") },
                 leadingContent = { Icon(painterResource(R.drawable.account_balance_wallet), contentDescription = "Localized description",) },
 //                colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
             )

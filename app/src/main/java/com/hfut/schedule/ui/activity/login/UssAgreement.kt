@@ -1,6 +1,5 @@
 package com.hfut.schedule.ui.activity.login
 
-import android.app.Activity
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,18 +21,20 @@ import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.utils.DataStoreManager
 import com.hfut.schedule.logic.utils.VersionUtils
 import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.logic.utils.data.SharePrefs.prefs
@@ -49,10 +50,8 @@ import dev.chrisbanes.haze.haze
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 //@Preview
-fun UseAgreementUI(navController : NavHostController) {
+fun UseAgreementScreen(navController : NavHostController) {
     val hazeState = remember { HazeState() }
-    val switchblur = prefs.getBoolean("SWITCHBLUR", VersionUtils.canBlur)
-    var blur by remember { mutableStateOf(switchblur) }
 
     val argeements = listOf(
         "本应用所使用权限为：网络、日历(用于向日历写入聚焦日程)、存储(用于导入导出课程表文件)、相机(用于洗浴扫码)、通知(用于提醒更新包已准备好)，均由用户自由决定是否授予",
@@ -70,10 +69,10 @@ fun UseAgreementUI(navController : NavHostController) {
     androidx.compose.material3.Scaffold(
         topBar = {
             LargeTopAppBar(
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = Color.Transparent,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
+                colors = topAppBarColors(
+        containerColor = Color.Transparent,
+        titleContentColor = MaterialTheme.colorScheme.primary
+        ),
                 title = {
                     Box(modifier = Modifier.fillMaxWidth()) {
                         Text(
@@ -111,7 +110,7 @@ fun UseAgreementUI(navController : NavHostController) {
                     Button(
                         onClick = {
                             SharePrefs.saveBoolean("canUse", default = false, save = true)
-                            navController.navigateAndClear(First.HOME.name)
+                            navController.navigateAndClear(MainNav.HOME.name)
                         },
                         modifier = Modifier
                             .fillMaxWidth()

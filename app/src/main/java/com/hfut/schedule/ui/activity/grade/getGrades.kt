@@ -9,15 +9,13 @@ import com.hfut.schedule.logic.utils.data.SharePrefs
 import com.hfut.schedule.viewmodel.NetWorkViewModel
 import org.jsoup.Jsoup
 
-fun getGrade() :  List<scoreInfoDTOList> {
-    val json = SharePrefs.prefs.getString("Grade","")
+fun getGrade(vm: NetWorkViewModel) :  List<scoreInfoDTOList> {
     try {
-        val result = Gson().fromJson(json,GradeResponse::class.java).result
+        val result = Gson().fromJson(vm.GradeData.value,GradeResponse::class.java).result
         return result.scoreInfoDTOList
     } catch (e:Exception) {
         return emptyList()
     }
-
 }
 
 fun getGradeJXGLSTU(vm : NetWorkViewModel) :  MutableList<GradeResponseJXGLSTU> {

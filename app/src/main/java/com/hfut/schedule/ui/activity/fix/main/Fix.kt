@@ -72,9 +72,6 @@ import dev.chrisbanes.haze.haze
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Fix(vm : LoginViewModel,vm2 : NetWorkViewModel) {
-    val switchblur = SharePrefs.prefs.getBoolean("SWITCHBLUR",  VersionUtils.canBlur)
-    var blur by remember { mutableStateOf(switchblur) }
-    var animation by remember { mutableStateOf(prefs.getInt("ANIMATION", MyApplication.ANIMATION_SPEED)) }
     val hazeState = remember { HazeState() }
     val navController = rememberNavController()
     val currentAnimationIndex by DataStoreManager.animationTypeFlow.collectAsState(initial = 0)

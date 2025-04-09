@@ -73,24 +73,12 @@ fun NetWorkScreen(navController: NavController,
         saveBoolean("SWITCHSERVER",false,server)
 
 
-
-
-//        var showBottomSheet_arrange by remember { mutableStateOf(false) }
-//        var sheetState_arrange = rememberModalBottomSheetState()
-//        if (showBottomSheet_arrange) {
-//            HazeBottomSheet (
-//                onDismissRequest = { showBottomSheet_arrange = false },
-//                showBottomSheet = showBottomSheet_arrange,
-//                hazeState = hazeState,
-//                isFullExpand = false
-////                sheetState = sheetState_arrange,
-////                shape = bottomSheetRound(sheetState_arrange)
-//            ) {
-//
-//                Spacer(modifier = Modifier.height(100.dp))
-//            }
-//        }
-
+        TransplantListItem(
+            headlineContent = { Text(text = "即时卡片(预加载)") },
+            supportingContent = { Text(text = "冷启动APP或下拉刷新时会自动更新一些即时数据,可按需调整") },
+            leadingContent = { Icon(painterResource(R.drawable.reset_iso), contentDescription = "Localized description",) },
+            modifier = Modifier.clickable { navController.navigate(Screen.FocusCardScreen.route) }
+        )
 
         TransplantListItem(
             headlineContent = { Text(text = "请求范围") },
@@ -126,23 +114,24 @@ fun NetWorkScreen(navController: NavController,
             leadingContent = { Icon(painterResource(R.drawable.cloud_upload), contentDescription = "Localized description",) },
             trailingContent = { Switch(checked = upload, onCheckedChange = { uploadch -> upload = uploadch }, enabled = true) }
         )
+        TransplantListItem(
+            headlineContent = { Text(text = "云控") },
+            supportingContent = { Text(text = "聚在工大部分内容受云端控制") },
+            leadingContent = { Icon(painterResource(R.drawable.cloud), contentDescription = "Localized description",) },
+            modifier = Modifier.clickable {
+                // TODO
+            }
+        )
+        Spacer(Modifier.height(innerPaddings.calculateBottomPadding()))
+
     }
 
 }
 
-fun isFocus() : Boolean {
-    return try {
-        val personInfo = getPersonInfo()
-        val classInfo = personInfo.classes
-        if (personInfo.school!!.contains("宣城")) {
-            if(classInfo!!.contains("计算机") && classInfo.contains("23-3")) {
-                true
-            } else personInfo.username == "2023216601" ||
-                    personInfo.username == "2023218012" ||
-                    personInfo.username == "2023218155" ||
-                    personInfo.username == "2023218529"
-        } else false
-    } catch (_:Exception) {
-        false
-    }
+private fun isFocus() : Boolean = try {
+    val personInfo = getPersonInfo()
+    val classInfo = personInfo.classes
+    personInfo.school!!.contains("宣城") && classInfo!!.contains("计算机") && classInfo.contains("23-3")
+} catch (_:Exception) {
+    false
 }
