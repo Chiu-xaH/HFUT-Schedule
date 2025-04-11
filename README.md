@@ -1,5 +1,15 @@
-# HFUT-Schedule 聚在工大
+# 聚在工大
 ![封面](/img/cover.png)
+
+<p align="center">
+<img alt="API" src="https://img.shields.io/badge/Android%20-50f270?logo=android&logoColor=black&style=for-the-badge"/></a>
+  <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-a503fc?logo=kotlin&logoColor=white&style=for-the-badge"/></a>
+ <img alt="material" src="https://custom-icon-badges.demolab.com/badge/material%20you-palegreen?style=for-the-badge&logoColor=black&logo=material-you"/></a>
+  <img alt="Jetpack Compose" src="https://img.shields.io/static/v1?style=for-the-badge&message=Jetpack+Compose&color=4285F4&logo=Jetpack+Compose&logoColor=FFFFFF&label="/></a> 
+
+</p>
+
+## 下载
 
 <div align="center">
 
@@ -9,34 +19,34 @@
 
 </div>
 
-## 说明:
+## 简介
 适用于合肥工业大学(HFUT)的学校服务聚合APP，查询教务、校园卡、网电费等
 
-🌟 由于开发者是宣城校区23级本科生，**理论**上合肥校区可使用大部分功能，除寝室卫生评分、生活缴费(已经内置慧新易校)、校园网
+🌟 由于开发者是宣城校区23级本科生，**理论**上合肥校区可使用，会缺失一些功能
 
-## UI(v4.12.2)
-![截图](/img/ui.jpg)
+## 界面(v4.12.2)
+![截图](/img/ui.jpg)·
 
-## 功能设计(v4.13.4.2)
+## 功能(v4.13.4.2)
 ![导图](/img/mindMaster.png)
 
-## 权限：
+## 权限
 网络、日历(将聚焦事项作为日程写入日历)、存储(导入导出课程表文件)、相机(洗浴扫码)、通知(下载更新包完成通知)
 
-## 使用：
+## 使用
 
 ### 环境要求
-搭载**Android 7.0**及以上版本的设备，初次使用要接入互联网(从云端拉取必要信息)
+**在读本科生，Android 8及以上，初次使用要接入互联网(从云端拉取必要信息)**
 
 ### 初次使用
-从开头三个徽章之一下载好APK后，进行安装，保证接入互联网的环境下，填入学号与信息门户密码，点击登录，等待加载完毕(弹出一卡通登陆成功、Community登录成功的Toast后)即可使用
+保证接入互联网的环境下，填入学号与信息门户密码，点击登录，等待加载完毕(弹出一卡通登陆成功、Community登录成功的Toast后)即可使用
 
 ### 后续使用
-完全登陆后会获取所需的数据，自动缓存，**由于平台限制，登陆一次教务系统有效期只有3小时且不支持多平台登录**，另两个平台(一卡通和智慧社区)有效期有几十天，智慧社区支持多平台登录，一卡通不支持多平台登录，洗浴不支持多平台登录，在登录教务时会顺便刷新，更多细分说明在APP中子功能界面右上角会有说明按钮
+完全登陆后会获取所需的数据，自动缓存，**由于平台限制，登陆一次教务系统有效期只有1小时且不支持多平台登录**，另两个平台(一卡通和智慧社区)有效期有几十天，智慧社区支持多平台登录，一卡通不支持多平台登录，洗浴不支持多平台登录，在登录教务时会顺便刷新，更多细分说明在APP中子功能界面右上角会有说明按钮
 
 ### 软件升级
 
-通过Gitee Release通道分发新版本，在启动时检查更新，如有更新会在首页底栏【选项】显示小红点，选项界面会有红色强调卡片，点击下方更新按钮，100%后授权安装未知应用权限
+(应用内通过Gitee Release通道分发新版本，**会存在限速**，因为下载的人多)在启动时检查更新，如有更新会在首页底栏【选项】显示小红点，选项界面会有下载提示，100%后授权安装未知应用权限即可
 
 ## [更新日志](docs/UPDATE.md)
 
@@ -45,7 +55,7 @@ Kotlin 2.0
 
 Gradle 8.7 + OpenJDK 17
 
-SDK 目标36(Android 16) \ 最低26(Android 7)
+SDK 目标36(Android 16) \ 最低26(Android 8)
 
 Jetpack Compose 1.7
 
@@ -75,6 +85,8 @@ UI: Material You (Material Design 3)
 [Tesseract4Android](https://github.com/adaptech-cz/Tesseract4Android) 封装Tesseract4 (供识别图片验证码)
 
 [Bsdiff-Lib](https://github.com/Chiu-xaH/Bsdiff-Lib) 增量更新
+
+## [联系方式](zsh0908@outlook.com) zsh0908@outlook.com
 
 ## [其他内容(P2)](/docs/OTHER.md)
 
