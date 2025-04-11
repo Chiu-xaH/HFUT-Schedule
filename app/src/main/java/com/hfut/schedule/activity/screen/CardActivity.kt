@@ -3,7 +3,7 @@ package com.hfut.schedule.activity.screen
 import android.os.Bundle
 import androidx.compose.runtime.Composable
 import com.hfut.schedule.activity.BaseActivity
-import com.hfut.schedule.ui.activity.card.main.CardUI
+import com.hfut.schedule.ui.screen.card.CardUI
 
 class CardActivity : BaseActivity() {
     @Composable

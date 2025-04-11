@@ -1,7 +1,7 @@
 package com.hfut.schedule.logic.network.interceptor
 
 import android.util.Log
-import com.hfut.schedule.logic.utils.data.SharePrefs
+import com.hfut.schedule.logic.util.storage.SharePrefs
 import okhttp3.Interceptor
 import okhttp3.Response
 

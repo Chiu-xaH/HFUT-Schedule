@@ -14,14 +14,14 @@ import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
-import com.hfut.schedule.activity.ui.theme.AppTheme
-import com.hfut.schedule.logic.utils.VersionUtils
-import com.hfut.schedule.logic.utils.data.SharePrefs
-import com.hfut.schedule.ui.utils.style.TransparentSystemBars
-import com.hfut.schedule.viewmodel.GuaGuaViewModel
-import com.hfut.schedule.viewmodel.NetworkViewModelFactory
-import com.hfut.schedule.viewmodel.LoginViewModel
-import com.hfut.schedule.viewmodel.NetWorkViewModel
+import com.hfut.schedule.ui.theme.AppTheme
+import com.hfut.schedule.logic.util.other.AppVersion
+import com.hfut.schedule.logic.util.storage.SharePrefs
+import com.hfut.schedule.ui.style.TransparentSystemBars
+import com.hfut.schedule.viewmodel.network.GuaGuaViewModel
+import com.hfut.schedule.viewmodel.network.NetworkViewModelFactory
+import com.hfut.schedule.viewmodel.network.LoginViewModel
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
 
 abstract class BaseActivity : ComponentActivity() {

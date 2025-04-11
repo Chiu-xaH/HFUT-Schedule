@@ -11,6 +11,10 @@
 ## 预测式返回
 ![1](/img/back.jpg)
 
+## 进度实时通知
+
+![1](/img/live.png)
+
 ## 16KB页大小
 摘录 Android Developer 网
 

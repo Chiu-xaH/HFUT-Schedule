@@ -3,10 +3,10 @@ package com.hfut.schedule.activity.screen
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModelProvider
 import com.hfut.schedule.activity.BaseActivity
-import com.hfut.schedule.logic.utils.data.WebVpn
-import com.hfut.schedule.ui.activity.grade.main.GradeScreen
-import com.hfut.schedule.viewmodel.NetworkViewModelFactory
-import com.hfut.schedule.viewmodel.NetWorkViewModel
+import com.hfut.schedule.logic.util.network.WebVpn
+import com.hfut.schedule.ui.screen.grade.GradeScreen
+import com.hfut.schedule.viewmodel.network.NetworkViewModelFactory
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 
 class GradeActivity : BaseActivity() {
     var webVpn = WebVpn.webVpn

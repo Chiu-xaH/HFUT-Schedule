@@ -59,7 +59,7 @@
             android:label="@string/title_activity_base"
             android:theme="@style/Theme.App.Starting" />
         <activity
-            android:name=".activity.shower.ShowerActivity"
+            android:name=".activity.screen.ShowerActivity"
             android:exported="true"
             android:label="@string/title_activity_shower"
             android:theme="@style/Theme.App" />

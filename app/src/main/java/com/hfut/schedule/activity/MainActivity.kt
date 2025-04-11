@@ -4,11 +4,11 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.lifecycleScope
-import com.hfut.schedule.logic.db.RoomDataBaseManager
-import com.hfut.schedule.logic.db.entity.CustomCourseTableEntity
-import com.hfut.schedule.logic.utils.PermissionManager.checkAndRequestStoragePermission
-import com.hfut.schedule.ui.MainHost
-import com.hfut.schedule.ui.utils.components.showToast
+import com.hfut.schedule.logic.database.DataBaseManager
+import com.hfut.schedule.logic.database.entity.CustomCourseTableEntity
+import com.hfut.schedule.logic.util.sys.PermissionManager.checkAndRequestStoragePermission
+import com.hfut.schedule.ui.screen.MainHost
+import com.hfut.schedule.ui.component.showToast
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.io.BufferedReader
@@ -27,7 +27,7 @@ class MainActivity : BaseActivity() {
             checkAndRequestStoragePermission(this)
             val content = readTextFromUri(uri)
             // 处理读取到的文本内容
-            RoomDataBaseManager.customCourseTableDao.let {
+            DataBaseManager.customCourseTableDao.let {
                 lifecycleScope.launch {
                     async { it.insert(CustomCourseTableEntity(title = "课表"+(it.count()+1).toString(), contentJson = content)) }.await()
                     launch { showToast("导入课表成功 请于课程表右上角切换") }

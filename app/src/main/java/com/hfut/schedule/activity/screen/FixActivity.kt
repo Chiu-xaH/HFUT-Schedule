@@ -1,11 +1,9 @@
 package com.hfut.schedule.activity.screen
 
-import android.os.Build
 import android.os.Bundle
-import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import com.hfut.schedule.activity.BaseActivity
-import com.hfut.schedule.ui.activity.fix.main.Fix
+import com.hfut.schedule.ui.screen.fix.Fix
 
 class FixActivity : BaseActivity() {
     @Composable
