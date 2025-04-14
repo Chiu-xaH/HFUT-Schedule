@@ -28,6 +28,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -70,7 +71,7 @@ fun APPScreen(navController: NavController,
         .fillMaxSize()
         .padding(innerPaddings)) {
         Spacer(modifier = Modifier.height(5.dp))
-
+        val showFocus by DataStoreManager.showCloudFocusFlow.collectAsState(initial = true)
         val switch_focus = prefs.getBoolean("SWITCHFOCUS",true)
         var showfocus by remember { mutableStateOf(switch_focus) }
         val switch_faststart = SharePrefs.prefs.getBoolean("SWITCHFASTSTART",
@@ -97,6 +98,7 @@ fun APPScreen(navController: NavController,
         var currentDefaultCalendar by remember { mutableStateOf(switch_default) }
         saveInt("SWITCH_DEFAULT_CALENDAR",currentDefaultCalendar)
 
+        val scope = rememberCoroutineScope()
 
 
         DividerTextExpandedWith("偏好") {
@@ -185,6 +187,13 @@ fun APPScreen(navController: NavController,
             )
         }
         DividerTextExpandedWith("配置") {
+            TransplantListItem(
+                headlineContent = { Text(text = "云端聚焦卡片") },
+                supportingContent = { Text(text = "打开后,将会显示开发者分发的聚焦卡片，如果觉得与自行添加的卡片混合起来比较乱，可选择关闭") },
+                leadingContent = { Icon(painterResource(R.drawable.cloud_download), contentDescription = "Localized description",) },
+                trailingContent = { Switch(checked = showFocus, onCheckedChange = { scope.launch { DataStoreManager.saveShowCloudFocus(!showFocus) }}) },
+                modifier = Modifier.clickable { scope.launch { DataStoreManager.saveShowCloudFocus(!showFocus) } }
+            )
             TransplantListItem(
                 headlineContent = { Text(text = "快速启动") },
                 supportingContent = { Text(text = "打开后,再次打开应用时将默认打开免登录二级界面,而不是登陆教务页面,但您仍可通过查询中心中的选项以登录") },

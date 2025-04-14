@@ -766,7 +766,7 @@ fun SaveCourse(
                 ) {
                     TextButton(onClick = {  }) {
                         Text(
-                            text = parseSemseter(getSemseter()),
+                            text = parseSemseter(getSemseter()) + " 第${Bianhuaweeks}周",
                             style = TextStyle(shadow = Shadow(
                                 color = Color.Gray,
                                 offset = Offset(5.0f,5.0f),

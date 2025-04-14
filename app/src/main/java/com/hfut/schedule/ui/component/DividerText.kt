@@ -51,7 +51,7 @@ fun DividerText(text: String, onClick: (() -> Unit?)? = null) {
         text = text,
         color = color,
         modifier = Modifier
-            .padding(horizontal = 17.dp, vertical = 10.dp)
+            .padding(horizontal = appHorizontalDp() + cardNormalDp(), vertical = 10.dp)
             .clickable { onClick?.invoke() }
             .pointerInput(Unit) {
                 detectTapGestures(

@@ -1,7 +1,6 @@
 package com.hfut.schedule.ui.screen.home.focus.funiction
 
 import android.app.Activity
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedContent
@@ -22,6 +21,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -31,6 +31,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
@@ -58,46 +60,44 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.Schedule
-import com.hfut.schedule.logic.model.community.TodayResponse
-import com.hfut.schedule.logic.model.community.TodayResult
-import com.hfut.schedule.logic.model.focus.AddFocus
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventDTO
 import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.database.util.CustomEventMapper
+import com.hfut.schedule.logic.model.Schedule
+import com.hfut.schedule.logic.model.community.TodayResponse
+import com.hfut.schedule.logic.model.community.TodayResult
+import com.hfut.schedule.logic.util.network.parse.ParseJsons.getSchedule
+import com.hfut.schedule.logic.util.network.parse.ParseJsons.getTimeStamp
+import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
+import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.logic.util.sys.DateTimeUtils.TimeState.ENDED
 import com.hfut.schedule.logic.util.sys.DateTimeUtils.TimeState.NOT_STARTED
 import com.hfut.schedule.logic.util.sys.DateTimeUtils.TimeState.ONGOING
 import com.hfut.schedule.logic.util.sys.JxglstuCourseSchedule
 import com.hfut.schedule.logic.util.sys.addToCalendars
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
-import com.hfut.schedule.logic.util.network.parse.ParseJsons.getSchedule
-import com.hfut.schedule.logic.util.network.parse.ParseJsons.getTimeStamp
-import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
-import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
 import com.hfut.schedule.logic.util.sys.parseToDateTime
-import com.hfut.schedule.ui.screen.home.calendar.communtiy.DetailInfos
-import com.hfut.schedule.ui.screen.home.calendar.communtiy.getCourseINFO
-import com.hfut.schedule.ui.screen.home.cube.apiCheck
-import com.hfut.schedule.ui.screen.home.search.function.card.TodayInfo
 import com.hfut.schedule.ui.component.BottomTip
+import com.hfut.schedule.ui.component.CustomTextField
 import com.hfut.schedule.ui.component.DateRangePickerModal
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.LittleDialog
+import com.hfut.schedule.ui.component.MyCustomCard
 import com.hfut.schedule.ui.component.RotatingIcon
 import com.hfut.schedule.ui.component.ScheduleIcons
 import com.hfut.schedule.ui.component.ScrollText
@@ -105,14 +105,20 @@ import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TimeRangePickerDialog
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.appHorizontalDp
+import com.hfut.schedule.ui.component.cardNormalColor
+import com.hfut.schedule.ui.component.cardNormalDp
 import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
+import com.hfut.schedule.ui.screen.home.calendar.communtiy.DetailInfos
+import com.hfut.schedule.ui.screen.home.calendar.communtiy.getCourseINFO
+import com.hfut.schedule.ui.screen.home.cube.apiCheck
+import com.hfut.schedule.ui.screen.home.search.function.card.TodayInfo
 import com.hfut.schedule.ui.style.ColumnVertical
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.RowHorizontal
 import com.hfut.schedule.ui.style.textFiledTransplant
-import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
-import dev.chrisbanes.haze.HazeDialog
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -180,7 +186,7 @@ private fun ScheduleItemUI(listItem: Schedule, isFuture : Boolean, activity : Ac
                                 try {
                                     val startTime = listItem.startTime
                                     val endTime = listItem.endTime
-                                    addToCalendars(startTime,endTime, info, title,time,activity)
+                                    addToCalendars(startTime,endTime, info, title,time,activity,true)
                                     showToast("添加到系统日历成功")
                                 } catch (e : SecurityException) {
                                     showToast("未授予权限")
@@ -328,9 +334,9 @@ fun CommunityTodayCourseItem(index : Int, vm : NetWorkViewModel, hazeState: Haze
 
     val itemUI = @Composable {
         StyleCardListItem(
-            headlineContent = { Text(text = list.name) },
-            overlineContent = { Text(text = time)},
-            supportingContent = { list.place?.let { Text(text = it) } },
+            headlineContent = { Text(text = list.name, textDecoration = if(state == ENDED) TextDecoration.LineThrough else TextDecoration.None) },
+            overlineContent = { Text(text = time, textDecoration = if(state == ENDED) TextDecoration.LineThrough else TextDecoration.None)},
+            supportingContent = { list.place?.let { Text(text = it, textDecoration = if(state == ENDED) TextDecoration.LineThrough else TextDecoration.None) } },
             leadingContent = {
                 when(state) {
                     NOT_STARTED -> {
@@ -389,7 +395,6 @@ fun CommunityTomorrowCourseItem(index : Int, vm: NetWorkViewModel, hazeState: Ha
     val list = getCourseINFO(weekdayTomorrow,week)[index][0]
     var showBottomSheet by remember { mutableStateOf(false) }
     if (showBottomSheet) {
-
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet,
@@ -440,7 +445,7 @@ fun CustomItem(item : CustomEventDTO,hazeState: HazeState,isFuture: Boolean,acti
             // 显示在第二页
             if(isFuture)
                 // 判断是否过期
-                CustomItemUI(item, isFuture, activity, hazeState, isOutOfDate = endNum > nowTimeNum, refresh = refresh)
+                CustomItemUI(item, isFuture, activity, hazeState, isOutOfDate = nowTimeNum > endNum, refresh = refresh)
         }
     }
 }
@@ -501,7 +506,8 @@ fun CustomItemUI(item: CustomEventDTO,isFuture: Boolean,activity: Activity,hazeS
                                     description,
                                     title,
                                     null,
-                                    activity
+                                    activity,
+                                    item.type == CustomEventType.SCHEDULE
                                 )
                             }
                         ) { Icon(painterResource(R.drawable.event_upcoming), null) }
@@ -525,194 +531,6 @@ fun CustomItemUI(item: CustomEventDTO,isFuture: Boolean,activity: Activity,hazeS
                 showDialog = true
             })
     )
-}
-
-@OptIn(ExperimentalSharedTransitionApi::class)
-@Composable
-fun AddEventFloatButton(
-    isVisible: Boolean,
-    hazeState: HazeState,
-    vmUI : UIViewModel,
-    innerPaddings: PaddingValues,
-) {
-    // 懒加载
-    var showSurface by remember { mutableStateOf(false) }
-
-    var showAddUI by remember { mutableStateOf(false) }
-    // 容器转换动画
-    val isCenterAnimation by DataStoreManager.motionAnimationTypeFlow.collectAsState(initial = false)
-    val boundsTransform by remember { mutableStateOf(
-        BoundsTransform { _, _ ->
-            if(!isCenterAnimation) {
-                spring(
-                    stiffness = StiffnessMediumLow,
-                    visibilityThreshold = Rect.VisibilityThreshold
-                )
-            } else {
-                tween(durationMillis = MyApplication.ANIMATION_SPEED, easing = FastOutSlowInEasing)
-            }
-        }
-    ) }
-    // 通知父布局开始进行模糊和缩放，同时暂时关闭topBar和bottomBar的实时模糊
-    LaunchedEffect(showAddUI) {
-        vmUI.isAddUIExpanded = showAddUI
-        if(showAddUI) {
-            // 进入
-            showSurface = false
-            delay(MyApplication.ANIMATION_SPEED * 1L)
-            showSurface = true
-        } else {
-            // 退出
-            showSurface = false
-        }
-    }
-
-    SharedTransitionLayout {
-        AnimatedContent(
-//            modifier = Modifier.background(Color.Transparent).clip(RoundedCornerShape(appHorizontalDp())),
-            targetState = showAddUI,
-            transitionSpec = {
-                fadeIn(animationSpec = tween(durationMillis = MyApplication.ANIMATION_SPEED)) togetherWith fadeOut(animationSpec = tween(durationMillis = MyApplication.ANIMATION_SPEED*2))
-            },
-            label = ""
-        ) { targetShowAddUI ->
-            // 这里是 AnimatedContentScope 的作用域
-            if (targetShowAddUI) {
-                SurfaceUI(
-                    sharedTransitionScope = this@SharedTransitionLayout,
-                    animatedContentScope = this,
-                    showSurface = showSurface,
-                    showChange = { showAddUI = it },
-                    boundsTransform
-                )
-            } else {
-                ButtonUI(
-                    isVisible = isVisible,
-                    innerPaddings = innerPaddings,
-                    sharedTransitionScope = this@SharedTransitionLayout,
-                    animatedContentScope = this,
-                    showAddUI,
-                    showChange = { showAddUI = it },
-                    boundsTransform
-                )
-            }
-        }
-    }
-}
-
-
-@OptIn(ExperimentalSharedTransitionApi::class)
-@Composable
-private fun SharedTransitionScope.ButtonUI(
-    isVisible: Boolean,
-    innerPaddings : PaddingValues,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
-    showAddUI : Boolean,
-    showChange : (Boolean) -> Unit,
-    boundsTransform: BoundsTransform
-) {
-    if (isVisible) {
-        FloatingActionButton(
-            modifier = Modifier
-                .padding(innerPaddings)
-                .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
-                .sharedBounds(
-                    boundsTransform = boundsTransform,
-                    enter = fadeIn(tween(durationMillis = MyApplication.ANIMATION_SPEED)),
-                    exit = fadeOut(tween(durationMillis = MyApplication.ANIMATION_SPEED)),
-                    sharedContentState = rememberSharedContentState(key = "container"),
-                    animatedVisibilityScope = animatedContentScope,
-                    resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds
-                ),
-            elevation =  FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp),
-            onClick = { showChange(true) },
-        ) { Icon(Icons.Filled.Add, "Add Button") }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
-@Composable
-private fun SharedTransitionScope.SurfaceUI(
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
-    showSurface : Boolean,
-    showChange: (Boolean) -> Unit,
-    boundsTransform: BoundsTransform
-) {
-    var enabled by remember { mutableStateOf(false) }
-    var entity by remember { mutableStateOf<CustomEventDTO?>(null) }
-
-    val scope = rememberCoroutineScope()
-    BackHandler {
-        showChange(false)
-    }
-    Scaffold(
-        modifier = Modifier
-            .fillMaxSize()
-//            .skipToLookaheadSize()
-            .sharedBounds(
-                enter = fadeIn(tween(durationMillis = MyApplication.ANIMATION_SPEED)),
-                exit = fadeOut(tween(durationMillis = MyApplication.ANIMATION_SPEED)),
-                sharedContentState = rememberSharedContentState(key = "container"),
-                animatedVisibilityScope = animatedContentScope,
-                boundsTransform = boundsTransform,
-                resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds
-            ),
-        topBar = {
-            TopAppBar(
-                colors = topAppBarColors(
-                    containerColor = Color.Transparent,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                    scrolledContainerColor = Color.Transparent,
-                ),
-                title = { Text("添加日程") },
-                actions = {
-                    IconButton(
-                        onClick = {
-                            showChange(false)
-                        }
-                    ) {
-                        Icon(Icons.Filled.Close,null)
-                    }
-                },
-            )
-        },
-        bottomBar = {
-            Button(
-                onClick = {
-                    scope.launch {
-                        async {
-                            if(enabled && entity != null) {
-                                // 添加到数据库
-                                DataBaseManager.customEventDao.insert(CustomEventMapper.dtoToEntity(entity!!))
-                                showToast("执行完成 请检查是否显示")
-                            }
-                        }.await()
-                        // 关闭
-                        launch { showChange(false)  }
-                    }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(appHorizontalDp()))
-            {
-                Text(if(enabled) "添加" else "关闭")
-            }
-        }
-    ) { innerPadding ->
-        if(showSurface) {
-            AnimatedVisibility(
-                visible = true,
-                enter  = fadeIn(),
-                exit = fadeOut()
-            ) {
-                Column(modifier = Modifier.padding(innerPadding)) {
-                    AddEventUI(enabled,{ enabled = it },{ entity = it })
-                }
-            }
-        }
-    }
 }
 
 @Composable
@@ -833,156 +651,6 @@ fun getToday() : TodayResult? {
     }
 }
 
-@Composable
-fun AddEventUI(enabled: Boolean,onEnabled : (Boolean) -> Unit,onEntity : (CustomEventDTO?) -> Unit) {
-    val activity = LocalActivity.current
-    var isScheduleType by remember { mutableStateOf(true) }
-    var title by remember { mutableStateOf("事件") }
-    var description by remember { mutableStateOf("") }
-    var remark by remember { mutableStateOf("") }
-
-    var time by remember { mutableStateOf(Pair("","")) }
-    var date by remember { mutableStateOf(Pair("","")) }
-
-    var showSelectDateDialog by remember { mutableStateOf(false) }
-    var showSelectTimeDialog by remember { mutableStateOf(false) }
-
-
-    LaunchedEffect(date,time) {
-        remark = if(date.first == date.second) { // 当天日程
-            "${date.first.substringAfter("-")} " +
-            // 同时间
-            if(time.first == time.second) {
-                time.first
-            } else {
-                time.first + " ~ " + time.second
-            }
-        } else {
-            "${date.first.substringAfter("-") + " " + time.first} ~ ${date.second.substringAfter("-") + " " + time.second}"
-        }
-    }
-
-
-    LaunchedEffect(title,time,date,remark) {
-        onEnabled(title.isNotBlank() && title.isNotEmpty() && time.first.isNotEmpty() && time.second.isNotEmpty() && date.first.isNotEmpty() && date.second.isNotEmpty() && remark.isNotBlank() && remark.isNotEmpty())
-    }
-
-    // 向上回传数据
-    LaunchedEffect(enabled) {
-        if(enabled) {
-            onEntity(
-                parseToDateTime(startDate = date.first, startTime = time.first, endDate = date.second, endTime = time.second)?.let {
-                    CustomEventDTO(
-                        title = title,
-                        dateTime = it,
-                        type = if(isScheduleType) CustomEventType.SCHEDULE else CustomEventType.NET_COURSE,
-                        description = description.let { desp -> if(desp.isNotEmpty() && desp.isNotBlank()) desp else null },
-                        remark = remark
-                    )
-                }
-            )
-        } else {
-            onEntity(null)
-        }
-    }
-
-
-    val typeIcon = @Composable {
-        Icon(painterResource(if(isScheduleType) R.drawable.calendar else R.drawable.net),null)
-    }
-
-    if(showSelectDateDialog)
-        DateRangePickerModal(onSelected = { date = it }) { showSelectDateDialog = false }
-    if(showSelectTimeDialog)
-        TimeRangePickerDialog(onSelected = { time = it }) { showSelectTimeDialog = false }
-
-
-    DividerTextExpandedWith("预览") {
-        StyleCardListItem(
-            headlineContent = { Text(title) },
-            leadingContent = typeIcon,
-            overlineContent = { Text(remark) },
-            supportingContent =  if(description.isNotBlank() && description.isNotEmpty()) { { Text(description) } } else null,
-            trailingContent = { FilledTonalIconButton(
-                onClick = {
-                    activity?.let { addToCalendars(startDate = date.first, startTime = time.first, endDate = date.second, endTime = time.second, description, title,null, it) }
-                }, enabled = enabled
-            ) { Icon(painterResource(R.drawable.event_upcoming),null) } },
-            modifier = Modifier.clickable { openOperation(description) }
-        )
-    }
-    DividerTextExpandedWith("配置") {
-        TransplantListItem(
-            headlineContent = { Text("类型：" + if(isScheduleType) "日程/课程" else "网课" ) },
-            supportingContent = { Text(if(isScheduleType) "日程类型旨在用户自行添加新加课程、实验、会议等，添加后，同步显示在课程表方格中；在未开始时位于其他事项，进行期间会显示为重要事项，结束后位于其他事项并划线标记" else "网课类型旨在用户自行添加需要在截止日期之前的网络作业等，添加后，在未开始和进行期间位于其他事项，截止日期当天会显示为重要事项，结束后位于其他事项并划线标记" ) },
-            leadingContent = {
-                FilledTonalIconButton(
-                    onClick = { isScheduleType = !isScheduleType },
-                    content = typeIcon
-                )
-            } ,
-            modifier = Modifier.clickable {
-                isScheduleType = !isScheduleType
-            }
-        )
-
-        Spacer(Modifier.height(5.dp))
-
-        CustomTextField(input = title, label = { Text("标题") }) { title = it }
-        Spacer(Modifier.height(15.dp))
-        CustomTextField(input = description, label = { Text("备注(可空)") }) { description = it }
-        Spacer(Modifier.height(10.dp))
-        CustomTextField(input = remark, label = { Text("自定义时间显示(可选)") }) { remark = it }
-        Spacer(Modifier.height(10.dp))
-        TransplantListItem(
-            headlineContent = { Text("开始 ${date.first + " " + time.first}\n结束 ${date.second + " " + time.second}") },
-            leadingContent = { Icon(painterResource(R.drawable.schedule),null) }
-        )
-        RowHorizontal {
-            TextButton(
-                onClick = { showSelectDateDialog = true }
-            ) { Text("选择日期范围") }
-            TextButton(
-                onClick = { showSelectTimeDialog = true }
-            ) { Text("选择时间范围") }
-        }
-    }
-}
-
-
-@Composable
-fun CustomTextField(
-    input : String = "",
-    label : @Composable (() -> Unit)? = null,
-    leadingIcon: @Composable (() -> Unit)? = null,
-    trailingIcon: @Composable (() -> Unit)? = null,
-    supportingText: @Composable (() -> Unit)? = null,
-    enabled: Boolean = true,
-    isError: Boolean = false,
-    singleLine: Boolean = true,
-    modifier: Modifier = Modifier,
-    onValueChange : (String) -> Unit
-) {
-    Row {
-        TextField(
-            modifier = modifier
-                .weight(1f)
-                .padding(horizontal = appHorizontalDp()),
-            value = input,
-            onValueChange = onValueChange,
-            label = label,
-            trailingIcon = trailingIcon,
-            leadingIcon = leadingIcon,
-            supportingText = supportingText,
-            isError = isError,
-            singleLine = singleLine,
-            enabled = enabled,
-            shape = MaterialTheme.shapes.medium,
-            colors = textFiledTransplant(),
-        )
-    }
-}
-
 fun parseTimeItem(item : Int) : String = item.let {
     if(it < 10) {
         "0$it"
@@ -992,11 +660,10 @@ fun parseTimeItem(item : Int) : String = item.let {
 }
 
 @Composable
-fun JxglstuTodayCourseItem(item : JxglstuCourseSchedule, vmUI : UIViewModel, hazeState: HazeState, timeNow : String) {
+fun JxglstuTodayCourseItem(item : JxglstuCourseSchedule, vmUI : UIViewModel, hazeState: HazeState, timeNow : String,vm : NetWorkViewModel) {
 
     val switchShowEnded = prefs.getBoolean("SWITCHSHOWENDED",true)
     //课程详情
-    var showBottomSheet by remember { mutableStateOf(false) }
     val time = item.time
 
     val startTime = with(time.start) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
@@ -1004,13 +671,25 @@ fun JxglstuTodayCourseItem(item : JxglstuCourseSchedule, vmUI : UIViewModel, haz
 
 
     val state = DateTimeUtils.getTimeState(startTime, endTime,timeNow)
-
+    val name = item.courseName
+    var showBottomSheet by remember { mutableStateOf(false) }
+    if (showBottomSheet) {
+        HazeBottomSheet (
+            onDismissRequest = {
+                showBottomSheet = false
+            },
+            showBottomSheet = showBottomSheet,
+            hazeState = hazeState
+        ) {
+            CourseDetailApi(courseName = name, vm = vm, hazeState = hazeState)
+        }
+    }
 
     val itemUI = @Composable {
         StyleCardListItem(
-            headlineContent = { Text(text = item.courseName) },
-            overlineContent = { Text(text = "$startTime-$endTime")},
-            supportingContent = { Text(text = item.place) },
+            headlineContent = { Text(text = name, textDecoration = if(state == ENDED) TextDecoration.LineThrough else TextDecoration.None) },
+            overlineContent = { Text(text = "$startTime-$endTime", textDecoration = if(state == ENDED) TextDecoration.LineThrough else TextDecoration.None)},
+            supportingContent = { Text(text = item.place, textDecoration = if(state == ENDED) TextDecoration.LineThrough else TextDecoration.None) },
             leadingContent = {
                 when(state) {
                     NOT_STARTED -> {
@@ -1056,16 +735,29 @@ fun JxglstuTodayCourseItem(item : JxglstuCourseSchedule, vmUI : UIViewModel, haz
 }
 
 @Composable
-fun JxglstuTomorrowCourseItem(item : JxglstuCourseSchedule, vmUI : UIViewModel, hazeState: HazeState) {
-    var showBottomSheet by remember { mutableStateOf(false) }
+fun JxglstuTomorrowCourseItem(item : JxglstuCourseSchedule, vmUI : UIViewModel, hazeState: HazeState,vm: NetWorkViewModel) {
 
     val time = item.time
 
     val startTime = with(time.start) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
     val endTime = with(time.end) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
 
+    val name = item.courseName
+    var showBottomSheet by remember { mutableStateOf(false) }
+    if (showBottomSheet) {
+        HazeBottomSheet (
+            onDismissRequest = {
+                showBottomSheet = false
+            },
+            showBottomSheet = showBottomSheet,
+            hazeState = hazeState
+        ) {
+            CourseDetailApi(courseName = name, vm = vm, hazeState = hazeState)
+        }
+    }
+
     StyleCardListItem(
-        headlineContent = { Text(text = item.courseName) },
+        headlineContent = { Text(text = name) },
         overlineContent = {Text(text = "$startTime-$endTime")},
         supportingContent = { Text(text = item.place) },
         leadingContent = { Icon(painterResource(R.drawable.exposure_plus_1), contentDescription = "Localized description") },

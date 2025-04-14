@@ -3,6 +3,7 @@ package com.hfut.schedule.ui.util
 //import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
@@ -34,10 +35,10 @@ object NavigateAnimationManager {
             shrinkVertically(shrinkTowards = Alignment.Bottom,animationSpec = tween(durationMillis = ANIMATION_SPEED))
     val downUpAnimation = TransferAnimation("向上吸附",enterAnimation11, exitAnimation11)
 
-    private val enterAnimation2 = scaleIn(animationSpec = tween(durationMillis = ANIMATION_SPEED)) +
-            expandVertically(expandFrom = Alignment.CenterVertically,animationSpec = tween(durationMillis = ANIMATION_SPEED))
-    private val exitAnimation2 = scaleOut(animationSpec = tween(durationMillis = ANIMATION_SPEED)) +
-            shrinkVertically(shrinkTowards = Alignment.CenterVertically,animationSpec = tween(durationMillis = ANIMATION_SPEED))
+    private val enterAnimation2 = scaleIn(animationSpec =  tween(durationMillis = ANIMATION_SPEED, easing = LinearOutSlowInEasing), initialScale = .8f) + fadeIn(animationSpec = tween(durationMillis = ANIMATION_SPEED/2))
+
+    private val exitAnimation2 = scaleOut(animationSpec =  tween(durationMillis = ANIMATION_SPEED,easing = LinearOutSlowInEasing), targetScale = .8f) + fadeOut(animationSpec = tween(durationMillis = ANIMATION_SPEED/2))
+
     val centerAnimation = TransferAnimation("向中心运动",enterAnimation2, exitAnimation2)
 
     private val enterAnimationFade = fadeIn(animationSpec = tween(durationMillis = ANIMATION_SPEED))

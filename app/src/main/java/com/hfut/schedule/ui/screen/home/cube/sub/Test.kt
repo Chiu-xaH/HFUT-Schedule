@@ -153,7 +153,6 @@ fun SharedTransitionScope.SecondUI(
         ){
             Button(
                 onClick = {
-//                    noticeInstall()
                     AppNotificationManager.updateCourseProgress("机器学习","16:00","17:50")
                 },
                 modifier = Modifier.align(Alignment.Center)

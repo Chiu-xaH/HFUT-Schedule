@@ -124,7 +124,8 @@ fun addToCalendars(
     place : String? = null,
     title : String,
     remark : String? = null,
-    activity : Activity
+    activity : Activity,
+    remind : Boolean = false
 ) {
     checkAndRequestCalendarPermission(activity)
     bean.let {
@@ -132,7 +133,7 @@ fun addToCalendars(
         if (checkExistEvent(it, title,activity) != null) {
             return
         }
-        addEvent(dateTime = it, title = title,place = place, remark = remark)
+        addEvent(dateTime = it, title = title,place = place, remark = remark, reminderMinutes = if(remind) 15 else null)
     }
 }
 // 传入标准格式化的YYYY-MM-DD与HH:SS
@@ -164,7 +165,8 @@ fun addToCalendars(
     place : String? = null,
     title : String,
     remark : String? = null,
-    activity : Activity
+    activity : Activity,
+    remind : Boolean = false
 ) {
     checkAndRequestCalendarPermission(activity)
     val bean = parseDateTimeBean(start, end)
@@ -173,7 +175,7 @@ fun addToCalendars(
         if (checkExistEvent(it, title,activity) != null) {
             return
         }
-        addEvent(dateTime = it, title = title,place = place, remark = remark)
+        addEvent(dateTime = it, title = title,place = place, remark = remark, reminderMinutes = if(remind) 15 else null)
     } ?: showToast("解析日期时间错误")
 }
 

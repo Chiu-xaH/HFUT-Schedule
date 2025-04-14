@@ -19,6 +19,7 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,6 +37,7 @@ import com.hfut.schedule.logic.util.network.parse.ParseJsons.getCustomNetCourse
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.getCustomSchedule
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.getNetCourse
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.getSchedule
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.getCourseINFO
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.cube.sub.FocusCard
@@ -87,23 +89,19 @@ fun TodayScreen(
     val scope = rememberCoroutineScope()
     val states = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
         scope.launch {
-            async {
-                refreshing = true
-            }.await()
+            async { refreshing = true }.await()
             async { DateTimeUtils.updateTime { timeNow = it } }.await()
             async { initNetworkRefresh(vm,vm2,vmUI,ifSaved) }.await()
             launch { netCourseList = getNetCourse() }
             launch { scheduleList = getSchedule() }
-            launch {
-                refreshing = false
-            }
+            launch { refreshing = false }
         }
     })
 
     var refreshDB by remember { mutableStateOf(false) }
 
     val scrollState = rememberLazyListState()
-    val shouldShowAddButton by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset == 0 } }
+//    val shouldShowAddButton by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset == 0 } }
 
     val courseDataSource = prefs.getInt("SWITCH_DEFAULT_CALENDAR", CourseType.COMMUNITY.code)
 
@@ -116,6 +114,7 @@ fun TodayScreen(
 
     var customNetCourseList by remember { mutableStateOf<List<CustomEventDTO>>(emptyList()) }
     var customScheduleList by remember { mutableStateOf<List<CustomEventDTO>>(emptyList()) }
+    val showFocus by DataStoreManager.showCloudFocusFlow.collectAsState(initial = true)
 
     // 初始化
     LaunchedEffect(Unit) {
@@ -167,6 +166,7 @@ fun TodayScreen(
             }
         }
     }
+
     val isAddUIExpanded by remember { derivedStateOf { vmUI.isAddUIExpanded } }
 
     LaunchedEffect(refreshDB,isAddUIExpanded) {
@@ -195,28 +195,32 @@ fun TodayScreen(
                                 }
                                 CourseType.JXGLSTU.code -> {
                                     if (DateTimeUtils.compareTime(jxglstuLastTime) != DateTimeUtils.TimeState.NOT_STARTED)
-                                        tomorrowJxglstuList.let { list -> items(list.size) { item -> JxglstuTomorrowCourseItem(list[item],vmUI, hazeState) } }
+                                        tomorrowJxglstuList.let { list -> items(list.size) { item -> JxglstuTomorrowCourseItem(list[item],vmUI, hazeState,vm) } }
                                     else
-                                        todayJxglstuList.let { list -> items(list.size) { item -> JxglstuTodayCourseItem(list[item],vmUI, hazeState,timeNow) } }
+                                        todayJxglstuList.let { list -> items(list.size) { item -> JxglstuTodayCourseItem(list[item],vmUI, hazeState,timeNow,vm) } }
                                 }
                                 CourseType.NEXT.code -> {}
                             }
                             //日程
                             customScheduleList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = false) { refreshDB = !refreshDB } } } }
-                            scheduleList.let { list -> items(list.size) { item -> activity?.let { ScheduleItem(listItem = list[item],false,it) } } }
+                            if(showFocus)
+                                scheduleList.let { list -> items(list.size) { item -> activity?.let { ScheduleItem(listItem = list[item],false,it) } } }
                             //考试
                             items(getExamJXGLSTU()) { item -> JxglstuExamUI(item,false) }
                             //网课
                             customNetCourseList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1,isFuture = false) { refreshDB = !refreshDB } } } }
-                            netCourseList.let { list -> items(list.size) { item -> activity?.let { NetCourseItem(listItem = list[item],false,it) } } }
+                            if(showFocus)
+                                netCourseList.let { list -> items(list.size) { item -> activity?.let { NetCourseItem(listItem = list[item],false,it) } } }
                         }
                         TAB_RIGHT -> {
                             //日程
                             customScheduleList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = true) { refreshDB = !refreshDB } } } }
-                            scheduleList.let { list -> items(list.size) { item -> activity?.let { ScheduleItem(listItem = list[item],true,it) }  } }
+                            if(showFocus)
+                                scheduleList.let { list -> items(list.size) { item -> activity?.let { ScheduleItem(listItem = list[item],true,it) }  } }
                             //网课
                             customNetCourseList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = true) { refreshDB = !refreshDB } } } }
-                            netCourseList.let { list -> items(list.size) { item -> activity?.let { NetCourseItem(listItem = list[item],true,it) } } }
+                            if(showFocus)
+                                netCourseList.let { list -> items(list.size) { item -> activity?.let { NetCourseItem(listItem = list[item],true,it) } } }
                             //第二天课表
                             when(courseDataSource) {
                                 CourseType.COMMUNITY.code -> {
@@ -225,7 +229,7 @@ fun TodayScreen(
                                 }
                                 CourseType.JXGLSTU.code -> {
                                     if (DateTimeUtils.compareTime(jxglstuLastTime) == DateTimeUtils.TimeState.NOT_STARTED)
-                                        tomorrowJxglstuList.let { list -> items(list.size) { item -> JxglstuTomorrowCourseItem(list[item],vmUI, hazeState) } }
+                                        tomorrowJxglstuList.let { list -> items(list.size) { item -> JxglstuTomorrowCourseItem(list[item],vmUI, hazeState,vm) } }
                                 }
                                 CourseType.NEXT.code -> {}
                             }

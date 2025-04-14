@@ -26,6 +26,8 @@ object DataStoreManager {
     private val HAZE_BLUR = booleanPreferencesKey("haze_blur")
     private val TRANSITION = booleanPreferencesKey("transition")
     private val MOTION_ANIMATION_TYPE = booleanPreferencesKey("motion_animation_type")
+    private val SHOW_CLOUD_FOCUS = booleanPreferencesKey("show_cloud_focus")
+
 
 
 
@@ -74,6 +76,11 @@ object DataStoreManager {
             preferences[TRANSITION] = switch
         }
     }
+    suspend fun saveShowCloudFocus(switch: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[SHOW_CLOUD_FOCUS] = switch
+        }
+    }
 
 
 
@@ -110,6 +117,10 @@ object DataStoreManager {
     val transitionFlow: Flow<Boolean> = dataStore.data
         .map { preferences ->
             preferences[TRANSITION] ?: false
+        }
+    val showCloudFocusFlow: Flow<Boolean> = dataStore.data
+        .map { preferences ->
+            preferences[SHOW_CLOUD_FOCUS] ?: true
         }
     /* 用法
     val XXX by DataStoreManager.XXX.collectAsState(initial = 默认值)

@@ -72,6 +72,7 @@ fun TransplantListItem(
     trailingContent : @Composable() (() -> Unit)? = null,
     leadingContent : @Composable() (() -> Unit)? = null,
     colors : Color? = null,
+    usePadding : Boolean = true,
     modifier: Modifier = Modifier
 ) {
     ListItem(
@@ -81,7 +82,13 @@ fun TransplantListItem(
         colors = ListItemDefaults.colors(containerColor = colors ?: Color.Transparent) ,
         trailingContent = trailingContent,
         leadingContent = leadingContent,
-        modifier = modifier
+        modifier = modifier.padding(horizontal =
+            if(leadingContent == null) {
+                if (usePadding) 2.dp else 0.dp
+            } else {
+                0.dp
+            }
+        )
     )
 }
 
@@ -104,6 +111,7 @@ private fun CardListItem(
             supportingContent = supportingContent,
             trailingContent = trailingContent,
             leadingContent = leadingContent,
+            usePadding = false,
             modifier = modifier
         )
     }
@@ -250,7 +258,8 @@ fun LargeCard(
                 )
             },
             trailingContent = rightTop,
-            leadingContent = leftTop
+            leadingContent = leftTop,
+            usePadding = false
         )
         //下面的内容
         content()
@@ -304,7 +313,8 @@ fun LoadingLargeCard(
                     )
                 },
                 trailingContent = rightTop,
-                leadingContent = leftTop
+                leadingContent = leftTop,
+                usePadding = false
             )
             content()
         }
