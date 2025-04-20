@@ -34,8 +34,8 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
-import com.hfut.schedule.logic.util.storage.SharePrefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.network.reEmptyLiveDta
 import com.hfut.schedule.ui.screen.grade.grade.getGrade
 import com.hfut.schedule.ui.component.AnimationCardListItem
@@ -92,7 +92,7 @@ fun GradeItemUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
         async {
             reEmptyLiveDta(vm.GradeData)
             loading = true
-            SharePrefs.saveBoolean("term",true,termBoolean)
+            SharedPrefs.saveBoolean("term",true,termBoolean)
         }.await()
         async { CommuityTOKEN?.let { vm.getGrade(it,Years.toString() + "-"+(Years+1),term) } }.await()
         launch {

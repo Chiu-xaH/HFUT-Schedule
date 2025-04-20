@@ -58,7 +58,7 @@ import com.hfut.schedule.logic.util.sys.ClipBoard
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
 import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.network.reEmptyLiveDta
 import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo

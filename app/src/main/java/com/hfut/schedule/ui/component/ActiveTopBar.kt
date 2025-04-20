@@ -25,7 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

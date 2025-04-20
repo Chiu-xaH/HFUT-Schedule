@@ -32,7 +32,7 @@ import com.google.gson.Gson
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.logic.model.zjgd.BillRangeResponse
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.component.BottomSheetTopBar
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar

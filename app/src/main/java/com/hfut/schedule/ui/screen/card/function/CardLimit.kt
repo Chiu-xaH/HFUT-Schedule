@@ -32,7 +32,7 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
-import com.hfut.schedule.logic.util.storage.SharePrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.model.zjgd.ChangeLimitResponse
 import com.hfut.schedule.ui.component.BottomSheetTopBar
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
@@ -48,9 +48,9 @@ import java.math.RoundingMode
 
 
 fun Click(vm : NetWorkViewModel, limit : String, amt : String) {
-    val auth = SharePrefs.prefs.getString("auth","")
-    val cardAccount = SharePrefs.prefs.getString("card_account","")
-    val result = SharePrefs.prefs.getString("changeResult","{\"msg\":\"\"}")
+    val auth = SharedPrefs.prefs.getString("auth","")
+    val cardAccount = SharedPrefs.prefs.getString("card_account","")
+    val result = SharedPrefs.prefs.getString("changeResult","{\"msg\":\"\"}")
     val json = JsonObject()
     val limits = "${limit}00".toInt()
     val amts = "${amt}00".toInt()
@@ -84,8 +84,8 @@ fun Click(vm : NetWorkViewModel, limit : String, amt : String) {
 fun CardLimit(vm : NetWorkViewModel, vmUI : UIViewModel) {
     val cardValue by remember { derivedStateOf { vmUI.cardValue } }
 
-    var limit by remember { mutableStateOf((cardValue?.autotrans_limite ?: SharePrefs.prefs.getString("card_limit","0"))) }
-    var amt by remember { mutableStateOf(cardValue?.autotrans_amt?: SharePrefs.prefs.getString("card_amt","0")) }
+    var limit by remember { mutableStateOf((cardValue?.autotrans_limite ?: SharedPrefs.prefs.getString("card_limit","0"))) }
+    var amt by remember { mutableStateOf(cardValue?.autotrans_amt?: SharedPrefs.prefs.getString("card_amt","0")) }
 
 
     var limitFloat = limit?.toFloat()

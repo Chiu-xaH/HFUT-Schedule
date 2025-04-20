@@ -1,7 +1,7 @@
 package com.hfut.schedule.ui.screen.home.cube.sub.update
 
 import com.hfut.schedule.logic.model.Update
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.xah.bsdiffs.model.Patch
 import com.xah.bsdiffs.util.parsePatchFile
 import org.jsoup.Jsoup

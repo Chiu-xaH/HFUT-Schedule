@@ -35,9 +35,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.App.Starting"
         tools:targetApi="tiramisu">
-        <!--预编译-->
-        <profileable android:shell="true" />
-        <!-- 小组件 -->
+        <activity
+            android:name=".activity.screen.SupabaseActivity"
+            android:exported="true"
+            android:label="@string/title_activity_supbase"
+            android:theme="@style/Theme.App.Starting" />
+        <!-- 预编译 -->
+        <profileable android:shell="true" /> <!-- 小组件 -->
         <!-- <receiver android:name=".ui.widget.MyAppWidgetReceiver" -->
         <!-- android:exported="true"> -->
         <!-- <intent-filter> -->

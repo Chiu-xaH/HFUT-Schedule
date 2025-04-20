@@ -34,8 +34,8 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.AppDownloadManager
 import com.hfut.schedule.logic.util.sys.AppDownloadManager.getDownloadProgress
 import com.hfut.schedule.logic.util.sys.PermissionManager
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.saveBoolean
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.saveBoolean
 import com.hfut.schedule.logic.util.ocr.TesseractUtils
 import com.hfut.schedule.logic.util.ocr.TesseractUtils.isModelInDownloadFolder
 import com.hfut.schedule.logic.util.ocr.TesseractUtils.moveDownloadedModel

@@ -66,8 +66,9 @@ import com.hfut.schedule.logic.enumeration.BottomBarItems.FOCUS
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.logic.util.storage.SharePrefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.ui.screen.home.cube.sub.MyAPIItem
 import com.hfut.schedule.ui.screen.home.cube.sub.update.getUpdates
 import com.hfut.schedule.ui.screen.home.cube.SettingsScreen
@@ -85,6 +86,7 @@ import com.hfut.schedule.ui.component.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.ScrollText
 import com.hfut.schedule.ui.component.appHorizontalDp
+import com.hfut.schedule.ui.screen.home.getHolidayYear
 import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.bottomBarBlur
@@ -96,6 +98,7 @@ import com.hfut.schedule.viewmodel.UIViewModel
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "NewApi")
@@ -105,7 +108,7 @@ fun GuestMainScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewMo
 
     val navController = rememberNavController()
     val isEnabled by remember { mutableStateOf(true) }
-    val switch = SharePrefs.prefs.getBoolean("SWITCH",true)
+    val switch = SharedPrefs.prefs.getBoolean("SWITCH",true)
     var showlable by remember { mutableStateOf(switch) }
     val hazeState = remember { HazeState() }
 
@@ -124,7 +127,7 @@ fun GuestMainScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewMo
     val ifSaved = false
 
     LaunchedEffect(Unit) {
-        initGuestNetwork(vm2)
+        initGuestNetwork(vm,vm2)
     }
 
     val currentAnimationIndex by DataStoreManager.animationTypeFlow.collectAsState(initial = 0)
@@ -134,7 +137,7 @@ fun GuestMainScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewMo
     }
 
     if (showBottomSheet) {
-        SharePrefs.saveString("Notifications", getNotifications().size.toString())
+        SharedPrefs.saveString("Notifications", getNotifications().size.toString())
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet,
@@ -204,7 +207,7 @@ fun GuestMainScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewMo
         var innerPaddingValues by remember { mutableStateOf<PaddingValues?>(null) }
 
         Box(modifier = Modifier.align(Alignment.BottomEnd).zIndex(3f)) {
-            innerPaddingValues?.let { AddEventFloatButton(isVisible = isNavigationIconVisible && targetPage == FOCUS,hazeState,vmUI,it) }
+            innerPaddingValues?.let { AddEventFloatButton(isSupabase = false,isVisible = isNavigationIconVisible && targetPage == FOCUS,hazeState,vmUI,it,vm) }
         }
         Scaffold(
             modifier = transitionBackground(isAddUIExpanded).fillMaxSize(),
@@ -389,6 +392,3 @@ fun GuestMainScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewMo
 }
 
 
-suspend fun initGuestNetwork(vm2 : LoginViewModel) = withContext(Dispatchers.IO) {
-    vm2.My()
-}

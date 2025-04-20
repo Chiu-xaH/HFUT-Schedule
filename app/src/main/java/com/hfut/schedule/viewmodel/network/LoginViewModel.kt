@@ -14,7 +14,7 @@ import com.hfut.schedule.logic.network.api.MyService
 import com.hfut.schedule.logic.network.api.WebVpnService
 import com.hfut.schedule.logic.network.servicecreator.GithubServiceCreator
 import com.hfut.schedule.logic.util.network.parse.JxglstuParseUtils
-import com.hfut.schedule.logic.util.storage.SharePrefs.saveString
+import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import okhttp3.ResponseBody
 import org.jsoup.Jsoup
 import retrofit2.Call

@@ -29,7 +29,7 @@ import androidx.compose.ui.zIndex
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.screen.home.calendar.multi.MultiScheduleSettings
 import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.component.BottomSheetTopBar

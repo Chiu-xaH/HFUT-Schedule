@@ -55,8 +55,8 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.logic.enumeration.PostMode
 import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
 import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
-import com.hfut.schedule.logic.util.storage.SharePrefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.AnimationCardListItem
 import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.component.BottomSheetTopBar
@@ -281,7 +281,7 @@ fun teacherList(vm : NetWorkViewModel, hazeState: HazeState, refresh : (Boolean)
                         modifier = Modifier.clickable {
                             if(!list[item].submitted) {
                                 id = list[item].id
-                                SharePrefs.saveInt("teacherID",id)
+                                SharedPrefs.saveInt("teacherID",id)
                                 showBottomSheet = true
                             } else showToast("已评教")
                         },

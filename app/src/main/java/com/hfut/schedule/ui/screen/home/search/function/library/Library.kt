@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
@@ -50,7 +51,7 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.LibraryItems
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.network.reEmptyLiveDta
 import com.hfut.schedule.ui.component.AnimationCustomCard
 import com.hfut.schedule.ui.component.appHorizontalDp
@@ -62,6 +63,7 @@ import com.hfut.schedule.ui.component.LoadingUI
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
+import com.hfut.schedule.ui.component.WebDialog
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.ui.style.textFiledTransplant
@@ -71,14 +73,12 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 @SuppressLint("SuspiciousIndentation")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LibraryItem(vm : NetWorkViewModel, hazeState: HazeState) {
     var showBottomSheet_Library by remember { mutableStateOf(false) }
 
-
     TransplantListItem(
-        headlineContent = { Text(text = "图书") },
+        headlineContent = { Text(text = "图书馆") },
         leadingContent = {
             Icon(
                 painterResource(R.drawable.book),
@@ -88,6 +88,10 @@ fun LibraryItem(vm : NetWorkViewModel, hazeState: HazeState) {
         modifier = Modifier.clickable { showBottomSheet_Library = true }
     )
 
+    var showDialog by remember { mutableStateOf(false) }
+    WebDialog(showDialog,{ showDialog = false },MyApplication.NEW_LIBRARY_URL,"新图书馆")
+    var showDialog2 by remember { mutableStateOf(false) }
+    WebDialog(showDialog2,{ showDialog2 = false },MyApplication.LIBRARY_SEAT + "home/web/f_second","座位预约(合肥校区)(校园网)")
 
 
     if (showBottomSheet_Library) {
@@ -101,12 +105,22 @@ fun LibraryItem(vm : NetWorkViewModel, hazeState: HazeState) {
                 containerColor = Color.Transparent,
                 topBar = {
                     HazeBottomSheetTopBar("图书") {
-                        FilledTonalButton(
-                            onClick = {
-                                Starter.startWebUrl(MyApplication.LIBRARY_URL)
+                        Row {
+                            FilledTonalButton(
+                                onClick = {
+                                    showDialog = true
+                                }
+                            ) {
+                                Text(text = "官网")
                             }
-                        ) {
-                            Text(text = "更多(官网)")
+                            Spacer(Modifier.width(appHorizontalDp()/3))
+                            FilledTonalButton(
+                                onClick = {
+                                    showDialog2 = true
+                                }
+                            ) {
+                                Text(text = "座位预约")
+                            }
                         }
                     }
                 },

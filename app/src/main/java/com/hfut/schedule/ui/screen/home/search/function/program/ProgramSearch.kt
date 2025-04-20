@@ -67,7 +67,7 @@ import com.hfut.schedule.ui.component.MyCustomCard
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.component.ScrollText
 import com.hfut.schedule.ui.component.StyleCardListItem
-import com.hfut.schedule.ui.component.statusUI
+import com.hfut.schedule.ui.component.StatusUI
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.ui.style.RowHorizontal
@@ -252,7 +252,7 @@ fun ProgramSearch(vm : NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState)
                         HEFEI -> "合肥"
                         XUANCHENG -> "宣城"
                     }
-                    statusUI(R.drawable.manga,"需要${campusText}校区在读生贡献数据源")
+                    StatusUI(R.drawable.manga,"需要${campusText}校区在读生贡献数据源")
                     Spacer(Modifier.height(5.dp))
                     RowHorizontal {
                         Button(
@@ -499,7 +499,7 @@ fun SearchProgramUIInfo2(num1 : Int, num2 : Int, vm : NetWorkViewModel, ifSaved 
     } else {
         Box(modifier = Modifier.fillMaxSize()) {
 //            Column(modifier = Modifier.align(Alignment.Center)) {
-                statusUI(R.drawable.manga,"选修课不做显示")
+                StatusUI(R.drawable.manga,"选修课不做显示")
 //            }
         }
     }

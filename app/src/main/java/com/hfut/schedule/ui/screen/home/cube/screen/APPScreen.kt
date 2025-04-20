@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
@@ -40,10 +42,10 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
 import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
-import com.hfut.schedule.logic.util.storage.SharePrefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.saveBoolean
-import com.hfut.schedule.logic.util.storage.SharePrefs.saveInt
+import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.saveBoolean
+import com.hfut.schedule.logic.util.storage.SharedPrefs.saveInt
 import com.hfut.schedule.ui.screen.home.cube.Screen
 import com.hfut.schedule.ui.screen.home.cube.sub.FocusCardSettings
 import com.hfut.schedule.ui.screen.home.cube.sub.LockUI
@@ -71,10 +73,11 @@ fun APPScreen(navController: NavController,
         .fillMaxSize()
         .padding(innerPaddings)) {
         Spacer(modifier = Modifier.height(5.dp))
+        val showStorageFocus by DataStoreManager.showFocusFlow.collectAsState(initial = true)
         val showFocus by DataStoreManager.showCloudFocusFlow.collectAsState(initial = true)
         val switch_focus = prefs.getBoolean("SWITCHFOCUS",true)
         var showfocus by remember { mutableStateOf(switch_focus) }
-        val switch_faststart = SharePrefs.prefs.getBoolean("SWITCHFASTSTART",
+        val switch_faststart = SharedPrefs.prefs.getBoolean("SWITCHFASTSTART",
             prefs.getString("TOKEN","")?.isNotEmpty() ?: false)
         var faststart by remember { mutableStateOf(switch_faststart) }
         saveBoolean("SWITCHFASTSTART", prefs.getString("TOKEN","")?.isNotEmpty() ?: false,faststart)
@@ -124,7 +127,7 @@ fun APPScreen(navController: NavController,
                         }
                     }
                 },
-                leadingContent = { Icon(painterResource(if(showfocus) R.drawable.lightbulb else R.drawable.calendar), contentDescription = "Localized description",) },
+                leadingContent = { Icon(painterResource(R.drawable.home), contentDescription = "Localized description",) },
                 //trailingContent = { Switch(checked = showfocus, onCheckedChange = {showfocusch -> showfocus = showfocusch }) },
                 modifier = Modifier.clickable {
                     showfocus = !showfocus
@@ -157,6 +160,39 @@ fun APPScreen(navController: NavController,
                 leadingContent = { Icon(painterResource(R.drawable.calendar), contentDescription = "Localized description",) },
             )
             TransplantListItem(
+                headlineContent = { Text(text = "聚焦数据源") },
+                supportingContent = {
+                    Column {
+                        Row {
+                            FilterChip(
+                                onClick = {
+                                    scope.launch{ DataStoreManager.saveShowCloudFocus(!showFocus) }
+                                },
+                                selected = showFocus,
+                                label = { Text(text = "4.15.1前的旧接口") })
+
+                            Spacer(Modifier.width(10.dp))
+
+                            FilterChip(
+                                onClick = {
+                                    scope.launch{ DataStoreManager.saveShowFocus(!showStorageFocus) }
+                                },
+                                selected = showStorageFocus,
+                                label = { Text(text = "本地") })
+                        }
+
+                        FilterChip(
+                            onClick = {
+                                showToast("正在开发")
+                            },
+                            selected = true,
+                            label = { Text(text = "共建平台(新接口)") },)
+
+                    }
+                },
+                leadingContent = { Icon(painterResource(R.drawable.lightbulb), contentDescription = "Localized description",) },
+            )
+            TransplantListItem(
                 headlineContent = { Text(text = "打开网页链接方式") },
                 supportingContent = {
                     Column {
@@ -187,13 +223,13 @@ fun APPScreen(navController: NavController,
             )
         }
         DividerTextExpandedWith("配置") {
-            TransplantListItem(
-                headlineContent = { Text(text = "云端聚焦卡片") },
-                supportingContent = { Text(text = "打开后,将会显示开发者分发的聚焦卡片，如果觉得与自行添加的卡片混合起来比较乱，可选择关闭") },
-                leadingContent = { Icon(painterResource(R.drawable.cloud_download), contentDescription = "Localized description",) },
-                trailingContent = { Switch(checked = showFocus, onCheckedChange = { scope.launch { DataStoreManager.saveShowCloudFocus(!showFocus) }}) },
-                modifier = Modifier.clickable { scope.launch { DataStoreManager.saveShowCloudFocus(!showFocus) } }
-            )
+//            TransplantListItem(
+//                headlineContent = { Text(text = "云端聚焦卡片") },
+//                supportingContent = { Text(text = "打开后,将会显示开发者分发的聚焦卡片，如果觉得与自行添加的卡片混合起来比较乱，可选择关闭") },
+//                leadingContent = { Icon(painterResource(R.drawable.cloud_download), contentDescription = "Localized description",) },
+//                trailingContent = { Switch(checked = showFocus, onCheckedChange = { scope.launch { DataStoreManager.saveShowCloudFocus(!showFocus) }}) },
+//                modifier = Modifier.clickable { scope.launch { DataStoreManager.saveShowCloudFocus(!showFocus) } }
+//            )
             TransplantListItem(
                 headlineContent = { Text(text = "快速启动") },
                 supportingContent = { Text(text = "打开后,再次打开应用时将默认打开免登录二级界面,而不是登陆教务页面,但您仍可通过查询中心中的选项以登录") },

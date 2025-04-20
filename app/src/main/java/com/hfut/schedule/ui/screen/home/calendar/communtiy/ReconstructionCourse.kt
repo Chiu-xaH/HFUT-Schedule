@@ -40,7 +40,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.logic.model.community.CourseTotalResponse
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
-import com.hfut.schedule.logic.util.storage.SharePrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.ui.screen.home.search.function.totalCourse.DetailItems
 import com.hfut.schedule.ui.screen.home.search.function.totalCourse.getCourse
 import com.hfut.schedule.ui.screen.home.search.function.totalCourse.getTotalCourse
@@ -196,7 +196,7 @@ fun CourseDetailApi(isNext : Boolean = false, courseName : String, vm : NetWorkV
 //            CourseDetailApi(courseName = courseName, vm = vm)
 //        }
 //    }
-    val json = SharePrefs.prefs.getString(if(!isNext)"courses" else "coursesNext","")
+    val json = SharedPrefs.prefs.getString(if(!isNext)"courses" else "coursesNext","")
     val list = getTotalCourse(json)
     var numItem by remember { mutableStateOf(0) }
     for(i in list.indices) {

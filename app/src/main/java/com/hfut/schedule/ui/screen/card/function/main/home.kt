@@ -58,8 +58,8 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.enumeration.CardBarItems
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
-import com.hfut.schedule.logic.util.storage.SharePrefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.ui.screen.card.bill.TodayBills
@@ -194,7 +194,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
     var nows by remember { mutableStateOf(cardValue?.now ?: prefs.getString("card_now","00")) }
     var settles by remember { mutableStateOf(cardValue?.settle ?: prefs.getString("card_settle","00")) }
 
-    val auth = SharePrefs.prefs.getString("auth","")
+    val auth = SharedPrefs.prefs.getString("auth","")
     val url by remember { mutableStateOf(MyApplication.HUIXIN_URL + "plat/pay" + "?synjones-auth=" + auth) }
 
     var showDialog_Huixin by remember { mutableStateOf(false) }

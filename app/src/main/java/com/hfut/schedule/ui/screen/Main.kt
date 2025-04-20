@@ -13,8 +13,8 @@ import androidx.compose.runtime.setValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.hfut.schedule.logic.util.storage.SharePrefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.parse.getCelebration
 import com.hfut.schedule.ui.screen.grade.GradeScreen
 import com.hfut.schedule.ui.screen.home.MainScreen
@@ -46,7 +46,7 @@ fun MainHost(networkVm : NetWorkViewModel, loginVm : LoginViewModel, uiVm : UIVi
             //从服务器获取信息
             launch { loginVm.My() }
             launch { loginVm.getCookie() }
-            launch { SharePrefs.saveString("tip","0") }
+            launch { SharedPrefs.saveString("tip","0") }
             launch {  loginVm.getKey() }
             launch {
                 async { loginVm.getTicket() }.await()

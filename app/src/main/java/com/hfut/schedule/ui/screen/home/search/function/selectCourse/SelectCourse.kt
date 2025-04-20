@@ -70,8 +70,8 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.logic.enumeration.SelectType
 import com.hfut.schedule.logic.model.jxglstu.SelectCourseInfo
 import com.hfut.schedule.logic.model.jxglstu.SelectPostResponse
-import com.hfut.schedule.logic.util.storage.SharePrefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.ui.screen.home.updateCourses
 import com.hfut.schedule.ui.screen.home.search.function.failRate.ApiToFailRate
@@ -360,7 +360,7 @@ fun SelectCourseList(vm: NetWorkViewModel, hazeState: HazeState) {
 //            )
             AnimationCustomCard (Modifier.clickable {
                     courseId = list[item].id
-                    SharePrefs.saveString("courseIDS", list[item].id.toString())
+                    SharedPrefs.saveString("courseIDS", list[item].id.toString())
                     name = list[item].name
                     showBottomSheet = true
                 },

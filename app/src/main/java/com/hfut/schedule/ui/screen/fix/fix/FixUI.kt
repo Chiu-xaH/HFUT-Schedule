@@ -46,8 +46,8 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.Starter.emailMe
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.logic.util.storage.SharePrefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.getTimeStamp
 import com.hfut.schedule.ui.screen.home.cube.apiCheck
 import com.hfut.schedule.ui.component.appHorizontalDp
@@ -68,14 +68,14 @@ import dev.chrisbanes.haze.HazeState
 @Composable
 fun FixUI(innerPadding : PaddingValues, vm : LoginViewModel, vm2 : NetWorkViewModel, hazeState: HazeState) {
     var showDialog by remember { mutableStateOf(false) }
-    val switch_faststart = SharePrefs.prefs.getBoolean("SWITCHFASTSTART",
-        SharePrefs.prefs.getString("TOKEN","")?.isNotEmpty() ?: false)
+    val switch_faststart = SharedPrefs.prefs.getBoolean("SWITCHFASTSTART",
+        SharedPrefs.prefs.getString("TOKEN","")?.isNotEmpty() ?: false)
     var faststart by remember { mutableStateOf(switch_faststart) }
-    SharePrefs.saveBoolean("SWITCHFASTSTART", SharePrefs.prefs.getString("TOKEN", "")?.isNotEmpty() ?: false, faststart)
+    SharedPrefs.saveBoolean("SWITCHFASTSTART", SharedPrefs.prefs.getString("TOKEN", "")?.isNotEmpty() ?: false, faststart)
 
-    val switch_api = SharePrefs.prefs.getBoolean("SWITCHMYAPI", apiCheck())
+    val switch_api = SharedPrefs.prefs.getBoolean("SWITCHMYAPI", apiCheck())
     var showapi by remember { mutableStateOf(switch_api) }
-    SharePrefs.saveBoolean("SWITCHMYAPI", false, showapi)
+    SharedPrefs.saveBoolean("SWITCHMYAPI", false, showapi)
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }

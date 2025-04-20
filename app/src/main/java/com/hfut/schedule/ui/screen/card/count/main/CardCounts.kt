@@ -60,7 +60,7 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.logic.model.zjgd.BillMonth
 import com.hfut.schedule.logic.model.zjgd.BillMonthResponse
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
-import com.hfut.schedule.logic.util.storage.SharePrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.ui.screen.card.count.drawLineChart
 import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.component.cardNormalColor
@@ -110,7 +110,7 @@ fun monthCount(vm : NetWorkViewModel, innerPadding : PaddingValues) {
 
     var clicked by remember { mutableStateOf(false) }
     var loading2 by remember { mutableStateOf(true) }
-    val auth = SharePrefs.prefs.getString("auth","")
+    val auth = SharedPrefs.prefs.getString("auth","")
     var input by remember { mutableStateOf("") }
   //  var sum by remember { mutableStateOf(0.0) }
   //  val big = BigDecimal(sum)

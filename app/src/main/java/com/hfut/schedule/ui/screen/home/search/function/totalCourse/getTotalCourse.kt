@@ -7,8 +7,8 @@ import com.hfut.schedule.logic.model.community.CourseTotalResponse
 import com.hfut.schedule.logic.model.community.courseBasicInfoDTOList
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
-import com.hfut.schedule.logic.util.storage.SharePrefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.parse.SemseterParser
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.getMy
 import java.time.LocalDate
@@ -31,7 +31,7 @@ fun getDetailCourse(item : Int,friendUserName : String? = null) : List<courseDet
 }
 
 fun getFormCommunity(friendUserName : String? = null): CourseResult? {
-    val json = SharePrefs.prefs.getString(if(friendUserName == null) "Course" else "Course${friendUserName}",null)
+    val json = SharedPrefs.prefs.getString(if(friendUserName == null) "Course" else "Course${friendUserName}",null)
     return try {
         Gson().fromJson(json, CourseTotalResponse::class.java).result
     } catch (e:Exception) {

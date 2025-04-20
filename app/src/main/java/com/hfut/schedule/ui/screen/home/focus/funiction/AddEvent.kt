@@ -1,13 +1,14 @@
 package com.hfut.schedule.ui.screen.home.focus.funiction
 
 import android.annotation.SuppressLint
+import android.os.Handler
+import android.os.Looper
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.BoundsTransform
-import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
@@ -18,42 +19,48 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -63,27 +70,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.zIndex
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventDTO
 import com.hfut.schedule.logic.database.entity.CustomEventType
+import com.hfut.schedule.logic.database.entity.ShowerLabelEntity
 import com.hfut.schedule.logic.database.util.CustomEventMapper
+import com.hfut.schedule.logic.model.SupabaseEventOutput
+import com.hfut.schedule.logic.util.network.reEmptyLiveDta
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.addToCalendars
 import com.hfut.schedule.logic.util.sys.parseToDateTime
+import com.hfut.schedule.ui.component.BottomTip
 import com.hfut.schedule.ui.component.CustomTextField
 import com.hfut.schedule.ui.component.DateRangePickerModal
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
+import com.hfut.schedule.ui.component.LittleDialog
+import com.hfut.schedule.ui.component.LoadingUI
 import com.hfut.schedule.ui.component.MyCustomCard
+import com.hfut.schedule.ui.component.RotatingIcon
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TimeRangePickerDialog
 import com.hfut.schedule.ui.component.TransplantListItem
@@ -91,8 +102,11 @@ import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.component.cardNormalColor
 import com.hfut.schedule.ui.component.cardNormalDp
 import com.hfut.schedule.ui.component.showToast
-import com.hfut.schedule.ui.screen.home.cube.sub.ShareBarRoutes
+import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
+import com.hfut.schedule.ui.screen.supabase.login.loginSupabaseWithCheck
+import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.UIViewModel
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -106,10 +120,12 @@ private enum class ShareRoutes {
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun AddEventFloatButton(
+    isSupabase : Boolean,
     isVisible: Boolean,
     hazeState: HazeState,
     vmUI : UIViewModel,
     innerPaddings: PaddingValues,
+    vm: NetWorkViewModel
 ) {
     // 懒加载
     var showSurface by remember { mutableStateOf(false) }
@@ -131,7 +147,11 @@ fun AddEventFloatButton(
     ) }
     // 通知父布局开始进行模糊和缩放，同时暂时关闭topBar和bottomBar的实时模糊
     LaunchedEffect(showAddUI) {
-        vmUI.isAddUIExpanded = showAddUI
+        if(isSupabase) {
+            vmUI.isAddUIExpandedSupabase = showAddUI
+        } else {
+            vmUI.isAddUIExpanded = showAddUI
+        }
         if(showAddUI) {
             // 进入
             showSurface = false
@@ -154,11 +174,13 @@ fun AddEventFloatButton(
             // 这里是 AnimatedContentScope 的作用域
             if (targetShowAddUI) {
                 SurfaceUI(
+                    isSupabase,
                     sharedTransitionScope = this@SharedTransitionLayout,
                     animatedContentScope = this,
                     showSurface = showSurface,
                     showChange = { showAddUI = it },
-                    boundsTransform
+                    boundsTransform,
+                    vm
                 )
             } else {
                 ButtonUI(
@@ -206,15 +228,22 @@ private fun SharedTransitionScope.ButtonUI(
     }
 }
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 private fun SharedTransitionScope.SurfaceUI(
+    isSupabase : Boolean,
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
     showSurface : Boolean,
     showChange: (Boolean) -> Unit,
-    boundsTransform: BoundsTransform
+    boundsTransform: BoundsTransform,
+    vm: NetWorkViewModel
 ) {
+    val jwt by DataStoreManager.supabaseJwtFlow.collectAsState(initial = "")
+    val refreshToken by DataStoreManager.supabaseRefreshTokenFlow.collectAsState(initial = "")
+
+    var loading by remember { mutableStateOf(false) }
     BackHandler {
         showChange(false)
     }
@@ -232,24 +261,29 @@ private fun SharedTransitionScope.SurfaceUI(
                 resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds
             ),
         topBar = {
-            TopAppBar(
-                colors = topAppBarColors(
-                    containerColor = Color.Transparent,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                    scrolledContainerColor = Color.Transparent,
-                ),
-                title = { Text("添加日程") },
-                actions = {
-                    IconButton(
-                        onClick = {
-//                            navHostController.popBackStack()
-                            showChange(false)
+            Column {
+                TopAppBar(
+                    colors = topAppBarColors(
+                        containerColor = Color.Transparent,
+                        titleContentColor = MaterialTheme.colorScheme.primary,
+                        scrolledContainerColor = Color.Transparent,
+                    ),
+                    title = { Text("添加") },
+                    actions = {
+                        Row {
+                            if(getPersonInfo().username != null && !isSupabase)
+                                FilledTonalButton(onClick = { loginSupabaseWithCheck(jwt,refreshToken,vm) { loading = it } }) {
+                                    Text("云端共建")
+                                }
+                            IconButton(
+                                onClick = { showChange(false) }
+                            ) {
+                                Icon(Icons.Filled.Close,null)
+                            }
                         }
-                    ) {
-                        Icon(Icons.Filled.Close,null)
-                    }
-                },
-            )
+                    },
+                )
+            }
         },
     ) { innerPadding ->
         if(showSurface) {
@@ -258,8 +292,14 @@ private fun SharedTransitionScope.SurfaceUI(
                 enter  = fadeIn(),
                 exit = fadeOut()
             ) {
-                Column(modifier = Modifier.padding(innerPadding).background(Color.Transparent)) {
-                    AddEventUI(showChange)
+                Column(modifier = Modifier
+                    .padding(innerPadding)
+                    .background(Color.Transparent)) {
+                    if(loading) {
+                        LoadingUI("正在核对登录")
+                    } else {
+                        AddEventUI(vm,isSupabase,showChange)
+                    }
                 }
             }
         }
@@ -267,7 +307,7 @@ private fun SharedTransitionScope.SurfaceUI(
 }
 
 @Composable
-fun AddEventUI(showChange: (Boolean) -> Unit) {
+fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -> Unit) {
     var enabled by remember { mutableStateOf(false) }
 
     val activity = LocalActivity.current
@@ -281,6 +321,7 @@ fun AddEventUI(showChange: (Boolean) -> Unit) {
 
     var showSelectDateDialog by remember { mutableStateOf(false) }
     var showSelectTimeDialog by remember { mutableStateOf(false) }
+    var showSupabaseDialog by remember { mutableStateOf(false) }
 
 
     val scope = rememberCoroutineScope()
@@ -304,8 +345,10 @@ fun AddEventUI(showChange: (Boolean) -> Unit) {
         enabled = title.isNotBlank() && title.isNotEmpty() && time.first.isNotEmpty() && time.second.isNotEmpty() && date.first.isNotEmpty() && date.second.isNotEmpty() && remark.isNotBlank() && remark.isNotEmpty()
     }
 
+    val jwt by DataStoreManager.supabaseJwtFlow.collectAsState(initial = "")
 
-
+    val classList = remember { mutableStateListOf<String>() }
+    var updateLoading by remember { mutableStateOf(false) }
     val typeIcon = @Composable {
         Icon(painterResource(if(isScheduleType) R.drawable.calendar else R.drawable.net),null)
     }
@@ -315,36 +358,91 @@ fun AddEventUI(showChange: (Boolean) -> Unit) {
     if(showSelectTimeDialog)
         TimeRangePickerDialog(onSelected = { time = it }) { showSelectTimeDialog = false }
 
+    LaunchedEffect(updateLoading) {
+        if(isSupabase && updateLoading) {
+            val entity = parseToDateTime(startDate = date.first, startTime = time.first, endDate = date.second, endTime = time.second)?.let {
+                SupabaseEventOutput(
+                    name = title,
+                    dateTime = it,
+                    type = if(isScheduleType) CustomEventType.SCHEDULE else CustomEventType.NET_COURSE,
+                    description = description.let { desp -> if(desp.isNotEmpty() && desp.isNotBlank()) desp else null },
+                    timeDescription = remark,
+                    applicableClasses = classList,
+                    url = null
+                )
+            }
+            if(enabled && entity != null) {
+                // 添加到数据库
+                async { reEmptyLiveDta(vm.supabaseAddResp) }.await()
+                async { updateLoading = true }.await()
+                launch { vm.supabaseAdd(jwt, entity) }
+            }
+
+            Handler(Looper.getMainLooper()).post {
+                vm.supabaseAddResp.observeForever { result ->
+                    if (result != null) {
+                        showToast("执行完成 请下拉刷新")
+                        updateLoading = false
+                        showChange(false)
+                    }
+                }
+            }
+        }
+    }
+
+    if(showSupabaseDialog) {
+        LittleDialog(
+            onConfirmation = {
+                updateLoading = true
+                showSupabaseDialog = false
+            },
+            onDismissRequest = { showSupabaseDialog = false },
+            dialogText = "是否核对好信息无误?提交后若有问题可删除重新添加；上传的内容请遵守需符合规范，不得出现谎骗、低俗等内容"
+        )
+    }
+
 
     Box(modifier = Modifier.fillMaxSize()) {
         Button(
             onClick = {
-                scope.launch {
-                    async {
-                        val entity = parseToDateTime(startDate = date.first, startTime = time.first, endDate = date.second, endTime = time.second)?.let {
-                            CustomEventDTO(
-                                title = title,
-                                dateTime = it,
-                                type = if(isScheduleType) CustomEventType.SCHEDULE else CustomEventType.NET_COURSE,
-                                description = description.let { desp -> if(desp.isNotEmpty() && desp.isNotBlank()) desp else null },
-                                remark = remark
-                            )
-                        }
-                        if(enabled && entity != null) {
-                            // 添加到数据库
-                            DataBaseManager.customEventDao.insert(CustomEventMapper.dtoToEntity(entity))
-                            showToast("执行完成 请检查是否显示")
-                        }
-                    }.await()
-                    // 关闭
-                    launch { showChange(false) }
+                if(!isSupabase) {
+                    scope.launch {
+                        async {
+                            val entity = parseToDateTime(startDate = date.first, startTime = time.first, endDate = date.second, endTime = time.second)?.let {
+                                CustomEventDTO(
+                                    title = title,
+                                    dateTime = it,
+                                    type = if(isScheduleType) CustomEventType.SCHEDULE else CustomEventType.NET_COURSE,
+                                    description = description.let { desp -> if(desp.isNotEmpty() && desp.isNotBlank()) desp else null },
+                                    remark = remark
+                                )
+                            }
+                            if(enabled && entity != null) {
+                                // 添加到数据库
+                                DataBaseManager.customEventDao.insert(CustomEventMapper.dtoToEntity(entity))
+                                showToast("执行完成 请检查是否显示")
+                            }
+                        }.await()
+                        // 关闭
+                        launch { showChange(false) }
+                    }
+                } else {
+                    if(enabled)
+                        showSupabaseDialog = true
+                    else
+                        showChange(false)
                 }
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = appHorizontalDp()).align(Alignment.BottomCenter)
+                .padding(horizontal = appHorizontalDp())
+                .align(Alignment.BottomCenter)
+                .zIndex(2f)
         ) {
-            Text(if(enabled) "添加" else "关闭")
+            if(!updateLoading)
+                Text(if(enabled) "添加" else "关闭")
+            else
+                RotatingIcon(R.drawable.progress_activity)
         }
         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
             DividerTextExpandedWith("预览") {
@@ -364,9 +462,9 @@ fun AddEventUI(showChange: (Boolean) -> Unit) {
             DividerTextExpandedWith("配置") {
                 CustomTextField(input = title, label = { Text("标题") }) { title = it }
                 Spacer(Modifier.height(5.dp + cardNormalDp()))
-                CustomTextField(input = description, label = { Text("备注(可空)") }) { description = it }
+                CustomTextField(input = description, label = { Text("备注(可空,可填写http网址)") }) { description = it }
                 Spacer(Modifier.height(5.dp + cardNormalDp()))
-                CustomTextField(input = remark, label = { Text("自定义时间显示(可选)") }) { remark = it }
+                CustomTextField(input = remark, label = { Text("自定义时间显示") }) { remark = it }
                 Spacer(Modifier.height(5.dp))
                 StyleCardListItem(
                     headlineContent = { Text("类型：" + if(isScheduleType) "日程/课程" else "网课" ) },
@@ -392,23 +490,186 @@ fun AddEventUI(showChange: (Boolean) -> Unit) {
                             text = "选择日期范围",
                             color = MaterialTheme.colorScheme.primary,
                             fontSize = 14.sp,
-                            modifier = Modifier.align(Alignment.Bottom).padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp() - 5.dp).clickable {
-                                showSelectDateDialog = true
-                            }
+                            modifier = Modifier
+                                .align(Alignment.Bottom)
+                                .padding(
+                                    horizontal = appHorizontalDp(),
+                                    vertical = appHorizontalDp() - 5.dp
+                                )
+                                .clickable {
+                                    showSelectDateDialog = true
+                                }
                         )
                         Text(
                             text = "选择时间范围",
                             color = MaterialTheme.colorScheme.primary,
                             fontSize = 14.sp,
-                            modifier = Modifier.align(Alignment.Top).padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp() - 5.dp).clickable {
-                                showSelectTimeDialog = true
-                            }
+                            modifier = Modifier
+                                .align(Alignment.Top)
+                                .padding(
+                                    horizontal = appHorizontalDp(),
+                                    vertical = appHorizontalDp() - 5.dp
+                                )
+                                .clickable {
+                                    showSelectTimeDialog = true
+                                }
                         )
                     }
+                }
+                if(isSupabase) {
+                    var isEditMode by remember { mutableStateOf(false) }
+                    var input by remember { mutableStateOf("") }
+                    var id by remember { mutableIntStateOf(-1) }
+                    var showDelDialog by remember { mutableStateOf(false) }
+                    var showAddDialog by remember { mutableStateOf(false) }
+
+                    if(showDelDialog) {
+                        LittleDialog(
+                            onConfirmation = {
+                                if(id >= 0) {
+                                    classList.removeAt(id)
+                                }
+                                showDelDialog = false
+                            },
+                            onDismissRequest = { showDelDialog = false },
+                            dialogText = "要删除此项吗"
+                        )
+                    }
+                    if(showAddDialog) {
+                        Dialog(
+                            onDismissRequest = { showAddDialog = false }
+                        ) {
+                            Column(modifier = Modifier
+                                .clip(MaterialTheme.shapes.medium)
+                                .background(MaterialTheme.colorScheme.surface)) {
+                                Column(modifier = Modifier.padding(appHorizontalDp())) {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.Center
+                                    ) {
+                                        TextField(
+                                            modifier = Modifier
+                                                .weight(1f),
+//                                                .padding(horizontal = appHorizontalDp()),
+                                            value = input,
+                                            onValueChange = { input = it },
+                                            singleLine = true,
+                                            shape = MaterialTheme.shapes.medium,
+                                            colors = textFiledTransplant(isColorCopy = false),
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.height(appHorizontalDp()))
+
+                                    Row(modifier = Modifier
+                                        .fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
+                                        FilledTonalButton(onClick = {
+                                            showAddDialog = false
+                                        },modifier = Modifier
+                                            .weight(.5f)
+                                        ) {
+                                            Text(text = "取消")
+                                        }
+                                        Spacer(modifier = Modifier.width(10.dp))
+                                        Button(onClick = {
+                                            classList.add(input)
+                                            showAddDialog = false
+                                        },modifier = Modifier
+                                            .weight(.5f)
+                                        ) {
+                                            Text(text = "保存")
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    LaunchedEffect(Unit) { getPersonInfo().classes?.let { classList.add(it) } }
+                    LaunchedEffect(showAddDialog) {
+                        if(!showAddDialog)
+                            input = ""
+                    }
+
+                    Spacer(Modifier.height(5.dp - cardNormalDp()))
+                    MyCustomCard(containerColor = cardNormalColor()) {
+                        TransplantListItem(
+                            headlineContent = { Text("适用范围" ) },
+                            supportingContent = {
+                                Text("为保证统一规范，必须按 查询中心-个人信息-班级 输入班级名，例如'计算机29-9班’而不是‘计科29-9班’，不添加则表示对所有人可见" )
+                            },
+                            leadingContent = {
+                                Icon(painterResource(R.drawable.target),null)
+                            } ,
+                            modifier = Modifier.clickable {
+                            }
+                        )
+                        HorizontalDivider()
+                        Spacer(Modifier.height(appHorizontalDp()-5.dp))
+
+                        for(index in classList.indices step 2) {
+                            Row {
+                                Spacer(Modifier.width(appHorizontalDp()))
+                                AssistChip(
+                                    onClick = {
+                                        id = index
+                                        showDelDialog = true
+                                              },
+                                    label = { Text(classList[index]) },
+                                    leadingIcon = if(isEditMode) { { Icon(Icons.Filled.Close, null) } } else null
+                                )
+
+                                if(index+1 != classList.size) {
+                                    Spacer(Modifier.width(appHorizontalDp()))
+                                    AssistChip(
+                                        onClick = {
+                                            id = index+1
+                                            showDelDialog = true
+                                                  },
+                                        label = { Text(classList[index+1]) },
+                                        leadingIcon = if(isEditMode) { { Icon(Icons.Filled.Close, null) } } else null
+                                    )
+                                }
+                            }
+                        }
+
+                        Row(modifier = Modifier.align(Alignment.End)) {
+                            Text(
+                                text = "添加",
+                                color = MaterialTheme.colorScheme.primary,
+                                fontSize = 14.sp,
+                                modifier = Modifier
+                                    .align(Alignment.Bottom)
+                                    .padding(
+                                        horizontal = appHorizontalDp(),
+                                        vertical = appHorizontalDp() - 5.dp
+                                    )
+                                    .clickable {
+                                        showAddDialog = true
+                                    }
+                            )
+                            Text(
+                                text = if(!isEditMode) "编辑" else "完成",
+                                color = MaterialTheme.colorScheme.primary,
+                                fontSize = 14.sp,
+                                modifier = Modifier
+                                    .align(Alignment.Top)
+                                    .padding(
+                                        horizontal = appHorizontalDp(),
+                                        vertical = appHorizontalDp() - 5.dp
+                                    )
+                                    .clickable {
+                                        isEditMode = !isEditMode
+                                    }
+                            )
+                        }
+                    }
+
+                    BottomTip("结果将共享至云端，共享后自己再次选择下载即可")
+                } else {
+                    BottomTip("结果将保存在私有本地，若需共享请进入 云端共建")
                 }
             }
             Spacer(Modifier.height(40.dp + appHorizontalDp()))
         }
     }
 }
-

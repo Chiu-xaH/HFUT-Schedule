@@ -26,8 +26,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.storage.SharePrefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.BottomSheetTopBar
 import com.hfut.schedule.ui.component.TransplantListItem
 import java.math.BigDecimal
@@ -65,7 +65,7 @@ fun ArrangeItem(title : String, icon : Int, key : String,canUse : Boolean = true
                         sliderPosition = it
                         val bd = BigDecimal(sliderPosition.toString())
                         val str = bd.setScale(0, RoundingMode.HALF_UP).toString()
-                        SharePrefs.saveString(key,str)
+                        SharedPrefs.saveString(key,str)
                     },
                     colors = SliderDefaults.colors(
                         thumbColor = MaterialTheme.colorScheme.secondary,

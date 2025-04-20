@@ -66,6 +66,9 @@ object DateTimeUtils {
     val tomorrow_MM_DD: String = today.plusDays(1).format(formatter_MM_DD)
     val tomorrow_YYYY_MM_DD: String = today.plusDays(1).format(formatter_YYYY_MM_DD)
 
+    val DateTime_T = Date_yyyy_MM_dd + "T" + Time_HH_MM_SS
+
+
     //计算目前已经过了多久
     fun getPercent(startDateStr: String, endDateStr: String): Double {
         // 将字符串转换为 LocalDate

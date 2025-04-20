@@ -3,9 +3,9 @@
 
     <style name="Theme.App" parent="android:Theme.Material.Light.NoActionBar" />
 
-<!--    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.DarkActionBar">-->
-        <!-- XML Material3 -->
-<!--    </style>-->
+    <!--    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.DarkActionBar">-->
+    <!-- XML Material3 -->
+    <!--    </style>-->
     <!-- 启动主题(低版本使用)，高版本用的是 -v31 -->
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">
         <item name="windowSplashScreenAnimatedIcon">@drawable/splash_icon</item>

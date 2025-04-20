@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.screen.home.search.function.lepaoYun
+package com.hfut.schedule.ui.screen.home.search.function.sport.lepao
 
 import android.widget.Toast
 import androidx.compose.animation.core.Spring
@@ -39,7 +39,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.storage.SharePrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.component.BottomSheetTopBar
 import com.hfut.schedule.ui.component.MyCustomCard
@@ -53,7 +53,7 @@ fun InfoSet() {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
 
-    val savedToken = SharePrefs.prefs.getString("Yuntoken","")
+    val savedToken = SharedPrefs.prefs.getString("Yuntoken","")
     var inputToken by remember { mutableStateOf(savedToken ?: "") }
 
 
@@ -73,7 +73,7 @@ fun InfoSet() {
                             interactionSource = interactionSource,
                             onClick = {
                                 // showBottomSheet_inputchanged
-                                SharePrefs.saveString("Yuntoken",inputToken)
+                                SharedPrefs.saveString("Yuntoken",inputToken)
                                 Toast.makeText(MyApplication.context,"已保存",Toast.LENGTH_SHORT).show()
                             }
                         ) { Icon(Icons.Filled.Check, contentDescription = "") }

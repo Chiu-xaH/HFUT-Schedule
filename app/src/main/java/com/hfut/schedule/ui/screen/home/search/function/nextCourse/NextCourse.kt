@@ -23,7 +23,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.isNextOpen
 import com.hfut.schedule.ui.screen.home.calendar.next.DatumUI
 import com.hfut.schedule.ui.screen.home.search.function.totalCourse.CourseTotalForApi

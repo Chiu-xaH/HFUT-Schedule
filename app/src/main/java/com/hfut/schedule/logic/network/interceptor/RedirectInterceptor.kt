@@ -1,6 +1,6 @@
 package com.hfut.schedule.logic.network.interceptor
 
-import com.hfut.schedule.logic.util.storage.SharePrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
 import okhttp3.Interceptor
 import okhttp3.Response
 
@@ -13,7 +13,7 @@ class RedirectInterceptor() : Interceptor {
               //  Log.d("l",location)
                 val ticket = location.substringAfter("=")
 
-                SharePrefs.saveString("TICKET",ticket)
+                SharedPrefs.saveString("TICKET",ticket)
                 val newRequest = request.newBuilder()
                     .url(location)
                     .build()
@@ -35,7 +35,7 @@ if(sb.length > 30 ) {
     sb.delete(sb.length - 2, sb.length)
     val redirectcookie = sb.toString()
 
-   SharePrefs.saveString("redirect", redirectcookie)
+   SharedPrefs.saveString("redirect", redirectcookie)
 
   //  sp.getString("redirect", "")?.let { Log.d("测试11", it) }
 }

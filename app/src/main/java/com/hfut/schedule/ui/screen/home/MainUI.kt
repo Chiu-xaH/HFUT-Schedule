@@ -77,9 +77,9 @@ import com.hfut.schedule.logic.util.sys.DateTimeUtils.Date_MM_dd
 import com.hfut.schedule.logic.util.sys.DateTimeUtils.weeksBetween
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.saveInt
-import com.hfut.schedule.logic.util.storage.SharePrefs.saveString
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.saveInt
+import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.isNextOpen
 import com.hfut.schedule.ui.component.CustomTabRow
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
@@ -317,7 +317,7 @@ fun MainScreen(
         var innerPaddingValues by remember { mutableStateOf<PaddingValues?>(null) }
 
         Box(modifier = Modifier.align(Alignment.BottomEnd).zIndex(3f)) {
-            innerPaddingValues?.let { AddEventFloatButton(isVisible = isNavigationIconVisible && (targetPage == FOCUS),hazeState,vmUI,it) }
+            innerPaddingValues?.let { AddEventFloatButton(isSupabase = false,isVisible = isNavigationIconVisible && (targetPage == FOCUS),hazeState,vmUI,it,vm) }
         }
 
         Scaffold(

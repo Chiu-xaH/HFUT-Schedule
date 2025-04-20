@@ -60,9 +60,9 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.logic.util.storage.SharePrefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.saveString
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.screen.home.search.function.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.transfer.getCampus
 import com.hfut.schedule.ui.component.appHorizontalDp
@@ -153,7 +153,7 @@ fun DormitoryScoreUI(vm : NetWorkViewModel) {
                             async {
                                 saveString("BuildNumber", BuildingsNumber)
                                 saveString("RoomNumber", RoomNumber)
-                                SharePrefs.saveBoolean("NS",true,NSBoolean)
+                                SharedPrefs.saveBoolean("NS",true,NSBoolean)
                                 showitem4 = false
                             }
                             async {

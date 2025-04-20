@@ -15,7 +15,7 @@ import android.os.Environment
 import android.provider.Settings
 import androidx.annotation.RequiresApi
 import com.hfut.schedule.App.MyApplication
-import com.hfut.schedule.logic.util.storage.SharePrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.ocr.TesseractUtils
 import com.hfut.schedule.logic.util.ocr.TesseractUtils.moveDownloadedModel
 import com.hfut.schedule.logic.enumeration.BroadcastAction
@@ -51,7 +51,7 @@ object AppDownloadManager {
         val downloadId = dlManager.enqueue(request)
 
         // 存储下载任务 ID
-        SharePrefs.saveLong("download_${dlId.id}", downloadId)
+        SharedPrefs.saveLong("download_${dlId.id}", downloadId)
 
         // 注册下载完成监听
         MyApplication.context.registerReceiver(object : BroadcastReceiver() {
@@ -155,7 +155,7 @@ object AppDownloadManager {
     }
 
     @JvmStatic
-    fun getDownloadId(dlId : DownloadIds) : Long = SharePrefs.prefs.getLong("download_${dlId.id}",-1)
+    fun getDownloadId(dlId : DownloadIds) : Long = SharedPrefs.prefs.getLong("download_${dlId.id}",-1)
 
     fun installApk() {
         val id = getDownloadId(DownloadIds.UPDATE)

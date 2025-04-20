@@ -36,8 +36,8 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.logic.util.storage.SharePrefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.component.TransplantListItem
@@ -109,7 +109,7 @@ fun UseAgreementScreen(navController : NavHostController) {
                 Row(modifier = Modifier.padding(appHorizontalDp()),horizontalArrangement = Arrangement.Center) {
                     Button(
                         onClick = {
-                            SharePrefs.saveBoolean("canUse", default = false, save = true)
+                            SharedPrefs.saveBoolean("canUse", default = false, save = true)
                             navController.navigateAndClear(MainNav.HOME.name)
                         },
                         modifier = Modifier
@@ -128,7 +128,7 @@ fun UseAgreementScreen(navController : NavHostController) {
                             .fillMaxWidth()
                             .weight(.5f)
                     ) {
-                        SharePrefs.saveBoolean("canUse", default = false, save = false)
+                        SharedPrefs.saveBoolean("canUse", default = false, save = false)
                         Text("拒绝")
                     }
                 }

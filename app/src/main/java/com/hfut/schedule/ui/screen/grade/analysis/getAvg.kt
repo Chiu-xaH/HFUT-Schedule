@@ -4,7 +4,7 @@ import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.model.community.AvgResult
 import com.hfut.schedule.logic.model.community.GradeAvgResponse
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import java.lang.Exception
 

@@ -61,7 +61,7 @@ import com.hfut.schedule.logic.model.jxglstu.ProgramPartThree
 import com.hfut.schedule.logic.model.jxglstu.ProgramShow
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.ui.screen.home.search.function.courseSearch.ApiForCourseSearch
 import com.hfut.schedule.ui.screen.home.search.function.life.countFunc
@@ -80,7 +80,7 @@ import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.component.ScrollText
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
-import com.hfut.schedule.ui.component.statusUI
+import com.hfut.schedule.ui.component.StatusUI
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.ui.style.textFiledTransplant
@@ -617,7 +617,7 @@ fun ProgramUIInfo2(num1 : Int, num2 : Int, vm : NetWorkViewModel, ifSaved : Bool
     } else {
         Box(modifier = Modifier.fillMaxSize()) {
             Column(modifier = Modifier.align(Alignment.Center)) {
-                statusUI(R.drawable.manga,"选修课不做显示")
+                StatusUI(R.drawable.manga,"选修课不做显示")
             }
         }
     }

@@ -52,8 +52,8 @@ import com.hfut.schedule.logic.model.community.ApplyingLists
 import com.hfut.schedule.logic.model.community.ApplyingResponse
 import com.hfut.schedule.logic.model.community.FriendsList
 import com.hfut.schedule.logic.model.community.FriendsResopnse
-import com.hfut.schedule.logic.util.storage.SharePrefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.component.BottomTip
 import com.hfut.schedule.ui.component.BottomSheetTopBar
@@ -89,7 +89,7 @@ fun getFriendsList() : List<FriendsList?> {
 }
 
 fun getFriendsCourse(studentId : String,vm : NetWorkViewModel) {
-    val CommuityTOKEN = SharePrefs.prefs.getString("TOKEN","")
+    val CommuityTOKEN = SharedPrefs.prefs.getString("TOKEN","")
     CommuityTOKEN?.let { vm.GetCourse(it,studentId) }
 }
 
@@ -154,7 +154,7 @@ fun AddCourseUI(vm: NetWorkViewModel, hazeState: HazeState) {
 @Composable
 fun FriendsSetting(vm : NetWorkViewModel) {
     var count = 0
-    val CommuityTOKEN = SharePrefs.prefs.getString("TOKEN","")
+    val CommuityTOKEN = SharedPrefs.prefs.getString("TOKEN","")
     var loading by remember { mutableStateOf(true) }
 
 

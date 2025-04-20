@@ -46,6 +46,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -77,9 +78,9 @@ import com.hfut.schedule.activity.screen.FixActivity
 import com.hfut.schedule.activity.screen.SuccessActivity
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.logic.util.storage.SharePrefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.saveString
+import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.network.Encrypt
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.useCaptcha
 import com.hfut.schedule.ui.screen.home.cube.sub.DownloadMLUI
@@ -240,10 +241,10 @@ fun LoginScreen(vm : LoginViewModel, navController : NavHostController) {
     Scaffold(
         topBar = {
             LargeTopAppBar(
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = Color.Transparent,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
+                colors = topAppBarColors(
+        containerColor = Color.Transparent,
+        titleContentColor = MaterialTheme.colorScheme.primary
+        ),
                 title = {
                     Box(modifier = Modifier.fillMaxWidth()) {
                         Text(
@@ -327,7 +328,7 @@ fun TwoTextField(vm : LoginViewModel, navHostController: NavHostController) {
     var inputAES by remember { mutableStateOf(Savedpassword ?: "") }
     var inputCode by remember { mutableStateOf( "") }
     var webVpn by remember { mutableStateOf(false) }
-    val switch_open = SharePrefs.prefs.getBoolean("SWITCH_ML",false)
+    val switch_open = SharedPrefs.prefs.getBoolean("SWITCH_ML",false)
     // 创建一个动画值，根据按钮的按下状态来改变阴影的大小
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -473,7 +474,7 @@ fun TwoTextField(vm : LoginViewModel, navHostController: NavHostController) {
             RowHorizontal {
                 Button(
                     onClick = {
-                        val cookie = SharePrefs.prefs.getString("cookie", "")
+                        val cookie = SharedPrefs.prefs.getString("cookie", "")
                         if (cookie != null) loginClick(vm,username,inputAES,inputCode,webVpn, onRefresh = { onRefresh++ }, onLoad = { loading = it }, onResult = { status = it})
 
                     }, modifier = Modifier.scale(scale.value),

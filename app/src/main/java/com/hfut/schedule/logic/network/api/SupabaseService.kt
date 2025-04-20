@@ -1,0 +1,85 @@
+package com.hfut.schedule.logic.network.api
+
+import com.hfut.schedule.logic.model.SupabaseEventEntity
+import com.hfut.schedule.logic.model.SupabaseEventForkCount
+import com.hfut.schedule.logic.model.SupabaseEventForkEntity
+import com.hfut.schedule.logic.model.SupabaseUserLoginBean
+import com.hfut.schedule.logic.util.network.Encrypt.getSupabasePublicKey
+import com.hfut.schedule.logic.util.network.toDateTimeBeanForSupabase
+import com.hfut.schedule.logic.util.sys.DateTimeUtils
+import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
+import okhttp3.ResponseBody
+import retrofit2.Call
+import retrofit2.http.Body
+import retrofit2.http.DELETE
+import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.POST
+import retrofit2.http.Query
+
+interface SupabaseService {
+    // 注册
+    @POST("auth/v1/signup")
+    fun reg(
+        @Header("apikey") publicKey : String = getSupabasePublicKey(),
+        @Body user : SupabaseUserLoginBean
+    ) : Call<ResponseBody>
+
+    // 登录
+    @POST("auth/v1/token")
+    fun login(
+        @Header("apikey") publicKey : String = getSupabasePublicKey(),
+        @Query("grant_type") loginType : String,
+        @Body user : Any
+    ) : Call<ResponseBody>
+
+    // 验证token
+    @GET("functions/v1/check-login")
+    fun checkToken(
+        @Header("apikey") publicKey : String = getSupabasePublicKey(),
+        @Header("Authorization") authorization : String,
+    ) : Call<ResponseBody>
+
+
+    // EVENT查
+    @GET("rest/v1/event")
+    fun getEvents(
+        @Header("Authorization") authorization : String,
+        @Header("apikey") publicKey : String = getSupabasePublicKey(),
+        @Query("end_time") endTime : String? = "gt.${toDateTimeBeanForSupabase()}",
+        @Query("contributor_email") email : String? = null,
+        @Query("applicable_classes") classes : String? = "ilike.*${getPersonInfo().classes}*"
+    ) : Call<ResponseBody>
+
+    // EVENT删
+    @DELETE("rest/v1/event")
+    fun delEvent(
+        @Header("Authorization") authorization : String,
+        @Header("apikey") publicKey : String = getSupabasePublicKey(),
+        @Query("id") id : String
+    ) : Call<ResponseBody>
+
+    // EVENT增
+    @POST("rest/v1/event")
+    fun addEvent(
+        @Header("Authorization") authorization : String,
+        @Header("apikey") publicKey : String = getSupabasePublicKey(),
+        @Body entity : SupabaseEventEntity
+    ) : Call<ResponseBody>
+
+    // EVENT下载+1
+    @POST("rest/v1/event_fork")
+    fun eventDownloadAdd(
+        @Header("Authorization") authorization : String,
+        @Header("apikey") publicKey : String = getSupabasePublicKey(),
+        @Body entity : SupabaseEventForkEntity
+    ) : Call<ResponseBody>
+
+    // EVENT下载数量
+    @POST("rest/v1/rpc/get_event_fork_count")
+    fun getEventDownloadCount(
+        @Header("Authorization") authorization : String,
+        @Header("apikey") publicKey : String = getSupabasePublicKey(),
+        @Body entity : SupabaseEventForkCount
+    ) : Call<ResponseBody>
+}

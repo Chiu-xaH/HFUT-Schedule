@@ -95,8 +95,8 @@ fun DateRangePickerModal(
 @Composable
 fun TimePicker(onSelected: (String) -> Unit) {
     val timePickerState = rememberTimePickerState(
-        initialHour = DateTimeUtils.Time_Hour.toInt(),
-        initialMinute = DateTimeUtils.Time_Minute.toInt(),
+        initialHour = 0,
+        initialMinute = 0,
         is24Hour = true,
     )
 
@@ -122,7 +122,8 @@ fun TimeRangePicker(onSelected: (Pair<String,String>) -> Unit,onDismiss: () -> U
         // 判定时间合法性
         launch {
             enabled = if(startTime != null && endTime != null) {
-                DateTimeUtils.compareTime(startTime = startTime!!, endTime = endTime!!) != DateTimeUtils.TimeState.ENDED
+                true
+//                DateTimeUtils.compareTime(startTime = startTime!!, endTime = endTime!!) != DateTimeUtils.TimeState.ENDED
             } else {
                 false
             }

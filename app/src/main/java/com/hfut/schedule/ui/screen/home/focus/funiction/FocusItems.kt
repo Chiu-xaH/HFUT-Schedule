@@ -83,7 +83,7 @@ import com.hfut.schedule.logic.util.network.parse.ParseJsons.getTimeStamp
 import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
 import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.logic.util.sys.DateTimeUtils.TimeState.ENDED
 import com.hfut.schedule.logic.util.sys.DateTimeUtils.TimeState.NOT_STARTED

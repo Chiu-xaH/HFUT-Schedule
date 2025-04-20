@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.hfut.schedule.activity.BaseActivity
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.parse.getCelebration
 import com.hfut.schedule.ui.screen.home.MainScreen
 import com.hfut.schedule.viewmodel.network.NetworkViewModelFactory

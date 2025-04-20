@@ -35,7 +35,7 @@ import com.hfut.schedule.logic.enumeration.PostMode
 import com.hfut.schedule.logic.model.jxglstu.PostSurvey
 import com.hfut.schedule.logic.model.jxglstu.blankQuestionAnswer
 import com.hfut.schedule.logic.model.jxglstu.radioQuestionAnswer
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.style.RowHorizontal
 import kotlinx.coroutines.CoroutineScope

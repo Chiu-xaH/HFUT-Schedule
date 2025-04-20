@@ -3,14 +3,21 @@ package com.hfut.schedule.viewmodel.network
 import android.annotation.SuppressLint
 import android.util.Base64
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.logic.enumeration.LibraryItems
+import com.hfut.schedule.logic.enumeration.LoginType
+import com.hfut.schedule.logic.model.SupabaseEventForkCount
+import com.hfut.schedule.logic.model.SupabaseEventOutput
+import com.hfut.schedule.logic.model.SupabaseRefreshLoginBean
+import com.hfut.schedule.logic.model.SupabaseUserLoginBean
 import com.hfut.schedule.logic.model.jxglstu.lessonResponse
 import com.hfut.schedule.logic.model.one.BorrowBooksResponse
 import com.hfut.schedule.logic.model.one.SubBooksResponse
@@ -19,13 +26,11 @@ import com.hfut.schedule.logic.model.zjgd.FeeType
 import com.hfut.schedule.logic.model.zjgd.FeeType.ELECTRIC
 import com.hfut.schedule.logic.model.zjgd.FeeType.SHOWER
 import com.hfut.schedule.logic.model.zjgd.FeeType.WEB
-import com.hfut.schedule.logic.enumeration.LibraryItems
-import com.hfut.schedule.logic.enumeration.LoginType
-import com.hfut.schedule.logic.network.repo.NetWork
 import com.hfut.schedule.logic.network.api.CommunityService
 import com.hfut.schedule.logic.network.api.DormitoryScore
 import com.hfut.schedule.logic.network.api.FWDTService
 import com.hfut.schedule.logic.network.api.GiteeService
+import com.hfut.schedule.logic.network.api.GithubRawService
 import com.hfut.schedule.logic.network.api.GuaGuaService
 import com.hfut.schedule.logic.network.api.JxglstuService
 import com.hfut.schedule.logic.network.api.LePaoYunService
@@ -37,12 +42,15 @@ import com.hfut.schedule.logic.network.api.OneService
 import com.hfut.schedule.logic.network.api.QWeatherService
 import com.hfut.schedule.logic.network.api.ServerService
 import com.hfut.schedule.logic.network.api.StuService
+import com.hfut.schedule.logic.network.api.SupabaseService
 import com.hfut.schedule.logic.network.api.TeachersService
 import com.hfut.schedule.logic.network.api.XuanChengService
 import com.hfut.schedule.logic.network.api.ZJGDBillService
+import com.hfut.schedule.logic.network.repo.NetWork
 import com.hfut.schedule.logic.network.servicecreator.CommunitySreviceCreator
 import com.hfut.schedule.logic.network.servicecreator.DormitoryScoreServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.GiteeServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.GithubRawServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.GuaGuaServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.Jxglstu.JxglstuHTMLServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.Jxglstu.JxglstuJSONServiceCreator
@@ -58,14 +66,17 @@ import com.hfut.schedule.logic.network.servicecreator.QWeatherServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.SearchEleServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.ServerServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.StuServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.SupabaseServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.TeacherServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.XuanChengServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.ZJGDBillServiceCreator
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.saveInt
-import com.hfut.schedule.logic.util.storage.SharePrefs.saveString
 import com.hfut.schedule.logic.util.network.Encrypt
+import com.hfut.schedule.logic.util.network.supabaseEventDtoToEntity
+import com.hfut.schedule.logic.util.network.supabaseEventForkDtoToEntity
 import com.hfut.schedule.logic.util.parse.SemseterParser
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.saveInt
+import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.ui.screen.home.cube.sub.getUserInfo
 import com.hfut.schedule.ui.screen.home.search.function.loginWeb.getIdentifyID
 import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
@@ -73,11 +84,7 @@ import com.hfut.schedule.ui.screen.home.search.function.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.transfer.Campus.HEFEI
 import com.hfut.schedule.ui.screen.home.search.function.transfer.Campus.XUANCHENG
 import com.hfut.schedule.ui.screen.news.transferToPostData
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
@@ -108,10 +115,85 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     private val Gitee = GiteeServiceCreator.create(GiteeService::class.java)
     private val LoginWeb = LoginWebServiceCreator.create(LoginWebsService::class.java)
     private val LoginWeb2 = LoginWeb2ServiceCreator.create(LoginWebsService::class.java)
+    private val github = GithubRawServiceCreator.create(GithubRawService::class.java)
+    private val supabase = SupabaseServiceCreator.create(SupabaseService::class.java)
+
 
     var studentId = MutableLiveData<Int>(prefs.getInt("STUDENTID",0))
     var lessonIds = MutableLiveData<List<Int>>()
     var token = MutableLiveData<String>()
+
+    var supabaseRegResp = MutableLiveData<String?>()
+    fun supabaseReg(password: String) = NetWork.makeRequest(supabase.reg(user = SupabaseUserLoginBean(password = password)),supabaseRegResp)
+
+    var supabaseLoginResp = MutableLiveData<String?>()
+    fun supabaseLoginWithPassword(password : String) = NetWork.makeRequest(supabase.login(user = SupabaseUserLoginBean(password = password), loginType = "password"),supabaseLoginResp)
+
+    fun supabaseLoginWithRefreshToken(refreshToken : String) = NetWork.makeRequest(supabase.login(user = SupabaseRefreshLoginBean(refreshToken), loginType = "grant_type"),supabaseLoginResp)
+
+    var supabaseDelResp = MutableLiveData<Boolean?>()
+    fun supabaseDel(jwt : String,id : Int) {
+        val call = supabase.delEvent(authorization = "Bearer $jwt",id = "eq.$id")
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                supabaseDelResp.value = response.isSuccessful
+            }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { }
+        })
+    }
+
+    var supabaseAddResp = MutableLiveData<Boolean?>()
+    fun supabaseAdd(jwt: String,event : SupabaseEventOutput) {
+        val call = supabase.addEvent(authorization = "Bearer $jwt",entity = supabaseEventDtoToEntity(event))
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                supabaseAddResp.value = response.isSuccessful
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { }
+        })
+    }
+
+    var supabaseAddCountResp = MutableLiveData<Boolean?>()
+    fun supabaseAddCount(jwt: String,eventId : Int) {
+        val call = supabase.eventDownloadAdd(authorization = "Bearer $jwt",entity = supabaseEventForkDtoToEntity(eventId))
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                supabaseAddCountResp.value = response.isSuccessful
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { }
+        })
+    }
+
+
+    // 默认 展示未过期日程&&符合自己班级的日程
+    var supabaseGetEventsResp = MutableLiveData<String?>()
+    fun supabaseGetEvents(jwt: String,filter : Boolean = false) = NetWork.makeRequest(supabase.getEvents(authorization = "Bearer $jwt", classes = if(filter) "ilike.*${getPersonInfo().classes}*" else null),supabaseGetEventsResp)
+
+    var supabaseGetEventForkCountResp = MutableLiveData<String?>()
+    fun supabaseGetEventForkCount(jwt: String,eventId: Int) = NetWork.makeRequest(supabase.getEventDownloadCount(authorization = "Bearer $jwt", entity = SupabaseEventForkCount(eventId = eventId)),supabaseGetEventForkCountResp)
+
+
+    // 定制 展示自己上传过的日程
+    var supabaseGetMyEventsResp = MutableLiveData<String?>()
+    fun supabaseGetMyEvents(jwt: String) = NetWork.makeRequest(supabase.getEvents(authorization = "Bearer $jwt",endTime = null,email = "eq." + getSchoolEmail(), classes = null),supabaseGetMyEventsResp)
+
+
+    var supabaseCheckResp = MutableLiveData<Boolean?>()
+    fun supabaseCheckJwt(jwt: String) {
+        val call = supabase.checkToken(authorization = "Bearer $jwt")
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                supabaseCheckResp.value = response.isSuccessful
+            }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { }
+        })
+    }
+
 
     var programList = MutableLiveData<String?>()
     fun getProgramList(campus : Campus) {
@@ -129,6 +211,18 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             XUANCHENG -> "xuancheng"
         }
         NetWork.makeRequest(MyAPI.getProgram(id,campusText),programSearchData)
+    }
+
+
+    fun downloadHoliday() {
+        val call = github.getYearHoliday()
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                saveString("HOLIDAY", response.body()?.string())
+            }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { }
+        })
     }
 
     val postTransferResponse = MutableLiveData<String?>()
@@ -1103,8 +1197,8 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     val mailData = MutableLiveData<String?>()
     fun getMailURL(token : String)  {
         val secret = Encrypt.generateRandomHexString()
-        val savedUsername = getPersonInfo().username + "@mail.hfut.edu.cn"
-        val chipperText = Encrypt.encryptAesECB(savedUsername,secret)
+        val email = getSchoolEmail() ?: return
+        val chipperText = Encrypt.encryptAesECB(email,secret)
         val cookie = "secret=$secret"
         val call = One.getMailURL(chipperText, "Bearer $token",cookie)
 

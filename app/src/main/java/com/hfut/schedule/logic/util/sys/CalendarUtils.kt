@@ -8,14 +8,16 @@ import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.model.jxglstu.datumResponse
 import com.hfut.schedule.logic.util.sys.PermissionManager.checkAndRequestCalendarPermission
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.viewmodel.UIViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.LocalDateTime
 import java.time.YearMonth
+import java.time.ZoneOffset
 import java.util.Calendar
 
 // 是否存在日程
@@ -276,6 +278,28 @@ fun parseToDateTime(startDate: String,startTime: String,endDate: String,endTime:
     val startBean = parseStrToDateTimeBean(startDate,startTime) ?: return null
     val endBean = parseStrToDateTimeBean(endDate,endTime) ?: return null
     return DateTime(startBean,endBean)
+}
+
+// 将时间转换为标准时间 例如东八区->0时区
+fun DateTimeBean.toUTC(offsetHours: Int = 8): DateTimeBean {
+    // 构造本地时区的 LocalDateTime
+    val localDateTime = LocalDateTime.of(year, month, day, hour, minute)
+
+    // 假设当前时间是东X区（默认东八区）
+    val zoneOffset = ZoneOffset.ofHours(offsetHours)
+    val zonedDateTime = localDateTime.atOffset(zoneOffset)
+
+    // 转换为 UTC
+    val utcDateTime = zonedDateTime.withOffsetSameInstant(ZoneOffset.UTC)
+
+    // 构造并返回转换后的 DateTimeBean
+    return DateTimeBean(
+        year = utcDateTime.year,
+        month = utcDateTime.monthValue,
+        day = utcDateTime.dayOfMonth,
+        hour = utcDateTime.hour,
+        minute = utcDateTime.minute
+    )
 }
 
 fun parseStrToDateTimeBean(date: String, time: String) : DateTimeBean? {

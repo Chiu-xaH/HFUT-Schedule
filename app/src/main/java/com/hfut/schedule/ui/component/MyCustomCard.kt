@@ -54,11 +54,11 @@ fun MyCustomCard(
 }
 // 小卡片
 @Composable
-fun SmallCard(modifier: Modifier = Modifier.fillMaxSize(), content: @Composable () -> Unit) {
+fun SmallCard(modifier: Modifier = Modifier.fillMaxSize(), color : Color? = null,content: @Composable () -> Unit) {
     Card(
         modifier = modifier,
         shape = MaterialTheme.shapes.small,
-        colors = CardDefaults.cardColors(containerColor = cardNormalColor())
+        colors = CardDefaults.cardColors(containerColor = color ?: cardNormalColor())
     ) {
         content()
     }

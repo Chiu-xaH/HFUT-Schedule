@@ -70,8 +70,8 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.zjgd.FeeResponse
 import com.hfut.schedule.logic.model.zjgd.FeeType
-import com.hfut.schedule.logic.util.storage.SharePrefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.screen.home.search.function.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.transfer.getCampus
 import com.hfut.schedule.ui.component.appHorizontalDp
@@ -101,7 +101,7 @@ import java.math.RoundingMode
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
-    val auth = SharePrefs.prefs.getString("auth","")
+    val auth = SharedPrefs.prefs.getString("auth","")
     val zjgdUrl = MyApplication.HUIXIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${FeeType.ELECTRIC.code}&name=pays&paymentUrl=${MyApplication.HUIXIN_URL}plat&token=" + auth
     var showDialogWeb by remember { mutableStateOf(false) }
     WebDialog(showDialogWeb, url = zjgdUrl, title = "慧新易校",showChanged = { showDialogWeb = false }, showTop = false)
@@ -182,10 +182,10 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                             Handler(Looper.getMainLooper()).post{
                                 vm.ElectricData.value = "{}"
                             }
-                            SharePrefs.saveString("BuildNumber", BuildingsNumber)
-                            SharePrefs.saveString("EndNumber", EndNumber)
-                            SharePrefs.saveString("RoomNumber", RoomNumber)
-                            SharePrefs.saveString("RoomText","${BuildingsNumber}号楼${RoomNumber}寝室${region}" )
+                            SharedPrefs.saveString("BuildNumber", BuildingsNumber)
+                            SharedPrefs.saveString("EndNumber", EndNumber)
+                            SharedPrefs.saveString("RoomNumber", RoomNumber)
+                            SharedPrefs.saveString("RoomText","${BuildingsNumber}号楼${RoomNumber}寝室${region}" )
                         }.await()
                         async { vm.getFee("bearer $auth", FeeType.ELECTRIC, room = input) }.await()
                         // async { vm.searchEle(jsons) }.await()

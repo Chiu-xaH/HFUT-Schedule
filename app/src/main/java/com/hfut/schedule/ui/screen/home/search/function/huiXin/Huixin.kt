@@ -12,13 +12,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.storage.SharePrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.WebDialog
 
 @Composable
 fun Huixin() {
-    val auth = SharePrefs.prefs.getString("auth","")
+    val auth = SharedPrefs.prefs.getString("auth","")
 
     var showDialog_Huixin by remember { mutableStateOf(false) }
 

@@ -22,6 +22,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -77,10 +78,10 @@ fun Fix(vm : LoginViewModel, vm2 : NetWorkViewModel) {
             Column {
                 TopAppBar(
                     modifier = Modifier.topBarBlur(hazeState),
-                    colors = TopAppBarDefaults.mediumTopAppBarColors(
-                        containerColor = Color.Transparent,
-                        titleContentColor = MaterialTheme.colorScheme.primary,
-                    ),
+                    colors = topAppBarColors(
+        containerColor = Color.Transparent,
+        titleContentColor = MaterialTheme.colorScheme.primary
+        ),
                     title = { Text("修复与检测") },
                     actions = {
                         IconButton(onClick = {
@@ -139,7 +140,7 @@ fun Fix(vm : LoginViewModel, vm2 : NetWorkViewModel) {
                             },
                             label = { Text(text = item.label) },
                             icon = {
-                                BadgedBox(badge = {}) { Icon(if(selected)item.filledIcon else item.icon, contentDescription = item.label) }
+                                Icon(if(selected)item.filledIcon else item.icon, contentDescription = item.label)
                             }
                         )
                     }

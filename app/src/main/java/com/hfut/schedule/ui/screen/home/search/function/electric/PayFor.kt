@@ -53,7 +53,7 @@ import com.hfut.schedule.logic.model.zjgd.FeeType
 import com.hfut.schedule.logic.model.zjgd.PayStep1Response
 import com.hfut.schedule.logic.model.zjgd.PayStep2Response
 import com.hfut.schedule.logic.model.zjgd.PayStep3Response
-import com.hfut.schedule.logic.util.storage.SharePrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.network.reEmptyLiveDta
 import com.hfut.schedule.ui.screen.home.cube.sub.CirclePoint
 import com.hfut.schedule.ui.screen.home.cube.sub.KeyBoard
@@ -65,7 +65,7 @@ import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.LittleDialog
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.style.bottomSheetRound
-import com.hfut.schedule.ui.component.statusUI
+import com.hfut.schedule.ui.component.StatusUI
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
@@ -110,7 +110,7 @@ fun PayFor(vm : NetWorkViewModel, payNumber : Float, tipInfo : String, json : St
         )
     }
 
-    val psk = SharePrefs.prefs.getString("pins",null)
+    val psk = SharedPrefs.prefs.getString("pins",null)
     var password by remember { mutableStateOf("") }
     var passwordStatus by remember { mutableStateOf("请输入密码") }
     val sheetState_pin = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -209,7 +209,7 @@ fun PayFor(vm : NetWorkViewModel, payNumber : Float, tipInfo : String, json : St
     Spacer(modifier = Modifier.height(20.dp))
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
         Button(onClick = {
-            if(!SharePrefs.prefs.getBoolean("SWITCHPIN",false))
+            if(!SharedPrefs.prefs.getBoolean("SWITCHPIN",false))
             showDialog = true
             else {
                 showBottomSheet_pin = true
@@ -232,7 +232,7 @@ private fun PayStatusUI(vm : NetWorkViewModel, payNumber : Float, json: String, 
 
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
-    val auth =   "bearer " + SharePrefs.prefs.getString("auth","")
+    val auth =   "bearer " + SharedPrefs.prefs.getString("auth","")
     var orderid = ""
     var msg  by remember { mutableStateOf("结果") }
     var count = 0;
@@ -326,7 +326,7 @@ private fun PayStatusUI(vm : NetWorkViewModel, payNumber : Float, json: String, 
             enter = fadeIn(),
             exit = fadeOut()
         ) {
-            statusUI(iconId = R.drawable.send_money, text = msg)
+            StatusUI(iconId = R.drawable.send_money, text = msg)
         }
     }
 

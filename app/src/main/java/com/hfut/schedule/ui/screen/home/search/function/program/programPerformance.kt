@@ -50,8 +50,8 @@ import androidx.compose.ui.unit.sp
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.logic.model.jxglstu.CourseItem
-import com.hfut.schedule.logic.util.storage.SharePrefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.screen.home.search.function.life.countFunc
 import com.hfut.schedule.ui.component.AnimationCardListItem
 import com.hfut.schedule.ui.component.AnimationCustomCard

@@ -49,7 +49,7 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.guagua.UseCodeResponse
 import com.hfut.schedule.logic.enumeration.ShowerScreen
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.network.reEmptyLiveDta
 import com.hfut.schedule.ui.screen.home.cube.sub.CirclePoint
 import com.hfut.schedule.ui.screen.home.cube.sub.KeyBoard
@@ -59,8 +59,8 @@ import com.hfut.schedule.ui.component.BottomTip
 import com.hfut.schedule.ui.component.largeCardColor
 import com.hfut.schedule.ui.component.LoadingUI
 import com.hfut.schedule.ui.component.TransplantListItem
-import com.hfut.schedule.ui.component.statusUI
-import com.hfut.schedule.ui.component.statusUI2
+import com.hfut.schedule.ui.component.StatusUI
+import com.hfut.schedule.ui.component.StatusUI2
 import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.RowHorizontal
@@ -161,9 +161,9 @@ fun UseCodeUI(vm: GuaGuaViewModel, hazeState: HazeState, navController: NavHostC
                     ActiveTopBar("修改使用码")
                     if(!loading) {
                         if(msg.contains("成功")) {
-                            statusUI2(Icons.Filled.Check,"成功修改为 $password")
+                            StatusUI2(Icons.Filled.Check,"成功修改为 $password")
                         } else if(msg == "密码错误")  {
-                            statusUI(R.drawable.login,"您从未使用密码登录过 需要重新用密码登录")
+                            StatusUI(R.drawable.login,"您从未使用密码登录过 需要重新用密码登录")
                             Spacer(Modifier.height(10.dp))
                             RowHorizontal {
                                 Button(
@@ -175,7 +175,7 @@ fun UseCodeUI(vm: GuaGuaViewModel, hazeState: HazeState, navController: NavHostC
                                 }
                             }
                         } else {
-                            statusUI2(Icons.Filled.Close,msg)
+                            StatusUI2(Icons.Filled.Close,msg)
                         }
                     } else {
                         LoadingUI()

@@ -62,7 +62,7 @@ import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
 import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
-import com.hfut.schedule.logic.util.storage.SharePrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.getNewWeek
 import com.hfut.schedule.ui.component.LoadingUI
 import com.hfut.schedule.ui.component.appHorizontalDp

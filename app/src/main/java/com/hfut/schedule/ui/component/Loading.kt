@@ -85,13 +85,11 @@ fun LoadingUI(
 }
 
 @Composable
-fun CenterLoadingUI(
+fun LoadingScreen(
     text : String? = null,
     sizeX : Int = 2
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
-        Box(modifier = Modifier.align(Alignment.Center)) {
-            LoadingUI(text, sizeX)
-        }
+    CenterScreen {
+        LoadingUI(text, sizeX)
     }
 }

@@ -28,6 +28,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -53,7 +54,7 @@ import com.hfut.schedule.logic.enumeration.ShowerBarItems
 import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.logic.util.storage.SharePrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
 //import com.hfut.schedule.ui.activity.card.function.main.turnToBottomBar
 import com.hfut.schedule.ui.screen.shower.bill.GuaguaBills
 import com.hfut.schedule.ui.screen.shower.function.GuaGuaSettings
@@ -93,10 +94,10 @@ fun ShowerGuaGua(vm: GuaGuaViewModel, netVm : NetWorkViewModel, navHostControlle
             Column {
                 TopAppBar(
                     modifier = Modifier.topBarBlur(hazeState),
-                    colors = TopAppBarDefaults.mediumTopAppBarColors(
-                        containerColor = Color.Transparent,
-                        titleContentColor = MaterialTheme.colorScheme.primary,
-                    ),
+                    colors = topAppBarColors(
+        containerColor = Color.Transparent,
+        titleContentColor = MaterialTheme.colorScheme.primary
+        ),
                     title = { Text("洗浴-呱呱物联") },
                     actions = {
                         IconButton(onClick = {

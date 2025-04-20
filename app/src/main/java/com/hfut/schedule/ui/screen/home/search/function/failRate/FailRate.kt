@@ -40,7 +40,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.logic.util.storage.SharePrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.component.BottomSheetTopBar
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
@@ -56,7 +56,7 @@ import kotlinx.coroutines.launch
 
 
 fun Click(vm: NetWorkViewModel, input : String, page : Int) {
-    val CommuityTOKEN = SharePrefs.prefs.getString("TOKEN","")
+    val CommuityTOKEN = SharedPrefs.prefs.getString("TOKEN","")
     CommuityTOKEN?.let { vm.SearchFailRate(it,input,page.toString()) }
 }
 @OptIn(ExperimentalMaterial3Api::class)

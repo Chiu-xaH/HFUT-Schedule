@@ -67,9 +67,10 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.zjgd.FeeType
 import com.hfut.schedule.logic.model.zjgd.ShowerFeeResponse
-import com.hfut.schedule.logic.util.storage.SharePrefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.saveString
+import com.hfut.schedule.logic.util.network.reEmptyLiveDta
+import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.Starter.loginGuaGua
 import com.hfut.schedule.logic.util.sys.Starter.startGuaGua
 import com.hfut.schedule.ui.screen.home.search.function.electric.PayFor
@@ -81,6 +82,7 @@ import com.hfut.schedule.ui.component.BottomSheetTopBar
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.LoadingLargeCard
+import com.hfut.schedule.ui.component.LoadingUI
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.component.ScrollText
 import com.hfut.schedule.ui.component.TransplantListItem
@@ -97,24 +99,29 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.math.BigDecimal
 
-fun getInGuaGua(vm: NetWorkViewModel) {
+fun getInGuaGua(vm: NetWorkViewModel,onResult : (Boolean) -> Unit) {
 
     lateinit var guaguaUserInfoObserver: Observer<String?> // 延迟初始化观察者
 
     guaguaUserInfoObserver = Observer { result ->
-        if (result?.contains("成功") == true) {
-            saveString("GuaGuaPersonInfo", result)
-            vm.guaguaUserInfo.removeObserver(guaguaUserInfoObserver) // 正常移除观察者
-            startGuaGua()
-        } else if (result?.contains("error") == true) {
-            vm.guaguaUserInfo.removeObserver(guaguaUserInfoObserver) // 正常移除观察者
-            loginGuaGua()
+        if(result != null) {
+            onResult(false)
+            if (result.contains("成功")) {
+                saveString("GuaGuaPersonInfo", result)
+                vm.guaguaUserInfo.removeObserver(guaguaUserInfoObserver) // 正常移除观察者
+                startGuaGua()
+            } else if (result.contains("error")) {
+                vm.guaguaUserInfo.removeObserver(guaguaUserInfoObserver) // 正常移除观察者
+                loginGuaGua()
+            }
         }
     }
 
     CoroutineScope(Job()).launch {
+        async { reEmptyLiveDta(vm.guaguaUserInfo) }.await()
+        async { onResult(true) }.await()
         async { vm.getGuaGuaUserInfo() }.await()
-        async {
+        launch {
             Handler(Looper.getMainLooper()).post {
                 vm.guaguaUserInfo.observeForever(guaguaUserInfoObserver)
             }
@@ -126,7 +133,7 @@ fun getInGuaGua(vm: NetWorkViewModel) {
 @Composable
 fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: HazeState) {
 //    val hazeState = remember { HazeState() }
-    val auth = SharePrefs.prefs.getString("auth","")
+    val auth = SharedPrefs.prefs.getString("auth","")
     val zjgdUrl = MyApplication.HUIXIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${FeeType.SHOWER.code}&name=pays&paymentUrl=${MyApplication.HUIXIN_URL}plat&token=" + auth
     var showDialogWeb by remember { mutableStateOf(false) }
     WebDialog(showDialogWeb, url = zjgdUrl, title = "慧新易校",showChanged = { showDialogWeb = false }, showTop = false)
@@ -269,7 +276,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
                             Handler(Looper.getMainLooper()).post{
                                 vm.ElectricData.value = "{}"
                             }
-                            SharePrefs.saveString("PhoneNumber",phoneNumber )
+                            SharedPrefs.saveString("PhoneNumber",phoneNumber )
                         }.await()
                         async { vm.getFee("bearer $auth", FeeType.SHOWER, phoneNumber = phoneNumber) }.await()
                         async {
@@ -378,6 +385,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
             animationSpec = tween(MyApplication.ANIMATION_SPEED/2, easing = LinearOutSlowInEasing),
             label = "" // 使用弹簧动画
         )
+        var loading by remember { mutableStateOf(false) }
 
         DividerTextExpandedWith(text = "查询结果") {
             Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
@@ -401,13 +409,17 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
             }
 
             if(!isInGuagua) {
-                Button(
-                    onClick = {
-                        getInGuaGua(vm)
-                    },
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = appHorizontalDp(), vertical = 5.dp).scale(scale.value)
-                ) {
-                    Text(text = "进入呱呱物联")
+                if(loading) {
+                    LoadingUI("正在核对登录")
+                } else {
+                    Button(
+                        onClick = {
+                            getInGuaGua(vm) { loading = it }
+                        },
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = appHorizontalDp(), vertical = 5.dp).scale(scale.value)
+                    ) {
+                        Text(text = "进入呱呱物联")
+                    }
                 }
             } else {
                 Spacer(Modifier.height(40.dp))

@@ -24,6 +24,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -47,7 +48,7 @@ import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.enumeration.GradeBarItems
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.screen.grade.analysis.GradeCountUI
 import com.hfut.schedule.ui.screen.grade.grade.community.GradeItemUI
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GradeItemUIJXGLSTU
@@ -117,10 +118,10 @@ fun GradeScreen(ifSaved : Boolean, vm : NetWorkViewModel) {
             Column {
                 TopAppBar(
                     modifier = Modifier.topBarBlur(hazeState,),
-                    colors = TopAppBarDefaults.mediumTopAppBarColors(
-                        containerColor = Color.Transparent,
-                        titleContentColor = MaterialTheme.colorScheme.primary,
-                    ),
+                    colors = topAppBarColors(
+        containerColor = Color.Transparent,
+        titleContentColor = MaterialTheme.colorScheme.primary
+        ),
                     title = { Text("成绩") },
                     actions = {
                         Row {

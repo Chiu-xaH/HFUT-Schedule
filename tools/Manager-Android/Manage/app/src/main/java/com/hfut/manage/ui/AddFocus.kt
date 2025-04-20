@@ -186,7 +186,7 @@ fun addFocus(vm : NetViewModel) {
                                 }
                             ) { Icon(Icons.Filled.Check, contentDescription = "") }
                         },
-                        title = { Text("添加聚焦卡片") }
+                        title = { Text("添加") }
                     )
                 },
             ) { innerPadding ->

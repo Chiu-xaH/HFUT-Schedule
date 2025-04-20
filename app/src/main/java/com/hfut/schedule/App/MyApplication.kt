@@ -20,8 +20,9 @@ class MyApplication : Application() {
         const val PAGE_SIZE = 30
         // 教务系统
         const val JXGLSTU_URL = "http://jxglstu.hfut.edu.cn/eams5-student/"
-        // Github API
-        const val GITHUB_URL = "https://api.github.com/"
+        // Github
+        const val GITHUB_API_URL = "https://api.github.com/"
+        const val GITHUB_RAW_URL = "https://raw.githubusercontent.com/"
         // 教务系统-WEBVPN 校外访问
         const val JXGLSTU_WEBVPN_URL = "https://webvpn.hfut.edu.cn/http/77726476706e69737468656265737421faef469034247d1e760e9cb8d6502720ede479/eams5-student/"
         // WEBVPN 校外访问
@@ -76,18 +77,28 @@ class MyApplication : Application() {
         // 哈尔滨中新官网 校园卡
         const val CARD_URL = "http://172.31.248.26:8088/"
         // 图书馆
-        const val LIBRARY_URL = "http://210.45.242.5:8080/"
+        const val OLD_LIBRARY_URL = "http://210.45.242.5:8080/"
+        const val NEW_LIBRARY_URL = "https://lib.hfut.edu.cn/"
+        // 座位预约
+        const val LIBRARY_SEAT = "http://210.45.242.57/"
         // 就业
         const val WORK_URL = "https://gdjy.hfut.edu.cn/"
         // 就业 宣城
         const val WORK_XC_URL = "https://xcjy.hfut.edu.cn/"
         // 大创
         const val IETP_URL = "http://dcxt.hfut.edu.cn/"
-
+        // 校友
+        const val ALUMNI_URL = "https://xypt.hfut.edu.cn/"
+        // 体育平台
+        const val PE_URL = "https://bdlp.hfut.edu.cn/"
+        // Supabase
+        const val SUPABASE_URL = "https://uadgxvstybecnhqemxvj.supabase.co/"
         // Github常量池
         const val GITHUB_USER_ID = 116127902
         const val GITHUB_DEVELOPER_NAME = "Chiu-xaH"
         const val GITHUB_REPO_NAME = "HFUT-Schedule"
+        // 邮箱
+        const val EMAIL = "@mail.hfut.edu.cn"
     }
 
     override fun onCreate() {

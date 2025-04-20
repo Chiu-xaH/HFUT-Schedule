@@ -28,7 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.Huixin
 import com.hfut.schedule.ui.screen.home.search.function.bus.SchoolBus
 import com.hfut.schedule.ui.screen.home.search.function.card.SchoolCardItem
@@ -41,7 +41,7 @@ import com.hfut.schedule.ui.screen.home.search.function.failRate.FailRate
 import com.hfut.schedule.ui.screen.home.search.function.grade.Grade
 import com.hfut.schedule.ui.screen.home.search.function.hotWater.HotWater
 import com.hfut.schedule.ui.screen.home.search.function.ietp.IETP
-import com.hfut.schedule.ui.screen.home.search.function.lepaoYun.LePaoYun
+import com.hfut.schedule.ui.screen.home.search.function.sport.lepao.LePaoYun
 import com.hfut.schedule.ui.screen.home.search.function.library.LibraryItem
 import com.hfut.schedule.ui.screen.home.search.function.life.Life
 import com.hfut.schedule.ui.screen.home.search.function.loginWeb.LoginWeb
@@ -69,6 +69,9 @@ import com.hfut.schedule.ui.screen.home.search.function.xueXin.XueXin
 import com.hfut.schedule.ui.component.cardNormalColor
 import com.hfut.schedule.ui.component.cardNormalDp
 import com.hfut.schedule.ui.component.SmallCard
+import com.hfut.schedule.ui.screen.home.search.function.alumni.Alumni
+import com.hfut.schedule.ui.screen.home.search.function.holiday.Holiday
+import com.hfut.schedule.ui.screen.home.search.function.supabase.Supabase
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
@@ -94,7 +97,7 @@ fun SearchScreen(
         "考试" to { Exam(vm, ifSaved,hazeState) },
         "寝室电费 缴费" to { Electric(vm, false, vmUI,hazeState) }, 
         "校园网" to { LoginWeb(vmUI, false, vm,hazeState) }, 
-        "教育邮箱" to { Mail(ifSaved, vm,hazeState) },
+        "教育邮箱" to { Mail(ifSaved, vm,vmUI,hazeState) },
         "一卡通 校园卡 账单 充值 缴费 慧新易校 合肥" to { Huixin() },
         "成绩" to { Grade(vm, ifSaved) },
         "挂科率" to { FailRate(vm,hazeState) }, 
@@ -108,13 +111,13 @@ fun SearchScreen(
         "教师评教 教师教评" to { Survey(ifSaved, vm,hazeState) }, 
         "通知公告 新闻" to { News(vm) }, 
         "培养方案" to { Program(vm, ifSaved,hazeState) },
-        "图书" to { LibraryItem(vm,hazeState) },
+        "图书馆 座位预约 借阅" to { LibraryItem(vm,hazeState) },
         "校车" to { SchoolBus() },
         "报修 维修 后勤" to { Repair(hazeState) }, 
         "下学期课程表 下学期课表" to { NextCourse(ifSaved, vmUI,vm, hazeState) }, 
         "热水机 趣智校园" to { HotWater() }, 
         "空教室" to { EmptyRoom(vm, ifSaved,hazeState) }, 
-        "乐跑云运动 校园跑" to { LePaoYun(vm) },
+        "乐跑云运动 校园跑 体测 体育测试 体育平台 体检" to { LePaoYun(hazeState) },
         "校历" to { SchoolCalendar() },
         "学信网" to { XueXin() },
         "生活服务 校园 校园 天气 教学楼 建筑 学堂" to { Life(vm,hazeState) }, 
@@ -126,8 +129,11 @@ fun SearchScreen(
         "第二课堂" to { Second() }, 
         "今日校园 学工系统 请假 助学金 奖学金 贫困 寝室 心理 日常" to { ToadyCampus(ifSaved,vm) }, 
         "大创 大学生创新创业" to { IETP() }, 
-        "就业 实习 春招 双选 秋招" to { Work(hazeState) }, 
-    )
+        "就业 实习 春招 双选 秋招" to { Work(hazeState) },
+        "校友 毕业" to { Alumni() },
+        "国家法定节假日 假期 节日" to { Holiday(hazeState) },
+        "云端共建平台 信息共建 日程 网课 网址导航" to { Supabase(vm) },
+        )
 
     val funcList = funcMaps.values.toList()
 

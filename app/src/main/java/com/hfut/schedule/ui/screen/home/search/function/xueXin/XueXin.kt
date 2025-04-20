@@ -16,7 +16,6 @@ import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.WebDialog
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun XueXin() {
     var showDialog by remember { mutableStateOf(false) }
@@ -30,47 +29,4 @@ fun XueXin() {
 
     val url = "https://my.chsi.com.cn/archive/wap/gdjy/index.action"
     WebDialog(showDialog,{ showDialog = false },url,"学信网")
-//
-//    val switch_startUri = SharePrefs.prefs.getBoolean("SWITCHSTARTURI",true)
-//
-//    if (showDialog) {
-//        if(switch_startUri) {
-//            androidx.compose.ui.window.Dialog(
-//                onDismissRequest = { showDialog = false },
-//                properties = DialogProperties(usePlatformDefaultWidth = false)
-//            ) {
-//                Scaffold(
-//                    modifier = Modifier.fillMaxSize(),
-//                    topBar = {
-//                        TopAppBar(
-//                            colors = TopAppBarDefaults.mediumTopAppBarColors(
-//                                containerColor = Color(0xFF26B887),
-//                                titleContentColor = Color.White,
-//                            ),
-//                            actions = {
-//                                Row{
-//                                    IconButton(onClick = { Starter.startWebUrl(url) }) { Icon(
-//                                        painterResource(id = R.drawable.net), contentDescription = "", tint = Color.White
-//                                    ) }
-//                                    IconButton(onClick = { showDialog = false }) { Icon(
-//                                        painterResource(id = R.drawable.close), contentDescription = "", tint = Color.White) }
-//                                }
-//                            },
-//                            title = { Text("学信网") }
-//                        )
-//                    },
-//                ) { innerPadding ->
-//                    Column(
-//                        modifier = Modifier
-//                            .padding(innerPadding)
-//                            .fillMaxSize()
-//                    ) {
-//                        WebViewScreen(url)
-//                    }
-//                }
-//            }
-//        } else {
-//            Starter.startWebUrl(url)
-//        }
-//    }
 }

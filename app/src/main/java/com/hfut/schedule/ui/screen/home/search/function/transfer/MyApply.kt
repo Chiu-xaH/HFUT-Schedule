@@ -57,8 +57,8 @@ import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.logic.util.storage.SharePrefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.network.reEmptyLiveDta
 import com.hfut.schedule.ui.screen.home.calendar.multi.getApplyingList
 import com.hfut.schedule.ui.screen.home.search.function.life.countFunc
@@ -80,7 +80,7 @@ import com.hfut.schedule.ui.component.LoadingLargeCard
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
-import com.hfut.schedule.ui.component.statusUI2
+import com.hfut.schedule.ui.component.StatusUI2
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.bottomSheetRound
 import dev.chrisbanes.haze.HazeState
@@ -470,7 +470,7 @@ fun TransferCancelStatusUI(vm : NetWorkViewModel, batchId: String, id: Int) {
             enter = fadeIn(),
             exit = fadeOut()
         ) {
-            statusUI2(painter =
+            StatusUI2(painter =
             if(msg == "成功" ) Icons.Filled.Check
             else Icons.Filled.Close
                 , text = msg)

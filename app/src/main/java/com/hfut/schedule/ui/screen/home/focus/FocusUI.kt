@@ -32,7 +32,7 @@ import com.hfut.schedule.logic.model.community.courseDetailDTOList
 import com.hfut.schedule.logic.database.entity.CustomEventDTO
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.logic.util.sys.JxglstuCourseSchedule
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.getCustomNetCourse
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.getCustomSchedule
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.getNetCourse
@@ -115,6 +115,8 @@ fun TodayScreen(
     var customNetCourseList by remember { mutableStateOf<List<CustomEventDTO>>(emptyList()) }
     var customScheduleList by remember { mutableStateOf<List<CustomEventDTO>>(emptyList()) }
     val showFocus by DataStoreManager.showCloudFocusFlow.collectAsState(initial = true)
+    val showStorageFocus by DataStoreManager.showFocusFlow.collectAsState(initial = true)
+
 
     // 初始化
     LaunchedEffect(Unit) {
@@ -202,23 +204,27 @@ fun TodayScreen(
                                 CourseType.NEXT.code -> {}
                             }
                             //日程
-                            customScheduleList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = false) { refreshDB = !refreshDB } } } }
+                            if(showStorageFocus)
+                                customScheduleList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = false) { refreshDB = !refreshDB } } } }
                             if(showFocus)
                                 scheduleList.let { list -> items(list.size) { item -> activity?.let { ScheduleItem(listItem = list[item],false,it) } } }
                             //考试
                             items(getExamJXGLSTU()) { item -> JxglstuExamUI(item,false) }
                             //网课
-                            customNetCourseList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1,isFuture = false) { refreshDB = !refreshDB } } } }
+                            if(showStorageFocus)
+                                customNetCourseList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1,isFuture = false) { refreshDB = !refreshDB } } } }
                             if(showFocus)
                                 netCourseList.let { list -> items(list.size) { item -> activity?.let { NetCourseItem(listItem = list[item],false,it) } } }
                         }
                         TAB_RIGHT -> {
                             //日程
-                            customScheduleList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = true) { refreshDB = !refreshDB } } } }
+                            if(showStorageFocus)
+                                customScheduleList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = true) { refreshDB = !refreshDB } } } }
                             if(showFocus)
                                 scheduleList.let { list -> items(list.size) { item -> activity?.let { ScheduleItem(listItem = list[item],true,it) }  } }
                             //网课
-                            customNetCourseList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = true) { refreshDB = !refreshDB } } } }
+                            if(showStorageFocus)
+                                customNetCourseList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = true) { refreshDB = !refreshDB } } } }
                             if(showFocus)
                                 netCourseList.let { list -> items(list.size) { item -> activity?.let { NetCourseItem(listItem = list[item],true,it) } } }
                             //第二天课表

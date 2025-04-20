@@ -43,8 +43,8 @@ import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.logic.util.storage.SharePrefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.model.zjgd.BillResponse
 import com.hfut.schedule.logic.model.zjgd.records
 import com.hfut.schedule.ui.screen.card.bill.main.getBills
@@ -70,7 +70,7 @@ private fun Items(vm: NetWorkViewModel) : List<records> {
             val records = data.data.records
             val totalpage = data.data.pages
             if(prefs.getInt("totalsearch",0) != totalpage)
-                SharePrefs.saveInt("totalsearch", totalpage)
+                SharedPrefs.saveInt("totalsearch", totalpage)
             return records
         } catch (_:Exception) {
             return emptyList()
@@ -83,7 +83,7 @@ fun SearchBillsUI(vm : NetWorkViewModel) {
 
     var clicked by remember { mutableStateOf(false) }
     var loading by remember { mutableStateOf(true) }
-    val auth = SharePrefs.prefs.getString("auth","")
+    val auth = SharedPrefs.prefs.getString("auth","")
 
     var input by remember { mutableStateOf("") }
     var page by remember { mutableStateOf(1) }

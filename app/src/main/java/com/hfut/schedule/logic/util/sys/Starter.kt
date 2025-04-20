@@ -12,7 +12,9 @@ import com.hfut.schedule.activity.screen.GradeActivity
 import com.hfut.schedule.activity.screen.NewsActivity
 import com.hfut.schedule.activity.screen.SuccessActivity
 import com.hfut.schedule.activity.screen.ShowerActivity
+import com.hfut.schedule.activity.screen.SupabaseActivity
 import com.hfut.schedule.logic.enumeration.ShowerScreen
+import com.hfut.schedule.logic.enumeration.SupabaseScreen
 import com.hfut.schedule.logic.util.network.WebVpn
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -94,6 +96,22 @@ object Starter {
     fun startGuaGua() {
         val it = Intent(MyApplication.context, ShowerActivity::class.java).apply {
             putExtra("FIRST",ShowerScreen.HOME.name)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        MyApplication.context.startActivity(it)
+    }
+    @JvmStatic
+    fun loginSupabase() {
+        val it = Intent(MyApplication.context, SupabaseActivity::class.java).apply {
+            putExtra("FIRST",SupabaseScreen.LOGIN.name)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        MyApplication.context.startActivity(it)
+    }
+    @JvmStatic
+    fun startSupabase() {
+        val it = Intent(MyApplication.context, SupabaseActivity::class.java).apply {
+            putExtra("FIRST",SupabaseScreen.HOME.name)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         MyApplication.context.startActivity(it)

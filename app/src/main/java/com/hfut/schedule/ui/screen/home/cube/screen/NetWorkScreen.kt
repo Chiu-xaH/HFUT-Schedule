@@ -30,12 +30,12 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.activity.MainActivity
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
-import com.hfut.schedule.logic.util.storage.SharePrefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.saveBoolean
+import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.saveBoolean
 import com.hfut.schedule.ui.screen.home.cube.Screen
 import com.hfut.schedule.ui.screen.home.cube.sub.RequestArrange
-import com.hfut.schedule.ui.screen.home.search.function.lepaoYun.InfoSet
+import com.hfut.schedule.ui.screen.home.search.function.sport.lepao.InfoSet
 import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.style.HazeBottomSheet
@@ -56,19 +56,19 @@ fun NetWorkScreen(navController: NavController,
         .padding(innerPaddings)) {
         Spacer(modifier = Modifier.height(5.dp))
 
-        val switch_api = SharePrefs.prefs.getBoolean("SWITCHMYAPIS", isFocus())
+        val switch_api = SharedPrefs.prefs.getBoolean("SWITCHMYAPIS", isFocus())
         var showapi by remember { mutableStateOf(switch_api) }
 
 
         saveBoolean("SWITCHMYAPIS",false,showapi)
 
-        val switch_upload = SharePrefs.prefs.getBoolean("SWITCHUPLOAD",true )
+        val switch_upload = SharedPrefs.prefs.getBoolean("SWITCHUPLOAD",true )
         var upload by remember { mutableStateOf(switch_upload) }
         saveBoolean("SWITCHUPLOAD",true,upload)
 
 
         // val deault = try { Gson().fromJson(my,MyAPIResponse::class.java).useNewAPI } catch (e : Exception) { true }
-        val switch_server = SharePrefs.prefs.getBoolean("SWITCHSERVER",false )
+        val switch_server = SharedPrefs.prefs.getBoolean("SWITCHSERVER",false )
         var server by remember { mutableStateOf(switch_server) }
         saveBoolean("SWITCHSERVER",false,server)
 
@@ -90,7 +90,7 @@ fun NetWorkScreen(navController: NavController,
 
         if(isFocus())
             TransplantListItem(
-                headlineContent = { Text(text = "网络接口") },
+                headlineContent = { Text(text = "显示班级内部事件(旧接口)") },
                 supportingContent = { Text(text = "为您提供除学校系统之外的聚焦信息\n(开发者同班同学仅可见此开关)") },
                 leadingContent = { Icon(painterResource(R.drawable.api), contentDescription = "Localized description",) },
                 trailingContent = { Switch(checked = showapi, onCheckedChange = {showapich -> showapi = showapich }) },

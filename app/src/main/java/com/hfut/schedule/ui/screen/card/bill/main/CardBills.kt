@@ -53,8 +53,8 @@ import com.hfut.schedule.logic.model.zjgd.BillResponse
 import com.hfut.schedule.logic.model.zjgd.records
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.logic.util.network.parse.JxglstuParseUtils
-import com.hfut.schedule.logic.util.storage.SharePrefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.network.reEmptyLiveDta
 import com.hfut.schedule.ui.screen.card.bill.CardRow
 import com.hfut.schedule.ui.component.AnimationCardListItem
@@ -86,11 +86,11 @@ fun getBills(vm : NetWorkViewModel) : List<records> {
             val data = bill.data.records
             val msg = bill.data.msg
             val totalpage = bill.data.pages
-            SharePrefs.saveString("totalpage",totalpage.toString())
+            SharedPrefs.saveString("totalpage",totalpage.toString())
             if (msg != null) {
                 if (msg.contains("成功")) {
                     val cardAccount = bill.data.records[0].fromAccount
-                    SharePrefs.saveString("cardAccount", cardAccount)
+                    SharedPrefs.saveString("cardAccount", cardAccount)
                 } else {
                     showToast(msg)
                 }

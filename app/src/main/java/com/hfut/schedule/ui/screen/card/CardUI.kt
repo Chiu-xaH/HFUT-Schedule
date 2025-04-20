@@ -34,6 +34,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -63,8 +64,8 @@ import com.hfut.schedule.logic.model.zjgd.records
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.network.parse.JxglstuParseUtils
-import com.hfut.schedule.logic.util.storage.SharePrefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.screen.card.function.main.HomeScreen
 import com.hfut.schedule.ui.screen.card.bill.main.CardBills
 import com.hfut.schedule.ui.screen.card.count.CardHome
@@ -95,11 +96,11 @@ private fun BillItem(vm : NetWorkViewModel) :List<records> {
             val data = bill.data.records
             val msg = bill.data.msg
             val totalpage = bill.data.pages
-            SharePrefs.saveString("totalpage",totalpage.toString())
+            SharedPrefs.saveString("totalpage",totalpage.toString())
             if (msg != null) {
                 if (msg.contains("成功")) {
                     val cardAccount = bill.data.records[0].fromAccount
-                    SharePrefs.saveString("cardAccount", cardAccount)
+                    SharedPrefs.saveString("cardAccount", cardAccount)
                 } else { Toast.makeText(MyApplication.context,msg, Toast.LENGTH_SHORT).show() }
             }
             return data
@@ -111,7 +112,6 @@ private fun BillItem(vm : NetWorkViewModel) :List<records> {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("SuspiciousIndentation", "UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -149,10 +149,10 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
         topBar = {
             Column(modifier = Modifier.topBarBlur(hazeState)) {
                 TopAppBar(
-                    colors = TopAppBarDefaults.mediumTopAppBarColors(
-                        containerColor = Color.Transparent,
-                        titleContentColor = MaterialTheme.colorScheme.primary,
-                    ),
+                    colors = topAppBarColors(
+        containerColor = Color.Transparent,
+        titleContentColor = MaterialTheme.colorScheme.primary
+        ),
                     title = { Text("一卡通") },
                     actions = {
                         IconButton(onClick = {

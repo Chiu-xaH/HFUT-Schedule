@@ -6,8 +6,8 @@ import com.hfut.schedule.logic.network.repo.NetWork
 import com.hfut.schedule.logic.network.servicecreator.GuaGuaServiceCreator
 import com.hfut.schedule.logic.network.api.GuaGuaService
 import com.hfut.schedule.logic.util.network.Encrypt
-import com.hfut.schedule.logic.util.storage.SharePrefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback

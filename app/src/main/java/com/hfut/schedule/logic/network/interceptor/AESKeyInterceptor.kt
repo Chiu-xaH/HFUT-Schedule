@@ -1,6 +1,6 @@
 package com.hfut.schedule.logic.network.interceptor
 
-import com.hfut.schedule.logic.util.storage.SharePrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
 import okhttp3.Interceptor
 import okhttp3.Response
 //获取AESKey保存到SharedPreferences
@@ -23,7 +23,7 @@ class AESKeyInterceptor : Interceptor {
     // Log.d("测试2",cookiekey)
         // 如果cookieValue不为空，就将其保存到SharedPreferences中
 
-        SharePrefs.saveString("cookie", cookiekey)
+        SharedPrefs.saveString("cookie", cookiekey)
 
 
         return response

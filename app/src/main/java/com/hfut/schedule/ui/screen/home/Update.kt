@@ -3,12 +3,16 @@ package com.hfut.schedule.ui.screen.home
 import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.Observer
+import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
+import com.hfut.schedule.logic.model.HolidayBean
+import com.hfut.schedule.logic.model.HolidayResponse
 import com.hfut.schedule.logic.util.network.parse.JxglstuParseUtils
-import com.hfut.schedule.logic.util.storage.SharePrefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.ui.screen.home.cube.sub.getEleNew
 import com.hfut.schedule.ui.screen.home.cube.sub.getWebInfoFromZJGD
 import com.hfut.schedule.ui.screen.home.focus.funiction.initCardNetwork
@@ -57,6 +61,10 @@ fun initNetworkRefresh(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIVie
             launch { getTodayNet(vm) }
         if(showCard)
             launch { initCardNetwork(vm,vmUI) }
+        // 更新节假日信息
+        if(DateTimeUtils.Date_yyyy != getHolidayYear()) {
+            launch { vm.downloadHoliday() }
+        }
     }
 }
 
@@ -67,7 +75,7 @@ suspend fun updateCourses(vm: NetWorkViewModel, vmUI: UIViewModel) = withContext
     val cookie = if (!vm.webVpn) prefs.getString("redirect", "") else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
     val studentIdObserver = Observer<Int> { result ->
         if (result != 0) {
-            SharePrefs.saveString("studentId", result.toString())
+            SharedPrefs.saveString("studentId", result.toString())
             CoroutineScope(Job()).launch {
                 async { vm.getBizTypeId(cookie!!) }.await()
             }
@@ -114,3 +122,18 @@ suspend fun updateCourses(vm: NetWorkViewModel, vmUI: UIViewModel) = withContext
         vm.datumData.observeForever(datumObserver)
     }
 }
+
+private fun getHoliday() : HolidayResponse? {
+    val json = prefs.getString("HOLIDAY",null)
+    return try {
+        Gson().fromJson(json, HolidayResponse::class.java)
+    } catch (e : Exception) {
+        null
+    }
+}
+
+fun getHolidayYear() : String? = getHoliday()?.year
+
+fun getHolidays() : List<HolidayBean> = getHoliday()?.days ?: emptyList()
+
+

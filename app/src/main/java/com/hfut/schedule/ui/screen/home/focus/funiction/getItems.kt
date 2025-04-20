@@ -5,8 +5,8 @@ import android.os.Looper
 import com.google.gson.Gson
 import com.hfut.schedule.logic.model.zjgd.BalanceResponse
 import com.hfut.schedule.logic.model.zjgd.ReturnCard
-import com.hfut.schedule.logic.util.storage.SharePrefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
 import kotlinx.coroutines.Dispatchers
@@ -32,15 +32,15 @@ suspend fun initCardNetwork(vm : NetWorkViewModel, vmUI : UIViewModel) = withCon
                         val name = yuedata.name
                         val account = yuedata.account
                         var now = transferNum(yuedata.db_balance)
-                        SharePrefs.saveString("card_now", now.toString())
+                        SharedPrefs.saveString("card_now", now.toString())
                         val settle = transferNum(yuedata.unsettle_amount)
-                        SharePrefs.saveString("card_settle", settle.toString())
+                        SharedPrefs.saveString("card_settle", settle.toString())
                         now += settle
                         val bd = BigDecimal(now.toString())
                         val str = bd.setScale(2, RoundingMode.HALF_UP).toString()
                         val balance = str
-                        SharePrefs.saveString("card", str)
-                        SharePrefs.saveString("card_account", account)
+                        SharedPrefs.saveString("card", str)
+                        SharedPrefs.saveString("card_account", account)
                         vmUI.cardValue = ReturnCard(balance, settle.toString(), now.toString(),amt.toString(),limite.toString(),name)
                     } catch (_: Exception) { }
                 }

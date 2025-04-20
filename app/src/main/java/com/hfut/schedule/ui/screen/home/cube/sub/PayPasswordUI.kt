@@ -35,9 +35,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.storage.SharePrefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.saveBoolean
-import com.hfut.schedule.logic.util.storage.SharePrefs.saveString
+import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.saveBoolean
+import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.ui.component.BottomSheetTopBar
 import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.component.showToast
@@ -49,11 +49,11 @@ import dev.chrisbanes.haze.HazeState
 @Composable
 fun LockUI(innerPadding : PaddingValues,hazeState: HazeState) {
 
-    val switch_pin = SharePrefs.prefs.getBoolean("SWITCHPIN",false)
+    val switch_pin = SharedPrefs.prefs.getBoolean("SWITCHPIN",false)
     var pin by remember { mutableStateOf(switch_pin) }
     saveBoolean("SWITCHPIN", false,pin)
 
-    var psk = SharePrefs.prefs.getString("pins",null)
+    var psk = SharedPrefs.prefs.getString("pins",null)
     // var password by remember { mutableStateOf(psk ?: "") }
     var input by remember { mutableStateOf("") }
     // Save("pins",password )
@@ -111,7 +111,7 @@ fun LockUI(innerPadding : PaddingValues,hazeState: HazeState) {
                         }
                         if(input.length == 6) {
                             if(pin) {
-                                psk = SharePrefs.prefs.getString("pins",null)
+                                psk = SharedPrefs.prefs.getString("pins",null)
                                 if(input == psk) {
                                     saveString("pins",null)
                                     pin = false

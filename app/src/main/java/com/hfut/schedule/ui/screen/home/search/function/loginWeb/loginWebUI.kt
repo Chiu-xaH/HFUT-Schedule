@@ -55,8 +55,8 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.zjgd.FeeType
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.logic.util.storage.SharePrefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.network.reEmptyLiveDta
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.ui.screen.home.search.function.electric.PayFor
@@ -114,7 +114,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
     var json by remember { mutableStateOf("") }
     // 校园网用的变量
     val isXuancheng = getCampus() == Campus.XUANCHENG
-    val memoryWeb = SharePrefs.prefs.getString("memoryWeb","0")
+    val memoryWeb = SharedPrefs.prefs.getString("memoryWeb","0")
     var flow by remember { mutableStateOf(vmUI.webValue.value?.flow ?: memoryWeb) }
     var fee by remember { mutableStateOf(vmUI.webValue.value?.fee?: "0") }
 

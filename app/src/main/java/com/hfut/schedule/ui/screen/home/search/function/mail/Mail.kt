@@ -2,6 +2,8 @@ package com.hfut.schedule.ui.screen.home.search.function.mail
 
 import android.os.Handler
 import android.os.Looper
+import android.provider.Contacts.Intents.UI
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -16,6 +18,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,17 +29,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.network.reEmptyLiveDta
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.LoadingUI
 import com.hfut.schedule.ui.component.ScrollText
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.WebDialog
+import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.ui.screen.supabase.login.UIStateHolder.isSupabaseRegistering
+import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.RowHorizontal
+import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
@@ -46,12 +56,11 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Mail(ifSaved : Boolean, vm : NetWorkViewModel, hazeState: HazeState) {
+fun Mail(ifSaved : Boolean, vm : NetWorkViewModel,vmUI: UIViewModel, hazeState: HazeState) {
     var showBottomSheet by remember { mutableStateOf(false) }
-    val mail = "@mail.hfut.edu.cn"
     TransplantListItem(
         headlineContent = { Text(text = "邮箱") },
-        overlineContent = { ScrollText(text = mail) },
+        overlineContent = { ScrollText(text = MyApplication.EMAIL) },
         leadingContent = { Icon(painter = painterResource(id = R.drawable.mail), contentDescription = "") },
         modifier = Modifier.clickable {
             if(ifSaved) refreshLogin()
@@ -78,7 +87,7 @@ fun Mail(ifSaved : Boolean, vm : NetWorkViewModel, hazeState: HazeState) {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ){
-                    MailUI(vm)
+                    MailUI(vm, vmUI)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
@@ -87,10 +96,8 @@ fun Mail(ifSaved : Boolean, vm : NetWorkViewModel, hazeState: HazeState) {
 }
 
 @Composable
-fun MailUI(vm: NetWorkViewModel) {
+fun MailUI(vm: NetWorkViewModel,vmUI : UIViewModel) {
     val token = prefs.getString("bearer","")
-    val savedUsername = prefs.getString("Username", "")
-    val mail = "$savedUsername@mail.hfut.edu.cn"
 
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
@@ -99,7 +106,7 @@ fun MailUI(vm: NetWorkViewModel) {
     var used by remember { mutableStateOf(false) }
 
     var showDialog by remember { mutableStateOf(false) }
-    WebDialog(showDialog,{ showDialog = false },url,mail)
+    WebDialog(showDialog,{ showDialog = false },url,getSchoolEmail() ?: "邮箱")
 
     fun refresh() {
         loading = true
@@ -127,8 +134,9 @@ fun MailUI(vm: NetWorkViewModel) {
     LaunchedEffect(used) {
         refresh()
     }
+
     if(loading) {
-        LoadingUI(text = "正在登录 $mail")
+        LoadingUI(text = "正在登录邮箱 若加载过长请重新打开")
     } else {
         RowHorizontal {
             Button(
@@ -138,6 +146,18 @@ fun MailUI(vm: NetWorkViewModel) {
                 }
             ) {
                 Text("进入邮箱")
+            }
+        }
+        if(isSupabaseRegistering.value) {
+            RowHorizontal {
+                Button(
+                    onClick = {
+                        Starter.startWebUrl(url)
+                        showToast("请检查最新收件箱 来自Supabase Auth的邮件 点击链接Confirm")
+                    }
+                ) {
+                    Text("注册激活请选此处")
+                }
             }
         }
     }

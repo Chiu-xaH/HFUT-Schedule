@@ -16,7 +16,7 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import com.hfut.schedule.ui.theme.AppTheme
 import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.logic.util.storage.SharePrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.ui.style.TransparentSystemBars
 import com.hfut.schedule.viewmodel.network.GuaGuaViewModel
 import com.hfut.schedule.viewmodel.network.NetworkViewModelFactory

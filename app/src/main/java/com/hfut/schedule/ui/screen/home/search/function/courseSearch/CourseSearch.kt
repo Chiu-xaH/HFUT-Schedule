@@ -51,9 +51,6 @@ fun CoursesSearch(ifSaved :  Boolean, vm : NetWorkViewModel, hazeState : HazeSta
             onDismissRequest = { showBottomSheet = false },
             hazeState = hazeState,
             showBottomSheet = showBottomSheet,
-
-//            sheetState = sheetState,
-//            shape = bottomSheetRound(sheetState)
         ) {
             CourseSearchUI(vm, hazeState )
         }

@@ -22,9 +22,9 @@ import com.hfut.schedule.ui.style.RowHorizontal
 import kotlinx.coroutines.launch
 
 @Composable
-fun CustomTabRow(pagerState: PagerState, titles: List<String>) {
+fun CustomTabRow(pagerState: PagerState, titles: List<String>,modifier: Modifier = Modifier.padding(horizontal = 10.dp)) {
     val scope = rememberCoroutineScope()
-    Column(modifier = Modifier.background(Color.Transparent).padding(horizontal = 10.dp)) {
+    Column(modifier = modifier.background(Color.Transparent)) {
         SecondaryTabRow(
             selectedTabIndex = pagerState.currentPage,
             containerColor = Color.Transparent,

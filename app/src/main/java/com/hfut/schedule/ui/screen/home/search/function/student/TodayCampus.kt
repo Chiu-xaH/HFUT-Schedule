@@ -35,8 +35,8 @@ import androidx.compose.ui.window.DialogProperties
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.network.parse.JxglstuParseUtils
-import com.hfut.schedule.logic.util.storage.SharePrefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.screen.home.search.function.life.countFunc
 import com.hfut.schedule.ui.component.BottomSheetTopBar
@@ -44,8 +44,8 @@ import com.hfut.schedule.ui.component.LoadingUI
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.ui.component.WebViewScreen
-import com.hfut.schedule.ui.component.statusUI
-import com.hfut.schedule.ui.component.statusUI2
+import com.hfut.schedule.ui.component.StatusUI
+import com.hfut.schedule.ui.component.StatusUI2
 import com.hfut.schedule.ui.style.ColumnVertical
 import com.hfut.schedule.ui.style.RowHorizontal
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -227,7 +227,7 @@ fun LoginStuUI(vm : NetWorkViewModel) {
         LoadingUI(text = "正在登录中 请勿关闭")
     } else {
         ColumnVertical {
-            statusUI2(Icons.Filled.Check, text = "登录成功")
+            StatusUI2(Icons.Filled.Check, text = "登录成功")
             Button(
                 onClick = {
                     showBottomSheet = true

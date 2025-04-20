@@ -7,8 +7,8 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.model.community.ExamResponse
 import com.hfut.schedule.logic.model.community.examArrangementList
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
-import com.hfut.schedule.logic.util.storage.SharePrefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import org.jsoup.Jsoup
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -56,7 +56,7 @@ fun getNewExam() : MutableList<examArrangementList> {
 fun getExamJXGLSTU() : List<Map<String,String>>{
     //考试JSON解析
 
-    val examjson = SharePrefs.prefs.getString("examJXGLSTU", "")
+    val examjson = SharedPrefs.prefs.getString("examJXGLSTU", "")
 
     val doc = Jsoup.parse(examjson).select("tbody tr")
     try {

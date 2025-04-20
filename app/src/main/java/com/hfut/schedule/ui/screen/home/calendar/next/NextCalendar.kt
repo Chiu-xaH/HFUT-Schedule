@@ -50,7 +50,7 @@ import androidx.compose.ui.unit.sp
 import com.google.gson.Gson
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.model.jxglstu.datumResponse
-import com.hfut.schedule.logic.util.storage.SharePrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.screen.home.calendar.next.DatumMode.*
 import com.hfut.schedule.ui.component.appHorizontalDp
@@ -249,7 +249,7 @@ fun DatumUI(showAll : Boolean,
         table_5_5 = ""
         //////////////////////////////////////////////////////////////////////////////////
         try {
-            val json = SharePrefs.prefs.getString("jsonNext", "")
+            val json = SharedPrefs.prefs.getString("jsonNext", "")
             val datumResponse = Gson().fromJson(json, datumResponse::class.java)
             val scheduleList = datumResponse.result.scheduleList
             val lessonList = datumResponse.result.lessonList
@@ -465,7 +465,7 @@ fun DatumUI(showAll : Boolean,
         //////////////////////////////////////////////////////////////////////////////////
 
         try {
-            val json =  SharePrefs.prefs.getString("jsonNext", "")
+            val json =  SharedPrefs.prefs.getString("jsonNext", "")
             // Log.d("测试",json!!)
             val datumResponse = Gson().fromJson(json, datumResponse::class.java)
             val scheduleList = datumResponse.result.scheduleList

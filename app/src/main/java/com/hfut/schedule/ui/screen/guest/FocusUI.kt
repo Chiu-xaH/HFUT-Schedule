@@ -26,6 +26,7 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,6 +43,7 @@ import com.hfut.schedule.logic.util.network.parse.ParseJsons.getCustomNetCourse
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.getCustomSchedule
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.getNetCourse
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.getSchedule
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.getCourseINFO
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.focus.funiction.CustomItem
@@ -74,6 +76,8 @@ fun TodayScreenNoLogin(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding
     var timeNow by remember { mutableStateOf(DateTimeUtils.Time_HH_MM) }
 
     var refreshDB by remember { mutableStateOf(false) }
+    val showStorageFocus by DataStoreManager.showFocusFlow.collectAsState(initial = true)
+
 
 //Today操作区///////////////////////////////////////////////////////////////////////////////////////////////////
     var customNetCourseList by remember { mutableStateOf<List<CustomEventDTO>>(emptyList()) }
@@ -90,7 +94,7 @@ fun TodayScreenNoLogin(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding
 
             }.await()
             async { DateTimeUtils.updateTime { timeNow = it } }.await()
-            async { initGuestNetwork(vm2) }.await()
+            async { initGuestNetwork(vm,vm2) }.await()
             launch {
                 refreshing = false
             }
@@ -110,7 +114,7 @@ fun TodayScreenNoLogin(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding
     LaunchedEffect(Unit) {
         // 冷启动
         launch {
-            initGuestNetwork(vm2)
+            initGuestNetwork(vm,vm2)
         }
         // 加载数据库
         launch {
@@ -139,18 +143,26 @@ fun TodayScreenNoLogin(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding
                         item { Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding())) }
                         when(page) {
                             TAB_LEFT -> {
-                                customScheduleList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = false) { refreshDB = !refreshDB } } } }
+                                if(showStorageFocus)
+                                    customScheduleList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = false) { refreshDB = !refreshDB } } } }
+
                                 scheduleList.let { list -> items(list.size) { item -> activity?.let { ScheduleItem(list[item],false,it) } } }
 
-                                customNetCourseList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1,isFuture = false) { refreshDB = !refreshDB } } } }
+                                if(showStorageFocus)
+                                    customNetCourseList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1,isFuture = false) { refreshDB = !refreshDB } } } }
+
                                 netCourseList.let { list -> items(list.size) { item -> activity?.let { NetCourseItem(list[item],false,it) } } }
                             }
                             TAB_RIGHT -> {
                                 //日程
-                                customScheduleList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = true) { refreshDB = !refreshDB } } } }
+                                if(showStorageFocus)
+                                    customScheduleList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = true) { refreshDB = !refreshDB } } } }
+
                                 scheduleList.let { list -> items(list.size) { item -> activity?.let { ScheduleItem(list[item],true,it) }  } }
                                 //网课
-                                customNetCourseList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = true) { refreshDB = !refreshDB } } } }
+                                if(showStorageFocus)
+                                    customNetCourseList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = true) { refreshDB = !refreshDB } } } }
+
                                 netCourseList.let { list -> items(list.size) { item -> activity?.let { NetCourseItem(list[item],true,it) } } }
 
                                 item { TimeStampItem() }

@@ -7,7 +7,7 @@ import com.hfut.schedule.logic.model.community.BorrowRecords
 import com.hfut.schedule.logic.model.community.BorrowResponse
 import com.hfut.schedule.logic.model.community.LibRecord
 import com.hfut.schedule.logic.model.community.LibraryResponse
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 
 fun getBorrow(vm: NetWorkViewModel) : List<BorrowRecords> {

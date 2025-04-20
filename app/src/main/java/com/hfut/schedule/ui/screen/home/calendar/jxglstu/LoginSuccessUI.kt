@@ -68,9 +68,9 @@ import com.hfut.schedule.logic.model.community.LoginCommunityResponse
 import com.hfut.schedule.logic.model.jxglstu.datumResponse
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.logic.util.network.parse.JxglstuParseUtils
-import com.hfut.schedule.logic.util.storage.SharePrefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.saveInt
+import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.saveInt
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.isNextOpen
 import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
@@ -467,7 +467,7 @@ fun CalendarScreen(
                if (result.contains("200") && result.contains("token")) {
                    try {
                        val tokens = Gson().fromJson(result, LoginCommunityResponse::class.java).result.token
-                       SharePrefs.saveString("TOKEN", tokens)
+                       SharedPrefs.saveString("TOKEN", tokens)
                        if (num2 == 1) {
                            showToast("Community登陆成功")
                            num2++
@@ -538,7 +538,7 @@ fun CalendarScreen(
             async {
                 val studentIdObserver = Observer<Int> { result ->
                     if (result != 0) {
-                        SharePrefs.saveString("studentId", result.toString())
+                        SharedPrefs.saveString("studentId", result.toString())
                         CoroutineScope(Job()).launch {
                             async { vm.getBizTypeId(cookie!!) }.await()
                             async { vm.getInfo(cookie!!) }

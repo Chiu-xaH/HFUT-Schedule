@@ -29,7 +29,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.storage.SharePrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.MyCustomCard
 import com.hfut.schedule.ui.component.showToast

@@ -37,9 +37,9 @@ import com.hfut.schedule.logic.model.SearchEleResponse
 import com.hfut.schedule.logic.model.zjgd.FeeResponse
 import com.hfut.schedule.logic.model.zjgd.FeeType
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
-import com.hfut.schedule.logic.util.storage.SharePrefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.saveString
+import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.ui.screen.home.focus.funiction.TodayUI
 import com.hfut.schedule.ui.screen.home.search.function.card.SchoolCardItem
 import com.hfut.schedule.ui.screen.home.search.function.electric.Electric
@@ -50,7 +50,9 @@ import com.hfut.schedule.ui.screen.home.search.function.shower.getInGuaGua
 import com.hfut.schedule.ui.screen.home.search.function.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.transfer.getCampus
 import com.hfut.schedule.ui.component.BottomSheetTopBar
+import com.hfut.schedule.ui.component.LoadingUI
 import com.hfut.schedule.ui.component.MyCustomCard
+import com.hfut.schedule.ui.component.RotatingIcon
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.cardNormalColor
@@ -72,34 +74,34 @@ fun FocusCardSettings(innerPadding : PaddingValues) {
     var showBottomSheet by remember { mutableStateOf(false) }
     var sheetState = rememberModalBottomSheetState()
 
-    val switch_ele = SharePrefs.prefs.getBoolean("SWITCHELE", getCampus() == Campus.XUANCHENG)
+    val switch_ele = SharedPrefs.prefs.getBoolean("SWITCHELE", getCampus() == Campus.XUANCHENG)
     var showEle by remember { mutableStateOf(switch_ele) }
-    SharePrefs.saveBoolean("SWITCHELE", true, showEle)
+    SharedPrefs.saveBoolean("SWITCHELE", true, showEle)
 
-    val switch_web = SharePrefs.prefs.getBoolean("SWITCHWEB", getCampus() == Campus.XUANCHENG)
+    val switch_web = SharedPrefs.prefs.getBoolean("SWITCHWEB", getCampus() == Campus.XUANCHENG)
     var showWeb by remember { mutableStateOf(switch_web) }
-    SharePrefs.saveBoolean("SWITCHWEB", true, showWeb)
+    SharedPrefs.saveBoolean("SWITCHWEB", true, showWeb)
 
-    val switch_card = SharePrefs.prefs.getBoolean("SWITCHCARD", true)
+    val switch_card = SharedPrefs.prefs.getBoolean("SWITCHCARD", true)
     var showCard by remember { mutableStateOf(switch_card) }
-    SharePrefs.saveBoolean("SWITCHCARD", true, showCard)
+    SharedPrefs.saveBoolean("SWITCHCARD", true, showCard)
 
-    val switch_today = SharePrefs.prefs.getBoolean("SWITCHTODAY", true)
+    val switch_today = SharedPrefs.prefs.getBoolean("SWITCHTODAY", true)
     var showToday by remember { mutableStateOf(switch_today) }
-    SharePrefs.saveBoolean("SWITCHTODAY", true, showToday)
+    SharedPrefs.saveBoolean("SWITCHTODAY", true, showToday)
 
 
-    val switch_card_add = SharePrefs.prefs.getBoolean("SWITCHCARDADD", true)
+    val switch_card_add = SharedPrefs.prefs.getBoolean("SWITCHCARDADD", true)
     var showCardAdd by remember { mutableStateOf(switch_card_add) }
-    SharePrefs.saveBoolean("SWITCHCARDADD", true, showCardAdd)
+    SharedPrefs.saveBoolean("SWITCHCARDADD", true, showCardAdd)
 
-    val switch_countDown = SharePrefs.prefs.getBoolean("SWITCHCOUNTDOWN", false)
+    val switch_countDown = SharedPrefs.prefs.getBoolean("SWITCHCOUNTDOWN", false)
     var showCountDown by remember { mutableStateOf(switch_countDown) }
-    SharePrefs.saveBoolean("SWITCHCOUNTDOWN", false, showCountDown)
+    SharedPrefs.saveBoolean("SWITCHCOUNTDOWN", false, showCountDown)
 
-    val switch_shortCut = SharePrefs.prefs.getBoolean("SWITCHSHORTCUT", false)
+    val switch_shortCut = SharedPrefs.prefs.getBoolean("SWITCHSHORTCUT", false)
     var showShortCut by remember { mutableStateOf(switch_shortCut) }
-    SharePrefs.saveBoolean("SWITCHSHORTCUT", false, showShortCut)
+    SharedPrefs.saveBoolean("SWITCHSHORTCUT", false, showShortCut)
 
 
     Column(modifier = Modifier.padding(innerPadding)) {
@@ -199,7 +201,7 @@ fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) {
     val showCard = prefs.getBoolean("SWITCHCARD",true)
     val showCountDown = prefs.getBoolean("SWITCHCOUNTDOWN",false)
     val showShortCut = prefs.getBoolean("SWITCHSHORTCUT",false)
-
+    var loading by remember { mutableStateOf(false) }
 
     if(showCard || showEle || showToday || showWeb)
         MyCustomCard(
@@ -246,23 +248,32 @@ fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) {
                 if(DateTimeUtils.Time_Hour.toInt() in 22 until 25) {
                     Row(
                         modifier = Modifier.clickable {
-                            getInGuaGua(vm)
+                            getInGuaGua(vm) { loading = it }
                         }
                     ) {
-                        Box(modifier = Modifier.weight(.5f)) {
+                        if(loading) {
                             TransplantListItem(
-                                headlineContent = { Text(text = "晚上好") },
-                                overlineContent = { Text(text = "洗去一身疲惫吧") },
+                                headlineContent = { Text(text = "正在核对登录") },
                                 leadingContent = {
-                                    Icon(painterResource(id = R.drawable.dark_mode), contentDescription = "")
+                                    RotatingIcon(R.drawable.progress_activity)
                                 }
                             )
-                        }
-                        Box(modifier = Modifier.weight(.5f)) {
-                            TransplantListItem(headlineContent = { Text(text = "洗浴") }, leadingContent = {
-                                Icon(painterResource(id = R.drawable.bathtub), contentDescription = "")
-                            }, overlineContent = { Text(text = "推荐") }
-                            )
+                        } else {
+                            Box(modifier = Modifier.weight(.5f)) {
+                                TransplantListItem(
+                                    headlineContent = { Text(text = "晚上好") },
+                                    overlineContent = { Text(text = "洗去一身疲惫吧") },
+                                    leadingContent = {
+                                        Icon(painterResource(id = R.drawable.dark_mode), contentDescription = "")
+                                    }
+                                )
+                            }
+                            Box(modifier = Modifier.weight(.5f)) {
+                                TransplantListItem(headlineContent = { Text(text = "洗浴") }, leadingContent = {
+                                    Icon(painterResource(id = R.drawable.bathtub), contentDescription = "")
+                                }, overlineContent = { Text(text = "推荐") }
+                                )
+                            }
                         }
                     }
                 }

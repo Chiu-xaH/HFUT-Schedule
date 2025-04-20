@@ -64,7 +64,7 @@ import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.ShowerLabelEntity
 import com.hfut.schedule.logic.util.sys.PermissionManager.checkAndRequestCameraPermission
 import com.hfut.schedule.logic.util.other.QRCodeAnalyzer
-import com.hfut.schedule.logic.util.storage.SharePrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.ui.component.BottomSheetTopBar
 import com.hfut.schedule.ui.component.BottomTip
 import com.hfut.schedule.ui.component.CameraScan
@@ -73,7 +73,7 @@ import com.hfut.schedule.ui.component.LittleDialog
 import com.hfut.schedule.ui.component.LoadingUI
 import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.component.showToast
-import com.hfut.schedule.ui.component.statusUI2
+import com.hfut.schedule.ui.component.StatusUI2
 import com.hfut.schedule.ui.style.RowHorizontal
 import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.ui.style.textFiledTransplant
@@ -85,8 +85,8 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 fun startShower(vm : GuaGuaViewModel, macLocation : String) {
-    val loginCode = SharePrefs.prefs.getString("loginCode",null)
-    val phoneNumber = SharePrefs.prefs.getString("PHONENUM",null)
+    val loginCode = SharedPrefs.prefs.getString("loginCode",null)
+    val phoneNumber = SharedPrefs.prefs.getString("PHONENUM",null)
     phoneNumber?.let {
         loginCode?.let {
                 it1 -> vm.startShower(phoneNumber = it, loginCode = it1, macLocation = macLocation)
@@ -148,7 +148,7 @@ fun ShowerStatusUI(vm : GuaGuaViewModel) {
             enter = fadeIn(),
             exit = fadeOut()
         ) {
-            statusUI2(painter =
+            StatusUI2(painter =
             if(msg.contains("成功")) Icons.Filled.Check
             else Icons.Filled.Close
                 , text = msg)
@@ -257,7 +257,7 @@ fun StartShowerUI(vm: GuaGuaViewModel, hazeState: HazeState) {
                         label = { Text("备注名称(可参考花洒红色贴纸)" ) },
                         singleLine = true,
                         shape = MaterialTheme.shapes.medium,
-                        colors = textFiledTransplant(),
+                        colors = textFiledTransplant(isColorCopy = false),
                         supportingText = {
                             Text(text = input)
                         }

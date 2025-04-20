@@ -48,7 +48,7 @@ import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomCourseTableSummary
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.addCourseToEvent
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.delCourseEvents
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.getMy
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.isNextOpen

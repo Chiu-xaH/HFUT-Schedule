@@ -74,7 +74,7 @@ import com.hfut.schedule.logic.enumeration.NewsBarItems
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.network.Encrypt
-import com.hfut.schedule.logic.util.storage.SharePrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.network.reEmptyLiveDta
 import com.hfut.schedule.ui.screen.news.department.SchoolsUI
 import com.hfut.schedule.ui.screen.news.home.NewsItem
@@ -84,7 +84,7 @@ import com.hfut.schedule.ui.util.NavigateAnimationManager.currentPage
 
 import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.component.cardNormalDp
-import com.hfut.schedule.ui.component.CenterLoadingUI
+import com.hfut.schedule.ui.component.LoadingScreen
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.ui.style.bottomBarBlur
@@ -321,7 +321,7 @@ fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
             Spacer(modifier = Modifier.height(cardNormalDp()))
 
             if(loading) {
-                CenterLoadingUI()
+                LoadingScreen()
             } else {
                 NewsItem(vm,innerPadding)
             }

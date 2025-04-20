@@ -34,9 +34,9 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.ShowerScreen
 import com.hfut.schedule.logic.util.sys.ClipBoard
-import com.hfut.schedule.logic.util.storage.SharePrefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.saveBoolean
+import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.saveBoolean
 import com.hfut.schedule.logic.util.sys.Starter.loginGuaGua
 import com.hfut.schedule.ui.component.appHorizontalDp
 
@@ -91,7 +91,7 @@ fun GuaGuaSettings(innerPadding: PaddingValues,navHostController: NavHostControl
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditLoginCode(isOnLogin: Boolean = false, onClickLogin: (() -> Unit)? = null) {
-    var input by remember { mutableStateOf(SharePrefs.prefs.getString("loginCode","") ?: "") }
+    var input by remember { mutableStateOf(SharedPrefs.prefs.getString("loginCode","") ?: "") }
 
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -104,7 +104,7 @@ fun EditLoginCode(isOnLogin: Boolean = false, onClickLogin: (() -> Unit)? = null
             value = input,
             onValueChange = {
                 input = it
-                SharePrefs.saveString("loginCode",input)
+                SharedPrefs.saveString("loginCode",input)
             },
             label = { Text("loginCode" ) },
             singleLine = true,

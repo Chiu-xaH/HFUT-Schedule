@@ -59,8 +59,8 @@ import com.hfut.schedule.logic.model.community.LoginCommunityResponse
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.logic.model.jxglstu.TransferData
 import com.hfut.schedule.logic.util.sys.ClipBoard
-import com.hfut.schedule.logic.util.storage.SharePrefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.network.reEmptyLiveDta
 import com.hfut.schedule.ui.screen.home.cube.sub.getUserInfo
 import com.hfut.schedule.ui.screen.home.search.function.life.countFunc
@@ -78,7 +78,7 @@ import com.hfut.schedule.ui.component.DepartmentIcons
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
-import com.hfut.schedule.ui.component.statusUI2
+import com.hfut.schedule.ui.component.StatusUI2
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.ui.style.textFiledTransplant
@@ -446,7 +446,7 @@ fun TransferStatusUI(vm : NetWorkViewModel, batchId: String, id: Int, phoneNumbe
             enter = fadeIn(),
             exit = fadeOut()
         ) {
-            statusUI2(painter =
+            StatusUI2(painter =
             if(msg == "成功" ) Icons.Filled.Check
             else Icons.Filled.Close
                 , text = msg)

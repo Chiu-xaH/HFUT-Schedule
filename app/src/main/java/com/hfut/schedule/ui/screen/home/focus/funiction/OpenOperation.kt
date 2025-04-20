@@ -8,5 +8,6 @@ fun openOperation(info : String) {
     else if(info.contains("U校园")) Starter.startWebUrl("https://u.unipus.cn/")
     else if(info.contains("雨课堂"))  Starter.startLaunchAPK("com.xuetangx.ykt","雨课堂")
     else if(info.contains("MOOC"))  Starter.startLaunchAPK("com.netease.edu.ucmooc","中国大学MOOC")
+    else if(info.contains("http")) Starter.startWebUrl(info)
     else showToast("此条未做点击适配")
 }

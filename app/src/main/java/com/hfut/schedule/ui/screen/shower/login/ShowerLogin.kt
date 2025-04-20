@@ -31,10 +31,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -49,6 +52,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.test.core.app.ActivityScenario.launch
+import androidx.test.core.app.launchActivity
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
@@ -58,8 +63,8 @@ import com.hfut.schedule.logic.model.guagua.GuaGuaLoginResponse
 import com.hfut.schedule.logic.model.guagua.GuaguaLoginMsg
 import com.hfut.schedule.logic.enumeration.ShowerScreen
 import com.hfut.schedule.logic.util.network.Encrypt
-import com.hfut.schedule.logic.util.storage.SharePrefs.saveString
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter.loginGuaGua
 import com.hfut.schedule.logic.util.sys.Starter.startGuaGua
 import com.hfut.schedule.ui.screen.shower.function.EditLoginCode
@@ -72,32 +77,31 @@ import com.hfut.schedule.ui.util.navigateAndClear
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShowerLogin(vm : GuaGuaViewModel, netVm : NetWorkViewModel, navHostController: NavHostController) {
-
     val context = LocalActivity.current
-
 
     Scaffold(
         topBar = {
             LargeTopAppBar(
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = Color.Transparent,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
+                colors = topAppBarColors(
+        containerColor = Color.Transparent,
+        titleContentColor = MaterialTheme.colorScheme.primary
+        ),
                 title = {
                     Box(modifier = Modifier.fillMaxWidth()) {
                         Text(
                             text = "登录  ",
                             modifier = Modifier.fillMaxWidth(),
                             textAlign = TextAlign.Center,
-                            //style = MaterialTheme.typography.titleLarge
                         )
                     }
                 },
@@ -134,20 +138,20 @@ fun ShowerLogin(vm : GuaGuaViewModel, netVm : NetWorkViewModel, navHostControlle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GuaGuaLoginUI(vm : GuaGuaViewModel, netVm : NetWorkViewModel, navHostController: NavHostController) {
+private fun GuaGuaLoginUI(vm : GuaGuaViewModel, netVm : NetWorkViewModel, navHostController: NavHostController) {
 
     var hidden by rememberSaveable { mutableStateOf(true) }
 
-    val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
     val Savedusername = prefs.getString("PHONENUM", "")
     val Savedpassword = prefs.getString("GuaGuaPsk","")
 
     var username by remember { mutableStateOf(Savedusername ?: "") }
     var inputAES by remember { mutableStateOf(Savedpassword ?: "") }
 
-
     // 创建一个动画值，根据按钮的按下状态来改变阴影的大小
-    var showTip by remember { mutableStateOf("请新用户先前往微信小程序-呱呱物联注册") }
+    val showTip by remember { mutableStateOf("请新用户先前往微信小程序-呱呱物联注册") }
+    val scope = rememberCoroutineScope()
+
     Column(modifier = Modifier.fillMaxWidth()) {
         val interactionSource = remember { MutableInteractionSource() }
         val interactionSource2 = remember { MutableInteractionSource() } // 创建一个
@@ -156,12 +160,6 @@ fun GuaGuaLoginUI(vm : GuaGuaViewModel, netVm : NetWorkViewModel, navHostControl
 
         val scale = animateFloatAsState(
             targetValue = if (isPressed) 0.9f else 1f, // 按下时为0.9，松开时为1
-            animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-            label = "" // 使用弹簧动画
-        )
-
-        val scale2 = animateFloatAsState(
-            targetValue = if (isPressed2) 0.9f else 1f, // 按下时为0.9，松开时为1
             animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
             label = "" // 使用弹簧动画
         )
@@ -229,7 +227,7 @@ fun GuaGuaLoginUI(vm : GuaGuaViewModel, netVm : NetWorkViewModel, navHostControl
 
             Button(
                 onClick = {
-                    LoginGuaGuaClick(username,inputAES,vm,navHostController)
+                    scope.launch { loginGuaGuaClick(username,inputAES,vm,navHostController) }
                 }, modifier = Modifier.scale(scale.value),
                 interactionSource = interactionSource
 
@@ -244,7 +242,7 @@ fun GuaGuaLoginUI(vm : GuaGuaViewModel, netVm : NetWorkViewModel, navHostControl
                     saveString("PHONENUM",username)
                     CoroutineScope(Job()).launch {
                         async { netVm.getGuaGuaUserInfo() }.await()
-                        async {
+                        launch {
                             Handler(Looper.getMainLooper()).post {
                                 netVm.guaguaUserInfo.observeForever { result ->
                                     if (result?.contains("成功") == true) {
@@ -263,26 +261,23 @@ fun GuaGuaLoginUI(vm : GuaGuaViewModel, netVm : NetWorkViewModel, navHostControl
     }
 }
 
-fun LoginGuaGuaClick(phoneNumber : String, psk : String, vm: GuaGuaViewModel, navHostController: NavHostController) {
-    val inputPSK = Encrypt.md5Hash(psk).uppercase(Locale.getDefault())
-    saveString("PHONENUM",phoneNumber)
-    saveString("GuaGuaPsk",psk)
-
-    CoroutineScope(Job()).launch {
-        async { vm.login(phoneNumber,inputPSK) }.await()
-        async {
-            Handler(Looper.getMainLooper()).post {
-                vm.loginResult.observeForever { result ->
-                    if (result != null && result.contains("成功")) {
-                        saveLoginCode(result)
-                        navHostController.navigateAndClear(ShowerScreen.HOME.name)
-                        showToast("登录成功")
-                    } else if(result != null && result.contains("error")) {
-                        showToast(getLoginedMsg(result))
-                    }
-                }
+suspend fun loginGuaGuaClick(phoneNumber : String, psk : String, vm: GuaGuaViewModel, navHostController: NavHostController) = withContext(Dispatchers.IO) {
+    Handler(Looper.getMainLooper()).post {
+        vm.loginResult.observeForever { result ->
+            if (result != null && result.contains("成功")) {
+                saveLoginCode(result)
+                navHostController.navigateAndClear(ShowerScreen.HOME.name)
+                showToast("登录成功")
+            } else if(result != null && result.contains("error")) {
+                showToast(getLoginedMsg(result))
             }
         }
+    }
+    launch { saveString("PHONENUM",phoneNumber) }
+    launch { saveString("GuaGuaPsk",psk) }
+    launch {
+        val inputPSK = Encrypt.md5Hash(psk).uppercase(Locale.getDefault())
+        vm.login(phoneNumber,inputPSK)
     }
 }
 

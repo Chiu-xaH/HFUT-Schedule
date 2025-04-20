@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
+import com.hfut.schedule.ui.component.RotatingIcon
 import com.hfut.schedule.ui.screen.home.search.function.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.transfer.getCampus
 import com.hfut.schedule.ui.component.TransplantListItem
@@ -28,8 +29,8 @@ import dev.chrisbanes.haze.HazeState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Shower(vm: NetWorkViewModel, hazeState: HazeState) {
-    val sheetState = rememberModalBottomSheetState(true)
     var showBottomSheet by remember { mutableStateOf(false) }
+    var loading by remember { mutableStateOf(false) }
 
     if (showBottomSheet) {
         HazeBottomSheet (
@@ -37,7 +38,6 @@ fun Shower(vm: NetWorkViewModel, hazeState: HazeState) {
             autoShape = false,
             showBottomSheet = showBottomSheet,
             hazeState = hazeState
-//            sheetState = sheetState
         ) {
             ShowerUI(vm,hazeState = hazeState)
         }
@@ -47,14 +47,18 @@ fun Shower(vm: NetWorkViewModel, hazeState: HazeState) {
     TransplantListItem(
         headlineContent = { Text(text = "洗浴" + if(getCampus() != Campus.XUANCHENG) "(宣)" else "") },
         leadingContent = {
-            Icon(painterResource(id = R.drawable.bathtub), contentDescription = "")
+            if(loading) {
+                RotatingIcon(R.drawable.progress_activity)
+            } else {
+                Icon(painterResource(id = R.drawable.bathtub), contentDescription = "")
+            }
         },
         trailingContent = {
             FilledTonalIconButton(
                 modifier = Modifier
                     .size(30.dp),
                 onClick = {
-                    getInGuaGua(vm)
+                    getInGuaGua(vm) { loading = it }
                 },
             ) { Icon( painterResource(R.drawable.shower), contentDescription = "Localized description",) }
         },

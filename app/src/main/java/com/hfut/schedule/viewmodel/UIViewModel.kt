@@ -12,11 +12,13 @@ import com.hfut.schedule.logic.network.servicecreator.GiteeServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.Login.LoginWeb2ServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.Login.LoginWebServiceCreator
 import com.hfut.schedule.logic.util.sys.JxglstuCourseSchedule
-import com.hfut.schedule.logic.util.storage.SharePrefs.prefs
-import com.hfut.schedule.logic.util.storage.SharePrefs.saveString
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.getJxglstuCourseSchedule
 import com.hfut.schedule.ui.screen.home.search.function.loginWeb.WebInfo
 import com.hfut.schedule.ui.screen.home.search.function.loginWeb.getIdentifyID
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -29,6 +31,13 @@ class UIViewModel : ViewModel()  {
     var webValue = MutableLiveData<WebInfo>()
 
     var isAddUIExpanded by mutableStateOf(false)
+    private val _isSupabaseRegistering = MutableStateFlow(false)
+    val isSupabaseRegistering: StateFlow<Boolean> = _isSupabaseRegistering
+    fun setSupabaseRegistering(value: Boolean) {
+        _isSupabaseRegistering.value = value
+    }
+
+    var isAddUIExpandedSupabase by mutableStateOf(false)
 
     // 缓存复用 由于数据过大
     var jxglstuCourseScheduleList by mutableStateOf(
@@ -38,3 +47,5 @@ class UIViewModel : ViewModel()  {
         jxglstuCourseScheduleList = getJxglstuCourseSchedule(json)
     }
 }
+
+

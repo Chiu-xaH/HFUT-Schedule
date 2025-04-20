@@ -1,6 +1,7 @@
 package com.hfut.schedule.logic.util.network
 
 import android.util.Base64
+import com.hfut.schedule.logic.util.network.Encrypt.encryptXiaoWuXing
 import com.hfut.schedule.logic.util.network.qweather.GenerateQWeather
 import java.security.MessageDigest
 import javax.crypto.Cipher
@@ -54,6 +55,28 @@ object Encrypt {
 
         return java.util.Base64.getEncoder().encodeToString(encryptedBytes)
     }
+    @JvmStatic
+    fun decryptXiaoWuXing(cipherText: String): String {
+        val key = "JL$<&*l9~67?:#5p"
+        val iv = "{g;,9~l4'/sw`885"
+
+        val keyBytes = key.toByteArray(Charsets.UTF_8)
+        val ivBytes = iv.toByteArray(Charsets.UTF_8)
+
+        val keySpec = SecretKeySpec(keyBytes, "AES")
+        val ivSpec = IvParameterSpec(ivBytes)
+
+        val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
+        cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec)
+
+        val decodedBytes = java.util.Base64.getDecoder().decode(cipherText)
+        val decryptedBytes = cipher.doFinal(decodedBytes)
+
+        return String(decryptedBytes, Charsets.UTF_8)
+    }
+
+
+
 
     @JvmStatic
     fun encryptAesECB(plainText: String, key: String): String {
@@ -84,6 +107,9 @@ object Encrypt {
             "THB3UBK56Q"
         )
     }
+    @JvmStatic
+    fun getSupabasePublicKey() : String =
+        encodeToBase64("{\"alg\":\"HS256\",\"typ\":\"JWT\"}").replace("=","") +
+                "." +encodeToBase64("{\"iss\":\"supabase\",\"ref\":\"uadgxvstybecnhqemxvj\",\"role\":\"anon\",\"iat\":1744637621,\"exp\":2060213621}").replace("=","") + "." +
+                decryptXiaoWuXing("KyeSUi9QTi1x6PYvq5W/kvSs6LWMdvq1/7cGFYlElE7ewQ7JMV1PjTZw+nfShdGb")
 }
-
-
