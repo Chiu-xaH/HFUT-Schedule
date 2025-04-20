@@ -57,8 +57,8 @@ fun VersionInfo() {
         UpdateItems("新增 法定假日数据源", "位于 查询中心；感谢开源项目提供对国务院数据整理的支持，为后续调休功能提供铺垫", UpdateType.ADD)
         UpdateItems("新增 聚焦卡片对点击打开网页的支持", null, UpdateType.ADD)
         UpdateItems("新增 聚焦卡片数据源管理", "整合设置，位于 选项-应用行为", UpdateType.ADD)
-        UpdateItems("修复 时间选取时判断机制错误的Bug", null,UpdateType.ADD)
         UpdateItems("新增 一些网址平台", null, UpdateType.ADD)
+        UpdateItems("修复 时间选取时判断机制错误的Bug", null,UpdateType.FIX)
 
 
 //        UpdateItems("重构 图书馆", "由于学校图书官网进行了升级，图书功能也带来了更多的可能性，扩展：合肥校区的座位预约入口、借阅图书数据",UpdateType.RENEW)
