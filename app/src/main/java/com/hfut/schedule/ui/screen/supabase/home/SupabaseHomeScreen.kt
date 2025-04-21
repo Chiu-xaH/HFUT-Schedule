@@ -12,8 +12,10 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -25,12 +27,9 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
-import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -46,7 +45,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -59,8 +57,8 @@ import com.hfut.schedule.logic.model.SupabaseEventEntity
 import com.hfut.schedule.logic.model.SupabaseEventsInput
 import com.hfut.schedule.logic.util.network.reEmptyLiveDta
 import com.hfut.schedule.logic.util.network.supabaseEventEntityToDto
+import com.hfut.schedule.logic.util.network.toTimestampWithOutT
 import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.logic.util.sys.parseToDateTime
 import com.hfut.schedule.ui.component.CenterScreen
 import com.hfut.schedule.ui.component.DevelopingUI
 import com.hfut.schedule.ui.component.LoadingScreen
@@ -69,6 +67,9 @@ import com.hfut.schedule.ui.component.RefreshIndicator
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.cardNormalColor
 import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
+import com.hfut.schedule.ui.screen.home.search.function.transfer.EventCampus
+import com.hfut.schedule.ui.screen.home.search.function.transfer.getEventCampus
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -92,10 +93,9 @@ private const val TAB_RIGHT = 1
 @OptIn(ExperimentalMaterialApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun SupabaseHomeScreen(vm: NetWorkViewModel,innerPadding : PaddingValues,pagerState : PagerState) {
+fun SupabaseHomeScreen(vm: NetWorkViewModel,sortType: SortType,sortReversed : Boolean,innerPadding : PaddingValues,pagerState : PagerState) {
     var refreshing by remember { mutableStateOf(true) }
     val jwt by DataStoreManager.supabaseJwtFlow.collectAsState(initial = "")
-//    val showAll by DataStoreManager.supabaseShowAllScheduleFlow.collectAsState(initial = false)
     var addRefresh by remember { mutableStateOf(true) }
 
     val scope = rememberCoroutineScope()
@@ -133,12 +133,16 @@ fun SupabaseHomeScreen(vm: NetWorkViewModel,innerPadding : PaddingValues,pagerSt
     Box(modifier = Modifier
         .fillMaxHeight()
         .pullRefresh(pullRefreshState)){
-        RefreshIndicator(refreshing, pullRefreshState, Modifier.padding(innerPadding).align(Alignment.TopCenter).zIndex(1f))
+        RefreshIndicator(refreshing, pullRefreshState,
+            Modifier
+                .padding(innerPadding)
+                .align(Alignment.TopCenter)
+                .zIndex(1f))
         HorizontalPager(state = pagerState) { page ->
             Scaffold {
                 when(page) {
                     TAB_LEFT -> {
-                        SupabaseScheduleUI(vm, innerPadding,refreshing) { refreshing = it }
+                        SupabaseScheduleUI(vm,sortType,sortReversed, innerPadding,refreshing) { refreshing = it }
                     }
                     TAB_RIGHT -> {
                         CenterScreen { DevelopingUI() }
@@ -148,125 +152,173 @@ fun SupabaseHomeScreen(vm: NetWorkViewModel,innerPadding : PaddingValues,pagerSt
         }
     }
 }
+enum class SortType {
+    CREATE_TIME,START_TIME,END_TIME,ID
+}
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun SupabaseScheduleUI(vm: NetWorkViewModel,innerPadding : PaddingValues,refresh : Boolean,onRefresh : (Boolean) -> Unit) {
+fun SupabaseScheduleUI(vm: NetWorkViewModel,sortType : SortType,sortReversed : Boolean,innerPadding : PaddingValues,refresh : Boolean,onRefresh : (Boolean) -> Unit) {
     val jwt by DataStoreManager.supabaseJwtFlow.collectAsState(initial = "")
     val scope = rememberCoroutineScope()
+//    var sortType by remember { mutableStateOf(SortType.ID) }
+    val filter by DataStoreManager.supabaseFilterEventFlow.collectAsState(initial = false)
+
+
     if(refresh) {
         LoadingScreen()
     } else {
         val list = getEvents(vm,false)
+
+        val filterList = if(filter) list.filter {
+            // 自己班
+            (
+                    it.applicableClasses.toString().contains(getPersonInfo().classes!!) ||
+                            it.applicableClasses.contains("EMPTY") ||
+                            it.applicableClasses.isEmpty()
+            ) && // 自己校区
+                    (it.campus == getEventCampus() || it.campus == EventCampus.DEFAULT)
+        } else list
+
+        val sortList =  when(sortType) {
+            SortType.ID -> filterList.sortedBy { it.id }
+            SortType.START_TIME -> filterList.sortedBy { it.dateTime.start.toTimestampWithOutT() }
+            SortType.END_TIME -> filterList.sortedBy { it.dateTime.end.toTimestampWithOutT() }
+            SortType.CREATE_TIME -> filterList.sortedBy { it.createTime }
+        }.let { if (sortReversed) it.reversed() else it }
+
         val expandedStates = remember { mutableStateMapOf<Int, Boolean>() }
         val downloadStates = remember { mutableStateMapOf<Int, Boolean>() }
 
-
         LazyColumn {
             item { Spacer(Modifier.height(innerPadding.calculateTopPadding())) }
-            items(list.size, key = { list[it].id }) { index ->
-                val item = list[index]
-                var count by remember { mutableStateOf("") }
-                LaunchedEffect(Unit) {
-                    async { vm.supabaseGetEventForkCount(jwt,item.id) }.await()
-                    launch {
-                        Handler(Looper.getMainLooper()).post{
-                            Handler(Looper.getMainLooper()).post {
-                                vm.supabaseGetEventForkCountResp.observeForever { result ->
-                                    if (result != null && result.toIntOrNull() != null) {
-                                        count = result
+
+            items(sortList.size, key = { sortList[it].id }) { index ->
+                val item = sortList[index]
+//                var count by remember { mutableStateOf("") }
+//                LaunchedEffect(Unit) {
+//                    async { vm.supabaseGetEventForkCount(jwt,item.id) }.await()
+//                    launch {
+//                        Handler(Looper.getMainLooper()).post{
+//                            Handler(Looper.getMainLooper()).post {
+//                                vm.supabaseGetEventForkCountResp.observeForever { result ->
+//                                    if (result != null && result.toIntOrNull() != null) {
+//                                        count = result
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+                val isExpanded = expandedStates[index] ?: !filter
+                val downloaded = downloadStates[index] ?: false
+                Box(modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null)) {
+                    MyCustomCard(containerColor = cardNormalColor()) {
+                        TransplantListItem(
+                            headlineContent = { Text(item.name) },
+                            overlineContent = { Text(item.timeDescription) },
+                            supportingContent = item.description?.let { { Text(it) } },
+                            trailingContent = {
+                                FilledTonalIconButton(
+                                    enabled = (downloadStates[index] != false),
+                                    onClick = {
+                                        scope.launch {
+                                            async {
+                                                val entity = CustomEventDTO(
+                                                    title = item.name,
+                                                    dateTime = item.dateTime,
+                                                    type = item.type,
+                                                    description = item.description,
+                                                    remark = item.timeDescription
+                                                )
+                                                // 添加到数据库
+                                                DataBaseManager.customEventDao.insert(CustomEventMapper.dtoToEntity(entity))
+                                            }.await()
+                                            async {
+                                                showToast("已下载到本地，位于聚焦")
+                                            }.await()
+                                            // 下载量++上传 下载量+1
+                                            if(!downloaded)
+                                                launch {
+                                                    downloadStates[index] = true
+                                                    expandedStates[index] = true
+                                                    vm.supabaseAddCount(jwt,item.id)
+//                                                count = count.toIntOrNull()?.let { ( it + 1).toString() } ?: count
+                                                }
+                                        }
                                     }
+                                ) {
+                                    Icon(painter = painterResource(id = if(downloaded) R.drawable.check else R.drawable.download), contentDescription = null)
+//                                BadgedBox(
+//                                    badge = {
+//                                        if (count.isNotEmpty() || count.isNotBlank())
+//                                            Badge(
+//                                                containerColor = MaterialTheme.colorScheme.primary,
+//                                                modifier = Modifier.padding(horizontal = 5.dp)
+//                                            ) {
+//                                                Text(text = count)
+//                                            }
+//                                    }
+//                                ) { Icon(painter = painterResource(id = if(downloaded) R.drawable.check else R.drawable.download), contentDescription = null) }
                                 }
+                            },
+                            leadingContent = {
+                                Icon(painterResource(
+                                    when(item.type) {
+                                        CustomEventType.SCHEDULE -> R.drawable.calendar
+                                        CustomEventType.NET_COURSE -> R.drawable.net
+                                    }
+                                ),null)
+                            },
+                            modifier = Modifier.clickable { expandedStates[index] = !isExpanded }
+                        )
+                        AnimatedVisibility(
+                            visible = isExpanded,
+                            enter = slideInVertically(
+                                initialOffsetY = { -40 }
+                            ) + expandVertically(
+                                expandFrom = Alignment.Top
+                            ) + scaleIn(
+                                transformOrigin = TransformOrigin(0.5f, 0f)
+                            ) + fadeIn(initialAlpha = 0.3f),
+                            exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
+                        ) {
+                            Column {
+                                HorizontalDivider()
+                                TransplantListItem(
+                                    overlineContent = {
+                                        Text("上传时间 ${item.createTime}" ) },
+                                    headlineContent = { Text(
+                                        "来自 " +
+                                                item.contributorClass +
+                                                " ******" +
+                                                item.contributorId.substring(6,10)
+                                    ) },
+                                    leadingContent = {
+                                        Icon(painterResource(R.drawable.person),null)
+                                    },
+                                )
+
+                                TransplantListItem(
+                                    headlineContent = { Text( "适用范围 " + when(item.campus) {
+                                        EventCampus.DEFAULT -> "通用"
+                                        EventCampus.XUANCHENG -> "宣城校区"
+                                        EventCampus.HEFEI -> "合肥校区"
+                                    }) },
+                                    supportingContent = {
+                                        var t = item.applicableClasses.toString().replace("[","").replace("]","")
+                                        if(t.isBlank() || t.isEmpty() || t == "EMPTY") t = "所有人可见"
+                                        Text(t)
+                                    },
+                                    leadingContent = {
+                                        Icon(painterResource(R.drawable.target),null)
+                                    },
+                                )
                             }
+
                         }
                     }
                 }
-                val isExpanded = expandedStates[index] ?: true
-                val downloaded = downloadStates[index] ?: false
 
-                MyCustomCard(containerColor = cardNormalColor()) {
-                    TransplantListItem(
-                        headlineContent = { Text(item.name) },
-                        overlineContent = { Text(item.timeDescription) },
-                        supportingContent = item.description?.let { { Text(it) } },
-                        trailingContent = {
-                            FilledTonalButton(
-                                enabled = (downloadStates[index] != false),
-                                onClick = {
-                                    scope.launch {
-                                        async {
-                                            val entity = CustomEventDTO(
-                                                title = item.name,
-                                                dateTime = item.dateTime,
-                                                type = item.type,
-                                                description = item.description,
-                                                remark = item.timeDescription
-                                            )
-                                            // 添加到数据库
-                                            DataBaseManager.customEventDao.insert(CustomEventMapper.dtoToEntity(entity))
-                                        }.await()
-                                        async {
-                                            showToast("已下载到本地，位于聚焦")
-                                        }.await()
-                                        // 下载量++上传 下载量+1
-                                        if(!downloaded)
-                                            launch {
-                                                downloadStates[index] = true
-                                                expandedStates[index] = true
-                                                vm.supabaseAddCount(jwt,item.id)
-                                                count = count.toIntOrNull()?.let { ( it + 1).toString() } ?: count
-                                            }
-                                    }
-                                }
-                            ) {
-                                BadgedBox(
-                                    badge = {
-                                        if (count.isNotEmpty() || count.isNotBlank())
-                                            Badge(
-                                                containerColor = MaterialTheme.colorScheme.primary,
-                                                modifier = Modifier.padding(horizontal = 5.dp)
-                                            ) {
-                                                Text(text = count)
-                                            }
-                                    }
-                                ) { Icon(painter = painterResource(id = if(downloaded) R.drawable.check else R.drawable.download), contentDescription = null) }
-                            }
-                        },
-                        leadingContent = {
-                            Icon(painterResource(
-                                when(item.type) {
-                                    CustomEventType.SCHEDULE -> R.drawable.calendar
-                                    CustomEventType.NET_COURSE -> R.drawable.net
-                                }
-                            ),null)
-                        },
-                        modifier = Modifier.clickable { expandedStates[index] = !isExpanded }
-                    )
-                    AnimatedVisibility(
-                        visible = isExpanded,
-                        enter = slideInVertically(
-                            initialOffsetY = { -40 }
-                        ) + expandVertically(
-                            expandFrom = Alignment.Top
-                        ) + scaleIn(
-                            transformOrigin = TransformOrigin(0.5f, 0f)
-                        ) + fadeIn(initialAlpha = 0.3f),
-                        exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
-                    ) {
-                        HorizontalDivider()
-                        TransplantListItem(
-                            overlineContent = { Text("上传时间 ${item.createTime}") },
-                            headlineContent = { Text("来自 " +item.contributorClass + " ******" + item.contributorId.substring(6,10)) },
-                            supportingContent = {
-                                var t = item.applicableClasses.toString().replace("[","").replace("]","")
-                                if(t.isBlank() || t.isEmpty()) t = "所有人可见"
-                                Text(t)
-                            },
-                            leadingContent = {
-                                Icon(painterResource(R.drawable.info),null)
-                            },
-                            // 反馈：信息不实、不适宜展示
-                        )
-                    }
-                }
             }
             items(2) { Spacer(Modifier.height(innerPadding.calculateBottomPadding())) }
         }

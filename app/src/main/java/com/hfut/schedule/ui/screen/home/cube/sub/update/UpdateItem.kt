@@ -25,7 +25,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-04-19") },
+                overlineContent = { Text(text = "2025-04-21") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -53,12 +53,13 @@ fun VersionInfo() {
 //        UpdateItems("新增 教务课程表导出为ics文件", "位于 课程表-多课表-写入日历日程",UpdateType.ADD)
 //        UpdateItems("重构 一共107个网络请求函数，全部换新，优化性能", null,UpdateType.OPTIMIZE)
 //        UpdateItems("新增 为选项界面适配新的转场动画", null, UpdateType.ADD)
-        UpdateItems("新增 共建体系", "任何持有合工大校园邮箱的用户，均可以上传日程和网址导航(下版本开放)，展示给指定范围的用户(目前仅支持以班级为单位)，一起维护共建云日程表",UpdateType.ADD)
-        UpdateItems("新增 法定假日数据源", "位于 查询中心；感谢开源项目提供对国务院数据整理的支持，为后续调休功能提供铺垫", UpdateType.ADD)
-        UpdateItems("新增 聚焦卡片对点击打开网页的支持", null, UpdateType.ADD)
-        UpdateItems("新增 聚焦卡片数据源管理", "整合设置，位于 选项-应用行为", UpdateType.ADD)
-        UpdateItems("新增 一些网址平台", null, UpdateType.ADD)
-        UpdateItems("修复 时间选取时判断机制错误的Bug", null,UpdateType.FIX)
+        UpdateItems("新增 共建聚焦卡片源的筛选，减少无用干扰", "位于 查询中心-信息共建-选项", UpdateType.ADD)
+        UpdateItems("新增 共建聚焦卡片源的排序", null, UpdateType.ADD)
+        UpdateItems("新增 共建聚焦卡片对校区的支持", null, UpdateType.ADD)
+        UpdateItems("优化 共建聚焦卡片界面的显示", null, UpdateType.ADD)
+
+
+//        UpdateItems("修复 时间选取时判断机制错误的Bug", null,UpdateType.FIX)
 
 
 //        UpdateItems("重构 图书馆", "由于学校图书官网进行了升级，图书功能也带来了更多的可能性，扩展：合肥校区的座位预约入口、借阅图书数据",UpdateType.RENEW)

@@ -16,6 +16,7 @@ CREATE TABLE event (
     end_time TIMESTAMP,                                    -- 事件结束时间
     type VARCHAR(50) NOT NULL,                             --类型
     contributor_email VARCHAR(27),                            -- 贡献者
+    campus VARCHAR(20) DEFAULT 'DEFAULT',
     created_time TIMESTAMP DEFAULT NOW(),
     contributor_class VARCHAR(30),                         -- 贡献者班级
     applicable_classes TEXT,                               -- 适用班级（英文逗号分隔字符串）

@@ -5,6 +5,9 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.util.sys.DateTime
 import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
+import com.hfut.schedule.ui.screen.home.search.function.transfer.Campus
+import com.hfut.schedule.ui.screen.home.search.function.transfer.EventCampus
+import com.hfut.schedule.ui.screen.home.search.function.transfer.getCampus
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
 
 data class SupabaseUserLoginBean(
@@ -32,12 +35,16 @@ data class SupabaseEventEntity(
     @SerializedName("contributor_email")
     val email : String? = getSchoolEmail(),
     @SerializedName("contributor_class")
-    val myClass : String? = getPersonInfo().classes,
+    val myClass : String? = getPersonInfo().classes + when(getCampus()) {
+        Campus.HEFEI -> "(肥)"
+        Campus.XUANCHENG -> "(宣)"
+    },
     @SerializedName("applicable_classes")
     val applicableClasses : String,
     @SerializedName("created_time")
     val createTime: String? = null,
     val url : String? = null,
+    val campus : String,
     val type : String
 )
 // 发送类
@@ -48,8 +55,10 @@ data class SupabaseEventOutput(
     val timeDescription : String,
     val dateTime : DateTime,
     val applicableClasses : List<String>,
+    val campus : EventCampus,
     val url : String?
 )
+
 // 接受类
 data class SupabaseEventsInput(
     val id : Int,
@@ -61,6 +70,7 @@ data class SupabaseEventsInput(
     val applicableClasses : List<String>,
     val contributorId : String,
     val contributorClass : String,
+    val campus : EventCampus,
     val url : String?,
     val createTime : String
 )

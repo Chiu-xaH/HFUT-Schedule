@@ -21,6 +21,15 @@ fun getCampus() : Campus {
         Campus.HEFEI
     }
 }
+fun getEventCampus() : EventCampus = when(getCampus()) {
+    Campus.HEFEI -> EventCampus.HEFEI
+    Campus.XUANCHENG -> EventCampus.XUANCHENG
+}
+
+
+enum class EventCampus  {
+    HEFEI,XUANCHENG,DEFAULT
+}
 
 fun getTransfer(vm : NetWorkViewModel) : List<TransferData> {
     val list = mutableListOf<TransferData>()

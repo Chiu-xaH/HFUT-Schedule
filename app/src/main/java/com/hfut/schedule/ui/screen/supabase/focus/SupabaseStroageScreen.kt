@@ -58,7 +58,7 @@ fun SupabaseStorageScreen(innerPadding : PaddingValues,hazeState : HazeState) {
         item { Spacer(Modifier.height(innerPadding.calculateTopPadding())) }
         customScheduleList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1) { refreshDB = !refreshDB } } } }
         customNetCourseList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1) { refreshDB = !refreshDB } } } }
-        item { Spacer(Modifier.height(innerPadding.calculateBottomPadding())) }
+        items(2) { Spacer(Modifier.height(innerPadding.calculateBottomPadding())) }
     }
 }
 

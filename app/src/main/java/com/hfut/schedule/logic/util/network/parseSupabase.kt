@@ -11,6 +11,8 @@ import com.hfut.schedule.logic.util.sys.DateTimeBean
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.logic.util.sys.toUTC
 import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
+import com.hfut.schedule.ui.screen.home.search.function.transfer.Campus
+import com.hfut.schedule.ui.screen.home.search.function.transfer.EventCampus
 
 // 转换层
 fun supabaseEventDtoToEntity(dto : SupabaseEventOutput) : SupabaseEventEntity = with(dto) {
@@ -23,6 +25,7 @@ fun supabaseEventDtoToEntity(dto : SupabaseEventOutput) : SupabaseEventEntity = 
         endTime = dateTime.end.toUTC().toTimestamp(),
         applicableClasses = applicableClasses.joinToString(","),
         url = url,
+        campus = campus.name
     )
 }
 
@@ -50,7 +53,13 @@ fun supabaseEventEntityToDto(entity : SupabaseEventEntity) : SupabaseEventsInput
                                     dateTime = DateTime(start = start.toUTC(-8), end = end.toUTC(-8)),
                                     contributorId = studentId,
                                     createTime = create,
-                                    contributorClass = it
+                                    contributorClass = it,
+                                    campus = when(campus) {
+                                        EventCampus.HEFEI.name -> EventCampus.HEFEI
+                                        EventCampus.XUANCHENG.name -> EventCampus.XUANCHENG
+                                        EventCampus.DEFAULT.name -> EventCampus.DEFAULT
+                                        else -> return null
+                                    }
                                 )
                             }
                         }
@@ -65,6 +74,9 @@ fun isValidStudentId(id : String) = id.length == 10
 
 private fun DateTimeBean.toTimestamp(): String = with(this) {
     parseTimeItem(year) + "-" + parseTimeItem(month) + "-" + parseTimeItem(day) + "T" + parseTimeItem(hour) + ":" + parseTimeItem(minute) + ":00"
+}
+fun DateTimeBean.toTimestampWithOutT(): Long? = with(this) {
+    (parseTimeItem(year) + parseTimeItem(month) + parseTimeItem(day)  + parseTimeItem(hour)  + parseTimeItem(minute)).toLongOrNull()
 }
 
 private fun toDateTimeBean(str : String): DateTimeBean? {
@@ -101,17 +113,16 @@ private fun toDateTimeStr(str: String) : String? {
             return null
         }
         val date = list1[0]
-//        val time = list1[1]
+        val time = list1[1]
 //        val dateList = date.split("-")
 //        if(dateList.size != 3) {
 //            return null
 //        }
-//        val timeList = time.split(":")
-//        if(timeList.size != 3) {
-//            return null
-//        }
-        return date
-//        + " "+ timeList[0] + ":" + timeList[1]
+        val timeList = time.split(":")
+        if(timeList.size != 3) {
+            return null
+        }
+        return date + " " + timeList[0] + ":" + timeList[1]
     } catch (e : Exception) {
         return null
     }

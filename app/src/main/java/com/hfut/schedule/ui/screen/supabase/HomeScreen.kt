@@ -18,9 +18,12 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -60,6 +63,7 @@ import com.hfut.schedule.ui.component.RefreshIndicator
 import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventFloatButton
 import com.hfut.schedule.ui.screen.supabase.cube.SupabaseSettingsScreen
 import com.hfut.schedule.ui.screen.supabase.focus.SupabaseStorageScreen
+import com.hfut.schedule.ui.screen.supabase.home.SortType
 import com.hfut.schedule.ui.screen.supabase.home.SupabaseHomeScreen
 import com.hfut.schedule.ui.screen.supabase.me.SupabaseMeScreen
 import com.hfut.schedule.ui.screen.supabase.me.SupabaseMeScreenRefresh
@@ -99,6 +103,10 @@ fun SupabaseHome(vm : NetWorkViewModel,navHostController: NavHostController,vmUI
 
     val context = LocalActivity.current
 
+    var sortType by remember { mutableStateOf(SortType.ID) }
+    var sortReversed by remember { mutableStateOf(false) }
+
+
     Box(modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {
         var innerPaddingValues by remember { mutableStateOf<PaddingValues?>(null) }
 
@@ -115,8 +123,36 @@ fun SupabaseHome(vm : NetWorkViewModel,navHostController: NavHostController,vmUI
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary
                         ),
-                        title = { Text("信息共建(Beta)") },
+                        title = { Text("信息共建") },
                         actions = {
+                            if(bottomBarItems == SupabaseScreen.HOME) {
+                                IconButton(onClick = {
+                                    sortReversed = !sortReversed
+                                }) {
+                                    Icon(if(sortReversed) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowUp, contentDescription = "")
+                                }
+
+                                FilledTonalButton(
+                                    onClick = {
+                                        sortType = when(sortType) {
+                                            SortType.ID -> SortType.START_TIME
+                                            SortType.START_TIME -> SortType.END_TIME
+                                            SortType.END_TIME -> SortType.CREATE_TIME
+                                            SortType.CREATE_TIME -> SortType.ID
+                                        }
+                                    }
+                                ) {
+                                    Text(
+                                        when(sortType) {
+                                            SortType.ID -> "默认排序"
+                                            SortType.START_TIME -> "按开始时间"
+                                            SortType.END_TIME -> "按结束时间"
+                                            SortType.CREATE_TIME -> "创建时间"
+                                        }
+                                    )
+                                }
+                            }
+
                             IconButton(onClick = {
                                 context?.finish()
                             }) {
@@ -199,7 +235,7 @@ fun SupabaseHome(vm : NetWorkViewModel,navHostController: NavHostController,vmUI
             ) {
                 composable(SupabaseScreen.HOME.name) {
                     Scaffold {
-                        SupabaseHomeScreen(vm,innerPadding,pagerState)
+                        SupabaseHomeScreen(vm,sortType,sortReversed,innerPadding,pagerState)
                     }
                 }
                 composable(SupabaseScreen.ME.name) {

@@ -32,7 +32,6 @@ import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.showToast
-import com.hfut.schedule.ui.screen.home.cube.sub.update.VersionInfo
 import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -41,7 +40,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun SupabaseSettingsScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,hazeState: HazeState) {
-    val showAll by DataStoreManager.supabaseShowAllScheduleFlow.collectAsState(initial = true)
+    val filter by DataStoreManager.supabaseFilterEventFlow.collectAsState(initial = false)
     val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
     if(showBottomSheet)
@@ -125,17 +124,17 @@ fun SupabaseSettingsScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,ha
                 modifier = Modifier.clickable { Starter.loginSupabase() }
             )
 
-//            TransplantListItem(
-//                headlineContent = { Text("过滤不适用于自己的日程") },
-//                supportingContent = { Text("展示${if(!showAll) "所有" else "包含 " + getPersonInfo().classes + " 的"}日程" ) },
-//                leadingContent = { Icon(painterResource(R.drawable.filter_alt), null) },
-//                trailingContent = {
-//                    Switch(checked = showAll, onCheckedChange = {  scope.launch { DataStoreManager.saveSupabaseShowAllSchedule(!showAll) } })
-//                },
-//                modifier = Modifier.clickable {
-//                    scope.launch { DataStoreManager.saveSupabaseShowAllSchedule(!showAll) }
-//                }
-//            )
+            TransplantListItem(
+                headlineContent = { Text("过滤不适用于自己的日程") },
+                supportingContent = { Text("展示${if(!filter) "所有" else "包含 " + getPersonInfo().school  + getPersonInfo().classes + " 的"}日程" ) },
+                leadingContent = { Icon(painterResource(R.drawable.filter_alt), null) },
+                trailingContent = {
+                    Switch(checked = filter, onCheckedChange = {  scope.launch { DataStoreManager.saveSupabaseFilterEvent(!filter) } })
+                },
+                modifier = Modifier.clickable {
+                    scope.launch { DataStoreManager.saveSupabaseFilterEvent(!filter) }
+                }
+            )
         }
         BottomTip("平台管理请联系 zsh0908@outlook.com")
         Spacer(Modifier.height(innerPadding.calculateBottomPadding()))

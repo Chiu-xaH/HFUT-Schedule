@@ -44,6 +44,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -80,7 +81,6 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventDTO
 import com.hfut.schedule.logic.database.entity.CustomEventType
-import com.hfut.schedule.logic.database.entity.ShowerLabelEntity
 import com.hfut.schedule.logic.database.util.CustomEventMapper
 import com.hfut.schedule.logic.model.SupabaseEventOutput
 import com.hfut.schedule.logic.util.network.reEmptyLiveDta
@@ -103,6 +103,8 @@ import com.hfut.schedule.ui.component.cardNormalColor
 import com.hfut.schedule.ui.component.cardNormalDp
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
+import com.hfut.schedule.ui.screen.home.search.function.transfer.EventCampus
+import com.hfut.schedule.ui.screen.home.search.function.transfer.getEventCampus
 import com.hfut.schedule.ui.screen.supabase.login.loginSupabaseWithCheck
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.UIViewModel
@@ -339,6 +341,7 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
             "${date.first.substringAfter("-") + " " + time.first} ~ ${date.second.substringAfter("-") + " " + time.second}"
         }
     }
+    var campus by remember { mutableStateOf(getEventCampus()) }
 
     // 向上回传数据
     LaunchedEffect(title,time,date,remark) {
@@ -367,8 +370,9 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                     type = if(isScheduleType) CustomEventType.SCHEDULE else CustomEventType.NET_COURSE,
                     description = description.let { desp -> if(desp.isNotEmpty() && desp.isNotBlank()) desp else null },
                     timeDescription = remark,
-                    applicableClasses = classList,
-                    url = null
+                    applicableClasses = classList.sorted(),
+                    url = null,
+                    campus = campus
                 )
             }
             if(enabled && entity != null) {
@@ -604,33 +608,56 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                             }
                         )
                         HorizontalDivider()
-                        Spacer(Modifier.height(appHorizontalDp()-5.dp))
+                        TransplantListItem(
+                            headlineContent = { Text("选择校区") },
+                            supportingContent = {
+                                Column {
+                                    Row {
+                                        FilterChip(onClick = { campus = EventCampus.HEFEI }, label = { Text("合肥") }, selected = campus == EventCampus.HEFEI)
+                                        Spacer(Modifier.width(10.dp))
+                                        FilterChip(onClick = { campus = EventCampus.XUANCHENG }, label = { Text("宣城") }, selected = campus == EventCampus.XUANCHENG)
+                                        Spacer(Modifier.width(10.dp))
+                                        FilterChip(onClick = { campus = EventCampus.DEFAULT }, label = { Text("所有人可见") }, selected = campus == EventCampus.DEFAULT)
+                                    }
+                                }
 
-                        for(index in classList.indices step 2) {
-                            Row {
-                                Spacer(Modifier.width(appHorizontalDp()))
-                                AssistChip(
-                                    onClick = {
-                                        id = index
-                                        showDelDialog = true
-                                              },
-                                    label = { Text(classList[index]) },
-                                    leadingIcon = if(isEditMode) { { Icon(Icons.Filled.Close, null) } } else null
-                                )
+                            }
+                        )
+                        HorizontalDivider()
+                        TransplantListItem(
+                            headlineContent = { Text("添加班级") },
+                            supportingContent = {
+                                Column {
+                                    for(index in classList.indices step 2) {
+                                        Row {
+//                                            Spacer(Modifier.width(appHorizontalDp()))
+                                            AssistChip(
+                                                onClick = {
+                                                    id = index
+                                                    showDelDialog = true
+                                                },
+                                                label = { Text(classList[index]) },
+                                                leadingIcon = if(isEditMode) { { Icon(Icons.Filled.Close, null) } } else null
+                                            )
 
-                                if(index+1 != classList.size) {
-                                    Spacer(Modifier.width(appHorizontalDp()))
-                                    AssistChip(
-                                        onClick = {
-                                            id = index+1
-                                            showDelDialog = true
-                                                  },
-                                        label = { Text(classList[index+1]) },
-                                        leadingIcon = if(isEditMode) { { Icon(Icons.Filled.Close, null) } } else null
-                                    )
+                                            if(index+1 != classList.size) {
+                                                Spacer(Modifier.width(appHorizontalDp()))
+                                                AssistChip(
+                                                    onClick = {
+                                                        id = index+1
+                                                        showDelDialog = true
+                                                    },
+                                                    label = { Text(classList[index+1]) },
+                                                    leadingIcon = if(isEditMode) { { Icon(Icons.Filled.Close, null) } } else null
+                                                )
+                                            }
+                                        }
+                                    }
                                 }
                             }
-                        }
+                        )
+//                        Spacer(Modifier.height(appHorizontalDp()-5.dp))
+
 
                         Row(modifier = Modifier.align(Alignment.End)) {
                             Text(
@@ -659,6 +686,36 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                                     )
                                     .clickable {
                                         isEditMode = !isEditMode
+                                    }
+                            )
+                            Text(
+                                text = "清空",
+                                color = MaterialTheme.colorScheme.primary,
+                                fontSize = 14.sp,
+                                modifier = Modifier
+                                    .align(Alignment.Bottom)
+                                    .padding(
+                                        horizontal = appHorizontalDp(),
+                                        vertical = appHorizontalDp() - 5.dp
+                                    )
+                                    .clickable {
+                                        classList.clear()
+                                    }
+                            )
+                            Text(
+                                text = "排序(自动)",
+                                color = MaterialTheme.colorScheme.primary,
+                                fontSize = 14.sp,
+                                modifier = Modifier
+                                    .align(Alignment.Bottom)
+                                    .padding(
+                                        horizontal = appHorizontalDp(),
+                                        vertical = appHorizontalDp() - 5.dp
+                                    )
+                                    .clickable {
+                                        val sorted = classList.sorted() // 生成排序后的副本
+                                        classList.clear()               // 清空原列表
+                                        classList.addAll(sorted)        // 添加排序后的元素
                                     }
                             )
                         }

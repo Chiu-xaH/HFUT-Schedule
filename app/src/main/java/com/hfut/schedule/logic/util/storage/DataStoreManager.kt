@@ -30,7 +30,7 @@ object DataStoreManager {
     private val SHOW_FOCUS = booleanPreferencesKey("show_focus")
     private val SUPABASE_JWT = stringPreferencesKey("supabase_jwt")
     private val SUPABASE_REFRESH_TOKEN = stringPreferencesKey("supabase_refresh_token")
-    private val SUPABASE_SHOW_ALL_SCHEDULE = booleanPreferencesKey("supabase_show_all_schedule")
+    private val SUPABASE_FILTER_EVENT = booleanPreferencesKey("supabase_filter_event")
 
 
 
@@ -98,9 +98,9 @@ object DataStoreManager {
             preferences[SUPABASE_REFRESH_TOKEN] = value
         }
     }
-    suspend fun saveSupabaseShowAllSchedule(value: Boolean) {
+    suspend fun saveSupabaseFilterEvent(value: Boolean) {
         dataStore.edit { preferences ->
-            preferences[SUPABASE_SHOW_ALL_SCHEDULE] = value
+            preferences[SUPABASE_FILTER_EVENT] = value
         }
     }
 
@@ -156,9 +156,9 @@ object DataStoreManager {
         .map { preferences ->
             preferences[SUPABASE_REFRESH_TOKEN] ?: ""
         }
-    val supabaseShowAllScheduleFlow: Flow<Boolean> = dataStore.data
+    val supabaseFilterEventFlow: Flow<Boolean> = dataStore.data
         .map { preferences ->
-            preferences[SUPABASE_SHOW_ALL_SCHEDULE] ?: true
+            preferences[SUPABASE_FILTER_EVENT] ?: true
         }
     /* 用法
     val XXX by DataStoreManager.XXX.collectAsState(initial = 默认值)
