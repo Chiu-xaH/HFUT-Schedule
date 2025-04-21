@@ -174,7 +174,9 @@ fun SupabaseScheduleUI(vm: NetWorkViewModel,sortType : SortType,sortReversed : B
             (
                     it.applicableClasses.toString().contains(getPersonInfo().classes!!) ||
                             it.applicableClasses.contains("EMPTY") ||
-                            it.applicableClasses.isEmpty()
+                            it.applicableClasses.toString().replace("[","").replace("]","").let { t ->
+                                t.isBlank() || t.isEmpty() || t == "EMPTY"
+                            }
             ) && // 自己校区
                     (it.campus == getEventCampus() || it.campus == EventCampus.DEFAULT)
         } else list
