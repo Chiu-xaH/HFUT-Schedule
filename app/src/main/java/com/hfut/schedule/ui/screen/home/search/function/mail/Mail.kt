@@ -41,10 +41,10 @@ import com.hfut.schedule.ui.component.ScrollText
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.WebDialog
 import com.hfut.schedule.ui.component.showToast
-import com.hfut.schedule.ui.screen.supabase.login.UIStateHolder.isSupabaseRegistering
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.RowHorizontal
+import com.hfut.schedule.ui.util.UIStateHolder.isSupabaseRegistering
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState

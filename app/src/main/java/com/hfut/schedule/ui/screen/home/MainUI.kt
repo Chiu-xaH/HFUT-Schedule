@@ -10,6 +10,7 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -25,9 +26,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -54,6 +59,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -70,21 +76,23 @@ import com.hfut.schedule.logic.enumeration.BottomBarItems.COURSES
 import com.hfut.schedule.logic.enumeration.BottomBarItems.FOCUS
 import com.hfut.schedule.logic.enumeration.BottomBarItems.SEARCH
 import com.hfut.schedule.logic.enumeration.BottomBarItems.SETTINGS
+import com.hfut.schedule.logic.enumeration.SortType
 import com.hfut.schedule.logic.model.NavigationBarItemData
+import com.hfut.schedule.logic.util.network.parse.ParseJsons.isNextOpen
+import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.saveInt
+import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.logic.util.sys.DateTimeUtils.Date_MM_dd
 import com.hfut.schedule.logic.util.sys.DateTimeUtils.weeksBetween
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
-import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.storage.SharedPrefs.saveInt
-import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
-import com.hfut.schedule.logic.util.network.parse.ParseJsons.isNextOpen
 import com.hfut.schedule.ui.component.CustomTabRow
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.ScrollText
+import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.SaveCourse
@@ -93,18 +101,18 @@ import com.hfut.schedule.ui.screen.home.calendar.jxglstu.CalendarScreen
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.calendar.multi.CustomSchedules
 import com.hfut.schedule.ui.screen.home.calendar.multi.MultiScheduleSettings
+import com.hfut.schedule.ui.screen.home.cube.SettingsScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.MyAPIItem
 import com.hfut.schedule.ui.screen.home.cube.sub.update.getUpdates
-import com.hfut.schedule.ui.screen.home.cube.SettingsScreen
-import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventFloatButton
 import com.hfut.schedule.ui.screen.home.focus.TodayScreen
-import com.hfut.schedule.ui.screen.home.search.function.life.ApiFromLife
+import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventFloatButton
+import com.hfut.schedule.ui.screen.home.search.SearchFuncs
+import com.hfut.schedule.ui.screen.home.search.SearchScreen
 import com.hfut.schedule.ui.screen.home.search.function.notification.NotificationItems
 import com.hfut.schedule.ui.screen.home.search.function.notification.getNotifications
 import com.hfut.schedule.ui.screen.home.search.function.totalCourse.CourseTotalForApi
 import com.hfut.schedule.ui.screen.home.search.function.webLab.LabUI
-import com.hfut.schedule.ui.screen.home.search.SearchFuncs
-import com.hfut.schedule.ui.screen.home.search.SearchScreen
+import com.hfut.schedule.ui.screen.supabase.login.ApiToSupabase
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.bottomBarBlur
 import com.hfut.schedule.ui.style.topBarBlur
@@ -112,9 +120,9 @@ import com.hfut.schedule.ui.style.transitionBackground
 import com.hfut.schedule.ui.util.NavigateAnimationManager
 import com.hfut.schedule.ui.util.NavigateAnimationManager.currentPage
 import com.hfut.schedule.ui.util.navigateAndSave
+import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.viewmodel.UIViewModel
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.delay
@@ -140,10 +148,6 @@ fun MainScreen(
     val hazeState = remember { HazeState() }
 
     val showBadge by remember { mutableStateOf(getUpdates().version != AppVersion.getVersionName()) }
-
-
-
-
 
 //判定是否以聚焦作为第一页
     val first  by remember { mutableStateOf(
@@ -294,40 +298,158 @@ fun MainScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     var isNavigationIconVisible by remember { mutableStateOf(true) }
     // 监听滚动状态
-    if(targetPage == FOCUS && celebrationText != null) {
+    if(targetPage == FOCUS) {
         LaunchedEffect(scrollBehavior.state) {
             snapshotFlow { scrollBehavior.state.collapsedFraction }
                 .collect { collapsedFraction -> isNavigationIconVisible = collapsedFraction < 0.5f }
         }
     }
+    var sortReversed by remember { mutableStateOf(false) }
+    var sortType by remember { mutableStateOf(SortType.END_TIME) }
+    var showDialog by remember { mutableStateOf(false) }
 
-    val focusActions = @Composable {
-        Row {
-            ApiFromLife(vm,hazeState)
-            TextButton(onClick = { showBottomSheet = true }) {
-                BadgedBox(badge = {
-                    if (getNotifications().size.toString() != prefs.getString("Notifications",""))
-                        Badge()
-                }) { Icon(painterResource(id = R.drawable.notifications), contentDescription = "") }
+    if(showDialog) {
+        HazeBottomSheet(
+            showBottomSheet = showDialog,
+            isFullExpand = false,
+            autoShape = false,
+            hazeState = hazeState,
+            onDismissRequest = { showDialog = false }
+        ) {
+            Column {
+                HazeBottomSheetTopBar("排序", isPaddingStatusBar = false)
+                StyleCardListItem(
+                    overlineContent = { Text("排序方式") },
+                    headlineContent = {
+                        Text(
+                            when (sortType) {
+                                SortType.ID -> "默认排序"
+                                SortType.START_TIME -> "按开始时间"
+                                SortType.END_TIME -> "按结束时间"
+                                SortType.CREATE_TIME -> "按创建时间"
+                            }
+                        )
+                    },
+                    leadingContent = { Icon(painterResource(R.drawable.sort),null) },
+                    modifier = Modifier.clickable {
+                        showToast("正在开发")
+//                        sortType = when (sortType) {
+//                            SortType.ID -> SortType.START_TIME
+//                            SortType.START_TIME -> SortType.END_TIME
+//                            SortType.END_TIME -> SortType.CREATE_TIME
+//                            SortType.CREATE_TIME -> SortType.ID
+//                        }
+                    },
+                    trailingContent = {
+                        FilledTonalIconButton(onClick = {
+                            sortReversed = !sortReversed
+                        }) {
+                            Icon(
+                                if (sortReversed) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowUp,
+                                contentDescription = ""
+                            )
+                        }
+                    }
+                )
+                Spacer(Modifier.height(appHorizontalDp()))
             }
         }
     }
+    val focusActions = @Composable {
+        Row {
+            val show = isNavigationIconVisible && celebrationText == null
+            if(show) {
+
+                IconButton(onClick = {
+                    sortReversed = !sortReversed
+                }) {
+                    Icon(
+                        if (sortReversed) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowUp,
+                        contentDescription = "",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+                TextButton(
+                    onClick = {
+                        showToast("正在开发")
+//                        sortType = when (sortType) {
+//                            SortType.ID -> SortType.START_TIME
+//                            SortType.START_TIME -> SortType.END_TIME
+//                            SortType.END_TIME -> SortType.CREATE_TIME
+//                            SortType.CREATE_TIME -> SortType.ID
+//                        }
+                    }
+                ) {
+                    Text(
+                        when (sortType) {
+                            SortType.ID -> "默认排序"
+                            SortType.START_TIME -> "按开始时间"
+                            SortType.END_TIME -> "按结束时间"
+                            SortType.CREATE_TIME -> "按创建时间"
+                        }
+                    )
+                }
+//                Spacer(Modifier.width(5.dp))
+            } else {
+                IconButton(
+                    onClick = {
+                        if(celebrationText != null) {
+                            showDialog = true
+                        } else {
+                            isNavigationIconVisible = true
+                        }
+                    }
+                ) {
+                    Icon(
+                        painterResource(R.drawable.sort),
+                        null,
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+//            ApiFromLife(vm, hazeState)
+            ApiToSupabase(vm)
+
+            IconButton(onClick = { showBottomSheet = true }) {
+                BadgedBox(badge = {
+                    if (getNotifications().size.toString() != prefs.getString("Notifications",""))
+                        Badge()
+                }) { Icon(painterResource(id = R.drawable.notifications), contentDescription = "", tint = MaterialTheme.colorScheme.primary) }
+            }
+        }
+    }
+//    val statusIcon = @Composable {
+//        if(ifSaved) {
+//            IconButton (onClick = { refreshLogin() }) {
+//                Icon(painter = painterResource(id =  R.drawable.login), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
+//            }
+//        } else {
+//            Spacer(modifier = Modifier.width(7.5.dp))
+//            Text(text = if(webVpn)"WEBVPN" else "已登录", color = MaterialTheme.colorScheme.primary)
+//            Spacer(modifier = Modifier.width(appHorizontalDp()))
+//        }
+//    }
 
     Box(modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {
         var innerPaddingValues by remember { mutableStateOf<PaddingValues?>(null) }
 
-        Box(modifier = Modifier.align(Alignment.BottomEnd).zIndex(3f)) {
+        Box(modifier = Modifier
+            .align(Alignment.BottomEnd)
+            .zIndex(3f)) {
             innerPaddingValues?.let { AddEventFloatButton(isSupabase = false,isVisible = isNavigationIconVisible && (targetPage == FOCUS),hazeState,vmUI,it,vm) }
         }
 
         Scaffold(
-            modifier = transitionBackground(isAddUIExpanded)
-                .fillMaxSize()
-//                .nestedScroll(scrollBehavior.nestedScrollConnection)
-            ,
+            modifier = transitionBackground(isAddUIExpanded).fillMaxSize().let {
+                if (targetPage == FOCUS) {
+                    it.nestedScroll(scrollBehavior.nestedScrollConnection)
+                } else {
+                    it
+                }
+            },
             topBar = {
                 Column(modifier = Modifier.topBarBlur(hazeState)) {
-                    if(targetPage == FOCUS && celebrationText != null) {
+                    if(targetPage == FOCUS) {
                         MediumTopAppBar(
                             colors = topAppBarColors(
                                 containerColor = Color.Transparent,
@@ -335,7 +457,7 @@ fun MainScreen(
                                 scrolledContainerColor = Color.Transparent,
                             ),
                             navigationIcon = {
-                                if(isNavigationIconVisible) {
+                                if(isNavigationIconVisible && celebrationText != null) {
                                     Box(modifier = Modifier.padding(horizontal = appHorizontalDp()-3.dp)) {
                                         Text(
                                             text = celebrationText,
@@ -389,7 +511,7 @@ fun MainScreen(
                                             IconButton(onClick = { showSearch = !showSearch }) {
                                                 Icon(painter = painterResource(id =  R.drawable.search), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
                                             }
-
+//                                            statusIcon()
                                             if(ifSaved) {
                                                 IconButton (onClick = { refreshLogin() }) {
                                                     Icon(painter = painterResource(id =  R.drawable.login), contentDescription = "",tint = MaterialTheme.colorScheme.primary)

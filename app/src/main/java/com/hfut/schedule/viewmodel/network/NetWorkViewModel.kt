@@ -129,7 +129,9 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     var supabaseLoginResp = MutableLiveData<String?>()
     fun supabaseLoginWithPassword(password : String) = NetWork.makeRequest(supabase.login(user = SupabaseUserLoginBean(password = password), loginType = "password"),supabaseLoginResp)
 
-    fun supabaseLoginWithRefreshToken(refreshToken : String) = NetWork.makeRequest(supabase.login(user = SupabaseRefreshLoginBean(refreshToken), loginType = "grant_type"),supabaseLoginResp)
+    fun supabaseLoginWithRefreshToken(refreshToken : String) = NetWork.makeRequest(supabase.login(user = SupabaseRefreshLoginBean(refreshToken), loginType = "refresh_token",
+//        authorization = "Bearer $jwt"
+    ),supabaseLoginResp)
 
     var supabaseDelResp = MutableLiveData<Boolean?>()
     fun supabaseDel(jwt : String,id : Int) {
@@ -172,15 +174,38 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
     // 默认 展示未过期日程&&符合自己班级的日程
     var supabaseGetEventsResp = MutableLiveData<String?>()
-    fun supabaseGetEvents(jwt: String,filter : Boolean = false) = NetWork.makeRequest(supabase.getEvents(authorization = "Bearer $jwt", classes = if(filter) "ilike.*${getPersonInfo().classes}*" else null),supabaseGetEventsResp)
+    fun supabaseGetEvents(jwt: String) = NetWork.makeRequest(supabase.getEvents(authorization = "Bearer $jwt"),supabaseGetEventsResp)
 
     var supabaseGetEventForkCountResp = MutableLiveData<String?>()
     fun supabaseGetEventForkCount(jwt: String,eventId: Int) = NetWork.makeRequest(supabase.getEventDownloadCount(authorization = "Bearer $jwt", entity = SupabaseEventForkCount(eventId = eventId)),supabaseGetEventForkCountResp)
 
+    var supabaseGetEventCountResp = MutableLiveData<String?>()
+    fun supabaseGetEventCount(jwt: String) = NetWork.makeRequest(supabase.getEventCount(authorization = "Bearer $jwt"),supabaseGetEventCountResp)
+
+    var supabaseGetEventLatestStatusResp = MutableLiveData<Boolean?>()
+    var supabaseGetEventLatestResp = MutableLiveData<String?>()
+    fun supabaseGetEventLatest(jwt: String) {
+
+        val call = supabase.getEventLatestTime(authorization = "Bearer $jwt")
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if(response.isSuccessful) {
+                    supabaseGetEventLatestResp.value = response.body()?.string()
+                    supabaseGetEventLatestStatusResp.value = true
+                } else {
+                    supabaseGetEventLatestStatusResp.value = false
+                }
+            }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { }
+        })
+    }
+
+
+
 
     // 定制 展示自己上传过的日程
     var supabaseGetMyEventsResp = MutableLiveData<String?>()
-    fun supabaseGetMyEvents(jwt: String) = NetWork.makeRequest(supabase.getEvents(authorization = "Bearer $jwt",endTime = null,email = "eq." + getSchoolEmail(), classes = null),supabaseGetMyEventsResp)
+    fun supabaseGetMyEvents(jwt: String) = NetWork.makeRequest(supabase.getEvents(authorization = "Bearer $jwt",endTime = null,email = "eq." + getSchoolEmail()),supabaseGetMyEventsResp)
 
 
     var supabaseCheckResp = MutableLiveData<Boolean?>()
@@ -189,6 +214,17 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 supabaseCheckResp.value = response.isSuccessful
+            }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { }
+        })
+    }
+
+    var supabaseUpdateResp = MutableLiveData<Boolean?>()
+    fun updateEvent(jwt: String,id: Int,body : Map<String,Any>) {
+        val call = supabase.updateEvent(authorization = "Bearer $jwt",id = "eq.$id", body = body)
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                supabaseUpdateResp.value = response.isSuccessful
             }
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { }
         })

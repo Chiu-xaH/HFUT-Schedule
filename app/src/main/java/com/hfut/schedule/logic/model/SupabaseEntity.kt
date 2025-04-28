@@ -3,11 +3,13 @@ package com.hfut.schedule.logic.model
 import com.google.gson.annotations.SerializedName
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.database.entity.CustomEventType
+import com.hfut.schedule.logic.util.network.toDateTimeBeanForSupabase
 import com.hfut.schedule.logic.util.sys.DateTime
 import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.transfer.EventCampus
 import com.hfut.schedule.ui.screen.home.search.function.transfer.getCampus
+import com.hfut.schedule.ui.screen.home.search.function.transfer.getEventCampus
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
 
 data class SupabaseUserLoginBean(
@@ -21,6 +23,8 @@ data class SupabaseEventForkCount(
     @SerializedName("target_event_id")
     val eventId : Int
 )
+
+
 // 实体类 接收数据库
 data class SupabaseEventEntity(
     val id : Int? = null,

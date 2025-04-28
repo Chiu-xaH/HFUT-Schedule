@@ -31,6 +31,8 @@ object DataStoreManager {
     private val SUPABASE_JWT = stringPreferencesKey("supabase_jwt")
     private val SUPABASE_REFRESH_TOKEN = stringPreferencesKey("supabase_refresh_token")
     private val SUPABASE_FILTER_EVENT = booleanPreferencesKey("supabase_filter_event")
+    private val SUPABASE_AUTO_CHECK = booleanPreferencesKey("supabase_auto_check")
+
 
 
 
@@ -103,9 +105,11 @@ object DataStoreManager {
             preferences[SUPABASE_FILTER_EVENT] = value
         }
     }
-
-
-
+    suspend fun saveSupabaseAutoCheck(value: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[SUPABASE_AUTO_CHECK] = value
+        }
+    }
 
 
     val animationTypeFlow: Flow<Int> = dataStore.data
@@ -126,11 +130,11 @@ object DataStoreManager {
         }
     val motionBlurFlow: Flow<Boolean> = dataStore.data
         .map { preferences ->
-            preferences[MOTION_BLUR] ?: true
+            preferences[MOTION_BLUR] ?: AppVersion.CAN_MOTION_BLUR
         }
     val hazeBlurFlow: Flow<Boolean> = dataStore.data
         .map { preferences ->
-            preferences[HAZE_BLUR] ?: AppVersion.canBlur
+            preferences[HAZE_BLUR] ?: AppVersion.CAN_BLUR
         }
     val motionAnimationTypeFlow: Flow<Boolean> = dataStore.data
         .map { preferences ->
@@ -160,6 +164,11 @@ object DataStoreManager {
         .map { preferences ->
             preferences[SUPABASE_FILTER_EVENT] ?: true
         }
+    val supabaseAutoCheck: Flow<Boolean> = dataStore.data
+        .map { preferences ->
+            preferences[SUPABASE_AUTO_CHECK] ?: true
+        }
+
     /* 用法
     val XXX by DataStoreManager.XXX.collectAsState(initial = 默认值)
      */

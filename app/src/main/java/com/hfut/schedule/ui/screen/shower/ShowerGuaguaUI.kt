@@ -57,7 +57,7 @@ import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 //import com.hfut.schedule.ui.activity.card.function.main.turnToBottomBar
 import com.hfut.schedule.ui.screen.shower.bill.GuaguaBills
-import com.hfut.schedule.ui.screen.shower.function.GuaGuaSettings
+import com.hfut.schedule.ui.screen.shower.cube.GuaGuaSettings
 import com.hfut.schedule.ui.screen.shower.home.GuaguaStart
 import com.hfut.schedule.ui.util.NavigateAnimationManager
 import com.hfut.schedule.ui.util.NavigateAnimationManager.currentPage

@@ -41,6 +41,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun SupabaseSettingsScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,hazeState: HazeState) {
     val filter by DataStoreManager.supabaseFilterEventFlow.collectAsState(initial = false)
+    val supabaseAutoCheck by DataStoreManager.supabaseAutoCheck.collectAsState(initial = true)
+
     val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
     if(showBottomSheet)
@@ -120,10 +122,21 @@ fun SupabaseSettingsScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,ha
         DividerTextExpandedWith("设置") {
             TransplantListItem(
                 headlineContent = { Text("刷新登陆状态") },
-                leadingContent = { Icon(painterResource(R.drawable.rotate_right), null) },
+                leadingContent = { Icon(painterResource(R.drawable.login), null) },
                 modifier = Modifier.clickable { Starter.loginSupabase() }
             )
 
+            TransplantListItem(
+                headlineContent = { Text("自动检查登录") },
+                supportingContent = { Text("启动APP时自动检查登陆状态，以减少初次等待时间" ) },
+                leadingContent = { Icon(painterResource(R.drawable.rotate_right), null) },
+                trailingContent = {
+                    Switch(checked = supabaseAutoCheck, onCheckedChange = {  scope.launch { DataStoreManager.saveSupabaseAutoCheck(!supabaseAutoCheck) } })
+                },
+                modifier = Modifier.clickable {
+                    scope.launch { DataStoreManager.saveSupabaseAutoCheck(!supabaseAutoCheck) }
+                }
+            )
             TransplantListItem(
                 headlineContent = { Text("过滤不适用于自己的日程") },
                 supportingContent = { Text("展示${if(!filter) "所有" else "包含 " + getPersonInfo().school  + getPersonInfo().classes + " 的"}日程" ) },

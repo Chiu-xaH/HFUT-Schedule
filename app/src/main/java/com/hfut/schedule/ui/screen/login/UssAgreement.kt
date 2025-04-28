@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
@@ -46,6 +47,7 @@ import com.hfut.schedule.ui.style.bottomBarBlur
 import com.hfut.schedule.ui.style.topBarBlur
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
+import dev.chrisbanes.haze.hazeSource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -105,39 +107,36 @@ fun UseAgreementScreen(navController : NavHostController) {
             )
         },
         bottomBar = {
-            Box(modifier = Modifier.bottomBarBlur(hazeState)) {
-                Row(modifier = Modifier.padding(appHorizontalDp()),horizontalArrangement = Arrangement.Center) {
-                    Button(
-                        onClick = {
-                            SharedPrefs.saveBoolean("canUse", default = false, save = true)
-                            navController.navigateAndClear(MainNav.HOME.name)
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f)
-                    ) {
-                        Text("同意")
-                    }
-                    Spacer(modifier = Modifier.width(appHorizontalDp()))
-                    FilledTonalButton(
-                        onClick = {
-                            showToast("已关闭APP")
-                            context?.finish()
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f)
-                    ) {
-                        SharedPrefs.saveBoolean("canUse", default = false, save = false)
-                        Text("拒绝")
-                    }
+            Row(modifier = Modifier.padding(appHorizontalDp()).statusBarsPadding().bottomBarBlur(hazeState),horizontalArrangement = Arrangement.Center) {
+                Button(
+                    onClick = {
+                        SharedPrefs.saveBoolean("canUse", default = false, save = true)
+                        navController.navigateAndClear(MainNav.HOME.name)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f)
+                ) {
+                    Text("同意")
+                }
+                Spacer(modifier = Modifier.width(appHorizontalDp()))
+                FilledTonalButton(
+                    onClick = {
+                        showToast("已关闭APP")
+                        context?.finish()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f)
+                ) {
+                    SharedPrefs.saveBoolean("canUse", default = false, save = false)
+                    Text("拒绝")
                 }
             }
         },
     ) { innerPadding ->
         Column(
-            modifier = Modifier
-                .fillMaxSize().haze(hazeState)
+            modifier = Modifier.hazeSource(hazeState).fillMaxSize()
         ) {
             LazyColumn {
                 item { Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding())) }

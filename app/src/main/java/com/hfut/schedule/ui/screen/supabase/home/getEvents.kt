@@ -1,0 +1,20 @@
+package com.hfut.schedule.ui.screen.supabase.home
+
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import com.hfut.schedule.logic.model.SupabaseEventEntity
+import com.hfut.schedule.logic.model.SupabaseEventsInput
+import com.hfut.schedule.logic.util.network.supabaseEventEntityToDto
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+
+fun getEvents(vm: NetWorkViewModel, isMine : Boolean) : List<SupabaseEventsInput> {
+    val json = if(!isMine) vm.supabaseGetEventsResp.value else vm.supabaseGetMyEventsResp.value
+    return try {
+        val list : List<SupabaseEventEntity> = Gson().fromJson(json,object : TypeToken<List<SupabaseEventEntity>>() {}.type)
+        val newList = list.mapNotNull { item -> supabaseEventEntityToDto(item) }
+        return newList
+    } catch (e : Exception) {
+        e.printStackTrace()
+        emptyList()
+    }
+}

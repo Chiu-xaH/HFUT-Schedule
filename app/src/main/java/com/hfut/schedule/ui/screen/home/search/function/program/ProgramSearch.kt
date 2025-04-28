@@ -45,6 +45,7 @@ import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.jxglstu.PlanCoursesSearch
+import com.hfut.schedule.logic.model.jxglstu.ProgramPartThree
 import com.hfut.schedule.logic.model.jxglstu.RequireInfo
 import com.hfut.schedule.logic.model.jxglstu.Type
 import com.hfut.schedule.logic.util.sys.Starter
@@ -228,7 +229,7 @@ fun ProgramSearch(vm : NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState)
                 }
                 if(searchList.isNotEmpty()) {
                     LazyColumn {
-                        items(searchList.size) { index ->
+                        items(searchList.size, key = { it }) { index ->
                             val data = searchList[index]
                             var department = data.department
                             val name = data.name
@@ -313,7 +314,7 @@ fun SearchProgramUI(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState
 
     var total = 0.0
     LazyColumn {
-        items(listOne.size) {item ->
+        items(listOne.size, key = { it }) {item ->
             total += listOne[item].requiedCredits ?: 0.0
 //            MyCustomCard {
             AnimationCardListItem(
@@ -403,7 +404,7 @@ fun SearchProgramUIInfo(num : Int, vm : NetWorkViewModel, ifSaved: Boolean, haze
     }
     if(show) {
         LazyColumn {
-            items(listTwo.size) {item ->
+            items(listTwo.size, key = { it }) {item ->
 //                MyCustomCard{
                 AnimationCardListItem(
                         headlineContent = { Text(text = listTwo[item].type + " | 学分要求 " + listTwo[item].requiedCredits) },
@@ -434,6 +435,12 @@ fun SearchProgramUIInfo2(num1 : Int, num2 : Int, vm : NetWorkViewModel, ifSaved 
     var courseName by remember { mutableStateOf("") }
     ApiForCourseSearch(vm,courseName,null,showBottomSheet_Search, hazeState = hazeState) {
         showBottomSheet_Search = false
+    }
+
+    var courseInfo by remember { mutableStateOf<ProgramPartThree?>(null) }
+    var showInfo by remember { mutableStateOf(false) }
+    if(showInfo && courseInfo != null) {
+        ProgramInfo(courseInfo = courseInfo!!,vm, hazeState, ifSaved){ showInfo = false }
     }
 
     if(listThree.size != 0) {
@@ -472,7 +479,7 @@ fun SearchProgramUIInfo2(num1 : Int, num2 : Int, vm : NetWorkViewModel, ifSaved 
         }
         Spacer(modifier = Modifier.height(cardNormalDp()))
         LazyColumn {
-            items(searchList.size) {item ->
+            items(searchList.size, key = { it }) {item ->
 //                MyCustomCard{
                 var department = searchList[item].depart
                 if(department.contains("（")) department = department.substringBefore("（")

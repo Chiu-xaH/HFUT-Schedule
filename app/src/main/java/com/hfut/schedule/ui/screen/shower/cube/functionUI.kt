@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.screen.shower.function
+package com.hfut.schedule.ui.screen.shower.cube
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement

@@ -1,19 +1,21 @@
 package com.hfut.schedule.logic.network.api
 
+import com.google.gson.annotations.SerializedName
 import com.hfut.schedule.logic.model.SupabaseEventEntity
 import com.hfut.schedule.logic.model.SupabaseEventForkCount
 import com.hfut.schedule.logic.model.SupabaseEventForkEntity
 import com.hfut.schedule.logic.model.SupabaseUserLoginBean
 import com.hfut.schedule.logic.util.network.Encrypt.getSupabasePublicKey
 import com.hfut.schedule.logic.util.network.toDateTimeBeanForSupabase
-import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
+import com.hfut.schedule.ui.screen.home.search.function.transfer.getEventCampus
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Query
 
@@ -30,6 +32,7 @@ interface SupabaseService {
     fun login(
         @Header("apikey") publicKey : String = getSupabasePublicKey(),
         @Query("grant_type") loginType : String,
+//        @Header("Authorization") authorization : String? = null,
         @Body user : Any
     ) : Call<ResponseBody>
 
@@ -48,7 +51,6 @@ interface SupabaseService {
         @Header("apikey") publicKey : String = getSupabasePublicKey(),
         @Query("end_time") endTime : String? = "gt.${toDateTimeBeanForSupabase()}",
         @Query("contributor_email") email : String? = null,
-        @Query("applicable_classes") classes : String? = "ilike.*${getPersonInfo().classes}*"
     ) : Call<ResponseBody>
 
     // EVENT删
@@ -67,6 +69,15 @@ interface SupabaseService {
         @Body entity : SupabaseEventEntity
     ) : Call<ResponseBody>
 
+    // EVENT改
+    @PATCH("rest/v1/event")
+    fun updateEvent(
+        @Header("Authorization") authorization : String,
+        @Header("apikey") publicKey : String = getSupabasePublicKey(),
+        @Query("id") id: String,
+        @Body body: Map<String, @JvmSuppressWildcards Any>
+    ) : Call<ResponseBody>
+
     // EVENT下载+1
     @POST("rest/v1/event_fork")
     fun eventDownloadAdd(
@@ -81,5 +92,34 @@ interface SupabaseService {
         @Header("Authorization") authorization : String,
         @Header("apikey") publicKey : String = getSupabasePublicKey(),
         @Body entity : SupabaseEventForkCount
+    ) : Call<ResponseBody>
+
+    // EVENT日程数量
+    data class SupabaseEventCount(
+        @SerializedName("class_text")
+        val classes : String? = getPersonInfo().classes,
+        @SerializedName("campus_text")
+        val campus : String = getEventCampus().name,
+        @SerializedName("end_time_param")
+        val endTime : String = toDateTimeBeanForSupabase()
+    )
+    @POST("rest/v1/rpc/get_event_count")
+    fun getEventCount(
+        @Header("Authorization") authorization : String,
+        @Header("apikey") publicKey : String = getSupabasePublicKey(),
+        @Body entity : SupabaseEventCount = SupabaseEventCount()
+    ) : Call<ResponseBody>
+
+    data class SupabaseEventLatest(
+        @SerializedName("class_text")
+        val classes : String? = getPersonInfo().classes,
+        @SerializedName("campus_text")
+        val campus : String = getEventCampus().name,
+    )
+    @POST("rest/v1/rpc/get_latest_event_end_time")
+    fun getEventLatestTime(
+        @Header("Authorization") authorization : String,
+        @Header("apikey") publicKey : String = getSupabasePublicKey(),
+        @Body entity : SupabaseEventLatest = SupabaseEventLatest()
     ) : Call<ResponseBody>
 }

@@ -50,8 +50,8 @@ fun SupabaseStorageScreen(innerPadding : PaddingValues,hazeState : HazeState) {
     // 初始化
     LaunchedEffect(refreshDB) {
         // 加载数据库
-        launch { customNetCourseList = getCustomNetCourse() }
-        launch { customScheduleList = getCustomSchedule() }
+        launch { customNetCourseList = getCustomNetCourse(isSupabase = true) }
+        launch { customScheduleList = getCustomSchedule(isSupabase = true) }
     }
 
     LazyColumn {
@@ -137,7 +137,6 @@ private fun CustomItemUI(item: CustomEventDTO,activity: Activity,hazeState: Haze
                         }
                     ) { Icon(painterResource(R.drawable.event_upcoming), null) }
                 }
-                Text("本地")
             }
         },
         modifier = Modifier.combinedClickable(

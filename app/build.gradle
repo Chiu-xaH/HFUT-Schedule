@@ -23,7 +23,8 @@ android {
             // 启用 ABI 分割
             enable true
             reset()
-            include 'arm64-v8a', 'armeabi-v7a', 'x86', 'x86_64'
+//            'armeabi-v7a', 'x86',
+            include 'arm64-v8a',  'x86_64'
             universalApk true
         }
     }
@@ -32,8 +33,8 @@ android {
         applicationId "com.hfut.schedule"
         minSdk 26
         targetSdk 36
-        versionCode 178
-        versionName "4.15.2.1"
+        versionCode 179
+        versionName "4.15.2.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
@@ -43,6 +44,8 @@ android {
     applicationVariants.configureEach { variant ->
         variant.outputs.each { output ->
             def abi = output.getFilter(com.android.build.OutputFile.ABI)
+            def versionName = variant.versionName
+            def buildType = variant.buildType.name
             if (abi != null) {
                 def baseVersionCode = defaultConfig.versionCode * 10
                 def abiVersionCodes = [
@@ -51,9 +54,15 @@ android {
                         "x86"         : 3,
                         "x86_64"      : 4
                 ]
-
                 def newVersionCode = baseVersionCode + (abiVersionCodes[abi] ?: 0)
-
+                // 判断是否显示release
+                def type = ""
+                if(buildType != "release") {
+                    type = "-${buildType}"
+                }
+                // 输出文件名
+                output.outputFileName = "${versionName}-${abi}${type}.apk"
+                // 分架构版本号
                 output.versionCodeOverride = newVersionCode
             }
         }
@@ -100,7 +109,6 @@ android {
 dependencies {
     implementation platform(libs.kotlin.bom)
     implementation libs.androidx.core.ktx
-//    implementation libs.androidx.core
     // Compose
     implementation libs.androidx.activity.compose
     implementation libs.androidx.ui

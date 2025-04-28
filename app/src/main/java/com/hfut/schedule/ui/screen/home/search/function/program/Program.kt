@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -63,6 +64,7 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.parse.formatDecimal
+import com.hfut.schedule.logic.util.sys.ClipBoard
 import com.hfut.schedule.ui.screen.home.search.function.courseSearch.ApiForCourseSearch
 import com.hfut.schedule.ui.screen.home.search.function.life.countFunc
 import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
@@ -221,7 +223,7 @@ fun ProgramUI(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState) {
                 )
 //            }
         }
-        items(list.size) { item ->
+        items(list.size, key = { it }) { item ->
             val name = list[item].name
 //            MyCustomCard{
                 AnimationCardListItem(
@@ -405,7 +407,7 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState) {
             ) {
                 var total = 0.0
                 LazyColumn {
-                    items(listOne.size) {item ->
+                    items(listOne.size, key = { it }) {item ->
                         total += listOne[item].requiedCredits ?: 0.0
 //                        MyCustomCard {
                             AnimationCardListItem(
@@ -522,7 +524,7 @@ fun ProgramUIInfo(num : Int, vm : NetWorkViewModel, ifSaved : Boolean, hazeState
     }
     if(show) {
         LazyColumn {
-            items(listTwo.size) {item ->
+            items(listTwo.size, key = { it }) {item ->
 //                MyCustomCard{
                     AnimationCardListItem(
                         headlineContent = { Text(text = listTwo[item].type + " | 学分要求 " + listTwo[item].requiedCredits) },
@@ -542,6 +544,120 @@ fun ProgramUIInfo(num : Int, vm : NetWorkViewModel, ifSaved : Boolean, hazeState
        ProgramUIInfo2(num,num2,vm, ifSaved,hazeState)
     }
 }
+@Composable
+fun ProgramInfo(courseInfo : ProgramPartThree,vm: NetWorkViewModel,hazeState: HazeState,ifSaved: Boolean,onDismissRequest : () -> Unit) {
+    var showBottomSheet_Search by remember { mutableStateOf(false) }
+
+    ApiForCourseSearch(vm,null, courseInfo.code,showBottomSheet_Search, hazeState = hazeState) {
+        showBottomSheet_Search = false
+    }
+    HazeBottomSheet(
+        showBottomSheet = true,
+        isFullExpand = true,
+        autoShape = false,
+        hazeState = hazeState,
+        onDismissRequest = onDismissRequest
+    ){
+        Column(modifier = Modifier.navigationBarsPadding()) {
+            HazeBottomSheetTopBar(courseInfo.name , isPaddingStatusBar = false) {
+                FilledTonalButton(
+                    onClick = {
+                        if(!ifSaved) {
+                            showBottomSheet_Search = true
+                        } else {
+                            showToast("登录教务后可查询开课")
+                            refreshLogin()
+                        }
+                    }
+                ) {
+                    Text("开课查询")
+                }
+            }
+            Row {
+                TransplantListItem(
+                    headlineContent = { Text(courseInfo.courseType) },
+                    leadingContent = {
+                        Icon(painterResource(R.drawable.hotel_class),null)
+                    },
+                    overlineContent = { Text("类型") },
+                    modifier = Modifier.weight(.5f)
+                )
+                TransplantListItem(
+                    headlineContent = { Text(if(courseInfo.isCompulsory) "必修" else "选修") },
+                    leadingContent = {
+                        Icon(painterResource(R.drawable.check),null)
+                    },
+                    overlineContent = { Text("真实选修性") },
+                    modifier = Modifier.weight(.5f)
+                )
+            }
+            Row {
+                TransplantListItem(
+                    headlineContent = { Text(courseInfo!!.credit.toString()) },
+                    leadingContent = {
+                        Icon(painterResource(R.drawable.filter_vintage),null)
+                    },
+                    overlineContent = { Text("学分") },
+
+                    modifier = Modifier.weight(.5f)
+                )
+                courseInfo!!.code.let {
+                    TransplantListItem(
+                        headlineContent = { Text(it) },
+                        leadingContent = {
+                            Icon(painterResource(R.drawable.tag),null)
+                        },
+                        overlineContent = { Text("课程代码") },
+                        modifier = Modifier.weight(.5f).clickable {
+                            ClipBoard.copy(it)
+                        }
+                    )
+                }
+            }
+            Row {
+                TransplantListItem(
+                    headlineContent = { Text("第" + courseInfo!!.term +"学期") },
+                    leadingContent = {
+                        Icon(painterResource(R.drawable.schedule),null)
+                    },
+                    overlineContent = { Text("类型") },
+
+                    modifier = Modifier.weight(.5f)
+                )
+                TransplantListItem(
+                    headlineContent = { Text("共"+courseInfo!!.week+"周") },
+                    leadingContent = {
+                        Icon(painterResource(R.drawable.calendar),null)
+                    },
+                    overlineContent = { Text("上课周数") },
+
+                    modifier = Modifier.weight(.5f)
+                )
+            }
+
+            courseInfo.depart.let {
+                TransplantListItem(
+                    headlineContent = { Text(it) },
+                    leadingContent = {
+                        DepartmentIcons(it)
+                    },
+                    overlineContent = { Text("开设学院") },
+                )
+            }
+            courseInfo.remark?.let {
+                TransplantListItem(
+                    headlineContent = { Text(it) },
+                    leadingContent = {
+                        Icon(painterResource(R.drawable.info),null)
+                    },
+                    overlineContent = { Text("备注") },
+                )
+            }
+            Spacer(Modifier.height(appHorizontalDp()))
+        }
+    }
+
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -551,10 +667,10 @@ fun ProgramUIInfo2(num1 : Int, num2 : Int, vm : NetWorkViewModel, ifSaved : Bool
         listThree.sortBy { it.term }
         var input by remember { mutableStateOf("") }
 
-        var showBottomSheet_Search by remember { mutableStateOf(false) }
-        var courseName by remember { mutableStateOf("") }
-        ApiForCourseSearch(vm,courseName,null,showBottomSheet_Search, hazeState = hazeState) {
-            showBottomSheet_Search = false
+        var courseInfo by remember { mutableStateOf<ProgramPartThree?>(null) }
+        var showInfo by remember { mutableStateOf(false) }
+        if(showInfo && courseInfo != null) {
+            ProgramInfo(courseInfo = courseInfo!!,vm, hazeState, ifSaved){ showInfo = false }
         }
 
         Row(
@@ -589,25 +705,21 @@ fun ProgramUIInfo2(num1 : Int, num2 : Int, vm : NetWorkViewModel, ifSaved : Bool
         }
         Spacer(modifier = Modifier.height(cardNormalDp()))
         LazyColumn {
-            items(searchList.size) {item ->
+            items(searchList.size, key = { it }) {item ->
                 val listItem = searchList[item]
                 val name = listItem.name
 //                MyCustomCard{
                     var department = listItem.depart
-                    if(department.contains("（")) department = department.substringBefore("（")
+//                    if(department.contains("（")) department = department.substringBefore("（")
                     AnimationCardListItem(
                         headlineContent = { Text(text = name) },
                         supportingContent = { Text(text = department) },
                         overlineContent = { Text(text = "第" + listItem.term + "学期 | 学分 ${listItem.credit}")},
                         leadingContent = { DepartmentIcons(name = listItem.depart) },
+                        trailingContent = if(!listItem.isCompulsory){{ Text("选修") }} else null,
                         modifier = Modifier.clickable {
-                            if(!ifSaved) {
-                                courseName = name
-                                showBottomSheet_Search = true
-                            } else {
-                                showToast("登录教务后可查询开课")
-                                Starter.refreshLogin()
-                            }
+                            courseInfo = listItem
+                            showInfo = true
                         },
                         index = item
                     )

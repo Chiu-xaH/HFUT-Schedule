@@ -517,7 +517,7 @@ fun CustomItemUI(item: CustomEventDTO,isFuture: Boolean,activity: Activity,hazeS
                         }
                     }
                 }
-                Text("本地")
+                Text(if(item.supabaseId == null)"本地" else "云端导入")
             }
         },
         modifier = Modifier.combinedClickable(

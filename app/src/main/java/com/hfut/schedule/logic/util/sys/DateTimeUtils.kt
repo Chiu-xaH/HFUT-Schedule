@@ -67,7 +67,7 @@ object DateTimeUtils {
     val tomorrow_YYYY_MM_DD: String = today.plusDays(1).format(formatter_YYYY_MM_DD)
 
     val DateTime_T = Date_yyyy_MM_dd + "T" + Time_HH_MM_SS
-
+    val DateTimeBeanNow = DateTimeBean(Date_yyyy.toInt(), Date_MM.toInt(), Date_dd.toInt(), Time_Hour.toInt(), Time_Minute.toInt())
 
     //计算目前已经过了多久
     fun getPercent(startDateStr: String, endDateStr: String): Double {

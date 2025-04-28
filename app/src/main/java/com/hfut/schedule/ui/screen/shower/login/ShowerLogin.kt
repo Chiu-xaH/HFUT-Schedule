@@ -67,7 +67,7 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter.loginGuaGua
 import com.hfut.schedule.logic.util.sys.Starter.startGuaGua
-import com.hfut.schedule.ui.screen.shower.function.EditLoginCode
+import com.hfut.schedule.ui.screen.shower.cube.EditLoginCode
 
 import com.hfut.schedule.ui.component.BottomTip
 import com.hfut.schedule.ui.component.DividerText

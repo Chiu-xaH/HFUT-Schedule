@@ -1,9 +1,10 @@
-package com.hfut.schedule.ui.screen.supabase.me
+package com.hfut.schedule.ui.screen.supabase.manage
 
 import android.os.Handler
 import android.os.Looper
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
@@ -99,25 +100,31 @@ fun SupabaseMeScreenRefresh(vm : NetWorkViewModel,innerPadding : PaddingValues) 
 
 
 @Composable
-fun SupabaseMeScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,refresh : Boolean,onRefresh : (Boolean) -> Unit ) {
+private fun SupabaseMeScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,refresh : Boolean,onRefresh : (Boolean) -> Unit ) {
     val jwt by DataStoreManager.supabaseJwtFlow.collectAsState(initial = "")
 
     var id by remember { mutableIntStateOf(-1) }
-    var showDialog by remember { mutableStateOf(false) }
+    var showDialogDel by remember { mutableStateOf(false) }
 
-    if(showDialog) {
+    if(showDialogDel) {
         LittleDialog(
             onConfirmation = {
                 if(id > 0) {
                     vm.supabaseDel(jwt,id)
                     onRefresh(true)
                 }
-                showDialog = false
+                showDialogDel = false
             },
-            onDismissRequest = { showDialog = false },
+            onDismissRequest = { showDialogDel = false },
             dialogText = "要删除这条吗，他人将看不到共享的内容"
         )
     }
+
+    var showDialogEdit by remember { mutableStateOf(false) }
+
+//    if(showDialogEdit) {
+//
+//    }
 
 
     if(refresh) {
@@ -133,12 +140,21 @@ fun SupabaseMeScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,refresh 
                     overlineContent = { Text(item.timeDescription) },
                     supportingContent = item.description?.let { { Text(it) } },
                     trailingContent = {
-                        FilledTonalIconButton(
-                            onClick = {
-                                id = item.id
-                                showDialog = true
-                            }
-                        ) { Icon(painterResource(R.drawable.close),null) }
+                        Row {
+                            FilledTonalIconButton(
+                                onClick = {
+                                    id = item.id
+                                    showToast("正在开发")
+                                    showDialogEdit = true
+                                }
+                            ) { Icon(painterResource(R.drawable.edit),null) }
+                            FilledTonalIconButton(
+                                onClick = {
+                                    id = item.id
+                                    showDialogDel = true
+                                }
+                            ) { Icon(painterResource(R.drawable.close),null) }
+                        }
                     },
                     leadingContent = {
                         Icon(

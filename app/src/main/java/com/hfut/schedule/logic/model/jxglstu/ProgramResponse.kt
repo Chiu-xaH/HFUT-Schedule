@@ -31,6 +31,7 @@ data class RequireInfo(val requiredSubModuleNum : Double?,
                        val requiredTotalPeriods : Int?,)
 
 data class PlanCourses(val readableTerms : List<Int>,
+                       val compulsory : Boolean,
                        val readableSuggestTerms : List<String>,
                        val remark : String?,
                        val course : course,
@@ -59,7 +60,13 @@ data class ProgramPartTwo(val type : String?,
 data class ProgramPartThree(val term : Int?,
                             val name : String,
                             val credit : Double?,
-                            val depart :String)
+                            val depart :String,
+                            val code : String,
+                            val week : Int?,
+                            val courseType : String,
+                            val remark : String?,
+                            val isCompulsory : Boolean
+)
 data class ProgramShow(val name : String,
                        val type : String?,
                        val credit : Double?,

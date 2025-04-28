@@ -12,7 +12,6 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,17 +45,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.zIndex
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventDTO
 import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.database.util.CustomEventMapper
-import com.hfut.schedule.logic.model.SupabaseEventEntity
-import com.hfut.schedule.logic.model.SupabaseEventsInput
+import com.hfut.schedule.logic.enumeration.SortType
 import com.hfut.schedule.logic.util.network.reEmptyLiveDta
-import com.hfut.schedule.logic.util.network.supabaseEventEntityToDto
 import com.hfut.schedule.logic.util.network.toTimestampWithOutT
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.component.CenterScreen
@@ -70,22 +65,11 @@ import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.transfer.EventCampus
 import com.hfut.schedule.ui.screen.home.search.function.transfer.getEventCampus
+import com.hfut.schedule.ui.screen.supabase.home.getEvents
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-
-fun getEvents(vm: NetWorkViewModel,isMine : Boolean) : List<SupabaseEventsInput> {
-    val json = if(!isMine) vm.supabaseGetEventsResp.value else vm.supabaseGetMyEventsResp.value
-    return try {
-        val list : List<SupabaseEventEntity> = Gson().fromJson(json,object : TypeToken<List<SupabaseEventEntity>>() {}.type)
-        val newList = list.mapNotNull { item -> supabaseEventEntityToDto(item) }
-        return newList
-    } catch (e : Exception) {
-        e.printStackTrace()
-        emptyList()
-    }
-}
 
 private const val TAB_LEFT = 0
 private const val TAB_RIGHT = 1
@@ -93,10 +77,9 @@ private const val TAB_RIGHT = 1
 @OptIn(ExperimentalMaterialApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun SupabaseHomeScreen(vm: NetWorkViewModel,sortType: SortType,sortReversed : Boolean,innerPadding : PaddingValues,pagerState : PagerState) {
+fun SupabaseHomeScreen(vm: NetWorkViewModel, sortType: SortType, sortReversed : Boolean, innerPadding : PaddingValues, pagerState : PagerState) {
     var refreshing by remember { mutableStateOf(true) }
     val jwt by DataStoreManager.supabaseJwtFlow.collectAsState(initial = "")
-    var addRefresh by remember { mutableStateOf(true) }
 
     val scope = rememberCoroutineScope()
     val pullRefreshState = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
@@ -113,7 +96,7 @@ fun SupabaseHomeScreen(vm: NetWorkViewModel,sortType: SortType,sortReversed : Bo
         }
     })
 
-    LaunchedEffect(jwt,addRefresh) {
+    LaunchedEffect(jwt) {
         if ((jwt.isNotBlank() || jwt.isNotEmpty()) && refreshing) {
             refreshing = true
             reEmptyLiveDta(vm.supabaseGetEventsResp)
@@ -152,12 +135,9 @@ fun SupabaseHomeScreen(vm: NetWorkViewModel,sortType: SortType,sortReversed : Bo
         }
     }
 }
-enum class SortType {
-    CREATE_TIME,START_TIME,END_TIME,ID
-}
-@OptIn(ExperimentalFoundationApi::class)
+
 @Composable
-fun SupabaseScheduleUI(vm: NetWorkViewModel,sortType : SortType,sortReversed : Boolean,innerPadding : PaddingValues,refresh : Boolean,onRefresh : (Boolean) -> Unit) {
+private fun SupabaseScheduleUI(vm: NetWorkViewModel,sortType : SortType,sortReversed : Boolean,innerPadding : PaddingValues,refresh : Boolean,onRefresh : (Boolean) -> Unit) {
     val jwt by DataStoreManager.supabaseJwtFlow.collectAsState(initial = "")
     val scope = rememberCoroutineScope()
 //    var sortType by remember { mutableStateOf(SortType.ID) }
@@ -230,13 +210,14 @@ fun SupabaseScheduleUI(vm: NetWorkViewModel,sortType : SortType,sortReversed : B
                                                     dateTime = item.dateTime,
                                                     type = item.type,
                                                     description = item.description,
-                                                    remark = item.timeDescription
+                                                    remark = item.timeDescription,
+                                                    supabaseId = item.id
                                                 )
                                                 // 添加到数据库
                                                 DataBaseManager.customEventDao.insert(CustomEventMapper.dtoToEntity(entity))
                                             }.await()
                                             async {
-                                                showToast("已下载到本地，位于聚焦")
+                                                showToast("已下载到本地")
                                             }.await()
                                             // 下载量++上传 下载量+1
                                             if(!downloaded)

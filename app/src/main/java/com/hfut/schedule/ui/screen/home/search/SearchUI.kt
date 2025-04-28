@@ -147,7 +147,7 @@ fun SearchScreen(
 
 
 
-    LazyVerticalGrid(columns = GridCells.Fixed(2),modifier = Modifier.padding(horizontal = 11.dp)) {
+    LazyVerticalGrid(columns = GridCells.Fixed(2),modifier = Modifier.padding(horizontal = 12.dp)) {
         items(2) {
             Column {
                 Spacer(modifier = Modifier.height(innerPaddings.calculateTopPadding()))
@@ -155,7 +155,7 @@ fun SearchScreen(
             }
         }
         items(filteredList.size) { index->
-            SmallCard(modifier = Modifier.padding(horizontal = cardNormalDp(), vertical = cardNormalDp())) {
+            SmallCard(modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp)) {
                 filteredList[index]()
             }
         }

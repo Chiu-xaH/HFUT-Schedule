@@ -112,9 +112,16 @@ fun getProgramListThree(item1 : Int, item2 : Int, vm : NetWorkViewModel, ifSaved
             val term = part[i].readableTerms[0]
             val course = part[i].course
             val courseName = course.nameZh
+            val code = course.code
+            val week = course.periodInfo.weeks
+            val courseType = course.courseType.nameZh
+            val remark = part[i].remark
+            val isCompulsory = part[i].compulsory
             val credit = course.credits
-            val depart = part[i].openDepartment.nameZh
-            list.add(ProgramPartThree(term,courseName,credit,depart?:""))
+            var depart = part[i].openDepartment.nameZh
+            if(depart.contains("（")) depart = depart.substringBefore("（")
+
+            list.add(ProgramPartThree(term,courseName,credit, depart,code,week,courseType,remark,isCompulsory))
         }
         return list
     } catch (e : Exception) {

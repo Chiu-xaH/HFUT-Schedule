@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.TypeConverter
+import androidx.room.Update
 import com.hfut.schedule.logic.database.entity.CustomCourseTableEntity
 import com.hfut.schedule.logic.database.entity.CustomEventDTO
 import com.hfut.schedule.logic.database.entity.CustomEventEntity
@@ -20,9 +21,15 @@ interface CustomEventDao {
     suspend fun getAll(type: String) : List<CustomEventEntity>
     // 删除
     @Query("DELETE FROM event WHERE id = :id")
-    suspend fun del(id : Int) : Int
+    suspend fun del(id : Int)
     // 新建
     @Insert
-    suspend fun insert(event : CustomEventEntity) : Long
+    suspend fun insert(event : CustomEventEntity)
+    // 获取下载的日程
+    @Query("SELECT * FROM event WHERE supabase_id IS NOT NULL AND type = :type")
+    suspend fun getDownloaded(type: String) : List<CustomEventEntity>
+    // 更新
+    @Update
+    suspend fun update(event : CustomEventEntity)
 }
 

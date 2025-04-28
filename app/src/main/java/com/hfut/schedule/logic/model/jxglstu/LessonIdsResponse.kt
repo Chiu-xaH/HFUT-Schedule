@@ -17,7 +17,7 @@ data class lessons(val nameZh : String?,
 data class scheduleText(val dateTimePlacePersonText : dateTimePlacePersonText )
 data class dateTimePlacePersonText(val textZh : String?)
 
-data class course(val nameZh : String,val credits : Double?)
+data class course(val nameZh : String,val credits : Double?,val code : String,val periodInfo : PeriodInfo,val courseType : courseType)
 data class courseType(val nameZh: String)
 
 data class teacherAssignmentList2(val teacher : teacher,val age : Int?)
@@ -30,3 +30,5 @@ data class semester(val id : Int,
                     val nameZh : String,
                     val startDate : String,
                     val endDate : String)
+
+data class PeriodInfo(val weeks : Int?)

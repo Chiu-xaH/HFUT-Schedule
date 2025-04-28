@@ -32,11 +32,6 @@ object AppVersion {
             SplitType.ARM32.code -> SplitType.ARM32
             SplitType.ARM64.code -> SplitType.ARM64
             SplitType.X86_64.code -> SplitType.X86_64
-//            SplitType.X86_DEBUG.code -> SplitType.X86_DEBUG
-//            SplitType.COMMON_DEBUG.code -> SplitType.COMMON_DEBUG
-//            SplitType.ARM32_DEBUG.code -> SplitType.ARM32_DEBUG
-//            SplitType.ARM64_DEBUG.code -> SplitType.ARM64_DEBUG
-//            SplitType.X86_64_DEBUG.code -> SplitType.X86_64_DEBUG
             else -> SplitType.COMMON
         }
     }
@@ -55,7 +50,13 @@ object AppVersion {
     // 获取当前系统的版本号
     val release = android.os.Build.VERSION.RELEASE
 
-    val canBlur = sdkInt >= 32
+    val CAN_BLUR = sdkInt >= 31
+    val CAN_PROGRESS_BLUR = sdkInt >= 33
+
+    val CAN_MOTION_BLUR = sdkInt >= 31
+
+    // 华为、安卓12 单独对渐变模糊适配
+    val blurForS = sdkInt == 31 || sdkInt == 32
 
     val canMonet = sdkInt >= 31
 

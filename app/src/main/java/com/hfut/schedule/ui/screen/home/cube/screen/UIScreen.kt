@@ -49,22 +49,26 @@ fun UIScreen(navController: NavController, innerPaddings : PaddingValues,
         Spacer(modifier = Modifier.height(5.dp))
 
         saveBoolean("SWITCH",true,showlable)
-        val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = AppVersion.canBlur)
+        val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = AppVersion.CAN_BLUR)
 
         val currentPureDark by DataStoreManager.pureDarkFlow.collectAsState(initial = false)
-        val motionBlur by DataStoreManager.motionBlurFlow.collectAsState(initial = true)
+        val motionBlur by DataStoreManager.motionBlurFlow.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
         val transition by DataStoreManager.transitionFlow.collectAsState(initial = false)
         val isCenterAnimation by DataStoreManager.motionAnimationTypeFlow.collectAsState(initial = false)
         val currentColorModeIndex by DataStoreManager.colorModeFlow.collectAsState(initial = DataStoreManager.ColorMode.AUTO.code)
+
         val cor = rememberCoroutineScope()
 
-        TransplantListItem(
-            headlineContent = { Text(text = "底栏标签") },
-            supportingContent = { Text(text = "屏幕底部的Tab栏底栏标签") },
-            leadingContent = { Icon(painterResource(R.drawable.label), contentDescription = "Localized description",) },
-            trailingContent = { Switch(checked = showlable, onCheckedChange = showlablechanged) },
-            modifier = Modifier.clickable { showlablechanged.invoke(showlable) }
-        )
+        DividerTextExpandedWith("标签") {
+            TransplantListItem(
+                headlineContent = { Text(text = "底栏标签") },
+                supportingContent = { Text(text = "屏幕底部的Tab栏底栏标签") },
+                leadingContent = { Icon(painterResource(R.drawable.label), contentDescription = "Localized description",) },
+                trailingContent = { Switch(checked = showlable, onCheckedChange = showlablechanged) },
+                modifier = Modifier.clickable { showlablechanged.invoke(showlable) }
+            )
+        }
+
         DividerTextExpandedWith("色彩") {
             TransplantListItem(
                 headlineContent = { Text(text = "主题色彩") },
@@ -119,45 +123,37 @@ fun UIScreen(navController: NavController, innerPaddings : PaddingValues,
             TransplantListItem(
                 headlineContent = { Text(text = "层级实时模糊") },
                 supportingContent = {
-                    if(AppVersion.canBlur) {
-                        Text(text = "开启后将会转换部分层级渲染为实时模糊,此过程会加大性能压力")
+                    if(AppVersion.CAN_BLUR) {
+                        Text(text = "开启后将会转换部分层级渲染为实时模糊,此过程会加大性能压力" )
                     } else {
-                        Text(text = "需为 Android 13+")
+                        Text(text = "需为 Android 12+")
                     }
                 },
                 leadingContent = { Icon(painterResource(R.drawable.deblur), contentDescription = "Localized description",) },
-                trailingContent = {  Switch(checked = blur, onCheckedChange = { cor.launch {  DataStoreManager.saveHazeBlur(!blur) } }, enabled = AppVersion.canBlur ) },
-                modifier = Modifier.clickable { cor.launch {  DataStoreManager.saveHazeBlur(!blur) } }
+                trailingContent = {  Switch(checked = blur, onCheckedChange = { cor.launch {  DataStoreManager.saveHazeBlur(!blur) } }, enabled = AppVersion.CAN_BLUR ) },
+                modifier = Modifier.clickable {
+                    if(AppVersion.CAN_BLUR ) {
+                        cor.launch {  DataStoreManager.saveHazeBlur(!blur) }
+                    }
+                }
             )
+
             TransplantListItem(
                 headlineContent = { Text(text = "运动模糊") },
                 supportingContent = {
-                    Text(text = "部分UI的运动会伴随实时模糊效果,此过程会加大动画过程的压力")
-                },
-                leadingContent = { Icon(painterResource(R.drawable.motion_mode), contentDescription = "Localized description",) },
-                trailingContent = {  Switch(checked = motionBlur, onCheckedChange = { cor.launch { DataStoreManager.saveMotionBlur(!motionBlur) } }) },
-                modifier = Modifier.clickable { cor.launch { DataStoreManager.saveMotionBlur(!motionBlur) } }
-            )
-            TransplantListItem(
-                headlineContent = { Text(text = "转场动画曲线") },
-                supportingContent = {
-                    Row {
-                        FilterChip(
-                            onClick = {
-                                cor.launch { DataStoreManager.saveMotionAnimation(true) }
-                            },
-                            label = { Text(text = "向中间运动(易打断)") }, selected = isCenterAnimation
-                        )
-                        Spacer(modifier = Modifier.width(10.dp))
-                        FilterChip(
-                            onClick = {
-                                cor.launch { DataStoreManager.saveMotionAnimation(false) }
-                            },
-                            label = { Text(text = "直接展开(不易打断)") }, selected = !isCenterAnimation
-                        )
+                    if(AppVersion.CAN_MOTION_BLUR) {
+                        Text(text = "部分UI的运动会伴随实时模糊效果,此过程会加大动画过程的压力")
+                    } else {
+                        Text(text = "需为 Android 12+")
                     }
                 },
-                leadingContent = { Icon(painterResource(R.drawable.moving), contentDescription = "Localized description",) },
+                leadingContent = { Icon(painterResource(R.drawable.motion_mode), contentDescription = "Localized description",) },
+                trailingContent = {  Switch(checked = motionBlur, onCheckedChange = { cor.launch { DataStoreManager.saveMotionBlur(!motionBlur) } },enabled = AppVersion.CAN_MOTION_BLUR) },
+                modifier = Modifier.clickable {
+                    if(AppVersion.CAN_MOTION_BLUR) {
+                        cor.launch { DataStoreManager.saveMotionBlur(!motionBlur) }
+                    }
+                }
             )
             TransplantListItem(
                 headlineContent = { Text(text = "增强转场动画") },
@@ -168,6 +164,28 @@ fun UIScreen(navController: NavController, innerPaddings : PaddingValues,
                 trailingContent = {  Switch(checked = transition, onCheckedChange = { cor.launch { DataStoreManager.saveTransition(!transition) } }) },
                 modifier = Modifier.clickable { cor.launch { DataStoreManager.saveTransition(!transition) } }
             )
+            TransplantListItem(
+                headlineContent = { Text(text = "转场动画曲线") },
+                supportingContent = {
+                    Row {
+                        FilterChip(
+                            onClick = {
+                                cor.launch { DataStoreManager.saveMotionAnimation(true) }
+                            },
+                            label = { Text(text = "向中间运动") }, selected = isCenterAnimation
+                        )
+                        Spacer(modifier = Modifier.width(10.dp))
+                        FilterChip(
+                            onClick = {
+                                cor.launch { DataStoreManager.saveMotionAnimation(false) }
+                            },
+                            label = { Text(text = "直接展开") }, selected = !isCenterAnimation
+                        )
+                    }
+                },
+                leadingContent = { Icon(painterResource(R.drawable.moving), contentDescription = "Localized description",) },
+            )
+
             TransplantListItem(
                 headlineContent = { Text(text = "底栏转场动画") },
                 supportingContent = {

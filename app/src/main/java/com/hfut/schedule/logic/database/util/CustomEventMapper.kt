@@ -10,28 +10,32 @@ import java.util.Date
 
 object CustomEventMapper {
     @JvmStatic
-    fun dtoToEntity(dto: CustomEventDTO): CustomEventEntity {
-        return CustomEventEntity(
-            title = dto.title,
-            startTime = dto.dateTime.start.toDate(),
-            endTime = dto.dateTime.end.toDate(),
-            type = dto.type.name, // 用字符串保存枚举
-            description = dto.description,
-            remark = dto.remark
+    fun dtoToEntity(dto: CustomEventDTO) = with(dto) {
+        CustomEventEntity(
+            title = title,
+            startTime = dateTime.start.toDate(),
+            endTime = dateTime.end.toDate(),
+            type = type.name,
+            description = description,
+            remark = remark,
+//            createTime = createTime.toDate(),
+            supabaseId = supabaseId
         )
     }
     @JvmStatic
-    fun entityToDto(entity: CustomEventEntity): CustomEventDTO {
-        return CustomEventDTO(
-            id = entity.id,
-            title = entity.title,
+    fun entityToDto(entity: CustomEventEntity) = with(entity) {
+        CustomEventDTO(
+            id = id,
+            title = title,
             dateTime = DateTime(
-                start = entity.startTime.toDateTimeBean(),
-                end = entity.endTime.toDateTimeBean()
+                start = startTime.toDateTimeBean(),
+                end = endTime.toDateTimeBean()
             ),
-            type = CustomEventType.valueOf(entity.type),
-            description = entity.description,
-            remark = entity.remark
+            type = CustomEventType.valueOf(type),
+            description = description,
+            remark = remark,
+//            createTime = createTime.toDateTimeBean(),
+            supabaseId = supabaseId
         )
     }
     // DateTimeBean -> Date

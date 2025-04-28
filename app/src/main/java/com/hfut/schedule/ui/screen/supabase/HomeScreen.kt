@@ -11,19 +11,14 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -31,6 +26,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
@@ -40,7 +36,6 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,18 +50,16 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.CardBarItems
+import com.hfut.schedule.logic.enumeration.SortType
 import com.hfut.schedule.logic.enumeration.SupabaseScreen
 import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.component.CustomTabRow
-import com.hfut.schedule.ui.component.RefreshIndicator
 import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventFloatButton
 import com.hfut.schedule.ui.screen.supabase.cube.SupabaseSettingsScreen
 import com.hfut.schedule.ui.screen.supabase.focus.SupabaseStorageScreen
-import com.hfut.schedule.ui.screen.supabase.home.SortType
 import com.hfut.schedule.ui.screen.supabase.home.SupabaseHomeScreen
-import com.hfut.schedule.ui.screen.supabase.me.SupabaseMeScreen
-import com.hfut.schedule.ui.screen.supabase.me.SupabaseMeScreenRefresh
+import com.hfut.schedule.ui.screen.supabase.manage.SupabaseMeScreenRefresh
 import com.hfut.schedule.ui.style.bottomBarBlur
 import com.hfut.schedule.ui.style.topBarBlur
 import com.hfut.schedule.ui.style.transitionBackground
@@ -77,11 +70,9 @@ import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SupabaseHome(vm : NetWorkViewModel,navHostController: NavHostController,vmUI : UIViewModel) {
     val hazeState = remember { HazeState() }
@@ -91,6 +82,8 @@ fun SupabaseHome(vm : NetWorkViewModel,navHostController: NavHostController,vmUI
     val titles = listOf("日程","网址导航")
 
     val isAddUIExpanded by remember { derivedStateOf { vmUI.isAddUIExpandedSupabase } }
+    val isAddUIExpandedS by remember { derivedStateOf { vmUI.isAddUIExpanded } }
+
 
 
     val currentAnimationIndex by DataStoreManager.animationTypeFlow.collectAsState(initial = 0)
@@ -103,7 +96,7 @@ fun SupabaseHome(vm : NetWorkViewModel,navHostController: NavHostController,vmUI
 
     val context = LocalActivity.current
 
-    var sortType by remember { mutableStateOf(SortType.ID) }
+    var sortType by remember { mutableStateOf(SortType.END_TIME) }
     var sortReversed by remember { mutableStateOf(false) }
 
 
@@ -115,7 +108,7 @@ fun SupabaseHome(vm : NetWorkViewModel,navHostController: NavHostController,vmUI
         }
 
         Scaffold(
-            modifier = transitionBackground(isAddUIExpanded).fillMaxSize(),
+            modifier = transitionBackground(if(bottomBarItems == SupabaseScreen.STORAGE) isAddUIExpandedS else isAddUIExpanded ).fillMaxSize(),
             topBar = {
                 Column(modifier = Modifier.topBarBlur(hazeState)) {
                     TopAppBar(
@@ -129,10 +122,10 @@ fun SupabaseHome(vm : NetWorkViewModel,navHostController: NavHostController,vmUI
                                 IconButton(onClick = {
                                     sortReversed = !sortReversed
                                 }) {
-                                    Icon(if(sortReversed) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowUp, contentDescription = "")
+                                    Icon(if(sortReversed) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowUp, contentDescription = "", tint = MaterialTheme.colorScheme.primary)
                                 }
 
-                                FilledTonalButton(
+                                TextButton(
                                     onClick = {
                                         sortType = when(sortType) {
                                             SortType.ID -> SortType.START_TIME
@@ -156,7 +149,7 @@ fun SupabaseHome(vm : NetWorkViewModel,navHostController: NavHostController,vmUI
                             IconButton(onClick = {
                                 context?.finish()
                             }) {
-                                Icon(Icons.Filled.Close, contentDescription = "")
+                                Icon(Icons.Filled.Close, contentDescription = "",tint = MaterialTheme.colorScheme.primary)
                             }
                         }
                     )
@@ -172,15 +165,15 @@ fun SupabaseHome(vm : NetWorkViewModel,navHostController: NavHostController,vmUI
 
                         val items = listOf(
                             NavigationBarItemData(
-                                SupabaseScreen.HOME.name,"源", painterResource(R.drawable.database), painterResource(
+                                SupabaseScreen.HOME.name,"源", painterResource(R.drawable.cloud), painterResource(
+                                    R.drawable.cloud_filled)
+                            ),
+                            NavigationBarItemData(
+                                SupabaseScreen.ME.name,"已贡献", painterResource(R.drawable.database), painterResource(
                                     R.drawable.database_filled)
                             ),
                             NavigationBarItemData(
-                                SupabaseScreen.ME.name,"贡献", painterResource(R.drawable.person), painterResource(
-                                    R.drawable.person_filled)
-                            ),
-                            NavigationBarItemData(
-                                SupabaseScreen.STORAGE.name,"聚焦(本地)", painterResource(R.drawable.lightbulb),
+                                SupabaseScreen.STORAGE.name,"已下载", painterResource(R.drawable.lightbulb),
                                 painterResource(R.drawable.lightbulb_filled)
                             ),
                             NavigationBarItemData(

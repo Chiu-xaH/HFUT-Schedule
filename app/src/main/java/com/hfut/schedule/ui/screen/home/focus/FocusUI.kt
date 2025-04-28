@@ -2,6 +2,7 @@ package com.hfut.schedule.ui.screen.home.focus
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.LocalActivity
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -38,6 +39,7 @@ import com.hfut.schedule.logic.util.network.parse.ParseJsons.getCustomSchedule
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.getNetCourse
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.getSchedule
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.ui.component.DividerText
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.getCourseINFO
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.cube.sub.FocusCard
@@ -69,7 +71,7 @@ private const val TAB_RIGHT = 1
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun TodayScreen(
     vm : NetWorkViewModel,
@@ -101,7 +103,6 @@ fun TodayScreen(
     var refreshDB by remember { mutableStateOf(false) }
 
     val scrollState = rememberLazyListState()
-//    val shouldShowAddButton by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset == 0 } }
 
     val courseDataSource = prefs.getInt("SWITCH_DEFAULT_CALENDAR", CourseType.COMMUNITY.code)
 
@@ -222,20 +223,32 @@ fun TodayScreen(
                                 customScheduleList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = true) { refreshDB = !refreshDB } } } }
                             if(showFocus)
                                 scheduleList.let { list -> items(list.size) { item -> activity?.let { ScheduleItem(listItem = list[item],true,it) }  } }
+//                            stickyHeader {
+//                                DividerText("网课")
+//                            }
                             //网课
                             if(showStorageFocus)
                                 customNetCourseList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = true) { refreshDB = !refreshDB } } } }
                             if(showFocus)
                                 netCourseList.let { list -> items(list.size) { item -> activity?.let { NetCourseItem(listItem = list[item],true,it) } } }
+
                             //第二天课表
                             when(courseDataSource) {
                                 CourseType.COMMUNITY.code -> {
-                                    if (DateTimeUtils.compareTime(lastTime) == DateTimeUtils.TimeState.NOT_STARTED)
+                                    if (DateTimeUtils.compareTime(lastTime) == DateTimeUtils.TimeState.NOT_STARTED) {
+//                                        stickyHeader {
+//                                            DividerText("明日课程")
+//                                        }
                                         items(tomorrowCourseList.size) { item -> CommunityTomorrowCourseItem(index = item,vm,hazeState) }
+                                    }
                                 }
                                 CourseType.JXGLSTU.code -> {
-                                    if (DateTimeUtils.compareTime(jxglstuLastTime) == DateTimeUtils.TimeState.NOT_STARTED)
+                                    if (DateTimeUtils.compareTime(jxglstuLastTime) == DateTimeUtils.TimeState.NOT_STARTED) {
+//                                        stickyHeader {
+//                                            DividerText("明日课程")
+//                                        }
                                         tomorrowJxglstuList.let { list -> items(list.size) { item -> JxglstuTomorrowCourseItem(list[item],vmUI, hazeState,vm) } }
+                                    }
                                 }
                                 CourseType.NEXT.code -> {}
                             }
@@ -243,7 +256,7 @@ fun TodayScreen(
                             item { TimeStampItem() }
                         }
                     }
-                    items(2) { Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding())) }
+                    item { Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding())) }
                 }
             }
         }

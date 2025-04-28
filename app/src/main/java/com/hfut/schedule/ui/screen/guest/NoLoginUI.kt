@@ -269,9 +269,6 @@ fun GuestMainScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewMo
                                         Spacer(modifier = Modifier.width(appHorizontalDp()))
                                         //null
                                     }
-                                    BottomBarItems.SETTINGS -> {
-
-                                    }
                                     else -> {}
                                 }
                             },

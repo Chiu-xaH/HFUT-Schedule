@@ -58,3 +58,49 @@ language sql
 as $$
   select count(*) from event_fork where event_id = target_event_id;
 $$;
+
+
+create or replace function get_event_count(
+    class_text text,
+    campus_text text,
+    end_time_param timestamp
+)
+returns integer
+language sql
+as $$
+    select count(*) from event
+    where (
+        applicable_classes = ''
+        or applicable_classes ilike '%' || class_text || '%'
+    )
+    and (
+        campus = 'DEFAULT'
+        or campus = campus_text
+    )
+    and end_time >= end_time_param
+$$;
+
+
+create or replace function get_latest_event_end_time(
+    class_text text,
+    campus_text text
+)
+returns timestamp as $$
+begin
+    return (
+        select max(end_time)
+        from event
+        where (
+            applicable_classes = ''
+            or applicable_classes ilike '%' || class_text || '%'
+        )
+        and (
+            campus = 'DEFAULT'
+            or campus = campus_text
+        )
+    );
+end;
+$$ language plpgsql;
+
+
+

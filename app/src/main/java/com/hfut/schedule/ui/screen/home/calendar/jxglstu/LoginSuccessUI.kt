@@ -66,29 +66,29 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import com.hfut.schedule.logic.model.community.LoginCommunityResponse
 import com.hfut.schedule.logic.model.jxglstu.datumResponse
-import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.logic.util.network.parse.JxglstuParseUtils
-import com.hfut.schedule.logic.util.storage.SharedPrefs
-import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.storage.SharedPrefs.saveInt
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.isNextOpen
 import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
-import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
-import com.hfut.schedule.ui.screen.home.calendar.examToCalendar
-import com.hfut.schedule.ui.screen.home.calendar.getScheduleDate
-import com.hfut.schedule.ui.screen.home.calendar.next.parseCourseName
-import com.hfut.schedule.ui.screen.home.search.function.totalCourse.getTotalCourse
+import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.saveInt
+import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.LargeCard
 import com.hfut.schedule.ui.component.LoadingUI
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
+import com.hfut.schedule.ui.screen.home.calendar.examToCalendar
+import com.hfut.schedule.ui.screen.home.calendar.getScheduleDate
+import com.hfut.schedule.ui.screen.home.calendar.next.parseCourseName
+import com.hfut.schedule.ui.screen.home.search.function.totalCourse.getTotalCourse
 import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.viewmodel.UIViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -99,7 +99,9 @@ import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalAnimationApi::class)
-@SuppressLint("SuspiciousIndentation", "CoroutineCreationDuringComposition")
+@SuppressLint("SuspiciousIndentation", "CoroutineCreationDuringComposition",
+    "UnusedMaterial3ScaffoldPaddingParameter"
+)
 @Composable
 fun CalendarScreen(
     showAll: Boolean,
@@ -121,6 +123,7 @@ fun CalendarScreen(
     var courses by remember { mutableStateOf(listOf<String>()) }
     var multiWeekday by remember { mutableStateOf(0) }
     var multiWeek by remember { mutableStateOf(0) }
+
     if (showBottomSheet_totalCourse) {
         HazeBottomSheet (
             onDismissRequest = {
@@ -132,6 +135,7 @@ fun CalendarScreen(
             CourseDetailApi(courseName = courseName, vm = vm, hazeState = hazeState)
         }
     }
+
     if (showBottomSheet_multiCourse) {
         HazeBottomSheet (
             showBottomSheet = showBottomSheet_multiCourse,
@@ -172,7 +176,6 @@ fun CalendarScreen(
             t.clear()
         }
     }
-
 
     fun refreshUI(showAll : Boolean) {
         // 清空
@@ -434,6 +437,8 @@ fun CalendarScreen(
             e.printStackTrace()
         }
     }
+
+
 
 
     LaunchedEffect(showAll,loading) {
@@ -726,6 +731,7 @@ fun CalendarScreen(
                             }
                             item {  Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding())) }
                         }
+                        // 上一周
                         androidx.compose.animation.AnimatedVisibility(
                             visible = shouldShowAddButton,
                             enter = scaleIn(),
@@ -747,8 +753,7 @@ fun CalendarScreen(
                                 ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
                             }
                         }
-
-
+                        // 中间
                         androidx.compose.animation.AnimatedVisibility(
                             visible = shouldShowAddButton,
                             enter = scaleIn(),
@@ -777,6 +782,7 @@ fun CalendarScreen(
                                 }
                             }
                         }
+                        // 学期显示
                         androidx.compose.animation.AnimatedVisibility(
                             visible = !shouldShowAddButton,
                             enter = scaleIn(),
@@ -798,6 +804,7 @@ fun CalendarScreen(
                                 )
                             }
                         }
+                        // 下一周
                         androidx.compose.animation.AnimatedVisibility(
                             visible = shouldShowAddButton,
                             enter = scaleIn(),

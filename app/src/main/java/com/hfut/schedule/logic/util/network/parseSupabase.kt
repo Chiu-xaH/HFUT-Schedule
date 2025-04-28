@@ -54,12 +54,7 @@ fun supabaseEventEntityToDto(entity : SupabaseEventEntity) : SupabaseEventsInput
                                     contributorId = studentId,
                                     createTime = create,
                                     contributorClass = it,
-                                    campus = when(campus) {
-                                        EventCampus.HEFEI.name -> EventCampus.HEFEI
-                                        EventCampus.XUANCHENG.name -> EventCampus.XUANCHENG
-                                        EventCampus.DEFAULT.name -> EventCampus.DEFAULT
-                                        else -> return null
-                                    }
+                                    campus = EventCampus.valueOf(campus)
                                 )
                             }
                         }
