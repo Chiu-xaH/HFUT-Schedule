@@ -1,19 +1,19 @@
 # 特性对比
 
 ## 层级实时模糊
-![1](/img/blur.jpg)
-![2](/img/blur2.jpg)
-![3](/img/blur3.jpg)
+![1](/src/img/blur.jpg)
+![2](/src/img/blur2.jpg)
+![3](/src/img/blur3.jpg)
 
 ## 动态取色
-![1](/img/dynamic_color.jpg)
+![1](/src/img/dynamic_color.jpg)
 
 ## 预测式返回
-![1](/img/back.jpg)
+![1](/src/img/back.jpg)
 
 ## 进度实时通知
 
-![1](/img/live.png)
+![1](/src/img/live.png)
 
 ## 16KB页大小
 摘录 Android Developer 网

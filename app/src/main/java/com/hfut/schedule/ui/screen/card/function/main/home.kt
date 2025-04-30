@@ -67,9 +67,7 @@ import com.hfut.schedule.ui.screen.card.bill.main.getBills
 import com.hfut.schedule.ui.screen.card.function.CardLimit
 import com.hfut.schedule.ui.screen.card.function.SearchBillsUI
 import com.hfut.schedule.ui.screen.card.function.SelecctDateRange
-import com.hfut.schedule.ui.screen.home.cube.sub.getUserInfo
 import com.hfut.schedule.ui.screen.home.focus.funiction.initCardNetwork
-import com.hfut.schedule.ui.screen.home.initNetworkRefresh
 import com.hfut.schedule.ui.screen.home.search.function.electric.EleUI
 import com.hfut.schedule.ui.screen.home.search.function.loginWeb.LoginWebScaUI
 
@@ -87,6 +85,7 @@ import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.WebDialog
+import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
 import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.bottomSheetRound
@@ -190,7 +189,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
 
 
     var text by remember { mutableStateOf(cardValue?.balance ?: prefs.getString("card","00")) }
-    var name by remember { mutableStateOf(cardValue?.name ?: getUserInfo().name) }
+    var name by remember { mutableStateOf(cardValue?.name ?: getPersonInfo().name) }
     var nows by remember { mutableStateOf(cardValue?.now ?: prefs.getString("card_now","00")) }
     var settles by remember { mutableStateOf(cardValue?.settle ?: prefs.getString("card_settle","00")) }
 
@@ -203,7 +202,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
 
     LaunchedEffect(cardValue) {
         text = cardValue?.balance ?: prefs.getString("card","00")
-        name = cardValue?.name ?: getUserInfo().name
+        name = cardValue?.name ?: getPersonInfo().name
         nows = cardValue?.now ?: prefs.getString("card_now","00")
         settles = cardValue?.settle ?: prefs.getString("card_settle","00")
     }

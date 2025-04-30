@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName
 import com.hfut.schedule.logic.model.SupabaseEventEntity
 import com.hfut.schedule.logic.model.SupabaseEventForkCount
 import com.hfut.schedule.logic.model.SupabaseEventForkEntity
+import com.hfut.schedule.logic.model.SupabaseUsageEntity
 import com.hfut.schedule.logic.model.SupabaseUserLoginBean
 import com.hfut.schedule.logic.util.network.Encrypt.getSupabasePublicKey
 import com.hfut.schedule.logic.util.network.toDateTimeBeanForSupabase
@@ -13,6 +14,8 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
+import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.PATCH
@@ -121,5 +124,12 @@ interface SupabaseService {
         @Header("Authorization") authorization : String,
         @Header("apikey") publicKey : String = getSupabasePublicKey(),
         @Body entity : SupabaseEventLatest = SupabaseEventLatest()
+    ) : Call<ResponseBody>
+
+    //发送用户数据给服务器，用于开发者分析用户使用体验进行优化
+    @POST("rest/v1/user_app_usage")
+    fun postUsage(
+        @Header("apikey") publicKey : String = getSupabasePublicKey(),
+        @Body entity : SupabaseUsageEntity = SupabaseUsageEntity()
     ) : Call<ResponseBody>
 }

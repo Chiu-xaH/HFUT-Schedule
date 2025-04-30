@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.logic.util.network.parse.ParseJsons.useCaptcha
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.ui.util.NavigateAnimationManager
 import kotlinx.coroutines.flow.Flow
@@ -32,6 +33,9 @@ object DataStoreManager {
     private val SUPABASE_REFRESH_TOKEN = stringPreferencesKey("supabase_refresh_token")
     private val SUPABASE_FILTER_EVENT = booleanPreferencesKey("supabase_filter_event")
     private val SUPABASE_AUTO_CHECK = booleanPreferencesKey("supabase_auto_check")
+    private val USE_CAPTCHA = booleanPreferencesKey("use_captcha")
+
+    private val USE_CAPTCHA_AUTO = booleanPreferencesKey("use_captcha_auto")
 
 
 
@@ -110,6 +114,17 @@ object DataStoreManager {
             preferences[SUPABASE_AUTO_CHECK] = value
         }
     }
+    suspend fun saveUseCaptcha(value: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[USE_CAPTCHA] = value
+        }
+    }
+    suspend fun saveUseCaptchaAuto(value: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[USE_CAPTCHA_AUTO] = value
+        }
+    }
+
 
 
     val animationTypeFlow: Flow<Int> = dataStore.data
@@ -167,6 +182,14 @@ object DataStoreManager {
     val supabaseAutoCheck: Flow<Boolean> = dataStore.data
         .map { preferences ->
             preferences[SUPABASE_AUTO_CHECK] ?: true
+        }
+    val useCaptcha: Flow<Boolean> = dataStore.data
+        .map { preferences ->
+            preferences[USE_CAPTCHA] ?: useCaptcha()
+        }
+    val useCaptchaAuto: Flow<Boolean> = dataStore.data
+        .map { preferences ->
+            preferences[USE_CAPTCHA_AUTO] ?: true
         }
 
     /* 用法

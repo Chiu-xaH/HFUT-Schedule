@@ -1,9 +1,7 @@
 package com.hfut.schedule.ui.screen.login
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -11,26 +9,34 @@ import androidx.activity.compose.LocalActivity
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.animation.with
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
@@ -42,17 +48,18 @@ import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -60,39 +67,41 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.activity.screen.FixActivity
-import com.hfut.schedule.activity.screen.SuccessActivity
-import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.logic.util.network.Encrypt
+import com.hfut.schedule.logic.util.network.parse.ParseJsons.useCaptcha
 import com.hfut.schedule.logic.util.other.AppVersion
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
-import com.hfut.schedule.logic.util.network.Encrypt
-import com.hfut.schedule.logic.util.network.parse.ParseJsons.useCaptcha
-import com.hfut.schedule.ui.screen.home.cube.sub.DownloadMLUI
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.BottomSheetTopBar
 import com.hfut.schedule.ui.component.LoadingUI
-import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.ui.component.MyCustomCard
+import com.hfut.schedule.ui.component.ShareTwoContainer
+import com.hfut.schedule.ui.component.StyleCardListItem
+import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.URLImageWithOCR
 import com.hfut.schedule.ui.component.appHorizontalDp
-import com.hfut.schedule.ui.util.navigateAndClear
+import com.hfut.schedule.ui.component.cardNormalColor
+import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.ui.screen.home.cube.sub.DownloadMLUI
 import com.hfut.schedule.ui.style.RowHorizontal
 import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.ui.style.textFiledTransplant
+import com.hfut.schedule.ui.util.navigateAndClear
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -229,14 +238,18 @@ enum class MainNav {
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @SuppressLint("SuspiciousIndentation")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun LoginScreen(vm : LoginViewModel, navController : NavHostController) {
     val context = LocalActivity.current
     var showBadge by remember { mutableStateOf(false) }
     if (AppVersion.getVersionName() != prefs.getString("version", AppVersion.getVersionName())) showBadge = true
+    val useCaptcha by DataStoreManager.useCaptcha.collectAsState(initial = useCaptcha())
+    val useCaptchaAuto by DataStoreManager.useCaptchaAuto.collectAsState(initial = true)
+    var webVpn by remember { mutableStateOf(false) }
+    var showToolBar by remember { mutableStateOf(true) }
 
-
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
@@ -257,11 +270,19 @@ fun LoginScreen(vm : LoginViewModel, navController : NavHostController) {
                     }
                         },
                 actions = {
-                    IconButton(onClick = {
-                        context?.finish()
-                    }) {
-                        Icon(painterResource(id = R.drawable.logout), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
+                    Row {
+                        IconButton(onClick = {
+                            showToolBar = !showToolBar
+                        }) {
+                            Icon(painterResource(id = R.drawable.build), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
+                        }
+                        IconButton(onClick = {
+                            context?.finish()
+                        }) {
+                            Icon(painterResource(id = R.drawable.logout), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
+                        }
                     }
+
                 },
                 navigationIcon  = {
                     AnimatedWelcomeScreen()
@@ -269,10 +290,59 @@ fun LoginScreen(vm : LoginViewModel, navController : NavHostController) {
             )
         },
     ) {innerPadding ->
-        Column(modifier = Modifier
-            .padding(innerPadding)
-            .fillMaxSize()) {
-            TwoTextField(vm,navController)
+        Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+            TwoTextField(vm,navController,webVpn)
+            ShareTwoContainer(
+                modifier = Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(horizontal = 25.dp- appHorizontalDp()),
+                defaultContent = {
+                    Column {
+                        StyleCardListItem(
+                            headlineContent = { Text("外地访问") },
+                            leadingContent = { Icon(painterResource(R.drawable.vpn_key),null) },
+                            trailingContent = {
+                                Switch(checked = webVpn,onCheckedChange = { ch -> webVpn = ch })
+                            },
+                            modifier = Modifier.clickable { webVpn = !webVpn },
+                        )
+                        MyCustomCard(containerColor = cardNormalColor(),) {
+                            TransplantListItem(
+                                headlineContent = { Text("图片验证码") },
+                                leadingContent = { Icon(painterResource(R.drawable.password),null) },
+                                trailingContent = {
+                                    Switch(checked = useCaptcha,onCheckedChange = { scope.launch { DataStoreManager.saveUseCaptcha(!useCaptcha) } }, enabled = !useCaptchaAuto)
+                                },
+                                modifier = Modifier.clickable { if(!useCaptchaAuto) scope.launch { DataStoreManager.saveUseCaptcha(!useCaptcha) } },
+                            )
+                            TransplantListItem(
+                                headlineContent = { Text("跟随云控(自动托管)") },
+                                leadingContent = { Icon(painterResource(R.drawable.cloud),null) },
+                                trailingContent = {
+                                    Switch(checked = useCaptchaAuto,onCheckedChange = { scope.launch { DataStoreManager.saveUseCaptchaAuto(!useCaptchaAuto) } })
+                                },
+                                modifier = Modifier.clickable { scope.launch { DataStoreManager.saveUseCaptchaAuto(!useCaptchaAuto) } },
+                            )
+                        }
+                        StyleCardListItem(
+                            headlineContent = { Text("遇到问题") },
+                            leadingContent = { Icon(painterResource(R.drawable.build),null) },
+                            trailingContent = {
+                                Icon(Icons.Filled.ArrowForward,null)
+                            },
+                            modifier = Modifier.clickable { Starter.startFix() },
+                        )
+                    }
+                },
+                secondContent = {
+                    StyleCardListItem(
+                        headlineContent = { Text("展开工具") },
+                        trailingContent = {
+                            Icon(painterResource(if(showToolBar) R.drawable.collapse_content else R.drawable.expand_content),null)
+                        },
+                        modifier = Modifier.clickable { showToolBar = !showToolBar },
+                    )
+                },
+                show = !showToolBar
+            )
         }
     }
 }
@@ -316,7 +386,7 @@ fun AnimatedWelcomeScreen() {
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TwoTextField(vm : LoginViewModel, navHostController: NavHostController) {
+fun TwoTextField(vm : LoginViewModel, navHostController: NavHostController,webVpn: Boolean) {
 
     var hidden by rememberSaveable { mutableStateOf(true) }
 
@@ -327,7 +397,6 @@ fun TwoTextField(vm : LoginViewModel, navHostController: NavHostController) {
     var username by remember { mutableStateOf(Savedusername ?: "") }
     var inputAES by remember { mutableStateOf(Savedpassword ?: "") }
     var inputCode by remember { mutableStateOf( "") }
-    var webVpn by remember { mutableStateOf(false) }
     val switch_open = SharedPrefs.prefs.getBoolean("SWITCH_ML",false)
     // 创建一个动画值，根据按钮的按下状态来改变阴影的大小
     val sheetState = rememberModalBottomSheetState()
@@ -351,6 +420,9 @@ fun TwoTextField(vm : LoginViewModel, navHostController: NavHostController) {
             }
         }
     }
+    val useCaptcha by DataStoreManager.useCaptcha.collectAsState(initial = useCaptcha())
+    val useCaptchaAuto by DataStoreManager.useCaptchaAuto.collectAsState(initial = true)
+
     var onRefresh by remember { mutableStateOf(1) }
     var loading by remember { mutableStateOf(false) }
     var status by remember { mutableStateOf<String?>(null) }
@@ -433,8 +505,7 @@ fun TwoTextField(vm : LoginViewModel, navHostController: NavHostController) {
                 shape = MaterialTheme.shapes.medium
             )
         }
-
-        if(useCaptcha()) {
+        val captchaUI = @Composable {
             Spacer(modifier = Modifier.height(20.dp))
             RowHorizontal {
                 TextField(
@@ -465,56 +536,48 @@ fun TwoTextField(vm : LoginViewModel, navHostController: NavHostController) {
                 )
             }
         }
+        if(useCaptchaAuto) {
+            if(useCaptcha()) {
+                captchaUI()
+            }
+        } else {
+            if(useCaptcha) {
+                captchaUI()
+            }
+        }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(25.dp))
 
         if(loading) {
             LoadingUI()
         } else {
-            RowHorizontal {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 25.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
                 Button(
                     onClick = {
                         val cookie = SharedPrefs.prefs.getString("cookie", "")
                         if (cookie != null) loginClick(vm,username,inputAES,inputCode,webVpn, onRefresh = { onRefresh++ }, onLoad = { loading = it }, onResult = { status = it})
-
-                    }, modifier = Modifier.scale(scale.value),
-                    interactionSource = interactionSource
-
-                ) { Text("登录") }
+                    },
+                    modifier = Modifier.fillMaxWidth().scale(scale.value).let { if(isAnonymity()) it.weight(.5f) else it },
+                    interactionSource = interactionSource,
+                    shape = MaterialTheme.shapes.medium,
+                ) { Text( "登录") }
 
                 if(isAnonymity()) {
                     Spacer(modifier = Modifier.width(appHorizontalDp()))
 
+
                     FilledTonalButton(
                         onClick = {
-
-//                            noLogin(navHostController =navHostController )
                             navHostController.navigateAndClear(MainNav.GUEST.name)
                         },
-                        modifier = Modifier.scale(scale2.value),
+                        shape = MaterialTheme.shapes.medium,
+                        modifier = Modifier.fillMaxWidth().scale(scale2.value).weight(.5f),
                         interactionSource = interactionSource2,
-
                         ) { Text("游客") }
                 }
-            }
-            RowHorizontal{
-                TextButton(
-                    onClick = {webVpn = !webVpn},
-                    content = {
-                        Checkbox(checked = webVpn, onCheckedChange = {change -> webVpn = change})
-                        Text(text = "外地访问")
-                    },
-                )
-                TextButton(
-                    onClick = {
-                        Starter.startFix()
-                    },
-                    content = {
-                        Box(modifier = Modifier.height(48.dp)) {
-                            Text(text = "遇到问题", modifier = Modifier.align(Alignment.Center),textDecoration = TextDecoration.Underline)
-                        }
-                    },
-                )
             }
         }
     }

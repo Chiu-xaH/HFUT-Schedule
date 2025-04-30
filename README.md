@@ -1,5 +1,5 @@
 # 聚在工大
-![封面](/img/cover.png)
+![封面](/src/img/cover.png)
 
 <p align="center">
 <img alt="API" src="https://img.shields.io/badge/Android%20-50f270?logo=android&logoColor=black&style=for-the-badge"/></a>
@@ -25,10 +25,10 @@
 🌟 由于开发者是宣城校区23级本科生，**理论**上合肥校区可使用，会缺失一些功能
 
 ## 界面(v4.12.2)
-![截图](/img/ui.jpg)·
+![截图](/src/img/ui.jpg)·
 
 ## 功能(v4.13.4.2)
-![导图](/img/mindMaster.png)
+![导图](/src/img/mindMaster.png)
 
 ## 权限
 网络、日历(将聚焦事项作为日程写入日历)、存储(导入导出课程表文件)、相机(洗浴扫码)、通知(下载更新包完成通知)

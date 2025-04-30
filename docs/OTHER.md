@@ -4,7 +4,7 @@
 ## Material Design 3 设计参考 
 [组件](https://m3.material.io/)与[图标](https://fonts.google.com/icons)
 
-### [Material3 一些自己写的组件与动效](/material3)
+### [Material3 一些自己写的组件与动效](/src/material3)
 
 ## [工具](/tools)
 
@@ -14,8 +14,8 @@
 ## 统计
 2024-10-07 ~ 2025-01-06、2025-02-14 ~ 2025-03-15
 
-![visitsChart](/img/visitsChart.png)
-![visitsChart2](/img/visitsChart_2.png)
+![visitsChart](/src/img/visitsChart.png)
+![visitsChart2](/src/img/visitsChart_2.png)
 
 ## 适配
 

@@ -16,7 +16,6 @@ import com.hfut.schedule.ui.component.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.LargeCard
 import com.hfut.schedule.ui.component.TransplantListItem
 
-
 @SuppressLint("SuspiciousIndentation")
 @Composable
 private fun VersionInfoCard() {
@@ -25,7 +24,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-04-28") },
+                overlineContent = { Text(text = "2025-04-30") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -52,26 +51,13 @@ fun VersionInfo() {
     DividerTextExpandedWith(text = "新特性") {
 //        UpdateItems("新增 教务课程表导出为ics文件", "位于 课程表-多课表-写入日历日程",UpdateType.ADD)
 //        UpdateItems("重构 一共107个网络请求函数，全部换新，优化性能", null,UpdateType.OPTIMIZE)
-//        UpdateItems("新增 为选项界面适配新的转场动画", null, UpdateType.ADD)
-        UpdateItems("新增 培养方案一些详细信息", "点击培养方案卡片后可查看", UpdateType.ADD)
-        UpdateItems("新增 对华为设备以及Android 12的层级实时模糊适配", "目前层级模糊由原Android 13+适配到Android 12+，但Android 12设备在渐变模糊上有所削弱，后续会推进适配", UpdateType.ADD)
-        UpdateItems("新增 信息共建的自动检查登录和检查最新聚焦卡片", "位于 查询中心-信息共建-选项-设置", UpdateType.ADD)
-        UpdateItems("新增 信息共建平台刷新登录的界面入口", "位于 查询中心-信息共建", UpdateType.ADD)
-        UpdateItems("修复 信息共建平台登陆到期后无法刷新登录的Bug", null, UpdateType.FIX)
-        UpdateItems("优化 聚焦顶栏的显示效果和按钮", null, UpdateType.OPTIMIZE)
-        UpdateItems("优化 层级实时模糊的显示效果", null, UpdateType.OPTIMIZE)
-        UpdateItems("优化 部分界面的显示", null, UpdateType.OPTIMIZE)
-
-
-//        UpdateItems("修复 时间选取时判断机制错误的Bug", null,UpdateType.FIX)
-
-
-//        UpdateItems("重构 图书馆", "由于学校图书官网进行了升级，图书功能也带来了更多的可能性，扩展：合肥校区的座位预约入口、借阅图书数据",UpdateType.RENEW)
-
 //        UpdateItems("新增 课程进度实时通知", "仅Android 16+", UpdateType.ADD)
 //        UpdateItems("新增 肥工就业信息网的检索", "位于 查询中心", UpdateType.ADD)
-
 //        UpdateItems("优化 层级转场时的圆角", null, UpdateType.OPTIMIZE)
+        UpdateItems("变更 部分网络接口", null, UpdateType.RENEW)
+        UpdateItems("新增 自由开启图片验证码的开关", "位于 教务登录界面", UpdateType.ADD)
+        UpdateItems("优化 部分界面的显示", null, UpdateType.OPTIMIZE)
+//        UpdateItems("新增 肥工就业信息网的检索", "位于 查询中心", UpdateType.ADD)
     }
 }
 

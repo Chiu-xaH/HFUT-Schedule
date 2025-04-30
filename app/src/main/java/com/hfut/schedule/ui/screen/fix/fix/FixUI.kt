@@ -1,10 +1,6 @@
 package com.hfut.schedule.ui.screen.fix.fix
 
 import android.content.Intent
-import android.net.Uri
-import android.os.Build
-import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,7 +19,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -40,25 +35,23 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.activity.MainActivity
+import com.hfut.schedule.logic.util.network.parse.ParseJsons.getTimeStamp
+import com.hfut.schedule.logic.util.other.AppVersion
+import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.CrashHandler
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.Starter.emailMe
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
-import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.logic.util.storage.SharedPrefs
-import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.network.parse.ParseJsons.getTimeStamp
-import com.hfut.schedule.ui.screen.home.cube.apiCheck
-import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.component.BottomSheetTopBar
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.LittleDialog
-import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
+import com.hfut.schedule.ui.component.appHorizontalDp
+import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.ui.screen.home.cube.apiCheck
 import com.hfut.schedule.ui.style.HazeBottomSheet
-import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -107,18 +100,18 @@ fun FixUI(innerPadding : PaddingValues, vm : LoginViewModel, vm2 : NetWorkViewMo
         }
     }
 
-    val sheetState_feedBack = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var showBottomSheet_feedBack by remember { mutableStateOf(false) }
-
-    if (showBottomSheet_feedBack) {
-        ModalBottomSheet(
-            onDismissRequest = { showBottomSheet_feedBack = false },
-            sheetState = sheetState_feedBack,
-            shape = bottomSheetRound(sheetState_feedBack)
-        ) {
-            feedBackUI(vm2)
-        }
-    }
+//    val sheetState_feedBack = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+//    var showBottomSheet_feedBack by remember { mutableStateOf(false) }
+//
+//    if (showBottomSheet_feedBack) {
+//        ModalBottomSheet(
+//            onDismissRequest = { showBottomSheet_feedBack = false },
+//            sheetState = sheetState_feedBack,
+//            shape = bottomSheetRound(sheetState_feedBack)
+//        ) {
+//            feedBackUI(vm2)
+//        }
+//    }
 
     Column(modifier = Modifier
         .verticalScroll(rememberScrollState())
@@ -179,6 +172,11 @@ fun FixUI(innerPadding : PaddingValues, vm : LoginViewModel, vm2 : NetWorkViewMo
 //            supportingContent = { Text(text = "直接输入内容,将会发送至开发者的服务器")},
             leadingContent = { Icon(painterResource(R.drawable.feedback), contentDescription = "Localized description",) },
             modifier = Modifier.clickable{ Starter.startWebUrl("https://docs.qq.com/form/page/DWHlwd1JZYlRtcVZ0") }
+        )
+        TransplantListItem(
+            headlineContent = { Text(text = "联系开发者") },
+            leadingContent = { Icon(painterResource(R.drawable.mail), contentDescription = "Localized description",) },
+            modifier = Modifier.clickable{ emailMe() }
         )
 
         TransplantListItem(
@@ -325,7 +323,7 @@ fun feedBackUI(vm : NetWorkViewModel) {
                         if(input == "") {
                             showToast("请输入内容")
                         } else {
-                            vm.feedBack(input,inputContact)
+//                            vm.feedBack(input,inputContact)
                             showToast("已提交,可关闭此界面")
                         }
                     }) {

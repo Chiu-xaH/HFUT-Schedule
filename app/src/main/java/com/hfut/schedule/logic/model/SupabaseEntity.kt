@@ -1,15 +1,14 @@
 package com.hfut.schedule.logic.model
 
+import android.os.Build
 import com.google.gson.annotations.SerializedName
-import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.database.entity.CustomEventType
-import com.hfut.schedule.logic.util.network.toDateTimeBeanForSupabase
+import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.sys.DateTime
 import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.transfer.EventCampus
 import com.hfut.schedule.ui.screen.home.search.function.transfer.getCampus
-import com.hfut.schedule.ui.screen.home.search.function.transfer.getEventCampus
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
 
 data class SupabaseUserLoginBean(
@@ -92,4 +91,16 @@ data class SupabaseEventForkEntity(
 // 发送类
 data class SupabaseEventForkOutput(
     val eventId : Int
+)
+
+
+data class SupabaseUsageEntity(
+    @SerializedName("user_name") val username : String = getPersonInfo().name ?: "游客",
+    @SerializedName("system_version") val systemVersion : Int = AppVersion.sdkInt,
+    @SerializedName("student_id") val studentID : String = getPersonInfo().username ?: "空",
+    @SerializedName("campus") val campus : String = getPersonInfo().school ?: "空",
+    @SerializedName("department") val department : String = getPersonInfo().department ?: "空",
+    @SerializedName("app_version_name") val appVersionName : String = AppVersion.getVersionName(),
+    @SerializedName("app_version_code") val appVersionCode : Int = AppVersion.getVersionCode(),
+    @SerializedName("device_name") val deviceName : String = Build.MODEL
 )

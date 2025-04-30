@@ -147,18 +147,3 @@ fun PersonPart() {
     }
 }
 
-
-fun getUserInfo() : UserInfo {
-
-    val date = DateTimeUtils.Date_yyyy_MM_dd
-    val time = "${DateTimeUtils.Time_Hour}:${DateTimeUtils.Time_Minute}:00"
-    val dateTime = "$date $time"
-
-
-    val appVersion = AppVersion.getVersionName()
-    val androidSDK = AppVersion.sdkInt
-    val device = Build.MODEL
-
-    return UserInfo(getPersonInfo().name,getPersonInfo().username,dateTime, appVersionName = appVersion, systemVersion = androidSDK, deviceName = device)
-}
-

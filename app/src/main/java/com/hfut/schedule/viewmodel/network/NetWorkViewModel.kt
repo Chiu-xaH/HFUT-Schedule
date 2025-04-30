@@ -3,8 +3,6 @@ package com.hfut.schedule.viewmodel.network
 import android.annotation.SuppressLint
 import android.util.Base64
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
@@ -40,7 +38,6 @@ import com.hfut.schedule.logic.network.api.MyService
 import com.hfut.schedule.logic.network.api.NewsService
 import com.hfut.schedule.logic.network.api.OneService
 import com.hfut.schedule.logic.network.api.QWeatherService
-import com.hfut.schedule.logic.network.api.ServerService
 import com.hfut.schedule.logic.network.api.StuService
 import com.hfut.schedule.logic.network.api.SupabaseService
 import com.hfut.schedule.logic.network.api.TeachersService
@@ -64,7 +61,6 @@ import com.hfut.schedule.logic.network.servicecreator.OneGotoServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.OneServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.QWeatherServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.SearchEleServiceCreator
-import com.hfut.schedule.logic.network.servicecreator.ServerServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.StuServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.SupabaseServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.TeacherServiceCreator
@@ -77,7 +73,6 @@ import com.hfut.schedule.logic.util.parse.SemseterParser
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveInt
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
-import com.hfut.schedule.ui.screen.home.cube.sub.getUserInfo
 import com.hfut.schedule.ui.screen.home.search.function.loginWeb.getIdentifyID
 import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.transfer.Campus
@@ -106,7 +101,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     private val Community = CommunitySreviceCreator.create(CommunityService::class.java)
     private val News = NewsServiceCreator.create(NewsService::class.java)
     private val xuanCheng = XuanChengServiceCreator.create(XuanChengService::class.java)
-    private val server = ServerServiceCreator.create(ServerService::class.java)
     private val guagua = GuaGuaServiceCreator.create(GuaGuaService::class.java)
     private val teacher = TeacherServiceCreator.create(TeachersService::class.java)
     private val MyAPI = MyServiceCreator.create(MyService::class.java)
@@ -328,39 +322,15 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
 
     fun postUser() {
-        val data = getUserInfo()
-        val call = server.postUse(
-            dateTime = data.dateTime,
-            deviceName = data.deviceName ?: "空",
-            appVersion = data.appVersionName,
-            systemVersion = data.systemVersion,
-            studentID = data.studentID ?: "空",
-            user = data.name ?: "空")
+        val call = supabase.postUsage()
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {}
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                t.printStackTrace()
+            }
         })
     }
 
-    fun feedBack(info : String,contact : String?) {
-        val data = getUserInfo()
-        val time = data.dateTime
-        val version = data.appVersionName
-        val name = data.name
-
-        val call = server.feedBack(
-            dateTime = time,
-            appVersion = version,
-            user = name ?: "空",
-            info = info,
-            contact = contact)
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {}
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
-    }
 
     val verifyData = MutableLiveData<String?>()
     @SuppressLint("SuspiciousIndentation")
@@ -674,21 +644,19 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             studentid
         )
 
-        if (call != null) {
-            call.enqueue(object : Callback<ResponseBody> {
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    val json = response.body()?.string()
-                    if (json != null) {
-                        try {
-                            val id = Gson().fromJson(json, lessonResponse::class.java)
-                            lessonIds.value = id.lessonIds
-                        } catch (e : Exception) { }
-                        saveString("courses",json)
-                    }
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                val json = response.body()?.string()
+                if (json != null) {
+                    try {
+                        val id = Gson().fromJson(json, lessonResponse::class.java)
+                        lessonIds.value = id.lessonIds
+                    } catch (e : Exception) { }
+                    saveString("courses",json)
                 }
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-            })
-        }
+            }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
     }
 
     val datumData = MutableLiveData<String?>()
