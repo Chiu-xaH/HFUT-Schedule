@@ -85,6 +85,8 @@ class MyApplication : Application() {
         const val WORK_URL = "https://gdjy.hfut.edu.cn/"
         // 就业 宣城
         const val WORK_XC_URL = "https://xcjy.hfut.edu.cn/"
+        // 就业检索
+        const val WORK_SEARCH_URL = "https://dc.bysjy.com.cn/"
         // 大创
         const val IETP_URL = "http://dcxt.hfut.edu.cn/"
         // 校友

@@ -75,6 +75,7 @@ import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.ui.component.ScrollText
 import com.hfut.schedule.ui.component.DepartmentIcons
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.style.ColumnVertical
@@ -165,7 +166,7 @@ fun CourseTotalUI(json : String?, isSearch : Boolean, sortType: Boolean, vm : Ne
                 )
             }
             if(isSearch)
-            item { Spacer(modifier = Modifier.height(85.dp)) }
+                item { PaddingForPageControllerButton() }
         }
     } else { EmptyUI() }
 }

@@ -7,12 +7,11 @@ import com.hfut.schedule.logic.model.jxglstu.MyApplyResponse
 import com.hfut.schedule.logic.model.jxglstu.TransferData
 import com.hfut.schedule.logic.model.jxglstu.TransferResponse
 import com.hfut.schedule.logic.model.jxglstu.courseType
-import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
 import org.jsoup.Jsoup
 
-enum class Campus {
-    HEFEI,XUANCHENG
+enum class Campus(val description : String) {
+    HEFEI("合肥"),XUANCHENG("宣城")
 }
 fun getCampus() : Campus {
     return if(getPersonInfo().school?.contains("宣城") == true) {

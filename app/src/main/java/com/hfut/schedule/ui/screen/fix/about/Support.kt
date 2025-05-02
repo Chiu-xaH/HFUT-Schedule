@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -42,6 +43,9 @@ private data class SupportItemBean(val title : String,val android : String,val u
 fun Support(hazeState: HazeState,innerPadding : PaddingValues) {
     val items = listOf(
         // 华为 小米 oppo vivo 荣耀 三星 魅族 类原生
+        SupportItemBean("开屏页面","Android 8+","https://github.com/Chiu-xaH/HFUT-Schedule/blob/main/docs/CONTRAST.md#%e8%bf%9b%e5%ba%a6%e5%ae%9e%e6%97%b6%e9%80%9a%e7%9f%a5", listOf(
+            false,true,true,true,true,true,true,true
+        )),
         SupportItemBean("全局动态取色","Android 12+","https://github.com/Chiu-xaH/HFUT-Schedule/blob/main/docs/CONTRAST.md#%E5%8A%A8%E6%80%81%E5%8F%96%E8%89%B2", listOf(
             false,true,true,true,false,true,null,true
         )),
@@ -49,7 +53,7 @@ fun Support(hazeState: HazeState,innerPadding : PaddingValues) {
             false,true,null,false,false,true,false,true
         )),
         SupportItemBean("层级实时模糊","Android 13+","https://github.com/Chiu-xaH/HFUT-Schedule/blob/main/docs/CONTRAST.md#%E5%B1%82%E7%BA%A7%E5%AE%9E%E6%97%B6%E6%A8%A1%E7%B3%8A", listOf(
-            false,true,true,true,true,true,true,true
+            true,true,true,true,true,true,true,true
         )),
         SupportItemBean("预测式返回","Android 13+","https://github.com/Chiu-xaH/HFUT-Schedule/blob/main/docs/CONTRAST.md#%E9%A2%84%E6%B5%8B%E5%BC%8F%E8%BF%94%E5%9B%9E", listOf(
             false,false,true,false,false,true,null,true
@@ -134,7 +138,7 @@ private fun SupportItem(item : SupportItemBean) {
                     }
                 }
             )
-            Divider()
+            HorizontalDivider()
             Row(modifier = Modifier.align(Alignment.End)) {
                 Text(
                     text = item.android,

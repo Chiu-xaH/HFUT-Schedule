@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.network.repo.NetWork
+import com.hfut.schedule.logic.util.network.NetWork
 import com.hfut.schedule.ui.screen.home.search.function.shower.ShowerUI
 import com.hfut.schedule.ui.screen.home.search.function.shower.tranamt
 import com.hfut.schedule.ui.screen.shower.login.getGuaGuaPersonInfo

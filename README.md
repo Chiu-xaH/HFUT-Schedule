@@ -36,7 +36,7 @@
 ## 使用
 
 ### 环境要求
-**在读本科生，Android 8及以上，初次使用要接入互联网(从云端拉取必要信息)**
+**在读本科生，Android 8.0及以上，初次使用要接入互联网(从云端拉取必要信息)**
 
 ### 初次使用
 保证接入互联网的环境下，填入学号与信息门户密码，点击登录，等待加载完毕(弹出一卡通登陆成功、Community登录成功的Toast后)即可使用
@@ -51,15 +51,17 @@
 ## [更新日志](docs/UPDATE.md)
 
 ## 构建
-Kotlin 2.0
+Kotlin v2.1.20 + Gradle v8.11.1 + Java v11
 
-Gradle 8.7 + OpenJDK 17
+Android Gradle Plugin (AGP) v8.9.2 + OpenJDK v17.0.0.1
 
-SDK 目标36(Android 16) \ 最低26(Android 8)
+SDK: 目标36(Android 16.0) \ 最低26(Android 8.0)
 
-Jetpack Compose 1.7
+Jetpack Compose v1.7.6
 
-UI: Material You (Material Design 3)
+UI: Material You (Material Design 3) v1.4.0-alpha12 + Material Design 1 v1.0.5
+
+IDE: Android Studio Meerkat(猫鼬)
 
 ## 开源库(鸣谢)
 [OkHttp](https://github.com/square/okhttp) 网络请求
@@ -72,7 +74,7 @@ UI: Material You (Material Design 3)
 
 [Zxing](https://github.com/zxing/zxing) 二维码
 
-[Haze](https://github.com/chrisbanes/haze) 实时模糊(SDK>=33)
+[Haze](https://github.com/chrisbanes/haze) 实时模糊
 
 [Accompanist](https://github.com/google/accompanist) 用做实现透明状态栏
 
@@ -82,7 +84,7 @@ UI: Material You (Material Design 3)
 
 [Konfetti](https://github.com/DanielMartinus/Konfetti) 礼花🎉动画
 
-[Tesseract4Android](https://github.com/adaptech-cz/Tesseract4Android) 封装Tesseract4 (供识别图片验证码)
+[Tesseract4Android](https://github.com/adaptech-cz/Tesseract4Android) 封装Tesseract (供识别图片验证码)
 
 [Bsdiff-Lib](https://github.com/Chiu-xaH/Bsdiff-Lib) 增量更新
 

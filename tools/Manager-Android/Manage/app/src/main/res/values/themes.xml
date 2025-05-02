@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-    <style name="Theme.聚在工大管理端" parent="android:Theme.Material.Light.NoActionBar" />
-</resources>

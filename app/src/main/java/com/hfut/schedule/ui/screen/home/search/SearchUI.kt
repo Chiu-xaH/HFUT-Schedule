@@ -129,7 +129,7 @@ fun SearchScreen(
         "第二课堂" to { Second() }, 
         "今日校园 学工系统 请假 助学金 奖学金 贫困 寝室 心理 日常" to { ToadyCampus(ifSaved,vm) }, 
         "大创 大学生创新创业" to { IETP() }, 
-        "就业 实习 春招 双选 秋招" to { Work(hazeState) },
+        "就业 实习 春招 双选 秋招" to { Work(hazeState,vm) },
         "校友 毕业" to { Alumni() },
         "国家法定节假日 假期 节日" to { Holiday(hazeState) },
         "云端共建平台 信息共建 日程 网课 网址导航" to { Supabase(vm) },

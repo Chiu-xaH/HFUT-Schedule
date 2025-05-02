@@ -79,7 +79,7 @@ fun SearchScreenNoLogin(vm : NetWorkViewModel, ifSaved : Boolean, innerPaddings 
         "生活服务 校园 校园 天气 教学楼 建筑 学堂" to { Life(vm,hazeState) },
         "教师 老师" to { TeacherSearch(vm,hazeState) },
         "大创 大学生创新创业" to { IETP() },
-        "就业 实习 春招 双选 秋招" to { Work(hazeState) },
+        "就业 实习 春招 双选 秋招" to { Work(hazeState,vm) },
         "校友 毕业" to { Alumni() },
         "国家法定节假日 假期 节日" to { Holiday(hazeState) },
     )

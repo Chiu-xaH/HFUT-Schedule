@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -29,9 +30,9 @@ fun EmptyUI() = StatusUI(R.drawable.manga,"结果为空")
 @Composable
 fun DevelopingUI() = StatusUI(R.drawable.sdk,"正在开发")
 @Composable
-fun SuccessUI() = StatusUI2(Icons.Filled.Check,"正在开发")
+fun SuccessUI() = StatusUI2(Icons.Filled.Check,"成功")
 @Composable
-fun ErrorUI() = StatusUI2(Icons.Filled.Close,"正在开发")
+fun ErrorUI(string: String) = StatusUI2(Icons.Filled.Close,string)
 
 @Composable
 fun CenterScreen(content : @Composable () -> Unit) {
@@ -55,7 +56,9 @@ fun StatusUI(iconId : Int, text : String, padding : Dp = 15.dp) {
         }
         Spacer(Modifier.height(padding))
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-            Text(text, color = MaterialTheme.colorScheme.primary)
+            Text(text, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(
+                horizontal = appHorizontalDp()
+            ))
         }
     }
 }
@@ -74,7 +77,9 @@ fun StatusUI2(painter : ImageVector, text : String, padding : Dp = 15.dp) {
         Spacer(Modifier.height(padding))
 
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-            Text(text, color = MaterialTheme.colorScheme.primary)
+            Text(text, color = MaterialTheme.colorScheme.primary,modifier = Modifier.padding(
+                horizontal = appHorizontalDp()
+            ))
         }
     }
 }

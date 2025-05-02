@@ -42,6 +42,7 @@ fun RequestArrange(innerPadding : PaddingValues) {
         item { ArrangeItem(title = "挂科率", icon = R.drawable.monitoring, key = "FailRateRequest") }
         item { ArrangeItem(title = "开课查询", icon = R.drawable.search, key = "CourseSearchRequest") }
         item { ArrangeItem(title = "教师检索", icon = R.drawable.group, key = "TeacherSearchRequest") }
+        item { ArrangeItem(title = "就业信息", icon = R.drawable.work, key = "WorkSearchRequest") }
         item { ArrangeItem(title = "通知公告", icon = R.drawable.stream, key = "NewsRequest",false) }
         item { Spacer(Modifier.height(innerPadding.calculateBottomPadding())) }
     }

@@ -50,14 +50,10 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
 //        UpdateItems("新增 教务课程表导出为ics文件", "位于 课程表-多课表-写入日历日程",UpdateType.ADD)
-//        UpdateItems("重构 一共107个网络请求函数，全部换新，优化性能", null,UpdateType.OPTIMIZE)
+        UpdateItems("重构 3/120个网络请求函数，拥抱新技术，优化性能", null,UpdateType.RENEW)
 //        UpdateItems("新增 课程进度实时通知", "仅Android 16+", UpdateType.ADD)
-//        UpdateItems("新增 肥工就业信息网的检索", "位于 查询中心", UpdateType.ADD)
 //        UpdateItems("优化 层级转场时的圆角", null, UpdateType.OPTIMIZE)
-        UpdateItems("变更 部分网络接口", null, UpdateType.RENEW)
-        UpdateItems("新增 自由开启图片验证码的开关", "位于 教务登录界面", UpdateType.ADD)
-        UpdateItems("优化 部分界面的显示", null, UpdateType.OPTIMIZE)
-//        UpdateItems("新增 肥工就业信息网的检索", "位于 查询中心", UpdateType.ADD)
+        UpdateItems("新增 就业信息网的检索", "位于 查询中心", UpdateType.ADD)
     }
 }
 

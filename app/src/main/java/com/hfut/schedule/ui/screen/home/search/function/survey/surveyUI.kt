@@ -64,6 +64,7 @@ import com.hfut.schedule.ui.component.EmptyUI
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.LittleDialog
 import com.hfut.schedule.ui.component.MyCustomCard
+import com.hfut.schedule.ui.component.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.style.HazeBottomSheet
@@ -290,7 +291,7 @@ fun teacherList(vm : NetWorkViewModel, hazeState: HazeState, refresh : (Boolean)
 //                }
             }
             item {
-                Spacer(modifier = Modifier.height(85.dp))
+                PaddingForPageControllerButton()
             }
         }
     else {
@@ -298,7 +299,7 @@ fun teacherList(vm : NetWorkViewModel, hazeState: HazeState, refresh : (Boolean)
 
             //      Scaffold {
             EmptyUI()
-            Spacer(modifier = Modifier.height(85.dp))
+            PaddingForPageControllerButton()
         }
 
         //      }

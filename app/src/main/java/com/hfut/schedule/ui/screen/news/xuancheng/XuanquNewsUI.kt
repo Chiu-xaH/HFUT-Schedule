@@ -35,6 +35,7 @@ import com.hfut.schedule.logic.util.network.reEmptyLiveDta
 import com.hfut.schedule.ui.component.AnimationCardListItem
 import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.component.LoadingUI
+import com.hfut.schedule.ui.component.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.component.WebDialog
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -79,43 +80,7 @@ fun XuanquNewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
     if(refresh) { refresh() }
 
     WebDialog(showDialog,{ showDialog = false },host + url,"新闻详情")
-//    if(showDialog) {
-//        val link = host + url
-//        androidx.compose.ui.window.Dialog(
-//            onDismissRequest = { showDialog = false },
-//            properties = DialogProperties(usePlatformDefaultWidth = false)
-//        ) {
-//            Scaffold(
-//                modifier = Modifier.fillMaxSize(),
-//                topBar = {
-//                    TopAppBar(
-////                        modifier = Modifier.topBarBlur(hazeState, blur),
-//                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-//                            containerColor = Color.Transparent,
-//                            titleContentColor = MaterialTheme.colorScheme.primary,
-//                        ),
-//                        actions = {
-//                            Row{
-//                                IconButton(onClick = { Starter.startWebUrl(link) }) { Icon(
-//                                    painterResource(id = R.drawable.net), contentDescription = "") }
-//                                IconButton(onClick = { showDialog = false }) { Icon(painterResource(id = R.drawable.close), contentDescription = "") }
-//                            }
-//                        },
-//                        title = { Text("新闻详情") }
-//                    )
-//                },
-//            ) { innerPadding ->
-//                Column(
-//                    modifier = Modifier
-//                        .padding(innerPadding)
-//                        .fillMaxSize()
-////                        .haze(state = hazeState)
-//                ) {
-//                    WebViewScreen(url = link)
-//                }
-//            }
-//        }
-//    }
+
 
     Box {
         if(loading) {
@@ -144,7 +109,7 @@ fun XuanquNewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
 //                    }
                 }
                 item { Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding())) }
-                item { Spacer(modifier = Modifier.height(85.dp)) }
+                item { PaddingForPageControllerButton() }
             }
         }
 

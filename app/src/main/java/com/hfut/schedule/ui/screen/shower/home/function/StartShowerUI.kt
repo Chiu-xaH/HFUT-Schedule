@@ -11,6 +11,7 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,7 +23,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
@@ -43,6 +46,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -62,99 +66,61 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.ShowerLabelEntity
+import com.hfut.schedule.logic.enumeration.WorkSearchType
+import com.hfut.schedule.logic.util.network.SimpleUiState
 import com.hfut.schedule.logic.util.sys.PermissionManager.checkAndRequestCameraPermission
 import com.hfut.schedule.logic.util.other.QRCodeAnalyzer
 import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.ui.component.AnimationCardListItem
 import com.hfut.schedule.ui.component.BottomSheetTopBar
 import com.hfut.schedule.ui.component.BottomTip
 import com.hfut.schedule.ui.component.CameraScan
+import com.hfut.schedule.ui.component.CommonNetworkScreen
+import com.hfut.schedule.ui.component.CustomTextField
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.LittleDialog
 import com.hfut.schedule.ui.component.LoadingUI
+import com.hfut.schedule.ui.component.PaddingForPageControllerButton
+import com.hfut.schedule.ui.component.PagingController
 import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.component.StatusUI2
+import com.hfut.schedule.ui.component.cardNormalDp
+import com.hfut.schedule.ui.screen.home.search.function.transfer.Campus
 import com.hfut.schedule.ui.style.RowHorizontal
 import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.network.GuaGuaViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-fun startShower(vm : GuaGuaViewModel, macLocation : String) {
+suspend fun startShower(vm : GuaGuaViewModel, macLocation : String) = withContext(Dispatchers.IO) {
     val loginCode = SharedPrefs.prefs.getString("loginCode",null)
     val phoneNumber = SharedPrefs.prefs.getString("PHONENUM",null)
-    phoneNumber?.let {
-        loginCode?.let {
-                it1 -> vm.startShower(phoneNumber = it, loginCode = it1, macLocation = macLocation)
-        }
-    }
+    phoneNumber?.let { loginCode?.let { it1 -> vm.startShower(phoneNumber = it, loginCode = it1, macLocation = macLocation) } }
 }
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun ShowerStatusUI(vm : GuaGuaViewModel) {
-
-    var loading by remember { mutableStateOf(true) }
-    var refresh by remember { mutableStateOf(true) }
-
-    var msg  by remember { mutableStateOf("结果") }
-
-    if(refresh) {
-        loading = true
-        CoroutineScope(Job()).launch{
-            async {
-                Handler(Looper.getMainLooper()).post{
-                    vm.startShowerData.observeForever { result ->
-                        if (result != null) {
-                            if(result.contains("message")) {
-                                msg = try {
-                                    Gson().fromJson(result, StatusMsgResponse::class.java).message
-                                } catch (_: Exception) {
-                                    "错误"
-                                }
-                                refresh = false
-                                loading = false
-                            }
-                        }
-                    }
-                }
-            }
-        }
+fun ShowerStatusUI(vm : GuaGuaViewModel,input : String) {
+    val uiState by vm.startShowerData.state.collectAsState()
+    val refreshNetwork: suspend () -> Unit = {
+        vm.startShowerData.clear()
+        startShower(vm,input)
+    }
+    LaunchedEffect(Unit) {
+        refreshNetwork()
     }
 
-
-    Box {
-        AnimatedVisibility(
-            visible = loading,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Spacer(modifier = Modifier.height(5.dp))
-                LoadingUI()
-            }
-        }
-
-
-        AnimatedVisibility(
-            visible = !loading,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            StatusUI2(painter =
-            if(msg.contains("成功")) Icons.Filled.Check
-            else Icons.Filled.Close
-                , text = msg)
-        }
+    CommonNetworkScreen(uiState,isCenter = false) {
+        val response = (uiState as SimpleUiState.Success).data
+        StatusUI2(painter = if(response?.contains("成功") == true) Icons.Filled.Check else Icons.Filled.Close, text = response ?: "错误")
     }
-
 }
 
 data class StatusMsgResponse(val message : String)
@@ -327,7 +293,7 @@ fun StartShowerUI(vm: GuaGuaViewModel, hazeState: HazeState) {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    ShowerStatusUI(vm)
+                    ShowerStatusUI(vm,input)
                 }
             }
         }
@@ -385,9 +351,7 @@ fun StartShowerUI(vm: GuaGuaViewModel, hazeState: HazeState) {
             if(input == "") showToast("请扫码或填写二维码贴纸下的MAC地址")
             else if(input.length != 12) {
                 showToast("MAC地址为12位")
-            }
-            else {
-                startShower(vm,input)
+            } else {
                 showBottomSheet = true
             }
         },modifier = Modifier

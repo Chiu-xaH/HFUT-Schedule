@@ -12,10 +12,12 @@ import com.google.gson.JsonPrimitive
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.enumeration.LibraryItems
 import com.hfut.schedule.logic.enumeration.LoginType
+import com.hfut.schedule.logic.enumeration.WorkSearchType
 import com.hfut.schedule.logic.model.SupabaseEventForkCount
 import com.hfut.schedule.logic.model.SupabaseEventOutput
 import com.hfut.schedule.logic.model.SupabaseRefreshLoginBean
 import com.hfut.schedule.logic.model.SupabaseUserLoginBean
+import com.hfut.schedule.logic.model.WorkSearchResponse
 import com.hfut.schedule.logic.model.jxglstu.lessonResponse
 import com.hfut.schedule.logic.model.one.BorrowBooksResponse
 import com.hfut.schedule.logic.model.one.SubBooksResponse
@@ -41,9 +43,9 @@ import com.hfut.schedule.logic.network.api.QWeatherService
 import com.hfut.schedule.logic.network.api.StuService
 import com.hfut.schedule.logic.network.api.SupabaseService
 import com.hfut.schedule.logic.network.api.TeachersService
+import com.hfut.schedule.logic.network.api.WorkService
 import com.hfut.schedule.logic.network.api.XuanChengService
 import com.hfut.schedule.logic.network.api.ZJGDBillService
-import com.hfut.schedule.logic.network.repo.NetWork
 import com.hfut.schedule.logic.network.servicecreator.CommunitySreviceCreator
 import com.hfut.schedule.logic.network.servicecreator.DormitoryScoreServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.GiteeServiceCreator
@@ -64,9 +66,13 @@ import com.hfut.schedule.logic.network.servicecreator.SearchEleServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.StuServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.SupabaseServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.TeacherServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.WorkServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.XuanChengServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.ZJGDBillServiceCreator
 import com.hfut.schedule.logic.util.network.Encrypt
+import com.hfut.schedule.logic.util.network.NetWork
+import com.hfut.schedule.logic.util.network.SimpleStateHolder
+import com.hfut.schedule.logic.util.network.StateHolder
 import com.hfut.schedule.logic.util.network.supabaseEventDtoToEntity
 import com.hfut.schedule.logic.util.network.supabaseEventForkDtoToEntity
 import com.hfut.schedule.logic.util.parse.SemseterParser
@@ -78,6 +84,7 @@ import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.transfer.Campus.HEFEI
 import com.hfut.schedule.ui.screen.home.search.function.transfer.Campus.XUANCHENG
+import com.hfut.schedule.ui.screen.home.search.function.work.parseWorkResponse
 import com.hfut.schedule.ui.screen.news.transferToPostData
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -86,8 +93,9 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.awaitResponse
 
-// 93个函数
+// 106个函数
 class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     private val JxglstuJSON = JxglstuJSONServiceCreator.create(JxglstuService::class.java,webVpn)
     private val JxglstuHTML = JxglstuHTMLServiceCreator.create(JxglstuService::class.java,webVpn)
@@ -111,11 +119,25 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     private val LoginWeb2 = LoginWeb2ServiceCreator.create(LoginWebsService::class.java)
     private val github = GithubRawServiceCreator.create(GithubRawService::class.java)
     private val supabase = SupabaseServiceCreator.create(SupabaseService::class.java)
+    private val workSearch = WorkServiceCreator.create(WorkService::class.java)
 
 
     var studentId = MutableLiveData<Int>(prefs.getInt("STUDENTID",0))
     var lessonIds = MutableLiveData<List<Int>>()
     var token = MutableLiveData<String>()
+
+    val workSearchResult = SimpleStateHolder<WorkSearchResponse>()
+    suspend fun searchWorks(keyword: String?, page: Int = 1,type: Int,campus: Campus) = NetWork.launchRequestSimple(
+        holder = workSearchResult,
+        request = { workSearch.search(
+            keyword = keyword,
+            page = page,
+            pageSize = prefs.getString("WorkSearchRequest",MyApplication.PAGE_SIZE.toString())?.toIntOrNull() ?: MyApplication.PAGE_SIZE,
+            type = type.let { if(it == 0) null else it },
+            token = "yxqqnn1700000" + if(campus == XUANCHENG) "119" else "002"
+        ).awaitResponse() },
+        transform = { _,json -> parseWorkResponse(json) },
+    )
 
     var supabaseRegResp = MutableLiveData<String?>()
     fun supabaseReg(password: String) = NetWork.makeRequest(supabase.reg(user = SupabaseUserLoginBean(password = password)),supabaseRegResp)
@@ -193,8 +215,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { }
         })
     }
-
-
 
 
     // 定制 展示自己上传过的日程
@@ -1409,8 +1429,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             booksChipData
         )
     }
-
-
 
     fun getToday(CommuityTOKEN : String) {
 

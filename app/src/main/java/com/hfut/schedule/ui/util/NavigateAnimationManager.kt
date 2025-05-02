@@ -41,6 +41,12 @@ object NavigateAnimationManager {
 
     val centerAnimation = TransferAnimation("向中心运动",enterAnimation2, exitAnimation2)
 
+    private val enterAnimation5 = scaleIn(animationSpec =  tween(durationMillis = ANIMATION_SPEED, easing = LinearOutSlowInEasing))
+
+    private val exitAnimation5 = scaleOut(animationSpec =  tween(durationMillis = ANIMATION_SPEED,easing = LinearOutSlowInEasing))
+
+    val centerFadeAnimation = TransferAnimation("向中心完全运动",enterAnimation5, exitAnimation5)
+
     private val enterAnimationFade = fadeIn(animationSpec = tween(durationMillis = ANIMATION_SPEED))
 
     private val exitAnimationFade = fadeOut(animationSpec = tween(durationMillis = ANIMATION_SPEED))

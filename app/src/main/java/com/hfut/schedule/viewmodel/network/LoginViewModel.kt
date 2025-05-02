@@ -2,7 +2,7 @@ package com.hfut.schedule.viewmodel.network
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.hfut.schedule.logic.network.repo.NetWork
+import com.hfut.schedule.logic.util.network.NetWork
 import com.hfut.schedule.logic.network.api.GithubService
 import com.hfut.schedule.logic.network.api.LoginService
 import com.hfut.schedule.logic.network.servicecreator.Login.GetAESKeyServiceCreator

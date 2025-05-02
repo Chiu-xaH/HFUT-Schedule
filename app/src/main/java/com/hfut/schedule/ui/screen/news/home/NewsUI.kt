@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.AnimationCardListItem
+import com.hfut.schedule.ui.component.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.WebDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,7 +49,7 @@ fun NewsItem(vm : NetWorkViewModel, innerPadding : PaddingValues? = null) {
             )
         }
         item { if (innerPadding != null) Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding())) }
-        item { Spacer(modifier = Modifier.height(85.dp)) }
+        item { PaddingForPageControllerButton() }
     }
 }
 
