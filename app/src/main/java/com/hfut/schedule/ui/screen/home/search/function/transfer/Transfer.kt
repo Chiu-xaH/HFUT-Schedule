@@ -27,6 +27,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,12 +38,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.util.network.SimpleUiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.ui.component.AnimationCardListItem
 import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.component.BottomSheetTopBar
+import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.LoadingUI
 import com.hfut.schedule.ui.component.MyCustomCard
@@ -143,18 +147,9 @@ fun Transfer(ifSaved : Boolean, vm : NetWorkViewModel, hazeState: HazeState){
 private fun TransferListUI(vm: NetWorkViewModel, hazeState: HazeState) {
 
 
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
     var batchId by remember { mutableStateOf("") }
     var title by remember { mutableStateOf("转专业") }
-    var loading by remember { mutableStateOf(true) }
-    var refresh by remember { mutableStateOf(true) }
-    val cookie = if (!vm.webVpn) prefs.getString(
-        "redirect",
-        ""
-    ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
-
-    val sheetState_apply = rememberModalBottomSheetState()
     var showBottomSheet_apply by remember { mutableStateOf(false) }
 
     if (showBottomSheet_apply) {
@@ -163,8 +158,6 @@ private fun TransferListUI(vm: NetWorkViewModel, hazeState: HazeState) {
             hazeState = hazeState,
             isFullExpand = false,
             showBottomSheet = showBottomSheet_apply
-//            sheetState = sheetState_apply,
-//            shape = bottomSheetRound(sheetState_apply)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
@@ -176,7 +169,6 @@ private fun TransferListUI(vm: NetWorkViewModel, hazeState: HazeState) {
                 Column(
                     modifier = Modifier
                         .padding(innerPadding)
-//                        .verticalScroll(rememberScrollState())
                         .fillMaxSize()
                 ) {
                     MyApplyListUI(vm,batchId,hazeState)
@@ -191,8 +183,6 @@ private fun TransferListUI(vm: NetWorkViewModel, hazeState: HazeState) {
             onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet,
             hazeState = hazeState
-//            sheetState = sheetState,
-//            shape = bottomSheetRound(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
@@ -217,49 +207,43 @@ private fun TransferListUI(vm: NetWorkViewModel, hazeState: HazeState) {
             }
         }
     }
-
-    if(refresh) {
-        loading = true
-        CoroutineScope(Job()).launch{
-            async{ cookie?.let { vm.getTransferList(it)} }.await()
-            async {
-                Handler(Looper.getMainLooper()).post{
-                    vm.transferListData.observeForever { result ->
-                        if (result != null) {
-                            if(result.contains("转专业")) {
-                                loading = false
-                                refresh = false
-                            }
-                        }
-                    }
-                }
-            }
+    val uiState by vm.transferListData.state.collectAsState()
+    val refreshNetwork: suspend () -> Unit = {
+        val cookie = if (!vm.webVpn) prefs.getString(
+            "redirect",
+            ""
+        ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
+        cookie?.let {
+            vm.transferListData.clear()
+            vm.getTransferList(it)
         }
     }
-    if(loading) {
-        LoadingUI()
-    } else {
-        val transferList = getTransferList(vm)
+
+    LaunchedEffect(Unit) {
+        refreshNetwork()
+    }
+
+    CommonNetworkScreen(uiState) {
+        val transferList = (uiState as SimpleUiState.Success).data ?: emptyList()
         LazyColumn {
             items(transferList.size) { index ->
                 val data = transferList[index]
 //                MyCustomCard {
-                    AnimationCardListItem(
-                        headlineContent = { Text(data.title) },
-                        supportingContent = { Text("申请日期 " + data.applicationDate + "\n转专业时期 " + data.admissionDate) },
-                        trailingContent = { Icon(Icons.Filled.ArrowForward,null) },
-                        modifier = Modifier.clickable {
-                            title = data.title
-                            batchId = data.batchId
-                            showBottomSheet = true
-                        },
-                        index = index
-                    )
+                AnimationCardListItem(
+                    headlineContent = { Text(data.title) },
+                    supportingContent = { Text("申请日期 " + data.applicationDate + "\n转专业时期 " + data.admissionDate) },
+                    trailingContent = { Icon(Icons.Filled.ArrowForward,null) },
+                    modifier = Modifier.clickable {
+                        title = data.title
+                        batchId = data.batchId
+                        showBottomSheet = true
+                    },
+                    index = index
+                )
 //                }
             }
         }
     }
-
 }
 
 @Composable

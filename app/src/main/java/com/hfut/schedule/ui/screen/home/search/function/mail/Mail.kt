@@ -1,9 +1,5 @@
 package com.hfut.schedule.ui.screen.home.search.function.mail
 
-import android.os.Handler
-import android.os.Looper
-import android.provider.Contacts.Intents.UI
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -15,11 +11,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,15 +22,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
+import com.hfut.schedule.logic.util.network.SimpleUiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.network.reEmptyLiveDta
 import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
+import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.LoadingUI
 import com.hfut.schedule.ui.component.ScrollText
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.WebDialog
@@ -48,10 +41,6 @@ import com.hfut.schedule.ui.util.UIStateHolder.isSupabaseRegistering
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -87,7 +76,7 @@ fun Mail(ifSaved : Boolean, vm : NetWorkViewModel,vmUI: UIViewModel, hazeState: 
                         .padding(innerPadding)
                         .fillMaxSize()
                 ){
-                    MailUI(vm, vmUI)
+                    MailUI(vm)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
@@ -96,53 +85,40 @@ fun Mail(ifSaved : Boolean, vm : NetWorkViewModel,vmUI: UIViewModel, hazeState: 
 }
 
 @Composable
-fun MailUI(vm: NetWorkViewModel,vmUI : UIViewModel) {
-    val token = prefs.getString("bearer","")
-
-    var loading by remember { mutableStateOf(true) }
-    var refresh by remember { mutableStateOf(true) }
-
+fun MailUI(vm: NetWorkViewModel) {
     var url by remember { mutableStateOf("") }
     var used by remember { mutableStateOf(false) }
 
     var showDialog by remember { mutableStateOf(false) }
     WebDialog(showDialog,{ showDialog = false },url,getSchoolEmail() ?: "邮箱")
 
-    fun refresh() {
-        loading = true
-        CoroutineScope(Job()).launch {
-            async { reEmptyLiveDta(vm.mailData) }.await()
-            async { token?.let { vm.getMailURL(it) } }.await()
-            async {
-                Handler(Looper.getMainLooper()).post{
-                    vm.mailData.observeForever { result ->
-                        if (result != null) {
-                            if(result.contains("success")) {
-                                val data = getMail(vm)
-                                url = data.data ?: ""
-                                refresh = false
-                                loading = false
-                            }
-                        }
-                    }
-                }
-            }
+    val uiState by vm.mailData.state.collectAsState()
+    val refreshNetwork: suspend () -> Unit = {
+        val token = prefs.getString("bearer","")
+        token?.let {
+            vm.mailData.clear()
+            vm.getMailURL(it)
         }
     }
-    if(refresh) { refresh() }
 
     LaunchedEffect(used) {
-        refresh()
+        refreshNetwork()
     }
 
-    if(loading) {
-        LoadingUI(text = "正在登录邮箱 若加载过长请重新打开")
-    } else {
+    CommonNetworkScreen(uiState, loadingText = "正在登录邮箱 若加载过长请重新打开", isCenter = false) {
+        val response = (uiState as SimpleUiState.Success).data
         RowHorizontal {
             Button(
                 onClick = {
-                    showDialog = true
-                    used = !used
+                    response?.data.let {
+                        if(it != null) {
+                            url = it
+                            showDialog = true
+                            used = !used
+                        } else {
+                            showToast( "错误 " + response?.msg)
+                        }
+                    }
                 }
             ) {
                 Text("进入邮箱")
@@ -168,11 +144,3 @@ data class MailResponse(
     val data : String?
 )
 
-fun getMail(vm : NetWorkViewModel) : MailResponse {
-    val json = vm.mailData.value
-    return try {
-        Gson().fromJson(json,MailResponse::class.java)
-    } catch (e: Exception) {
-        MailResponse("APP错误","")
-    }
-}

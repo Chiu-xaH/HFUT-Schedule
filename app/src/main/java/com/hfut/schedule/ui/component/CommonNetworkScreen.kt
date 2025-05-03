@@ -8,7 +8,11 @@ import com.hfut.schedule.logic.util.network.SimpleUiState
 import com.hfut.schedule.logic.util.network.UiState
 
 @Composable
-fun CommonNetworkScreen(uiState: UiState<*,*>, successContent : @Composable () -> Unit) = Box(modifier = Modifier.fillMaxSize()) {
+fun CommonNetworkScreen(
+    uiState: UiState<*,*>,
+    modifier: Modifier = Modifier.fillMaxSize(),
+    successContent : @Composable () -> Unit,
+) = Box(modifier = modifier) {
     when (uiState) {
         UiState.Empty -> {
             CenterScreen {
@@ -32,19 +36,24 @@ fun CommonNetworkScreen(uiState: UiState<*,*>, successContent : @Composable () -
 
 
 @Composable
-fun CommonNetworkScreen(uiState: SimpleUiState<*>, isCenter : Boolean = true,successContent : @Composable () -> Unit) = Box(modifier = Modifier.fillMaxSize()) {
+fun CommonNetworkScreen(
+    uiState: SimpleUiState<*>,
+    isCenter : Boolean = true,
+    modifier: Modifier = Modifier.fillMaxSize(),
+    loadingText : String? = null,
+    successContent : @Composable () -> Unit) = Box(modifier = modifier) {
     when (uiState) {
         SimpleUiState.Empty -> {
-            val ui = @Composable {
-                EmptyUI()
-            }
-            if(isCenter) {
-                CenterScreen {
-                    ui()
-                }
-            } else {
-                ui()
-            }
+//            val ui = @Composable {
+//                EmptyUI()
+//            }
+//            if(isCenter) {
+//                CenterScreen {
+//                    ui()
+//                }
+//            } else {
+//                ui()
+//            }
         }
         is SimpleUiState.Error -> {
             val e = uiState.exception
@@ -62,7 +71,7 @@ fun CommonNetworkScreen(uiState: SimpleUiState<*>, isCenter : Boolean = true,suc
         }
         SimpleUiState.Loading -> {
             val ui = @Composable {
-                LoadingUI()
+                LoadingUI(loadingText)
             }
             if(isCenter) {
                 CenterScreen {

@@ -57,6 +57,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.enumeration.CardBarItems
+import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
@@ -185,7 +186,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
 
     }
 
-    val str by remember { mutableStateOf(BigDecimal(todaypay.toString()).setScale(2, RoundingMode.HALF_UP).toString()) }
+    val str by remember { mutableStateOf(formatDecimal(todaypay,2)) }
 
 
     var text by remember { mutableStateOf(cardValue?.balance ?: prefs.getString("card","00")) }

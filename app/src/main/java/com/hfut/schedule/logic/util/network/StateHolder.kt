@@ -39,6 +39,11 @@ class SimpleStateHolder<T> {
     fun clear() {
         _state.value = SimpleUiState.Loading
     }
+
+    fun emitEmpty() {
+        _state.value = SimpleUiState.Empty
+    }
+
 }
 
 class StateHolder<T, E> {

@@ -261,6 +261,7 @@ suspend fun loginGuaGuaClick(
     val inputPSK = Encrypt.md5Hash(psk).uppercase(Locale.getDefault())
 
     // 启动登录
+    vm.loginResult.clear()
     vm.login(phoneNumber, inputPSK)
 
     // 主线程监听 StateFlow

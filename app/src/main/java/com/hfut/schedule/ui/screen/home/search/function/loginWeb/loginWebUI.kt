@@ -120,8 +120,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
 
     // 百分比
     val percent = try {
-        val bd2 = BigDecimal(((flow?.toDouble() ?: 0.0) / (1024 * MyApplication.MAX_FREE_FLOW)) * 100)
-        bd2.setScale(2, RoundingMode.HALF_UP).toString()
+        formatDecimal(((flow?.toDouble() ?: 0.0) / (1024 * MyApplication.MAX_FREE_FLOW)) * 100,2)
     } catch (_:Exception) {
         "未知"
     }

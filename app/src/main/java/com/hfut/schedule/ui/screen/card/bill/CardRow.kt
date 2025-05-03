@@ -34,6 +34,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
@@ -83,12 +84,12 @@ fun CardRow(vm : NetWorkViewModel, vmUI : UIViewModel, hazeState: HazeState) {
     }
     val now = prefs.getString("card_now","00")
     val settle = prefs.getString("card_settle","00")
-    val num = todaypay.toString()
-    val bd = BigDecimal(num)
-    val str = bd.setScale(2, RoundingMode.HALF_UP).toString()
+//    val num = todaypay.toString()
+//    val bd = BigDecimal(num)
+    val str = formatDecimal(todaypay,2)
 
     var showBottomSheet by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState()
+//    val sheetState = rememberModalBottomSheetState()
 
 
     if(showBottomSheet) {

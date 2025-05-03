@@ -35,7 +35,10 @@ fun BoxScope.PagingController(
     nextPage : (Int) -> Unit,
     previousPage : (Int) -> Unit
 ) {
-    val shouldShowButton by remember { derivedStateOf { listState.firstVisibleItemScrollOffset == 0 } }
+    // 如果列表无项目，不显示按钮
+    val shouldShowButton by remember { derivedStateOf {
+        listState.firstVisibleItemScrollOffset == 0
+    } }
     AnimatedVisibility(
         visible = shouldShowButton,
         modifier = Modifier.align(Alignment.BottomStart).padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp()),

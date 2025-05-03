@@ -76,7 +76,7 @@ object NetWork {
     suspend fun <T> launchRequestSimple(
         holder: SimpleStateHolder<T>,
         request: suspend () -> Response<ResponseBody>,
-        transform: (Headers, String) -> T?,
+        transformSuccess: (Headers, String) -> T?,
         transformRedirect: ((Headers) -> T?)? = null
     ) = try {
         holder.setLoading()
@@ -85,7 +85,7 @@ object NetWork {
         val bodyString = response.body()?.string().orEmpty()
         if (response.isSuccessful) {
             // 成功
-            val result = transform(headers, bodyString)
+            val result = transformSuccess(headers, bodyString)
             holder.emitData(result)
         } else if(response.code() in 300..399){
             // 重定向 特殊处理

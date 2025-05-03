@@ -14,7 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.screen.card.bill.main.getBills
-import com.hfut.schedule.ui.screen.card.count.main.monthCount
+import com.hfut.schedule.ui.screen.card.count.main.MonthBillUI
 import com.hfut.schedule.ui.screen.card.bill.TodayCount
 import com.hfut.schedule.ui.component.DevelopingUI
 import com.hfut.schedule.ui.component.EmptyUI
@@ -51,7 +51,7 @@ fun CardHome(innerPadding : PaddingValues, vm : NetWorkViewModel, pagerState : P
         HorizontalPager(state = pagerState) { page ->
             Scaffold { it->
                 if(page == TAB_MONTH) {
-                    monthCount(vm,innerPadding)
+                    MonthBillUI(vm,innerPadding)
                 } else {
                     LazyColumn() {
                         when (page) {

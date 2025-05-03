@@ -50,10 +50,11 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
 //        UpdateItems("新增 教务课程表导出为ics文件", "位于 课程表-多课表-写入日历日程",UpdateType.ADD)
-        UpdateItems("重构 3/120个网络请求函数，拥抱新技术，优化性能", null,UpdateType.RENEW)
+//        UpdateItems("重构 提纯出CAS统一认证登录逻辑，为更多平台的一键登录做准备", null,UpdateType.RENEW)
+        UpdateItems("重构 网络请求、解析层，拥抱新技术，优化潜在的内存泄漏问题", "APP体系较大，当前进度 20/99",UpdateType.RENEW)
+        UpdateItems("新增 就业信息网的检索", "位于 查询中心", UpdateType.ADD)
 //        UpdateItems("新增 课程进度实时通知", "仅Android 16+", UpdateType.ADD)
 //        UpdateItems("优化 层级转场时的圆角", null, UpdateType.OPTIMIZE)
-        UpdateItems("新增 就业信息网的检索", "位于 查询中心", UpdateType.ADD)
     }
 }
 

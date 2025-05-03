@@ -70,6 +70,7 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.zjgd.FeeResponse
 import com.hfut.schedule.logic.model.zjgd.FeeType
+import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.screen.home.search.function.transfer.Campus
@@ -448,7 +449,7 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                 LoadingLargeCard(
                     title = if(!show)"￥XX.XX"
                     else
-                        "￥${BigDecimal(Result2.substringAfter(" ")).setScale(2, RoundingMode.HALF_UP).toString()}",
+                        "￥${formatDecimal(Result2.substringAfter(" ").toDouble(),2)}",
                     loading = !show ,
                     rightTop = {
                         if(show) {

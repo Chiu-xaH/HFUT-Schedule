@@ -36,6 +36,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.SearchEleResponse
 import com.hfut.schedule.logic.model.zjgd.FeeResponse
 import com.hfut.schedule.logic.model.zjgd.FeeType
+import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
@@ -331,8 +332,8 @@ fun getEle(vm : NetWorkViewModel, vmUI : UIViewModel) {
                         try {
                             var msg = Gson().fromJson(result, SearchEleResponse::class.java).query_elec_roominfo.errmsg
                             if(msg.contains("剩余金额")) {
-                                val bd = BigDecimal(msg.substringAfter("剩余金额").substringAfter(":"))
-                                vmUI.electricValue.value =  bd.setScale(2, RoundingMode.HALF_UP).toString()
+//                                val bd = BigDecimal()
+                                vmUI.electricValue.value = formatDecimal(msg.substringAfter("剩余金额").substringAfter(":").toDouble(),2)
                                 saveString("memoryEle",vmUI.electricValue.value)
                             }
                         } catch (_:Exception) { }
@@ -359,8 +360,8 @@ fun getEleNew(vm : NetWorkViewModel, vmUI : UIViewModel) {
                         try {
                             val data = Gson().fromJson(result,FeeResponse::class.java).map.showData
                             for ((_, value) in data) {
-                                val bd = BigDecimal(value.substringAfter("剩余金额:"))
-                                vmUI.electricValue.value = bd.setScale(2, RoundingMode.HALF_UP).toString()
+//                                val bd = BigDecimal(value.substringAfter("剩余金额:"))
+                                vmUI.electricValue.value = formatDecimal(value.substringAfter("剩余金额:").toDouble(),2)
                                 saveString("memoryEle",vmUI.electricValue.value)
                             }
                         } catch (_:Exception) { }

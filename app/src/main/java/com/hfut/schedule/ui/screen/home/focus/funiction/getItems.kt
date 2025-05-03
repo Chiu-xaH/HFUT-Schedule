@@ -5,6 +5,7 @@ import android.os.Looper
 import com.google.gson.Gson
 import com.hfut.schedule.logic.model.zjgd.BalanceResponse
 import com.hfut.schedule.logic.model.zjgd.ReturnCard
+import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -36,8 +37,7 @@ suspend fun initCardNetwork(vm : NetWorkViewModel, vmUI : UIViewModel) = withCon
                         val settle = transferNum(yuedata.unsettle_amount)
                         SharedPrefs.saveString("card_settle", settle.toString())
                         now += settle
-                        val bd = BigDecimal(now.toString())
-                        val str = bd.setScale(2, RoundingMode.HALF_UP).toString()
+                        val str = formatDecimal(now.toDouble(),2)
                         val balance = str
                         SharedPrefs.saveString("card", str)
                         SharedPrefs.saveString("card_account", account)
@@ -49,7 +49,7 @@ suspend fun initCardNetwork(vm : NetWorkViewModel, vmUI : UIViewModel) = withCon
     }
 }
 
-private fun transferNum(num : Int) : Float {
+fun transferNum(num : Int) : Float {
     var num_float = num.toFloat()
     num_float /= 100
     val settle = num_float
