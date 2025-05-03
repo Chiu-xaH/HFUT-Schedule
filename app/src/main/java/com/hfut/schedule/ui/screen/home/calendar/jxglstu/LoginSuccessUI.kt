@@ -520,8 +520,8 @@ fun CalendarScreen(
                //登录信息门户的接口,还没做重构（懒）
                if (token != null) {
                    if (token.contains("AT") && cardvalue != "未获取") {
-                       async { vm.getSubBooks("Bearer $token") }
-                       async { vm.getBorrowBooks("Bearer $token") }
+//                       async { vm.getSubBooks("Bearer $token") }
+//                       async { vm.getBorrowBooks("Bearer $token") }
                    } else {
                        async {
                            async { vm.OneGoto(cookies) }.await()

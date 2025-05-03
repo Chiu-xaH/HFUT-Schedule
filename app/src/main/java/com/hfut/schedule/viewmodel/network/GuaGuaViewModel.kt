@@ -1,13 +1,13 @@
 package com.hfut.schedule.viewmodel.network
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
 import com.hfut.schedule.logic.model.guagua.GuaGuaLoginResponse
+import com.hfut.schedule.logic.model.guagua.GuaguaBillsResponse
+import com.hfut.schedule.logic.model.guagua.UseCodeResponse
 import com.hfut.schedule.logic.network.api.GuaGuaService
 import com.hfut.schedule.logic.network.servicecreator.GuaGuaServiceCreator
 import com.hfut.schedule.logic.util.network.Encrypt
-import com.hfut.schedule.logic.util.network.NetWork
 import com.hfut.schedule.logic.util.network.NetWork.launchRequestSimple
 import com.hfut.schedule.logic.util.network.SimpleStateHolder
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
@@ -26,37 +26,39 @@ class GuaGuaViewModel : ViewModel() {
     suspend fun login(phoneNumber : String, password : String) = launchRequestSimple(
         holder = loginResult,
         request = { guaGua.login(phoneNumber,password).awaitResponse() },
-        transform = { _,json -> parseGuaguaLogin(json) },
+        transformSuccess = { _, json -> parseGuaguaLogin(json) },
     )
 
-    val startShowerData = SimpleStateHolder<String>()
+    val startShowerResult = SimpleStateHolder<String>()
     suspend fun startShower(phoneNumber: String, macLocation : String, loginCode : String) = launchRequestSimple(
-        holder = startShowerData,
+        holder = startShowerResult,
         request = { guaGua.startShower(phoneNumber = phoneNumber,loginCode = loginCode,macLocation = macLocation).awaitResponse() },
-        transform = { _,json -> parseStartShower(json) },
+        transformSuccess = { _, json -> parseStartShower(json) },
     )
 
-    var billsResult = MutableLiveData<String?>()
-    fun getBills() {
-        val call = guaGua.getBills(phoneNumber, loginCode)
-        NetWork.makeRequest(call,billsResult)
-    }
+    var billsResult = SimpleStateHolder<GuaguaBillsResponse>()
+    suspend fun getBills() = launchRequestSimple(
+        holder = billsResult,
+        request = { guaGua.getBills(phoneNumber, loginCode).awaitResponse() },
+        transformSuccess = { _, json -> parseBills(json) },
+    )
 
-    var userCode = MutableLiveData<String?>()
-    fun getUseCode() = NetWork.makeRequest(guaGua.getUseCode(phoneNumber,loginCode),userCode)
+    var useCodeResult = SimpleStateHolder<String>()
+    suspend fun getUseCode() = launchRequestSimple(
+        holder = useCodeResult,
+        request = { guaGua.getUseCode(phoneNumber,loginCode).awaitResponse() },
+        transformSuccess = { _, json -> parseUseCode(json) }
+    )
 
-    var reSetCodeResult = MutableLiveData<String?>()
-    fun reSetUseCode(newCode : String) {
-        val psk = prefs.getString("GuaGuaPsk","") ?: ""
-        val encrypted = Encrypt.md5Hash(psk).uppercase(Locale.ROOT)
-        val call = guaGua.reSetUseCode(
-            phoneNumber,
-            encrypted,
-            loginCode,
-            newCode,
-        )
-        NetWork.makeRequest(call,reSetCodeResult)
-    }
+    var reSetCodeResult = SimpleStateHolder<String>()
+    suspend fun reSetUseCode(newCode : String) = launchRequestSimple(
+        holder = reSetCodeResult,
+        request = {
+            val psk = prefs.getString("GuaGuaPsk","") ?: ""
+            val encrypted = Encrypt.md5Hash(psk).uppercase(Locale.ROOT)
+            guaGua.reSetUseCode(phoneNumber, encrypted, loginCode, newCode,).awaitResponse() },
+        transformSuccess = { _, json -> parseReSetUseCode(json) }
+    )
 
     private fun parseGuaguaLogin(result: String): GuaGuaLoginResponse? = try {
         val data = Gson().fromJson(result, GuaGuaLoginResponse::class.java)
@@ -71,6 +73,21 @@ class GuaGuaViewModel : ViewModel() {
 
     private fun parseStartShower(result: String): String? = try {
         Gson().fromJson(result, StatusMsgResponse::class.java).message
+    } catch (e : Exception) {
+        null
+    }
+    private fun parseBills(result: String) : GuaguaBillsResponse? = try {
+        Gson().fromJson(result, GuaguaBillsResponse::class.java)
+    } catch (e : Exception) {
+        null
+    }
+    private fun parseUseCode(result: String) : String? = try {
+        Gson().fromJson(result,UseCodeResponse::class.java).data.randomCode
+    } catch (e : Exception) {
+        null
+    }
+    private fun parseReSetUseCode(result: String) : String? = try {
+        Gson().fromJson(result,StatusMsgResponse::class.java).message
     } catch (e : Exception) {
         null
     }

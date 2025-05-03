@@ -9,21 +9,6 @@ import com.hfut.schedule.logic.model.jxglstu.lessonSurveyTasks
 import com.hfut.schedule.logic.model.jxglstu.options
 import com.hfut.schedule.logic.model.jxglstu.radioQuestions
 
-fun getSurveyList(vm : NetWorkViewModel) : MutableList<lessonSurveyTasks> {
-    val list = mutableListOf<lessonSurveyTasks>()
-    return try {
-        val result = Gson().fromJson(vm.surveyListData.value, SurveyTeacherResponse::class.java).forStdLessonSurveySearchVms
-        for(i in result.indices) {
-            val teacherList = result[i].lessonSurveyTasks
-            for(j in teacherList.indices) {
-                list.add(teacherList[j])
-            }
-        }
-        list
-    } catch (e : Exception) {
-        list
-    }
-}
 fun getSurveyChoice(vm : NetWorkViewModel) : List<radioQuestions> {
     return try {
         val json = Gson().fromJson(vm.surveyData.value, SurveyResponse::class.java)

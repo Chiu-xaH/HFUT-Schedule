@@ -1,12 +1,7 @@
 package com.hfut.schedule.ui.screen.home.search.function.teacherSearch
 
-import android.os.Handler
-import android.os.Looper
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,51 +10,40 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.CircularProgressIndicator
-import com.hfut.schedule.ui.component.LoadingUI
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.logic.util.network.reEmptyLiveDta
-import com.hfut.schedule.ui.screen.home.search.function.failRate.permit
-import com.hfut.schedule.ui.component.appHorizontalDp
-import com.hfut.schedule.ui.component.BottomSheetTopBar
+import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.TransplantListItem
+import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.style.HazeBottomSheet
-import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.ui.style.textFiledTransplant
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TeacherSearch(vm: NetWorkViewModel, hazeState: HazeState) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
 
     TransplantListItem(
@@ -73,8 +57,6 @@ fun TeacherSearch(vm: NetWorkViewModel, hazeState: HazeState) {
             onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet,
             hazeState = hazeState
-//            sheetState = sheetState,
-//            shape = bottomSheetRound(sheetState)
         ) {
             SearchTeachersUI(vm)
         }
@@ -84,28 +66,18 @@ fun TeacherSearch(vm: NetWorkViewModel, hazeState: HazeState) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchTeachersUI(vm : NetWorkViewModel) {
-    var loading by remember { mutableStateOf(false) }
     var name by remember { mutableStateOf("") }
     var direction by remember { mutableStateOf("") }
 
+    val uiState by vm.teacherSearchData.state.collectAsState()
 
-    fun onClick() {
-        CoroutineScope(Job()).launch{
-            async { loading = true }.await()
-            async { reEmptyLiveDta(vm.teacherSearchData) }
-            async{ vm.searchTeacher(name, direction) }.await()
-            async {
-                Handler(Looper.getMainLooper()).post{
-                    vm.teacherSearchData.observeForever { result ->
-                        if (result != null) {
-                            if(result.contains("{")) {
-                                loading = false
-                            }
-                        }
-                    }
-                }
-            }
-        }
+    val scope = rememberCoroutineScope()
+    val refreshNetwork: suspend () -> Unit = {
+        vm.teacherSearchData.clear()
+        vm.searchTeacher(name,direction)
+    }
+    LaunchedEffect(Unit) {
+        vm.teacherSearchData.emitEmpty()
     }
 
     Scaffold(
@@ -114,8 +86,7 @@ fun SearchTeachersUI(vm : NetWorkViewModel) {
         topBar = {
             HazeBottomSheetTopBar("教师") {
                 FilledTonalIconButton(
-                    onClick = { onClick() },
-//                    modifier = Modifier.padding(horizontal = AppHorizontalDp())
+                    onClick = { scope.launch { refreshNetwork() } },
                 ) {
                     Icon(painterResource(R.drawable.search), contentDescription = "")
                 }
@@ -163,27 +134,10 @@ fun SearchTeachersUI(vm : NetWorkViewModel) {
                     )
                 }
                 Spacer(modifier = Modifier.height(4.dp))
-                Box {
-                    androidx.compose.animation.AnimatedVisibility(
-                        visible = loading,
-                        enter = fadeIn(),
-                        exit = fadeOut()
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            Spacer(modifier = Modifier.height(5.dp))
-                            LoadingUI()
-                        }
-                    }
-                    androidx.compose.animation.AnimatedVisibility(
-                        visible = !loading,
-                        enter = fadeIn(),
-                        exit = fadeOut()
-                    ) {
-                        TeacherListUI(vm)
-                    }
+                CommonNetworkScreen(uiState) {
+                    val response = (uiState as SimpleUiState.Success).data
+                    val list = response?.teacherData ?: emptyList()
+                    TeacherListUI(list)
                 }
             }
             Spacer(modifier = Modifier.height(20.dp))
@@ -193,46 +147,18 @@ fun SearchTeachersUI(vm : NetWorkViewModel) {
 
 @Composable
 fun ApiToTeacherSearch(input : String,vm: NetWorkViewModel) {
-    var loading by remember { mutableStateOf(false) }
-    if(permit == 1) {
-        CoroutineScope(Job()).launch{
-            async { loading = true }.await()
-            async { reEmptyLiveDta(vm.teacherSearchData) }
-            async{ vm.searchTeacher(name = input) }.await()
-            async {
-                Handler(Looper.getMainLooper()).post{
-                    vm.teacherSearchData.observeForever { result ->
-                        if (result != null) {
-                            if(result.contains("{")) {
-                                loading = false
-                                permit++
-                            }
-                        }
-                    }
-                }
-            }
-        }
+    val uiState by vm.teacherSearchData.state.collectAsState()
+
+    val refreshNetwork: suspend () -> Unit = {
+        vm.teacherSearchData.clear()
+        vm.searchTeacher(input)
     }
-    Box {
-        androidx.compose.animation.AnimatedVisibility(
-            visible = loading,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Spacer(modifier = Modifier.height(5.dp))
-                LoadingUI()
-            }
-        }
-        androidx.compose.animation.AnimatedVisibility(
-            visible = !loading,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            TeacherListUI(vm)
-        }
+    LaunchedEffect(input) {
+        refreshNetwork()
+    }
+    CommonNetworkScreen(uiState) {
+        val response = (uiState as SimpleUiState.Success).data
+        val list = response?.teacherData ?: emptyList()
+        TeacherListUI(list)
     }
 }

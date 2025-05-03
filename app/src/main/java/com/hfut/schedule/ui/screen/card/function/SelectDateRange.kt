@@ -5,7 +5,6 @@ import android.os.Looper
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
-import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Column
@@ -13,35 +12,36 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DateRangePicker
+import androidx.compose.material3.DateRangePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
+import com.hfut.schedule.logic.enumeration.ShowerScreen
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.logic.model.zjgd.BillRangeResponse
+import com.hfut.schedule.logic.util.network.SimpleUiState
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.ui.component.appHorizontalDp
-import com.hfut.schedule.ui.component.BottomSheetTopBar
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.ui.util.navigateAndClear
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
+import kotlinx.coroutines.withContext
 import java.util.Date
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,6 +56,7 @@ fun SelecctDateRange(vm : NetWorkViewModel) {
         animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
         label = " " // 使用弹簧动画
     )
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -65,41 +66,8 @@ fun SelecctDateRange(vm : NetWorkViewModel) {
                 FilledTonalButton(
                     modifier = Modifier.scale(scale.value),
                     interactionSource = interactionSource,
-                    //shape = MaterialTheme.shapes.small,
                     onClick = {
-                        val startDate = Date(state.selectedStartDateMillis!!)
-                        val endDate = Date(state.selectedEndDateMillis!!)
-
-                        val startDateString = DateTimeUtils.simpleFormatter_YYYY_MM_DD.format(startDate)
-                        val endDateString = DateTimeUtils.simpleFormatter_YYYY_MM_DD.format(endDate)
-
-                        val auth = prefs.getString("auth", "")
-                        CoroutineScope(Job()).apply {
-                            launch {
-                                async {
-                                    Handler(Looper.getMainLooper()).post{
-                                        vm.RangeData.value = "{}"
-                                    }
-                                    vm.searchDate("bearer " + auth, startDateString, endDateString)
-                                }.await()
-                                async {
-                                    Handler(Looper.getMainLooper()).post{
-                                        vm.RangeData.observeForever { result ->
-                                            if(result.contains("操作成功")){
-                                                try {
-                                                    val data = Gson().fromJson(result, BillRangeResponse::class.java)
-                                                    var zhichu = data.data.expenses
-                                                    zhichu /= 100
-                                                    showToast("共支出 $zhichu 元")
-                                                } catch (e : Exception) {
-                                                    showToast("错误")
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        scope.launch { getRangeData(vm,state) }
                     },
                     enabled = state.selectedEndDateMillis != null
                 ) {
@@ -117,6 +85,34 @@ fun SelecctDateRange(vm : NetWorkViewModel) {
                 modifier = Modifier.weight(1f), title = { Text(text = "")},
                 colors = DatePickerDefaults.colors(containerColor = Color.Transparent),
             )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+private suspend fun getRangeData(vm: NetWorkViewModel, state: DateRangePickerState) = withContext(Dispatchers.IO) {
+    val startDate = Date(state.selectedStartDateMillis!!)
+    val endDate = Date(state.selectedEndDateMillis!!)
+
+    val startDateString = DateTimeUtils.simpleFormatter_YYYY_MM_DD.format(startDate)
+    val endDateString = DateTimeUtils.simpleFormatter_YYYY_MM_DD.format(endDate)
+
+    val auth = prefs.getString("auth", "")
+    vm.huixinRangeResult.clear()
+    vm.searchDate("bearer $auth", startDateString, endDateString)
+    // 主线程监听 StateFlow
+    withContext(Dispatchers.Main) {
+        // 只收集第一次流
+        val state = vm.huixinRangeResult.state.first { it !is SimpleUiState.Loading }
+        when (state) {
+            is SimpleUiState.Success -> {
+                val data = state.data
+                showToast("共支出 $data 元")
+            }
+            is SimpleUiState.Error -> {
+                showToast("错误 " + state.exception?.message)
+            }
+            else -> {}
         }
     }
 }

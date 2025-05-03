@@ -104,10 +104,10 @@ fun CardLimit(vm : NetWorkViewModel, vmUI : UIViewModel) {
                 .fillMaxSize()
         ) {
            // var sliderPosition by remember { mutableStateOf(prefss!!.toFloat()) }
-            val bd = BigDecimal(limit.toString())
-            val limits = bd.setScale(0, RoundingMode.HALF_UP).toString()
-            val bd2 = BigDecimal(amt.toString())
-            val amts = bd.setScale(0, RoundingMode.HALF_UP).toString()
+//            val bd = BigDecimal(limit.toString())
+//            val limits = bd.setScale(0, RoundingMode.HALF_UP).toString()
+//            val bd2 = BigDecimal(amt.toString())
+//            val amts = bd.setScale(0, RoundingMode.HALF_UP).toString()
             //  var Num by remember { mutableStateOf(sliderPosition.toString()) }
             TransplantListItem(
                 headlineContent = { Text(text = "自主转账限额 ￥${limit}")},

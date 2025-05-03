@@ -31,10 +31,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -47,9 +48,11 @@ import androidx.lifecycle.Observer
 import com.google.gson.Gson
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.jxglstu.TransferData
+import com.hfut.schedule.logic.util.network.SimpleUiState
 import com.hfut.schedule.logic.util.network.reEmptyLiveDta
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.AnimationCardListItem
+import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.DepartmentIcons
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.LoadingUI
@@ -72,42 +75,25 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransferUI(vm: NetWorkViewModel, batchId: String, hazeState: HazeState) {
-    var loading by remember { mutableStateOf(true) }
-    var refresh by remember { mutableStateOf(true) }
-    val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
-    val sheetState_select = rememberModalBottomSheetState()
     var showBottomSheet_select by remember { mutableStateOf(false) }
     var telephone by remember { mutableStateOf("") }
-    val cookie = if (!vm.webVpn) prefs.getString(
-        "redirect",
-        ""
-    ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
-    var id by remember { mutableStateOf(0) }
-   // val campus =
 
-    LaunchedEffect(key1 = batchId) {
-        loading = true
-        reEmptyLiveDta(vm.transferData)
-        refresh = true
-    }
-    if(refresh) {
-        loading = true
-        CoroutineScope(Job()).launch{
-            async{ cookie?.let { vm.getTransfer(it,batchId)} }.await()
-            async {
-                Handler(Looper.getMainLooper()).post{
-                    vm.transferData.observeForever { result ->
-                        if (result != null) {
-                            if(result.contains("转专业")) {
-                                loading = false
-                                refresh = false
-                            }
-                        }
-                    }
-                }
-            }
+    var id by remember { mutableIntStateOf(0) }
+    val uiState by vm.transferData.state.collectAsState()
+    val refreshNetwork: suspend () -> Unit = {
+        val cookie = if (!vm.webVpn) prefs.getString(
+            "redirect",
+            ""
+        ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
+        cookie?.let {
+            vm.transferData.clear()
+            vm.getTransfer(it,batchId)
         }
+    }
+
+    LaunchedEffect(batchId) {
+        refreshNetwork()
     }
 
     if(showBottomSheet) {
@@ -119,8 +105,6 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String, hazeState: HazeState) {
             hazeState = hazeState,
             showBottomSheet = showBottomSheet,
             isFullExpand = false
-//            sheetState = sheetState,
-//            shape = bottomSheetRound(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
@@ -148,8 +132,6 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String, hazeState: HazeState) {
             hazeState = hazeState,
             isFullExpand = false,
             showBottomSheet = showBottomSheet_select
-//            sheetState = sheetState_select,
-//            shape = bottomSheetRound(sheetState_select)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
@@ -165,7 +147,6 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String, hazeState: HazeState) {
                         .fillMaxSize()
                 ) {
                     val personInfo = getPersonInfo()
-//                    var input by remember { mutableStateOf("") }
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -198,7 +179,6 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String, hazeState: HazeState) {
                     Spacer(Modifier.height(5.dp))
                     personInfo.mobile?.let {
                         if(it.isNotEmpty()) {
-//                            MyCustomCard {
                             StyleCardListItem(
                                     headlineContent = { Text(it) },
                                     overlineContent = { Text("教务系统预留手机号") },
@@ -208,12 +188,10 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String, hazeState: HazeState) {
                                         showBottomSheet = true
                                     }
                                 )
-//                            }
                         }
                     }
                     personInfo.phone?.let {
                         if(it.isNotEmpty()) {
-//                            MyCustomCard {
                                 StyleCardListItem(
                                     headlineContent = { Text(it) },
                                     overlineContent = { Text("教务系统预留电话号") },
@@ -223,13 +201,10 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String, hazeState: HazeState) {
                                         showBottomSheet = true
                                     }
                                 )
-//                            }
-
                         }
                     }
                     prefs.getString("PHONENUM","")?.let {
                         if(it.isNotEmpty()) {
-//                            MyCustomCard  {
                                 StyleCardListItem(
                                     headlineContent = { Text(it) },
                                     overlineContent = { Text("呱呱物联登录手机号") },
@@ -239,7 +214,6 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String, hazeState: HazeState) {
                                         showBottomSheet = true
                                     }
                                 )
-//                            }
                         }
                     }
                     Spacer(modifier = Modifier.height(20.dp))
@@ -247,92 +221,70 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String, hazeState: HazeState) {
             }
         }
     }
-
-    Box {
-        AnimatedVisibility(
-            visible = loading,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
+    var input by remember { mutableStateOf("") }
+    CommonNetworkScreen(uiState) {
+        val response = (uiState as SimpleUiState.Success).data
+        val list = response?.data ?: emptyList()
+        Column {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                Spacer(modifier = Modifier.height(5.dp))
-                LoadingUI()
+                TextField(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = appHorizontalDp()),
+                    value = input,
+                    onValueChange = {
+                        input = it
+                    },
+                    label = { Text("搜索学院或专业") },
+                    singleLine = true,
+                    trailingIcon = {
+                        IconButton(
+                            onClick = {}) {
+                            Icon(painter = painterResource(R.drawable.search), contentDescription = "description")
+                        }
+                    },
+                    shape = MaterialTheme.shapes.medium,
+                    colors = textFiledTransplant(),
+                )
             }
-        }
+            val searchList = mutableListOf<TransferData>()
+            list.forEach { item->
+                if(item.department.nameZh.contains(input) || item.major.nameZh.contains(input)) {
+                    searchList.add(item)
+                }
+            }
+            Spacer(modifier = Modifier.height(cardNormalDp()))
 
-
-        AnimatedVisibility(
-            visible = !loading,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            var input by remember { mutableStateOf("") }
-            Column {
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    TextField(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(horizontal = appHorizontalDp()),
-                        value = input,
-                        onValueChange = {
-                            input = it
+            LazyColumn {
+                items(searchList.size, key = { it }) {item ->
+                    val dataItem = searchList[item]
+                    var department = dataItem.department.nameZh
+                    if(department.contains("（")) department = department.substringBefore("（")
+                    if(department.contains("(")) department = department.substringBefore("(")
+                    val count = dataItem.applyStdCount
+                    val limit = dataItem.preparedStdCount
+                    val isFull = count > limit
+                    AnimationCardListItem(
+                        headlineContent = { Text(text = dataItem.major.nameZh, fontWeight = FontWeight.Bold) },
+                        supportingContent = { dataItem.registrationConditions?.let { Text(text = it) } },
+                        overlineContent = { ScrollText(text = "已申请 $count / $limit $department") },
+                        leadingContent = { DepartmentIcons(dataItem.department.nameZh) },
+                        trailingContent = {  FilledTonalIconButton(onClick = {
+                            id = dataItem.id
+                            showBottomSheet_select = true
                         },
-                        label = { Text("搜索学院或专业" ) },
-                        singleLine = true,
-                        trailingIcon = {
-                            IconButton(
-                                onClick = {}) {
-                                Icon(painter = painterResource(R.drawable.search), contentDescription = "description")
-                            }
+                            colors = if(!isFull) IconButtonDefaults.filledTonalIconButtonColors() else IconButtonDefaults.filledTonalIconButtonColors(MaterialTheme.colorScheme.error.copy(alpha = 0.1f))
+                        ) { Icon(painter = painterResource(id = R.drawable.add_2), contentDescription = "") } },
+                        color = if(isFull) {
+                            MaterialTheme.colorScheme.errorContainer
+                        } else {
+                            null
                         },
-                        shape = MaterialTheme.shapes.medium,
-                        colors = textFiledTransplant(),
+                        index = item
                     )
-                }
-                val list = getTransfer(vm)
-                val searchList = mutableListOf<TransferData>()
-                list.forEach { item->
-                    if(item.department.nameZh.contains(input) || item.major.nameZh.contains(input)) {
-                        searchList.add(item)
-                    }
-                }
-                Spacer(modifier = Modifier.height(cardNormalDp()))
-
-                LazyColumn {
-                    items(searchList.size) {item ->
-                        val dataItem = searchList[item]
-                        var department = dataItem.department.nameZh
-                        if(department.contains("（")) department = department.substringBefore("（")
-                        if(department.contains("(")) department = department.substringBefore("(")
-                        val count = dataItem.applyStdCount
-                        val limit = dataItem.preparedStdCount
-                        val isFull = count > limit
-                        AnimationCardListItem(
-                            headlineContent = { Text(text = dataItem.major.nameZh, fontWeight = FontWeight.Bold) },
-                            supportingContent = { dataItem.registrationConditions?.let { Text(text = it) } },
-                            overlineContent = { ScrollText(text = "已申请 $count / $limit $department") },
-                            leadingContent = { DepartmentIcons(dataItem.department.nameZh) },
-                            trailingContent = {  FilledTonalIconButton(onClick = {
-                                id = dataItem.id
-                                showBottomSheet_select = true
-                            },
-                                colors = if(!isFull) IconButtonDefaults.filledTonalIconButtonColors() else IconButtonDefaults.filledTonalIconButtonColors(MaterialTheme.colorScheme.error.copy(alpha = 0.1f))
-                            ) { Icon(painter = painterResource(id = R.drawable.add_2), contentDescription = "") } },
-                            color = if(isFull) {
-                                MaterialTheme.colorScheme.errorContainer
-                            } else {
-                                null
-                            },
-                            index = item
-                        )
-                    }
                 }
             }
         }

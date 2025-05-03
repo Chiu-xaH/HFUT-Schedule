@@ -26,6 +26,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.BottomSheetTopBar
@@ -52,9 +53,9 @@ fun RequestArrange(innerPadding : PaddingValues) {
 @Composable
 fun ArrangeItem(title : String, icon : Int, key : String,canUse : Boolean = true) {
     val pageSize = prefs.getString(key,MyApplication.PAGE_SIZE.toString()) ?: MyApplication.PAGE_SIZE.toString()
-    var sliderPosition by remember { mutableStateOf(pageSize.toFloat()) }
-    val bd = BigDecimal(sliderPosition.toString())
-    val str = bd.setScale(0, RoundingMode.HALF_UP).toString()
+    var sliderPosition by remember { mutableFloatStateOf(pageSize.toFloat()) }
+//    val bd = BigDecimal(sliderPosition.toString())
+    val str = formatDecimal(sliderPosition.toDouble(),0)
     TransplantListItem(
             headlineContent = { Text(text = "$title   $str 条/页")},
             leadingContent = { Icon(painterResource(id = icon), contentDescription = "") },
@@ -64,8 +65,8 @@ fun ArrangeItem(title : String, icon : Int, key : String,canUse : Boolean = true
                     value = sliderPosition,
                     onValueChange = {
                         sliderPosition = it
-                        val bd = BigDecimal(sliderPosition.toString())
-                        val str = bd.setScale(0, RoundingMode.HALF_UP).toString()
+//                        val bd = BigDecimal(sliderPosition.toString())
+                        val str = formatDecimal(sliderPosition.toDouble(),0)
                         SharedPrefs.saveString(key,str)
                     },
                     colors = SliderDefaults.colors(

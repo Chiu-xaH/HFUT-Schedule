@@ -21,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.logic.model.TeacherBean
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.cardNormalColor
 import com.hfut.schedule.ui.component.TransplantListItem
@@ -29,11 +30,11 @@ import com.hfut.schedule.ui.component.WebDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TeacherListUI(vm: NetWorkViewModel) {
+fun TeacherListUI(dataList: List<TeacherBean>) {
     var showDialog by remember { mutableStateOf(false) }
     var links by remember { mutableStateOf("") }
     var title by remember { mutableStateOf("教师主页") }
-    val dataList = getTeacherList(vm)
+//    val dataList = getTeacherList(vm)
 
     WebDialog(showDialog,{ showDialog = false },links,title)
 
@@ -41,7 +42,7 @@ fun TeacherListUI(vm: NetWorkViewModel) {
     LazyVerticalGrid(columns = GridCells.Fixed(2),modifier = Modifier.padding(horizontal = 11.dp))  {
         items(dataList.size) { index->
             val item = dataList[index]
-            item?.let {
+            item.let {
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -57,9 +58,9 @@ fun TeacherListUI(vm: NetWorkViewModel) {
                                 URLImage(url = MyApplication.TEACHER_URL + it.picUrl, width = 120.dp, height = 120.dp)
                             }
                         },
-//                        trailingContent = {
-//                            Icon(Icons.Filled.ArrowForward, contentDescription = "")
-//                        },
+        //                        trailingContent = {
+        //                            Icon(Icons.Filled.ArrowForward, contentDescription = "")
+        //                        },
                         modifier = Modifier.clickable {
                             links = it.url
                             title = it.name

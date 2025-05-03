@@ -30,6 +30,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.screen.home.search.function.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.transfer.getCampus
@@ -57,11 +58,11 @@ fun LoginWeb(vmUI : UIViewModel, card : Boolean, vm : NetWorkViewModel, hazeStat
 
     val flow = vmUI.webValue.value?.flow?: memoryWeb
     val gB = (flow?.toDouble() ?: 0.0) / 1024
-    val bd = BigDecimal(gB)
-    val str = bd.setScale(2, RoundingMode.HALF_UP).toString()
+//    val bd = BigDecimal(gB)
+    val str = formatDecimal(gB,2)
 
-    val bd2 = BigDecimal(((flow?.toDouble() ?: 0.0) / (1024 * MyApplication.MAX_FREE_FLOW)) * 100)
-    val precent = bd2.setScale(1, RoundingMode.HALF_UP).toString()
+//    val bd2 = BigDecimal()
+    val precent = formatDecimal(((flow?.toDouble() ?: 0.0) / (1024 * MyApplication.MAX_FREE_FLOW)) * 100,1)
 
     TransplantListItem(
         headlineContent = { if(!card)Text(text = "校园网"  + if(getCampus() != Campus.XUANCHENG) "(宣)" else "") else ScrollText(text = "${str}GB") },
