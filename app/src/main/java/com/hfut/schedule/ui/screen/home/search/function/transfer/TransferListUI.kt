@@ -222,7 +222,7 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String, hazeState: HazeState) {
         }
     }
     var input by remember { mutableStateOf("") }
-    CommonNetworkScreen(uiState) {
+    CommonNetworkScreen(uiState, onReload = refreshNetwork) {
         val response = (uiState as SimpleUiState.Success).data
         val list = response?.data ?: emptyList()
         Column {

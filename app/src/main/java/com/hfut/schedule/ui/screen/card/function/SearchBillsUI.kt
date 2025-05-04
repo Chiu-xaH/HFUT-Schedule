@@ -16,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,7 +30,6 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.network.SimpleUiState
 import com.hfut.schedule.ui.component.AnimationCardListItem
-import com.hfut.schedule.ui.screen.card.bill.main.getBills
 import com.hfut.schedule.ui.screen.card.bill.main.processTranamt
 import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.component.BillsIcons
@@ -41,7 +39,7 @@ import com.hfut.schedule.ui.component.EmptyUI
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.PagingController
-import com.hfut.schedule.ui.component.StyleCardListItem
+import com.hfut.schedule.ui.component.PrepareSearchUI
 import com.hfut.schedule.ui.style.RowHorizontal
 import com.hfut.schedule.ui.style.textFiledTransplant
 import kotlinx.coroutines.launch
@@ -60,7 +58,7 @@ fun SearchBillsUI(vm : NetWorkViewModel) {
     }
 
     LaunchedEffect(Unit) {
-        vm.huixinSearchBillsResult.emitEmpty()
+        vm.huixinSearchBillsResult.emitPrepare()
     }
     LaunchedEffect(currentPage) {
         if(startUse) {
@@ -110,7 +108,7 @@ fun SearchBillsUI(vm : NetWorkViewModel) {
                 )
             }
 
-            CommonNetworkScreen(uiState) {
+            CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchUI() }) {
                 if(!startUse) startUse = true
 
                 val response = (uiState as SimpleUiState.Success).data

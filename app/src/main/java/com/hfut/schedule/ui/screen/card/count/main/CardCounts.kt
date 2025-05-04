@@ -144,7 +144,7 @@ fun MonthBillUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
             }
         }
     }
-    CommonNetworkScreen(uiState) {
+    CommonNetworkScreen(uiState, onReload = refreshNetwork) {
         val list = (uiState as SimpleUiState.Success).data ?: emptyList()
         val filteredList = withoutMonthBills(list)
         //填充界面

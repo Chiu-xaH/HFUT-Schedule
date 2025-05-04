@@ -60,36 +60,31 @@ class GuaGuaViewModel : ViewModel() {
         transformSuccess = { _, json -> parseReSetUseCode(json) }
     )
 
-    private fun parseGuaguaLogin(result: String): GuaGuaLoginResponse? = try {
+    private fun parseGuaguaLogin(result: String): GuaGuaLoginResponse = try {
         val data = Gson().fromJson(result, GuaGuaLoginResponse::class.java)
         if(data.message.contains("成功")) {
             saveString("GuaGuaPersonInfo",result)
             saveString("loginCode",data.data?.loginCode)
         }
         data
-    } catch (e: Exception) {
-        null
-    }
+    } catch (e: Exception) { throw e }
 
-    private fun parseStartShower(result: String): String? = try {
+    private fun parseStartShower(result: String): String = try {
         Gson().fromJson(result, StatusMsgResponse::class.java).message
-    } catch (e : Exception) {
-        null
-    }
-    private fun parseBills(result: String) : GuaguaBillsResponse? = try {
+    } catch (e : Exception) { throw e }
+
+    private fun parseBills(result: String) : GuaguaBillsResponse = try {
         Gson().fromJson(result, GuaguaBillsResponse::class.java)
-    } catch (e : Exception) {
-        null
-    }
-    private fun parseUseCode(result: String) : String? = try {
+    } catch (e : Exception) { throw e }
+
+    private fun parseUseCode(result: String) : String = try {
         Gson().fromJson(result,UseCodeResponse::class.java).data.randomCode
-    } catch (e : Exception) {
-        null
-    }
-    private fun parseReSetUseCode(result: String) : String? = try {
+    } catch (e : Exception) { throw e }
+
+    private fun parseReSetUseCode(result: String) : String = try {
         Gson().fromJson(result,StatusMsgResponse::class.java).message
-    } catch (e : Exception) {
-        null
-    }
+    } catch (e : Exception) { throw e }
 }
+
+
 

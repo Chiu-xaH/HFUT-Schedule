@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
@@ -33,7 +35,8 @@ fun DevelopingUI() = StatusUI(R.drawable.sdk,"正在开发")
 fun SuccessUI() = StatusUI2(Icons.Filled.Check,"成功")
 @Composable
 fun ErrorUI(string: String) = StatusUI2(Icons.Filled.Close,string)
-
+@Composable
+fun PrepareSearchUI() = StatusUI(R.drawable.search,"开始搜索")
 @Composable
 fun CenterScreen(content : @Composable () -> Unit) {
     Box(modifier = Modifier.fillMaxSize()) {
@@ -64,7 +67,7 @@ fun StatusUI(iconId : Int, text : String, padding : Dp = 15.dp) {
 }
 
 @Composable
-fun StatusUI2(painter : ImageVector, text : String, padding : Dp = 15.dp) {
+fun StatusUI2(painter : ImageVector, text : String, padding : Dp = appHorizontalDp()) {
     Column {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
             Icon(

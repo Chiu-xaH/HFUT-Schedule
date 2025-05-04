@@ -31,7 +31,7 @@ fun GuaguaBills(innerPadding: PaddingValues, vm: GuaGuaViewModel) {
         refreshNetwork()
     }
 
-    CommonNetworkScreen(uiState) {
+    CommonNetworkScreen(uiState, onReload = refreshNetwork) {
         val response = (uiState as SimpleUiState.Success).data
         val list = response?.data ?: emptyList()
         LazyColumn {

@@ -33,7 +33,8 @@ fun BoxScope.PagingController(
     currentPage : Int,
     showUp : Boolean = false,
     nextPage : (Int) -> Unit,
-    previousPage : (Int) -> Unit
+    previousPage : (Int) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     // 如果列表无项目，不显示按钮
     val shouldShowButton by remember { derivedStateOf {
@@ -41,7 +42,7 @@ fun BoxScope.PagingController(
     } }
     AnimatedVisibility(
         visible = shouldShowButton,
-        modifier = Modifier.align(Alignment.BottomStart).padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp()),
+        modifier = modifier.align(Alignment.BottomStart).padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp()),
         exit = NavigateAnimationManager.centerFadeAnimation.exit,
         enter = NavigateAnimationManager.centerFadeAnimation.enter
     ){
@@ -58,7 +59,7 @@ fun BoxScope.PagingController(
     }
     AnimatedVisibility(
         visible = shouldShowButton,
-        modifier = Modifier.align(Alignment.BottomCenter).padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp()),
+        modifier = modifier.align(Alignment.BottomCenter).padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp()),
         exit = NavigateAnimationManager.centerFadeAnimation.exit,
         enter = NavigateAnimationManager.centerFadeAnimation.enter
     ){
@@ -71,7 +72,7 @@ fun BoxScope.PagingController(
     }
     AnimatedVisibility(
         visible = shouldShowButton,
-        modifier = Modifier.align(Alignment.BottomEnd).padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp()),
+        modifier = modifier.align(Alignment.BottomEnd).padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp()),
         exit = NavigateAnimationManager.centerFadeAnimation.exit,
         enter = NavigateAnimationManager.centerFadeAnimation.enter
     ){
@@ -85,7 +86,7 @@ fun BoxScope.PagingController(
         val scope = rememberCoroutineScope()
         AnimatedVisibility(
             visible = !shouldShowButton,
-            modifier = Modifier.align(Alignment.BottomEnd).padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp()),
+            modifier = modifier.align(Alignment.BottomEnd).padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp()),
             exit = NavigateAnimationManager.centerFadeAnimation.exit,
             enter = NavigateAnimationManager.centerFadeAnimation.enter
         ){

@@ -33,6 +33,8 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.SimpleUiState
 import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.PrepareSearchUI
+import com.hfut.schedule.ui.component.StatusUI
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.style.HazeBottomSheet
@@ -77,7 +79,7 @@ fun SearchTeachersUI(vm : NetWorkViewModel) {
         vm.searchTeacher(name,direction)
     }
     LaunchedEffect(Unit) {
-        vm.teacherSearchData.emitEmpty()
+        vm.teacherSearchData.emitPrepare()
     }
 
     Scaffold(
@@ -134,7 +136,7 @@ fun SearchTeachersUI(vm : NetWorkViewModel) {
                     )
                 }
                 Spacer(modifier = Modifier.height(4.dp))
-                CommonNetworkScreen(uiState) {
+                CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchUI() }) {
                     val response = (uiState as SimpleUiState.Success).data
                     val list = response?.teacherData ?: emptyList()
                     TeacherListUI(list)
@@ -156,7 +158,7 @@ fun ApiToTeacherSearch(input : String,vm: NetWorkViewModel) {
     LaunchedEffect(input) {
         refreshNetwork()
     }
-    CommonNetworkScreen(uiState) {
+    CommonNetworkScreen(uiState, onReload = refreshNetwork) {
         val response = (uiState as SimpleUiState.Success).data
         val list = response?.teacherData ?: emptyList()
         TeacherListUI(list)

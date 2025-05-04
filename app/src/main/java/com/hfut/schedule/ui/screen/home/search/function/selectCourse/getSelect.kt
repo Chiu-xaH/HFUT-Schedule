@@ -15,15 +15,7 @@ fun getSelectCourseList(vm : NetWorkViewModel) : List<SelectCourse> {
         emptyList()
     }
 }
-fun getSelectCourseInfo(vm : NetWorkViewModel) : List<SelectCourseInfo>  {
-    val json = vm.selectCourseInfoData.value
-    return try {
-        val courses: List<SelectCourseInfo> = Gson().fromJson(json, object : TypeToken<List<SelectCourseInfo>>() {}.type)
-        courses
-    } catch (_: Exception) {
-        emptyList()
-    }
-}
+
 fun getSelectedCourse(vm : NetWorkViewModel) : List<SelectCourseInfo>  {
     val json = vm.selectedData.value
     return try {

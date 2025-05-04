@@ -236,7 +236,7 @@ fun ReSetUseCodeUI(vm: GuaGuaViewModel,navController: NavHostController) {
 
         Column (modifier = Modifier.height(350.dp)) {
             HazeBottomSheetTopBar("修改使用码", isPaddingStatusBar = false)
-            CommonNetworkScreen(uiState,isCenter = false) {
+            CommonNetworkScreen(uiState,isCenter = false, onReload = refreshNetwork) {
                 val msg = (uiState as SimpleUiState.Success).data
                 if(msg?.contains("成功") == true) {
                     StatusUI2(Icons.Filled.Check,"成功修改为 $password")

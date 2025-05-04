@@ -77,7 +77,7 @@ fun SurveyUI(vm : NetWorkViewModel, hazeState: HazeState) {
     }
 
     val scope = rememberCoroutineScope()
-    CommonNetworkScreen(uiState) {
+    CommonNetworkScreen(uiState, onReload = refreshNetwork) {
         val response = (uiState as SimpleUiState.Success).data
         Box(modifier = Modifier.fillMaxSize()) {
             teacherSurveyList(vm, list = response ?: emptyList(), hazeState = hazeState) {

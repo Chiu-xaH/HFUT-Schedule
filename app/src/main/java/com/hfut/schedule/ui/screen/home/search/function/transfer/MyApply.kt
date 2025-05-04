@@ -122,7 +122,7 @@ fun MyApplyListUI(vm: NetWorkViewModel, batchId : String, hazeState: HazeState) 
     }
     val uiState by vm.myApplyData.state.collectAsState()
 
-    CommonNetworkScreen(uiState) {
+    CommonNetworkScreen(uiState, onReload = refreshNetwork) {
         var showBottomSheet by remember { mutableStateOf(false) }
         val sheetState = rememberModalBottomSheetState()
         val response = (uiState as SimpleUiState.Success).data
@@ -198,19 +198,21 @@ fun MyApply(vm: NetWorkViewModel, batchId : String, indexs : Int) {
 
 
     val uiState1 by vm.myApplyData.state.collectAsState()
-
-    LaunchedEffect(Unit) {
+    val refreshNetwork1 = suspend {
         cookie?.let {
             vm.myApplyData.clear()
             vm.getMyApply(it,batchId)
         }
     }
+    LaunchedEffect(Unit) {
+        refreshNetwork1()
+    }
+
 
     val uiState2 by vm.myApplyInfoData.state.collectAsState()
 
     var loading = uiState1 !is SimpleUiState.Success
-
-    LaunchedEffect(Unit) {
+    val refreshNetwork2 = suspend {
         val state = vm.myApplyData.state.first { it is SimpleUiState.Success }
         if(state is SimpleUiState.Success) {
             val list = state.data?.models
@@ -224,6 +226,9 @@ fun MyApply(vm: NetWorkViewModel, batchId : String, indexs : Int) {
                 vm.getMyApplyInfo(it, i)
             } }
         }
+    }
+    LaunchedEffect(Unit) {
+        refreshNetwork2()
     }
 
     var data by remember { mutableStateOf(TransferData(null,0, courseType(""), courseType(""),0,0)) }
@@ -278,7 +283,7 @@ fun MyApply(vm: NetWorkViewModel, batchId : String, indexs : Int) {
     }
 
     DividerTextExpandedWith("成绩") {
-        CommonNetworkScreen(uiState2, isCenter = false) {
+        CommonNetworkScreen(uiState2, isCenter = false, onReload = refreshNetwork2) {
             val bean = (uiState2 as SimpleUiState.Success).data
 
             val grade = bean?.grade

@@ -11,7 +11,7 @@ sealed class SimpleUiState<out T> {
     data object Loading : SimpleUiState<Nothing>()
     data class Success<T>(val data: T?) : SimpleUiState<T>()
     data class Error<T>(val exception: Throwable?,val code: Int? = null) : SimpleUiState<T>()
-    data object Empty : SimpleUiState<Nothing>()
+    data object Prepare : SimpleUiState<Nothing>()
 }
 //typealias SimpleUiState<T> = UiState<T, Nothing>
 //
@@ -23,5 +23,5 @@ sealed class UiState<out T, out E> {
         val code: Int? = null,
         val errorBody: E? = null
     ) : UiState<Nothing, E>()
-    data object Empty : UiState<Nothing, Nothing>()
+    data object Prepare : UiState<Nothing, Nothing>()
 }

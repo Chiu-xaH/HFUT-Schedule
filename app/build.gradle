@@ -70,7 +70,11 @@ android {
 
     buildTypes {
         release {
+            // R8
             minifyEnabled false
+            // 压缩未使用资源
+            shrinkResources false
+            // 最终构建的元数据中包含 VCS(Git)的信息
             vcsInfo.include false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }

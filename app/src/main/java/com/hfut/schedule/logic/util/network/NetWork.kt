@@ -76,16 +76,22 @@ object NetWork {
     suspend fun <T> launchRequestSimple(
         holder: SimpleStateHolder<T>,
         request: suspend () -> Response<ResponseBody>,
-        transformSuccess: (Headers, String) -> T?,
+        transformSuccess: (Headers, String) -> T,
         transformRedirect: ((Headers) -> T?)? = null
     ) = try {
         holder.setLoading()
         val response = request()
         val headers = response.headers()
         val bodyString = response.body()?.string().orEmpty()
+
         if (response.isSuccessful) {
             // 成功
-            val result = transformSuccess(headers, bodyString)
+            val result = try {
+                transformSuccess(headers, bodyString)
+            } catch (e: Exception) {
+                holder.emitError(e, PARSE_ERROR_CODE)
+                return
+            }
             holder.emitData(result)
         } else if(response.code() in 300..399){
             // 重定向 特殊处理
@@ -98,6 +104,10 @@ object NetWork {
     } catch (e: Exception) {
         holder.emitError(e,null)
     }
+
+    fun <T> parseResponseBody(body : String,function : (String) -> T) : T = try {
+        function(body)
+    } catch (e : Exception) { throw e }
 }
 
 

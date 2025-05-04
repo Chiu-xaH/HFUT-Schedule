@@ -1,8 +1,6 @@
 package com.hfut.schedule.logic.util.network
 
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 
 //class EventFlow<T> {
@@ -17,6 +15,7 @@ import kotlinx.coroutines.flow.StateFlow
 //        _events.tryEmit(event)
 //    }
 //}
+const val PARSE_ERROR_CODE = 1000
 
 
 class SimpleStateHolder<T> {
@@ -24,7 +23,7 @@ class SimpleStateHolder<T> {
     val state: StateFlow<SimpleUiState<T>> get() = _state
 
     fun emitData(data: T?) {
-        _state.value = if (data == null) SimpleUiState.Empty else SimpleUiState.Success(data)
+        _state.value = SimpleUiState.Success(data)
     }
 
     fun emitError(e: Throwable?, code: Int? = null) {
@@ -40,8 +39,8 @@ class SimpleStateHolder<T> {
         _state.value = SimpleUiState.Loading
     }
 
-    fun emitEmpty() {
-        _state.value = SimpleUiState.Empty
+    fun emitPrepare() {
+        _state.value = SimpleUiState.Prepare
     }
 
 }
@@ -51,7 +50,7 @@ class StateHolder<T, E> {
     val state: StateFlow<UiState<T, E>> get() = _state
 
     fun emitData(data: T?) {
-        _state.value = if (data == null) UiState.Empty else UiState.Success(data)
+        _state.value = if (data == null) UiState.Prepare else UiState.Success(data)
     }
 
     fun emitError(e: Throwable?, code: Int? = null, body: E?) {
