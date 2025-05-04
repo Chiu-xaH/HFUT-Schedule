@@ -22,7 +22,7 @@ class SimpleStateHolder<T> {
     private val _state = MutableStateFlow<SimpleUiState<T>>(SimpleUiState.Loading)
     val state: StateFlow<SimpleUiState<T>> get() = _state
 
-    fun emitData(data: T?) {
+    fun emitData(data: T) {
         _state.value = SimpleUiState.Success(data)
     }
 

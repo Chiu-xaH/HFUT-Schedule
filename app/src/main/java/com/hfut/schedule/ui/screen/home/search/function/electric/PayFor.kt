@@ -1,18 +1,12 @@
 package com.hfut.schedule.ui.screen.home.search.function.electric
 
 import android.annotation.SuppressLint
-import android.os.Handler
-import android.os.Looper
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,19 +16,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
-import com.hfut.schedule.ui.component.LoadingUI
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,39 +35,28 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.gson.Gson
 import com.hfut.schedule.R
-import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.logic.model.zjgd.FeeType
-import com.hfut.schedule.logic.model.zjgd.PayStep1Response
-import com.hfut.schedule.logic.model.zjgd.PayStep2Response
-import com.hfut.schedule.logic.model.zjgd.PayStep3Response
+import com.hfut.schedule.logic.util.network.SimpleUiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs
-import com.hfut.schedule.logic.util.network.reEmptyLiveDta
-import com.hfut.schedule.ui.screen.home.cube.sub.CirclePoint
-import com.hfut.schedule.ui.screen.home.cube.sub.KeyBoard
-
-import com.hfut.schedule.ui.screen.home.search.function.loginWeb.getIdentifyID
-import com.hfut.schedule.ui.component.appHorizontalDp
-import com.hfut.schedule.ui.component.BottomSheetTopBar
+import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.LittleDialog
-import com.hfut.schedule.ui.component.showToast
-import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.ui.component.StatusUI
+import com.hfut.schedule.ui.component.appHorizontalDp
+import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.ui.screen.home.cube.sub.CirclePoint
+import com.hfut.schedule.ui.screen.home.cube.sub.KeyBoard
+import com.hfut.schedule.ui.screen.home.search.function.loginWeb.getIdentifyID
 import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PayFor(vm : NetWorkViewModel, payNumber : Float, tipInfo : String, json : String, type : FeeType, hazeState: HazeState) {
     var showDialog by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
 
     val interactionSource = remember { MutableInteractionSource() }
@@ -88,14 +66,6 @@ fun PayFor(vm : NetWorkViewModel, payNumber : Float, tipInfo : String, json : St
         animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
         label = "" // 使用弹簧动画
     )
-
-    LaunchedEffect(Unit) {
-        async { reEmptyLiveDta(vm.orderIdData) }.await()
-        async { reEmptyLiveDta(vm.uuIdData) }.await()
-        async { reEmptyLiveDta(vm.payResultData) }.await()
-    }
-
-
 
     if(showDialog) {
         LittleDialog(
@@ -113,7 +83,6 @@ fun PayFor(vm : NetWorkViewModel, payNumber : Float, tipInfo : String, json : St
     val psk = SharedPrefs.prefs.getString("pins",null)
     var password by remember { mutableStateOf("") }
     var passwordStatus by remember { mutableStateOf("请输入密码") }
-    val sheetState_pin = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_pin by remember { mutableStateOf(false) }
 
     if (showBottomSheet_pin) {
@@ -125,8 +94,6 @@ fun PayFor(vm : NetWorkViewModel, payNumber : Float, tipInfo : String, json : St
                 showBottomSheet = showBottomSheet_pin,
                 hazeState = hazeState,
                 autoShape = false
-//                sheetState = sheetState_pin,
-                // shape = Round(sheetState)
             ) {
                 Column {
                     Spacer(Modifier.height(appHorizontalDp()*1.5f))
@@ -168,8 +135,6 @@ fun PayFor(vm : NetWorkViewModel, payNumber : Float, tipInfo : String, json : St
             showBottomSheet = showBottomSheet,
             hazeState = hazeState,
             isFullExpand = false
-//            sheetState = sheetState,
-//            shape = bottomSheetRound(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
@@ -229,110 +194,35 @@ fun PayFor(vm : NetWorkViewModel, payNumber : Float, tipInfo : String, json : St
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 private fun PayStatusUI(vm : NetWorkViewModel, payNumber : Float, json: String, type : FeeType) {
+    val auth = remember { "Bearer " + SharedPrefs.prefs.getString("auth","") }
+    val uiState by vm.payResultData.state.collectAsState()
 
-    var loading by remember { mutableStateOf(true) }
-    var refresh by remember { mutableStateOf(true) }
-    val auth =   "bearer " + SharedPrefs.prefs.getString("auth","")
-    var orderid = ""
-    var msg  by remember { mutableStateOf("结果") }
-    var count = 0;
-    if(refresh) {
-        loading = true
-        CoroutineScope(Job()).launch {
-            async{ vm.payStep1(auth,json, payNumber,type) }.await()
-            async {
-                Handler(Looper.getMainLooper()).post{
-                    vm.orderIdData.observeForever { result ->
-                        if (result != null) {
-                            if(result.contains("操作成功")) {
-                                try {
-                                    orderid = Gson().fromJson(result, PayStep1Response::class.java).data.orderid
-                                    vm.payStep2(auth,orderid,type)
-                                } catch (e : Exception) {
-                                    showToast("服务器错误，终止支付")
-                                }
-                            }
-                        }
-                    }
-                }
-            }.await()
-
-            async {
-                Handler(Looper.getMainLooper()).post{
-                    vm.uuIdData.observeForever { result ->
-                        if (result != null) {
-                            if(result.contains("操作成功")) {
-                                try {
-                                    val map = Gson().fromJson(result, PayStep2Response::class.java).data.passwordMap
-                                    var uuid = ""
-                                    var passwordKey = ""
-                                    for((key,value) in map) {
-                                        uuid = key
-                                        passwordKey = value
-                                    }
-                                    //正式支付
-                                    if(count == 0) {
-                                        vm.payStep3(auth,orderid,getPsk(passwordKey),uuid,type)
-                                        count++
-                                    }
-                                } catch (e : Exception) {
-                                    showToast("服务器错误，终止支付")
-                                }
-                            }
-                        }
-                    }
-                }
-            }.await()
-
-            async {
-                Handler(Looper.getMainLooper()).post{
-                    vm.payResultData.observeForever { result ->
-                        if (result != null) {
-                            if(result.contains("success")) {
-                                msg = try {
-                                    Gson().fromJson(result, PayStep3Response::class.java).msg
-                                } catch (_:Exception) {
-                                    "错误"
-                                }
-                                refresh = false
-                                loading = false
-                            }
-                        }
-                    }
-                }
-            }
+    LaunchedEffect(Unit) {
+        vm.orderIdData.clear()
+        vm.uuIdData.clear()
+        vm.payResultData.clear()
+        // 开始
+        vm.payStep1(auth,json, payNumber,type)
+        val orderId = (vm.orderIdData.state.value as? SimpleUiState.Success)?.data ?: return@LaunchedEffect
+        vm.payStep2(auth,orderId,type)
+        val map = (vm.uuIdData.state.value as? SimpleUiState.Success)?.data ?: return@LaunchedEffect
+        var uuid = ""
+        var passwordKey = ""
+        for((key,value) in map) {
+            uuid = key
+            passwordKey = value
         }
+        val pwd = getPsk(passwordKey) ?: return@LaunchedEffect
+        vm.payStep3(auth,orderId,pwd,uuid,type)
     }
 
-
-    Box {
-        AnimatedVisibility(
-            visible = loading,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Spacer(modifier = Modifier.height(5.dp))
-                LoadingUI()
-            }
-        }
-
-
-        AnimatedVisibility(
-            visible = !loading,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            StatusUI(iconId = R.drawable.send_money, text = msg)
-        }
+    CommonNetworkScreen(uiState,isCenter = false, onReload = { showToast("禁止刷新") }) {
+        val msg = (uiState as SimpleUiState.Success).data
+        StatusUI(iconId = R.drawable.send_money, text = msg)
     }
-
 }
 
-fun getPsk(key : String) : String {
+fun getPsk(key : String) : String? {
     var result = ""
     return try {
         val psk = getIdentifyID()
@@ -346,7 +236,7 @@ fun getPsk(key : String) : String {
             }
         }
         result
-    } catch (_ : Exception) {
-        "000000"
+    } catch (e : Exception) {
+        null
     }
 }

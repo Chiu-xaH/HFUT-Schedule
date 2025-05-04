@@ -41,6 +41,9 @@ import com.hfut.schedule.logic.model.zjgd.FeeType
 import com.hfut.schedule.logic.model.zjgd.FeeType.ELECTRIC
 import com.hfut.schedule.logic.model.zjgd.FeeType.SHOWER
 import com.hfut.schedule.logic.model.zjgd.FeeType.WEB
+import com.hfut.schedule.logic.model.zjgd.PayStep1Response
+import com.hfut.schedule.logic.model.zjgd.PayStep2Response
+import com.hfut.schedule.logic.model.zjgd.PayStep3Response
 import com.hfut.schedule.logic.network.api.CommunityService
 import com.hfut.schedule.logic.network.api.DormitoryScore
 import com.hfut.schedule.logic.network.api.FWDTService
@@ -95,6 +98,8 @@ import com.hfut.schedule.logic.util.parse.SemseterParser
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveInt
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
+import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.ui.screen.home.search.function.electric.getPsk
 import com.hfut.schedule.ui.screen.home.search.function.loginWeb.getIdentifyID
 import com.hfut.schedule.ui.screen.home.search.function.mail.MailResponse
 import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
@@ -117,6 +122,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.awaitResponse
+import kotlin.ranges.contains
 
 // 106个函数
 class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
@@ -1066,86 +1072,94 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         })
     }
 
-    val orderIdData = MutableLiveData<String?>()
-    fun payStep1(auth: String,json: String,pay : Float,type: FeeType) {
-        val feeitemid = type.code
-        val call = huixin.pay(
-            auth = auth,
-            pay = pay,
-            flag = "choose",
-            paystep = 0,
-            json = json,
-            typeId = feeitemid,
-            isWX = null,
-            orderid = null,
-            password = null,
-            paytype = null,
-            paytypeid = null,
-            cardId = null
-        )
+    val orderIdData = SimpleStateHolder<String>()
+    suspend fun payStep1(auth: String,json: String,pay : Float,type: FeeType) = launchRequestSimple(
+        holder = orderIdData,
+        request = {
+            huixin.pay(
+                auth = auth,
+                pay = pay,
+                flag = "choose",
+                paystep = 0,
+                json = json,
+                typeId = type.code,
+                isWX = null,
+                orderid = null,
+                password = null,
+                paytype = null,
+                paytypeid = null,
+                cardId = null
+            ).awaitResponse()
+        },
+        transformSuccess = { _,json -> parseHuixinPayStep1(json) }
+    )
+    private fun parseHuixinPayStep1(result : String) : String = try {
+        if(result.contains("操作成功")) {
+            Gson().fromJson(result, PayStep1Response::class.java).data.orderid
+        } else {
+            throw Exception("Step1失败 终止支付")
+        }
+    } catch (e : Exception) { throw e }
 
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                orderIdData.value = response.body()?.string()
-            }
+    val uuIdData = SimpleStateHolder<Map<String, String>>()
+    suspend fun payStep2(auth: String,orderId : String,type : FeeType) = launchRequestSimple(
+        holder = uuIdData,
+        request = {
+            huixin.pay(
+                auth = auth,
+                pay = null,
+                flag = null,
+                paystep = 2,
+                json = null,
+                typeId = 261,
+                isWX = null,
+                orderid = orderId,
+                password = null,
+                paytype = "CARDTSM",
+                paytypeid = type.payTypeId,
+                cardId = null
+            ).awaitResponse()
+        },
+        transformSuccess = { _,json -> parseHuixinPayStep2(json) }
+    )
 
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
-    }
+    private fun parseHuixinPayStep2(result : String) : Map<String, String> = try {
+        if(result.contains("操作成功")) {
+            Gson().fromJson(result, PayStep2Response::class.java).data.passwordMap
+        } else {
+            throw Exception("Step2失败 终止支付")
+        }
+    } catch (e : Exception) { throw e }
 
-    val uuIdData = MutableLiveData<String?>()
-    fun payStep2(auth: String,orderId : String,type : FeeType) {
+    val payResultData = SimpleStateHolder<String>()
+    suspend fun payStep3(auth: String,orderId : String,password : String,uuid : String,type: FeeType) = launchRequestSimple(
+        holder = payResultData,
+        request = {
+            huixin.pay(
+                auth = auth,
+                pay = null,
+                flag = null,
+                paystep = 2,
+                json = null,
+                isWX = 0,
+                orderid = orderId,
+                password = password,
+                paytype = "CARDTSM",
+                paytypeid = type.payTypeId,
+                cardId = uuid,
+                typeId = null
+            ).awaitResponse()
+        },
+        transformSuccess = { _,json -> parseHuixinPayStep3(json)}
+    )
+    private fun parseHuixinPayStep3(result : String) : String = try {
+        if(result.contains("success")) {
+            Gson().fromJson(result, PayStep3Response::class.java).msg
+        } else {
+            throw Exception("支付失败")
+        }
+    } catch (e : Exception) { throw e }
 
-        val call = huixin.pay(
-            auth = auth,
-            pay = null,
-            flag = null,
-            paystep = 2,
-            json = null,
-            typeId = 261,
-            isWX = null,
-            orderid = orderId,
-            password = null,
-            paytype = "CARDTSM",
-            paytypeid = type.payTypeId,
-            cardId = null
-        )
-
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                uuIdData.value = response.body()?.string()
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
-    }
-
-    val payResultData = MutableLiveData<String?>()
-    fun payStep3(auth: String,orderId : String,password : String,uuid : String,type: FeeType) {
-
-        val call = huixin.pay(
-            auth = auth,
-            pay = null,
-            flag = null,
-            paystep = 2,
-            json = null,
-            isWX = 0,
-            orderid = orderId,
-            password = password,
-            paytype = "CARDTSM",
-            paytypeid = type.payTypeId,
-            cardId = uuid,
-            typeId = null
-        )
-
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                payResultData.value = response.body()?.string()
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
-    }
 
     fun changeLimit(auth: String,json: JsonObject) {
 
