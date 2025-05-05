@@ -23,6 +23,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,10 +37,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.sys.ClipBoard
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.parse.formatDecimal
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.screen.home.search.function.loginWeb.getIdentifyID
 import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.component.BottomSheetTopBar
@@ -48,6 +51,7 @@ import com.hfut.schedule.ui.component.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.component.TransplantListItem
+import com.hfut.schedule.ui.style.appBlur
 import org.jsoup.Jsoup
 
 
@@ -80,6 +84,7 @@ fun PersonItems(ifSaved : Boolean) {
     val endDate = getPersonInfo().endDate
     val majorDirection = getPersonInfo().majorDirection
     val studyTime = getPersonInfo().studyTime
+    val motionBlur by DataStoreManager.motionBlurFlow.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
 
     var show by remember { mutableStateOf(false) }
     val blurSize by animateDpAsState(targetValue = if (!show) 10.dp else 0.dp, label = "")
@@ -132,7 +137,7 @@ fun PersonItems(ifSaved : Boolean) {
                     FilledTonalIconButton(onClick = { show2 = !show2 }, modifier = Modifier.zIndex(1f).align(Alignment.CenterEnd).padding(horizontal = appHorizontalDp())) {
                         Icon(painter = painterResource(id = if(show2)R.drawable.visibility else R.drawable.visibility_off), contentDescription = "")
                     }
-                    Column(modifier = Modifier.blur(radius = blurSize2)) {
+                    Column(modifier = appBlur(!show2)) {
                         chineseid?.let {
                             TransplantListItem(
                                 headlineContent = { Text(text = it)  },
@@ -233,7 +238,7 @@ fun PersonItems(ifSaved : Boolean) {
                         }
                     }
                 )
-                Column(modifier = Modifier.blur(radius = blurSize)) {
+                Column(modifier = appBlur(!show)) {
                     val pwd= prefs.getString("Password","")
                     pwd?.let {
                         TransplantListItem(

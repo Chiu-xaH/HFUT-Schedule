@@ -11,9 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -23,16 +21,19 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.logic.util.other.AppVersion.blurForS
+import com.hfut.schedule.logic.util.other.AppVersion.HAZE_BLUR_FOR_S
 import com.hfut.schedule.ui.component.appHorizontalDp
+import com.hfut.schedule.ui.component.largeCardColor
 import dev.chrisbanes.haze.HazeEffectScope
 import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.HazeState
@@ -45,8 +46,8 @@ import kotlinx.coroutines.delay
 fun Modifier.bottomBarBlur(hazeState : HazeState) : Modifier {
     val surfaceColor = MaterialTheme.colorScheme.surface
 
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = AppVersion.CAN_BLUR)
-    return if(blur && !blurForS) {
+    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = AppVersion.CAN_HAZE_BLUR)
+    return if(blur && !HAZE_BLUR_FOR_S) {
         this.hazeEffect(state = hazeState,
             style = HazeStyle(
                 tint = HazeTint(color = surfaceColor.copy(0.35f)),
@@ -76,7 +77,7 @@ fun Modifier.bottomBarBlur(hazeState : HazeState) : Modifier {
 @Composable
 fun Modifier.topBarBlur(hazeState : HazeState) : Modifier {
     val surfaceColor = MaterialTheme.colorScheme.surface
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = AppVersion.CAN_BLUR)
+    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = AppVersion.CAN_HAZE_BLUR)
     return if(blur) {
         this.hazeEffect(state = hazeState,
             style = HazeStyle(
@@ -88,8 +89,8 @@ fun Modifier.topBarBlur(hazeState : HazeState) : Modifier {
             block = fun HazeEffectScope.() {
                 progressive = HazeProgressive.verticalGradient(
                     // 适配安卓12
-                    startIntensity = if(blurForS)0.9f else 1f,
-                    endIntensity = if(blurForS) 0.1f else 0f
+                    startIntensity = if(HAZE_BLUR_FOR_S)0.9f else 1f,
+                    endIntensity = if(HAZE_BLUR_FOR_S) 0.1f else 0f
                 )
             })
     } else {
@@ -105,7 +106,7 @@ fun Modifier.topBarBlur(hazeState : HazeState) : Modifier {
 
 @Composable
 private fun Modifier.blurStyle(hazeState: HazeState,radius : Float = 1f,tint : Color = Color.Transparent) : Modifier {
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = AppVersion.CAN_BLUR)
+    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = AppVersion.CAN_HAZE_BLUR)
     return if(blur) {
         this.hazeEffect(state = hazeState, style = HazeStyle(
             tint = HazeTint(color =  tint),
@@ -175,7 +176,7 @@ fun CustomBottomSheet(
 // isExpanded=true时，下层背景进入高斯模糊，并用黑色压暗，伴随缩放，上层背景展开
 @Composable
 fun transitionBackground(isExpanded : Boolean) : Modifier {
-    val motionBlur by DataStoreManager.motionBlurFlow.collectAsState(initial = true)
+    val motionBlur by DataStoreManager.motionBlurFlow.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
     val transition by DataStoreManager.transitionFlow.collectAsState(initial = false)
     // 稍微晚于运动结束
     val blurSize by animateDpAsState(
@@ -192,7 +193,7 @@ fun transitionBackground(isExpanded : Boolean) : Modifier {
         animationSpec = tween(MyApplication.ANIMATION_SPEED, easing = LinearOutSlowInEasing),
         label = "",
     )
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = AppVersion.CAN_BLUR)
+    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = AppVersion.CAN_HAZE_BLUR)
     LaunchedEffect(isExpanded) {
         if(blur && transition) {
             DataStoreManager.saveHazeBlur(false)
@@ -208,4 +209,35 @@ fun transitionBackground(isExpanded : Boolean) : Modifier {
     return transitionModifier
 }
 
+@Composable
+fun appBlur(
+    showBlur: Boolean,
+    radius: Dp = 10.dp,
+    tweenDuration: Int = MyApplication.ANIMATION_SPEED / 2
+): Modifier {
+    val motionBlur by DataStoreManager.motionBlurFlow.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
 
+    val blurRadius by animateDpAsState(
+        targetValue = if (showBlur && motionBlur) radius else 0.dp,
+        animationSpec = tween(tweenDuration, easing = LinearOutSlowInEasing),
+        label = "BlurAnimation"
+    )
+
+    val overlayAlpha by animateFloatAsState(
+        targetValue = if (showBlur && !motionBlur) 1f else 0f,
+        animationSpec = tween(tweenDuration, easing = LinearOutSlowInEasing),
+        label = "OverlayAlphaAnimation"
+    )
+    val color = largeCardColor()
+
+    return Modifier
+        .then(if (motionBlur) Modifier.blur(blurRadius) else Modifier)
+        .drawWithContent {
+            drawContent()
+            if (!motionBlur && overlayAlpha > 0f) {
+                drawRect(
+                    color = color.copy(alpha = overlayAlpha)
+                )
+            }
+        }
+}

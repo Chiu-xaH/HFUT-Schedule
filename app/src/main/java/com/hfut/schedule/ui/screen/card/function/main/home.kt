@@ -36,6 +36,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -57,7 +58,9 @@ import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.enumeration.CardBarItems
+import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.parse.formatDecimal
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
@@ -89,6 +92,7 @@ import com.hfut.schedule.ui.component.WebDialog
 import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
 import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.style.appBlur
 import com.hfut.schedule.ui.style.bottomSheetRound
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
@@ -411,6 +415,8 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
         targetValue = if (refreshing) 10.dp else 0.dp, label = ""
         ,animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
     )
+    val motionBlur by DataStoreManager.motionBlurFlow.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
+
     Box(modifier = Modifier
         .fillMaxHeight()
         .pullRefresh(states)) {
@@ -430,9 +436,8 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                         shape = MaterialTheme.shapes.medium,
                         colors = CardDefaults.cardColors(largeCardColor())
                     ) {
-                        Column(modifier = Modifier
-                            .blur(blurSize)
-                            .scale(scale.value)) {
+                        Column(modifier = appBlur(loading).scale(scale.value)
+                            ) {
                             TransplantListItem(
                                 headlineContent = { Text(text = "$name 校园一卡通") },
                                 trailingContent = {

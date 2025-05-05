@@ -25,7 +25,6 @@ import com.hfut.schedule.logic.util.network.PARSE_ERROR_CODE
 import com.hfut.schedule.logic.util.network.SimpleUiState
 import com.hfut.schedule.logic.util.sys.ClipBoard
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.ui.style.ColumnVertical
 import kotlinx.coroutines.launch
 
 //@Composable
@@ -88,48 +87,66 @@ fun CommonNetworkScreen(
             val codeInt = uiState.code
             val ui =  @Composable {
                 Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.verticalScroll(rememberScrollState()))  {
-                    if(codeInt == PARSE_ERROR_CODE) {
-                        var showDetail by remember { mutableStateOf(false) }
-                        var text by remember { mutableStateOf("") }
-                        LaunchedEffect(showDetail) {
-                            if(showDetail) {
-                                e?.let {
-                                    text = getKeyStackTrace(it)
+                    when(codeInt) {
+                        PARSE_ERROR_CODE -> {
+                            var showDetail by remember { mutableStateOf(false) }
+                            var text by remember { mutableStateOf("") }
+                            LaunchedEffect(showDetail) {
+                                if(showDetail) {
+                                    e?.let {
+                                        text = getKeyStackTrace(it)
+                                    }
+                                } else {
+                                    text = "解析数据错误 ${e?.message?.substringBefore(":")}"
                                 }
-                            } else {
-                                text = "解析数据错误 ${e?.message?.substringBefore(":")}"
                             }
-                        }
 
-                        // 解析出错
-                        ErrorUI(text)
-                        Spacer(Modifier.height(appHorizontalDp()*1.5f))
-                        if(!showDetail)
-                            Button(onClick = {
-                                showDetail = true
-                            }) {
-                                Text("详细报错信息")
-                            }
-                        else
-                            Button(onClick = {
-                                e?.let { ClipBoard.copy(getExceptionDetail(it)) }
-                                showToast("请截图或粘贴详细错误信息，并注明功能，发送邮件")
-                                Starter.emailMe()
-                            }) {
-                                Text( "上报开发者")
-                            }
-                    } else {
-                        // 网络出错
-                        val code = codeInt?.toString() ?: ""
-                        val eMsg = e?.message
-                        if(eMsg?.contains("Unable to resolve host") == true || eMsg?.contains("Failed to connect to") == true) {
-                            StatusUI(R.drawable.link_off, "网络连接失败")
-                        } else if(eMsg?.contains("10000ms") == true) {
-                            StatusUI(R.drawable.link_off, "网络连接超时")
-                        } else {
-                            ErrorUI("网络错误 $code $e")
+                            // 解析出错
+                            ErrorUI(text)
+                            Spacer(Modifier.height(appHorizontalDp()*1.5f))
+                            if(!showDetail)
+                                Button(onClick = {
+                                    showDetail = true
+                                }) {
+                                    Text("详细报错信息")
+                                }
+                            else
+                                Button(onClick = {
+                                    e?.let { ClipBoard.copy(getExceptionDetail(it)) }
+                                    showToast("请截图或粘贴详细错误信息，并注明功能，发送邮件")
+                                    Starter.emailMe()
+                                }) {
+                                    Text( "上报开发者")
+                                }
                         }
-                        refreshUI()
+                        401 -> {
+                            StatusUI(R.drawable.login, "登录状态失效")
+                            Spacer(Modifier.height(appHorizontalDp()*1.5f))
+                            Button(onClick = {
+                                Starter.refreshLogin()
+                            }) {
+                                Text("刷新登陆状态")
+                            }
+                        }
+                        403 -> {
+                            StatusUI(R.drawable.lock, "禁止操作 可能原因: 密码不正确或无权利进行操作")
+                        }
+                        in 500..599 -> {
+                            StatusUI(R.drawable.net, "服务器错误 可能原因: APP自身原因对接服务端失败或对方已关闭了通道")
+                        }
+                        else -> {
+                            // 网络出错
+                            val code = codeInt?.toString() ?: ""
+                            val eMsg = e?.message
+                            if(eMsg?.contains("Unable to resolve host") == true || eMsg?.contains("Failed to connect to") == true) {
+                                StatusUI(R.drawable.link_off, "网络连接失败")
+                            } else if(eMsg?.contains("10000ms") == true) {
+                                StatusUI(R.drawable.link_off, "网络连接超时")
+                            } else {
+                                ErrorUI("网络错误 $code $e")
+                            }
+                            refreshUI()
+                        }
                     }
                 }
             }

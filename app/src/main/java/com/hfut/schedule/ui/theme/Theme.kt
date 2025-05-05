@@ -50,7 +50,7 @@ fun AppTheme(
     val usePureBlack by DataStoreManager.pureDarkFlow.collectAsState(initial = false)
 
     val colorScheme = when {
-        dynamicColor && AppVersion.canMonet -> {
+        dynamicColor && AppVersion.CAN_DYNAMIC_COLOR -> {
             val context = LocalContext.current
             val defaultDynamicScheme = if (darkTheme) {
                 dynamicDarkColorScheme(context)

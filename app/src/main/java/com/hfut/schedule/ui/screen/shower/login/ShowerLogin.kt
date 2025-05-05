@@ -271,14 +271,14 @@ suspend fun loginGuaGuaClick(
         when (state) {
             is SimpleUiState.Success -> {
                 val data = state.data
-                data?.message?.let{ msg ->
+                data.message.let{ msg ->
                     if(msg.contains("成功") == true) {
                         navHostController.navigateAndClear(ShowerScreen.HOME.name)
                         showToast("登录成功")
                     } else {
                         showToast(data.message)
                     }
-                } ?: showToast("错误")
+                }
             }
             is SimpleUiState.Error -> {
                 showToast("错误 " + state.exception?.message)

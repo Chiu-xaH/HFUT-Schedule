@@ -15,6 +15,7 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.ui.screen.shower.home.function.StatusMsgResponse
 import retrofit2.awaitResponse
 import java.util.Locale
+import kotlin.ranges.contains
 
 // 5个函数
 class GuaGuaViewModel : ViewModel() {
@@ -78,7 +79,9 @@ class GuaGuaViewModel : ViewModel() {
     } catch (e : Exception) { throw e }
 
     private fun parseUseCode(result: String) : String = try {
-        Gson().fromJson(result,UseCodeResponse::class.java).data.randomCode
+        if(result.contains("成功"))
+            Gson().fromJson(result,UseCodeResponse::class.java).data.randomCode
+        else throw Exception("解析错误")
     } catch (e : Exception) { throw e }
 
     private fun parseReSetUseCode(result: String) : String = try {

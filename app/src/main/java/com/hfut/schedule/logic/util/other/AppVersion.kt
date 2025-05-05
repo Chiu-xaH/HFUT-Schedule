@@ -50,15 +50,16 @@ object AppVersion {
     // 获取当前系统的版本号
     val release = android.os.Build.VERSION.RELEASE
 
-    val CAN_BLUR = sdkInt >= 31
-    val CAN_PROGRESS_BLUR = sdkInt >= 33
+    val CAN_HAZE_BLUR = sdkInt >= 31
 
     val CAN_MOTION_BLUR = sdkInt >= 31
 
     // 华为、安卓12 单独对渐变模糊适配
-    val blurForS = sdkInt == 31 || sdkInt == 32
+    val HAZE_BLUR_FOR_S = sdkInt == 31 || sdkInt == 32
 
-    val canMonet = sdkInt >= 31
+    val CAN_DYNAMIC_COLOR = sdkInt >= 31
+
+
 
     /*
     * 安卓15 35

@@ -31,6 +31,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 
 // 小标题
@@ -81,7 +82,7 @@ fun DividerTextExpandedWith(
 
     val speed = MyApplication.ANIMATION_SPEED
 
-    val motionBlur by DataStoreManager.motionBlurFlow.collectAsState(initial = true)
+    val motionBlur by DataStoreManager.motionBlurFlow.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
 
     var expanded by remember { mutableStateOf(defaultIsExpanded) }
     fun set() {

@@ -1182,8 +1182,12 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     )
 
     private fun parseHuixinRange(result : String) : Float = try {
-        val data = Gson().fromJson(result, BillRangeResponse::class.java)
-        data.data.expenses / 100
+        if(result.contains("操作成功")) {
+            val data = Gson().fromJson(result, BillRangeResponse::class.java)
+            data.data.expenses / 100
+        } else {
+            throw Exception(result)
+        }
     } catch (e : Exception) { throw e }
 
     val huixinSearchBillsResult = SimpleStateHolder<BillDatas>()
@@ -1194,10 +1198,11 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     )
 
     private fun parseHuixinSearchBills(result : String) : BillDatas = try {
-//        if(result.contains("操作成功")) {
-//
-//        }
-        Gson().fromJson(result,BillResponse::class.java).data
+        if(result.contains("操作成功")) {
+            Gson().fromJson(result,BillResponse::class.java).data
+        } else {
+            throw Exception(result)
+        }
     } catch (e : Exception) { throw e }
 
     val huixinMonthBillResult = SimpleStateHolder<List<BillMonth>>()
@@ -1211,7 +1216,9 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             val data = Gson().fromJson(json, BillMonthResponse::class.java)
             val bill = data.data
             bill.map { (date,balance) -> BillMonth(date, balance) }
-        } else emptyList()
+        } else {
+            throw Exception(json)
+        }
     } catch (e : Exception) { throw e }
 
     fun getToken()  {
@@ -1327,7 +1334,10 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         transformSuccess = { _,json -> parseMailUrl(json) }
     )
     private fun parseMailUrl(result: String) : MailResponse? = try {
-        Gson().fromJson(result,MailResponse::class.java)
+        if(result.contains("success"))
+            Gson().fromJson(result,MailResponse::class.java)
+        else
+            throw Exception(result)
     } catch (e: Exception) { throw e }
 
     val PayData = MutableLiveData<String?>()
@@ -1621,7 +1631,10 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     )
 
     private fun parseQweatherNow(json : String) : QWeatherNowBean = try {
-        Gson().fromJson(json, QWeatherResponse::class.java).now
+        if(json.contains("200"))
+            Gson().fromJson(json, QWeatherResponse::class.java).now
+        else
+            throw Exception(json)
     } catch (e : Exception) { throw e }
 
     val goToStuResponse = MutableLiveData<String?>()

@@ -149,7 +149,7 @@ object DataStoreManager {
         }
     val hazeBlurFlow: Flow<Boolean> = dataStore.data
         .map { preferences ->
-            preferences[HAZE_BLUR] ?: AppVersion.CAN_BLUR
+            preferences[HAZE_BLUR] ?: AppVersion.CAN_HAZE_BLUR
         }
     val motionAnimationTypeFlow: Flow<Boolean> = dataStore.data
         .map { preferences ->

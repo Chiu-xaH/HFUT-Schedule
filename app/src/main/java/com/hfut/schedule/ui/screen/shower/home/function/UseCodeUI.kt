@@ -48,6 +48,8 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.ShowerScreen
 import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.other.AppVersion
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.BottomTip
 import com.hfut.schedule.ui.component.CommonNetworkScreen
@@ -62,6 +64,7 @@ import com.hfut.schedule.ui.screen.home.cube.sub.CirclePoint
 import com.hfut.schedule.ui.screen.home.cube.sub.KeyBoard
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.RowHorizontal
+import com.hfut.schedule.ui.style.appBlur
 import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.viewmodel.network.GuaGuaViewModel
 import dev.chrisbanes.haze.HazeState
@@ -93,6 +96,7 @@ fun UseCodeUI(vm: GuaGuaViewModel, hazeState: HazeState, navController: NavHostC
     )
 
     var showBottomSheet by remember { mutableStateOf(false) }
+    val motionBlur by DataStoreManager.motionBlurFlow.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
 
 
 
@@ -145,13 +149,13 @@ fun UseCodeUI(vm: GuaGuaViewModel, hazeState: HazeState, navController: NavHostC
                         .align(Alignment.Center)
                         .zIndex(1f)
                 ) {
-                    val blurSizeButton by animateDpAsState(
-                        targetValue = if (!showButton) 4.dp else 0.dp, label = ""
-                        ,animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
-                    )
+//                    val blurSizeButton by animateDpAsState(
+//                        targetValue = if (!showButton) 4.dp else 0.dp, label = ""
+//                        ,animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
+//                    )
                     Button(
                         onClick = { scope.launch { refreshNetwork() } },
-                        modifier = Modifier.blur(blurSizeButton),
+//                        modifier = appBlur(showButton,4.dp),
                         elevation = ButtonDefaults.elevatedButtonElevation()
                     ) {
                         Text("使用码")
@@ -159,9 +163,7 @@ fun UseCodeUI(vm: GuaGuaViewModel, hazeState: HazeState, navController: NavHostC
                 }
             }
 
-            Column(modifier = Modifier
-                .blur(blurSize)
-                .scale(scale.value)){
+            Column(modifier = appBlur(loading).scale(scale.value)){
                 TransplantListItem(
                     headlineContent = {
                         Text(

@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Switch
@@ -27,14 +25,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveBoolean
 import com.hfut.schedule.ui.screen.home.cube.sub.AnimationSetting
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.component.TransplantListItem
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 @Composable
@@ -49,7 +44,7 @@ fun UIScreen(navController: NavController, innerPaddings : PaddingValues,
         Spacer(modifier = Modifier.height(5.dp))
 
         saveBoolean("SWITCH",true,showlable)
-        val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = AppVersion.CAN_BLUR)
+        val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = AppVersion.CAN_HAZE_BLUR)
 
         val currentPureDark by DataStoreManager.pureDarkFlow.collectAsState(initial = false)
         val motionBlur by DataStoreManager.motionBlurFlow.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
@@ -123,16 +118,16 @@ fun UIScreen(navController: NavController, innerPaddings : PaddingValues,
             TransplantListItem(
                 headlineContent = { Text(text = "层级实时模糊") },
                 supportingContent = {
-                    if(AppVersion.CAN_BLUR) {
+                    if(AppVersion.CAN_HAZE_BLUR) {
                         Text(text = "开启后将会转换部分层级渲染为实时模糊,此过程会加大性能压力" )
                     } else {
                         Text(text = "需为 Android 12+")
                     }
                 },
                 leadingContent = { Icon(painterResource(R.drawable.deblur), contentDescription = "Localized description",) },
-                trailingContent = {  Switch(checked = blur, onCheckedChange = { cor.launch {  DataStoreManager.saveHazeBlur(!blur) } }, enabled = AppVersion.CAN_BLUR ) },
+                trailingContent = {  Switch(checked = blur, onCheckedChange = { cor.launch {  DataStoreManager.saveHazeBlur(!blur) } }, enabled = AppVersion.CAN_HAZE_BLUR ) },
                 modifier = Modifier.clickable {
-                    if(AppVersion.CAN_BLUR ) {
+                    if(AppVersion.CAN_HAZE_BLUR ) {
                         cor.launch {  DataStoreManager.saveHazeBlur(!blur) }
                     }
                 }
