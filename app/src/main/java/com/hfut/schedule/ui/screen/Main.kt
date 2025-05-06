@@ -20,6 +20,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.parse.getCelebration
@@ -80,7 +81,7 @@ fun MainHost(networkVm : NetWorkViewModel, loginVm : LoginViewModel, uiVm : UIVi
             }
         } else { // 否则进入的是主界面
             //上传用户统计数据
-            if(switchUpload && value == 0) {
+            if(switchUpload && value == 0 && !AppVersion.isPreview()) {
                 launch {
                     networkVm.postUser()
                     value++

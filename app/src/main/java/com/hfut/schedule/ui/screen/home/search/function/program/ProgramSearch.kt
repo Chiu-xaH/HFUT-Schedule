@@ -1,7 +1,5 @@
 package com.hfut.schedule.ui.screen.home.search.function.program
 
-import android.os.Handler
-import android.os.Looper
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,17 +18,14 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -40,45 +35,33 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.jxglstu.PlanCoursesSearch
 import com.hfut.schedule.logic.model.jxglstu.ProgramPartThree
 import com.hfut.schedule.logic.model.jxglstu.RequireInfo
 import com.hfut.schedule.logic.model.jxglstu.Type
+import com.hfut.schedule.logic.util.network.SimpleUiState
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.logic.util.network.reEmptyLiveDta
+import com.hfut.schedule.ui.component.AnimationCardListItem
+import com.hfut.schedule.ui.component.BottomTip
+import com.hfut.schedule.ui.component.CommonNetworkScreen
+import com.hfut.schedule.ui.component.DepartmentIcons
+import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.StatusUI
+import com.hfut.schedule.ui.component.appHorizontalDp
+import com.hfut.schedule.ui.component.cardNormalDp
+import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.screen.home.search.function.courseSearch.ApiForCourseSearch
 import com.hfut.schedule.ui.screen.home.search.function.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.transfer.Campus.HEFEI
 import com.hfut.schedule.ui.screen.home.search.function.transfer.Campus.XUANCHENG
 import com.hfut.schedule.ui.screen.home.search.function.transfer.getCampus
-import com.hfut.schedule.ui.component.AnimationCardListItem
-import com.hfut.schedule.ui.component.appHorizontalDp
-import com.hfut.schedule.ui.component.BottomTip
-import com.hfut.schedule.ui.component.cardNormalDp
-import com.hfut.schedule.ui.component.BottomSheetTopBar
-import com.hfut.schedule.ui.component.DepartmentIcons
-import com.hfut.schedule.ui.component.EmptyUI
-import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.LoadingUI
-import com.hfut.schedule.ui.component.MyCustomCard
-import com.hfut.schedule.ui.component.showToast
-import com.hfut.schedule.ui.component.ScrollText
-import com.hfut.schedule.ui.component.StyleCardListItem
-import com.hfut.schedule.ui.component.StatusUI
 import com.hfut.schedule.ui.style.HazeBottomSheet
-import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.ui.style.RowHorizontal
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
 
 data class ProgramListBean(
     val id : Int,
@@ -88,57 +71,26 @@ data class ProgramListBean(
     val major : String
 )
 
-fun getProgramList(vm : NetWorkViewModel) : List<ProgramListBean> {
-    val json = vm.programList.value
-    try {
-        val data: List<ProgramListBean> = Gson().fromJson(json,object : TypeToken<List<ProgramListBean>>() {}.type)
-        return data
-    } catch (e: Exception) {
-        return emptyList()
-    }
-}
-
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProgramSearch(vm : NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState) {
-    var loading by remember { mutableStateOf(true) }
-    var refresh by remember { mutableStateOf(true) }
-
     var campus by remember { mutableStateOf( getCampus() ) }
-
-    fun refresh() {
-        loading = true
-        CoroutineScope(Job()).launch {
-            async { reEmptyLiveDta(vm.programList) }.await()
-            async { vm.getProgramList(campus) }.await()
-            async {
-                Handler(Looper.getMainLooper()).post{
-                    vm.programList.observeForever { result ->
-                        if (result != null) {
-                            if(result.contains("[")) {
-                                refresh = false
-                                loading = false
-                            }
-                        }
-                    }
-                }
-            }
-        }
+    val uiState by vm.programList.state.collectAsState()
+    val refreshNetwork: suspend () -> Unit = {
+        vm.programList.clear()
+        vm.getProgramList(campus)
+    }
+    LaunchedEffect(campus) {
+        refreshNetwork()
     }
 
-
     var item by remember { mutableStateOf(ProgramListBean(0,"","培养方案详情","","")) }
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
     var showBottomSheet by remember { mutableStateOf(false) }
     if (showBottomSheet) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet,
             hazeState = hazeState
-//            sheetState = sheetState,
-//            shape = bottomSheetRound(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
@@ -158,8 +110,6 @@ fun ProgramSearch(vm : NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState)
         }
     }
 
-    if(refresh) { refresh() }
-
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = Color.Transparent,
@@ -171,9 +121,7 @@ fun ProgramSearch(vm : NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState)
                             HEFEI -> XUANCHENG
                             XUANCHENG -> HEFEI
                         }
-                        refresh()
                     },
-//                    modifier = Modifier.padding(horizontal = AppHorizontalDp())
                 ) {
                     Text(
                         when(campus) {
@@ -190,40 +138,38 @@ fun ProgramSearch(vm : NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState)
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            if(loading) {
-                LoadingUI(text = "若加载过长 请搭外网")
-            } else {
-                val programList = getProgramList(vm)
-                var input by remember { mutableStateOf("") }
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    TextField(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(horizontal = appHorizontalDp()),
-                        value = input,
-                        onValueChange = {
-                            input = it
-                        },
-                        label = { Text("搜索") },
-                        singleLine = true,
-                        trailingIcon = {
-                            IconButton(
-                                onClick = {}) {
-                                Icon(
-                                    painter = painterResource(R.drawable.search),
-                                    contentDescription = "description"
-                                )
-                            }
-                        },
-                        shape = MaterialTheme.shapes.medium,
-                        colors = textFiledTransplant()
-                    )
-                }
-                Spacer(modifier = Modifier.height(cardNormalDp()))
+            var input by remember { mutableStateOf("") }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                TextField(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = appHorizontalDp()),
+                    value = input,
+                    onValueChange = {
+                        input = it
+                    },
+                    label = { Text("搜索") },
+                    singleLine = true,
+                    trailingIcon = {
+                        IconButton(
+                            onClick = {}) {
+                            Icon(
+                                painter = painterResource(R.drawable.search),
+                                contentDescription = "description"
+                            )
+                        }
+                    },
+                    shape = MaterialTheme.shapes.medium,
+                    colors = textFiledTransplant()
+                )
+            }
+            Spacer(modifier = Modifier.height(cardNormalDp()))
 
+            CommonNetworkScreen(uiState, onReload = refreshNetwork, loadingText = "若加载过长 请搭外网") {
+                val programList = (uiState as SimpleUiState.Success).data
                 val searchList = programList.filter {
                     it.name.contains(input) || it.department.contains(input) || it.major.contains(input) || it.grade.contains(input)
                 }
@@ -236,15 +182,15 @@ fun ProgramSearch(vm : NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState)
                             department = department.substringBefore("（")
 //                            MyCustomCard {
                             AnimationCardListItem(
-                                    headlineContent = { Text(name) },
-                                    overlineContent = { Text(data.grade + "级 " + department + " " + data.major) },
-                                    leadingContent = { DepartmentIcons(department) },
-                                    modifier = Modifier.clickable {
-                                        item = data
-                                        showBottomSheet = true
-                                    },
+                                headlineContent = { Text(name) },
+                                overlineContent = { Text(data.grade + "级 " + department + " " + data.major) },
+                                leadingContent = { DepartmentIcons(department) },
+                                modifier = Modifier.clickable {
+                                    item = data
+                                    showBottomSheet = true
+                                },
                                 index = index
-                                )
+                            )
 //                            }
                         }
                     }
@@ -253,15 +199,17 @@ fun ProgramSearch(vm : NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState)
                         HEFEI -> "合肥"
                         XUANCHENG -> "宣城"
                     }
-                    StatusUI(R.drawable.manga,"需要${campusText}校区在读生贡献数据源")
-                    Spacer(Modifier.height(5.dp))
-                    RowHorizontal {
-                        Button(
-                            onClick = {
-                                Starter.startWebUrl("https://github.com/${MyApplication.GITHUB_DEVELOPER_NAME}/${MyApplication.GITHUB_REPO_NAME}/blob/main/tools/All-Programs-Get-Python/README.md")
+                    Column {
+                        StatusUI(R.drawable.manga,"需要${campusText}校区在读生贡献数据源")
+                        Spacer(Modifier.height(5.dp))
+                        RowHorizontal {
+                            Button(
+                                onClick = {
+                                    Starter.startWebUrl("https://github.com/${MyApplication.GITHUB_DEVELOPER_NAME}/${MyApplication.GITHUB_REPO_NAME}/blob/main/tools/All-Programs-Get-Python/README.md")
+                                }
+                            ) {
+                                Text("接入指南(Github)")
                             }
-                        ) {
-                            Text("接入指南(Github)")
                         }
                     }
                 }
@@ -272,42 +220,54 @@ fun ProgramSearch(vm : NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState)
 
 @Composable
 private fun ProgramSearchInfo(vm: NetWorkViewModel, item: ProgramListBean, campus: Campus, ifSaved: Boolean, hazeState: HazeState) {
-    val id = item.id
-    var loading by remember { mutableStateOf(true) }
-    var refresh by remember { mutableStateOf(true) }
-    fun refresh() {
-        loading = true
-        CoroutineScope(Job()).launch {
-            async { reEmptyLiveDta(vm.programSearchData) }
-            async { vm.getProgramListInfo(id,campus) }.await()
-            async {
-                Handler(Looper.getMainLooper()).post{
-                    vm.programSearchData.observeForever { result ->
-                        if (result != null) {
-                            if(result.contains("{")) {
-                                refresh = false
-                                loading = false
-                            }
-                        }
-                    }
-                }
-            }
-        }
+//    val id =
+//    var loading by remember { mutableStateOf(true) }
+//    var refresh by remember { mutableStateOf(true) }
+//    fun refresh() {
+//        loading = true
+//        CoroutineScope(Job()).launch {
+//            async { reEmptyLiveDta(vm.programSearchData) }
+//            async { vm.getProgramListInfo(id,campus) }.await()
+//            async {
+//                Handler(Looper.getMainLooper()).post{
+//                    vm.programSearchData.observeForever { result ->
+//                        if (result != null) {
+//                            if(result.contains("{")) {
+//                                refresh = false
+//                                loading = false
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
+//    if(refresh) { refresh() }
+    val uiState by vm.programSearchData.state.collectAsState()
+    val refreshNetwork: suspend () -> Unit = {
+        vm.programSearchData.clear()
+        vm.getProgramListInfo(item.id,campus)
     }
-    if(refresh) { refresh() }
-    if(loading) {
-        LoadingUI("培养方案较大 加载中")
-    } else {
-        SearchProgramUI(vm, ifSaved, hazeState =hazeState )
+    LaunchedEffect(Unit) {
+        refreshNetwork()
     }
+    CommonNetworkScreen(uiState, onReload = refreshNetwork, loadingText = "培养方案较大 加载中") {
+        val bean = (uiState as SimpleUiState.Success).data
+        SearchProgramUI(bean, ifSaved, hazeState =hazeState,vm)
+    }
+//    if(loading) {
+//        LoadingUI()
+//    } else {
+//
+//    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchProgramUI(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState) {
-    val sheetState_Program = rememberModalBottomSheetState()
+private fun SearchProgramUI(bean: ProgramSearchItemBean, ifSaved: Boolean, hazeState: HazeState,vm: NetWorkViewModel) {
+//    val sheetState_Program = rememberModalBottomSheetState()
     var showBottomSheet_Program by remember { mutableStateOf(false) }
-    val listOne = getProgramListOneSearch(vm)
+    val listOne = getProgramListOneSearch(bean)
     var title by remember { mutableStateOf("培养方案") }
     var num by remember { mutableStateOf(0) }
 
@@ -355,7 +315,7 @@ fun SearchProgramUI(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState
                         .padding(innerPadding)
                         .fillMaxSize()
                 ){
-                    SearchProgramUIInfo(num,vm, ifSaved, hazeState =hazeState )
+                    SearchProgramUIInfo(num,bean, ifSaved, hazeState =hazeState,vm )
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
@@ -365,8 +325,8 @@ fun SearchProgramUI(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchProgramUIInfo(num : Int, vm : NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState) {
-    val listTwo = getProgramListTwoSearch(num,vm)
+private fun SearchProgramUIInfo(num : Int, bean: ProgramSearchItemBean, ifSaved: Boolean, hazeState: HazeState,vm : NetWorkViewModel) {
+    val listTwo = getProgramListTwoSearch(num,bean)
     var show by remember { mutableStateOf(true) }
     val sheetState_Program = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_Program by remember { mutableStateOf(false) }
@@ -392,7 +352,7 @@ fun SearchProgramUIInfo(num : Int, vm : NetWorkViewModel, ifSaved: Boolean, haze
                         .padding(innerPadding)
                         .fillMaxSize()
                 ){
-                    SearchProgramUIInfo2(num,num2,vm, ifSaved, hazeState =hazeState )
+                    SearchProgramUIInfo2(num,num2,bean, ifSaved, hazeState =hazeState ,vm)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
@@ -421,15 +381,15 @@ fun SearchProgramUIInfo(num : Int, vm : NetWorkViewModel, ifSaved: Boolean, haze
             }
         }
     } else {
-        SearchProgramUIInfo2(num,num2,vm, ifSaved,hazeState)
+        SearchProgramUIInfo2(num,num2,bean, ifSaved,hazeState,vm)
     }
 
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchProgramUIInfo2(num1 : Int, num2 : Int, vm : NetWorkViewModel, ifSaved : Boolean, hazeState: HazeState) {
-    val listThree = getProgramListThreeSearch(num1,num2,vm)
+private fun SearchProgramUIInfo2(num1 : Int, num2 : Int, bean: ProgramSearchItemBean, ifSaved : Boolean, hazeState: HazeState,vm: NetWorkViewModel) {
+    val listThree = getProgramListThreeSearch(num1,num2,bean)
 
     var showBottomSheet_Search by remember { mutableStateOf(false) }
     var courseName by remember { mutableStateOf("") }
@@ -526,15 +486,15 @@ data class SearchRequireInfo(
     val requiredCourseNum : Double
 )
 
-fun getProgramSearchItem(vm: NetWorkViewModel) : ProgramSearchItemBean? {
-    val json = vm.programSearchData.value
-    try {
-        val data = Gson().fromJson(json,ProgramSearchItem::class.java).data
-        return data
-    } catch (e : Exception) {
-        return null
-    }
-}
+//fun getProgramSearchItem(vm: NetWorkViewModel) : ProgramSearchItemBean? {
+//    val json = vm.programSearchData.value
+//    try {
+//        val data = Gson().fromJson(json,ProgramSearchItem::class.java).data
+//        return data
+//    } catch (e : Exception) {
+//        return null
+//    }
+//}
 data class ProgramResponseSearch(
                            val type : Type?,
 
@@ -561,10 +521,10 @@ data class ProgramPartTwoSearch(val type : String?,
                                 //方向
     val children : List<ProgramResponseSearch>,)
 
-fun getProgramListOneSearch(vm : NetWorkViewModel): MutableList<ProgramPartOneSearch> {
+fun getProgramListOneSearch(bean : ProgramSearchItemBean): MutableList<ProgramPartOneSearch> {
     val list = mutableListOf<ProgramPartOneSearch>()
     return try {
-        val children = getProgramSearchItem(vm)!!.children
+        val children = bean.children
 
         for(i in children.indices) {
             val type = children[i].type?.nameZh
@@ -581,10 +541,10 @@ fun getProgramListOneSearch(vm : NetWorkViewModel): MutableList<ProgramPartOneSe
     }
 }
 
-fun getProgramListTwoSearch(item : Int, vm : NetWorkViewModel,): MutableList<ProgramPartTwoSearch> {
+fun getProgramListTwoSearch(item : Int, bean: ProgramSearchItemBean): MutableList<ProgramPartTwoSearch> {
     val list = mutableListOf<ProgramPartTwoSearch>()
     try {
-        val partl = getProgramListOneSearch(vm)[item]
+        val partl = getProgramListOneSearch(bean)[item]
 //        val part = partl.partCourse
 
         if(partl.children.isEmpty()) {
@@ -639,10 +599,10 @@ fun getProgramListDirectionSearch(children: List<ProgramResponseSearch>): Mutabl
 }
 
 
-fun getProgramListThreeSearch(item1 : Int, item2 : Int, vm : NetWorkViewModel): MutableList<ProgramPartThreeSearch> {
+fun getProgramListThreeSearch(item1 : Int, item2 : Int, bean: ProgramSearchItemBean): MutableList<ProgramPartThreeSearch> {
     val list = mutableListOf<ProgramPartThreeSearch>()
     try {
-        val partl = getProgramListTwoSearch(item1,vm)[item2]
+        val partl = getProgramListTwoSearch(item1,bean)[item2]
 //        val partChilren = partl
         val part = partl.part
 

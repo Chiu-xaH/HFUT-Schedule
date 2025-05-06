@@ -105,7 +105,7 @@ fun MailUI(vm: NetWorkViewModel) {
         refreshNetwork()
     }
 
-    CommonNetworkScreen(uiState, loadingText = "正在登录邮箱 若加载过长请重新打开", isCenter = false, onReload = refreshNetwork) {
+    CommonNetworkScreen(uiState, loadingText = "正在登录邮箱 若加载过长请重新打开", isFullScreen = false, onReload = refreshNetwork) {
         val response = (uiState as SimpleUiState.Success).data
         RowHorizontal {
             Button(

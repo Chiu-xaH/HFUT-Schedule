@@ -29,13 +29,13 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,23 +49,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.enumeration.LibraryItems
-import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.network.SimpleUiState
 import com.hfut.schedule.logic.util.network.reEmptyLiveDta
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.AnimationCustomCard
-import com.hfut.schedule.ui.component.appHorizontalDp
-import com.hfut.schedule.ui.component.cardNormalColor
-import com.hfut.schedule.ui.component.BottomSheetTopBar
+import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.LoadingUI
-import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.WebDialog
+import com.hfut.schedule.ui.component.appHorizontalDp
+import com.hfut.schedule.ui.component.cardNormalColor
+import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.style.HazeBottomSheet
-import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
@@ -328,35 +326,22 @@ fun BooksUI(vm: NetWorkViewModel, hazeState: HazeState) {
 
 @Composable
 fun DetailBookUI(vm: NetWorkViewModel, callNo : String) {
-    val CommuityTOKEN = prefs.getString("TOKEN","")
-    var refresh by remember { mutableStateOf(false) }
-    var loading by remember { mutableStateOf(false) }
-
-    LaunchedEffect(refresh) {
-        async { reEmptyLiveDta(vm.bookPositionData) }.await()
-        async { loading = true }.await()
-        async { CommuityTOKEN?.let { vm.getBookPosition(it,callNo) } }.await()
-        launch {
-            Handler(Looper.getMainLooper()).post {
-                vm.bookPositionData.observeForever { result ->
-                    if (result != null) {
-                        if(result.contains("成功")) {
-                            refresh = false
-                            loading = false
-                        }
-                    }
-                }
-            }
+    val uiState by vm.bookPositionData.state.collectAsState()
+    val refreshNetwork: suspend () -> Unit = {
+        prefs.getString("TOKEN","")?.let {
+            vm.bookPositionData.clear()
+            vm.getBookPosition(it,callNo)
         }
     }
+    LaunchedEffect(Unit) {
+        refreshNetwork()
+    }
     DividerTextExpandedWith("索书号 $callNo") {
-        if(loading) {
-            LoadingUI()
-        } else {
-            val infos = getBookDetail(vm)
+        CommonNetworkScreen(uiState, onReload = refreshNetwork,isFullScreen = false) {
+            val list = (uiState as SimpleUiState.Success).data
             LazyColumn {
-                items(infos.size) { index ->
-                    val item = infos[index]
+                items(list.size) { index ->
+                    val item = list[index]
                     val status = item.status_dictText
                     StyleCardListItem(
                         headlineContent = {
@@ -372,6 +357,6 @@ fun DetailBookUI(vm: NetWorkViewModel, callNo : String) {
                 }
             }
         }
+        Spacer(Modifier.height(20.dp))
     }
-    Spacer(Modifier.height(20.dp))
 }

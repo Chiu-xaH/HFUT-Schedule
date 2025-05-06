@@ -216,7 +216,7 @@ private fun PayStatusUI(vm : NetWorkViewModel, payNumber : Float, json: String, 
         vm.payStep3(auth,orderId,pwd,uuid,type)
     }
 
-    CommonNetworkScreen(uiState,isCenter = false, onReload = { showToast("禁止刷新") }) {
+    CommonNetworkScreen(uiState,isFullScreen = false, onReload = { showToast("禁止刷新") }) {
         val msg = (uiState as SimpleUiState.Success).data
         StatusUI(iconId = R.drawable.send_money, text = msg)
     }

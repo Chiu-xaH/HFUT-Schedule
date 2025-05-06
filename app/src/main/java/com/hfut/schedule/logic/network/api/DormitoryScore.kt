@@ -10,5 +10,5 @@ interface DormitoryScore {
     //宣区宿舍卫生分数查询
     @FormUrlEncoded
     @POST ("query/getStudentScore")
-    fun SearchXuanqu(@Field ("student_code") code : String) : Call<ResponseBody>
+    fun search(@Field ("student_code") code : String) : Call<ResponseBody>
 }

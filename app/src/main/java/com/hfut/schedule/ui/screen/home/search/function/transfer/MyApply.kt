@@ -283,7 +283,7 @@ fun MyApply(vm: NetWorkViewModel, batchId : String, indexs : Int) {
     }
 
     DividerTextExpandedWith("成绩") {
-        CommonNetworkScreen(uiState2, isCenter = false, onReload = refreshNetwork2) {
+        CommonNetworkScreen(uiState2, isFullScreen = false, onReload = refreshNetwork2) {
             val bean = (uiState2 as SimpleUiState.Success).data
 
             val grade = bean?.grade
@@ -365,70 +365,25 @@ fun MyApply(vm: NetWorkViewModel, batchId : String, indexs : Int) {
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun TransferCancelStatusUI(vm : NetWorkViewModel, batchId: String, id: Int) {
-
-    var loading by remember { mutableStateOf(true) }
-    var refresh by remember { mutableStateOf(true) }
-
-//    var phoneNumber by remember { mutableStateOf("") }
-    var msg  by remember { mutableStateOf("结果") }
-
-    var cookie = if (!vm.webVpn) prefs.getString(
-        "redirect",
-        ""
-    ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
-
-    if(refresh) {
-        loading = true
-        CoroutineScope(Job()).launch {
-            async { reEmptyLiveDta(vm.cancelTransferResponse) }
-            async {
-                cookie?.let { vm.cancelTransfer(it,batchId,id.toString()) }
-            }.await()
-            async {
-                Handler(Looper.getMainLooper()).post {
-                    vm.cancelTransferResponse.observeForever { result ->
-                        if (result != null) {
-                            msg = if(result) {
-                                "成功"
-                            } else {
-                                "未知错误"
-                            }
-                            refresh = false
-                            loading = false
-                        }
-                    }
-                }
-            }
+    val uiState by vm.cancelTransferResponse.state.collectAsState()
+    val refreshNetwork: suspend () -> Unit = {
+        var cookie = if (!vm.webVpn) prefs.getString(
+            "redirect",
+            ""
+        ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
+        cookie?.let {
+            vm.cancelTransferResponse.clear()
+            vm.cancelTransfer(it,batchId,id.toString())
         }
     }
-
-
-    Box {
-        AnimatedVisibility(
-            visible = loading,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Spacer(modifier = Modifier.height(5.dp))
-                LoadingUI()
-            }
-        }
-
-
-        AnimatedVisibility(
-            visible = !loading,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            StatusUI2(painter =
-            if(msg == "成功" ) Icons.Filled.Check
-            else Icons.Filled.Close
-                , text = msg)
-        }
+    LaunchedEffect(Unit) {
+        refreshNetwork()
     }
 
+    CommonNetworkScreen(uiState, onReload = refreshNetwork, isFullScreen = false) {
+        val result = (uiState as SimpleUiState.Success).data
+        var msg  by remember { mutableStateOf("结果") }
+        msg = if(result) "成功"  else "未知错误"
+        StatusUI2(painter = if(msg == "成功") Icons.Filled.Check else Icons.Filled.Close, text = msg)
+    }
 }

@@ -58,10 +58,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun CommonNetworkScreen(
     uiState: SimpleUiState<*>,
-    isCenter : Boolean = true,
-    modifier: Modifier = Modifier.fillMaxSize(),
+    isFullScreen : Boolean = true,
+    modifier: Modifier = if(isFullScreen) Modifier.fillMaxSize() else Modifier,
     loadingText : String? = null,
-    onReload: (suspend () -> Unit)? , // 新增刷新回调
+    onReload: (suspend () -> Unit)?, // 新增刷新回调
     prepareContent : (@Composable () -> Unit)? = null,
     successContent : @Composable () -> Unit
 ) = Box(modifier = modifier) {
@@ -151,7 +151,7 @@ fun CommonNetworkScreen(
                 }
             }
 
-            if(isCenter) {
+            if(isFullScreen) {
                 CenterScreen {
                     ui()
                 }
@@ -164,7 +164,7 @@ fun CommonNetworkScreen(
             val ui = @Composable {
                 LoadingUI(loadingText)
             }
-            if(isCenter) {
+            if(isFullScreen) {
                 CenterScreen {
                     ui()
                 }

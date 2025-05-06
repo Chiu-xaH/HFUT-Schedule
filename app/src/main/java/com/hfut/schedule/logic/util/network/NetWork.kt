@@ -77,7 +77,7 @@ object NetWork {
         holder: SimpleStateHolder<T>,
         request: suspend () -> Response<ResponseBody>,
         transformSuccess: (Headers, String) -> T,
-//        transformRedirect: ((Headers) -> T)? = null
+        transformRedirect: ((Headers) -> T)? = null
     ) = try {
         holder.setLoading()
         val response = request()
@@ -94,16 +94,16 @@ object NetWork {
             }
             holder.emitData(result)
         }
-//        else if(response.code() in 300..399){
-            // 重定向 特殊处理
-//            val result = try {
-//                transformRedirect(headers)
-//            } catch (e: Exception) {
-//                holder.emitError(e, PARSE_ERROR_CODE)
-//                return
-//            }
-//            holder.emitData(result)
-//        }
+        else if(response.code() == 302){
+//             重定向 特殊处理
+            val result = try {
+                transformRedirect!!(headers)
+            } catch (e: Exception) {
+                holder.emitError(e, PARSE_ERROR_CODE)
+                return
+            }
+            holder.emitData(result)
+        }
         else {
             // 承接错误解析 可选
             holder.emitError(HttpException(response), response.code())

@@ -31,12 +31,3 @@ fun getBooks(vm : NetWorkViewModel) : List<LibRecord> {
         return emptyList()
     }
 }
-
-fun getBookDetail(vm: NetWorkViewModel) : List<BookPositionBean> {
-    val json = vm.bookPositionData.value
-    return try {
-        Gson().fromJson(json,BookPositionResponse::class.java).result
-    } catch (e : Exception) {
-        emptyList()
-    }
-}

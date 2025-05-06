@@ -33,10 +33,7 @@ import dev.chrisbanes.haze.HazeState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DormitoryScoreXuanCheng(vm : NetWorkViewModel, hazeState: HazeState) {
-    vm.XuanquData.value = "{}"
-    val sheetState_Xuanqu = rememberModalBottomSheetState(skipPartiallyExpanded = false)
     var showBottomSheet_Xuanqu by remember { mutableStateOf(false) }
-
 
     TransplantListItem(
         headlineContent = { ScrollText(text = "寝室评分"  + if(getCampus() != Campus.XUANCHENG) "(宣)" else "" ) },
@@ -51,8 +48,6 @@ fun DormitoryScoreXuanCheng(vm : NetWorkViewModel, hazeState: HazeState) {
             },
             hazeState = hazeState,
             showBottomSheet = showBottomSheet_Xuanqu
-//            sheetState = sheetState_Xuanqu,
-//            shape = bottomSheetRound(sheetState_Xuanqu)
         ) {
             Column() {
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
