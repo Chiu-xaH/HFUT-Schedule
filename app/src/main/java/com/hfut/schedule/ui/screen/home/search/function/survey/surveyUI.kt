@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.PostMode
+import com.hfut.schedule.logic.model.jxglstu.SurveyResponse
 import com.hfut.schedule.logic.model.jxglstu.lessonSurveyTasks
 import com.hfut.schedule.logic.util.network.SimpleUiState
 import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
@@ -51,6 +52,7 @@ import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -80,9 +82,7 @@ fun SurveyUI(vm : NetWorkViewModel, hazeState: HazeState) {
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
         val response = (uiState as SimpleUiState.Success).data
         Box(modifier = Modifier.fillMaxSize()) {
-            teacherSurveyList(vm, list = response ?: emptyList(), hazeState = hazeState) {
-                scope.launch { refreshNetwork() }
-            }
+            teacherSurveyList(vm, list = response, hazeState = hazeState, refresh = refreshNetwork)
             FloatingActionButton(
                 onClick = { semester -= 20 },
                 modifier = Modifier
@@ -111,87 +111,33 @@ fun SurveyUI(vm : NetWorkViewModel, hazeState: HazeState) {
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun teacherSurveyList(vm : NetWorkViewModel, hazeState: HazeState, list : List<lessonSurveyTasks>,refresh : () -> Unit) {
+fun teacherSurveyList(vm : NetWorkViewModel, hazeState: HazeState, list : List<lessonSurveyTasks>,refresh : suspend () -> Unit) {
 //    val list =  getSurveyList(vm)
-    val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
-    var postMode by remember { mutableStateOf(PostMode.NORMAL) }
-    var showDialog by remember { mutableStateOf(false) }
+    var id by remember { mutableIntStateOf(0) }
 
-
-    var id by remember { mutableStateOf(0) }
-
-
-    if(showDialog) {
-        LittleDialog(
-            onDismissRequest = { showDialog = false },
-            onConfirmation = {
-                val result = selectMode(vm,postMode)
-                if(result) {
-                    showDialog = false
-                    showBottomSheet = false
-                    //在这里刷新
-                    refresh()
-                }
-            },
-            dialogTitle = "确定提交",
-            dialogText = "实名制上网,理性填表,不可修改",
-            conformText = "提交",
-            dismissText = "返回"
-        )
-    }
+    val scope = rememberCoroutineScope()
     if (showBottomSheet) {
         HazeBottomSheet(
             onDismissRequest = { showBottomSheet = false },
             hazeState = hazeState,
             showBottomSheet = showBottomSheet,
-            isFullExpand = false
+            isFullExpand = true,
+            autoShape = false
 //            sheetState = sheetState,
 //            shape = bottomSheetRound(sheetState)
         ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("发送教评") {
-                        Row(modifier = Modifier.padding(horizontal = appHorizontalDp())) {
-                            FilledTonalIconButton(
-                                onClick = {
-                                    showDialog = true
-                                    postMode = PostMode.GOOD
-                                }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.thumb_up),
-                                    contentDescription = "description"
-                                )
-                            }
-                            FilledTonalIconButton(
-                                onClick = {
-                                    showDialog = true
-                                    // MyToast("下版本开放")
-                                    postMode = PostMode.BAD
-                                }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.thumb_down),
-                                    contentDescription = "description"
-                                )
-                            }
-                        }
-                    }
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    surveyInfo(id,vm)
+            Column {
+                HazeBottomSheetTopBar("发送教评", isPaddingStatusBar = false)
+                SurveyInfoUI(id,vm) {
+                    showBottomSheet = false
+                    scope.launch { refresh() }
                 }
             }
         }
     }
 
-    if(list.size != 0)
+    if(list.isNotEmpty())
         LazyColumn {
             items(list.size) { item ->
 //                MyCustomCard{

@@ -28,6 +28,7 @@ import com.hfut.schedule.logic.model.community.BookPositionBean
 import com.hfut.schedule.logic.model.community.BookPositionResponse
 import com.hfut.schedule.logic.model.jxglstu.MyApplyResponse
 import com.hfut.schedule.logic.model.jxglstu.SelectCourseInfo
+import com.hfut.schedule.logic.model.jxglstu.SurveyResponse
 import com.hfut.schedule.logic.model.jxglstu.SurveyTeacherResponse
 import com.hfut.schedule.logic.model.jxglstu.TransferResponse
 import com.hfut.schedule.logic.model.jxglstu.lessonResponse
@@ -119,6 +120,7 @@ import com.hfut.schedule.ui.screen.home.search.function.transfer.MyApplyInfoBean
 import com.hfut.schedule.ui.screen.home.search.function.transfer.PlaceAndTime
 import com.hfut.schedule.ui.screen.news.home.transferToPostData
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
+import okhttp3.Headers
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
@@ -128,7 +130,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.awaitResponse
-import kotlin.ranges.contains
 
 // 106个函数
 class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
@@ -920,30 +921,37 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         list
     } catch (e : Exception) { throw e }
 
-    val surveyData = MutableLiveData<String?>()
-    fun getSurvey(cookie: String, id : String) {
-        val call = jxglstuJSON.getSurveyInfo(cookie,id)
+    val surveyData = SimpleStateHolder<SurveyResponse>()
+    suspend fun getSurvey(cookie: String, id : String) = launchRequestSimple(
+        holder = surveyData,
+        request = { jxglstuJSON.getSurveyInfo(cookie,id).awaitResponse() },
+        transformSuccess = { _,json -> parseSurvey(json) }
+    )
+    private fun parseSurvey(json : String) : SurveyResponse = try {
+        Gson().fromJson(json, SurveyResponse::class.java)
+    } catch (e : Exception) { throw e }
 
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                surveyData.value = response.body()?.string()
-            }
+    val surveyToken = SimpleStateHolder<String>()
+    suspend fun getSurveyToken(cookie: String, id : String) = launchRequestSimple(
+        holder = surveyToken,
+        request = { jxglstuJSON.getSurveyToken(cookie,id,"/for-std/lesson-survey/semester-index/${studentId.value}").awaitResponse() },
+        transformSuccess = { headers,_ -> parseSurveyToken(headers) }
+    )
+//    {
+//        val call =
+//
+//        call.enqueue(object : Callback<ResponseBody> {
+//            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+//                 saveString("SurveyCookie", )
+//            }
+//
+//            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+//        })
+//    }
 
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
-    }
-
-    fun getSurveyToken(cookie: String, id : String) {
-        val call = jxglstuJSON.getSurveyToken(cookie,id,"/for-std/lesson-survey/semester-index/${studentId.value}")
-
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                 saveString("SurveyCookie", response.headers().toString().substringAfter("Set-Cookie:").substringBefore(";"))
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
-    }
+    private fun parseSurveyToken(headers : Headers) : String = try {
+        headers.toString().substringAfter("Set-Cookie:").substringBefore(";")
+    } catch(e : Exception) { throw e }
 
     val surveyPostData = MutableLiveData<String?>()
     fun postSurvey(cookie : String,json: JsonObject){

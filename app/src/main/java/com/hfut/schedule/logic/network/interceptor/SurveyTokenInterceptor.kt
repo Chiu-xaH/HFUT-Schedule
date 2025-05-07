@@ -10,9 +10,6 @@ class SurveyTokenInterceptor : Interceptor {
         val response = chain.proceed(chain.request())
         val cookies = response.headers("Set-Cookie")
         var result = ""
-        //Log.d("cookieAES",cookies.toString())
-      //  var cookieValue = ""
-      //  var cookiekey = ""
 
         // 遍历cookies列表，找到LOGIN_FLAVORING
         for (cookie in cookies) {
@@ -22,8 +19,7 @@ class SurveyTokenInterceptor : Interceptor {
                 break
             }
         }
-   //     // 如果cookieValue不为空，就将其保存到SharedPreferences中
-//        Log.d("cookies",cookies.toString())
+
         SharedPrefs.saveString("SurveyCookie", cookies.toString())
         return response
     }
