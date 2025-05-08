@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -29,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.QWeatherNowBean
 import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.screen.home.search.function.life.QWeatherLevel.*
 import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
 import com.hfut.schedule.ui.component.BottomTip
@@ -36,6 +38,7 @@ import com.hfut.schedule.ui.component.BottomSheetTopBar
 import com.hfut.schedule.ui.component.DevelopingUI
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.LoadingLargeCard
+import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.style.bottomSheetRound
@@ -48,8 +51,15 @@ fun LifeUIS(vm : NetWorkViewModel) {
     val sheetState_Weather = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_Weather by remember { mutableStateOf(false) }
     val uiState by vm.qWeatherResult.state.collectAsState()
+    val uiStateWarn by vm.weatherWarningData.state.collectAsState()
+    val showWeather by DataStoreManager.showFocusWeatherWarn.collectAsState(initial = true)
+
     var loading = uiState !is SimpleUiState.Success
     val refreshNetwork: suspend () -> Unit = {
+        if(!showWeather) {
+            vm.weatherWarningData.clear()
+            vm.getWeatherWarn()
+        }
         vm.qWeatherResult.clear()
         vm.getWeather()
     }
@@ -95,7 +105,7 @@ fun LifeUIS(vm : NetWorkViewModel) {
         }
     }
 
-    DividerTextExpandedWith(text = "天气预警",false) {
+    DividerTextExpandedWith(text = "实时天气",false) {
         LoadingLargeCard(
             title = data.text + " " + data.temp + "℃",
             loading = loading,
@@ -147,17 +157,37 @@ fun LifeUIS(vm : NetWorkViewModel) {
             }
         }
 
-        BottomTip("数据来源 和风天气")
+
+    }
+    if (uiStateWarn is SimpleUiState.Success) {
+        val list = (uiStateWarn as SimpleUiState.Success).data
+        if(list.isNotEmpty()) {
+            DividerTextExpandedWith("气象预警") {
+                LazyColumn {
+                    items(list.size, key = { it }) { index ->
+                        with(list[index]) {
+                            StyleCardListItem(
+                                headlineContent = { Text(title) },
+                                supportingContent = { Text(text) },
+                                overlineContent = { Text(typeName) },
+                                leadingContent = { Icon(painterResource(R.drawable.warning),null)}
+                            )
+                        }
+                    }
+                }
+            }
+        }
     }
 
+    BottomTip("数据来源 和风天气")
 
-    DividerTextExpandedWith(text = "楼层导向") {
-        DevelopingUI()
-    }
-
-    DividerTextExpandedWith(text = "校园地图") {
-        DevelopingUI()
-    }
+//    DividerTextExpandedWith(text = "楼层导向") {
+//        DevelopingUI()
+//    }
+//
+//    DividerTextExpandedWith(text = "校园地图") {
+//        DevelopingUI()
+//    }
 }
 
 

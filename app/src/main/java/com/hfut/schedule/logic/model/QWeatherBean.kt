@@ -13,3 +13,13 @@ data class QWeatherNowBean(
     val humidity : String, //湿度
     val icon : String//图标代码
 )
+
+data class QWeatherWarnResponse(
+    val warning : List<QWeatherWarnBean>
+)
+
+data class QWeatherWarnBean(
+    val title : String,
+    val typeName : String,
+    val text : String
+)

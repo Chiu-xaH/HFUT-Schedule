@@ -104,7 +104,7 @@ fun SupabaseHome(vm : NetWorkViewModel,navHostController: NavHostController,vmUI
         var innerPaddingValues by remember { mutableStateOf<PaddingValues?>(null) }
 
         Box(modifier = Modifier.align(Alignment.BottomEnd).zIndex(3f)) {
-            innerPaddingValues?.let { AddEventFloatButton(isSupabase = bottomBarItems != SupabaseScreen.STORAGE,isVisible = bottomBarItems != SupabaseScreen.SETTINGS,hazeState,vmUI,it,vm) }
+            innerPaddingValues?.let { AddEventFloatButton(isSupabase = bottomBarItems != SupabaseScreen.STORAGE,isVisible = bottomBarItems != SupabaseScreen.SETTINGS,vmUI,it,vm) }
         }
 
         Scaffold(

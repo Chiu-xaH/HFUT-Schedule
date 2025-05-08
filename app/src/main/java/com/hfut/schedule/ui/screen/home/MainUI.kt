@@ -436,7 +436,7 @@ fun MainScreen(
         Box(modifier = Modifier
             .align(Alignment.BottomEnd)
             .zIndex(3f)) {
-            innerPaddingValues?.let { AddEventFloatButton(isSupabase = false,isVisible = isNavigationIconVisible && (targetPage == FOCUS),hazeState,vmUI,it,vm) }
+            innerPaddingValues?.let { AddEventFloatButton(isSupabase = false,isVisible = isNavigationIconVisible && (targetPage == FOCUS),vmUI,it,vm) }
         }
 
         Scaffold(

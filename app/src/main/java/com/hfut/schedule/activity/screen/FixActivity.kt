@@ -12,6 +12,6 @@ class FixActivity : BaseActivity() {
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        super.loginVm.My()
+        super.loginVm.getMyApi()
     }
 }

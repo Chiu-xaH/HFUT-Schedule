@@ -1,22 +1,9 @@
 package com.hfut.schedule.ui.screen.home.search.function.library
 
 import com.google.gson.Gson
-import com.hfut.schedule.logic.model.community.BookPositionBean
-import com.hfut.schedule.logic.model.community.BookPositionResponse
-import com.hfut.schedule.logic.model.community.BorrowRecords
-import com.hfut.schedule.logic.model.community.BorrowResponse
 import com.hfut.schedule.logic.model.community.LibRecord
 import com.hfut.schedule.logic.model.community.LibraryResponse
-import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-
-fun getBorrow(vm: NetWorkViewModel) : List<BorrowRecords> {
-    return try {
-        Gson().fromJson(vm.booksChipData.value,BorrowResponse::class.java).result.records
-    } catch (_:Exception) {
-        emptyList()
-    }
-}
 
 fun getBooks(vm : NetWorkViewModel) : List<LibRecord> {
     val library = vm.libraryData.value

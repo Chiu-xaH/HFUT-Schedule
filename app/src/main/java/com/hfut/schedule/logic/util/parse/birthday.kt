@@ -3,6 +3,7 @@ package com.hfut.schedule.logic.util.parse
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.logic.util.sys.DateTimeUtils.formatter_YYYY_MM_DD
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.getAPICelebration
+import com.hfut.schedule.ui.screen.home.getHolidays
 import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
 import java.time.LocalDate
 import java.time.Period
@@ -54,8 +55,12 @@ fun isUserBirthday() : Boolean = getBirthday()?.let {
 // 毕业季
 fun isInGraduation() : Boolean = getGraduationYear()?.let { DateTimeUtils.isCurrentMonth("$it-06") } ?: false
 // APP周年
-fun isAppBirthday() : Boolean =
-    DateTimeUtils.isTodayAnniversary(DateTimeUtils.APP_BIRTHDAY.substringAfter("-"))
+fun isAppBirthday() : Boolean = DateTimeUtils.isTodayAnniversary(DateTimeUtils.APP_BIRTHDAY.substringAfter("-"))
+
+// 节假日
+fun isHoliday() : Boolean = getHolidays().any { it.isOffDay && it.name == DateTimeUtils.Date_yyyy_MM_dd }
+
+fun getTodayHoliday(): String? = getHolidays().firstOrNull { it.isOffDay && it.date == DateTimeUtils.Date_yyyy_MM_dd }?.name
 
 data class Celebration(val use : Boolean,val str : String?,val time : Long = 1L)
 
@@ -68,6 +73,9 @@ fun getCelebration() : Celebration {
     }
     if(isAppBirthday()) {
         return Celebration(true,"聚在工大${getAppAge()}周年",1L)
+    }
+    getTodayHoliday()?.let {
+        return Celebration(true,it,1L)
     }
     if(getAPICelebration()) {
         return Celebration(true,null,1L)

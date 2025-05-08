@@ -5,6 +5,7 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,9 +24,11 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,40 +36,46 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.SearchEleResponse
 import com.hfut.schedule.logic.model.zjgd.FeeResponse
 import com.hfut.schedule.logic.model.zjgd.FeeType
+import com.hfut.schedule.logic.util.network.SimpleUiState
 import com.hfut.schedule.logic.util.parse.formatDecimal
-import com.hfut.schedule.logic.util.sys.DateTimeUtils
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
+import com.hfut.schedule.logic.util.sys.DateTimeUtils
+import com.hfut.schedule.ui.component.BottomSheetTopBar
+import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.MyCustomCard
+import com.hfut.schedule.ui.component.RotatingIcon
+import com.hfut.schedule.ui.component.StyleCardListItem
+import com.hfut.schedule.ui.component.TransplantListItem
+import com.hfut.schedule.ui.component.cardNormalColor
+import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.screen.home.focus.funiction.TodayUI
 import com.hfut.schedule.ui.screen.home.search.function.card.SchoolCardItem
 import com.hfut.schedule.ui.screen.home.search.function.electric.Electric
+import com.hfut.schedule.ui.screen.home.search.function.life.LifeUIS
 import com.hfut.schedule.ui.screen.home.search.function.loginWeb.LoginWeb
 import com.hfut.schedule.ui.screen.home.search.function.loginWeb.getWebInfo
 import com.hfut.schedule.ui.screen.home.search.function.loginWeb.getWebInfoOld
 import com.hfut.schedule.ui.screen.home.search.function.shower.getInGuaGua
 import com.hfut.schedule.ui.screen.home.search.function.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.transfer.getCampus
-import com.hfut.schedule.ui.component.BottomSheetTopBar
-import com.hfut.schedule.ui.component.LoadingUI
-import com.hfut.schedule.ui.component.MyCustomCard
-import com.hfut.schedule.ui.component.RotatingIcon
-import com.hfut.schedule.ui.component.StyleCardListItem
-import com.hfut.schedule.ui.component.TransplantListItem
-import com.hfut.schedule.ui.component.cardNormalColor
+import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.bottomSheetRound
-import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.hfut.schedule.ui.util.NavigateAnimationManager
 import com.hfut.schedule.viewmodel.UIViewModel
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import java.math.BigDecimal
-import java.math.RoundingMode
+import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -103,6 +112,10 @@ fun FocusCardSettings(innerPadding : PaddingValues) {
     val switch_shortCut = SharedPrefs.prefs.getBoolean("SWITCHSHORTCUT", false)
     var showShortCut by remember { mutableStateOf(switch_shortCut) }
     SharedPrefs.saveBoolean("SWITCHSHORTCUT", false, showShortCut)
+
+    val showShower by DataStoreManager.showFocusShower.collectAsState(initial = true)
+    val showWeather by DataStoreManager.showFocusWeatherWarn.collectAsState(initial = true)
+    val scope = rememberCoroutineScope()
 
 
     Column(modifier = Modifier.padding(innerPadding)) {
@@ -144,23 +157,15 @@ fun FocusCardSettings(innerPadding : PaddingValues) {
             trailingContent = { Switch(checked = showToday, onCheckedChange = {showch -> showToday = showch})}
         )
         TransplantListItem(
-            headlineContent = { Text(text = "倒计时")} ,
-            leadingContent = { Icon(painter = painterResource(id = R.drawable.schedule), contentDescription = "")},
-            trailingContent = { Switch(checked = showCountDown, onCheckedChange = {showch -> showCountDown = showch},enabled = false)}
+            headlineContent = { Text(text = "洗浴(需要时显示)")} ,
+            leadingContent = { Icon(painter = painterResource(id = R.drawable.bathtub), contentDescription = "")},
+            trailingContent = { Switch(checked = showShower, onCheckedChange = { scope.launch { DataStoreManager.saveFocusShowShower(!showShower) } })}
         )
-
-//        TransplantListItem(
-//            headlineContent = { Text(text = "绩点排名")} ,
-//            leadingContent = { Icon(painter = painterResource(id = R.drawable.filter_vintage), contentDescription = "")},
-//            trailingContent = { Switch(checked = false, onCheckedChange = {}, enabled = false)}
-//        )
-//        TransplantListItem(
-//            headlineContent = { Text(text = "预留项")} ,
-//            leadingContent = { Icon(painter = painterResource(id = R.drawable.add_circle), contentDescription = "")},
-//            modifier = Modifier.clickable { showBottomSheet = true },
-//            trailingContent = { Switch(checked = showShortCut, onCheckedChange = {showch -> showShortCut = showch},enabled = false)}
-//        )
-
+        TransplantListItem(
+            headlineContent = { Text(text = "气象预警(需要时显示)")} ,
+            leadingContent = { Icon(painter = painterResource(id = R.drawable.warning), contentDescription = "")},
+            trailingContent = { Switch(checked = showWeather, onCheckedChange = { scope.launch { DataStoreManager.saveFocusShowWeatherWarn(!showWeather) } })}
+        )
     }
 
 
@@ -203,7 +208,32 @@ fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) {
     val showCountDown = prefs.getBoolean("SWITCHCOUNTDOWN",false)
     val showShortCut = prefs.getBoolean("SWITCHSHORTCUT",false)
     var loading by remember { mutableStateOf(false) }
-
+    val showShower by DataStoreManager.showFocusShower.collectAsState(initial = true)
+    val showWeather by DataStoreManager.showFocusWeatherWarn.collectAsState(initial = true)
+    var showBottomSheet by remember { mutableStateOf(false) }
+    if (showBottomSheet) {
+        HazeBottomSheet (
+            onDismissRequest = { showBottomSheet = false },
+            showBottomSheet = showBottomSheet,
+            hazeState = hazeState
+        ) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
+                topBar = {
+                    HazeBottomSheetTopBar("生活服务")
+                },) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                ) {
+                    LifeUIS(vm)
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
+            }
+        }
+    }
     if(showCard || showEle || showToday || showWeb)
         MyCustomCard(
             containerColor = cardNormalColor(),
@@ -246,7 +276,7 @@ fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) {
                                 shortCut()
                             }
                     }
-                if(DateTimeUtils.Time_Hour.toInt() in 22 until 25) {
+                if(DateTimeUtils.Time_Hour.toInt() in 22 until 25 && showShower) {
                     Row(
                         modifier = Modifier.clickable {
                             getInGuaGua(vm) { loading = it }
@@ -273,6 +303,30 @@ fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) {
                                 TransplantListItem(headlineContent = { Text(text = "洗浴") }, leadingContent = {
                                     Icon(painterResource(id = R.drawable.bathtub), contentDescription = "")
                                 }, overlineContent = { Text(text = "推荐") }
+                                )
+                            }
+                        }
+                    }
+                }
+                if(showWeather) {
+                    val uiStateWarn by vm.weatherWarningData.state.collectAsState()
+                    AnimatedVisibility(
+                        visible = uiStateWarn is SimpleUiState.Success,
+                        exit = NavigateAnimationManager.fadeAnimation.exit,
+                        enter = NavigateAnimationManager.fadeAnimation.enter
+                    ) {
+                        val list = (uiStateWarn as SimpleUiState.Success).data
+                        AnimatedVisibility(
+                            visible = list.isNotEmpty(),
+                            exit = NavigateAnimationManager.fadeAnimation.exit,
+                            enter = NavigateAnimationManager.fadeAnimation.enter
+                        ) {
+                            with(list[0]) {
+                                TransplantListItem(
+                                    headlineContent = { Text(title) },
+                                    overlineContent = { Text(typeName)},
+                                    leadingContent = { Icon(painterResource(R.drawable.warning),null)},
+                                    modifier = Modifier.clickable { showBottomSheet = true }
                                 )
                             }
                         }
@@ -315,31 +369,27 @@ fun getWebInfoFromZJGD(vm: NetWorkViewModel, vmUI : UIViewModel)  {
 
 
 //废弃旧的方法
-fun getEle(vm : NetWorkViewModel, vmUI : UIViewModel) {
+suspend fun getEle(vm : NetWorkViewModel, vmUI : UIViewModel) = withContext(Dispatchers.IO) {
     val BuildingsNumber = prefs.getString("BuildNumber", "0")
     val RoomNumber = prefs.getString("RoomNumber", "")
     val EndNumber = prefs.getString("EndNumber", "")
 
     var input = "300$BuildingsNumber$RoomNumber$EndNumber"
     var jsons = "{ \"query_elec_roominfo\": { \"aid\":\"0030000000007301\", \"account\": \"24027\",\"room\": { \"roomid\": \"${input}\", \"room\": \"${input}\" },  \"floor\": { \"floorid\": \"\", \"floor\": \"\" }, \"area\": { \"area\": \"\", \"areaname\": \"\" }, \"building\": { \"buildingid\": \"\", \"building\": \"\" },\"extdata\":\"info1=\" } }"
-
-    CoroutineScope(Job()).launch {
-        async { vm.searchEle(jsons) }.await()
-        async {
-            Handler(Looper.getMainLooper()).post{
-                vm.ElectricData.observeForever { result ->
-                    if (result?.contains("query_elec_roominfo") == true) {
-                        try {
-                            var msg = Gson().fromJson(result, SearchEleResponse::class.java).query_elec_roominfo.errmsg
-                            if(msg.contains("剩余金额")) {
-//                                val bd = BigDecimal()
-                                vmUI.electricValue.value = formatDecimal(msg.substringAfter("剩余金额").substringAfter(":").toDouble(),2)
-                                saveString("memoryEle",vmUI.electricValue.value)
-                            }
-                        } catch (_:Exception) { }
-                    }
-                }
+    vm.electricOldData.clear()
+    vm.searchEle(jsons)
+    withContext(Dispatchers.Main) {
+        val state = vm.electricOldData.state.first { it !is SimpleUiState.Loading }
+        when (state) {
+            is SimpleUiState.Success -> {
+                val data = state.data
+                vmUI.electricValue.value = data
+                saveString("memoryEle",vmUI.electricValue.value)
             }
+            is SimpleUiState.Error -> {
+                showToast("错误 " + state.exception?.message)
+            }
+            else -> {}
         }
     }
 }
@@ -355,7 +405,7 @@ fun getEleNew(vm : NetWorkViewModel, vmUI : UIViewModel) {
         async { vm.getFee("bearer $auth", FeeType.ELECTRIC, room = input) }.await()
         async {
             Handler(Looper.getMainLooper()).post{
-                vm.ElectricData.observeForever { result ->
+                vm.electricData.observeForever { result ->
                     if (result?.contains("success") == true) {
                         try {
                             val data = Gson().fromJson(result,FeeResponse::class.java).map.showData

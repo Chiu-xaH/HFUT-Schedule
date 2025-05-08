@@ -163,7 +163,7 @@ fun FixUI(innerPadding : PaddingValues, vm : LoginViewModel, vm2 : NetWorkViewMo
             overlineContent = { getTimeStamp()?.let { Text(text = it) } },
             leadingContent = { Icon(painterResource(R.drawable.api), contentDescription = "Localized description",) },
             modifier = Modifier.clickable {
-                vm.My()
+                vm.getMyApi()
                 showToast("正在更新信息")
             }
         )

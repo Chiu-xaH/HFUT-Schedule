@@ -181,7 +181,7 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                         async {
                             showitem4 = false
                             Handler(Looper.getMainLooper()).post{
-                                vm.ElectricData.value = "{}"
+                                vm.electricData.value = "{}"
                             }
                             SharedPrefs.saveString("BuildNumber", BuildingsNumber)
                             SharedPrefs.saveString("EndNumber", EndNumber)
@@ -192,7 +192,7 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                         // async { vm.searchEle(jsons) }.await()
                         async {
                             Handler(Looper.getMainLooper()).post{
-                                vm.ElectricData.observeForever { result ->
+                                vm.electricData.observeForever { result ->
                                     if (result?.contains("success") == true) {
                                         showButton = true
                                         try {

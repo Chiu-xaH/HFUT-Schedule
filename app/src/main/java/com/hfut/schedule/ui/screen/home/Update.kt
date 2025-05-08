@@ -2,6 +2,8 @@ package com.hfut.schedule.ui.screen.home
 
 import android.os.Handler
 import android.os.Looper
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.lifecycle.Observer
 import com.google.gson.Gson
 import com.google.gson.JsonArray
@@ -9,7 +11,10 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import com.hfut.schedule.logic.model.HolidayBean
 import com.hfut.schedule.logic.model.HolidayResponse
+import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.network.parse.JxglstuParseUtils
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
@@ -25,6 +30,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -39,7 +45,7 @@ fun initNetworkRefresh(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIVie
     val cookie = if(!vm.webVpn) prefs.getString("redirect", "")  else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket","")
     CoroutineScope(Job()).apply {
         // 刷新个人接口
-        launch { vm2.My() }
+        launch { vm2.getMyApi() }
         // 用于更新ifSaved
         launch { vm.getExamJXGLSTU(cookie!!) }
         // 更新课程表
@@ -61,6 +67,13 @@ fun initNetworkRefresh(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIVie
             launch { getTodayNet(vm) }
         if(showCard)
             launch { initCardNetwork(vm,vmUI) }
+        launch {
+            val showWeather = DataStoreManager.showFocusWeatherWarn.first()
+            val state = vm.weatherWarningData.state.first() // 只发送一次请求 API有次数限制
+            if(showWeather && state  !is SimpleUiState.Success) {
+                vm.getWeatherWarn()
+            }
+        }
         // 更新节假日信息
         if(DateTimeUtils.Date_yyyy != getHolidayYear()) {
             launch { vm.downloadHoliday() }

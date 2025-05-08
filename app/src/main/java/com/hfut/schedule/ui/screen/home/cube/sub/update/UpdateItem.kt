@@ -51,8 +51,18 @@ fun VersionInfo() {
     DividerTextExpandedWith(text = "新特性") {
 //        UpdateItems("新增 教务课程表导出为ics文件", "位于 课程表-多课表-写入日历日程",UpdateType.ADD)
 //        UpdateItems("重构 提纯出CAS统一认证登录逻辑，为更多平台的一键登录做准备", null,UpdateType.RENEW)
-        UpdateItems("重构 网络请求层，重新进行封装，使用Flow代替LiveData，优化潜在的内存泄漏问题，增加不同状态下的展示", "进度: 完成34/搁置1/总100",UpdateType.RENEW)
-//        UpdateItems("新增 课程进度实时通知", "仅Android 16+", UpdateType.ADD)
+//        UpdateItems("新增 本地聚焦卡片快速转化为云端卡片，一键共享本地卡片", null, UpdateType.ADD)
+//        UpdateItems("新增 对共建平台已上传卡片的信息编辑", null, UpdateType.ADD)
+        UpdateItems("重构 网络请求层，重新进行封装，使用Flow代替LiveData，优化潜在的内存泄漏问题，增加不同状态下的展示", "进度: 完成38/搁置12/总101",UpdateType.RENEW)
+        UpdateItems("重构 节假日时绽放礼花动画", "解耦至APP端，自动根据节假日开启", UpdateType.RENEW)
+        UpdateItems("新增 共建平台聚焦卡片的下载量显示", null, UpdateType.ADD)
+        UpdateItems("新增 共建平台上传卡片时附带本地添加的开关", null, UpdateType.ADD)
+        UpdateItems("新增 气象预警", "位于 查询中心-生活服务 与 聚焦首页，仅在需要时显示", UpdateType.ADD)
+        UpdateItems("重置 实时层级模糊和运动模糊的开关持久化存储，以修复安卓10及其以下用户升级之后运动模糊开关无法关闭的Bug", null, UpdateType.FIX)
+        UpdateItems("优化 共建平台已贡献列表中对过期项目的特别显示", null, UpdateType.OPTIMIZE)
+        UpdateItems("优化 共建平台重复下载聚焦日程的逻辑问题", null, UpdateType.OPTIMIZE)
+        UpdateItems("优化 添加网课类型聚焦卡片时的日期时间选择机制", null, UpdateType.OPTIMIZE)
+//        UpdateItems("优化 部分列表快速滑动时首张卡片卡顿的问题", null, UpdateType.OPTIMIZE)
 //        UpdateItems("优化 层级转场时的圆角", null, UpdateType.OPTIMIZE)
     }
 }

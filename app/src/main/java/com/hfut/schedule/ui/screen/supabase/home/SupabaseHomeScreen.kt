@@ -3,6 +3,7 @@ package com.hfut.schedule.ui.screen.supabase.home
 import android.annotation.SuppressLint
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -23,12 +24,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
+import androidx.compose.material.BadgedBox
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.Badge
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,6 +42,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -44,6 +50,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
@@ -51,6 +58,7 @@ import com.hfut.schedule.logic.database.entity.CustomEventDTO
 import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.database.util.CustomEventMapper
 import com.hfut.schedule.logic.enumeration.SortType
+import com.hfut.schedule.logic.util.network.SimpleUiState
 import com.hfut.schedule.logic.util.network.reEmptyLiveDta
 import com.hfut.schedule.logic.util.network.toTimestampWithOutT
 import com.hfut.schedule.logic.util.storage.DataStoreManager
@@ -171,28 +179,21 @@ private fun SupabaseScheduleUI(vm: NetWorkViewModel,sortType : SortType,sortReve
         val expandedStates = remember { mutableStateMapOf<Int, Boolean>() }
         val downloadStates = remember { mutableStateMapOf<Int, Boolean>() }
 
+
         LazyColumn {
             item { Spacer(Modifier.height(innerPadding.calculateTopPadding())) }
 
             items(sortList.size, key = { sortList[it].id }) { index ->
                 val item = sortList[index]
-//                var count by remember { mutableStateOf("") }
-//                LaunchedEffect(Unit) {
-//                    async { vm.supabaseGetEventForkCount(jwt,item.id) }.await()
-//                    launch {
-//                        Handler(Looper.getMainLooper()).post{
-//                            Handler(Looper.getMainLooper()).post {
-//                                vm.supabaseGetEventForkCountResp.observeForever { result ->
-//                                    if (result != null && result.toIntOrNull() != null) {
-//                                        count = result
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
+
+                val count by produceState(initialValue = "") {
+                    vm.eventForkCountCache[item.id]?.let { value = it }
+                }
+                LaunchedEffect(item.id) {
+                    async { vm.supabaseGetEventForkCount(jwt,item.id) }.await()
+                }
                 val isExpanded = expandedStates[index] ?: !filter
-                val downloaded = downloadStates[index] ?: false
+                var downloaded by remember { mutableStateOf(false) }
                 Box(modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null)) {
                     MyCustomCard(containerColor = cardNormalColor()) {
                         TransplantListItem(
@@ -200,37 +201,73 @@ private fun SupabaseScheduleUI(vm: NetWorkViewModel,sortType : SortType,sortReve
                             overlineContent = { Text(item.timeDescription) },
                             supportingContent = item.description?.let { { Text(it) } },
                             trailingContent = {
-                                FilledTonalIconButton(
-                                    enabled = (downloadStates[index] != false),
-                                    onClick = {
-                                        scope.launch {
-                                            async {
-                                                val entity = CustomEventDTO(
-                                                    title = item.name,
-                                                    dateTime = item.dateTime,
-                                                    type = item.type,
-                                                    description = item.description,
-                                                    remark = item.timeDescription,
-                                                    supabaseId = item.id
-                                                )
-                                                // 添加到数据库
-                                                DataBaseManager.customEventDao.insert(CustomEventMapper.dtoToEntity(entity))
-                                            }.await()
-                                            async {
-                                                showToast("已下载到本地")
-                                            }.await()
-                                            // 下载量++上传 下载量+1
-                                            if(!downloaded)
-                                                launch {
-                                                    downloadStates[index] = true
-                                                    expandedStates[index] = true
-                                                    vm.supabaseAddCount(jwt,item.id)
-//                                                count = count.toIntOrNull()?.let { ( it + 1).toString() } ?: count
-                                                }
+                                // 检查是否已经存在 若存在相同id则显示别的按钮和操作
+                                val isHasAdded by produceState(initialValue = false) {
+                                    value = DataBaseManager.customEventDao.isExistBySupabaseId(item.id)
+                                }
+                                if(isHasAdded) {
+                                    FilledTonalButton(
+                                        onClick = {
+                                            scope.launch {
+                                                async {
+                                                    val entity = CustomEventDTO(
+                                                        title = item.name,
+                                                        dateTime = item.dateTime,
+                                                        type = item.type,
+                                                        description = item.description,
+                                                        remark = item.timeDescription,
+                                                        supabaseId = item.id
+                                                    )
+                                                    // 检查是否已经存在 若存在相同id则直接覆盖掉
+                                                    DataBaseManager.customEventDao.delBySupabaseId(item.id)
+                                                    // 添加到数据库
+                                                    DataBaseManager.customEventDao.insert(CustomEventMapper.dtoToEntity(entity))
+                                                }.await()
+                                                async {
+                                                    showToast("已覆盖本地日程")
+                                                }.await()
+                                            }
+                                        }
+                                    ) {
+                                        if(downloaded) {
+                                            Icon(painter = painterResource(id = R.drawable.check), contentDescription = null)
+                                        } else {
+                                            Text("覆盖")
                                         }
                                     }
-                                ) {
-                                    Icon(painter = painterResource(id = if(downloaded) R.drawable.check else R.drawable.download), contentDescription = null)
+                                } else {
+                                    FilledTonalIconButton(
+                                        enabled = !downloaded,
+                                        onClick = {
+                                            scope.launch {
+                                                async {
+                                                    val entity = CustomEventDTO(
+                                                        title = item.name,
+                                                        dateTime = item.dateTime,
+                                                        type = item.type,
+                                                        description = item.description,
+                                                        remark = item.timeDescription,
+                                                        supabaseId = item.id
+                                                    )
+                                                    // 检查是否已经存在 若存在相同id则直接覆盖掉
+                                                    // 添加到数据库
+                                                    DataBaseManager.customEventDao.insert(CustomEventMapper.dtoToEntity(entity))
+                                                }.await()
+                                                async {
+                                                    showToast("已克隆到本地")
+                                                }.await()
+                                                // 下载量++上传 下载量+1
+                                                if(!downloaded)
+                                                    launch {
+                                                        downloaded = true
+                                                        expandedStates[index] = true
+                                                        vm.supabaseAddCount(jwt,item.id)
+//                                                count = count.toIntOrNull()?.let { ( it + 1).toString() } ?: count
+                                                    }
+                                            }
+                                        }
+                                    ) {
+                                        Icon(painter = painterResource(id = if(downloaded) R.drawable.check else R.drawable.download), contentDescription = null)
 //                                BadgedBox(
 //                                    badge = {
 //                                        if (count.isNotEmpty() || count.isNotBlank())
@@ -242,15 +279,27 @@ private fun SupabaseScheduleUI(vm: NetWorkViewModel,sortType : SortType,sortReve
 //                                            }
 //                                    }
 //                                ) { Icon(painter = painterResource(id = if(downloaded) R.drawable.check else R.drawable.download), contentDescription = null) }
+                                    }
                                 }
                             },
                             leadingContent = {
-                                Icon(painterResource(
-                                    when(item.type) {
-                                        CustomEventType.SCHEDULE -> R.drawable.calendar
-                                        CustomEventType.NET_COURSE -> R.drawable.net
-                                    }
-                                ),null)
+                                BadgedBox(
+                                    badge = {
+                                        if (count.isNotEmpty() || count.isNotBlank())
+                                            Badge(
+                                                containerColor = MaterialTheme.colorScheme.primary,
+                                            ) {
+                                                Text(text = count)
+                                            }
+                                    },
+                                ) {
+                                    Icon(painterResource(
+                                        when(item.type) {
+                                            CustomEventType.SCHEDULE -> R.drawable.calendar
+                                            CustomEventType.NET_COURSE -> R.drawable.net
+                                        }
+                                    ),null)
+                                }
                             },
                             modifier = Modifier.clickable { expandedStates[index] = !isExpanded }
                         )

@@ -274,7 +274,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
                         async {
                             showitem4 = false
                             Handler(Looper.getMainLooper()).post{
-                                vm.ElectricData.value = "{}"
+                                vm.electricData.value = "{}"
                             }
                             SharedPrefs.saveString("PhoneNumber",phoneNumber )
                         }.await()

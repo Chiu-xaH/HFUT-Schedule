@@ -55,7 +55,7 @@ fun MainHost(networkVm : NetWorkViewModel, loginVm : LoginViewModel, uiVm : UIVi
         // 如果进入的是登陆界面 未登录做准备
         if(!(startActivity && login)) {
             //从服务器获取信息
-            launch { loginVm.My() }
+            launch { loginVm.getMyApi() }
             launch { loginVm.getCookie() }
             launch { SharedPrefs.saveString("tip","0") }
             launch {  loginVm.getKey() }

@@ -11,13 +11,15 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.ui.screen.card.bill.main.getBills
-import com.hfut.schedule.ui.screen.card.count.main.MonthBillUI
-import com.hfut.schedule.ui.screen.card.bill.TodayCount
+import com.hfut.schedule.logic.util.network.SimpleUiState
 import com.hfut.schedule.ui.component.DevelopingUI
 import com.hfut.schedule.ui.component.EmptyUI
+import com.hfut.schedule.ui.screen.card.bill.TodayCount
+import com.hfut.schedule.ui.screen.card.count.main.MonthBillUI
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalFoundationApi::class)
@@ -48,6 +50,8 @@ fun CardHome(innerPadding : PaddingValues, vm : NetWorkViewModel, pagerState : P
 //            }
 //        }
 //        Spacer(modifier = Modifier.height(5.dp))
+        val uiState by vm.huixinBillResult.state.collectAsState()
+
         HorizontalPager(state = pagerState) { page ->
             Scaffold { it->
                 if(page == TAB_MONTH) {
@@ -56,8 +60,11 @@ fun CardHome(innerPadding : PaddingValues, vm : NetWorkViewModel, pagerState : P
                     LazyColumn() {
                         when (page) {
                             TAB_DAY ->  {
-                                if(getBills(vm).size == 0) item { EmptyUI() }
-                                else { items(getBills(vm).size) { item -> TodayCount(vm, item) } }
+                                if(uiState is SimpleUiState.Success) {
+                                    val list = (uiState as SimpleUiState.Success).data.data.records
+                                    if(list.isEmpty()) item { EmptyUI() }
+                                    else { items(list.size) { item -> TodayCount(list[item]) } }
+                                }
                             }
                             TAB_TERM -> item { DevelopingUI() }
                         }

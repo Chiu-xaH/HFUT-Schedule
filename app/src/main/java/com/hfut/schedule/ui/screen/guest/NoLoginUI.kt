@@ -207,7 +207,7 @@ fun GuestMainScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewMo
         var innerPaddingValues by remember { mutableStateOf<PaddingValues?>(null) }
 
         Box(modifier = Modifier.align(Alignment.BottomEnd).zIndex(3f)) {
-            innerPaddingValues?.let { AddEventFloatButton(isSupabase = false,isVisible = isNavigationIconVisible && targetPage == FOCUS,hazeState,vmUI,it,vm) }
+            innerPaddingValues?.let { AddEventFloatButton(isSupabase = false,isVisible = isNavigationIconVisible && targetPage == FOCUS,vmUI,it,vm) }
         }
         Scaffold(
             modifier = transitionBackground(isAddUIExpanded).fillMaxSize(),

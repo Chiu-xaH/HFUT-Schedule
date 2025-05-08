@@ -1,9 +1,7 @@
 package com.hfut.schedule.ui.screen.card.function.main
 
-import android.os.Build
-import androidx.annotation.RequiresApi
+
 import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
@@ -21,7 +19,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Card
@@ -36,16 +33,16 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -55,53 +52,71 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.enumeration.CardBarItems
-import com.hfut.schedule.logic.util.other.AppVersion
+import com.hfut.schedule.logic.util.network.SimpleUiState
 import com.hfut.schedule.logic.util.parse.formatDecimal
-import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.logic.util.sys.DateTimeUtils
-import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
+import com.hfut.schedule.ui.component.DividerTextExpandedWith
+import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.RefreshIndicator
+import com.hfut.schedule.ui.component.ScrollText
+import com.hfut.schedule.ui.component.StyleCardListItem
+import com.hfut.schedule.ui.component.TransplantListItem
+import com.hfut.schedule.ui.component.WebDialog
+import com.hfut.schedule.ui.component.appHorizontalDp
+import com.hfut.schedule.ui.component.largeCardColor
+import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.screen.card.bill.TodayBills
-import com.hfut.schedule.ui.screen.card.bill.main.getBills
 import com.hfut.schedule.ui.screen.card.function.CardLimit
 import com.hfut.schedule.ui.screen.card.function.SearchBillsUI
 import com.hfut.schedule.ui.screen.card.function.SelecctDateRange
 import com.hfut.schedule.ui.screen.home.focus.funiction.initCardNetwork
 import com.hfut.schedule.ui.screen.home.search.function.electric.EleUI
 import com.hfut.schedule.ui.screen.home.search.function.loginWeb.LoginWebScaUI
-
+import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.shower.ShowerUI
 import com.hfut.schedule.ui.screen.home.search.function.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.transfer.getCampus
-//import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
-
-import com.hfut.schedule.ui.component.appHorizontalDp
-import com.hfut.schedule.ui.component.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.RefreshIndicator
-import com.hfut.schedule.ui.component.largeCardColor
-import com.hfut.schedule.ui.component.showToast
-import com.hfut.schedule.ui.component.StyleCardListItem
-import com.hfut.schedule.ui.component.TransplantListItem
-import com.hfut.schedule.ui.component.WebDialog
-import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
-import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.appBlur
 import com.hfut.schedule.ui.style.bottomSheetRound
+import com.hfut.schedule.ui.util.navigateAndSave
+import com.hfut.schedule.viewmodel.UIViewModel
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import java.math.BigDecimal
-import java.math.RoundingMode
 
-@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun loadTodayPay(vm: NetWorkViewModel) : State<String> = produceState(initialValue = "--") {
+    var total = 0.0
+    try {
+        val uiState = vm.huixinBillResult.state.first { it !is SimpleUiState.Loading }
+        if(uiState is SimpleUiState.Success) {
+            val list = uiState.data.data.records
+            for (item in list) {
+                val get = item.effectdateStr
+                val name = item.resume
+                val todayDate = get.substringBefore(" ")
+                var num = item.tranamt.toString()
+                // 优化0.0X元Bug
+                if(num.length == 1)
+                    num = "00$num"
+                num = num.substring(0, num.length - 2) + "." + num.substring(num.length - 2)
+                if (DateTimeUtils.Date_yyyy_MM_dd == todayDate) {
+                    if (!name.contains("充值")) total += num.toFloat()
+                }
+            }
+            value = formatDecimal(total,2)
+        }
+    } catch (_ : Exception) { value = formatDecimal(total,2) }
+}
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navController :  NavHostController, vmUI : UIViewModel, hazeState: HazeState) {
@@ -125,80 +140,28 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
         }
     })
 
-
-
-
     var showDialog by remember { mutableStateOf(false) }
-
-    val sheetState_Range = rememberModalBottomSheetState()
     var showBottomSheet_Range by remember { mutableStateOf(false) }
-
-    val sheetState_Search = rememberModalBottomSheetState()
     var showBottomSheet_Search by remember { mutableStateOf(false) }
-
-    val sheetState_Settings = rememberModalBottomSheetState()
     var showBottomSheet_Settings by remember { mutableStateOf(false) }
-
-
-
-    val sheetState_ELectric = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_ELectric by remember { mutableStateOf(false) }
-
     var showBottomSheet_Web by remember { mutableStateOf(false) }
     val sheetState_Web = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-
-
     val sheetState_Shower = rememberModalBottomSheetState()
     var showBottomSheet_Shower by remember { mutableStateOf(false) }
-
-    val sheetState_Fee = rememberModalBottomSheetState()
     var showBottomSheet_Fee by remember { mutableStateOf(false) }
-
-
-
-
-
-    val sheetState_NFC = rememberModalBottomSheetState()
     var showBottomSheet_NFC by remember { mutableStateOf(false) }
-
     var showBottomSheet_Toady by remember { mutableStateOf(false) }
-    val sheetState_Today = rememberModalBottomSheetState()
 
     val cardValue by remember { derivedStateOf { vmUI.cardValue } }
-
-
-    var todaypay by remember { mutableStateOf(0.0) }
-
-    for (item in 0 until getBills(vm).size) {
-        val get = getBills(vm)[item].effectdateStr
-        val name = getBills(vm)[item].resume
-        val todaydate = get?.substringBefore(" ")
-        var num = getBills(vm)[item].tranamt.toString()
-
-        //优化0.0X元Bug
-        if(num.length == 1)
-            num = "00$num"
-
-
-        num = num.substring(0, num.length - 2) + "." + num.substring(num.length - 2)
-
-        val num_float = num.toFloat()
-
-        if ( DateTimeUtils.Date_yyyy_MM_dd == todaydate) {
-            if (!name.contains("充值")) todaypay += num_float
-        }
-
-    }
-
-    val str by remember { mutableStateOf(formatDecimal(todaypay,2)) }
-
+    val str by loadTodayPay(vm)
 
     var text by remember { mutableStateOf(cardValue?.balance ?: prefs.getString("card","00")) }
     var name by remember { mutableStateOf(cardValue?.name ?: getPersonInfo().name) }
     var nows by remember { mutableStateOf(cardValue?.now ?: prefs.getString("card_now","00")) }
     var settles by remember { mutableStateOf(cardValue?.settle ?: prefs.getString("card_settle","00")) }
 
-    val auth = SharedPrefs.prefs.getString("auth","")
+    val auth = prefs.getString("auth","")
     val url by remember { mutableStateOf(MyApplication.HUIXIN_URL + "plat/pay" + "?synjones-auth=" + auth) }
 
     var showDialog_Huixin by remember { mutableStateOf(false) }
@@ -224,8 +187,6 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
             hazeState = hazeState,
             showBottomSheet = showBottomSheet_Fee,
             isFullExpand = false
-//            sheetState = sheetState_Fee,
-//            shape = bottomSheetRound(sheetState_Fee)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
@@ -398,7 +359,6 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
         }
     }
 
-
     val scale = animateFloatAsState(
         targetValue = if (refreshing) 0.9f else 1f, // 按下时为0.9，松开时为1
         //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
@@ -411,11 +371,6 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
         animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
         label = "" // 使用弹簧动画
     )
-    val blurSize by animateDpAsState(
-        targetValue = if (refreshing) 10.dp else 0.dp, label = ""
-        ,animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
-    )
-    val motionBlur by DataStoreManager.motionBlurFlow.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
 
     Box(modifier = Modifier
         .fillMaxHeight()

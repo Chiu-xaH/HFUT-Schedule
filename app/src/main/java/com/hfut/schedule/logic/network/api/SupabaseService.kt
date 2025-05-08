@@ -69,6 +69,7 @@ interface SupabaseService {
     fun addEvent(
         @Header("Authorization") authorization : String,
         @Header("apikey") publicKey : String = getSupabasePublicKey(),
+        @Header("Prefer") prefer: String = "return=representation",
         @Body entity : SupabaseEventEntity
     ) : Call<ResponseBody>
 

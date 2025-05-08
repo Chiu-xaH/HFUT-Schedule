@@ -24,6 +24,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,11 +36,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.LibraryItems
+import com.hfut.schedule.logic.util.network.SimpleUiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.network.reEmptyLiveDta
 import com.hfut.schedule.ui.component.AnimationCardListItem
 import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.component.BottomSheetTopBar
+import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.LoadingUI
 import com.hfut.schedule.ui.component.MyCustomCard
@@ -149,32 +152,19 @@ fun LibraryChips(vm : NetWorkViewModel, hazeState: HazeState) {
 }
 
 @Composable
-fun BorrowItems(vm : NetWorkViewModel, PerfsJson : LibraryItems) {
-    val CommuityTOKEN = prefs.getString("TOKEN","")
-
-    var loading by remember { mutableStateOf(true) }
-    LaunchedEffect(Unit) {
-        if(loading) {
-            CommuityTOKEN?.let {
-                async { reEmptyLiveDta(vm.booksChipData) }.await()
-                async { vm.communityBooks(it,PerfsJson) }.await()
-                launch {
-                    Handler(Looper.getMainLooper()).post{
-                        vm.booksChipData.observeForever { result ->
-                            if (result != null && result.contains("success")) {
-                                loading = false
-                            }
-                        }
-                    }
-                }
-            }
+fun BorrowItems(vm : NetWorkViewModel, type : LibraryItems) {
+    val uiState by vm.booksChipData.state.collectAsState()
+    val refreshNetwork: suspend () -> Unit = {
+        prefs.getString("TOKEN","")?.let {
+            vm.booksChipData.clear()
+            vm.communityBooks(it,type)
         }
     }
-
-    if(loading) {
-        LoadingUI()
-    } else {
-        val list = getBorrow(vm)
+    LaunchedEffect(Unit) {
+        refreshNetwork()
+    }
+    CommonNetworkScreen(uiState, onReload = refreshNetwork) {
+        val list = (uiState as SimpleUiState.Success).data
         LazyColumn {
             items(list.size){ index ->
                 val item = list[index]

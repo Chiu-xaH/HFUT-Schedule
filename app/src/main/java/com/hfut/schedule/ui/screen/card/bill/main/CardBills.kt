@@ -1,158 +1,67 @@
 package com.hfut.schedule.ui.screen.card.bill.main
 
-import android.annotation.SuppressLint
-import android.os.Handler
-import android.os.Looper
-import android.widget.Toast
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.CircularProgressIndicator
-import com.hfut.schedule.ui.component.LoadingUI
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.google.gson.Gson
-import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.viewmodel.UIViewModel
-import com.hfut.schedule.logic.model.zjgd.BillResponse
 import com.hfut.schedule.logic.model.zjgd.records
-import com.hfut.schedule.logic.util.sys.DateTimeUtils
-import com.hfut.schedule.logic.util.network.parse.JxglstuParseUtils
-import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.network.SimpleUiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.network.reEmptyLiveDta
-import com.hfut.schedule.ui.screen.card.bill.CardRow
+import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.ui.component.AnimationCardListItem
-import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.component.BillsIcons
-import com.hfut.schedule.ui.component.cardNormalColor
-import com.hfut.schedule.ui.component.BottomSheetTopBar
+import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.LoadingUI
 import com.hfut.schedule.ui.component.MyCustomCard
-import com.hfut.schedule.ui.component.showToast
-import com.hfut.schedule.ui.component.StyleCardListItem
+import com.hfut.schedule.ui.component.PaddingForPageControllerButton
+import com.hfut.schedule.ui.component.PagingController
 import com.hfut.schedule.ui.component.TransplantListItem
+import com.hfut.schedule.ui.component.cardNormalColor
+import com.hfut.schedule.ui.screen.card.bill.CardRow
 import com.hfut.schedule.ui.style.HazeBottomSheet
-import com.hfut.schedule.ui.style.bottomSheetRound
+import com.hfut.schedule.viewmodel.UIViewModel
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
 import java.math.BigDecimal
 
-
-fun getBills(vm : NetWorkViewModel) : List<records> {
-    val billjson = vm.BillsData.value
-    if(billjson?.contains("操作成功") == true){
-        try {
-            val bill = Gson().fromJson(billjson, BillResponse::class.java)
-            val data = bill.data.records
-            val msg = bill.data.msg
-            val totalpage = bill.data.pages
-            SharedPrefs.saveString("totalpage",totalpage.toString())
-            if (msg != null) {
-                if (msg.contains("成功")) {
-                    val cardAccount = bill.data.records[0].fromAccount
-                    SharedPrefs.saveString("cardAccount", cardAccount)
-                } else {
-                    showToast(msg)
-                }
-            }
-            return data
-        } catch (e : Exception) {
-            return emptyList()
-        }
-    }
-    return emptyList()
-}
-
-
-
-
-
-
 @OptIn(ExperimentalMaterial3Api::class)
-@SuppressLint("SuspiciousIndentation")
 @Composable
 fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIViewModel, hazeState : HazeState) {
-    var loading by remember { mutableStateOf(true) }
-    var page by remember { mutableStateOf(1) }
-    var counter by remember { mutableStateOf(1) }
-    val auth = prefs.getString("auth","")
-
-    if(counter == 1) {
-        vm.CardGet("bearer $auth",page)
-        counter++
+    var page by remember { mutableIntStateOf(1) }
+    val uiState by vm.huixinBillResult.state.collectAsState()
+    val refreshNetwork: suspend () -> Unit = {
+        val auth = prefs.getString("auth","")
+        vm.huixinBillResult.clear()
+        vm.getCardBill("bearer $auth",page)
     }
-   // page = 1
-
-
-        CoroutineScope(Job()).apply {
-            launch {
-                async {
-                    //  delay(1000)
-                    Handler(Looper.getMainLooper()).post {
-                        vm.BillsData.observeForever { result ->
-                            if (result != null) {
-                                if (result.contains("操作成功")) {
-                                    loading = false
-                                    if (result.contains("操作成功")) getBills(vm)
-                                    else {
-                                        val ONE = JxglstuParseUtils.casCookies
-                                        val TGC = prefs.getString("TGC", "")
-                                        vm.OneGotoCard("$ONE;$TGC")
-                                        showToast("空数据,请再次尝试或登录")
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }.await()
-            }
-        }
-
-
+    LaunchedEffect(page) {
+        refreshNetwork()
+    }
 
     var showBottomSheet by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var Infonum by remember { mutableStateOf(0) }
+    var infoNum by remember { mutableIntStateOf(0) }
 
     if(showBottomSheet) {
         HazeBottomSheet (
@@ -160,59 +69,18 @@ fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVie
             autoShape = false,
             showBottomSheet = showBottomSheet,
             hazeState = hazeState
-//            sheetState = sheetState,
         ){
-            BillsInfo(vm,Infonum)
+            BillsInfo(vm,infoNum)
         }
     }
 
-    fun Updade() {
-        CoroutineScope(Job()).apply {
-            launch {
-                async {
-                    page = 1
-                    loading = true
-                    vm.CardGet("bearer $auth",page)
-                }.await()
-                async { reEmptyLiveDta(vm.BillsData) }.await()
-                async {
-                    Handler(Looper.getMainLooper()).post {
-                        vm.BillsData.observeForever { result ->
-                            if (result != null) {
-                                if(result.contains("{")) {
-                                    loading = false
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-   Box(){
-        AnimatedVisibility(
-            visible = loading,
-            enter = fadeIn(),
-            exit = fadeOut(),
-            modifier = Modifier
-                .padding(innerPaddings)
-                .align(Alignment.Center)
-        ) {
-            Column {
-                Spacer(modifier = Modifier.height(innerPaddings.calculateTopPadding()))
-                Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center)  {
-                    LoadingUI()
-                }
-            }
-        }
-        AnimatedVisibility(
-            visible = !loading,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            val list = getBills(vm)
-            LazyColumn() {
+    CommonNetworkScreen(uiState, onReload = refreshNetwork) {
+        val data = (uiState as SimpleUiState.Success).data.data
+        val list = data.records
+        val listState = rememberLazyListState()
+
+        Box(modifier = Modifier.fillMaxSize()) {
+            LazyColumn(state = listState) {
                 item { Spacer(modifier = Modifier.height(innerPaddings.calculateTopPadding())) }
                 if (page == 1)
                     item { CardRow(vm,vmUI, hazeState) }
@@ -223,99 +91,37 @@ fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVie
 
                     val time =bills.effectdateStr
                     val getTime = time.substringBefore(" ")
-
-
-//                    MyCustomCard{
-                        AnimationCardListItem(
-                            headlineContent = { Text(text = name) },
-                            supportingContent = { Text(text = processTranamt(bills)) },
-                            overlineContent = { Text(text = time) },
-                            leadingContent = { BillsIcons(name) },
-                            color =
+                    AnimationCardListItem(
+                        headlineContent = { Text(text = name) },
+                        supportingContent = { Text(text = processTranamt(bills)) },
+                        overlineContent = { Text(text = time) },
+                        leadingContent = { BillsIcons(name) },
+                        color =
                             if(DateTimeUtils.Date_yyyy_MM_dd == getTime)
                                 MaterialTheme.colorScheme.primaryContainer
                             else null,
-                            modifier = Modifier.clickable {
-                                Infonum = item
-                                showBottomSheet = true
-                            },
-                            index = item
-                        )
-//                    }
+                        modifier = Modifier.clickable {
+                            infoNum = item
+                            showBottomSheet = true
+                        },
+                        index = item
+                    )
                 }
-                item {
-                    val totalpage = prefs.getString("totalpage","1")
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
-
-                        OutlinedButton(
-                            onClick = {
-                                CoroutineScope(Job()).apply {
-                                    launch {
-                                        async {
-                                            if(page > 1) {
-                                                page--
-                                                loading = true
-                                                vm.CardGet("bearer $auth",page)
-                                            }
-                                        }.await()
-                                        async {
-                                            Handler(Looper.getMainLooper()).post{
-                                                vm.libraryData.observeForever { result ->
-                                                    loading = false
-                                                    getBills(vm)
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }) { Text(text = "上一页") }
-
-                        Spacer(modifier = Modifier.width(appHorizontalDp()))
-
-                        OutlinedButton(
-                            onClick = { Updade()}
-                        ) { Text(text = "${page} / ${totalpage}") }
-
-                        Spacer(modifier = Modifier.width(appHorizontalDp()))
-
-                        OutlinedButton(
-                            onClick = {
-                                CoroutineScope(Job()).apply {
-                                    launch {
-                                        async {
-                                            if ( page < totalpage?.toInt() ?: 1) {
-                                                page++
-                                                loading = true
-                                                vm.CardGet("bearer " + auth,page)
-                                            }
-                                        }.await()
-                                        async {
-                                            async {
-                                                Handler(Looper.getMainLooper()).post {
-                                                    vm.libraryData.observeForever { result ->
-                                                        loading = false
-                                                        getBills(vm)
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }) { Text(text = "下一页") }
-                    }
-                    Spacer(modifier = Modifier.height(innerPaddings.calculateBottomPadding()))
-                    Spacer(modifier = Modifier.height(5.dp))
-                }
+                item { Spacer(modifier = Modifier.height(innerPaddings.calculateBottomPadding())) }
+                item { PaddingForPageControllerButton() }
             }
+            PagingController(listState,page, showUp = true,nextPage = { page = it }, previousPage = { page = it }, modifier = Modifier.padding(innerPaddings))
         }
+
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BillsInfo(vm : NetWorkViewModel, Infonum : Int) {
-    val bills = getBills(vm)[Infonum]
+    val uiState by vm.huixinBillResult.state.collectAsState()
+    val data = (uiState as SimpleUiState.Success).data.data.records
+    val bills = data[Infonum]
     Column {
         HazeBottomSheetTopBar("详情", isPaddingStatusBar = false)
         MyCustomCard(hasElevation = false, containerColor = cardNormalColor()){
@@ -370,9 +176,9 @@ fun processTranamt(bills : records) : String {
         num = "00$num"
     num = num.substring(0, num.length - 2) + "." + num.substring(num.length - 2)
     val big = BigDecimal(num)
-    val num_float = big.toFloat()
-    var pay = "$num_float 元"
-    if (bills.resume.contains("充值") || bills.resume.contains("补助")) pay = "+ $pay"
-    else pay = "- $pay"
+    val numFloat = big.toFloat()
+    var pay = "$numFloat 元"
+    pay = if (bills.resume.contains("充值") || bills.resume.contains("补助")) "+ $pay"
+    else "- $pay"
     return pay
 }

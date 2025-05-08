@@ -44,10 +44,7 @@ class LoginViewModel : ViewModel() {
         val cookies : String = sessionLiveData.value  + jsessionid.value +";" + keys
         JxglstuParseUtils.casCookies = cookies
 
-      //  val ticketWebVpn = prefs.getString("WebVpn","")
-        val ticket = webVpnTicket.value?.substringAfter("wengine_vpn_ticketwebvpn_hfut_edu_cn=")
-            ?.substringBefore(";")
-       // Log.d("i",webVpnTicket.value.toString())
+        val ticket = webVpnTicket.value?.substringAfter("wengine_vpn_ticketwebvpn_hfut_edu_cn=")?.substringBefore(";")
         val call =
             if(!webVpn) execution.value?.let { Login.login(cookie = cookies,username = username, password = password,execution = it,code = imageCode) }
             else execution.value?.let { LoginWebVpn.loginWebVpn(cookie ="wengine_vpn_ticketwebvpn_hfut_edu_cn=${ticket}",username =username, password =password,execution= it, code = imageCode) }
@@ -92,7 +89,6 @@ class LoginViewModel : ViewModel() {
 
     var webVpnTicket = MutableLiveData<String?>()
     fun getKeyWebVpn() {
-    //    val ticketWebVpn = prefs.getString("WebVpn","")
     val ticket = webVpnTicket.value?.substringAfter("wengine_vpn_ticketwebvpn_hfut_edu_cn=")
         ?.substringBefore(";")
         val call = LoginWebVpn.getKeyWebVpn("show_vpn=1; show_fast=0; heartbeat=1; show_faq=0; wengine_vpn_ticketwebvpn_hfut_edu_cn=${ticket}; refresh=1")
@@ -104,7 +100,6 @@ class LoginViewModel : ViewModel() {
                     val responses = response.body()?.string()
                     saveString("webVpnKey",responses?.substringAfter("LOGIN_FLAVORING=")?.substringBefore(";"))
                 }
-                //else Log.d("测试","失败，${response.code()},${response.message()}")
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
@@ -116,13 +111,12 @@ class LoginViewModel : ViewModel() {
 
     var status = MutableLiveData<Int?>()
     fun putKey(ticket : String) {
-        //    val ticketWebVpn = prefs.getString("WebVpn","")
 
         val call = LoginWebVpn.putKey("wengine_vpn_ticketwebvpn_hfut_edu_cn=${ticket}")
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                status.value = response?.code()
+                status.value = response.code()
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
@@ -145,7 +139,6 @@ class LoginViewModel : ViewModel() {
                         .substringBefore(";")
                     saveString("webVpnTicket",ticket)
                 }
-                //else Log.d("测试","失败，${response.code()},${response.message()}")
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
@@ -156,8 +149,7 @@ class LoginViewModel : ViewModel() {
     }
 
     fun loginJxglstu() {
-        val ticket = webVpnTicket.value?.substringAfter("wengine_vpn_ticketwebvpn_hfut_edu_cn=")
-            ?.substringBefore(";")
+        val ticket = webVpnTicket.value?.substringAfter("wengine_vpn_ticketwebvpn_hfut_edu_cn=")?.substringBefore(";")
         val call = LoginWebVpn.loginJxglstu("wengine_vpn_ticketwebvpn_hfut_edu_cn=${ticket}")
 
         call.enqueue(object : Callback<ResponseBody> {
@@ -182,7 +174,6 @@ class LoginViewModel : ViewModel() {
                     execution.value = doc.select("input[name=execution]").first()?.attr("value")
                 }
                 if(response.isSuccessful) { sessionLiveData.value  = response.headers()["Set-Cookie"].toString().substringBefore(";").plus(";") }
-               // else Log.d("失败","getKey，${response.code()},${response.message()}")
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
@@ -192,7 +183,7 @@ class LoginViewModel : ViewModel() {
         })
     }
 
-    fun My() {
+    fun getMyApi() {
         val call = MyAPI.my()
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {

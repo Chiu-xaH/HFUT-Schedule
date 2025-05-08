@@ -2,9 +2,7 @@ package com.hfut.schedule.ui.screen.card.bill
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,16 +11,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,63 +27,33 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.parse.formatDecimal
-import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.viewmodel.UIViewModel
+import com.hfut.schedule.logic.model.zjgd.records
+import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.ui.screen.card.bill.main.getBills
-import com.hfut.schedule.ui.screen.card.bill.main.processTranamt
 import com.hfut.schedule.ui.component.AnimationCustomCard
 import com.hfut.schedule.ui.component.BillsIcons
-import com.hfut.schedule.ui.component.BottomSheetTopBar
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.MyCustomCard
-import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.ui.component.ScrollText
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
+import com.hfut.schedule.ui.screen.card.bill.main.processTranamt
+import com.hfut.schedule.ui.screen.card.function.main.loadTodayPay
 import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.viewmodel.UIViewModel
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
-import java.math.BigDecimal
-import java.math.RoundingMode
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CardRow(vm : NetWorkViewModel, vmUI : UIViewModel, hazeState: HazeState) {
-    var todaypay = 0.0
-    var date = DateTimeUtils.Date_yyyy_MM_dd
     val cardValue by remember { derivedStateOf { vmUI.cardValue } }
-
-    for (item in 0 until getBills(vm).size) {
-        val get = getBills(vm)[item].effectdateStr
-        val name = getBills(vm)[item].resume
-        val todaydate = get?.substringBefore(" ")
-        var num = getBills(vm)[item].tranamt.toString()
-
-        //优化0.0X元Bug
-        if(num.length == 1)
-            num = "00$num"
-
-
-        num = num.substring(0, num.length - 2) + "." + num.substring(num.length - 2)
-
-        val num_float = num.toFloat()
-
-        if (date == todaydate) {
-            if (!name.contains("充值")) todaypay += num_float
-        }
-
-    }
     val now = prefs.getString("card_now","00")
     val settle = prefs.getString("card_settle","00")
-//    val num = todaypay.toString()
-//    val bd = BigDecimal(num)
-    val str = formatDecimal(todaypay,2)
+    val str by loadTodayPay(vm)
 
     var showBottomSheet by remember { mutableStateOf(false) }
-//    val sheetState = rememberModalBottomSheetState()
-
 
     if(showBottomSheet) {
         HazeBottomSheet(
@@ -98,8 +61,6 @@ fun CardRow(vm : NetWorkViewModel, vmUI : UIViewModel, hazeState: HazeState) {
             isFullExpand = false,
             showBottomSheet = showBottomSheet,
             hazeState = hazeState
-//            sheetState = sheetState,
-//            shape = bottomSheetRound(sheetState)
         ){
            TodayBills(vm)
         }
@@ -107,7 +68,6 @@ fun CardRow(vm : NetWorkViewModel, vmUI : UIViewModel, hazeState: HazeState) {
 
     //添加间距
     Spacer(modifier = Modifier.height(5.dp))
-
 
     AnimationCustomCard(containerColor = MaterialTheme.colorScheme.errorContainer) {
         Row {
@@ -119,13 +79,11 @@ fun CardRow(vm : NetWorkViewModel, vmUI : UIViewModel, hazeState: HazeState) {
                     .clickable { Starter.startAppUrl(MyApplication.ALIPAY_CARD_URL) },
                 overlineContent = { ScrollText(text = "待圈存 ￥${cardValue?.settle ?: settle}") },
                 leadingContent = { Icon(painterResource(R.drawable.account_balance_wallet), contentDescription = "Localized description",) },
-//                colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer)
             )
             TransplantListItem(
                 headlineContent = { ScrollText(text = "￥${str}") },
                 overlineContent = { Text(text = " 今日消费") },
                 leadingContent = { Icon(painterResource(R.drawable.send_money), contentDescription = "Localized description",) },
-//                colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.errorContainer),
                 modifier = Modifier
                     .clickable { showBottomSheet = true }
                     .weight(.5f)
@@ -137,7 +95,7 @@ fun CardRow(vm : NetWorkViewModel, vmUI : UIViewModel, hazeState: HazeState) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TodayBills(vm: NetWorkViewModel) {
-//    val bills = getBills(vm)
+    val uiState by vm.huixinBillResult.state.collectAsState()
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = Color.Transparent,
@@ -145,26 +103,28 @@ fun TodayBills(vm: NetWorkViewModel) {
             HazeBottomSheetTopBar("今日消费")
         },
     ) {innerPadding ->
-        LazyColumn(modifier = Modifier.padding(innerPadding)) {
-            items(getBills(vm).size) { item ->
-                TodayCount(vm, item )
+        if(uiState is SimpleUiState.Success) {
+            val list = (uiState as SimpleUiState.Success).data.data.records
+            LazyColumn(modifier = Modifier.padding(innerPadding)) {
+                items(list.size) { item ->
+                    TodayCount(list[item] )
+                }
             }
         }
     }
 }
 @Composable
-fun TodayCount(vm  : NetWorkViewModel, item : Int) {
-    val bills = getBills(vm)[item]
-    var name = bills.resume
+fun TodayCount(item : records) = with(item) {
+    var name = resume
     if (name.contains("有限公司")) name = name.replace("有限公司","")
 
-    val time =bills.effectdateStr
+    val time = effectdateStr
     val getTime = time.substringBefore(" ")
 
     if(DateTimeUtils.Date_yyyy_MM_dd == getTime) {
         StyleCardListItem(
             headlineContent = { Text(text = name) },
-            supportingContent = { Text(text = processTranamt(bills)) },
+            supportingContent = { Text(text = processTranamt(item)) },
             overlineContent = { Text(text = time) },
             leadingContent = { BillsIcons(name) },
             modifier = Modifier.clickable {
@@ -172,7 +132,4 @@ fun TodayCount(vm  : NetWorkViewModel, item : Int) {
             }
         )
     }
-//        MyCustomCard(hasElevation = false, containerColor = ) {
-
-//        }
 }

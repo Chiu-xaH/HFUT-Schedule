@@ -16,5 +16,5 @@ suspend fun initGuestNetwork(vm : NetWorkViewModel, vm2 : LoginViewModel) = with
     //检查更新
     launch { vm.getUpdate() }
     // API接口
-    launch { vm2.My() }
+    launch { vm2.getMyApi() }
 }

@@ -88,29 +88,29 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-private fun BillItem(vm : NetWorkViewModel) :List<records> {
-    val billjson = vm.BillsData.value
-    try {
-        if(billjson?.contains("操作成功") == true){
-            val bill = Gson().fromJson(billjson, BillResponse::class.java)
-            val data = bill.data.records
-            val msg = bill.data.msg
-            val totalpage = bill.data.pages
-            SharedPrefs.saveString("totalpage",totalpage.toString())
-            if (msg != null) {
-                if (msg.contains("成功")) {
-                    val cardAccount = bill.data.records[0].fromAccount
-                    SharedPrefs.saveString("cardAccount", cardAccount)
-                } else { Toast.makeText(MyApplication.context,msg, Toast.LENGTH_SHORT).show() }
-            }
-            return data
-        } else {
-            return emptyList()
-        }
-    } catch (e:Exception) {
-        return emptyList()
-    }
-}
+//private fun BillItem(vm : NetWorkViewModel) :List<records> {
+//    val billjson = vm.BillsData.value
+//    try {
+//        if(billjson?.contains("操作成功") == true){
+//            val bill = Gson().fromJson(billjson, BillResponse::class.java)
+//            val data = bill.data.records
+//            val msg = bill.data.msg
+//            val totalpage = bill.data.pages
+//            SharedPrefs.saveString("totalpage",totalpage.toString())
+//            if (msg != null) {
+//                if (msg.contains("成功")) {
+//                    val cardAccount = bill.data.records[0].fromAccount
+//                    SharedPrefs.saveString("cardAccount", cardAccount)
+//                } else { Toast.makeText(MyApplication.context,msg, Toast.LENGTH_SHORT).show() }
+//            }
+//            return data
+//        } else {
+//            return emptyList()
+//        }
+//    } catch (e:Exception) {
+//        return emptyList()
+//    }
+//}
 
 @SuppressLint("SuspiciousIndentation", "UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)

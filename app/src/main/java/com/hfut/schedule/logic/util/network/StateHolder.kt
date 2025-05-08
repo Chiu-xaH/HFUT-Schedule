@@ -42,8 +42,27 @@ class SimpleStateHolder<T> {
     fun emitPrepare() {
         _state.value = SimpleUiState.Prepare
     }
-
 }
+
+// 判断是否包含某个 key
+fun <K, V> SimpleStateHolder<Map<K, V>>.containsKey(key: K): Boolean {
+    val current = (state.value as? SimpleUiState.Success)?.data
+    return current?.containsKey(key) == true
+}
+
+// 获取某个 key 的值
+operator fun <K, V> SimpleStateHolder<Map<K, V>>.get(key: K): V? {
+    val current = (state.value as? SimpleUiState.Success)?.data
+    return current?.get(key)
+}
+
+// 设置某个 key 的值，会触发刷新
+operator fun <K, V> SimpleStateHolder<Map<K, V>>.set(key: K, value: V) {
+    val current = (state.value as? SimpleUiState.Success)?.data?.toMutableMap() ?: mutableMapOf()
+    current[key] = value
+    emitData(current)
+}
+
 
 class StateHolder<T, E> {
     private val _state = MutableStateFlow<UiState<T, E>>(UiState.Loading)

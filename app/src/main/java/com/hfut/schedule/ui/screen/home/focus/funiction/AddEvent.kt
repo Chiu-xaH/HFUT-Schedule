@@ -41,6 +41,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
@@ -52,6 +53,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
@@ -96,6 +98,7 @@ import com.hfut.schedule.ui.component.LoadingUI
 import com.hfut.schedule.ui.component.MyCustomCard
 import com.hfut.schedule.ui.component.RotatingIcon
 import com.hfut.schedule.ui.component.StyleCardListItem
+import com.hfut.schedule.ui.component.TimePickerDialog
 import com.hfut.schedule.ui.component.TimeRangePickerDialog
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.appHorizontalDp
@@ -105,7 +108,9 @@ import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.transfer.EventCampus
 import com.hfut.schedule.ui.screen.home.search.function.transfer.getEventCampus
+import com.hfut.schedule.ui.screen.supabase.home.getInsertedEventId
 import com.hfut.schedule.ui.screen.supabase.login.loginSupabaseWithCheck
+import com.hfut.schedule.ui.style.RowHorizontal
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -124,7 +129,6 @@ private enum class ShareRoutes {
 fun AddEventFloatButton(
     isSupabase : Boolean,
     isVisible: Boolean,
-    hazeState: HazeState,
     vmUI : UIViewModel,
     innerPaddings: PaddingValues,
     vm: NetWorkViewModel
@@ -314,7 +318,7 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
 
     val activity = LocalActivity.current
     var isScheduleType by remember { mutableStateOf(true) }
-    var title by remember { mutableStateOf("事件") }
+    var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var remark by remember { mutableStateOf("") }
 
@@ -329,16 +333,20 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(date,time) {
-        remark = if(date.first == date.second) { // 当天日程
-            "${date.first.substringAfter("-")} " +
-                    // 同时间
-                    if(time.first == time.second) {
-                        time.first
-                    } else {
-                        time.first + " ~ " + time.second
-                    }
+        remark = if(isScheduleType) {
+            if(date.first == date.second) { // 当天日程
+                "${date.first.substringAfter("-")} " +
+                        // 同时间
+                        if(time.first == time.second) {
+                            time.first
+                        } else {
+                            time.first + " ~ " + time.second
+                        }
+            } else {
+                "${date.first.substringAfter("-") + " " + time.first} ~ ${date.second.substringAfter("-") + " " + time.second}"
+            }
         } else {
-            "${date.first.substringAfter("-") + " " + time.first} ~ ${date.second.substringAfter("-") + " " + time.second}"
+            date.second.substringAfter("-") + " " + time.second + " 截止"
         }
     }
     var campus by remember { mutableStateOf(getEventCampus()) }
@@ -349,7 +357,7 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
     }
 
     val jwt by DataStoreManager.supabaseJwtFlow.collectAsState(initial = "")
-
+    var isClone by remember { mutableStateOf(true) }
     val classList = remember { mutableStateListOf<String>() }
     var updateLoading by remember { mutableStateOf(false) }
     val typeIcon = @Composable {
@@ -357,9 +365,10 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
     }
 
     if(showSelectDateDialog)
-        DateRangePickerModal(onSelected = { date = it }) { showSelectDateDialog = false }
+        DateRangePickerModal(isScheduleType,onSelected = { date = it }) { showSelectDateDialog = false }
     if(showSelectTimeDialog)
-        TimeRangePickerDialog(onSelected = { time = it }) { showSelectTimeDialog = false }
+        TimeRangePickerDialog(isScheduleType,onSelected = { time = it }) { showSelectTimeDialog = false }
+
 
     LaunchedEffect(updateLoading) {
         if(isSupabase && updateLoading) {
@@ -385,9 +394,35 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
             Handler(Looper.getMainLooper()).post {
                 vm.supabaseAddResp.observeForever { result ->
                     if (result != null) {
-                        showToast("执行完成 请下拉刷新")
-                        updateLoading = false
-                        showChange(false)
+                        if(result.first) {
+                            showToast("上传成功 请下拉刷新")
+                            // 克隆
+                            if(isClone) {
+                                scope.launch {
+                                    async {
+                                        val entity = parseToDateTime(startDate = date.first, startTime = time.first, endDate = date.second, endTime = time.second)?.let {
+                                            CustomEventDTO(
+                                                title = title,
+                                                dateTime = it,
+                                                type = if(isScheduleType) CustomEventType.SCHEDULE else CustomEventType.NET_COURSE,
+                                                description = description.let { desp -> if(desp.isNotEmpty() && desp.isNotBlank()) desp else null },
+                                                remark = remark,
+                                                supabaseId = getInsertedEventId(vm)
+                                            )
+                                        }
+                                        if(enabled && entity != null) {
+                                            // 添加到数据库
+                                            DataBaseManager.customEventDao.insert(CustomEventMapper.dtoToEntity(entity))
+                                        }
+                                    }.await()
+                                    // 关闭
+                                    launch { updateLoading = false }
+                                    launch { showChange(false) }
+                                }
+                            }
+                        } else {
+                            showToast("上传失败")
+                        }
                     }
                 }
             }
@@ -464,15 +499,9 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                 )
             }
             DividerTextExpandedWith("配置") {
-                CustomTextField(input = title, label = { Text("标题") }) { title = it }
-                Spacer(Modifier.height(5.dp + cardNormalDp()))
-                CustomTextField(input = description, label = { Text("备注(可空,可填写http网址)") }) { description = it }
-                Spacer(Modifier.height(5.dp + cardNormalDp()))
-                CustomTextField(input = remark, label = { Text("自定义时间显示") }) { remark = it }
-                Spacer(Modifier.height(5.dp))
                 StyleCardListItem(
-                    headlineContent = { Text("类型：" + if(isScheduleType) "日程/课程" else "网课" ) },
-                    supportingContent = { Text(if(isScheduleType) "日程类型旨在用户自行添加新加课程、实验、会议等，添加后，同步显示在课程表方格中；在未开始时位于其他事项，进行期间会显示为重要事项，结束后位于其他事项并划线标记" else "网课类型旨在用户自行添加需要在截止日期之前的网络作业等，添加后，在未开始和进行期间位于其他事项，截止日期当天会显示为重要事项，结束后位于其他事项并划线标记" ) },
+                    headlineContent = { Text("类型: " + if(isScheduleType) "日程" else "网课" ) },
+                    supportingContent = { Text(if(isScheduleType) "日程类型旨在用户自行添加额外的课程、实验、会议等，强调线下活动、有始有终；\n添加后，在未开始时位于其他事项，进行期间会显示为重要事项" else "网课类型旨在用户自行添加需要在截止日期之前的网络作业、实验报告等，强调线上活动、无始有终，相比日程类型只注意结束时间(即DeadLine)；\n添加后，除了当天即将到达截止时位于重要事项，其余均位于其他事项" ) },
                     leadingContent = {
                         FilledTonalIconButton(
                             onClick = { isScheduleType = !isScheduleType },
@@ -481,17 +510,23 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                     } ,
                     modifier = Modifier.clickable {
                         isScheduleType = !isScheduleType
+                        date = Pair("","")
+                        time = Pair("","")
                     }
                 )
-                Spacer(Modifier.height(5.dp - cardNormalDp()))
+                Spacer(Modifier.height(5.dp))
+                CustomTextField(input = title, label = { Text("标题") }) { title = it }
+                Spacer(Modifier.height(5.dp + cardNormalDp()))
+                CustomTextField(input = description, label = { Text("备注(可空 可填写网址,地点,位置等)") }) { description = it }
+                Spacer(Modifier.height(5.dp ))
                 MyCustomCard(containerColor = cardNormalColor()) {
                     TransplantListItem(
-                        headlineContent = { Text("开始 ${date.first + " " + time.first}\n结束 ${date.second + " " + time.second}") },
+                        headlineContent = { Text((if(isScheduleType)"开始 ${date.first + " " + time.first}\n" else "") + "结束 ${date.second + " " + time.second}") },
                         leadingContent = { Icon(painterResource(R.drawable.schedule),null) }
                     )
                     Row(modifier = Modifier.align(Alignment.End)) {
                         Text(
-                            text = "选择日期范围",
+                            text = if(isScheduleType)"选择日期范围" else "选择截止日期",
                             color = MaterialTheme.colorScheme.primary,
                             fontSize = 14.sp,
                             modifier = Modifier
@@ -505,7 +540,7 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                                 }
                         )
                         Text(
-                            text = "选择时间范围",
+                            text = if(isScheduleType)"选择时间范围" else "选择截止时间",
                             color = MaterialTheme.colorScheme.primary,
                             fontSize = 14.sp,
                             modifier = Modifier
@@ -520,6 +555,10 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                         )
                     }
                 }
+                Spacer(Modifier.height(5.dp))
+                CustomTextField(input = remark, label = { Text("自定义时间显示") }) { remark = it }
+                Spacer(Modifier.height(5.dp - cardNormalDp()*0f))
+
                 if(isSupabase) {
                     var isEditMode by remember { mutableStateOf(false) }
                     var input by remember { mutableStateOf("") }
@@ -594,12 +633,12 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                             input = ""
                     }
 
-                    Spacer(Modifier.height(5.dp - cardNormalDp()))
+                    Spacer(Modifier.height(5.dp - cardNormalDp()*2f))
                     MyCustomCard(containerColor = cardNormalColor()) {
                         TransplantListItem(
                             headlineContent = { Text("适用范围" ) },
                             supportingContent = {
-                                Text("为保证统一规范，必须按 查询中心-个人信息-班级 输入班级名，例如'计算机29-9班’而不是‘计科29-9班’，不添加则表示对所有人可见" )
+                                Text("为保证统一规范，必须按 查询中心-个人信息-班级 输入班级名，例如'计算机29-9班’而不是‘计科29-9班’，不添加/清空班级则表示对所有人可见" )
                             },
                             leadingContent = {
                                 Icon(painterResource(R.drawable.target),null)
@@ -609,7 +648,7 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                         )
                         HorizontalDivider()
                         TransplantListItem(
-                            headlineContent = { Text("选择校区") },
+                            headlineContent = { Text("适用校区") },
                             supportingContent = {
                                 Column {
                                     Row {
@@ -625,40 +664,42 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                         )
                         HorizontalDivider()
                         TransplantListItem(
-                            headlineContent = { Text("添加班级") },
+                            headlineContent = { Text("适用班级") },
                             supportingContent = {
-                                Column {
-                                    for(index in classList.indices step 2) {
-                                        Row {
-//                                            Spacer(Modifier.width(appHorizontalDp()))
-                                            AssistChip(
-                                                onClick = {
-                                                    id = index
-                                                    showDelDialog = true
-                                                },
-                                                label = { Text(classList[index]) },
-                                                leadingIcon = if(isEditMode) { { Icon(Icons.Filled.Close, null) } } else null
-                                            )
-
-                                            if(index+1 != classList.size) {
-                                                Spacer(Modifier.width(appHorizontalDp()))
+                                if(classList.isEmpty()) {
+                                    RowHorizontal {
+                                        Text("所有人可见")
+                                    }
+                                } else {
+                                    Column {
+                                        for(index in classList.indices step 2) {
+                                            Row {
                                                 AssistChip(
                                                     onClick = {
-                                                        id = index+1
+                                                        id = index
                                                         showDelDialog = true
                                                     },
-                                                    label = { Text(classList[index+1]) },
+                                                    label = { Text(classList[index]) },
                                                     leadingIcon = if(isEditMode) { { Icon(Icons.Filled.Close, null) } } else null
                                                 )
+
+                                                if(index+1 != classList.size) {
+                                                    Spacer(Modifier.width(appHorizontalDp()))
+                                                    AssistChip(
+                                                        onClick = {
+                                                            id = index+1
+                                                            showDelDialog = true
+                                                        },
+                                                        label = { Text(classList[index+1]) },
+                                                        leadingIcon = if(isEditMode) { { Icon(Icons.Filled.Close, null) } } else null
+                                                    )
+                                                }
                                             }
                                         }
                                     }
                                 }
                             }
                         )
-//                        Spacer(Modifier.height(appHorizontalDp()-5.dp))
-
-
                         Row(modifier = Modifier.align(Alignment.End)) {
                             Text(
                                 text = "添加",
@@ -720,12 +761,20 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                             )
                         }
                     }
-
-                    BottomTip("结果将共享至云端，共享后自己再次选择下载即可")
+                    Spacer(Modifier.height(5.dp - cardNormalDp()))
+                    StyleCardListItem(
+                        headlineContent = { Text("同时克隆卡片至本地")},
+                        supportingContent = { Text(if(isClone)"上传卡片时，同时添加入本地聚焦当中" else "仅共享卡片 自己无需使用")},
+                        trailingContent = { Switch(checked = isClone, onCheckedChange = { ch -> isClone = ch }) },
+                        modifier = Modifier.clickable { isClone = !isClone }
+                    )
+                    Spacer(Modifier.height(5.dp))
+                    BottomTip("结果将上传至云端,仅持有校园邮箱用户可访问")
                 } else {
-                    BottomTip("结果将保存在私有本地，若需共享请进入 云端共建")
+                    BottomTip("结果将保存在本地，若需共享请进入云端共建")
                 }
             }
+
             Spacer(Modifier.height(40.dp + appHorizontalDp()))
         }
     }

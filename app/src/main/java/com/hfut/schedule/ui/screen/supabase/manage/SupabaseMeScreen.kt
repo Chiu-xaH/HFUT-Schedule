@@ -28,16 +28,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextDecoration
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.util.network.reEmptyLiveDta
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.ui.component.LittleDialog
 import com.hfut.schedule.ui.component.LoadingScreen
 import com.hfut.schedule.ui.component.RefreshIndicator
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
 import com.hfut.schedule.ui.screen.supabase.home.getEvents
+import com.hfut.schedule.ui.style.ColumnVertical
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -122,11 +126,6 @@ private fun SupabaseMeScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,
 
     var showDialogEdit by remember { mutableStateOf(false) }
 
-//    if(showDialogEdit) {
-//
-//    }
-
-
     if(refresh) {
         LoadingScreen()
     } else {
@@ -135,25 +134,34 @@ private fun SupabaseMeScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,
             item { Spacer(Modifier.height(innerPadding.calculateTopPadding())) }
             items(list.size) { index ->
                 val item = list[index]
+                val dateTime = item.dateTime
+                val nowTimeNum = DateTimeUtils.Date_yyyy_MM_dd.replace("-","").toLong()
+                val endNum = with(dateTime.end) { "$year${parseTimeItem(month)}${parseTimeItem(day)}" }.toLong()
+                val isOutOfDate = nowTimeNum > endNum
                 StyleCardListItem(
-                    headlineContent = { Text(item.name) },
-                    overlineContent = { Text(item.timeDescription) },
-                    supportingContent = item.description?.let { { Text(it) } },
+                    headlineContent = { Text(item.name, textDecoration = if(isOutOfDate) TextDecoration.LineThrough else TextDecoration.None) },
+                    overlineContent = { Text(item.timeDescription, textDecoration = if(isOutOfDate) TextDecoration.LineThrough else TextDecoration.None) },
+                    supportingContent = item.description?.let { { Text(it, textDecoration = if(isOutOfDate) TextDecoration.LineThrough else TextDecoration.None) } },
                     trailingContent = {
                         Row {
-                            FilledTonalIconButton(
-                                onClick = {
-                                    id = item.id
-                                    showToast("正在开发")
-                                    showDialogEdit = true
+//                            FilledTonalIconButton(
+//                                onClick = {
+//                                    id = item.id
+//                                    showToast("正在开发")
+//                                    showDialogEdit = true
+//                                }
+//                            ) { Icon(painterResource(R.drawable.edit),null) }
+                            ColumnVertical {
+                                FilledTonalIconButton(
+                                    onClick = {
+                                        id = item.id
+                                        showDialogDel = true
+                                    }
+                                ) { Icon(painterResource(R.drawable.close),null) }
+                                if(isOutOfDate) {
+                                    Text("已过期不可见")
                                 }
-                            ) { Icon(painterResource(R.drawable.edit),null) }
-                            FilledTonalIconButton(
-                                onClick = {
-                                    id = item.id
-                                    showDialogDel = true
-                                }
-                            ) { Icon(painterResource(R.drawable.close),null) }
+                            }
                         }
                     },
                     leadingContent = {

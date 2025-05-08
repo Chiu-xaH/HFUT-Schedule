@@ -34,8 +34,9 @@ object DataStoreManager {
     private val SUPABASE_FILTER_EVENT = booleanPreferencesKey("supabase_filter_event")
     private val SUPABASE_AUTO_CHECK = booleanPreferencesKey("supabase_auto_check")
     private val USE_CAPTCHA = booleanPreferencesKey("use_captcha")
-
     private val USE_CAPTCHA_AUTO = booleanPreferencesKey("use_captcha_auto")
+    private val FOCUS_SHOW_SHOWER = booleanPreferencesKey("focus_show_shower")
+    private val FOCUS_SHOW_WEATHER_WARN = booleanPreferencesKey("focus_show_weather_warn")
 
 
 
@@ -124,6 +125,16 @@ object DataStoreManager {
             preferences[USE_CAPTCHA_AUTO] = value
         }
     }
+    suspend fun saveFocusShowShower(value: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[FOCUS_SHOW_SHOWER] = value
+        }
+    }
+    suspend fun saveFocusShowWeatherWarn(value: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[FOCUS_SHOW_WEATHER_WARN] = value
+        }
+    }
 
 
 
@@ -190,6 +201,14 @@ object DataStoreManager {
     val useCaptchaAuto: Flow<Boolean> = dataStore.data
         .map { preferences ->
             preferences[USE_CAPTCHA_AUTO] ?: true
+        }
+    val showFocusShower: Flow<Boolean> = dataStore.data
+        .map { preferences ->
+            preferences[FOCUS_SHOW_SHOWER] ?: true
+        }
+    val showFocusWeatherWarn: Flow<Boolean> = dataStore.data
+        .map { preferences ->
+            preferences[FOCUS_SHOW_WEATHER_WARN] ?: true
         }
 
     /* 用法

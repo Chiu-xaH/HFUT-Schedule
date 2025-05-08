@@ -31,5 +31,11 @@ interface CustomEventDao {
     // 更新
     @Update
     suspend fun update(event : CustomEventEntity)
+    // 传入supabase_id，检查整张表里是否存在
+    @Query("SELECT EXISTS(SELECT 1 FROM event WHERE supabase_id = :supabaseId)")
+    suspend fun isExistBySupabaseId(supabaseId: Int): Boolean
+    // 传入supabase_id，删除
+    @Query("DELETE FROM event WHERE supabase_id = :supabaseId")
+    suspend fun delBySupabaseId(supabaseId: Int)
 }
 

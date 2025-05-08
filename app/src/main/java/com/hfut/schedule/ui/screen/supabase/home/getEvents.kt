@@ -18,3 +18,19 @@ fun getEvents(vm: NetWorkViewModel, isMine : Boolean) : List<SupabaseEventsInput
         emptyList()
     }
 }
+
+fun getInsertedEventId(vm: NetWorkViewModel) : Int? {
+    val json = vm.supabaseAddResp.value?.second
+    return try {
+        val list : List<SupabaseEventEntity> = Gson().fromJson(json,object : TypeToken<List<SupabaseEventEntity>>() {}.type)
+        if(list.size == 1) {
+            list[0].id
+        } else {
+            null
+        }
+    } catch (e : Exception) {
+        e.printStackTrace()
+        null
+    }
+}
+
