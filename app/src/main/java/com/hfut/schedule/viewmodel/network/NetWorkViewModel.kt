@@ -34,6 +34,7 @@ import com.hfut.schedule.logic.model.community.BorrowRecords
 import com.hfut.schedule.logic.model.community.BorrowResponse
 import com.hfut.schedule.logic.model.community.GradeResponseJXGLSTU
 import com.hfut.schedule.logic.model.jxglstu.MyApplyResponse
+import com.hfut.schedule.logic.model.jxglstu.ProgramBean
 import com.hfut.schedule.logic.model.jxglstu.SelectCourseInfo
 import com.hfut.schedule.logic.model.jxglstu.SurveyResponse
 import com.hfut.schedule.logic.model.jxglstu.SurveyTeacherResponse
@@ -868,7 +869,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
                 val body = response.body()?.string()
                 saveString("program", body)
                 ProgramData.value = body
-
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -889,21 +889,15 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         })
     }
 
-    val programPerformanceData = MutableLiveData<String?>()
-    fun getProgramPerformance(cookie: String) {
-        val call = studentId.value?.let { jxglstuJSON.getProgramPerformance(cookie, it) }
-
-        if (call != null) {
-            call.enqueue(object : Callback<ResponseBody> {
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    val body = response.body()?.string()
-                    programPerformanceData.value = body
-                }
-
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-            })
-        }
-    }
+    val programPerformanceData = SimpleStateHolder<ProgramBean>()
+    suspend fun getProgramPerformance(cookie: String) = launchRequestSimple(
+        holder = programPerformanceData,
+        request = { jxglstuJSON.getProgramPerformance(cookie, studentId.value ?: 0).awaitResponse() },
+        transformSuccess = { _,json -> parseProgramPerformance(json) }
+    )
+    private fun parseProgramPerformance(json : String) : ProgramBean = try {
+        Gson().fromJson(json,ProgramBean::class.java)
+    } catch (e : Exception) { throw e }
 
     val teacherSearchData = SimpleStateHolder<TeacherResponse>()
     suspend fun searchTeacher(name: String = "", direction: String = "") = launchRequestSimple(

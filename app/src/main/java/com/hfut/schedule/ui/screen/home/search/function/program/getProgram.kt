@@ -144,14 +144,13 @@ fun getProgramCompletion(vm: NetWorkViewModel) : ProgramCompletionResponse {
 }
 
 
-fun getProgramPerformance(vm: NetWorkViewModel) : ProgramBean? {
-    val json = vm.programPerformanceData.value
-    return try {
-        val data = Gson().fromJson(json,ProgramBean::class.java)
-        data
-    } catch (e:Exception) {
-        null
-//        e.printStackTrace()
-    }
-}
+//fun getProgramPerformance(vm: NetWorkViewModel) : ProgramBean? {
+//    val json = vm.programPerformanceData.value
+//    return try {
+//        val data = Gson().fromJson(json,ProgramBean::class.java)
+//        data
+//    } catch (e:Exception) {
+//        null
+//    }
+//}
 
