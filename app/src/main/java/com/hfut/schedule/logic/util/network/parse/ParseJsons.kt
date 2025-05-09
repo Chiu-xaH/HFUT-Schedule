@@ -84,26 +84,26 @@ object ParseJsons {
         }
     }
     @JvmStatic
-    suspend fun getCustomEvent(type: CustomEventType,isSupabase : Boolean = false) : List<CustomEventDTO> = withContext(Dispatchers.IO) {
+    suspend fun getCustomEvent(isSupabase : Boolean = false) : List<CustomEventDTO> = withContext(Dispatchers.IO) {
         val dtoList = mutableListOf<CustomEventDTO>()
-        val list = if(isSupabase) DataBaseManager.customEventDao.getDownloaded(type.name) else DataBaseManager.customEventDao.getAll(type.name)
+        val list = if(isSupabase) DataBaseManager.customEventDao.getDownloadedByTime() else DataBaseManager.customEventDao.getAllSortedByTime()
         list.forEach {
             dtoList.add(CustomEventMapper.entityToDto(it))
         }
         return@withContext dtoList
     }
-    @JvmStatic
-    suspend fun getCustomSchedule(isSupabase : Boolean = false) : List<CustomEventDTO> = getCustomEvent(CustomEventType.SCHEDULE,isSupabase).sortedBy {
-        with(it.dateTime.start) {
-            LocalDateTime.of(year, month, day, hour, minute)
-        }
-    }
-    @JvmStatic
-    suspend fun getCustomNetCourse(isSupabase : Boolean = false) : List<CustomEventDTO> = getCustomEvent(CustomEventType.NET_COURSE,isSupabase).sortedBy {
-        with(it.dateTime.end) {
-            LocalDateTime.of(year, month, day, hour, minute)
-        }
-    }
+//    @JvmStatic
+//    suspend fun getCustomSchedule(isSupabase : Boolean = false) : List<CustomEventDTO> = getCustomEvent(CustomEventType.SCHEDULE,isSupabase).sortedBy {
+//        with(it.dateTime.start) {
+//            LocalDateTime.of(year, month, day, hour, minute)
+//        }
+//    }
+//    @JvmStatic
+//    suspend fun getCustomNetCourse(isSupabase : Boolean = false) : List<CustomEventDTO> = getCustomEvent(CustomEventType.NET_COURSE,isSupabase).sortedBy {
+//        with(it.dateTime.end) {
+//            LocalDateTime.of(year, month, day, hour, minute)
+//        }
+//    }
     @JvmStatic
     fun getNetCourse() : List<Schedule> {
         try {

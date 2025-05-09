@@ -3,7 +3,6 @@ package com.hfut.schedule.ui.screen.supabase.home
 import android.annotation.SuppressLint
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -50,7 +49,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
@@ -58,22 +56,22 @@ import com.hfut.schedule.logic.database.entity.CustomEventDTO
 import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.database.util.CustomEventMapper
 import com.hfut.schedule.logic.enumeration.SortType
-import com.hfut.schedule.logic.util.network.SimpleUiState
 import com.hfut.schedule.logic.util.network.reEmptyLiveDta
 import com.hfut.schedule.logic.util.network.toTimestampWithOutT
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.component.CenterScreen
+import com.hfut.schedule.ui.component.CustomTextField
 import com.hfut.schedule.ui.component.DevelopingUI
 import com.hfut.schedule.ui.component.LoadingScreen
 import com.hfut.schedule.ui.component.MyCustomCard
 import com.hfut.schedule.ui.component.RefreshIndicator
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.cardNormalColor
+import com.hfut.schedule.ui.component.cardNormalDp
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.transfer.EventCampus
 import com.hfut.schedule.ui.screen.home.search.function.transfer.getEventCampus
-import com.hfut.schedule.ui.screen.supabase.home.getEvents
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -168,21 +166,31 @@ private fun SupabaseScheduleUI(vm: NetWorkViewModel,sortType : SortType,sortReve
             ) && // 自己校区
                     (it.campus == getEventCampus() || it.campus == EventCampus.DEFAULT)
         } else list
+        var input by remember { mutableStateOf("") }
 
         val sortList =  when(sortType) {
-            SortType.ID -> filterList.sortedBy { it.id }
-            SortType.START_TIME -> filterList.sortedBy { it.dateTime.start.toTimestampWithOutT() }
-            SortType.END_TIME -> filterList.sortedBy { it.dateTime.end.toTimestampWithOutT() }
+            SortType.TIME_LINE -> filterList.sortedBy { when(it.type) {
+                CustomEventType.NET_COURSE -> it.dateTime.end.toTimestampWithOutT()
+                CustomEventType.SCHEDULE -> it.dateTime.start.toTimestampWithOutT()
+            } }
             SortType.CREATE_TIME -> filterList.sortedBy { it.createTime }
-        }.let { if (sortReversed) it.reversed() else it }
+        }.let { if (sortReversed) it.reversed() else it }.filter {
+            it.toString().contains(input,ignoreCase = true)
+        }
 
         val expandedStates = remember { mutableStateMapOf<Int, Boolean>() }
         val downloadStates = remember { mutableStateMapOf<Int, Boolean>() }
 
-
         LazyColumn {
             item { Spacer(Modifier.height(innerPadding.calculateTopPadding())) }
-
+            item {
+                CustomTextField(
+                    input = input,
+                    label = { Text("搜索") },
+                    leadingIcon = { Icon(painterResource(R.drawable.search),null)}
+                ) { input = it }
+                Spacer(Modifier.height(cardNormalDp()))
+            }
             items(sortList.size, key = { sortList[it].id }) { index ->
                 val item = sortList[index]
 

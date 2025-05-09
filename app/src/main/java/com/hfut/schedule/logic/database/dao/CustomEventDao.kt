@@ -34,8 +34,31 @@ interface CustomEventDao {
     // 传入supabase_id，检查整张表里是否存在
     @Query("SELECT EXISTS(SELECT 1 FROM event WHERE supabase_id = :supabaseId)")
     suspend fun isExistBySupabaseId(supabaseId: Int): Boolean
-    // 传入supabase_id，删除
+    // 传入supabase_id 删除
     @Query("DELETE FROM event WHERE supabase_id = :supabaseId")
     suspend fun delBySupabaseId(supabaseId: Int)
+    // 查询所有的过期内容 根据end_time
+    // 获取所有的内容，并且按type=SCHEDULE的start_time和type=NET_COURSE的end_time进行排序
+    @Query("""
+        SELECT * FROM event
+        ORDER BY 
+            CASE 
+                WHEN type = 'SCHEDULE' THEN start_time 
+                WHEN type = 'NET_COURSE' THEN end_time 
+                ELSE NULL 
+            END ASC,id ASC
+    """)
+    suspend fun getAllSortedByTime(): List<CustomEventEntity>
+    // 获取下载的日程
+    @Query("""
+        SELECT * FROM event WHERE supabase_id IS NOT NULL
+        ORDER BY 
+            CASE 
+                WHEN type = 'SCHEDULE' THEN start_time 
+                WHEN type = 'NET_COURSE' THEN end_time 
+                ELSE NULL 
+            END ASC,supabase_id ASC
+    """)
+    suspend fun getDownloadedByTime() : List<CustomEventEntity>
 }
 

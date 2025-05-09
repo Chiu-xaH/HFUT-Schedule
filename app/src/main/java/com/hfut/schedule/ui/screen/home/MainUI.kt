@@ -305,7 +305,7 @@ fun MainScreen(
         }
     }
     var sortReversed by remember { mutableStateOf(false) }
-    var sortType by remember { mutableStateOf(SortType.END_TIME) }
+    var sortType by remember { mutableStateOf(SortType.TIME_LINE) }
     var showDialog by remember { mutableStateOf(false) }
 
     if(showDialog) {
@@ -323,22 +323,17 @@ fun MainScreen(
                     headlineContent = {
                         Text(
                             when (sortType) {
-                                SortType.ID -> "默认排序"
-                                SortType.START_TIME -> "按开始时间"
-                                SortType.END_TIME -> "按结束时间"
-                                SortType.CREATE_TIME -> "按创建时间"
+                                SortType.TIME_LINE -> "时间线"
+                                SortType.CREATE_TIME -> "创建时间"
                             }
                         )
                     },
                     leadingContent = { Icon(painterResource(R.drawable.sort),null) },
                     modifier = Modifier.clickable {
-                        showToast("正在开发")
-//                        sortType = when (sortType) {
-//                            SortType.ID -> SortType.START_TIME
-//                            SortType.START_TIME -> SortType.END_TIME
-//                            SortType.END_TIME -> SortType.CREATE_TIME
-//                            SortType.CREATE_TIME -> SortType.ID
-//                        }
+                        sortType = when (sortType) {
+                            SortType.TIME_LINE -> SortType.CREATE_TIME
+                            SortType.CREATE_TIME -> SortType.TIME_LINE
+                        }
                     },
                     trailingContent = {
                         FilledTonalIconButton(onClick = {
@@ -371,21 +366,16 @@ fun MainScreen(
                 }
                 TextButton(
                     onClick = {
-                        showToast("正在开发")
-//                        sortType = when (sortType) {
-//                            SortType.ID -> SortType.START_TIME
-//                            SortType.START_TIME -> SortType.END_TIME
-//                            SortType.END_TIME -> SortType.CREATE_TIME
-//                            SortType.CREATE_TIME -> SortType.ID
-//                        }
+                        sortType = when (sortType) {
+                            SortType.TIME_LINE -> SortType.CREATE_TIME
+                            SortType.CREATE_TIME -> SortType.TIME_LINE
+                        }
                     }
                 ) {
                     Text(
                         when (sortType) {
-                            SortType.ID -> "默认排序"
-                            SortType.START_TIME -> "按开始时间"
-                            SortType.END_TIME -> "按结束时间"
-                            SortType.CREATE_TIME -> "按创建时间"
+                            SortType.TIME_LINE -> "时间线"
+                            SortType.CREATE_TIME -> "创建时间"
                         }
                     )
                 }
@@ -429,6 +419,7 @@ fun MainScreen(
 //            Spacer(modifier = Modifier.width(appHorizontalDp()))
 //        }
 //    }
+
 
     Box(modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {
         var innerPaddingValues by remember { mutableStateOf<PaddingValues?>(null) }
@@ -637,7 +628,7 @@ fun MainScreen(
                 }
                 composable(FOCUS.name) {
                     Scaffold {
-                        TodayScreen(vm,vm2,innerPadding,vmUI,ifSaved,false,pagerState, hazeState = hazeState)
+                        TodayScreen(vm,vm2,innerPadding,vmUI,ifSaved,pagerState, hazeState = hazeState,sortType,sortReversed)
                     }
                 }
                 composable(SEARCH.name) {

@@ -26,12 +26,13 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventDTO
 import com.hfut.schedule.logic.database.entity.CustomEventType
-import com.hfut.schedule.logic.util.network.parse.ParseJsons.getCustomNetCourse
-import com.hfut.schedule.logic.util.network.parse.ParseJsons.getCustomSchedule
+import com.hfut.schedule.logic.util.network.parse.ParseJsons.getCustomEvent
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.logic.util.sys.addToCalendars
+import com.hfut.schedule.ui.component.CustomTextField
 import com.hfut.schedule.ui.component.LittleDialog
 import com.hfut.schedule.ui.component.StyleCardListItem
+import com.hfut.schedule.ui.component.cardNormalDp
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.screen.home.focus.funiction.openOperation
 import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
@@ -42,22 +43,34 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun SupabaseStorageScreen(innerPadding : PaddingValues,hazeState : HazeState) {
-    var customNetCourseList by remember { mutableStateOf<List<CustomEventDTO>>(emptyList()) }
+//    var customNetCourseList by remember { mutableStateOf<List<CustomEventDTO>>(emptyList()) }
     var customScheduleList by remember { mutableStateOf<List<CustomEventDTO>>(emptyList()) }
     val activity = LocalActivity.current
     var refreshDB by remember { mutableStateOf(false) }
+    var input by remember { mutableStateOf("") }
 
     // 初始化
     LaunchedEffect(refreshDB) {
         // 加载数据库
-        launch { customNetCourseList = getCustomNetCourse(isSupabase = true) }
-        launch { customScheduleList = getCustomSchedule(isSupabase = true) }
+//        launch { customNetCourseList = getCustomNetCourse(isSupabase = true) }
+        launch { customScheduleList = getCustomEvent(isSupabase = true) }
+    }
+    LaunchedEffect(input) {
+        customScheduleList = customScheduleList.filter { it.toString().contains(input,ignoreCase = true) }
     }
 
     LazyColumn {
         item { Spacer(Modifier.height(innerPadding.calculateTopPadding())) }
+        item {
+            CustomTextField(
+                input = input,
+                label = { Text("搜索") },
+                leadingIcon = { Icon(painterResource(R.drawable.search),null)}
+            ) { input = it }
+            Spacer(Modifier.height(cardNormalDp()))
+        }
         customScheduleList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1) { refreshDB = !refreshDB } } } }
-        customNetCourseList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1) { refreshDB = !refreshDB } } } }
+//        customNetCourseList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1) { refreshDB = !refreshDB } } } }
         items(2) { Spacer(Modifier.height(innerPadding.calculateBottomPadding())) }
     }
 }

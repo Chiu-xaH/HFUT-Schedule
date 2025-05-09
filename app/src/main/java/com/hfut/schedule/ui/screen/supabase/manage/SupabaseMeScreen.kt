@@ -34,10 +34,12 @@ import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.util.network.reEmptyLiveDta
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
+import com.hfut.schedule.ui.component.CustomTextField
 import com.hfut.schedule.ui.component.LittleDialog
 import com.hfut.schedule.ui.component.LoadingScreen
 import com.hfut.schedule.ui.component.RefreshIndicator
 import com.hfut.schedule.ui.component.StyleCardListItem
+import com.hfut.schedule.ui.component.cardNormalDp
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
 import com.hfut.schedule.ui.screen.supabase.home.getEvents
@@ -106,6 +108,7 @@ fun SupabaseMeScreenRefresh(vm : NetWorkViewModel,innerPadding : PaddingValues) 
 @Composable
 private fun SupabaseMeScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,refresh : Boolean,onRefresh : (Boolean) -> Unit ) {
     val jwt by DataStoreManager.supabaseJwtFlow.collectAsState(initial = "")
+    var input by remember { mutableStateOf("") }
 
     var id by remember { mutableIntStateOf(-1) }
     var showDialogDel by remember { mutableStateOf(false) }
@@ -124,14 +127,25 @@ private fun SupabaseMeScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,
         )
     }
 
+
     var showDialogEdit by remember { mutableStateOf(false) }
 
     if(refresh) {
         LoadingScreen()
     } else {
-        val list = getEvents(vm,true)
+        val list = getEvents(vm,true).filter {
+            it.toString().contains(input,ignoreCase = true)
+        }
         LazyColumn {
             item { Spacer(Modifier.height(innerPadding.calculateTopPadding())) }
+            item {
+                CustomTextField(
+                    input = input,
+                    label = { Text("搜索") },
+                    leadingIcon = { Icon(painterResource(R.drawable.search),null)}
+                ) { input = it }
+                Spacer(Modifier.height(cardNormalDp()))
+            }
             items(list.size) { index ->
                 val item = list[index]
                 val dateTime = item.dateTime

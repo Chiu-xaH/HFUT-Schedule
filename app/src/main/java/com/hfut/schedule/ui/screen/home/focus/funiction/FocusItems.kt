@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -363,11 +364,11 @@ fun CommunityTomorrowCourseItem(index : Int, vm: NetWorkViewModel, hazeState: Ha
 @Composable
 fun CustomItem(item : CustomEventDTO,hazeState: HazeState,isFuture: Boolean,activity: Activity,refresh : () -> Unit) {
     val dateTime = item.dateTime
-    val nowTimeNum = DateTimeUtils.Date_yyyy_MM_dd.replace("-","").toLong()
-    val endNum = with(dateTime.end) { "$year${parseTimeItem(month)}${parseTimeItem(day)}" }.toLong()
+    val nowTimeNum = (DateTimeUtils.Date_yyyy_MM_dd.replace("-","") + DateTimeUtils.Time_HH_MM.replace(":","")).toLong()
+    val endNum = with(dateTime.end) { "$year${parseTimeItem(month)}${parseTimeItem(day)}${parseTimeItem(hour)}${parseTimeItem(minute)}" }.toLong()
 
     if(item.type == CustomEventType.SCHEDULE) {
-        val startNum = with(dateTime.start) { "$year${parseTimeItem(month)}${parseTimeItem(day)}" }.toLong()
+        val startNum = with(dateTime.start) { "$year${parseTimeItem(month)}${parseTimeItem(day)}${parseTimeItem(hour)}${parseTimeItem(minute)}" }.toLong()
         if(nowTimeNum in startNum .. endNum) {
             // 显示在首页
             if(!isFuture)
@@ -379,7 +380,8 @@ fun CustomItem(item : CustomEventDTO,hazeState: HazeState,isFuture: Boolean,acti
                 CustomItemUI(item, isFuture, activity, hazeState, isOutOfDate = nowTimeNum > endNum, refresh)
         }
     } else {
-        if(endNum == nowTimeNum) {
+        // 今天截止 并且尚未截止
+        if((endNum / 10000 == nowTimeNum  / 10000) && (endNum % 10000 >= nowTimeNum % 10000)) {
             // 显示在首页
             if(!isFuture)
                 CustomItemUI(item, isFuture, activity, hazeState, refresh = refresh)
@@ -428,6 +430,7 @@ fun CustomItemUI(item: CustomEventDTO,isFuture: Boolean,activity: Activity,hazeS
             Icon(
                 painterResource(if(item.type == CustomEventType.SCHEDULE) R.drawable.calendar else R.drawable.net),
                 contentDescription = "Localized description",
+                tint = if(isOutOfDate) LocalContentColor.current.copy(.5f) else LocalContentColor.current
             )
         },
         trailingContent = {
@@ -459,7 +462,7 @@ fun CustomItemUI(item: CustomEventDTO,isFuture: Boolean,activity: Activity,hazeS
                         }
                     }
                 }
-                Text(if(item.supabaseId == null)"本地" else "云端导入")
+                Text(if(isOutOfDate) "已过期" else if(item.supabaseId == null)"本地" else "云端导入")
             }
         },
         modifier = Modifier.combinedClickable(

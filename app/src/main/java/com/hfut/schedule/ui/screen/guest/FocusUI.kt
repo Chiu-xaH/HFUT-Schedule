@@ -1,12 +1,7 @@
 package com.hfut.schedule.ui.screen.guest
 
-//import com.hfut.schedule.ui.activity.home.focus.getResult
-//import com.hfut.schedule.ui.activity.home.focus.newScheduleItems
-//import com.hfut.schedule.ui.activity.home.focus.newWangkeItem
 import android.annotation.SuppressLint
-import android.os.Build
 import androidx.activity.compose.LocalActivity
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,32 +30,22 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.hfut.schedule.logic.model.community.courseDetailDTOList
 import com.hfut.schedule.logic.database.entity.CustomEventDTO
-import com.hfut.schedule.logic.util.sys.DateTimeUtils
-import com.hfut.schedule.logic.util.sys.JxglstuCourseSchedule
-import com.hfut.schedule.logic.util.network.parse.ParseJsons.getCustomNetCourse
-import com.hfut.schedule.logic.util.network.parse.ParseJsons.getCustomSchedule
+import com.hfut.schedule.logic.util.network.parse.ParseJsons.getCustomEvent
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.getNetCourse
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.getSchedule
 import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.ui.screen.home.calendar.communtiy.getCourseINFO
-import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
+import com.hfut.schedule.logic.util.sys.DateTimeUtils
+import com.hfut.schedule.ui.component.RefreshIndicator
 import com.hfut.schedule.ui.screen.home.focus.funiction.CustomItem
 import com.hfut.schedule.ui.screen.home.focus.funiction.NetCourseItem
 import com.hfut.schedule.ui.screen.home.focus.funiction.ScheduleItem
 import com.hfut.schedule.ui.screen.home.focus.funiction.TimeStampItem
-import com.hfut.schedule.ui.screen.home.focus.funiction.getTodayJxglstuCourse
-import com.hfut.schedule.ui.screen.home.focus.funiction.getTomorrowJxglstuCourse
-import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
-import com.hfut.schedule.ui.screen.home.initNetworkRefresh
-import com.hfut.schedule.ui.component.RefreshIndicator
+import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.viewmodel.UIViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @SuppressLint("SuspiciousIndentation", "CoroutineCreationDuringComposition",
@@ -80,7 +65,7 @@ fun TodayScreenNoLogin(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding
 
 
 //Today操作区///////////////////////////////////////////////////////////////////////////////////////////////////
-    var customNetCourseList by remember { mutableStateOf<List<CustomEventDTO>>(emptyList()) }
+//    var customNetCourseList by remember { mutableStateOf<List<CustomEventDTO>>(emptyList()) }
     var customScheduleList by remember { mutableStateOf<List<CustomEventDTO>>(emptyList()) }
     val scheduleList = getSchedule()
     val netCourseList = getNetCourse()
@@ -105,8 +90,8 @@ fun TodayScreenNoLogin(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding
 
     LaunchedEffect(refreshDB,isAddUIExpanded) {
         if(!isAddUIExpanded) {
-            launch { customNetCourseList = getCustomNetCourse() }
-            launch { customScheduleList = getCustomSchedule() }
+//            launch { customNetCourseList = getCustomNetCourse() }
+            launch { customScheduleList = getCustomEvent() }
         }
     }
 
@@ -118,8 +103,8 @@ fun TodayScreenNoLogin(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding
         }
         // 加载数据库
         launch {
-            launch { customNetCourseList = getCustomNetCourse() }
-            launch { customScheduleList = getCustomSchedule() }
+//            launch { customNetCourseList = getCustomNetCourse() }
+            launch { customScheduleList = getCustomEvent() }
         }
     }
 
@@ -148,8 +133,8 @@ fun TodayScreenNoLogin(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding
 
                                 scheduleList.let { list -> items(list.size) { item -> activity?.let { ScheduleItem(list[item],false,it) } } }
 
-                                if(showStorageFocus)
-                                    customNetCourseList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1,isFuture = false) { refreshDB = !refreshDB } } } }
+//                                if(showStorageFocus)
+//                                    customNetCourseList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1,isFuture = false) { refreshDB = !refreshDB } } } }
 
                                 netCourseList.let { list -> items(list.size) { item -> activity?.let { NetCourseItem(list[item],false,it) } } }
                             }
@@ -160,8 +145,8 @@ fun TodayScreenNoLogin(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding
 
                                 scheduleList.let { list -> items(list.size) { item -> activity?.let { ScheduleItem(list[item],true,it) }  } }
                                 //网课
-                                if(showStorageFocus)
-                                    customNetCourseList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = true) { refreshDB = !refreshDB } } } }
+//                                if(showStorageFocus)
+//                                    customNetCourseList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = true) { refreshDB = !refreshDB } } } }
 
                                 netCourseList.let { list -> items(list.size) { item -> activity?.let { NetCourseItem(list[item],true,it) } } }
 

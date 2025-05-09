@@ -96,7 +96,7 @@ fun SupabaseHome(vm : NetWorkViewModel,navHostController: NavHostController,vmUI
 
     val context = LocalActivity.current
 
-    var sortType by remember { mutableStateOf(SortType.END_TIME) }
+    var sortType by remember { mutableStateOf(SortType.TIME_LINE) }
     var sortReversed by remember { mutableStateOf(false) }
 
 
@@ -128,19 +128,15 @@ fun SupabaseHome(vm : NetWorkViewModel,navHostController: NavHostController,vmUI
                                 TextButton(
                                     onClick = {
                                         sortType = when(sortType) {
-                                            SortType.ID -> SortType.START_TIME
-                                            SortType.START_TIME -> SortType.END_TIME
-                                            SortType.END_TIME -> SortType.CREATE_TIME
-                                            SortType.CREATE_TIME -> SortType.ID
+                                            SortType.TIME_LINE -> SortType.CREATE_TIME
+                                            SortType.CREATE_TIME -> SortType.TIME_LINE
                                         }
                                     }
                                 ) {
                                     Text(
                                         when(sortType) {
-                                            SortType.ID -> "默认排序"
-                                            SortType.START_TIME -> "按开始时间"
-                                            SortType.END_TIME -> "按结束时间"
-                                            SortType.CREATE_TIME -> "创建时间"
+                                            SortType.TIME_LINE -> "按时间线"
+                                            SortType.CREATE_TIME -> "按创建时间"
                                         }
                                     )
                                 }

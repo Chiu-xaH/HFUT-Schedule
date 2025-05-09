@@ -29,17 +29,19 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.hfut.schedule.logic.model.community.courseDetailDTOList
 import com.hfut.schedule.logic.database.entity.CustomEventDTO
-import com.hfut.schedule.logic.util.sys.DateTimeUtils
-import com.hfut.schedule.logic.util.sys.JxglstuCourseSchedule
-import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.network.parse.ParseJsons.getCustomNetCourse
-import com.hfut.schedule.logic.util.network.parse.ParseJsons.getCustomSchedule
+import com.hfut.schedule.logic.database.entity.CustomEventType
+import com.hfut.schedule.logic.enumeration.SortType
+import com.hfut.schedule.logic.model.community.courseDetailDTOList
+import com.hfut.schedule.logic.util.network.parse.ParseJsons.getCustomEvent
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.getNetCourse
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.getSchedule
+import com.hfut.schedule.logic.util.network.toTimestampWithOutT
 import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.ui.component.DividerText
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.sys.DateTimeUtils
+import com.hfut.schedule.logic.util.sys.JxglstuCourseSchedule
+import com.hfut.schedule.ui.component.RefreshIndicator
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.getCourseINFO
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.cube.sub.FocusCard
@@ -57,10 +59,9 @@ import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
 import com.hfut.schedule.ui.screen.home.initNetworkRefresh
 import com.hfut.schedule.ui.screen.home.search.function.exam.JxglstuExamUI
 import com.hfut.schedule.ui.screen.home.search.function.exam.getExamJXGLSTU
-import com.hfut.schedule.ui.component.RefreshIndicator
+import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.viewmodel.UIViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -79,9 +80,10 @@ fun TodayScreen(
     innerPadding : PaddingValues,
     vmUI : UIViewModel,
     ifSaved : Boolean,
-    webVpn : Boolean,
     state: PagerState,
     hazeState: HazeState,
+    sortType: SortType,
+    sortReversed : Boolean
 ) {
     var scheduleList by remember { mutableStateOf(getSchedule()) }
     var netCourseList by remember { mutableStateOf(getNetCourse()) }
@@ -113,7 +115,7 @@ fun TodayScreen(
     var tomorrowJxglstuList by remember { mutableStateOf<List<JxglstuCourseSchedule>>(emptyList()) }
     var todayJxglstuList by remember { mutableStateOf<List<JxglstuCourseSchedule>>(emptyList()) }
 
-    var customNetCourseList by remember { mutableStateOf<List<CustomEventDTO>>(emptyList()) }
+//    var customNetCourseList by remember { mutableStateOf<List<CustomEventDTO>>(emptyList()) }
     var customScheduleList by remember { mutableStateOf<List<CustomEventDTO>>(emptyList()) }
     val showFocus by DataStoreManager.showCloudFocusFlow.collectAsState(initial = true)
     val showStorageFocus by DataStoreManager.showFocusFlow.collectAsState(initial = true)
@@ -158,8 +160,8 @@ fun TodayScreen(
         }
         // 加载数据库
         launch {
-            launch { customNetCourseList = getCustomNetCourse() }
-            launch { customScheduleList = getCustomSchedule() }
+//            launch { customNetCourseList = getCustomNetCourse() }
+            launch { customScheduleList = getCustomEvent() }
         }
         // 一分钟更新时间 触发重组
         launch {
@@ -174,9 +176,18 @@ fun TodayScreen(
 
     LaunchedEffect(refreshDB,isAddUIExpanded) {
         if(!isAddUIExpanded) {
-            launch { customNetCourseList = getCustomNetCourse() }
-            launch { customScheduleList = getCustomSchedule() }
+//            launch { customNetCourseList = getCustomNetCourse() }
+            launch { customScheduleList = getCustomEvent() }
         }
+    }
+    LaunchedEffect(sortType,sortReversed) {
+        customScheduleList =  when(sortType) {
+            SortType.TIME_LINE -> customScheduleList.sortedBy { when(it.type) {
+                CustomEventType.NET_COURSE -> it.dateTime.end.toTimestampWithOutT()
+                CustomEventType.SCHEDULE -> it.dateTime.start.toTimestampWithOutT()
+            } }
+            SortType.CREATE_TIME -> customScheduleList.sortedBy { it.id }
+        }.let { if (sortReversed) it.reversed() else it }
     }
 
     Box(modifier = Modifier.fillMaxSize().pullRefresh(states)) {
@@ -198,56 +209,101 @@ fun TodayScreen(
                                 }
                                 CourseType.JXGLSTU.code -> {
                                     if (DateTimeUtils.compareTime(jxglstuLastTime) != DateTimeUtils.TimeState.NOT_STARTED)
-                                        tomorrowJxglstuList.let { list -> items(list.size) { item -> JxglstuTomorrowCourseItem(list[item],vmUI, hazeState,vm) } }
+                                        tomorrowJxglstuList.let { list ->
+                                            items(list.size) { item ->
+                                                JxglstuTomorrowCourseItem(list[item],vmUI, hazeState,vm)
+                                            }
+                                        }
                                     else
-                                        todayJxglstuList.let { list -> items(list.size) { item -> JxglstuTodayCourseItem(list[item],vmUI, hazeState,timeNow,vm) } }
+                                        todayJxglstuList.let { list ->
+                                            items(list.size) { item ->
+                                                JxglstuTodayCourseItem(list[item],vmUI, hazeState,timeNow,vm)
+                                            }
+                                        }
                                 }
                                 CourseType.NEXT.code -> {}
                             }
                             //日程
                             if(showStorageFocus)
-                                customScheduleList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = false) { refreshDB = !refreshDB } } } }
+                                customScheduleList.let { list ->
+                                    items(list.size){ item ->
+                                        activity?.let { it1 ->
+//                                            Box(modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null)) {
+                                                CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = false) { refreshDB = !refreshDB }
+//                                            }
+                                        }
+                                    }
+                                }
                             if(showFocus)
-                                scheduleList.let { list -> items(list.size) { item -> activity?.let { ScheduleItem(listItem = list[item],false,it) } } }
+                                scheduleList.let { list ->
+                                    items(list.size) { item ->
+                                        activity?.let {
+                                            ScheduleItem(listItem = list[item],false,it)
+                                        }
+                                    }
+                                }
                             //考试
                             items(getExamJXGLSTU()) { item -> JxglstuExamUI(item,false) }
                             //网课
-                            if(showStorageFocus)
-                                customNetCourseList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1,isFuture = false) { refreshDB = !refreshDB } } } }
+//                            if(showStorageFocus)
+//                                customNetCourseList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1,isFuture = false) { refreshDB = !refreshDB } } } }
                             if(showFocus)
-                                netCourseList.let { list -> items(list.size) { item -> activity?.let { NetCourseItem(listItem = list[item],false,it) } } }
+                                netCourseList.let { list ->
+                                    items(list.size) { item ->
+                                        activity?.let {
+                                            NetCourseItem(listItem = list[item],false,it)
+                                        }
+                                    }
+                                }
                         }
                         TAB_RIGHT -> {
                             //日程
                             if(showStorageFocus)
-                                customScheduleList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = true) { refreshDB = !refreshDB } } } }
+                                customScheduleList.let { list ->
+                                    items(list.size){ item ->
+                                        activity?.let { it1 ->
+//                                            Box(modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null)) {
+                                                CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = true) { refreshDB = !refreshDB }
+//                                            }
+                                        }
+                                    }
+                                }
                             if(showFocus)
-                                scheduleList.let { list -> items(list.size) { item -> activity?.let { ScheduleItem(listItem = list[item],true,it) }  } }
-//                            stickyHeader {
-//                                DividerText("网课")
-//                            }
+                                scheduleList.let { list ->
+                                    items(list.size) { item ->
+                                        activity?.let {
+                                            ScheduleItem(listItem = list[item],true,it)
+                                        }
+                                    }
+                                }
                             //网课
-                            if(showStorageFocus)
-                                customNetCourseList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = true) { refreshDB = !refreshDB } } } }
+//                            if(showStorageFocus)
+//                                customNetCourseList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = true) { refreshDB = !refreshDB } } } }
                             if(showFocus)
-                                netCourseList.let { list -> items(list.size) { item -> activity?.let { NetCourseItem(listItem = list[item],true,it) } } }
+                                netCourseList.let { list ->
+                                    items(list.size) { item ->
+                                        activity?.let {
+                                            NetCourseItem(listItem = list[item],true,it)
+                                        }
+                                    }
+                                }
 
                             //第二天课表
                             when(courseDataSource) {
                                 CourseType.COMMUNITY.code -> {
                                     if (DateTimeUtils.compareTime(lastTime) == DateTimeUtils.TimeState.NOT_STARTED) {
-//                                        stickyHeader {
-//                                            DividerText("明日课程")
-//                                        }
-                                        items(tomorrowCourseList.size) { item -> CommunityTomorrowCourseItem(index = item,vm,hazeState) }
+                                        items(tomorrowCourseList.size) { item ->
+                                            CommunityTomorrowCourseItem(index = item,vm,hazeState)
+                                        }
                                     }
                                 }
                                 CourseType.JXGLSTU.code -> {
                                     if (DateTimeUtils.compareTime(jxglstuLastTime) == DateTimeUtils.TimeState.NOT_STARTED) {
-//                                        stickyHeader {
-//                                            DividerText("明日课程")
-//                                        }
-                                        tomorrowJxglstuList.let { list -> items(list.size) { item -> JxglstuTomorrowCourseItem(list[item],vmUI, hazeState,vm) } }
+                                        tomorrowJxglstuList.let { list ->
+                                            items(list.size) { item ->
+                                                JxglstuTomorrowCourseItem(list[item],vmUI, hazeState,vm)
+                                            }
+                                        }
                                     }
                                 }
                                 CourseType.NEXT.code -> {}
