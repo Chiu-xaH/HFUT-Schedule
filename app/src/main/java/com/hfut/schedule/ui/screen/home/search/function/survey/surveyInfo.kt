@@ -41,6 +41,7 @@ import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.LittleDialog
 import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.ui.component.onListenStateHolder
 import com.hfut.schedule.ui.style.RowHorizontal
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import kotlinx.coroutines.Dispatchers
@@ -88,8 +89,8 @@ fun SurveyInfoUI(id : Int, vm: NetWorkViewModel,onDismiss : () -> Unit) {
         refreshNetwork()
     }
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-        val bean = (uiState as SimpleUiState.Success).data
-        SurveyList(bean,vm) {
+//        val bean = (uiState as SimpleUiState.Success).data
+        SurveyList(vm) {
             onDismiss()
         }
     }
@@ -121,11 +122,13 @@ fun SurveyInfoUI(id : Int, vm: NetWorkViewModel,onDismiss : () -> Unit) {
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SurveyList(bean : SurveyResponse,vm: NetWorkViewModel,onResult : () -> Unit) {
+private fun SurveyList(vm: NetWorkViewModel,onResult : () -> Unit) {
 //    val choiceList = getSurveyChoice(bean)
 //    val inputList = getSurveyInput(bean)
 //    val choiceNewList = mutableListOf<radioQuestionAnswer>()
 //    val inputNewList = mutableListOf<blankQuestionAnswer>()
+    val uiState by vm.surveyData.state.collectAsState()
+    val bean = (uiState as SimpleUiState.Success).data
     var postMode by remember { mutableStateOf(PostMode.NORMAL) }
     var showDialog by remember { mutableStateOf(false) }
 
@@ -197,33 +200,36 @@ suspend fun selectMode(vm : NetWorkViewModel, mode : PostMode,bean: SurveyRespon
     ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
 //    val token = prefs.getString("SurveyCookie","")
     // 主线程监听 StateFlow
-    withContext(Dispatchers.Main) {
-        // 只收集第一次流
-        val state = vm.surveyToken.state.first { it !is SimpleUiState.Loading }
-        when (state) {
-            is SimpleUiState.Success -> {
-                val token = state.data
-                when(mode) {
-                    PostMode.NORMAL -> {
-                        //vm.postSurvey("$cookie;$token", postResultNormal(vm))
-                        showToast("提交完成")
-                    }
-                    PostMode.GOOD ->  {
-                        vm.postSurvey("$cookie;$token", postResult(true, bean))
-                        showToast("提交完成")
-                    }
-                    PostMode.BAD -> {
-                        vm.postSurvey("$cookie;$token", postResult(false,bean))
-                        showToast("提交完成")
-                    }
-                }
+    onListenStateHolder(vm.surveyToken) { token ->
+        when(mode) {
+            PostMode.NORMAL -> {
+                //vm.postSurvey("$cookie;$token", postResultNormal(vm))
+                showToast("提交完成")
             }
-            is SimpleUiState.Error -> {
-                showToast("错误 " + state.exception?.message)
+            PostMode.GOOD ->  {
+                vm.postSurvey("$cookie;$token", postResult(true, bean))
+                showToast("提交完成")
             }
-            else -> {}
+            PostMode.BAD -> {
+                vm.postSurvey("$cookie;$token", postResult(false,bean))
+                showToast("提交完成")
+            }
         }
     }
+//    withContext(Dispatchers.Main) {
+//        // 只收集第一次流
+//        val state = vm.surveyToken.state.first { it !is SimpleUiState.Loading }
+//        when (state) {
+//            is SimpleUiState.Success -> {
+//                val token = state.data
+//
+//            }
+//            is SimpleUiState.Error -> {
+//                showToast("错误 " + state.exception?.message)
+//            }
+//            else -> {}
+//        }
+//    }
 }
 
 //true为好评，false为差评

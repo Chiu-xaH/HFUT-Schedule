@@ -128,29 +128,3 @@ fun getProgramListThree(item1 : Int, item2 : Int, vm : NetWorkViewModel, ifSaved
         return list
     }
 }
-
-
-fun getProgramCompletion(vm: NetWorkViewModel) : ProgramCompletionResponse {
-    return try {
-        val json = vm.ProgramCompletionData.value
-        val listType = object : TypeToken<List<ProgramCompletionResponse>>() {}.type
-        val data : List<ProgramCompletionResponse> = Gson().fromJson(json, listType)
-        val list = data[0]
-        list
-    } catch (_: Exception) {
-        val nilItem = item("培养方案课程",0.0,0.0)
-        ProgramCompletionResponse(nilItem, listOf(nilItem,nilItem,nilItem))
-    }
-}
-
-
-//fun getProgramPerformance(vm: NetWorkViewModel) : ProgramBean? {
-//    val json = vm.programPerformanceData.value
-//    return try {
-//        val data = Gson().fromJson(json,ProgramBean::class.java)
-//        data
-//    } catch (e:Exception) {
-//        null
-//    }
-//}
-

@@ -28,13 +28,22 @@ import com.hfut.schedule.logic.model.TeacherResponse
 import com.hfut.schedule.logic.model.WorkSearchResponse
 import com.hfut.schedule.logic.model.XuanquNewsItem
 import com.hfut.schedule.logic.model.XuanquResponse
+import com.hfut.schedule.logic.model.community.AvgResult
 import com.hfut.schedule.logic.model.community.BookPositionBean
 import com.hfut.schedule.logic.model.community.BookPositionResponse
 import com.hfut.schedule.logic.model.community.BorrowRecords
 import com.hfut.schedule.logic.model.community.BorrowResponse
+import com.hfut.schedule.logic.model.community.FailRateRecord
+import com.hfut.schedule.logic.model.community.FailRateResponse
+import com.hfut.schedule.logic.model.community.GradeAllResponse
+import com.hfut.schedule.logic.model.community.GradeAllResult
+import com.hfut.schedule.logic.model.community.GradeAvgResponse
 import com.hfut.schedule.logic.model.community.GradeResponseJXGLSTU
+import com.hfut.schedule.logic.model.community.LibRecord
+import com.hfut.schedule.logic.model.community.LibraryResponse
 import com.hfut.schedule.logic.model.jxglstu.MyApplyResponse
 import com.hfut.schedule.logic.model.jxglstu.ProgramBean
+import com.hfut.schedule.logic.model.jxglstu.ProgramCompletionResponse
 import com.hfut.schedule.logic.model.jxglstu.SelectCourseInfo
 import com.hfut.schedule.logic.model.jxglstu.SurveyResponse
 import com.hfut.schedule.logic.model.jxglstu.SurveyTeacherResponse
@@ -49,6 +58,7 @@ import com.hfut.schedule.logic.model.zjgd.BillMonth
 import com.hfut.schedule.logic.model.zjgd.BillMonthResponse
 import com.hfut.schedule.logic.model.zjgd.BillRangeResponse
 import com.hfut.schedule.logic.model.zjgd.BillResponse
+import com.hfut.schedule.logic.model.zjgd.ChangeLimitResponse
 import com.hfut.schedule.logic.model.zjgd.FeeType
 import com.hfut.schedule.logic.model.zjgd.FeeType.ELECTRIC
 import com.hfut.schedule.logic.model.zjgd.FeeType.SHOWER
@@ -103,7 +113,6 @@ import com.hfut.schedule.logic.util.network.Encrypt
 import com.hfut.schedule.logic.util.network.NetWork
 import com.hfut.schedule.logic.util.network.NetWork.launchRequestSimple
 import com.hfut.schedule.logic.util.network.SimpleStateHolder
-import com.hfut.schedule.logic.util.network.containsKey
 import com.hfut.schedule.logic.util.network.supabaseEventDtoToEntity
 import com.hfut.schedule.logic.util.network.supabaseEventForkDtoToEntity
 import com.hfut.schedule.logic.util.parse.SemseterParser
@@ -137,7 +146,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.awaitResponse
-import kotlin.ranges.contains
 
 // 106个函数
 class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
@@ -322,7 +330,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         data
     } catch (e : Exception) { throw e }
 
-    var programSearchData = SimpleStateHolder<ProgramSearchItemBean>()
+    val programSearchData = SimpleStateHolder<ProgramSearchItemBean>()
     suspend fun getProgramListInfo(id : Int,campus : Campus) = launchRequestSimple(
         holder = programSearchData,
         request = { myAPI.getProgram(
@@ -875,19 +883,17 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         })
     }
 
-    val ProgramCompletionData = MutableLiveData<String?>()
-    fun getProgramCompletion(cookie: String) {
-        val call = jxglstuJSON.getProgramCompletion(cookie)
-
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val body = response.body()?.string()
-                ProgramCompletionData.value = body
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
-    }
+    val ProgramCompletionData = SimpleStateHolder<ProgramCompletionResponse>()
+    suspend fun getProgramCompletion(cookie: String) = launchRequestSimple(
+        holder = ProgramCompletionData,
+        request = { jxglstuJSON.getProgramCompletion(cookie).awaitResponse() },
+        transformSuccess = { _,json -> parseProgramCompletion(json) }
+    )
+    private fun parseProgramCompletion(json : String) : ProgramCompletionResponse = try {
+        val listType = object : TypeToken<List<ProgramCompletionResponse>>() {}.type
+        val data : List<ProgramCompletionResponse> = Gson().fromJson(json, listType)
+        data[0]
+    } catch (e : Exception) { throw e }
 
     val programPerformanceData = SimpleStateHolder<ProgramBean>()
     suspend fun getProgramPerformance(cookie: String) = launchRequestSimple(
@@ -1202,19 +1208,15 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         }
     } catch (e : Exception) { throw e }
 
-
-    fun changeLimit(auth: String,json: JsonObject) {
-
-        val call = huixin.changeLimit(auth,json)
-
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                saveString("changeResult", response.body()?.string())
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
-    }
+    val changeLimitResponse = SimpleStateHolder<String>()
+    suspend fun changeLimit(auth: String,json: JsonObject) = launchRequestSimple(
+        holder = changeLimitResponse,
+        request = { huixin.changeLimit(auth,json).awaitResponse() },
+        transformSuccess = { _,json -> parseHuixinChangeLimit(json) }
+    )
+    private fun parseHuixinChangeLimit(json : String) : String = try {
+        Gson().fromJson(json,ChangeLimitResponse::class.java).msg
+    } catch (e : Exception) { throw e }
 
     var huixinRangeResult = SimpleStateHolder<Float>()
     suspend fun searchDate(auth : String, timeFrom : String, timeTo : String) = launchRequestSimple(
@@ -1433,28 +1435,24 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         })
     }
 
-    val FailRateData = MutableLiveData<String>()
-    fun SearchFailRate(CommuityTOKEN : String,name: String,page : String) {
-        val size = prefs.getString("FailRateRequest","15")
-        //size?.let { Log.d("size", it) }
-        val call = CommuityTOKEN?.let { size?.let { it1 -> community.getFailRate(it,name,page, it1) } }
-
-        if (call != null) {
-            call.enqueue(object : Callback<ResponseBody> {
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    FailRateData.value = response.body()?.string()
-                }
-
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-            })
-        }
-    }
+    val failRateData = SimpleStateHolder<List<FailRateRecord>>()
+    suspend fun searchFailRate(token : String, name: String, page : Int) = launchRequestSimple(
+        holder = failRateData,
+        request = { community.getFailRate(token,name,page.toString(), prefs.getString("FailRateRequest", MyApplication.PAGE_SIZE.toString()) ?: MyApplication.PAGE_SIZE.toString()).awaitResponse() },
+        transformSuccess = { _,json -> parseFailRate(json) }
+    )
+    private fun parseFailRate(json : String) : List<FailRateRecord> = try {
+        if(json.contains("操作成功")) {
+            Gson().fromJson(json, FailRateResponse::class.java).result.records
+        } else
+            throw Exception(json)
+    } catch (e : Exception) { throw e }
 
     val ExamData = MutableLiveData<String?>()
     val ExamCodeData = MutableLiveData<Int>()
-    fun Exam(CommuityTOKEN: String) {
+    fun Exam(token: String) {
 
-        val call = CommuityTOKEN.let { community.getExam(it) }
+        val call = token.let { community.getExam(it) }
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 val responses = response.body()?.string()
@@ -1488,29 +1486,47 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     }
 
     var GradeData = MutableLiveData<String?>()
-    fun getGrade(CommuityTOKEN: String,year : String,term : String) = NetWork.makeRequest(community.getGrade(CommuityTOKEN,year,term),GradeData)
-    var avgData = MutableLiveData<String?>()
-    fun getAvgGrade(CommuityTOKEN: String) = NetWork.makeRequest(community.getAvgGrade(CommuityTOKEN),avgData)
+    fun getGrade(token: String, year : String, term : String) = NetWork.makeRequest(community.getGrade(token,year,term),GradeData)
 
-    var allAvgData = MutableLiveData<String?>()
-    fun getAllAvgGrade(CommuityTOKEN: String) = NetWork.makeRequest(community.getAllAvgGrade(CommuityTOKEN),allAvgData)
+    val avgData = SimpleStateHolder<AvgResult>()
+    suspend fun getAvgGrade(token: String) = launchRequestSimple(
+        holder = avgData,
+        request = { community.getAvgGrade(token).awaitResponse() },
+        transformSuccess = { _,json -> parseAvgGradeFromCommunity(json) }
+    )
+    private fun parseAvgGradeFromCommunity(result : String) : AvgResult = try {
+        if(result.contains("success"))
+            Gson().fromJson(result,GradeAvgResponse::class.java).result
+        else
+            throw Exception(result)
+    } catch (e : Exception) { throw e }
 
-    val libraryData = MutableLiveData<String?>()
-    fun SearchBooks(CommuityTOKEN: String,name: String,page: Int) {
+    val allAvgData = SimpleStateHolder<List<GradeAllResult>>()
+    suspend fun getAllAvgGrade(token: String) = launchRequestSimple(
+        holder = allAvgData,
+        request = { community.getAllAvgGrade(token).awaitResponse() },
+        transformSuccess = { _,json -> parseAllAvgGradeFromCommunity(json) }
+    )
+    private fun parseAllAvgGradeFromCommunity(result : String) : List<GradeAllResult> = try {
+        if(result.contains("success"))
+            Gson().fromJson(result,GradeAllResponse::class.java).result
+        else
+            throw Exception(result)
+    } catch (e : Exception) { throw e }
 
-        val size = prefs.getString("BookRequest", MyApplication.PAGE_SIZE.toString())
-        val call = CommuityTOKEN.let { size?.let { it1 -> community.searchBooks(it,name,page.toString(), it1) } }
-        call?.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                libraryData.value = response.body()?.string()
-            }
 
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                libraryData.value = "错误"
-                t.printStackTrace()
-            }
-        })
-    }
+    val libraryData = SimpleStateHolder<List<LibRecord>>()
+    suspend fun searchBooks(token: String, name: String, page: Int) = launchRequestSimple(
+        holder = libraryData,
+        request = { community.searchBooks(token,name,page.toString(),prefs.getString("BookRequest", MyApplication.PAGE_SIZE.toString())?: MyApplication.PAGE_SIZE.toString()).awaitResponse() },
+        transformSuccess = { _,json -> parseSearchBooks(json) }
+    )
+    private fun parseSearchBooks(json : String) : List<LibRecord> = try {
+        if(json.contains("操作成功"))
+            Gson().fromJson(json, LibraryResponse::class.java).result.records
+        else
+            throw Exception(json)
+    } catch (e : Exception) { throw e }
 
     val bookPositionData = SimpleStateHolder<List<BookPositionBean>>()
     suspend fun getBookPosition(token: String,callNo: String) = launchRequestSimple(
@@ -1526,51 +1542,40 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             throw Exception(json)
     } catch (e : Exception) { throw e }
 
-    fun GetCourse(CommuityTOKEN : String,studentId: String? = null) {
+    fun GetCourse(token : String, studentId: String? = null) {
 
-        val call = CommuityTOKEN?.let { community.getCourse(it,studentId) }
+        val call = token.let { community.getCourse(it,studentId) }
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if(studentId == null)
+                    saveString("Course", response.body()?.string())
+                else
+                    saveString("Course${studentId}", response.body()?.string())
+            }
 
-        if (call != null) {
-            call.enqueue(object : Callback<ResponseBody> {
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    if(studentId == null)
-                        saveString("Course", response.body()?.string())
-                    else
-                        saveString("Course${studentId}", response.body()?.string())
-                }
-
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-            })
-        }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
     }
 
-    fun openFriend(CommuityTOKEN : String) {
+    fun openFriend(token : String) {
 
-        val call = CommuityTOKEN?.let { community.switchShare(it, CommunityService.RequestJson(1)) }
+        val call = token.let { community.switchShare(it, CommunityService.RequestJson(1)) }
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+            }
 
-        if (call != null) {
-            call.enqueue(object : Callback<ResponseBody> {
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                }
-
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-            })
-        }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
     }
 
     val applyResponseMsg = MutableLiveData<String>()
-    fun addApply(CommuityTOKEN : String,username : String) {
 
-        val call = community.applyAdd(CommuityTOKEN,CommunityService.RequestJsonApply(username))
-
-        NetWork.makeRequest(call,applyResponseMsg)
-
-    }
+    fun addApply(token : String, username : String) = NetWork.makeRequest( community.applyAdd(token,CommunityService.RequestJsonApply(username)),applyResponseMsg)
 
     val applyData = MutableLiveData<String>()
-    fun getApplying(CommuityTOKEN : String) {
-        val size = prefs.getString("CardRequest","15")
-        val call = size?.let { community.getApplyingList(CommuityTOKEN, it) }
+    fun getApplying(token : String) {
+        val size = prefs.getString("CardRequest", MyApplication.PAGE_SIZE.toString())
+        val call = size?.let { community.getApplyingList(token, it) }
 
         call?.let { NetWork.makeRequest(it,applyData) }
 
@@ -1596,9 +1601,9 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             throw Exception(json)
     } catch (e : Exception) { throw e }
 
-    fun getToday(CommuityTOKEN : String) {
+    fun getToday(token : String) {
 
-        val call = CommuityTOKEN.let { community.getToday(it) }
+        val call = token.let { community.getToday(it) }
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 saveString("TodayNotice", response.body()?.string())
@@ -1608,9 +1613,9 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         })
     }
 
-    fun getFriends(CommuityTOKEN : String) {
+    fun getFriends(token : String) {
 
-        val call = CommuityTOKEN?.let { community.getFriends(it) }
+        val call = token?.let { community.getFriends(it) }
 
         if (call != null) {
             call.enqueue(object : Callback<ResponseBody> {
@@ -1623,14 +1628,10 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         }
     }
 
-    fun checkApplying(CommuityTOKEN : String,id : String,isOk : Boolean) {
-
-        val call = CommuityTOKEN.let { community.checkApplying(it,CommunityService.RequestApplyingJson(id,if(isOk) 1 else 0)) }
+    fun checkApplying(token : String, id : String, isOk : Boolean) {
+        val call = token.let { community.checkApplying(it,CommunityService.RequestApplyingJson(id,if(isOk) 1 else 0)) }
         call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-
-            }
-
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {}
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }

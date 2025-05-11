@@ -201,7 +201,7 @@ private fun TransferListUI(vm: NetWorkViewModel, hazeState: HazeState) {
     }
 
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-        val transferList = (uiState as SimpleUiState.Success).data ?: emptyList()
+        val transferList = (uiState as SimpleUiState.Success).data
         LazyColumn {
             items(transferList.size) { index ->
                 val data = transferList[index]

@@ -41,9 +41,11 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,8 +60,11 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.model.jxglstu.ProgramCompletionResponse
 import com.hfut.schedule.logic.model.jxglstu.ProgramPartThree
 import com.hfut.schedule.logic.model.jxglstu.ProgramShow
+import com.hfut.schedule.logic.model.jxglstu.item
+import com.hfut.schedule.logic.util.network.SimpleUiState
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
@@ -247,9 +252,7 @@ fun ProgramUI(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState) {
 @Composable
 fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState) {
 
-    val sheetState_Performance = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_Performance by remember { mutableStateOf(false) }
-
 
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
@@ -259,31 +262,39 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState) {
     ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
 
 
-    val sheetState_Program = rememberModalBottomSheetState()
     var showBottomSheet_Program by remember { mutableStateOf(false) }
     val listOne = getProgramListOne(vm,ifSaved)
     var title by remember { mutableStateOf("培养方案") }
     var num by remember { mutableStateOf(0) }
-    var loadingCard by remember { mutableStateOf(true) }
-
+//    var loadingCard by remember { mutableStateOf(true) }
+    val uiState by vm.ProgramCompletionData.state.collectAsState()
+    var loadingCard = uiState !is SimpleUiState.Success
     val scale2 = animateFloatAsState(
         targetValue = if (loadingCard) 0.97f else 1f, // 按下时为0.9，松开时为1
-        //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
         animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
         label = "" // 使用弹簧动画
     )
 
 
-    val completion = getProgramCompletion(vm)
 
+    var completion by remember { mutableStateOf(
+        item("培养方案课程",0.0,0.0).let { nilItem -> ProgramCompletionResponse(nilItem, listOf(nilItem,nilItem,nilItem)) }
+    ) }
+
+    LaunchedEffect(Unit) {
+        if(!ifSaved) {
+            cookie?.let {
+                vm.ProgramCompletionData.clear()
+                vm.getProgramCompletion(it)
+            }
+        }
+    }
 
     if (showBottomSheet_Performance ) {
         HazeBottomSheet(
             onDismissRequest = { showBottomSheet_Performance = false },
             hazeState = hazeState,
             showBottomSheet = showBottomSheet_Performance
-//            sheetState = sheetState_Performance,
-//            shape = bottomSheetRound(sheetState_Performance)
         ) {
 
             Scaffold(
@@ -309,25 +320,25 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState) {
     if(ifSaved) {
         loading = false
         refresh = false
-        loadingCard = true
+//        loadingCard = true
     } else {
         if(refresh) {
             loading = true
-            loadingCard = true
-            CoroutineScope(Job()).launch{
-                async{ cookie?.let { vm.getProgramCompletion(it)} }.await()
-                async {
-                    Handler(Looper.getMainLooper()).post{
-                        vm.ProgramCompletionData.observeForever { result ->
-                            if (result != null) {
-                                if(result.contains("总学分")) {
-                                    loadingCard = false
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+//            loadingCard = true
+//            CoroutineScope(Job()).launch{
+//                async{ cookie?.let { vm.getProgramCompletion(it)} }.await()
+//                async {
+//                    Handler(Looper.getMainLooper()).post{
+//                        vm.ProgramCompletionData.observeForever { result ->
+//                            if (result != null) {
+//                                if(result.contains("总学分")) {
+//                                    loadingCard = false
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
             CoroutineScope(Job()).launch{
                 async{ cookie?.let { vm.getProgram(it)} }.await()
                 async {
@@ -342,6 +353,14 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState) {
                         }
                     }
                 }
+            }
+        }
+    }
+    LaunchedEffect(uiState) {
+        if (uiState is SimpleUiState.Success) {
+            val response = (uiState as SimpleUiState.Success).data
+            response.let {
+                completion = it
             }
         }
     }

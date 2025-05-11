@@ -100,7 +100,7 @@ fun ShowerStatusUI(vm : GuaGuaViewModel,input : String) {
 
     CommonNetworkScreen(uiState,isFullScreen = false, onReload = refreshNetwork) {
         val response = (uiState as SimpleUiState.Success).data
-        StatusUI2(painter = if(response?.contains("成功") == true) Icons.Filled.Check else Icons.Filled.Close, text = response ?: "错误")
+        StatusUI2(painter = if(response.contains("成功")) Icons.Filled.Check else Icons.Filled.Close, text = response)
     }
 }
 

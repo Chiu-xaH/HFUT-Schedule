@@ -57,6 +57,7 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.ui.component.onListenStateHolder
 import com.hfut.schedule.ui.screen.shower.cube.EditLoginCode
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.ui.util.navigateAndClear
@@ -264,28 +265,31 @@ suspend fun loginGuaGuaClick(
     vm.loginResult.clear()
     vm.login(phoneNumber, inputPSK)
 
-    // 主线程监听 StateFlow
-    withContext(Dispatchers.Main) {
-        // 只收集第一次流
-        val state = vm.loginResult.state.first { it !is SimpleUiState.Loading }
-        when (state) {
-            is SimpleUiState.Success -> {
-                val data = state.data
-                data.message.let{ msg ->
-                    if(msg.contains("成功") == true) {
-                        navHostController.navigateAndClear(ShowerScreen.HOME.name)
-                        showToast("登录成功")
-                    } else {
-                        showToast(data.message)
-                    }
-                }
+    onListenStateHolder(vm.loginResult) { data ->
+        data.message.let{ msg ->
+            if(msg.contains("成功") == true) {
+                navHostController.navigateAndClear(ShowerScreen.HOME.name)
+                showToast("登录成功")
+            } else {
+                showToast(data.message)
             }
-            is SimpleUiState.Error -> {
-                showToast("错误 " + state.exception?.message)
-            }
-            else -> {}
         }
     }
+    // 主线程监听 StateFlow
+//    withContext(Dispatchers.Main) {
+//        // 只收集第一次流
+//        val state = vm.loginResult.state.first { it !is SimpleUiState.Loading }
+//        when (state) {
+//            is SimpleUiState.Success -> {
+//                val data = state.data
+//
+//            }
+//            is SimpleUiState.Error -> {
+//                showToast("错误 " + state.exception?.message)
+//            }
+//            else -> {}
+//        }
+//    }
 }
 
 

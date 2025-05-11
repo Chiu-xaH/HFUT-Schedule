@@ -33,7 +33,7 @@ fun GuaguaBills(innerPadding: PaddingValues, vm: GuaGuaViewModel) {
 
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
         val response = (uiState as SimpleUiState.Success).data
-        val list = response?.data ?: emptyList()
+        val list = response.data
         LazyColumn {
             item { Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding())) }
             item { Spacer(modifier = Modifier.height(5.dp)) }

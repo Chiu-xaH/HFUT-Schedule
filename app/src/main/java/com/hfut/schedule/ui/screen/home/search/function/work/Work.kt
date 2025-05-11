@@ -148,7 +148,7 @@ private fun WorkSearchUI(vm : NetWorkViewModel,campus: Campus) {
 
         CommonNetworkScreen(uiState, onReload = refreshNetwork) {
             val response = (uiState as SimpleUiState.Success).data
-            val repos = response?.data ?: emptyList()
+            val repos = response.data
             val listState = rememberLazyListState()
             Box(modifier = Modifier.fillMaxSize()) {
                 LazyColumn(state = listState) {

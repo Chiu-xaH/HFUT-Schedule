@@ -1,13 +1,7 @@
 package com.hfut.schedule.ui.screen.home.search.function.failRate
 
-import android.os.Handler
-import android.os.Looper
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,57 +9,43 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CircularProgressIndicator
-import com.hfut.schedule.ui.component.LoadingUI
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.logic.util.storage.SharedPrefs
-import com.hfut.schedule.ui.component.appHorizontalDp
-import com.hfut.schedule.ui.component.BottomSheetTopBar
+import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.PrepareSearchUI
 import com.hfut.schedule.ui.component.TransplantListItem
+import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.style.HazeBottomSheet
-import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.ui.style.textFiledTransplant
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-
-fun Click(vm: NetWorkViewModel, input : String, page : Int) {
-    val CommuityTOKEN = SharedPrefs.prefs.getString("TOKEN","")
-    CommuityTOKEN?.let { vm.SearchFailRate(it,input,page.toString()) }
-}
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FailRate(vm: NetWorkViewModel, hazeState: HazeState) {
-
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
-
 
     TransplantListItem(
         headlineContent = { Text(text = "挂科率") },
@@ -73,14 +53,11 @@ fun FailRate(vm: NetWorkViewModel, hazeState: HazeState) {
         modifier = Modifier.clickable { showBottomSheet = true }
     )
 
-
     if (showBottomSheet) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet,
             hazeState = hazeState
-//            sheetState = sheetState,
-//            shape = bottomSheetRound(sheetState)
         ) {
 
             Scaffold(
@@ -105,11 +82,26 @@ fun FailRate(vm: NetWorkViewModel, hazeState: HazeState) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FailRateSearch(vm: NetWorkViewModel) {
+    LaunchedEffect(Unit) {
+        vm.failRateData.emitPrepare()
+    }
+    val uiState by vm.failRateData.state.collectAsState()
     var input by remember { mutableStateOf( "") }
-    var onclick by remember { mutableStateOf(false) }
-    var loading by remember { mutableStateOf(false) }
-
-
+    var firstUse by remember { mutableStateOf(true) }
+    var page by remember { mutableIntStateOf(1) }
+    val refreshNetwork : suspend () -> Unit = {
+        SharedPrefs.prefs.getString("TOKEN","")?.let {
+            vm.failRateData.clear()
+            vm.searchFailRate(it,input,page)
+            firstUse = false
+        }
+    }
+    LaunchedEffect(page) {
+        if(!firstUse) {
+            refreshNetwork()
+        }
+    }
+    val scope = rememberCoroutineScope()
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
@@ -126,26 +118,8 @@ fun FailRateSearch(vm: NetWorkViewModel) {
             singleLine = true,
             trailingIcon = {
                 IconButton(
-                    // shape = RoundedCornerShape(5.dp),
                     onClick = {
-                        CoroutineScope(Job()).launch{
-                            async{
-                                Click(vm, input, 1)
-                                loading = true
-                                onclick = true
-                                Handler(Looper.getMainLooper()).post{
-                                    vm.FailRateData.value = "{}"
-                                }
-                            }.await()
-                            async {
-                                Handler(Looper.getMainLooper()).post{
-                                    vm.FailRateData.observeForever { result ->
-                                        if(result.contains("操作成功"))
-                                            loading = false
-                                    }
-                                }
-                            }
-                        }
+                        scope.launch { refreshNetwork() }
                     }) {
                     Icon(painter = painterResource(R.drawable.search), contentDescription = "description")
                 }
@@ -155,76 +129,25 @@ fun FailRateSearch(vm: NetWorkViewModel) {
         )
     }
     Spacer(modifier = Modifier.height(3.dp))
-
-
-    if(onclick){
-        Box() {
-            AnimatedVisibility(
-                visible = loading,
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Spacer(modifier = Modifier.height(5.dp))
-                    LoadingUI()
-                }
-            }////加载动画居中，3s后消失
-
-            AnimatedVisibility(
-                visible = !loading,
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) { FailRateUI(vm) }
-        }
-
+    CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchUI() }) {
+        FailRateUI(vm,page,nextPage = { page = it }, previousPage = { page = it })
     }
-    Spacer(modifier = Modifier.height(30.dp))
 }
 var permit = 1
 @Composable
 fun ApiToFailRate(input : String, vm: NetWorkViewModel, hazeState: HazeState) {
-    var loading by remember { mutableStateOf(true) }
-    if(permit == 1)
-    CoroutineScope(Job()).launch {
-        async{
-            Click(vm, input, 1)
-            Handler(Looper.getMainLooper()).post{
-                vm.FailRateData.value = "{}"
-            }
-        }.await()
-        async {
-            Handler(Looper.getMainLooper()).post{
-                vm.FailRateData.observeForever { result ->
-                    if(result.contains("操作成功")) {
-                        permit++
-                        loading = false
-                    }
-                }
-            }
+    val uiState by vm.failRateData.state.collectAsState()
+    var page by remember { mutableIntStateOf(1) }
+    val refreshNetwork : suspend () -> Unit = {
+        SharedPrefs.prefs.getString("TOKEN","")?.let {
+            vm.failRateData.clear()
+            vm.searchFailRate(it,input,page)
         }
     }
-    Box {
-        AnimatedVisibility(
-            visible = loading,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Spacer(modifier = Modifier.height(5.dp))
-                LoadingUI()
-            }
-        }
-        AnimatedVisibility(
-            visible = !loading,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) { FailRateUI(vm) }
+    LaunchedEffect(page) {
+        refreshNetwork()
     }
-
+    CommonNetworkScreen(uiState, onReload = refreshNetwork) {
+        FailRateUI(vm,page,nextPage = { page = it }, previousPage = { page = it })
+    }
 }

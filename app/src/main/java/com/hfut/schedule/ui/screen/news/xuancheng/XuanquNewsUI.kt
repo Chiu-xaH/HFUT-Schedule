@@ -49,7 +49,7 @@ fun XuanquNewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
     WebDialog(showDialog,{ showDialog = false },MyApplication.NEWS_XC_URL + url,"新闻详情")
 
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-        val list = (uiState as SimpleUiState.Success).data ?: emptyList()
+        val list = (uiState as SimpleUiState.Success).data
         val listState = rememberLazyListState()
         Box(modifier = Modifier.fillMaxSize()) {
             LazyColumn(state = listState) {

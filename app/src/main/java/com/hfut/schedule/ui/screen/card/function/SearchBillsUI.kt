@@ -112,8 +112,8 @@ fun SearchBillsUI(vm : NetWorkViewModel) {
                 if(!startUse) startUse = true
 
                 val response = (uiState as SimpleUiState.Success).data
-                val list = response?.records
-                list?.let {
+                val list = response.records
+                list.let {
                     if(it.isEmpty()) {
                         CenterScreen { EmptyUI() }
                     } else {

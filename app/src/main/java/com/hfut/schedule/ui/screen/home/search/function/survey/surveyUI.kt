@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,12 +12,9 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -30,12 +26,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.enumeration.PostMode
-import com.hfut.schedule.logic.model.jxglstu.SurveyResponse
-import com.hfut.schedule.logic.model.jxglstu.lessonSurveyTasks
 import com.hfut.schedule.logic.util.network.SimpleUiState
 import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
@@ -45,14 +37,12 @@ import com.hfut.schedule.ui.component.AnimationCardListItem
 import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.EmptyUI
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.LittleDialog
 import com.hfut.schedule.ui.component.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -80,9 +70,8 @@ fun SurveyUI(vm : NetWorkViewModel, hazeState: HazeState) {
 
     val scope = rememberCoroutineScope()
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-        val response = (uiState as SimpleUiState.Success).data
         Box(modifier = Modifier.fillMaxSize()) {
-            teacherSurveyList(vm, list = response, hazeState = hazeState, refresh = refreshNetwork)
+            TeacherSurveyListUI(vm,hazeState = hazeState, refresh = refreshNetwork)
             FloatingActionButton(
                 onClick = { semester -= 20 },
                 modifier = Modifier
@@ -111,8 +100,10 @@ fun SurveyUI(vm : NetWorkViewModel, hazeState: HazeState) {
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun teacherSurveyList(vm : NetWorkViewModel, hazeState: HazeState, list : List<lessonSurveyTasks>,refresh : suspend () -> Unit) {
+fun TeacherSurveyListUI(vm : NetWorkViewModel, hazeState: HazeState, refresh : suspend () -> Unit) {
 //    val list =  getSurveyList(vm)
+    val uiState by vm.surveyListData.state.collectAsState()
+    val list = (uiState as SimpleUiState.Success).data
     var showBottomSheet by remember { mutableStateOf(false) }
     var id by remember { mutableIntStateOf(0) }
 

@@ -276,7 +276,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
                             Handler(Looper.getMainLooper()).post{
                                 vm.electricData.value = "{}"
                             }
-                            SharedPrefs.saveString("PhoneNumber",phoneNumber )
+                            saveString("PhoneNumber",phoneNumber )
                         }.await()
                         async { vm.getFee("bearer $auth", FeeType.SHOWER, phoneNumber = phoneNumber) }.await()
                         async {

@@ -460,7 +460,6 @@ fun SelectCourseInfoLoad(courseId : Int, vm: NetWorkViewModel, hazeState: HazeSt
     }
 
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-        val response = (uiState as SimpleUiState.Success).data ?: emptyList()
         Column {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -489,14 +488,16 @@ fun SelectCourseInfoLoad(courseId : Int, vm: NetWorkViewModel, hazeState: HazeSt
                 )
             }
             Spacer(modifier = Modifier.height(cardNormalDp()))
-            SelectCourseInfo(vm,response,courseId,input, hazeState =hazeState )
+            SelectCourseInfo(vm,courseId,input, hazeState =hazeState )
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SelectCourseInfo(vm: NetWorkViewModel,list : List<SelectCourseInfo>,courseId : Int, search : String = "", hazeState: HazeState) {
+private fun SelectCourseInfo(vm: NetWorkViewModel,courseId : Int, search : String = "", hazeState: HazeState) {
+    val uiState by vm.selectCourseInfoData.state.collectAsState()
+    val list = (uiState as SimpleUiState.Success).data
     var lessonId by remember { mutableIntStateOf(0) }
     var showBottomSheet by remember { mutableStateOf(false) }
     var name by remember { mutableStateOf("课程详情") }

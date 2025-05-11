@@ -137,9 +137,9 @@ fun SearchTeachersUI(vm : NetWorkViewModel) {
                 }
                 Spacer(modifier = Modifier.height(4.dp))
                 CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchUI() }) {
-                    val response = (uiState as SimpleUiState.Success).data
-                    val list = response?.teacherData ?: emptyList()
-                    TeacherListUI(list)
+//                    val response = (uiState as SimpleUiState.Success).data
+//                    val list = response?.teacherData ?: emptyList()
+                    TeacherListUI(vm)
                 }
             }
             Spacer(modifier = Modifier.height(20.dp))
@@ -159,8 +159,8 @@ fun ApiToTeacherSearch(input : String,vm: NetWorkViewModel) {
         refreshNetwork()
     }
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-        val response = (uiState as SimpleUiState.Success).data
-        val list = response?.teacherData ?: emptyList()
-        TeacherListUI(list)
+//        val response = (uiState as SimpleUiState.Success).data
+//        val list = response?.teacherData ?: emptyList()
+        TeacherListUI(vm)
     }
 }

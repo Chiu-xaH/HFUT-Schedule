@@ -90,15 +90,7 @@ fun UseCodeUI(vm: GuaGuaViewModel, hazeState: HazeState, navController: NavHostC
         label = "" // 使用弹簧动画
     )
 
-    val blurSize by animateDpAsState(
-        targetValue = if (loading) 10.dp else 0.dp, label = ""
-        ,animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
-    )
-
     var showBottomSheet by remember { mutableStateOf(false) }
-    val motionBlur by DataStoreManager.motionBlurFlow.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
-
-
 
     if (showBottomSheet) {
         HazeBottomSheet (
@@ -124,7 +116,7 @@ fun UseCodeUI(vm: GuaGuaViewModel, hazeState: HazeState, navController: NavHostC
     LaunchedEffect(uiState) {
         if (uiState is SimpleUiState.Success) {
             val response = (uiState as SimpleUiState.Success).data
-            response?.let {
+            response.let {
                 useCode = it
             }
         }
@@ -240,7 +232,7 @@ fun ReSetUseCodeUI(vm: GuaGuaViewModel,navController: NavHostController) {
             HazeBottomSheetTopBar("修改使用码", isPaddingStatusBar = false)
             CommonNetworkScreen(uiState,isFullScreen = false, onReload = refreshNetwork) {
                 val msg = (uiState as SimpleUiState.Success).data
-                if(msg?.contains("成功") == true) {
+                if(msg.contains("成功") == true) {
                     StatusUI2(Icons.Filled.Check,"成功修改为 $password")
                 } else if(msg == "密码错误")  {
                     StatusUI(R.drawable.login,"您从未使用密码登录过 需要重新用密码登录")
@@ -255,7 +247,7 @@ fun ReSetUseCodeUI(vm: GuaGuaViewModel,navController: NavHostController) {
                         }
                     }
                 } else {
-                    ErrorUI(msg ?: "结果空")
+                    ErrorUI(msg)
                 }
             }
         }

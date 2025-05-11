@@ -33,6 +33,7 @@ import com.hfut.schedule.logic.util.network.SimpleUiState
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.onListenStateHolder
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.util.navigateAndClear
 import kotlinx.coroutines.CoroutineScope
@@ -101,18 +102,21 @@ private suspend fun getRangeData(vm: NetWorkViewModel, state: DateRangePickerSta
     vm.huixinRangeResult.clear()
     vm.searchDate("bearer $auth", startDateString, endDateString)
     // 主线程监听 StateFlow
-    withContext(Dispatchers.Main) {
-        // 只收集第一次流
-        val state = vm.huixinRangeResult.state.first { it !is SimpleUiState.Loading }
-        when (state) {
-            is SimpleUiState.Success -> {
-                val data = state.data
-                showToast("共支出 $data 元")
-            }
-            is SimpleUiState.Error -> {
-                showToast("错误 " + state.exception?.message)
-            }
-            else -> {}
-        }
+    onListenStateHolder(vm.huixinRangeResult) { data ->
+        showToast("共支出 $data 元")
     }
+//    withContext(Dispatchers.Main) {
+//        // 只收集第一次流
+//        val state = vm.huixinRangeResult.state.first { it !is SimpleUiState.Loading }
+//        when (state) {
+//            is SimpleUiState.Success -> {
+//                val data = state.data
+//                showToast("共支出 $data 元")
+//            }
+//            is SimpleUiState.Error -> {
+//                showToast("错误 " + state.exception?.message)
+//            }
+//            else -> {}
+//        }
+//    }
 }

@@ -22,10 +22,14 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.getExceptionDetail
 import com.hfut.schedule.logic.util.getKeyStackTrace
 import com.hfut.schedule.logic.util.network.PARSE_ERROR_CODE
+import com.hfut.schedule.logic.util.network.SimpleStateHolder
 import com.hfut.schedule.logic.util.network.SimpleUiState
 import com.hfut.schedule.logic.util.sys.ClipBoard
 import com.hfut.schedule.logic.util.sys.Starter
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 //@Composable
 //fun CommonNetworkScreen(
@@ -176,5 +180,20 @@ fun CommonNetworkScreen(
         is SimpleUiState.Success -> {
             successContent()
         }
+    }
+}
+
+suspend fun <T> onListenStateHolder(response : SimpleStateHolder<T>,onSuccess : (T) -> Unit) = withContext(Dispatchers.Main) {
+    // 只收集第一次流
+    val state = response.state.first { it !is SimpleUiState.Loading }
+    when (state) {
+        is SimpleUiState.Success -> {
+            val data = state.data
+            onSuccess(data)
+        }
+        is SimpleUiState.Error -> {
+            showToast("错误 " + state.exception?.message)
+        }
+        else -> {}
     }
 }

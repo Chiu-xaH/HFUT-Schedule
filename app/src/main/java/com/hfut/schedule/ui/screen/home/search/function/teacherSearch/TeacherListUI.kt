@@ -14,6 +14,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.model.TeacherBean
+import com.hfut.schedule.logic.util.network.SimpleUiState
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.cardNormalColor
 import com.hfut.schedule.ui.component.TransplantListItem
@@ -30,7 +32,10 @@ import com.hfut.schedule.ui.component.WebDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TeacherListUI(dataList: List<TeacherBean>) {
+fun TeacherListUI(vm: NetWorkViewModel) {
+    val uiState by vm.teacherSearchData.state.collectAsState()
+    val dataList = (uiState as SimpleUiState.Success).data.teacherData
+
     var showDialog by remember { mutableStateOf(false) }
     var links by remember { mutableStateOf("") }
     var title by remember { mutableStateOf("教师主页") }

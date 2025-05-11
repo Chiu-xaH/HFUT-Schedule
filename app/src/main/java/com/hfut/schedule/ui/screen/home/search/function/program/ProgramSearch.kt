@@ -220,29 +220,6 @@ fun ProgramSearch(vm : NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState)
 
 @Composable
 private fun ProgramSearchInfo(vm: NetWorkViewModel, item: ProgramListBean, campus: Campus, ifSaved: Boolean, hazeState: HazeState) {
-//    val id =
-//    var loading by remember { mutableStateOf(true) }
-//    var refresh by remember { mutableStateOf(true) }
-//    fun refresh() {
-//        loading = true
-//        CoroutineScope(Job()).launch {
-//            async { reEmptyLiveDta(vm.programSearchData) }
-//            async { vm.getProgramListInfo(id,campus) }.await()
-//            async {
-//                Handler(Looper.getMainLooper()).post{
-//                    vm.programSearchData.observeForever { result ->
-//                        if (result != null) {
-//                            if(result.contains("{")) {
-//                                refresh = false
-//                                loading = false
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-//    if(refresh) { refresh() }
     val uiState by vm.programSearchData.state.collectAsState()
     val refreshNetwork: suspend () -> Unit = {
         vm.programSearchData.clear()
@@ -252,20 +229,16 @@ private fun ProgramSearchInfo(vm: NetWorkViewModel, item: ProgramListBean, campu
         refreshNetwork()
     }
     CommonNetworkScreen(uiState, onReload = refreshNetwork, loadingText = "培养方案较大 加载中") {
-        val bean = (uiState as SimpleUiState.Success).data
-        SearchProgramUI(bean, ifSaved, hazeState =hazeState,vm)
+        SearchProgramUI(ifSaved, hazeState =hazeState,vm)
     }
-//    if(loading) {
-//        LoadingUI()
-//    } else {
-//
-//    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SearchProgramUI(bean: ProgramSearchItemBean, ifSaved: Boolean, hazeState: HazeState,vm: NetWorkViewModel) {
+private fun SearchProgramUI(ifSaved: Boolean, hazeState: HazeState,vm: NetWorkViewModel) {
 //    val sheetState_Program = rememberModalBottomSheetState()
+    val uiState by vm.programSearchData.state.collectAsState()
+    val bean = (uiState as SimpleUiState.Success).data
     var showBottomSheet_Program by remember { mutableStateOf(false) }
     val listOne = getProgramListOneSearch(bean)
     var title by remember { mutableStateOf("培养方案") }

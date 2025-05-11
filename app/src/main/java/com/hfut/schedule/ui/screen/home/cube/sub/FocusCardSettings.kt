@@ -53,6 +53,7 @@ import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.cardNormalColor
 import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.ui.component.onListenStateHolder
 import com.hfut.schedule.ui.screen.home.focus.funiction.TodayUI
 import com.hfut.schedule.ui.screen.home.search.function.card.SchoolCardItem
 import com.hfut.schedule.ui.screen.home.search.function.electric.Electric
@@ -378,20 +379,23 @@ suspend fun getEle(vm : NetWorkViewModel, vmUI : UIViewModel) = withContext(Disp
     var jsons = "{ \"query_elec_roominfo\": { \"aid\":\"0030000000007301\", \"account\": \"24027\",\"room\": { \"roomid\": \"${input}\", \"room\": \"${input}\" },  \"floor\": { \"floorid\": \"\", \"floor\": \"\" }, \"area\": { \"area\": \"\", \"areaname\": \"\" }, \"building\": { \"buildingid\": \"\", \"building\": \"\" },\"extdata\":\"info1=\" } }"
     vm.electricOldData.clear()
     vm.searchEle(jsons)
-    withContext(Dispatchers.Main) {
-        val state = vm.electricOldData.state.first { it !is SimpleUiState.Loading }
-        when (state) {
-            is SimpleUiState.Success -> {
-                val data = state.data
-                vmUI.electricValue.value = data
-                saveString("memoryEle",vmUI.electricValue.value)
-            }
-            is SimpleUiState.Error -> {
-                showToast("错误 " + state.exception?.message)
-            }
-            else -> {}
-        }
+    onListenStateHolder(vm.electricOldData) { data ->
+        vmUI.electricValue.value = data
+        saveString("memoryEle",vmUI.electricValue.value)
     }
+//    withContext(Dispatchers.Main) {
+//        val state = .state.first { it !is SimpleUiState.Loading }
+//        when (state) {
+//            is SimpleUiState.Success -> {
+//                val data = state.data
+//                
+//            }
+//            is SimpleUiState.Error -> {
+//                showToast("错误 " + state.exception?.message)
+//            }
+//            else -> {}
+//        }
+//    }
 }
 fun getEleNew(vm : NetWorkViewModel, vmUI : UIViewModel) {
     val BuildingsNumber = prefs.getString("BuildNumber", "0")
