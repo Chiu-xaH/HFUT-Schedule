@@ -500,18 +500,14 @@ fun CalendarScreen(
            }
        }
 
-
-       LaunchedEffect(Unit) {
-
-       }
         if(!webVpn) {
             val token = prefs.getString("bearer", "")
             //检测慧新易校可用性
-            if (prefs.getString("auth", "") == "") vm.goToHuixin("$ONE;$TGC")
+            if (prefs.getString("auth", "") == "") vm.goToHuiXin("$ONE;$TGC")
            CoroutineScope(job2).launch {
 
 
-               async { vm.goToHuixin("$ONE;$TGC") }
+               async { vm.goToHuiXin("$ONE;$TGC") }
                async { CommuityTOKEN?.let { vm.getExamFromCommunity(it) } }
 
                Handler(Looper.getMainLooper()).post { vm.examCodeFromCommunityResponse.observeForever(ExamObserver) }

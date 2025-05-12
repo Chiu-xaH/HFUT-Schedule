@@ -1,14 +1,8 @@
 package com.hfut.schedule.ui.screen.home.search.function.transfer
 
 import android.annotation.SuppressLint
-import android.os.Handler
-import android.os.Looper
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -44,18 +38,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Observer
-import com.google.gson.Gson
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.jxglstu.TransferData
 import com.hfut.schedule.logic.util.network.SimpleUiState
-import com.hfut.schedule.logic.util.network.reEmptyLiveDta
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.AnimationCardListItem
 import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.DepartmentIcons
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.LoadingUI
 import com.hfut.schedule.ui.component.ScrollText
 import com.hfut.schedule.ui.component.StatusUI2
 import com.hfut.schedule.ui.component.StyleCardListItem
@@ -67,10 +57,6 @@ import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -296,93 +282,111 @@ data class ErrorText(val textZh : String)
 @Composable
 fun TransferStatusUI(vm : NetWorkViewModel, batchId: String, id: Int, phoneNumber : String) {
 
-    var loading by remember { mutableStateOf(true) }
-    var refresh by remember { mutableStateOf(true) }
-
-    var msg  by remember { mutableStateOf("") }
-
-    var cookie = if (!vm.webVpn) prefs.getString(
-        "redirect",
-        ""
-    ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
-
-    val cookieObserver = Observer<String?> { result ->
-        if (result != null) {
-            if(countFunc == 0) {
-                ("$cookie;$result").let { vm.postTransfer(it,batchId,id.toString(),phoneNumber) }
-                countFunc++
-            }
+//    var loading by remember { mutableStateOf(true) }
+//
+//    var msg  by remember { mutableStateOf("") }
+    var cookie = remember {
+        if (!vm.webVpn) prefs.getString(
+            "redirect",
+            ""
+        ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
+    }
+    val refreshNetwork : suspend () -> Unit = {
+        cookie?.let {
+            vm.postTransferResponse.clear()
+            vm.fromCookie.clear()
+            vm.getFormCookie(it,batchId,id.toString())
+            val preferCookie = (vm.fromCookie.state.value as? SimpleUiState.Success)?.data ?: return@let
+            vm.postTransfer("$cookie;$preferCookie",batchId,id.toString(),phoneNumber)
         }
     }
-    val postObserver = Observer<String?> { result ->
-        if (result != null) {
-            if(result.contains("result")) {
-                try {
-                    val data =  Gson().fromJson(result,TransferPostResponse::class.java)
-                    if(data.result) {
-                        msg = "成功"
-                    } else {
-                        val errors = data.errors
-                        errors.forEach { item ->
-                            msg += item.textZh + " "
-                        }
-                    }
-                } catch (_: Exception) {
-                    msg = "错误"
-                }
-
-                refresh = false
-                loading = false
-            }
-        }
-    }
-
-    if(refresh && countFunc == 0) {
-
-        loading = true
-        Handler(Looper.getMainLooper()).post {
-            vm.formCookie.observeForever(cookieObserver)
-            vm.postTransferResponse.observeForever(postObserver)
-        }
-        CoroutineScope(Job()).launch {
-            async {
-                reEmptyLiveDta(vm.formCookie)
-                reEmptyLiveDta(vm.postTransferResponse)
-            }.await()
-            async {
-                if(countFunc == 0)
-                cookie?.let { vm.getFormCookie(it,batchId,id.toString()) }
-            }.await()
-        }
+//    val uiStateCookie by vm.fromCookie.state.collectAsState()
+    val uiState by vm.postTransferResponse.state.collectAsState()
+    LaunchedEffect(Unit) {
+        refreshNetwork()
     }
 
 
-    Box {
-        AnimatedVisibility(
-            visible = loading,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Spacer(modifier = Modifier.height(5.dp))
-                LoadingUI()
-            }
-        }
 
+//    val cookieObserver = Observer<String?> { result ->
+//        if (result != null) {
+//            if(countFunc == 0) {
+//                vm.postTransfer("$cookie;$result",batchId,id.toString(),phoneNumber)
+//                countFunc++
+//            }
+//        }
+//    }
+//    val postObserver = Observer<String?> { result ->
+//        if (result != null) {
+//            if(result.contains("result")) {
+//                try {
+//                    val data =  Gson().fromJson(result,TransferPostResponse::class.java)
+//                    if(data.result) {
+//                        msg = "成功"
+//                    } else {
+//                        val errors = data.errors
+//                        errors.forEach { item ->
+//                            msg += item.textZh + " "
+//                        }
+//                    }
+//                } catch (_: Exception) {
+//                    msg = "错误"
+//                }
+//
+//                refresh = false
+//                loading = false
+//            }
+//        }
+//    }
 
-        AnimatedVisibility(
-            visible = !loading,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            StatusUI2(painter =
-            if(msg == "成功" ) Icons.Filled.Check
-            else Icons.Filled.Close
-                , text = msg)
-        }
+//    if(refresh && countFunc == 0) {
+//
+//        loading = true
+//        Handler(Looper.getMainLooper()).post {
+//            vm.fromCookie.observeForever(cookieObserver)
+//            vm.postTransferResponse.observeForever(postObserver)
+//        }
+//        CoroutineScope(Job()).launch {
+//            async {
+//                reEmptyLiveDta(vm.fromCookie)
+//                reEmptyLiveDta(vm.postTransferResponse)
+//            }.await()
+//            async {
+//                if(countFunc == 0)
+//                cookie?.let { vm.getFormCookie(it,batchId,id.toString()) }
+//            }.await()
+//        }
+//    }
+//
+
+    CommonNetworkScreen(uiState, isFullScreen = false , onReload = refreshNetwork) {
+        val msg = (uiState as SimpleUiState.Success).data
+        StatusUI2(painter = if(msg == "成功" ) Icons.Filled.Check else Icons.Filled.Close, text = msg)
     }
+
+//    Box {
+//        AnimatedVisibility(
+//            visible = loading,
+//            enter = fadeIn(),
+//            exit = fadeOut()
+//        ) {
+//            Row(
+//                modifier = Modifier.fillMaxWidth(),
+//                horizontalArrangement = Arrangement.Center
+//            ) {
+//                Spacer(modifier = Modifier.height(5.dp))
+//                LoadingUI()
+//            }
+//        }
+//
+//
+//        AnimatedVisibility(
+//            visible = !loading,
+//            enter = fadeIn(),
+//            exit = fadeOut()
+//        ) {
+//
+//        }
+//    }
 
 }

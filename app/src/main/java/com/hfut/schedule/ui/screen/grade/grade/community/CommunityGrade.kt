@@ -1,7 +1,5 @@
 package com.hfut.schedule.ui.screen.grade.grade.community
 
-import android.os.Handler
-import android.os.Looper
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,7 +20,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -32,34 +33,27 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.util.network.SimpleUiState
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
-import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.network.reEmptyLiveDta
-import com.hfut.schedule.ui.screen.grade.grade.getGrade
 import com.hfut.schedule.ui.component.AnimationCardListItem
+import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.EmptyUI
-import com.hfut.schedule.ui.component.LoadingUI
+import com.hfut.schedule.ui.component.PrepareSearchUI
 import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 @Composable
-fun TotalGrade(vm : NetWorkViewModel) {
-
-    val result = getTotalGrade(vm)
-    if(result != null) {
-        val Class = result.classRanking
-        val Major = result.majorRanking
-        val TotalGPA = result.gpa
-
+private fun TotalGrade(vm : NetWorkViewModel) {
+    val uiState by vm.gradeFromCommunityResponse.state.collectAsState()
+    val result = (uiState as SimpleUiState.Success).data
+    with(result) {
         AnimationCardListItem(
-            headlineContent = {  Text("绩点(GPA)  $TotalGPA") },
-            supportingContent = { Text("班级排名: $Class   专业排名: $Major") },
+            headlineContent = {  Text("绩点(GPA)  $gpa") },
+            supportingContent = { Text("班级排名: $classRanking   专业排名: $majorRanking") },
             leadingContent = { Icon(painterResource(R.drawable.flag), contentDescription = "Localized description",) },
-            modifier = Modifier.clickable {},
             color = MaterialTheme.colorScheme.primaryContainer,
             index = 0
         )
@@ -68,112 +62,90 @@ fun TotalGrade(vm : NetWorkViewModel) {
 
 @Composable
 fun GradeItemUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
+    var year by remember {
+        mutableIntStateOf(
+            if (DateTimeUtils.Date_MM.toInt() <= 8)
+                DateTimeUtils.Date_yyyy.toInt() - 1
+            else
+                DateTimeUtils.Date_yyyy.toInt()
+        )
+    }
 
-    val CommuityTOKEN = prefs.getString("TOKEN","")
-    var refresh by remember { mutableStateOf(true) }
-    var loading by remember { mutableStateOf(true) }
-
-    var term  by remember { mutableStateOf( "1") }
-    val month = DateTimeUtils.Date_MM.toInt()
-    if( month >= 9 || month <= 2) term = "1"
-    else term = "2"
-    var Years by remember { mutableStateOf(
-        if (month <= 8) DateTimeUtils.Date_yyyy.toInt() - 1
-        else DateTimeUtils.Date_yyyy.toInt()
+    var isUpTerm by remember { mutableStateOf(
+        DateTimeUtils.Date_MM.toInt().let { it >= 9 || it <= 2 }
     ) }
+    val uiState by vm.gradeFromCommunityResponse.state.collectAsState()
 
-    var termBoolean by remember { mutableStateOf(prefs.getBoolean("term",true)) }
+    LaunchedEffect(Unit) {
+        if(uiState !is SimpleUiState.Success)
+            vm.gradeFromCommunityResponse.emitPrepare()
+    }
 
-    if (termBoolean) term = "1"
-    else term = "2"
-    val cor = rememberCoroutineScope()
-
-    fun refresh() = cor.launch {
-        async {
-            reEmptyLiveDta(vm.gradeFromCommunityResponse)
-            loading = true
-            SharedPrefs.saveBoolean("term",true,termBoolean)
-        }.await()
-        async { CommuityTOKEN?.let { vm.getGrade(it,Years.toString() + "-"+(Years+1),term) } }.await()
-        launch {
-            Handler(Looper.getMainLooper()).post{
-                vm.gradeFromCommunityResponse.observeForever { result ->
-                    if (result != null && result.contains("success")) {
-                        refresh = false
-                        loading = false
-                    }
-                }
-            }
+    val refreshNetwork : suspend () -> Unit = {
+        prefs.getString("TOKEN","")?.let {
+            vm.gradeFromCommunityResponse.clear()
+            vm.getGrade(it,year.toString() + "-"+(year+1),(if(isUpTerm) 1 else 2).toString())
         }
     }
-    if(refresh) refresh()
-
-    var showitem_year by remember { mutableStateOf(false) }
-    DropdownMenu(expanded = showitem_year, onDismissRequest = { showitem_year = false }, offset = DpOffset(appHorizontalDp(),0.dp)) {
+    val scope = rememberCoroutineScope()
+    var showItemYear by remember { mutableStateOf(false) }
+    DropdownMenu(expanded = showItemYear, onDismissRequest = { showItemYear = false }, offset = DpOffset(appHorizontalDp(),0.dp)) {
         DropdownMenuItem(text = { Text(text = "${(DateTimeUtils.Date_yyyy.toInt() - 3).toString()} - ${(DateTimeUtils.Date_yyyy.toInt() - 2).toString()}" )}, onClick = {
-            Years = (DateTimeUtils.Date_yyyy.toInt() - 3)
-            showitem_year = false})
+            year = (DateTimeUtils.Date_yyyy.toInt() - 3)
+            showItemYear = false})
         DropdownMenuItem(text = { Text(text = "${(DateTimeUtils.Date_yyyy.toInt() - 2).toString()} - ${(DateTimeUtils.Date_yyyy.toInt() - 1).toString()}" )}, onClick = {
-            Years =  (DateTimeUtils.Date_yyyy.toInt() - 2)
-            showitem_year = false})
+            year =  (DateTimeUtils.Date_yyyy.toInt() - 2)
+            showItemYear = false})
         DropdownMenuItem(text = { Text(text = "${(DateTimeUtils.Date_yyyy.toInt() - 1).toString()} - ${(DateTimeUtils.Date_yyyy.toInt() ).toString()}" )},onClick = {
-            Years =  (DateTimeUtils.Date_yyyy.toInt() - 1)
-            showitem_year = false})
+            year =  (DateTimeUtils.Date_yyyy.toInt() - 1)
+            showItemYear = false})
         DropdownMenuItem(text = { Text(text = "${(DateTimeUtils.Date_yyyy.toInt() ).toString()} - ${(DateTimeUtils.Date_yyyy.toInt() + 1).toString()}" )}, onClick = {
-            Years =  DateTimeUtils.Date_yyyy.toInt()
-            showitem_year = false})
+            year =  DateTimeUtils.Date_yyyy.toInt()
+            showItemYear = false})
         DropdownMenuItem(text = { Text(text = "${(DateTimeUtils.Date_yyyy.toInt() + 1).toString()} - ${(DateTimeUtils.Date_yyyy.toInt() + 2).toString()}" )}, onClick = {
-            Years =  (DateTimeUtils.Date_yyyy.toInt() + 1)
-            showitem_year = false})
+            year =  (DateTimeUtils.Date_yyyy.toInt() + 1)
+            showItemYear = false})
         DropdownMenuItem(text = { Text(text = "${(DateTimeUtils.Date_yyyy.toInt() + 2).toString()} - ${(DateTimeUtils.Date_yyyy.toInt() + 3).toString()}" )}, onClick = {
-            Years =  (DateTimeUtils.Date_yyyy.toInt() + 2)
-            showitem_year = false})
+            year =  (DateTimeUtils.Date_yyyy.toInt() + 2)
+            showItemYear = false})
         DropdownMenuItem(text = { Text(text = "${(DateTimeUtils.Date_yyyy.toInt() + 3).toString()} - ${(DateTimeUtils.Date_yyyy.toInt() + 4).toString()}" )}, onClick = {
-            Years =  (DateTimeUtils.Date_yyyy.toInt() + 3)
-            showitem_year = false})
+            year =  (DateTimeUtils.Date_yyyy.toInt() + 3)
+            showItemYear = false})
     }
-
     Column {
         Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
-        if(loading) {
-            LoadingUI()
-        } else {
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = appHorizontalDp(), vertical = 0.dp), horizontalArrangement = Arrangement.Start){
+        Row(modifier = Modifier.fillMaxWidth().padding(horizontal = appHorizontalDp(), vertical = 0.dp), horizontalArrangement = Arrangement.Start){
 
-                AssistChip(
-                    onClick = { showitem_year = true },
-                    label = { Text(text = "${Years} - ${Years + 1}") }
-                )
+            AssistChip(
+                onClick = { showItemYear = true },
+                label = { Text(text = "$year - ${year + 1}") }
+            )
 
-                Spacer(modifier = Modifier.width(10.dp))
+            Spacer(modifier = Modifier.width(10.dp))
 
-                AssistChip(
-                    onClick = {termBoolean = !termBoolean},
-                    label = { Text(text = "第 $term 学期") },
-                )
+            AssistChip(
+                onClick = {isUpTerm = !isUpTerm},
+                label = { Text(text = "第 ${if(isUpTerm) 1 else 2} 学期") },
+            )
 
-                Spacer(modifier = Modifier.width(10.dp))
-                AssistChip(
-                    onClick = {
-                        refresh()
-                    },
-                    label = { Text(text = "搜索") },
-                    leadingIcon = { Icon(painter = painterResource(R.drawable.search), contentDescription = "description") }
-                )
-            }
-
-
-            val list = getGrade(vm)
+            Spacer(modifier = Modifier.width(10.dp))
+            AssistChip(
+                onClick = {
+                    scope.launch { refreshNetwork() }
+                },
+                label = { Text(text = "搜索") },
+                leadingIcon = { Icon(painter = painterResource(R.drawable.search), contentDescription = "description") }
+            )
+        }
+        CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchUI() }) {
+            val bean = (uiState as SimpleUiState.Success).data
+            val list = bean.scoreInfoDTOList
             if(list.isEmpty()) EmptyUI()
             else {
                 LazyColumn {
                     item { TotalGrade(vm) }
                     items(list.size) { index ->
                         val item = list[index]
-                        val pass = item.pass
-                        val passs = if (pass) "通过" else "挂科"
                         AnimationCardListItem(
                             headlineContent = { Text(item.courseName) },
                             supportingContent = { Text("学分: " + item.credit + "   绩点: " + item.gpa + "   分数: ${item.score}") },
@@ -183,7 +155,7 @@ fun GradeItemUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
                                     contentDescription = "Localized description",
                                 )
                             },
-                            trailingContent = { Text(passs) },
+                            trailingContent = { Text(if (item.pass) "通过" else "未通过") },
                             index = index
                         )
                     }

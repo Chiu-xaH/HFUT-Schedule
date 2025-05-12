@@ -1,6 +1,5 @@
 package com.hfut.schedule.viewmodel.network
 
-import android.annotation.SuppressLint
 import android.util.Base64
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.MutableLiveData
@@ -21,8 +20,10 @@ import com.hfut.schedule.logic.model.QWeatherResponse
 import com.hfut.schedule.logic.model.QWeatherWarnBean
 import com.hfut.schedule.logic.model.QWeatherWarnResponse
 import com.hfut.schedule.logic.model.SearchEleResponse
+import com.hfut.schedule.logic.model.SupabaseEventEntity
 import com.hfut.schedule.logic.model.SupabaseEventForkCount
 import com.hfut.schedule.logic.model.SupabaseEventOutput
+import com.hfut.schedule.logic.model.SupabaseEventsInput
 import com.hfut.schedule.logic.model.SupabaseRefreshLoginBean
 import com.hfut.schedule.logic.model.SupabaseUserLoginBean
 import com.hfut.schedule.logic.model.TeacherResponse
@@ -42,7 +43,9 @@ import com.hfut.schedule.logic.model.community.FailRateResponse
 import com.hfut.schedule.logic.model.community.GradeAllResponse
 import com.hfut.schedule.logic.model.community.GradeAllResult
 import com.hfut.schedule.logic.model.community.GradeAvgResponse
+import com.hfut.schedule.logic.model.community.GradeResponse
 import com.hfut.schedule.logic.model.community.GradeResponseJXGLSTU
+import com.hfut.schedule.logic.model.community.GradeResult
 import com.hfut.schedule.logic.model.community.LibRecord
 import com.hfut.schedule.logic.model.community.LibraryResponse
 import com.hfut.schedule.logic.model.jxglstu.MyApplyResponse
@@ -119,6 +122,7 @@ import com.hfut.schedule.logic.util.network.NetWork.launchRequestSimple
 import com.hfut.schedule.logic.util.network.SimpleStateHolder
 import com.hfut.schedule.logic.util.network.parse.JxglstuParseUtils
 import com.hfut.schedule.logic.util.network.supabaseEventDtoToEntity
+import com.hfut.schedule.logic.util.network.supabaseEventEntityToDto
 import com.hfut.schedule.logic.util.network.supabaseEventForkDtoToEntity
 import com.hfut.schedule.logic.util.parse.SemseterParser
 import com.hfut.schedule.logic.util.parse.formatDecimal
@@ -139,6 +143,7 @@ import com.hfut.schedule.ui.screen.home.search.function.transfer.ChangeMajorInfo
 import com.hfut.schedule.ui.screen.home.search.function.transfer.GradeAndRank
 import com.hfut.schedule.ui.screen.home.search.function.transfer.MyApplyInfoBean
 import com.hfut.schedule.ui.screen.home.search.function.transfer.PlaceAndTime
+import com.hfut.schedule.ui.screen.home.search.function.transfer.TransferPostResponse
 import com.hfut.schedule.ui.screen.news.home.transferToPostData
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
 import okhttp3.Headers
@@ -201,6 +206,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         Gson().fromJson(jsonStr,WorkSearchResponse::class.java)
     } catch (e : Exception) { throw e }
 
+// Supabase ////////////////////////////////////////////////////////////////////////////////////////////////
     var supabaseRegResp = MutableLiveData<String?>()
     fun supabaseReg(password: String) = NetWork.makeRequest(supabase.reg(user = SupabaseUserLoginBean(password = password)),supabaseRegResp)
 
@@ -209,17 +215,12 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
     fun supabaseLoginWithRefreshToken(refreshToken : String) = NetWork.makeRequest(supabase.login(user = SupabaseRefreshLoginBean(refreshToken), loginType = "refresh_token"),supabaseLoginResp)
 
-    var supabaseDelResp = MutableLiveData<Boolean?>()
-    fun supabaseDel(jwt : String,id : Int) {
-        val call = supabase.delEvent(authorization = "Bearer $jwt",id = "eq.$id")
-
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                supabaseDelResp.value = response.isSuccessful
-            }
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { }
-        })
-    }
+    var supabaseDelResp = SimpleStateHolder<Boolean>()
+    suspend fun supabaseDel(jwt : String,id : Int) = launchRequestSimple(
+        holder = supabaseDelResp,
+        request = { supabase.delEvent(authorization = "Bearer $jwt",id = "eq.$id").awaitResponse() },
+        transformSuccess = { _,_ -> true }
+    )
 
     var supabaseAddResp = MutableLiveData<Pair<Boolean,String?>?>()
     fun supabaseAdd(jwt: String,event : SupabaseEventOutput) {
@@ -246,7 +247,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { }
         })
     }
-
 
     // 默认 展示未过期日程&&符合自己班级的日程
     var supabaseGetEventsResp = MutableLiveData<String?>()
@@ -295,11 +295,17 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         })
     }
 
-
     // 定制 展示自己上传过的日程
-    var supabaseGetMyEventsResp = MutableLiveData<String?>()
-    fun supabaseGetMyEvents(jwt: String) = NetWork.makeRequest(supabase.getEvents(authorization = "Bearer $jwt",endTime = null,email = "eq." + getSchoolEmail()),supabaseGetMyEventsResp)
-
+    val supabaseGetMyEventsResp = SimpleStateHolder<List<SupabaseEventsInput>>()
+    suspend fun supabaseGetMyEvents(jwt: String) = launchRequestSimple(
+        holder = supabaseGetMyEventsResp,
+        request = { supabase.getEvents(authorization = "Bearer $jwt",endTime = null,email = "eq." + getSchoolEmail()).awaitResponse() },
+        transformSuccess = { _,json -> parseSupabaseMyEvents(json) }
+    )
+    private fun parseSupabaseMyEvents(json : String) : List<SupabaseEventsInput> = try {
+        val list : List<SupabaseEventEntity> = Gson().fromJson(json,object : TypeToken<List<SupabaseEventEntity>>() {}.type)
+        list.mapNotNull { item -> supabaseEventEntityToDto(item) }
+    } catch(e : Exception) { throw e }
 
     var supabaseCheckResp = MutableLiveData<Boolean?>()
     fun supabaseCheckJwt(jwt: String) {
@@ -313,11 +319,12 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     }
 
     var supabaseUpdateResp = SimpleStateHolder<Boolean>()
-    suspend fun updateEvent(jwt: String, id: Int, body : Map<String,Any>) = launchRequestSimple(
+    suspend fun supabaseUpdateEvent(jwt: String, id: Int, body : Map<String,Any>) = launchRequestSimple(
         holder = supabaseUpdateResp,
         request = { supabase.updateEvent(authorization = "Bearer $jwt",id = "eq.$id", body = body).awaitResponse() },
         transformSuccess = { _, _ -> true }
     )
+// 培养方案 ////////////////////////////////////////////////////////////////////////////////////////////////
 
     var programList = SimpleStateHolder<List<ProgramListBean>>()
     suspend fun getProgramList(campus : Campus) = launchRequestSimple(
@@ -362,45 +369,61 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         })
     }
 
-    val postTransferResponse = MutableLiveData<String?>()
-    fun postTransfer(
-        cookie: String,
-        batchId: String,
-        id : String,
-        phoneNumber : String,
-                     ) = NetWork.makeRequest(
-        jxglstuJSON.postTransfer(
-            cookie = cookie,
-            redirectUrl = "/for-std/change-major-apply/apply?PARENT_URL=/for-std/change-major-apply/index/${studentId.value}&batchId=${batchId}&studentId=${studentId.value}".toRequestBody("text/plain".toMediaTypeOrNull()),
-            batchId = batchId.toRequestBody("text/plain".toMediaTypeOrNull()),
-            id = id.toRequestBody("text/plain".toMediaTypeOrNull()),
-            studentID = studentId.value.toString().toRequestBody("text/plain".toMediaTypeOrNull()),
-            telephone = phoneNumber.toRequestBody("text/plain".toMediaTypeOrNull())
-        ), postTransferResponse)
-
-    val formCookie = MutableLiveData<String?>()
-    fun getFormCookie(
-        cookie: String,
-        batchId: String,
-        id : String,
-    )  {
-        val call = jxglstuHTML.getFormCookie(
-            cookie = cookie,
-            id = id,
-            studentId = studentId.value.toString(),
-            redirectUrl = "/for-std/change-major-apply/apply?PARENT_URL=/for-std/change-major-apply/index/${studentId.value}&batchId=${batchId}&studentId=${studentId.value}",
-            batchId = batchId
-        )
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                response.headers()["Set-Cookie"].toString().let {
-                    formCookie.value = it.split(";")[0]
+    val postTransferResponse = SimpleStateHolder<String>()
+    suspend fun postTransfer(cookie: String, batchId: String, id : String, phoneNumber : String ) = launchRequestSimple(
+        holder = postTransferResponse,
+        request = {
+            jxglstuJSON.postTransfer(
+                cookie = cookie,
+                redirectUrl = "/for-std/change-major-apply/apply?PARENT_URL=/for-std/change-major-apply/index/${studentId.value}&batchId=${batchId}&studentId=${studentId.value}".toRequestBody("text/plain".toMediaTypeOrNull()),
+                batchId = batchId.toRequestBody("text/plain".toMediaTypeOrNull()),
+                id = id.toRequestBody("text/plain".toMediaTypeOrNull()),
+                studentID = studentId.value.toString().toRequestBody("text/plain".toMediaTypeOrNull()),
+                telephone = phoneNumber.toRequestBody("text/plain".toMediaTypeOrNull())
+            ).awaitResponse()
+        },
+        transformSuccess = { _,json -> parsePostTransfer(json) }
+    )
+    private fun parsePostTransfer(result : String) : String = try {
+        var msg = ""
+        if(result.contains("result")) {
+            val data =  Gson().fromJson(result,TransferPostResponse::class.java)
+            if(data.result) {
+                msg = "成功"
+            } else {
+                val errors = data.errors
+                errors.forEach { item ->
+                    msg += item.textZh + " "
                 }
             }
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
-    }
+            msg
+        } else
+            throw Exception(result)
+    } catch (e : Exception) { throw e }
 
+    val fromCookie = SimpleStateHolder<String>()
+    suspend fun getFormCookie(
+        cookie: String,
+        batchId: String,
+        id : String,
+    ) = launchRequestSimple(
+        holder = fromCookie,
+        request = {
+            jxglstuHTML.getFormCookie(
+                cookie = cookie,
+                id = id,
+                studentId = studentId.value.toString(),
+                redirectUrl = "/for-std/change-major-apply/apply?PARENT_URL=/for-std/change-major-apply/index/${studentId.value}&batchId=${batchId}&studentId=${studentId.value}",
+                batchId = batchId
+            ).awaitResponse()
+        },
+        transformSuccess = { headers,_ -> parseFromCookie(headers) }
+    )
+    private fun parseFromCookie(headers : Headers) : String = try {
+        headers["Set-Cookie"].toString().let {
+            it.split(";")[0]
+        }
+    } catch (e : Exception) { throw e }
 
     // 响应 为 302代表成功 否则为失败
     val cancelTransferResponse = SimpleStateHolder<Boolean>()
@@ -423,7 +446,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         transformRedirect = { _ -> true }
     )
 
-
     fun postUser() {
         val call = supabase.postUsage()
         call.enqueue(object : Callback<ResponseBody> {
@@ -436,7 +458,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
 // 选课 ////////////////////////////////////////////////////////////////////////////////////////////////
     val verifyData = MutableLiveData<String?>()
-    @SuppressLint("SuspiciousIndentation")
     fun verify(cookie: String) {
         val call = jxglstuJSON.verify(cookie)
 
@@ -456,7 +477,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     }
 
     val selectCourseData = MutableLiveData<String?>()
-    @SuppressLint("SuspiciousIndentation")
     fun getSelectCourse(cookie: String) {
         val bizTypeId = JxglstuParseUtils.bizTypeId ?: return
         val call = jxglstuJSON.getSelectCourse(bizTypeId,studentId.value.toString(), cookie)
@@ -480,14 +500,12 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         request = { jxglstuJSON.getSelectCourseInfo(id,cookie).awaitResponse() },
         transformSuccess = { _,json -> parseSelectCourseInfo(json) }
     )
-
     private fun parseSelectCourseInfo(json : String) : List<SelectCourseInfo> = try {
         val courses: List<SelectCourseInfo> = Gson().fromJson(json, object : TypeToken<List<SelectCourseInfo>>() {}.type)
         courses
     } catch (e : Exception) { throw e }
 
     val stdCountData = MutableLiveData<String?>()
-    @SuppressLint("SuspiciousIndentation")
     fun getSCount(cookie: String,id : Int) {
         val call = jxglstuJSON.getCount(id,cookie)
 
@@ -503,7 +521,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     }
 
     val requestIdData = MutableLiveData<String?>()
-    @SuppressLint("SuspiciousIndentation")
     fun getRequestID(cookie: String,lessonId : String,courseId : String,type : String) {
         val call = jxglstuJSON.getRequestID(studentId.value.toString(),lessonId,courseId,cookie,type)
 
@@ -519,7 +536,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     }
 
     val selectedData = MutableLiveData<String?>()
-    @SuppressLint("SuspiciousIndentation")
     fun getSelectedCourse(cookie: String,courseId : String) {
         val call = jxglstuJSON.getSelectedCourse(studentId.value.toString(),courseId,cookie)
 
@@ -535,7 +551,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     }
 
     val selectResultData = MutableLiveData<String?>()
-    @SuppressLint("SuspiciousIndentation")
     fun postSelect(cookie: String,requestId : String) {
         val call = jxglstuJSON.postSelect(studentId.value.toString(), requestId,cookie)
 
@@ -567,7 +582,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         request = { jxglstuHTML.getTransferList(cookie,studentId.value ?: 0).awaitResponse() },
         transformSuccess = { _,html -> parseTransferList(html) }
     )
-
     private fun parseTransferList(html : String) : List<ChangeMajorInfo> = try {
         val document = Jsoup.parse(html)
         val result = mutableListOf<ChangeMajorInfo>()
@@ -601,7 +615,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         request = { jxglstuJSON.getMyTransfer(cookie,batchId,studentId.value ?: 0).awaitResponse() },
         transformSuccess = { _,json -> parseMyApply(json) }
     )
-
     private fun parseMyApply(json: String) : MyApplyResponse = try {
         Gson().fromJson(json, MyApplyResponse::class.java)
     } catch (e : Exception) { throw e }
@@ -612,7 +625,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         request = { jxglstuHTML.getMyTransferInfo(cookie,listId,studentId.value ?: 0).awaitResponse() },
         transformSuccess = { _,html -> parseMyApplyGradeInfo(html) }
     )
-
     private fun parseMyApplyGradeInfo(html: String) : MyApplyInfoBean = try {
         val doc = Jsoup.parse(html)
         // 面试安排
@@ -659,7 +671,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         request = { news.searchNews(Encrypt.encodeToBase64(title),page).awaitResponse() },
         transformSuccess = { _,html -> parseNews(html) }
     )
-
     private fun parseNews(html : String) : List<NewsResponse> = try {
         var newsList = mutableListOf<NewsResponse>()
         val doc: Document = Jsoup.parse(html)
@@ -693,13 +704,11 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
-
     suspend fun getXuanChengNews(page: Int) = launchRequestSimple(
         holder = newsXuanChengResult,
         request = { xuanCheng.getNotications(page = page.let { if(it <= 1)  ""  else  it.toString()  }).awaitResponse() },
         transformSuccess = { _,html -> parseNewsXuanCheng(html) }
     )
-
     private fun parseNewsXuanCheng(html : String) : List<XuanquNewsItem> = try {
         val document = Jsoup.parse(html)
         document.select("ul.news_list > li").map { element ->
@@ -711,7 +720,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             XuanquNewsItem(title, date, url)
         }
     } catch (e : Exception) { throw e }
-//  ////////////////////////////////////////////////////////////////////////////////////////////////
+// 核心业务 ////////////////////////////////////////////////////////////////////////////////////////////////
     fun gotoCommunity(cookie : String) {
 
         val call = login.loginGoTo(service = LoginType.COMMUNITY.service,cookie = cookie)
@@ -752,10 +761,10 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             if(!tds.isEmpty()) {
                 val titles = tds[0].text()
                 val scores =tds[3].text()
-                val gpas = tds[4].text()
-                val totalgrade = tds[5].text()
+                val gpa = tds[4].text()
+                val totalGrade = tds[5].text()
                 val grades = tds[6].text()
-                list.add(GradeResponseJXGLSTU(titles,scores,gpas,grades,totalgrade))
+                list.add(GradeResponseJXGLSTU(titles,scores,gpa,grades,totalGrade))
             }
         }
         list
@@ -914,14 +923,14 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     } catch (e : Exception) { throw e }
 
     val courseData = MutableLiveData<String?>()
-    val courseRsponseData = MutableLiveData<String?>()
+    val courseResponseData = MutableLiveData<String?>()
     fun searchCourse(cookie: String, className : String?,courseName : String?, semester : Int,courseId : String?) {
         val call = jxglstuJSON.searchCourse(cookie,studentId.value.toString(),semester,className,"1,${prefs.getString("CourseSearchRequest",MyApplication.PAGE_SIZE.toString()) ?: MyApplication.PAGE_SIZE}",courseName,courseId)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 courseData.value = response.code().toString()
-                courseRsponseData.value = response.body()?.string()
+                courseResponseData.value = response.body()?.string()
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -962,6 +971,9 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         request = { jxglstuJSON.getSurveyToken(cookie,id,"/for-std/lesson-survey/semester-index/${studentId.value}").awaitResponse() },
         transformSuccess = { headers,_ -> parseSurveyToken(headers) }
     )
+    private fun parseSurveyToken(headers : Headers) : String = try {
+        headers.toString().substringAfter("Set-Cookie:").substringBefore(";")
+    } catch(e : Exception) { throw e }
 //    {
 //        val call =
 //
@@ -974,9 +986,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 //        })
 //    }
 
-    private fun parseSurveyToken(headers : Headers) : String = try {
-        headers.toString().substringAfter("Set-Cookie:").substringBefore(";")
-    } catch(e : Exception) { throw e }
 
     val surveyPostData = MutableLiveData<String?>()
     fun postSurvey(cookie : String,json: JsonObject){
@@ -1022,7 +1031,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         })
     }
 
-    fun goToHuixin(cookie : String)  {
+    fun goToHuiXin(cookie : String)  {
 
         val call = oneGoto.OneGotoCard(cookie)
 
@@ -1037,24 +1046,23 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     suspend fun getCardBill(auth : String, page : Int) = launchRequestSimple(
         holder = huiXinBillResult,
         request = { huiXin.Cardget(auth,page, prefs.getString("CardRequest", MyApplication.PAGE_SIZE.toString()) ?: MyApplication.PAGE_SIZE.toString()).awaitResponse() },
-        transformSuccess = { _,json -> parseHuixinBills(json) }
+        transformSuccess = { _,json -> parseHuiXinBills(json) }
     )
-
-    private fun parseHuixinBills(json : String) : BillResponse = try {
+    private fun parseHuiXinBills(json : String) : BillResponse = try {
         if(json.contains("操作成功")){
             Gson().fromJson(json, BillResponse::class.java)
         } else
             throw Exception(json)
     } catch (e : Exception) { throw e }
 
-    val huixinCardInfoResponse = MutableLiveData<String?>()
-    fun getyue(auth : String) {
+    val huiXinCardInfoResponse = MutableLiveData<String?>()
+    fun getHuiXinCardInfo(auth : String) {
         val call = huiXin.getYue(auth)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 val body = response.body()?.string()
-                huixinCardInfoResponse.value = body
+                huiXinCardInfoResponse.value = body
                 saveString("cardyue",body )
             }
 
@@ -1101,14 +1109,14 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         })
     }
 
-    val guaguaUserInfo = MutableLiveData<String?>()
+    val guaGuaUserInfo = MutableLiveData<String?>()
     fun getGuaGuaUserInfo() {
         val loginCode = prefs.getString("loginCode","") ?: ""
         val phoneNumber = prefs.getString("PHONENUM","") ?: ""
         val call = phoneNumber.let { loginCode.let { it1 -> guaGua.getUserInfo(it, it1) } }
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                guaguaUserInfo.value = response.body()?.string()
+                guaGuaUserInfo.value = response.body()?.string()
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -1469,8 +1477,18 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         })
     }
 
-    var gradeFromCommunityResponse = MutableLiveData<String?>()
-    fun getGrade(token: String, year : String, term : String) = NetWork.makeRequest(community.getGrade(token,year,term),gradeFromCommunityResponse)
+    val gradeFromCommunityResponse = SimpleStateHolder<GradeResult>()
+    suspend fun getGrade(token: String, year : String, term : String) = launchRequestSimple(
+        holder = gradeFromCommunityResponse,
+        request = { community.getGrade(token,year,term).awaitResponse() },
+        transformSuccess = { _,json -> parseGradeFromCommunity(json) }
+    )
+    private fun parseGradeFromCommunity(json : String) : GradeResult = try {
+        if(json.contains("success"))
+            Gson().fromJson(json,GradeResponse::class.java).result
+        else
+            throw Exception(json)
+    } catch (e : Exception) { throw e }
 
     val avgData = SimpleStateHolder<AvgResult>()
     suspend fun getAvgGrade(token: String) = launchRequestSimple(
@@ -1684,6 +1702,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         else
             throw Exception(json)
     } catch (e : Exception) { throw e }
+// 学工系统/今日校园 ////////////////////////////////////////////////////////////////////////////////////////////////
 
     val goToStuResponse = MutableLiveData<String?>()
     val stuTicket = MutableLiveData<String?>(null)
@@ -1720,19 +1739,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         call = stu.getStudentInfo(cookie),
         liveData = stuInfoResponse
     )
-
-    fun getUpdate() {
-
-        val call = gitee.getUpdate()
-
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                saveString("versions",response.body()?.string())
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
-    }
+// 宣城校园网 ////////////////////////////////////////////////////////////////////////////////////////////////
 
     val resultValue = MutableLiveData<String?>()
     fun loginWeb() {
@@ -1803,6 +1810,19 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
                 t.printStackTrace()
                 infoWebValue.value = "Error"
             }
+        })
+    }
+
+    fun getUpdate() {
+
+        val call = gitee.getUpdate()
+
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                saveString("versions",response.body()?.string())
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
 }

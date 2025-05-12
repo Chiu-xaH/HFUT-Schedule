@@ -7,8 +7,8 @@ import com.hfut.schedule.logic.model.SupabaseEventsInput
 import com.hfut.schedule.logic.util.network.supabaseEventEntityToDto
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 
-fun getEvents(vm: NetWorkViewModel, isMine : Boolean) : List<SupabaseEventsInput> {
-    val json = if(!isMine) vm.supabaseGetEventsResp.value else vm.supabaseGetMyEventsResp.value
+fun getEvents(vm: NetWorkViewModel) : List<SupabaseEventsInput> {
+    val json = vm.supabaseGetEventsResp.value
     return try {
         val list : List<SupabaseEventEntity> = Gson().fromJson(json,object : TypeToken<List<SupabaseEventEntity>>() {}.type)
         val newList = list.mapNotNull { item -> supabaseEventEntityToDto(item) }

@@ -1,7 +1,5 @@
 package com.hfut.schedule.ui.screen.supabase.manage
 
-import android.os.Handler
-import android.os.Looper
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -31,94 +29,85 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.entity.CustomEventType
-import com.hfut.schedule.logic.util.network.reEmptyLiveDta
+import com.hfut.schedule.logic.util.network.SimpleUiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
+import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.CustomTextField
 import com.hfut.schedule.ui.component.LittleDialog
-import com.hfut.schedule.ui.component.LoadingScreen
 import com.hfut.schedule.ui.component.RefreshIndicator
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.cardNormalDp
+import com.hfut.schedule.ui.component.onListenStateHolder
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
-import com.hfut.schedule.ui.screen.supabase.home.getEvents
 import com.hfut.schedule.ui.style.ColumnVertical
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SupabaseMeScreenRefresh(vm : NetWorkViewModel,innerPadding : PaddingValues) {
-    var refreshing by remember { mutableStateOf(true) }
-    var delRefresh by remember { mutableStateOf(true) }
-
     val jwt by DataStoreManager.supabaseJwtFlow.collectAsState(initial = "")
-
+    val uiState by vm.supabaseGetMyEventsResp.state.collectAsState()
+    val refreshNetwork : suspend () -> Unit = {
+        vm.supabaseGetMyEventsResp.clear()
+        vm.supabaseDelResp.clear()
+        vm.supabaseGetMyEvents(jwt)
+    }
+    val refreshing = uiState is SimpleUiState.Loading
     val scope = rememberCoroutineScope()
     val pullRefreshState = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
-        scope.launch {
-            async {
-                refreshing = true
-            }.await()
-            launch {
-                reEmptyLiveDta(vm.supabaseGetMyEventsResp)
-                reEmptyLiveDta(vm.supabaseDelResp)
-                vm.supabaseGetMyEvents(jwt)
-            }
-        }
+        scope.launch { refreshNetwork() }
     })
-    LaunchedEffect(jwt,delRefresh) {
-        if ((jwt.isNotBlank() || jwt.isNotEmpty()) && refreshing) {
-            refreshing = true
-            reEmptyLiveDta(vm.supabaseGetMyEventsResp)
-            reEmptyLiveDta(vm.supabaseDelResp)
-            vm.supabaseGetMyEvents(jwt)
-        }
-    }
 
-    LaunchedEffect(Unit) {
-        Handler(Looper.getMainLooper()).post {
-            vm.supabaseGetMyEventsResp.observeForever { result ->
-                if (result != null) {
-                    refreshing = false
-                }
-            }
-            vm.supabaseDelResp.observeForever { result ->
-                if (result != null) {
-                    delRefresh = !delRefresh
-                    showToast("执行完成")
-                }
-            }
+    LaunchedEffect(jwt) {
+        if ((jwt.isNotBlank() || jwt.isNotEmpty()) && refreshing) {
+            refreshNetwork()
         }
     }
 
     Box(modifier = Modifier
         .fillMaxHeight()
         .pullRefresh(pullRefreshState)){
-        RefreshIndicator(refreshing, pullRefreshState, Modifier.padding(innerPadding).align(
-            Alignment.TopCenter))
-        SupabaseMeScreen(vm,innerPadding,refreshing) { refreshing = it }
+        RefreshIndicator(refreshing, pullRefreshState, Modifier
+            .padding(innerPadding)
+            .align(
+                Alignment.TopCenter
+            ))
+        CommonNetworkScreen(uiState, onReload = refreshNetwork) {
+            SupabaseMeScreen(vm,innerPadding) {
+                scope.launch { refreshNetwork() }
+            }
+        }
     }
 }
 
 
 @Composable
-private fun SupabaseMeScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,refresh : Boolean,onRefresh : (Boolean) -> Unit ) {
+private fun SupabaseMeScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,onRefresh :  () -> Unit) {
     val jwt by DataStoreManager.supabaseJwtFlow.collectAsState(initial = "")
     var input by remember { mutableStateOf("") }
-
     var id by remember { mutableIntStateOf(-1) }
     var showDialogDel by remember { mutableStateOf(false) }
-
+    val scope = rememberCoroutineScope()
     if(showDialogDel) {
         LittleDialog(
             onConfirmation = {
                 if(id > 0) {
-                    vm.supabaseDel(jwt,id)
-                    onRefresh(true)
+                    scope.launch {
+                        vm.supabaseDelResp.clear()
+                        vm.supabaseDel(jwt,id)
+                        onListenStateHolder(vm.supabaseDelResp) { data ->
+                            if(data) {
+                                showToast("执行完成")
+                                onRefresh()
+                            } else {
+                                showToast("执行失败")
+                            }
+                        }
+                    }
                 }
                 showDialogDel = false
             },
@@ -129,35 +118,34 @@ private fun SupabaseMeScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,
 
 
     var showDialogEdit by remember { mutableStateOf(false) }
+    val uiState by vm.supabaseGetMyEventsResp.state.collectAsState()
+    val data = (uiState as SimpleUiState.Success).data
 
-    if(refresh) {
-        LoadingScreen()
-    } else {
-        val list = getEvents(vm,true).filter {
-            it.toString().contains(input,ignoreCase = true)
+    val list = data.filter {
+        it.toString().contains(input,ignoreCase = true)
+    }
+    LazyColumn {
+        item { Spacer(Modifier.height(innerPadding.calculateTopPadding())) }
+        item {
+            CustomTextField(
+                input = input,
+                label = { Text("搜索") },
+                leadingIcon = { Icon(painterResource(R.drawable.search),null)}
+            ) { input = it }
+            Spacer(Modifier.height(cardNormalDp()))
         }
-        LazyColumn {
-            item { Spacer(Modifier.height(innerPadding.calculateTopPadding())) }
-            item {
-                CustomTextField(
-                    input = input,
-                    label = { Text("搜索") },
-                    leadingIcon = { Icon(painterResource(R.drawable.search),null)}
-                ) { input = it }
-                Spacer(Modifier.height(cardNormalDp()))
-            }
-            items(list.size) { index ->
-                val item = list[index]
-                val dateTime = item.dateTime
-                val nowTimeNum = DateTimeUtils.Date_yyyy_MM_dd.replace("-","").toLong()
-                val endNum = with(dateTime.end) { "$year${parseTimeItem(month)}${parseTimeItem(day)}" }.toLong()
-                val isOutOfDate = nowTimeNum > endNum
-                StyleCardListItem(
-                    headlineContent = { Text(item.name, textDecoration = if(isOutOfDate) TextDecoration.LineThrough else TextDecoration.None) },
-                    overlineContent = { Text(item.timeDescription, textDecoration = if(isOutOfDate) TextDecoration.LineThrough else TextDecoration.None) },
-                    supportingContent = item.description?.let { { Text(it, textDecoration = if(isOutOfDate) TextDecoration.LineThrough else TextDecoration.None) } },
-                    trailingContent = {
-                        Row {
+        items(list.size) { index ->
+            val item = list[index]
+            val dateTime = item.dateTime
+            val nowTimeNum = DateTimeUtils.Date_yyyy_MM_dd.replace("-","").toLong()
+            val endNum = with(dateTime.end) { "$year${parseTimeItem(month)}${parseTimeItem(day)}" }.toLong()
+            val isOutOfDate = nowTimeNum > endNum
+            StyleCardListItem(
+                headlineContent = { Text(item.name, textDecoration = if(isOutOfDate) TextDecoration.LineThrough else TextDecoration.None) },
+                overlineContent = { Text(item.timeDescription, textDecoration = if(isOutOfDate) TextDecoration.LineThrough else TextDecoration.None) },
+                supportingContent = item.description?.let { { Text(it, textDecoration = if(isOutOfDate) TextDecoration.LineThrough else TextDecoration.None) } },
+                trailingContent = {
+                    Row {
 //                            FilledTonalIconButton(
 //                                onClick = {
 //                                    id = item.id
@@ -165,31 +153,31 @@ private fun SupabaseMeScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,
 //                                    showDialogEdit = true
 //                                }
 //                            ) { Icon(painterResource(R.drawable.edit),null) }
-                            ColumnVertical {
-                                FilledTonalIconButton(
-                                    onClick = {
-                                        id = item.id
-                                        showDialogDel = true
-                                    }
-                                ) { Icon(painterResource(R.drawable.close),null) }
-                                if(isOutOfDate) {
-                                    Text("已过期不可见")
+                        ColumnVertical {
+                            FilledTonalIconButton(
+                                onClick = {
+                                    id = item.id
+                                    showDialogDel = true
                                 }
+                            ) { Icon(painterResource(R.drawable.close),null) }
+                            if(isOutOfDate) {
+                                Text("已过期不可见")
                             }
                         }
-                    },
-                    leadingContent = {
-                        Icon(
-                            painterResource(
+                    }
+                },
+                leadingContent = {
+                    Icon(
+                        painterResource(
                             when(item.type) {
                                 CustomEventType.SCHEDULE -> R.drawable.calendar
                                 CustomEventType.NET_COURSE -> R.drawable.net
                             }
                         ),null)
-                    }
-                )
-            }
-            items(2) { Spacer(Modifier.height(innerPadding.calculateBottomPadding())) }
+                }
+            )
         }
+        items(2) { Spacer(Modifier.height(innerPadding.calculateBottomPadding())) }
     }
+
 }

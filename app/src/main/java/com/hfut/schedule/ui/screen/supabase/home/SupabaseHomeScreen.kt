@@ -153,7 +153,7 @@ private fun SupabaseScheduleUI(vm: NetWorkViewModel,sortType : SortType,sortReve
     if(refresh) {
         LoadingScreen()
     } else {
-        val list = getEvents(vm,false)
+        val list = getEvents(vm)
 
         val filterList = if(filter) list.filter {
             // 自己班

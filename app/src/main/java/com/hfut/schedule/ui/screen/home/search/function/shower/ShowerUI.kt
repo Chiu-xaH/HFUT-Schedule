@@ -108,22 +108,22 @@ fun getInGuaGua(vm: NetWorkViewModel,onResult : (Boolean) -> Unit) {
             onResult(false)
             if (result.contains("成功")) {
                 saveString("GuaGuaPersonInfo", result)
-                vm.guaguaUserInfo.removeObserver(guaguaUserInfoObserver) // 正常移除观察者
+                vm.guaGuaUserInfo.removeObserver(guaguaUserInfoObserver) // 正常移除观察者
                 startGuaGua()
             } else if (result.contains("error")) {
-                vm.guaguaUserInfo.removeObserver(guaguaUserInfoObserver) // 正常移除观察者
+                vm.guaGuaUserInfo.removeObserver(guaguaUserInfoObserver) // 正常移除观察者
                 loginGuaGua()
             }
         }
     }
 
     CoroutineScope(Job()).launch {
-        async { reEmptyLiveDta(vm.guaguaUserInfo) }.await()
+        async { reEmptyLiveDta(vm.guaGuaUserInfo) }.await()
         async { onResult(true) }.await()
         async { vm.getGuaGuaUserInfo() }.await()
         launch {
             Handler(Looper.getMainLooper()).post {
-                vm.guaguaUserInfo.observeForever(guaguaUserInfoObserver)
+                vm.guaGuaUserInfo.observeForever(guaguaUserInfoObserver)
             }
         }
     }

@@ -21,10 +21,10 @@ import java.math.RoundingMode
 //使用指尖工大接口获取一卡通余额
 suspend fun initCardNetwork(vm : NetWorkViewModel, vmUI : UIViewModel) = withContext(Dispatchers.IO) {
     val auth = prefs.getString("auth","")
-    async { vm.getyue("bearer $auth") }.await()
+    async { vm.getHuiXinCardInfo("bearer $auth") }.await()
     launch {
         Handler(Looper.getMainLooper()).post {
-            vm.huixinCardInfoResponse.observeForever { result ->
+            vm.huiXinCardInfoResponse.observeForever { result ->
                 if (result != null && result.contains("操作成功")) {
                     try {
                         val yuedata = Gson().fromJson(result, BalanceResponse::class.java).data.card[0]

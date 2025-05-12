@@ -232,7 +232,7 @@ private fun GuaGuaLoginUI(vm : GuaGuaViewModel, netVm : NetWorkViewModel, navHos
                         async { netVm.getGuaGuaUserInfo() }.await()
                         launch {
                             Handler(Looper.getMainLooper()).post {
-                                netVm.guaguaUserInfo.observeForever { result ->
+                                netVm.guaGuaUserInfo.observeForever { result ->
                                     if (result?.contains("成功") == true) {
                                         saveString("GuaGuaPersonInfo",result)
                                         navHostController.navigateAndClear(ShowerScreen.HOME.name)

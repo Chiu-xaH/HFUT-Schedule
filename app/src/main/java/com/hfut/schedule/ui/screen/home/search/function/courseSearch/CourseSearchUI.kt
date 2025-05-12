@@ -287,7 +287,7 @@ fun CourseSearchUI(vm : NetWorkViewModel, hazeState: HazeState) {
                             enter = fadeIn(),
                             exit = fadeOut()
                         ) {
-                            CourseTotalUI(json = vm.courseRsponseData.value, isSearch = true, sortType = true,vm, hazeState = hazeState)
+                            CourseTotalUI(json = vm.courseResponseData.value, isSearch = true, sortType = true,vm, hazeState = hazeState)
                         }
                     }
                 }
@@ -423,7 +423,7 @@ fun ApiForCourseSearch(vm: NetWorkViewModel, courseName : String?, courseId : St
                                     enter = fadeIn(),
                                     exit = fadeOut()
                                 ) {
-                                    CourseTotalUI(json = vm.courseRsponseData.value, isSearch = true, sortType = true,vm, hazeState = hazeState)
+                                    CourseTotalUI(json = vm.courseResponseData.value, isSearch = true, sortType = true,vm, hazeState = hazeState)
                                 }
                             }
                         }
