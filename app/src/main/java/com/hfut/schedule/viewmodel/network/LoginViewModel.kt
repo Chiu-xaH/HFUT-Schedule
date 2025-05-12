@@ -13,17 +13,19 @@ import com.hfut.schedule.logic.network.servicecreator.MyServiceCreator
 import com.hfut.schedule.logic.network.api.MyService
 import com.hfut.schedule.logic.network.api.WebVpnService
 import com.hfut.schedule.logic.network.servicecreator.GithubServiceCreator
-import com.hfut.schedule.logic.util.network.parse.JxglstuParseUtils
+import com.hfut.schedule.logic.util.network.HfutCAS
+import com.hfut.schedule.logic.util.network.NetWork.launchRequestSimple
+import com.hfut.schedule.logic.util.network.SimpleStateHolder
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import okhttp3.ResponseBody
 import org.jsoup.Jsoup
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-// 9个函数
+// 8个函数 这里是一切的地基：致敬传奇屎山 当时技术力不够，写的太耦合了，想最大程度保留原代码进行重构，根本无从下手...
 class LoginViewModel : ViewModel() {
     var sessionLiveData = MutableLiveData<String>() //SESSIONID
-    var jsessionid = MutableLiveData<String>() // JESSIONID
+    var jSessionId = MutableLiveData<String>() // JESSIONID
     var code = MutableLiveData<String?>()
     var location = MutableLiveData<String>()
     var execution = MutableLiveData<String>()
@@ -33,40 +35,35 @@ class LoginViewModel : ViewModel() {
     private val GetCookie = GetCookieServiceCreator.create(LoginService::class.java)
     private val GetAESKey = GetAESKeyServiceCreator.create(LoginService::class.java)
     private val MyAPI = MyServiceCreator.create(MyService::class.java)
-    private val github = GithubServiceCreator.create(GithubService::class.java)
 
-    var githubData = MutableLiveData<String?>()
-    fun getStarsNum() = NetWork.makeRequest(github.getRepoInfo(),githubData)
 
     var TICKET = MutableLiveData<String?>()
     fun login(username : String,password : String,keys : String,imageCode : String,webVpn : Boolean)  {
 
-        val cookies : String = sessionLiveData.value  + jsessionid.value +";" + keys
-        JxglstuParseUtils.casCookies = cookies
+        val cookies : String = sessionLiveData.value  + jSessionId.value +";" + keys
+        HfutCAS.casCookies = cookies
 
         val ticket = webVpnTicket.value?.substringAfter("wengine_vpn_ticketwebvpn_hfut_edu_cn=")?.substringBefore(";")
         val call =
             if(!webVpn) execution.value?.let { Login.login(cookie = cookies,username = username, password = password,execution = it,code = imageCode) }
             else execution.value?.let { LoginWebVpn.loginWebVpn(cookie ="wengine_vpn_ticketwebvpn_hfut_edu_cn=${ticket}",username =username, password =password,execution= it, code = imageCode) }
 
-        if (call != null) {
-            call.enqueue(object : Callback<ResponseBody> {
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    location.value = response.headers()["Location"].toString()
-                    val TGC = response.headers()["Set-Cookie"].toString().substringBefore(";")
-                    code.value = response.code().toString()
-                    val tickets = response.headers()["Location"].toString().substringAfter("=")
-                    saveString("ticket", tickets)
-                    saveString("TGC", TGC)
-                    TICKET.value = tickets
-                }
+        call?.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                location.value = response.headers()["Location"].toString()
+                val TGC = response.headers()["Set-Cookie"].toString().substringBefore(";")
+                code.value = response.code().toString()
+                val tickets = response.headers()["Location"].toString().substringAfter("=")
+                saveString("ticket", tickets)
+                saveString("TGC", TGC)
+                TICKET.value = tickets
+            }
 
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    code.value = "XXX"
-                    t.printStackTrace()
-                }
-            })
-        }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                code.value = "XXX"
+                t.printStackTrace()
+            }
+        })
     }
 
     fun getKey() {
@@ -75,9 +72,7 @@ class LoginViewModel : ViewModel() {
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-
-                if(response.isSuccessful()){ jsessionid.value  = response.headers()["Set-Cookie"].toString() }
-                //else Log.d("测试","失败，${response.code()},${response.message()}")
+                if(response.isSuccessful){ jSessionId.value  = response.headers()["Set-Cookie"].toString() }
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {

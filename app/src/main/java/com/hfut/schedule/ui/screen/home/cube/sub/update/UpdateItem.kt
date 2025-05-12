@@ -53,7 +53,7 @@ fun VersionInfo() {
 //        UpdateItems("重构 提纯出CAS统一认证登录逻辑，为更多平台的一键登录做准备", null,UpdateType.RENEW)
 //        UpdateItems("新增 本地聚焦卡片快速转化为云端卡片，一键共享本地卡片", null, UpdateType.ADD)
 //        UpdateItems("新增 对共建平台已上传卡片的信息编辑", null, UpdateType.ADD)
-        UpdateItems("重构 网络请求层，重新进行封装，使用Flow代替LiveData，优化潜在的内存泄漏问题，增加不同状态下的展示", "进度: 完成52/搁置12/总102",UpdateType.RENEW)
+        UpdateItems("重构 网络请求层，重新进行封装，使用Flow代替LiveData，优化潜在的内存泄漏问题，增加不同状态下的展示", "进度: 完成54/总101",UpdateType.RENEW)
         UpdateItems("修复 选课功能由于验证接口早期修复遗漏而导致可能除23级宣区用户无法使用的Bug", null, UpdateType.FIX)
         UpdateItems("优化 添加聚焦卡片的一些选项可输入多行文本", null, UpdateType.OPTIMIZE)
 //        UpdateItems("优化 添加聚焦卡片适用范围的添加班级逻辑", null, UpdateType.OPTIMIZE)

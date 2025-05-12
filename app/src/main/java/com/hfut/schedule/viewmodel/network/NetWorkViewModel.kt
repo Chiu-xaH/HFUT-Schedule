@@ -12,6 +12,7 @@ import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.enumeration.LibraryItems
 import com.hfut.schedule.logic.enumeration.LoginType
+import com.hfut.schedule.logic.model.GithubBean
 import com.hfut.schedule.logic.model.NewsResponse
 import com.hfut.schedule.logic.model.PayData
 import com.hfut.schedule.logic.model.PayResponse
@@ -78,6 +79,7 @@ import com.hfut.schedule.logic.network.api.DormitoryScore
 import com.hfut.schedule.logic.network.api.FWDTService
 import com.hfut.schedule.logic.network.api.GiteeService
 import com.hfut.schedule.logic.network.api.GithubRawService
+import com.hfut.schedule.logic.network.api.GithubService
 import com.hfut.schedule.logic.network.api.GuaGuaService
 import com.hfut.schedule.logic.network.api.JxglstuService
 import com.hfut.schedule.logic.network.api.LePaoYunService
@@ -97,6 +99,7 @@ import com.hfut.schedule.logic.network.servicecreator.CommunitySreviceCreator
 import com.hfut.schedule.logic.network.servicecreator.DormitoryScoreServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.GiteeServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.GithubRawServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.GithubServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.GuaGuaServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.Jxglstu.JxglstuHTMLServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.Jxglstu.JxglstuJSONServiceCreator
@@ -120,7 +123,7 @@ import com.hfut.schedule.logic.util.network.Encrypt
 import com.hfut.schedule.logic.util.network.NetWork
 import com.hfut.schedule.logic.util.network.NetWork.launchRequestSimple
 import com.hfut.schedule.logic.util.network.SimpleStateHolder
-import com.hfut.schedule.logic.util.network.parse.JxglstuParseUtils
+import com.hfut.schedule.logic.util.network.HfutCAS
 import com.hfut.schedule.logic.util.network.supabaseEventDtoToEntity
 import com.hfut.schedule.logic.util.network.supabaseEventEntityToDto
 import com.hfut.schedule.logic.util.network.supabaseEventForkDtoToEntity
@@ -179,7 +182,8 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     private val gitee = GiteeServiceCreator.create(GiteeService::class.java)
     private val loginWeb = LoginWebServiceCreator.create(LoginWebsService::class.java)
     private val loginWeb2 = LoginWeb2ServiceCreator.create(LoginWebsService::class.java)
-    private val github = GithubRawServiceCreator.create(GithubRawService::class.java)
+    private val githubRaw = GithubRawServiceCreator.create(GithubRawService::class.java)
+    private val github = GithubServiceCreator.create(GithubService::class.java)
     private val supabase = SupabaseServiceCreator.create(SupabaseService::class.java)
     private val workSearch = WorkServiceCreator.create(WorkService::class.java)
 
@@ -187,6 +191,16 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     var studentId = MutableLiveData<Int>(prefs.getInt("STUDENTID",0))
     var lessonIds = MutableLiveData<List<Int>>()
     var token = MutableLiveData<String>()
+
+    var githubData = SimpleStateHolder<Int>()
+    suspend fun getStarsNum() = launchRequestSimple(
+        holder = githubData,
+        request = { github.getRepoInfo().awaitResponse() },
+        transformSuccess = { _,json -> parseGithubStarNum(json) }
+    )
+    private fun parseGithubStarNum(json : String) : Int = try {
+        Gson().fromJson(json,GithubBean::class.java).stargazers_count
+    } catch (e : Exception) { throw e }
 
     val workSearchResult = SimpleStateHolder<WorkSearchResponse>()
     suspend fun searchWorks(keyword: String?, page: Int = 1,type: Int,campus: Campus) = launchRequestSimple(
@@ -277,23 +291,20 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         transformSuccess = { _,body -> body }
     )
 
-    var supabaseGetEventLatestStatusResp = MutableLiveData<Boolean?>()
-    var supabaseGetEventLatestResp = MutableLiveData<String?>()
-    fun supabaseGetEventLatest(jwt: String) {
-
-        val call = supabase.getEventLatestTime(authorization = "Bearer $jwt")
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                if(response.isSuccessful) {
-                    supabaseGetEventLatestResp.value = response.body()?.string()
-                    supabaseGetEventLatestStatusResp.value = true
-                } else {
-                    supabaseGetEventLatestStatusResp.value = false
-                }
-            }
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { }
-        })
-    }
+    var supabaseGetEventLatestResp = SimpleStateHolder<Boolean>()
+    suspend fun supabaseGetEventLatest(jwt: String) = launchRequestSimple(
+        holder = supabaseGetEventLatestResp,
+        request = { supabase.getEventLatestTime(authorization = "Bearer $jwt").awaitResponse() },
+        transformSuccess = { _,body -> parseSupabaseLatestEventTime(body) }
+    )
+    private fun parseSupabaseLatestEventTime(body : String) : Boolean = try {
+        if(prefs.getString("SUPABASE_LATEST",null) != body) {
+            saveString("SUPABASE_LATEST",body)
+            true
+        } else {
+            false
+        }
+    } catch (e : Exception) { throw e }
 
     // 定制 展示自己上传过的日程
     val supabaseGetMyEventsResp = SimpleStateHolder<List<SupabaseEventsInput>>()
@@ -359,7 +370,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     } catch (e : Exception) { throw e }
 
     fun downloadHoliday() = {
-        val call = github.getYearHoliday()
+        val call = githubRaw.getYearHoliday()
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -478,7 +489,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
     val selectCourseData = MutableLiveData<String?>()
     fun getSelectCourse(cookie: String) {
-        val bizTypeId = JxglstuParseUtils.bizTypeId ?: return
+        val bizTypeId = HfutCAS.bizTypeId ?: return
         val call = jxglstuJSON.getSelectCourse(bizTypeId,studentId.value.toString(), cookie)
 
         call.enqueue(object : Callback<ResponseBody> {
@@ -831,12 +842,12 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     }
 
     val datumData = MutableLiveData<String?>()
-    fun getDatum(cookie : String,lessonid: JsonObject) {
+    fun getDatum(cookie : String, lessonIds: JsonObject) {
 
         val lessonIdsArray = JsonArray()
-        lessonIds.value?.forEach {lessonIdsArray.add(JsonPrimitive(it))}
+        this@NetWorkViewModel.lessonIds.value?.forEach {lessonIdsArray.add(JsonPrimitive(it))}
 
-        val call = jxglstuJSON.getDatum(cookie,lessonid)
+        val call = jxglstuJSON.getDatum(cookie,lessonIds)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -1295,9 +1306,9 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     }
 
     val electricOldData = SimpleStateHolder<String>()
-    suspend fun searchEle(jsondata : String) = launchRequestSimple(
+    suspend fun searchEle(json : String) = launchRequestSimple(
         holder = electricOldData,
-        request = { searchEle.searchEle(jsondata,"synjones.onecard.query.elec.roominfo",true).awaitResponse() },
+        request = { searchEle.searchEle(json,"synjones.onecard.query.elec.roominfo",true).awaitResponse() },
         transformSuccess = { _,json -> parseElectric(json) }
     )
     private fun parseElectric(result : String) : String = try {
@@ -1663,12 +1674,12 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         })
     }
 
-    fun getDatumNext(cookie : String,lessonid: JsonObject) {
+    fun getDatumNext(cookie : String, lessonIds: JsonObject) {
 
         val lessonIdsArray = JsonArray()
-        lessonIds.value?.forEach {lessonIdsArray.add(JsonPrimitive(it))}
+        this@NetWorkViewModel.lessonIds.value?.forEach {lessonIdsArray.add(JsonPrimitive(it))}
 
-        val call = jxglstuJSON.getDatum(cookie,lessonid)
+        val call = jxglstuJSON.getDatum(cookie,lessonIds)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {

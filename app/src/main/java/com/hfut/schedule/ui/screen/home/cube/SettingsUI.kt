@@ -111,7 +111,7 @@ fun SettingsScreen(vm : NetWorkViewModel
                 }
                 composable(Screen.FIxAboutScreen.route) {
                     Scaffold {
-                        AboutUI(innerPadding = innerPaddings, vm1,true,navController,hazeState)
+                        AboutUI(innerPadding = innerPaddings, vm,true,navController,hazeState)
                     }
                 }
                 composable(Screen.NetWorkScreen.route) {

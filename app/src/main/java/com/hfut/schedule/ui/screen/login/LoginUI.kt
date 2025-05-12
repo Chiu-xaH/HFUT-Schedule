@@ -10,15 +10,12 @@ import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionLayout
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.animation.with
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -187,7 +184,7 @@ fun ImageCodeUI(webVpn : Boolean, vm: LoginViewModel, onRefresh: Int = 1, onResu
             LaunchedEffect(Unit) {
                 launch {
                     Handler(Looper.getMainLooper()).post{
-                        vm.jsessionid.observeForever { result ->
+                        vm.jSessionId.observeForever { result ->
                             if(result != null) {
                                 refresh = false
                             }
@@ -208,7 +205,7 @@ fun ImageCodeUI(webVpn : Boolean, vm: LoginViewModel, onRefresh: Int = 1, onResu
                 ) + "cas/vercode"
         // 让 URL 可变，每次点击时更新
         var imageUrl by remember { mutableStateOf("$url?timestamp=${System.currentTimeMillis()}") }
-        val cookies = if(webVpn) "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "") else vm.jsessionid.value
+        val cookies = if(webVpn) "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "") else vm.jSessionId.value
         // webVpn开关变化时重载
         LaunchedEffect(webVpn,onRefresh) {
             imageUrl = "$url?timestamp=${System.currentTimeMillis()}"

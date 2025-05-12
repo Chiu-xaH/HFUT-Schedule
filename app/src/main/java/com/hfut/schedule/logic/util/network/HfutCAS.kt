@@ -1,10 +1,20 @@
-package com.hfut.schedule.logic.util.network.parse
+package com.hfut.schedule.logic.util.network
 
-import android.util.Log
 import org.jsoup.Jsoup
 
-object JxglstuParseUtils {
+// HFUT Central Authentication Service 统一认证登录
+// 准备v5.0重写
+object HfutCAS {
+    // cookie 模块
+    // studentId 模块
+    // bizTypeId 模块
+    // WEBVPN 模块
+    var studentId : Int? = null
     var bizTypeId : Int? = null
+    var jSessionId : String? = null
+    var sessionId : String? = null
+    var loginFlavoring : String? = null
+//    fun getCasCookies() : String = jSessionId + sessionId + loginFlavoring
 
     fun getBizTypeId(html : String) : Int? {
         val doc = Jsoup.parse(html)
@@ -19,7 +29,6 @@ object JxglstuParseUtils {
                     if(id != null) {
                         bizTypeId = id
                     }
-//                    Log.d("bizTypeId", id.toString())
                     return id
                 }
             }

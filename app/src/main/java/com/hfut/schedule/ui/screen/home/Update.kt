@@ -2,8 +2,6 @@ package com.hfut.schedule.ui.screen.home
 
 import android.os.Handler
 import android.os.Looper
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.lifecycle.Observer
 import com.google.gson.Gson
 import com.google.gson.JsonArray
@@ -12,8 +10,7 @@ import com.google.gson.JsonPrimitive
 import com.hfut.schedule.logic.model.HolidayBean
 import com.hfut.schedule.logic.model.HolidayResponse
 import com.hfut.schedule.logic.util.network.SimpleUiState
-import com.hfut.schedule.logic.util.network.UiState
-import com.hfut.schedule.logic.util.network.parse.JxglstuParseUtils
+import com.hfut.schedule.logic.util.network.HfutCAS
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
@@ -97,7 +94,7 @@ suspend fun updateCourses(vm: NetWorkViewModel, vmUI: UIViewModel) = withContext
     val getBizTypeIdObserver = Observer<String?> { result ->
         if(result != null) {
             // 开始解析
-            val bizTypeId = JxglstuParseUtils.bizTypeId ?: JxglstuParseUtils.getBizTypeId(result)
+            val bizTypeId = HfutCAS.bizTypeId ?: HfutCAS.getBizTypeId(result)
             if(bizTypeId != null) {
                 vm.getLessonIds(cookie!!,bizTypeId,vm.studentId.value.toString())
             }

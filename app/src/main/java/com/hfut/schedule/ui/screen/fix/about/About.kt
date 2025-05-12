@@ -1,6 +1,5 @@
 package com.hfut.schedule.ui.screen.fix.about
 
-//import com.hfut.schedule.ui.utils.componentsAbout
 
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -52,12 +51,13 @@ import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.LoginViewModel
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import java.util.Hashtable
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun AboutUI(innerPadding : PaddingValues, vm : LoginViewModel, cubeShow : Boolean, navController : NavController, hazeState: HazeState) {
+fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Boolean, navController : NavController, hazeState: HazeState) {
     Column (modifier = Modifier
         .verticalScroll(rememberScrollState())
         .padding(innerPadding)){

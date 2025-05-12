@@ -168,7 +168,7 @@ fun Fix(vm : LoginViewModel, vm2 : NetWorkViewModel) {
             }
             composable(FixBarItems.About.name) {
                 Scaffold {
-                    AboutUI(innerPadding = innerPadding, vm,false,navController,hazeState)
+                    AboutUI(innerPadding = innerPadding, vm2,false,navController,hazeState)
                 }
             }
         }

@@ -66,7 +66,7 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import com.hfut.schedule.logic.model.community.LoginCommunityResponse
 import com.hfut.schedule.logic.model.jxglstu.datumResponse
-import com.hfut.schedule.logic.util.network.parse.JxglstuParseUtils
+import com.hfut.schedule.logic.util.network.HfutCAS
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.isNextOpen
 import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
@@ -453,7 +453,7 @@ fun CalendarScreen(
             ""
         ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
         var num2 = 1
-        val ONE = JxglstuParseUtils.casCookies
+        val ONE = HfutCAS.casCookies
         val TGC = prefs.getString("TGC", "")
         val cardvalue = prefs.getString("borrow", "")
         val cookies = "$ONE;$TGC"
@@ -551,7 +551,7 @@ fun CalendarScreen(
                 val getBizTypeIdObserver = Observer<String?> { result ->
                     if(result != null) {
                         // 开始解析
-                        val bizTypeId = JxglstuParseUtils.bizTypeId ?: JxglstuParseUtils.getBizTypeId(result)
+                        val bizTypeId = HfutCAS.bizTypeId ?: HfutCAS.getBizTypeId(result)
                         if(bizTypeId != null) {
                             vm.getLessonIds(cookie!!,bizTypeId,vm.studentId.value.toString())
                             if(nextBoolean) {

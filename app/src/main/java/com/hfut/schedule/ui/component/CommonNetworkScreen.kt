@@ -19,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.model.one.datas
 import com.hfut.schedule.logic.util.getExceptionDetail
 import com.hfut.schedule.logic.util.getKeyStackTrace
 import com.hfut.schedule.logic.util.network.PARSE_ERROR_CODE
@@ -136,18 +137,18 @@ fun CommonNetworkScreen(
                             StatusUI(R.drawable.lock, "禁止操作 可能原因: 密码不正确或无权利进行操作")
                         }
                         in 500..599 -> {
-                            StatusUI(R.drawable.net, "服务器错误 可能原因: APP自身原因对接服务端失败或对方已关闭了通道")
+                            StatusUI(R.drawable.net, "服务器错误 可能的原因: \n1.智慧社区(Community)接口登陆状态失效,需重新刷新登陆状态\n2.对方API发生变更，APP对接失败\n3.对方暂时关闭了API(如选课等周期性活动)")
                         }
                         else -> {
                             // 网络出错
                             val code = codeInt?.toString() ?: ""
                             val eMsg = e?.message
-                            if(eMsg?.contains("Unable to resolve host") == true || eMsg?.contains("Failed to connect to") == true) {
+                            if(eMsg?.contains("Unable to resolve host",ignoreCase = true) == true || eMsg?.contains("Failed to connect to",ignoreCase = true) == true ||  eMsg?.contains("Connection reset",ignoreCase = true) == true) {
                                 StatusUI(R.drawable.link_off, "网络连接失败")
                             } else if(eMsg?.contains("10000ms") == true) {
                                 StatusUI(R.drawable.link_off, "网络连接超时")
                             } else {
-                                ErrorUI("网络错误 $code $e")
+                                ErrorUI("错误 $code $e")
                             }
                             refreshUI()
                         }
@@ -183,7 +184,7 @@ fun CommonNetworkScreen(
     }
 }
 
-suspend fun <T> onListenStateHolder(response : SimpleStateHolder<T>,onSuccess : (T) -> Unit) = withContext(Dispatchers.Main) {
+suspend fun <T> onListenStateHolder(response : SimpleStateHolder<T>,onError : (() -> Unit)? = null,onSuccess : (T) -> Unit) = withContext(Dispatchers.Main) {
     // 只收集第一次流
     val state = response.state.first { it !is SimpleUiState.Loading }
     when (state) {
@@ -192,7 +193,11 @@ suspend fun <T> onListenStateHolder(response : SimpleStateHolder<T>,onSuccess : 
             onSuccess(data)
         }
         is SimpleUiState.Error -> {
-            showToast("错误 " + state.exception?.message)
+            if(onError == null) {
+                showToast("错误 " + state.exception?.message)
+            } else {
+                onError()
+            }
         }
         else -> {}
     }

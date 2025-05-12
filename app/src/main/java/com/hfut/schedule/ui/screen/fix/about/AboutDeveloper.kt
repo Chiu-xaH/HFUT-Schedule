@@ -1,8 +1,5 @@
 package com.hfut.schedule.ui.screen.fix.about
 
-import android.os.Handler
-import android.os.Looper
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,6 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,33 +27,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.GithubBean
+import com.hfut.schedule.logic.util.network.SimpleUiState
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.logic.util.network.reEmptyLiveDta
-import com.hfut.schedule.ui.component.appHorizontalDp
-import com.hfut.schedule.ui.component.BottomSheetTopBar
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.Party
 import com.hfut.schedule.ui.component.ScrollText
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.URLImage
-import com.hfut.schedule.ui.style.RowHorizontal
-import com.hfut.schedule.viewmodel.network.LoginViewModel
-import kotlinx.coroutines.async
+import com.hfut.schedule.ui.component.appHorizontalDp
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+
+private data class Build(
+    val languages : List<String>,
+    val build : List<String>,
+    val ui : String,
+    val jetpack : String
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun About(vm : LoginViewModel) {
-    data class Build(
-        val languages : List<String>,
-        val build : List<String>,
-        val ui : String,
-        val jetpack : String
-    )
+fun About(vm : NetWorkViewModel) {
     val openSourceProjects = listOf(
         "Okhttp" to "网络请求",
         "Retrofit" to "网络请求",
@@ -77,29 +71,18 @@ fun About(vm : LoginViewModel) {
         build = listOf( "Gradle 8.3 With Groovy","OpenJDK 17"),
     )
 
+    LaunchedEffect(Unit) {
+        vm.githubData.clear()
+        vm.getStarsNum()
+    }
     var starsNum by remember { mutableStateOf("") }
-    var loading by remember { mutableStateOf(true) }
-    if(loading) {
-        LaunchedEffect(Unit) {
-            async { reEmptyLiveDta(vm.githubData) }
-            async { vm.getStarsNum() }.await()
-            async {
-                Handler(Looper.getMainLooper()).post{
-                    vm.githubData.observeForever { result ->
-                        if (result != null) {
-                            if(result.contains("stargazers_count")) {
-                                try {
-                                    starsNum = (Gson().fromJson(result,GithubBean::class.java).stargazers_count).toString()
-                                    loading = false
-                                } catch (_:Exception) { }
-                            }
-                        }
-                    }
-                }
-            }
+    val uiState by vm.githubData.state.collectAsState()
+    var loading = uiState is SimpleUiState.Loading
+    LaunchedEffect(uiState) {
+        if(uiState is SimpleUiState.Success) {
+            starsNum = (uiState as SimpleUiState.Success).data.toString()
         }
     }
-
 
     Party(
         show = !loading
