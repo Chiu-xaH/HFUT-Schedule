@@ -56,7 +56,7 @@ fun getProgramListOne(vm : NetWorkViewModel, ifSaved : Boolean): MutableList<Pro
     return try {
         val json = if(ifSaved) {
             prefs.getString("program","")
-        } else vm.ProgramData.value
+        } else vm.programData.value
         val result = Gson().fromJson(json,ProgramResponse::class.java)
         val children = result.children
 

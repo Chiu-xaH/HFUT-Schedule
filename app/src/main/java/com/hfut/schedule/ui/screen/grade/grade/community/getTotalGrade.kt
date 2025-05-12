@@ -7,7 +7,7 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 
 fun getTotalGrade(vm : NetWorkViewModel): GradeResult? {
     return try {
-        Gson().fromJson(vm.GradeData.value,com.hfut.schedule.logic.model.community.GradeResponse::class.java).result
+        Gson().fromJson(vm.gradeFromCommunityResponse.value,com.hfut.schedule.logic.model.community.GradeResponse::class.java).result
     } catch (e : Exception) {
         null
     }

@@ -50,15 +50,15 @@ fun SearchBillsUI(vm : NetWorkViewModel) {
     var currentPage by remember { mutableIntStateOf(1) }
     var startUse by remember { mutableStateOf(false) }
 
-    val uiState by vm.huixinSearchBillsResult.state.collectAsState()
+    val uiState by vm.huiXinSearchBillsResult.state.collectAsState()
     val refreshNetwork: suspend () -> Unit = {
         val auth = prefs.getString("auth","")
-        vm.huixinSearchBillsResult.clear()
+        vm.huiXinSearchBillsResult.clear()
         vm.searchBills("bearer $auth",input,currentPage)
     }
 
     LaunchedEffect(Unit) {
-        vm.huixinSearchBillsResult.emitPrepare()
+        vm.huiXinSearchBillsResult.emitPrepare()
     }
     LaunchedEffect(currentPage) {
         if(startUse) {

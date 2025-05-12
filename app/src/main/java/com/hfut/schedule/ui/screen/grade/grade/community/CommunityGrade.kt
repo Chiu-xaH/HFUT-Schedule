@@ -90,14 +90,14 @@ fun GradeItemUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
 
     fun refresh() = cor.launch {
         async {
-            reEmptyLiveDta(vm.GradeData)
+            reEmptyLiveDta(vm.gradeFromCommunityResponse)
             loading = true
             SharedPrefs.saveBoolean("term",true,termBoolean)
         }.await()
         async { CommuityTOKEN?.let { vm.getGrade(it,Years.toString() + "-"+(Years+1),term) } }.await()
         launch {
             Handler(Looper.getMainLooper()).post{
-                vm.GradeData.observeForever { result ->
+                vm.gradeFromCommunityResponse.observeForever { result ->
                     if (result != null && result.contains("success")) {
                         refresh = false
                         loading = false

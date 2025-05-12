@@ -74,6 +74,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -486,10 +487,10 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
             DividerTextExpandedWith("预览") {
                 StyleCardListItem(
-                    headlineContent = { Text(title) },
+                    headlineContent = { Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                     leadingContent = typeIcon,
-                    overlineContent = { Text(remark) },
-                    supportingContent =  if(description.isNotBlank() && description.isNotEmpty()) { { Text(description) } } else null,
+                    overlineContent = { Text(remark,maxLines = 1,overflow = TextOverflow.Ellipsis) },
+                    supportingContent =  if(description.isNotBlank() && description.isNotEmpty()) { { Text(description,maxLines = 1,overflow = TextOverflow.Ellipsis) } } else null,
                     trailingContent = { FilledTonalIconButton(
                         onClick = {
                             activity?.let { addToCalendars(startDate = date.first, startTime = time.first, endDate = date.second, endTime = time.second, description, title,null, it) }
@@ -515,9 +516,9 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                     }
                 )
                 Spacer(Modifier.height(5.dp))
-                CustomTextField(input = title, label = { Text("标题") }) { title = it }
+                CustomTextField(input = title, label = { Text("标题") },singleLine = false) { title = it }
                 Spacer(Modifier.height(5.dp + cardNormalDp()))
-                CustomTextField(input = description, label = { Text("备注(可空 可填写网址,地点,位置等)") }) { description = it }
+                CustomTextField(input = description, label = { Text("备注(可空 可填写网址,地点,位置等)") },singleLine = false) { description = it }
                 Spacer(Modifier.height(5.dp ))
                 MyCustomCard(containerColor = cardNormalColor()) {
                     TransplantListItem(
@@ -556,7 +557,7 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                     }
                 }
                 Spacer(Modifier.height(5.dp))
-                CustomTextField(input = remark, label = { Text("自定义时间显示") }) { remark = it }
+                CustomTextField(input = remark, label = { Text("自定义时间显示") }, singleLine = false) { remark = it }
                 Spacer(Modifier.height(5.dp - cardNormalDp()*0f))
 
                 if(isSupabase) {

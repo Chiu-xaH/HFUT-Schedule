@@ -81,8 +81,8 @@ fun CommonNetworkScreen(
     when (uiState) {
         // 准备状态UI 例如手动搜索时第一次什么也不显示
         SimpleUiState.Prepare -> {
-            CenterScreen {
-                prepareContent?.let { it() }
+            prepareContent?.let {
+                CenterScreen { it() }
             }
         }
         // 错误UI 数据解析使用了TRY CATCH,数据解析错误时跳转到这里（待开发） 或者网络请求失败

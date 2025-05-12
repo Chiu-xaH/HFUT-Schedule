@@ -50,10 +50,10 @@ import java.math.BigDecimal
 @Composable
 fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIViewModel, hazeState : HazeState) {
     var page by remember { mutableIntStateOf(1) }
-    val uiState by vm.huixinBillResult.state.collectAsState()
+    val uiState by vm.huiXinBillResult.state.collectAsState()
     val refreshNetwork: suspend () -> Unit = {
         val auth = prefs.getString("auth","")
-        vm.huixinBillResult.clear()
+        vm.huiXinBillResult.clear()
         vm.getCardBill("bearer $auth",page)
     }
     LaunchedEffect(page) {
@@ -119,7 +119,7 @@ fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVie
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BillsInfo(vm : NetWorkViewModel, Infonum : Int) {
-    val uiState by vm.huixinBillResult.state.collectAsState()
+    val uiState by vm.huiXinBillResult.state.collectAsState()
     val data = (uiState as SimpleUiState.Success).data.data.records
     val bills = data[Infonum]
     Column {

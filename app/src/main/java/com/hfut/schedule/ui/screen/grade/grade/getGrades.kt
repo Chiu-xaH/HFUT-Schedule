@@ -11,7 +11,7 @@ import org.jsoup.Jsoup
 
 fun getGrade(vm: NetWorkViewModel) :  List<scoreInfoDTOList> {
     try {
-        val result = Gson().fromJson(vm.GradeData.value,GradeResponse::class.java).result
+        val result = Gson().fromJson(vm.gradeFromCommunityResponse.value,GradeResponse::class.java).result
         return result.scoreInfoDTOList
     } catch (e:Exception) {
         return emptyList()

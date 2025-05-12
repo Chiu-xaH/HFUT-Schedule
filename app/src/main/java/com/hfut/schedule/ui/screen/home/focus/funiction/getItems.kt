@@ -24,7 +24,7 @@ suspend fun initCardNetwork(vm : NetWorkViewModel, vmUI : UIViewModel) = withCon
     async { vm.getyue("bearer $auth") }.await()
     launch {
         Handler(Looper.getMainLooper()).post {
-            vm.CardData.observeForever { result ->
+            vm.huixinCardInfoResponse.observeForever { result ->
                 if (result != null && result.contains("操作成功")) {
                     try {
                         val yuedata = Gson().fromJson(result, BalanceResponse::class.java).data.card[0]

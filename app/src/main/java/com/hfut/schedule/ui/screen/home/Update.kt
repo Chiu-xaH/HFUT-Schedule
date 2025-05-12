@@ -53,7 +53,7 @@ fun initNetworkRefresh(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIVie
             launch { updateCourses(vm,vmUI) }
         // 更新社区
         communityToken?.let {
-            launch { vm.GetCourse(it) }
+            launch { vm.getCoursesFromCommunity(it) }
             launch { vm.getFriends(it) }
         }
         //检查更新

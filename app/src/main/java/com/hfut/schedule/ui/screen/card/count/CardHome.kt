@@ -50,7 +50,7 @@ fun CardHome(innerPadding : PaddingValues, vm : NetWorkViewModel, pagerState : P
 //            }
 //        }
 //        Spacer(modifier = Modifier.height(5.dp))
-        val uiState by vm.huixinBillResult.state.collectAsState()
+        val uiState by vm.huiXinBillResult.state.collectAsState()
 
         HorizontalPager(state = pagerState) { page ->
             Scaffold { it->

@@ -2,7 +2,6 @@ package com.hfut.schedule.viewmodel.network
 
 import android.annotation.SuppressLint
 import android.util.Base64
-import android.util.Log
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,6 +14,8 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.enumeration.LibraryItems
 import com.hfut.schedule.logic.enumeration.LoginType
 import com.hfut.schedule.logic.model.NewsResponse
+import com.hfut.schedule.logic.model.PayData
+import com.hfut.schedule.logic.model.PayResponse
 import com.hfut.schedule.logic.model.QWeatherNowBean
 import com.hfut.schedule.logic.model.QWeatherResponse
 import com.hfut.schedule.logic.model.QWeatherWarnBean
@@ -28,6 +29,9 @@ import com.hfut.schedule.logic.model.TeacherResponse
 import com.hfut.schedule.logic.model.WorkSearchResponse
 import com.hfut.schedule.logic.model.XuanquNewsItem
 import com.hfut.schedule.logic.model.XuanquResponse
+import com.hfut.schedule.logic.model.community.ApplyFriendResponse
+import com.hfut.schedule.logic.model.community.ApplyingLists
+import com.hfut.schedule.logic.model.community.ApplyingResponse
 import com.hfut.schedule.logic.model.community.AvgResult
 import com.hfut.schedule.logic.model.community.BookPositionBean
 import com.hfut.schedule.logic.model.community.BookPositionResponse
@@ -113,6 +117,7 @@ import com.hfut.schedule.logic.util.network.Encrypt
 import com.hfut.schedule.logic.util.network.NetWork
 import com.hfut.schedule.logic.util.network.NetWork.launchRequestSimple
 import com.hfut.schedule.logic.util.network.SimpleStateHolder
+import com.hfut.schedule.logic.util.network.parse.JxglstuParseUtils
 import com.hfut.schedule.logic.util.network.supabaseEventDtoToEntity
 import com.hfut.schedule.logic.util.network.supabaseEventForkDtoToEntity
 import com.hfut.schedule.logic.util.parse.SemseterParser
@@ -153,9 +158,9 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     private val jxglstuHTML = JxglstuHTMLServiceCreator.create(JxglstuService::class.java,webVpn)
     private val oneGoto = OneGotoServiceCreator.create(LoginService::class.java)
     private val one = OneServiceCreator.create(OneService::class.java)
-    private val huixin = ZJGDBillServiceCreator.create(ZJGDBillService::class.java)
-    private val xuanquDormitory = DormitoryScoreServiceCreator.create(DormitoryScore::class.java)
-    private val lepaoYun = LePaoYunServiceCreator.create(LePaoYunService::class.java)
+    private val huiXin = ZJGDBillServiceCreator.create(ZJGDBillService::class.java)
+    private val xuanChengDormitory = DormitoryScoreServiceCreator.create(DormitoryScore::class.java)
+    private val lePaoYun = LePaoYunServiceCreator.create(LePaoYunService::class.java)
     private val searchEle = SearchEleServiceCreator.create(FWDTService::class.java)
     private val login = LoginServiceCreator.create(LoginService::class.java)
     private val community = CommunitySreviceCreator.create(CommunityService::class.java)
@@ -202,7 +207,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     var supabaseLoginResp = MutableLiveData<String?>()
     fun supabaseLoginWithPassword(password : String) = NetWork.makeRequest(supabase.login(user = SupabaseUserLoginBean(password = password), loginType = "password"),supabaseLoginResp)
 
-    fun supabaseLoginWithRefreshToken(refreshToken : String) = NetWork.makeRequest(supabase.login(user = SupabaseRefreshLoginBean(refreshToken), loginType = "refresh_token",),supabaseLoginResp)
+    fun supabaseLoginWithRefreshToken(refreshToken : String) = NetWork.makeRequest(supabase.login(user = SupabaseRefreshLoginBean(refreshToken), loginType = "refresh_token"),supabaseLoginResp)
 
     var supabaseDelResp = MutableLiveData<Boolean?>()
     fun supabaseDel(jwt : String,id : Int) {
@@ -453,27 +458,20 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     val selectCourseData = MutableLiveData<String?>()
     @SuppressLint("SuspiciousIndentation")
     fun getSelectCourse(cookie: String) {
-        val call = prefs.getString("Username","2023XXXXXX")?.let {
-            jxglstuJSON.getSelectCourse(
-                it.substring(2,4),
-                studentId.value.toString(), cookie)
-        }
+        val bizTypeId = JxglstuParseUtils.bizTypeId ?: return
+        val call = jxglstuJSON.getSelectCourse(bizTypeId,studentId.value.toString(), cookie)
 
-        if (call != null) {
-            call.enqueue(object : Callback<ResponseBody> {
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    if (response.isSuccessful) {
-                        selectCourseData.value = response.body()?.string()
-                    } else {
-                        Log.e("Error", "Response code: ${response.code()}")
-                    }
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if (response.isSuccessful) {
+                    selectCourseData.value = response.body()?.string()
                 }
+            }
 
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    t.printStackTrace()
-                }
-            })
-        }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                t.printStackTrace()
+            }
+        })
     }
 
     val selectCourseInfoData = SimpleStateHolder<List<SelectCourseInfo>>()
@@ -714,7 +712,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         }
     } catch (e : Exception) { throw e }
 //  ////////////////////////////////////////////////////////////////////////////////////////////////
-    fun GotoCommunity(cookie : String) {
+    fun gotoCommunity(cookie : String) {
 
         val call = login.loginGoTo(service = LoginType.COMMUNITY.service,cookie = cookie)
 
@@ -725,14 +723,14 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         })
     }
 
-    val LoginCommunityData = MutableLiveData<String?>()
-    fun LoginCommunity(ticket : String) {
+    val loginCommunityData = MutableLiveData<String?>()
+    fun loginCommunity(ticket : String) {
 
         val call = community.Login(ticket)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                LoginCommunityData.value = response.body()?.string()
+                loginCommunityData.value = response.body()?.string()
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -757,14 +755,13 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
                 val gpas = tds[4].text()
                 val totalgrade = tds[5].text()
                 val grades = tds[6].text()
-                val Grade = GradeResponseJXGLSTU(titles,scores,gpas,grades,totalgrade)
-                list.add(Grade)
+                list.add(GradeResponseJXGLSTU(titles,scores,gpas,grades,totalgrade))
             }
         }
         list
     } catch (e : Exception) { throw e }
 
-    fun Jxglstulogin(cookie : String) {
+    fun jxglstuLogin(cookie : String) {
 
         val call = jxglstuJSON.jxglstulogin(cookie)
 
@@ -816,7 +813,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
                     try {
                         val id = Gson().fromJson(json, lessonResponse::class.java)
                         lessonIds.value = id.lessonIds
-                    } catch (e : Exception) { }
+                    } catch (_ : Exception) { }
                     saveString("courses",json)
                 }
             }
@@ -868,7 +865,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         })
     }
 
-    val ProgramData = MutableLiveData<String?>()
+    val programData = MutableLiveData<String?>()
     fun getProgram(cookie: String) {
         val call = jxglstuJSON.getProgram(cookie,studentId.value.toString())
 
@@ -876,16 +873,16 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 val body = response.body()?.string()
                 saveString("program", body)
-                ProgramData.value = body
+                programData.value = body
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
 
-    val ProgramCompletionData = SimpleStateHolder<ProgramCompletionResponse>()
+    val programCompletionData = SimpleStateHolder<ProgramCompletionResponse>()
     suspend fun getProgramCompletion(cookie: String) = launchRequestSimple(
-        holder = ProgramCompletionData,
+        holder = programCompletionData,
         request = { jxglstuJSON.getProgramCompletion(cookie).awaitResponse() },
         transformSuccess = { _,json -> parseProgramCompletion(json) }
     )
@@ -1007,16 +1004,14 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
                     val base64String = Base64.encodeToString(bytes, Base64.DEFAULT)
                     // 保存编码后的字符串
                     saveString("photo",base64String)
-                } catch (e : Exception) {
-
-                }
+                } catch (_ : Exception) { }
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
 
-    fun OneGoto(cookie : String)  {// 创建一个Call对象，用于发送异步请求
+    fun goToOne(cookie : String)  {// 创建一个Call对象，用于发送异步请求
 
         val call = oneGoto.OneGoto(cookie)
 
@@ -1027,7 +1022,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         })
     }
 
-    fun OneGotoCard(cookie : String)  {
+    fun goToHuixin(cookie : String)  {
 
         val call = oneGoto.OneGotoCard(cookie)
 
@@ -1038,10 +1033,10 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         })
     }
 
-    val huixinBillResult = SimpleStateHolder<BillResponse>()
+    val huiXinBillResult = SimpleStateHolder<BillResponse>()
     suspend fun getCardBill(auth : String, page : Int) = launchRequestSimple(
-        holder = huixinBillResult,
-        request = { huixin.Cardget(auth,page, prefs.getString("CardRequest", MyApplication.PAGE_SIZE.toString()) ?: MyApplication.PAGE_SIZE.toString()).awaitResponse() },
+        holder = huiXinBillResult,
+        request = { huiXin.Cardget(auth,page, prefs.getString("CardRequest", MyApplication.PAGE_SIZE.toString()) ?: MyApplication.PAGE_SIZE.toString()).awaitResponse() },
         transformSuccess = { _,json -> parseHuixinBills(json) }
     )
 
@@ -1052,14 +1047,14 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             throw Exception(json)
     } catch (e : Exception) { throw e }
 
-    val CardData = MutableLiveData<String?>()
+    val huixinCardInfoResponse = MutableLiveData<String?>()
     fun getyue(auth : String) {
-        val call = huixin.getYue(auth)
+        val call = huiXin.getYue(auth)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 val body = response.body()?.string()
-                CardData.value = body
+                huixinCardInfoResponse.value = body
                 saveString("cardyue",body )
             }
 
@@ -1090,7 +1085,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             ELECTRIC -> null
             SHOWER -> phoneNumber
         }
-        val call = huixin.getFee(auth, typeId = feeitemid, room = rooms, level = levels, phoneNumber = phoneNumbers)
+        val call = huiXin.getFee(auth, typeId = feeitemid, room = rooms, level = levels, phoneNumber = phoneNumbers)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -1124,7 +1119,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     suspend fun payStep1(auth: String,json: String,pay : Float,type: FeeType) = launchRequestSimple(
         holder = orderIdData,
         request = {
-            huixin.pay(
+            huiXin.pay(
                 auth = auth,
                 pay = pay,
                 flag = "choose",
@@ -1139,9 +1134,9 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
                 cardId = null
             ).awaitResponse()
         },
-        transformSuccess = { _,json -> parseHuixinPayStep1(json) }
+        transformSuccess = { _,json -> parseHuiXinPayStep1(json) }
     )
-    private fun parseHuixinPayStep1(result : String) : String = try {
+    private fun parseHuiXinPayStep1(result : String) : String = try {
         if(result.contains("操作成功")) {
             Gson().fromJson(result, PayStep1Response::class.java).data.orderid
         } else {
@@ -1153,7 +1148,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     suspend fun payStep2(auth: String,orderId : String,type : FeeType) = launchRequestSimple(
         holder = uuIdData,
         request = {
-            huixin.pay(
+            huiXin.pay(
                 auth = auth,
                 pay = null,
                 flag = null,
@@ -1168,10 +1163,9 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
                 cardId = null
             ).awaitResponse()
         },
-        transformSuccess = { _,json -> parseHuixinPayStep2(json) }
+        transformSuccess = { _,json -> parseHuiXinPayStep2(json) }
     )
-
-    private fun parseHuixinPayStep2(result : String) : Map<String, String> = try {
+    private fun parseHuiXinPayStep2(result : String) : Map<String, String> = try {
         if(result.contains("操作成功")) {
             Gson().fromJson(result, PayStep2Response::class.java).data.passwordMap
         } else {
@@ -1183,7 +1177,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     suspend fun payStep3(auth: String,orderId : String,password : String,uuid : String,type: FeeType) = launchRequestSimple(
         holder = payResultData,
         request = {
-            huixin.pay(
+            huiXin.pay(
                 auth = auth,
                 pay = null,
                 flag = null,
@@ -1198,9 +1192,9 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
                 typeId = null
             ).awaitResponse()
         },
-        transformSuccess = { _,json -> parseHuixinPayStep3(json)}
+        transformSuccess = { _,json -> parseHuiXinPayStep3(json)}
     )
-    private fun parseHuixinPayStep3(result : String) : String = try {
+    private fun parseHuiXinPayStep3(result : String) : String = try {
         if(result.contains("success")) {
             Gson().fromJson(result, PayStep3Response::class.java).msg
         } else {
@@ -1211,21 +1205,20 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     val changeLimitResponse = SimpleStateHolder<String>()
     suspend fun changeLimit(auth: String,json: JsonObject) = launchRequestSimple(
         holder = changeLimitResponse,
-        request = { huixin.changeLimit(auth,json).awaitResponse() },
-        transformSuccess = { _,json -> parseHuixinChangeLimit(json) }
+        request = { huiXin.changeLimit(auth,json).awaitResponse() },
+        transformSuccess = { _,json -> parseHuiXinChangeLimit(json) }
     )
-    private fun parseHuixinChangeLimit(json : String) : String = try {
+    private fun parseHuiXinChangeLimit(json : String) : String = try {
         Gson().fromJson(json,ChangeLimitResponse::class.java).msg
     } catch (e : Exception) { throw e }
 
-    var huixinRangeResult = SimpleStateHolder<Float>()
+    var huiXinRangeResult = SimpleStateHolder<Float>()
     suspend fun searchDate(auth : String, timeFrom : String, timeTo : String) = launchRequestSimple(
-        holder = huixinRangeResult,
-        request = { huixin.searchDate(auth,timeFrom,timeTo).awaitResponse() },
-        transformSuccess = { _, json -> parseHuixinRange(json) }
+        holder = huiXinRangeResult,
+        request = { huiXin.searchDate(auth,timeFrom,timeTo).awaitResponse() },
+        transformSuccess = { _, json -> parseHuiXinRange(json) }
     )
-
-    private fun parseHuixinRange(result : String) : Float = try {
+    private fun parseHuiXinRange(result : String) : Float = try {
         if(result.contains("操作成功")) {
             val data = Gson().fromJson(result, BillRangeResponse::class.java)
             data.data.expenses / 100
@@ -1234,14 +1227,13 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         }
     } catch (e : Exception) { throw e }
 
-    val huixinSearchBillsResult = SimpleStateHolder<BillDatas>()
+    val huiXinSearchBillsResult = SimpleStateHolder<BillDatas>()
     suspend fun searchBills(auth : String, info: String,page : Int) = launchRequestSimple(
-        holder = huixinSearchBillsResult,
-        request = { huixin.searchBills(auth,info,page, prefs.getString("CardRequest","30") ?: MyApplication.PAGE_SIZE.toString()).awaitResponse() },
-        transformSuccess = { _, json -> parseHuixinSearchBills(json) }
+        holder = huiXinSearchBillsResult,
+        request = { huiXin.searchBills(auth,info,page, prefs.getString("CardRequest","30") ?: MyApplication.PAGE_SIZE.toString()).awaitResponse() },
+        transformSuccess = { _, json -> parseHuiXinSearchBills(json) }
     )
-
-    private fun parseHuixinSearchBills(result : String) : BillDatas = try {
+    private fun parseHuiXinSearchBills(result : String) : BillDatas = try {
         if(result.contains("操作成功")) {
             Gson().fromJson(result,BillResponse::class.java).data
         } else {
@@ -1249,13 +1241,13 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         }
     } catch (e : Exception) { throw e }
 
-    val huixinMonthBillResult = SimpleStateHolder<List<BillMonth>>()
+    val huiXinMonthBillResult = SimpleStateHolder<List<BillMonth>>()
     suspend fun getMonthBills(auth : String, dateStr: String) = launchRequestSimple(
-        holder = huixinMonthBillResult,
-        request = { huixin.getMonthYue(auth,dateStr).awaitResponse() },
-        transformSuccess = { _, json -> parseHuixinMonthBills(json) }
+        holder = huiXinMonthBillResult,
+        request = { huiXin.getMonthYue(auth,dateStr).awaitResponse() },
+        transformSuccess = { _, json -> parseHuiXinMonthBills(json) }
     )
-    private fun parseHuixinMonthBills(json : String) : List<BillMonth> = try {
+    private fun parseHuiXinMonthBills(json : String) : List<BillMonth> = try {
         if(json.contains("操作成功")) {
             val data = Gson().fromJson(json, BillMonthResponse::class.java)
             val bill = data.data
@@ -1276,22 +1268,20 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
         val call = http?.let { code?.let { it1 -> one.getToken(it, it1) } }
 
-        if (call != null) {
-            call.enqueue(object : Callback<ResponseBody> {
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    val json = response.body()?.string()
-                    try {
-                        val data = Gson().fromJson(json, getTokenResponse::class.java)
-                        if (data.msg == "success") {
-                            token.value = data.data.access_token
-                            saveString("bearer", data.data.access_token)
-                        }
-                    } catch (_: Exception) {}
-                }
+        call?.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                val json = response.body()?.string()
+                try {
+                    val data = Gson().fromJson(json, getTokenResponse::class.java)
+                    if (data.msg == "success") {
+                        token.value = data.data.access_token
+                        saveString("bearer", data.data.access_token)
+                    }
+                } catch (_: Exception) {}
+            }
 
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-            })
-        }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
 
 
     }
@@ -1356,9 +1346,9 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         })
     }
 
-    fun searchEmptyRoom(building_code : String,token : String)  {
+    fun searchEmptyRoom(buildingCode : String, token : String)  {
 
-        val call = one.searchEmptyRoom(building_code, "Bearer $token")
+        val call = one.searchEmptyRoom(buildingCode, "Bearer $token")
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -1388,26 +1378,20 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             throw Exception(result)
     } catch (e: Exception) { throw e }
 
-    val PayData = MutableLiveData<String?>()
-    fun getPay()  {
-
-        val call = prefs.getString("Username","")?.let { one.getPay(it) }
-
-        if (call != null) {
-            call.enqueue(object : Callback<ResponseBody> {
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    PayData.value = response.body()?.string()
-                }
-
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-            })
-        }
-    }
+    val payFeeResponse = SimpleStateHolder<PayData>()
+    suspend fun getPay() = launchRequestSimple(
+        holder = payFeeResponse,
+        request = {  one.getPay(getPersonInfo().username).awaitResponse()  },
+        transformSuccess = { _,json -> parsePayFee(json) }
+    )
+    private fun parsePayFee(result : String) : PayData = try {
+        Gson().fromJson(result,PayResponse::class.java).data
+    } catch (e : Exception) { throw e }
 
     val dormitoryResult = SimpleStateHolder<List<XuanquResponse>>()
     suspend fun searchDormitoryXuanCheng(code : String) = launchRequestSimple(
         holder = dormitoryResult,
-        request = { xuanquDormitory.search(code).awaitResponse() },
+        request = { xuanChengDormitory.search(code).awaitResponse() },
         transformSuccess = { _,html -> parseDormitoryXuanCheng(html) }
     )
     private fun parseDormitoryXuanCheng(html : String) : List<XuanquResponse> = try {
@@ -1422,9 +1406,9 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         data
     }  catch (e : Exception) { throw e }
 
-    fun lepaoYunHome(Yuntoken : String) {
+    fun lePaoYunHome(token : String) {
 
-        val call = lepaoYun.getLePaoYunHome(Yuntoken)
+        val call = lePaoYun.getLePaoYunHome(token)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -1448,21 +1432,21 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             throw Exception(json)
     } catch (e : Exception) { throw e }
 
-    val ExamData = MutableLiveData<String?>()
-    val ExamCodeData = MutableLiveData<Int>()
-    fun Exam(token: String) {
+    val examCommunityResponse = MutableLiveData<String?>()
+    val examCodeFromCommunityResponse = MutableLiveData<Int>()
+    fun getExamFromCommunity(token: String) {
 
         val call = token.let { community.getExam(it) }
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 val responses = response.body()?.string()
                 saveString("Exam", responses)
-                ExamData.value = responses
-                ExamCodeData.value = response.code()
+                examCommunityResponse.value = responses
+                examCodeFromCommunityResponse.value = response.code()
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                ExamData.value = "错误"
+                examCommunityResponse.value = "错误"
                 t.printStackTrace()
             }
         })
@@ -1485,8 +1469,8 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         })
     }
 
-    var GradeData = MutableLiveData<String?>()
-    fun getGrade(token: String, year : String, term : String) = NetWork.makeRequest(community.getGrade(token,year,term),GradeData)
+    var gradeFromCommunityResponse = MutableLiveData<String?>()
+    fun getGrade(token: String, year : String, term : String) = NetWork.makeRequest(community.getGrade(token,year,term),gradeFromCommunityResponse)
 
     val avgData = SimpleStateHolder<AvgResult>()
     suspend fun getAvgGrade(token: String) = launchRequestSimple(
@@ -1514,7 +1498,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             throw Exception(result)
     } catch (e : Exception) { throw e }
 
-
     val libraryData = SimpleStateHolder<List<LibRecord>>()
     suspend fun searchBooks(token: String, name: String, page: Int) = launchRequestSimple(
         holder = libraryData,
@@ -1534,7 +1517,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         request = { community.getBookPosition(token,callNo).awaitResponse() },
         transformSuccess = { _,json -> parseBookPosition(json) }
     )
-
     private fun parseBookPosition(json : String) : List<BookPositionBean> = try {
         if(json.contains("成功"))
             Gson().fromJson(json,BookPositionResponse::class.java).result
@@ -1542,7 +1524,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             throw Exception(json)
     } catch (e : Exception) { throw e }
 
-    fun GetCourse(token : String, studentId: String? = null) {
+    fun getCoursesFromCommunity(token : String, studentId: String? = null) {
 
         val call = token.let { community.getCourse(it,studentId) }
         call.enqueue(object : Callback<ResponseBody> {
@@ -1568,18 +1550,31 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         })
     }
 
-    val applyResponseMsg = MutableLiveData<String>()
+    val addFriendApplyResponse = SimpleStateHolder<String>()
+    suspend fun addFriendApply(token : String, username : String) = launchRequestSimple(
+        holder = addFriendApplyResponse,
+        request = { community.applyAdd(token,CommunityService.RequestJsonApply(username)).awaitResponse() },
+        transformSuccess = { _,json -> parseApplyFriend(json) }
+    )
+    private fun parseApplyFriend(result : String) : String = try {
+        if (result.contains("success"))
+            Gson().fromJson(result,ApplyFriendResponse::class.java).message
+        else
+            throw Exception(result)
+    } catch (e : Exception) { throw e }
 
-    fun addApply(token : String, username : String) = NetWork.makeRequest( community.applyAdd(token,CommunityService.RequestJsonApply(username)),applyResponseMsg)
-
-    val applyData = MutableLiveData<String>()
-    fun getApplying(token : String) {
-        val size = prefs.getString("CardRequest", MyApplication.PAGE_SIZE.toString())
-        val call = size?.let { community.getApplyingList(token, it) }
-
-        call?.let { NetWork.makeRequest(it,applyData) }
-
-    }
+    val applyFriendsResponse = SimpleStateHolder<List<ApplyingLists?>>()
+    suspend fun getApplying(token : String) = launchRequestSimple(
+        holder = applyFriendsResponse,
+        request = { community.getApplyingList(token, prefs.getString("FriendRequest", MyApplication.PAGE_SIZE.toString())?: MyApplication.PAGE_SIZE.toString()).awaitResponse() },
+        transformSuccess = { _,json -> parseApplyFriends(json) }
+    )
+    private fun parseApplyFriends(result : String) : List<ApplyingLists?> = try {
+        if(result.contains("success"))
+            Gson().fromJson(result,ApplyingResponse::class.java).result.records
+        else
+            throw Exception(result)
+    } catch (e : Exception) { throw e }
 
     val booksChipData = SimpleStateHolder<List<BorrowRecords>>()
     suspend fun communityBooks(token : String,type : LibraryItems,page : Int = 1) = launchRequestSimple(
@@ -1615,17 +1610,13 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
     fun getFriends(token : String) {
 
-        val call = token?.let { community.getFriends(it) }
-
-        if (call != null) {
-            call.enqueue(object : Callback<ResponseBody> {
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    saveString("feiends", response.body()?.string())
-                }
-
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-            })
-        }
+        val call = token.let { community.getFriends(it) }
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                saveString("feiends", response.body()?.string())
+            }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
     }
 
     fun checkApplying(token : String, id : String, isOk : Boolean) {
@@ -1638,24 +1629,20 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
     var lessonIdsNext = MutableLiveData<List<Int>>()
     fun getLessonIdsNext(cookie : String, bizTypeId : Int,studentid : String) {
-        val call = (SemseterParser.getSemseter()?.plus(20)).toString()
-            ?.let { jxglstuJSON.getLessonIds(cookie,bizTypeId.toString(), it,studentid) }
-
-        if (call != null) {
-            call.enqueue(object : Callback<ResponseBody> {
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    val json = response.body()?.string()
-                    if (json != null) {
-                        try {
-                            val id = Gson().fromJson(json, lessonResponse::class.java)
-                            saveString("coursesNext",json)
-                            lessonIdsNext.value = id.lessonIds
-                        } catch (_ : Exception) {}
-                    }
+        val call = (SemseterParser.getSemseter().plus(20)).toString().let { jxglstuJSON.getLessonIds(cookie,bizTypeId.toString(), it,studentid) }
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                val json = response.body()?.string()
+                if (json != null) {
+                    try {
+                        val id = Gson().fromJson(json, lessonResponse::class.java)
+                        saveString("coursesNext",json)
+                        lessonIdsNext.value = id.lessonIds
+                    } catch (_ : Exception) {}
                 }
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-            })
-        }
+            }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
     }
 
     fun getDatumNext(cookie : String,lessonid: JsonObject) {
@@ -1668,7 +1655,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 val body = response.body()?.string()
-            //    datumDataNext.value = body
                 saveString("jsonNext", body)
             }
 
@@ -1692,7 +1678,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         request = { qWeather.getWeather().awaitResponse() },
         transformSuccess = { _, json -> parseQweatherNow(json) }
     )
-
     private fun parseQweatherNow(json : String) : QWeatherNowBean = try {
         if(json.contains("200"))
             Gson().fromJson(json, QWeatherResponse::class.java).now
@@ -1710,8 +1695,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
                 val statusCode = response.code()
                 if(statusCode == 302) {
                     goToStuResponse.value = response.headers()["Location"]
-                } else {
-//                    Log.d(statusCode.toString(),"登陆失败")
                 }
             }
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -1724,12 +1707,8 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val statusCode = response.code()
-                if(statusCode == 200) {
-//                    Log.d("成功",response.headers()["Set-Cookie"].toString())
+                if(response.isSuccessful) {
                     loginStuResponse.value = response.headers()["Set-Cookie"]
-                } else {
-//                    Log.d("登失败",response.headers().toString())
                 }
             }
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
@@ -1759,18 +1738,15 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     fun loginWeb() {
 
         val call = getPersonInfo().username?.let { getIdentifyID()?.let { it1 -> loginWeb.loginWeb(it, it1,"宣州Login") } }
-
-        if (call != null) {
-            call.enqueue(object : Callback<ResponseBody> {
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    resultValue.value = response?.body()?.string()
-                }
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    t.printStackTrace()
-                    resultValue.value = "Error"
-                }
-            })
-        }
+        call?.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                resultValue.value = response.body()?.string()
+            }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                t.printStackTrace()
+                resultValue.value = "Error"
+            }
+        })
     }
 
     val result2Value = MutableLiveData<String?>()
@@ -1778,17 +1754,16 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
         val call = getPersonInfo().username?.let { getIdentifyID()?.let { it1 -> loginWeb2.loginWeb(it, it1,"宣州Login") } }
 
-        if (call != null) {
-            call.enqueue(object : Callback<ResponseBody> {
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    result2Value.value = response?.body()?.string()
-                }
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    t.printStackTrace()
-                    result2Value.value = "Error"
-                }
-            })
-        }
+        call?.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                result2Value.value = response.body()?.string()
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                t.printStackTrace()
+                result2Value.value = "Error"
+            }
+        })
     }
 
     fun logoutWeb() {
@@ -1803,6 +1778,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             }
         })
     }
+
     val infoWebValue = MutableLiveData<String?>()
     fun getWebInfo() {
         val call =  loginWeb.getInfo()

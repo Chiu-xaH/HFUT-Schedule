@@ -87,11 +87,11 @@ private fun withoutMonthBills(originalList : List<BillMonth>) : List<BillMonth> 
 fun MonthBillUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
     var month  by remember { mutableIntStateOf(DateTimeUtils.Date_MM.toInt()) }
     var year by remember { mutableStateOf(DateTimeUtils.Date_yyyy) }
-    val uiState by vm.huixinMonthBillResult.state.collectAsState()
+    val uiState by vm.huiXinMonthBillResult.state.collectAsState()
     val refreshNetwork: suspend () -> Unit = {
         val auth = SharedPrefs.prefs.getString("auth","")
         val input = "$year-" + if(month.toInt() < 10) "0$month" else month.toString()
-        vm.huixinMonthBillResult.clear()
+        vm.huiXinMonthBillResult.clear()
         vm.getMonthBills("bearer $auth", input)
     }
 

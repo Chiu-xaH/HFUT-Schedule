@@ -124,7 +124,7 @@ fun SearchScreen(
         "转专业" to { Transfer(ifSaved, vm,hazeState) }, 
         "开课查询 全校开课" to { CoursesSearch(ifSaved, vm,hazeState) }, 
         "教师 老师" to { TeacherSearch(vm,hazeState) }, 
-        "学费 费用 欠缴学费" to { Pay(ifSaved, vm,hazeState) }, 
+        "学费 费用 欠缴学费" to { Pay(vm,hazeState) },
         "实习" to { Practice(ifSaved) }, 
         "第二课堂" to { Second() }, 
         "今日校园 学工系统 请假 助学金 奖学金 贫困 寝室 心理 日常" to { ToadyCampus(ifSaved,vm) }, 

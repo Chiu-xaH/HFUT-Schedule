@@ -486,14 +486,14 @@ fun CalendarScreen(
        val ExamObserver = Observer<Int> { result ->
            if (result == 500) {
                CoroutineScope(Job()).launch {
-                   async { vm.GotoCommunity(cookies) }.await()
+                   async { vm.gotoCommunity(cookies) }.await()
                    async {
                        delay(1000)
-                       ticket?.let { vm.LoginCommunity(it) }
+                       ticket?.let { vm.loginCommunity(it) }
                    }.await()
                    launch {
                        Handler(Looper.getMainLooper()).post {
-                           vm.LoginCommunityData.observeForever(LoginCommunityObserver)
+                           vm.loginCommunityData.observeForever(LoginCommunityObserver)
                        }
                    }
                }
@@ -507,14 +507,14 @@ fun CalendarScreen(
         if(!webVpn) {
             val token = prefs.getString("bearer", "")
             //检测慧新易校可用性
-            if (prefs.getString("auth", "") == "") vm.OneGotoCard("$ONE;$TGC")
+            if (prefs.getString("auth", "") == "") vm.goToHuixin("$ONE;$TGC")
            CoroutineScope(job2).launch {
 
 
-               async { vm.OneGotoCard("$ONE;$TGC") }
-               async { CommuityTOKEN?.let { vm.Exam(it) } }
+               async { vm.goToHuixin("$ONE;$TGC") }
+               async { CommuityTOKEN?.let { vm.getExamFromCommunity(it) } }
 
-               Handler(Looper.getMainLooper()).post { vm.ExamCodeData.observeForever(ExamObserver) }
+               Handler(Looper.getMainLooper()).post { vm.examCodeFromCommunityResponse.observeForever(ExamObserver) }
 
 
                //登录信息门户的接口,还没做重构（懒）
@@ -524,7 +524,7 @@ fun CalendarScreen(
 //                       async { vm.getBorrowBooks("Bearer $token") }
                    } else {
                        async {
-                           async { vm.OneGoto(cookies) }.await()
+                           async { vm.goToOne(cookies) }.await()
                            async {
                                delay(500)
                                vm.getToken()

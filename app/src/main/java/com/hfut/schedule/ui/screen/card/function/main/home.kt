@@ -97,7 +97,7 @@ import kotlinx.coroutines.launch
 fun loadTodayPay(vm: NetWorkViewModel) : State<String> = produceState(initialValue = "--") {
     var total = 0.0
     try {
-        val uiState = vm.huixinBillResult.state.first { it !is SimpleUiState.Loading }
+        val uiState = vm.huiXinBillResult.state.first { it !is SimpleUiState.Loading }
         if(uiState is SimpleUiState.Success) {
             val list = uiState.data.data.records
             for (item in list) {

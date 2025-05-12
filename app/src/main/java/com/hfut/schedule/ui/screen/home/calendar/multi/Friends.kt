@@ -1,76 +1,55 @@
 package com.hfut.schedule.ui.screen.home.calendar.multi
 
 import android.annotation.SuppressLint
-import android.os.Handler
-import android.os.Looper
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.CircularProgressIndicator
-import com.hfut.schedule.ui.component.LoadingUI
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.hfut.schedule.R
-import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.logic.model.community.ApplyFriendResponse
-import com.hfut.schedule.logic.model.community.ApplyingLists
-import com.hfut.schedule.logic.model.community.ApplyingResponse
 import com.hfut.schedule.logic.model.community.FriendsList
 import com.hfut.schedule.logic.model.community.FriendsResopnse
+import com.hfut.schedule.logic.util.network.SimpleUiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.component.BottomTip
-import com.hfut.schedule.ui.component.BottomSheetTopBar
-import com.hfut.schedule.ui.component.DividerText
+import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.MyCustomCard
-import com.hfut.schedule.ui.component.showToast
-import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.ui.component.ScrollText
 import com.hfut.schedule.ui.component.StyleCardListItem
+import com.hfut.schedule.ui.component.appHorizontalDp
+import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.textFiledTransplant
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 fun getFriendsList() : List<FriendsList?> {
@@ -90,7 +69,7 @@ fun getFriendsList() : List<FriendsList?> {
 
 fun getFriendsCourse(studentId : String,vm : NetWorkViewModel) {
     val CommuityTOKEN = SharedPrefs.prefs.getString("TOKEN","")
-    CommuityTOKEN?.let { vm.GetCourse(it,studentId) }
+    CommuityTOKEN?.let { vm.getCoursesFromCommunity(it,studentId) }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -153,40 +132,24 @@ fun AddCourseUI(vm: NetWorkViewModel, hazeState: HazeState) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FriendsSetting(vm : NetWorkViewModel) {
-    var count = 0
-    val CommuityTOKEN = SharedPrefs.prefs.getString("TOKEN","")
-    var loading by remember { mutableStateOf(true) }
-
-
-    fun loadData() {
-        CoroutineScope(Job()).launch {
-            async {
-                if(count == 0) {
-                    CommuityTOKEN?.let { vm.openFriend(it) }
-                    count++
-                }
-            }
-            async { loading = true }.await()
-            async {
-                CommuityTOKEN?.let { vm.getApplying(it) } }.await()
-            async {
-                Handler(Looper.getMainLooper()).post {
-                    vm.applyData.observeForever { result ->
-                        if (result != null && result.contains("success")) {
-                            loading = false
-                        }
-                    }
-                }
-            }
+    val scope = rememberCoroutineScope()
+    val token = remember { prefs.getString("TOKEN","") }
+    val refreshNetwork : suspend () -> Unit = {
+        token?.let {
+            vm.openFriend(it)
+            vm.applyFriendsResponse.clear()
+            vm.getApplying(it)
         }
     }
     // 初始加载
     LaunchedEffect(Unit) {
-        loadData()
+        vm.addFriendApplyResponse.emitPrepare()
+        refreshNetwork()
     }
-    val friendList = getFriendsList()
+    val uiState by vm.applyFriendsResponse.state.collectAsState()
+    val uiStateAdd by vm.addFriendApplyResponse.state.collectAsState()
+    val friendList = remember { getFriendsList() }
     var input by remember { mutableStateOf("") }
-    var msg by remember { mutableStateOf("") }
     DividerTextExpandedWith(text = "申请新的好友") {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -205,16 +168,10 @@ fun FriendsSetting(vm : NetWorkViewModel) {
                 trailingIcon = {
                     IconButton(
                         onClick = {
-                            CoroutineScope(Job()).launch {
-                                async { CommuityTOKEN?.let { vm.addApply(it,input) } }.await()
-                                async {
-                                    Handler(Looper.getMainLooper()).post {
-                                        vm.applyResponseMsg.observeForever { result ->
-                                            if (result != null && result.contains("success")) {
-                                                msg = getMsg(result)
-                                            }
-                                        }
-                                    }
+                            scope.launch {
+                                token?.let {
+                                    vm.addFriendApplyResponse.clear()
+                                    vm.addFriendApply(it,input)
                                 }
                             }
                         }) {
@@ -225,8 +182,10 @@ fun FriendsSetting(vm : NetWorkViewModel) {
                 colors = textFiledTransplant(),
             )
         }
-        if(msg != "")
+        CommonNetworkScreen(uiStateAdd, isFullScreen = false, onReload = { showToast("禁止刷新") }) {
+            val msg = (uiStateAdd as SimpleUiState.Success).data
             BottomTip(str = msg)
+        }
     }
     DividerTextExpandedWith(text = "好友列表(您目前可以查看的课表)") {
 //        MyCustomCard {
@@ -248,78 +207,41 @@ fun FriendsSetting(vm : NetWorkViewModel) {
     }
 
     DividerTextExpandedWith(text = "申请列表(同意后对方可查看你的课表)") {
-        Box {
-            AnimatedVisibility(
-                visible = loading,
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Spacer(modifier = Modifier.height(5.dp))
-                    LoadingUI()
+        CommonNetworkScreen(uiState, onReload = refreshNetwork) {
+            val applyList = (uiState as SimpleUiState.Success).data
+            Column {
+                for(i in applyList.indices) {
+                    StyleCardListItem(
+                        headlineContent = { applyList[i]?.let { ScrollText(text = it.applyUsername) } },
+                        leadingContent = { Icon(painterResource(id = R.drawable.person_add), contentDescription = "")},
+                        overlineContent = { applyList[i]?.let { Text(text = it.applyUserId) } },
+                        trailingContent = {
+                            Row(modifier = Modifier.padding(horizontal = appHorizontalDp())) {
+                                FilledTonalButton(onClick = {
+                                    val id = applyList[i]?.id
+                                    id?.let { token?.let { it1 ->
+                                        vm.checkApplying(it1, it,true)
+                                        scope.launch { refreshNetwork() }
+                                    } }
+                                }) {
+                                    Text(text = "同意")
+                                }
+                                Spacer(modifier = Modifier.width(appHorizontalDp()))
+                                FilledTonalButton(onClick = {
+                                    val id = applyList[i]?.id
+                                    token?.let { id?.let { it1 ->
+                                        vm.checkApplying(it, it1,false)
+                                        scope.launch { refreshNetwork() }
+                                    } }
+                                }) {
+                                    Text(text = "拒绝")
+                                }
+                            }
+
+                        }
+                    )
                 }
             }
-
-
-            AnimatedVisibility(
-                visible = !loading,
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-//                MyCustomCard {
-                    val applyList = getApplyingList(vm)
-                    for(i in applyList.indices) {
-                        StyleCardListItem(
-                            headlineContent = { applyList[i]?.let { ScrollText(text = it.applyUsername) } },
-                            leadingContent = { Icon(painterResource(id = R.drawable.person_add), contentDescription = "")},
-                            overlineContent = { applyList[i]?.let { Text(text = it.applyUserId) } },
-                            trailingContent = {
-                                Row(modifier = Modifier.padding(horizontal = appHorizontalDp())) {
-                                    FilledTonalButton(onClick = {
-                                        val id = applyList[i]?.id
-                                        id?.let { CommuityTOKEN?.let { it1 -> vm.checkApplying(it1, it,true) } }
-                                        loading = true
-                                        loadData()
-                                    }) {
-                                        Text(text = "同意")
-                                    }
-                                    Spacer(modifier = Modifier.width(appHorizontalDp()))
-                                    FilledTonalButton(onClick = {
-                                        val id = applyList[i]?.id
-                                        CommuityTOKEN?.let { id?.let { it1 -> vm.checkApplying(it, it1,false) } }
-                                        loading = true
-                                        loadData()
-                                    }) {
-                                        Text(text = "拒绝")
-                                    }
-                                }
-
-                            }
-                        )
-                    }
-//                }
-            }
         }
-    }
-}
-
-fun getMsg(json : String) : String {
-    return try {
-        val data = Gson().fromJson(json,ApplyFriendResponse::class.java)
-        data.message
-    } catch (_:Exception) {
-        "解析出错"
-    }
-}
-
-fun getApplyingList(vm: NetWorkViewModel) : List<ApplyingLists?> {
-    return try {
-        val json = vm.applyData.value
-        Gson().fromJson(json,ApplyingResponse::class.java).result.records
-    } catch (e:Exception) {
-        emptyList()
     }
 }

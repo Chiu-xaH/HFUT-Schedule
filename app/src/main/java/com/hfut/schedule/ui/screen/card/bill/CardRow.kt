@@ -95,7 +95,7 @@ fun CardRow(vm : NetWorkViewModel, vmUI : UIViewModel, hazeState: HazeState) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TodayBills(vm: NetWorkViewModel) {
-    val uiState by vm.huixinBillResult.state.collectAsState()
+    val uiState by vm.huiXinBillResult.state.collectAsState()
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = Color.Transparent,

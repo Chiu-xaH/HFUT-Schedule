@@ -38,7 +38,7 @@ class SuccessActivity : BaseActivity() {
             if(!webVpn) {
                 launch {
                     val cookie = prefs.getString("redirect", "")
-                    networkVms.Jxglstulogin(cookie!!)
+                    networkVms.jxglstuLogin(cookie!!)
                 }
             }
         }

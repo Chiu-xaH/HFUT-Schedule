@@ -43,7 +43,7 @@ interface OneService {
         @Query("size") size : Int = 30) : Call<ResponseBody>
     //欠交学费
     @GET("api/leaver/third/finance/arrearsForPortal?type=1")
-    fun getPay(@Query("xh") username : String) : Call<ResponseBody>
+    fun getPay(@Query("xh") username : String?) : Call<ResponseBody>
 
     //获取邮箱URL
     @GET ("api/msg/mailBusiness/getLoginUrl")

@@ -99,10 +99,10 @@ private suspend fun getRangeData(vm: NetWorkViewModel, state: DateRangePickerSta
     val endDateString = DateTimeUtils.simpleFormatter_YYYY_MM_DD.format(endDate)
 
     val auth = prefs.getString("auth", "")
-    vm.huixinRangeResult.clear()
+    vm.huiXinRangeResult.clear()
     vm.searchDate("bearer $auth", startDateString, endDateString)
     // 主线程监听 StateFlow
-    onListenStateHolder(vm.huixinRangeResult) { data ->
+    onListenStateHolder(vm.huiXinRangeResult) { data ->
         showToast("共支出 $data 元")
     }
 //    withContext(Dispatchers.Main) {

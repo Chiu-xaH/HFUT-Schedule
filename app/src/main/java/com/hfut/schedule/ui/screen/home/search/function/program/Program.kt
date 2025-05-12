@@ -267,7 +267,7 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState) {
     var title by remember { mutableStateOf("培养方案") }
     var num by remember { mutableStateOf(0) }
 //    var loadingCard by remember { mutableStateOf(true) }
-    val uiState by vm.ProgramCompletionData.state.collectAsState()
+    val uiState by vm.programCompletionData.state.collectAsState()
     var loadingCard = uiState !is SimpleUiState.Success
     val scale2 = animateFloatAsState(
         targetValue = if (loadingCard) 0.97f else 1f, // 按下时为0.9，松开时为1
@@ -284,7 +284,7 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState) {
     LaunchedEffect(Unit) {
         if(!ifSaved) {
             cookie?.let {
-                vm.ProgramCompletionData.clear()
+                vm.programCompletionData.clear()
                 vm.getProgramCompletion(it)
             }
         }
@@ -343,7 +343,7 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState) {
                 async{ cookie?.let { vm.getProgram(it)} }.await()
                 async {
                     Handler(Looper.getMainLooper()).post{
-                        vm.ProgramData.observeForever { result ->
+                        vm.programData.observeForever { result ->
                             if (result != null) {
                                 if(result.contains("children")) {
                                     loading = false

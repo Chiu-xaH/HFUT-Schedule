@@ -127,7 +127,7 @@ interface JxglstuService {
     @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0","Content-Type: application/x-www-form-urlencoded")
     @POST("ws/for-std/course-select/open-turns")
     fun getSelectCourse(
-        @Field("bizTypeId") grade: String,
+        @Field("bizTypeId") bizTypeId: Int,
         @Field("studentId") studentId: String,
         @Header("Cookie") cookie: String
     ): Call<ResponseBody>
