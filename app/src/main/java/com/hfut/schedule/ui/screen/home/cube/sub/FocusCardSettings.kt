@@ -58,7 +58,6 @@ import com.hfut.schedule.ui.screen.home.search.function.card.SchoolCardItem
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.electric.Electric
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.LoginWeb
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getWebInfo
-import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getWebInfoOld
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.shower.getInGuaGua
 import com.hfut.schedule.ui.screen.home.search.function.life.WeatherScreen
 import com.hfut.schedule.ui.screen.home.search.function.transfer.Campus
@@ -336,17 +335,17 @@ fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) {
 }
 //废弃旧的方法
 fun getWeb(vm : NetWorkViewModel,vmUI: UIViewModel)  {
-    CoroutineScope(Job()).launch {
-        Handler(Looper.getMainLooper()).post{
-            vm.infoWebValue.observeForever { result ->
-                if (result != null)
-                    if(result.contains("flow")) {
-                        vmUI.webValue.value = getWebInfoOld(result)
-                        saveString("memoryWeb", vmUI.webValue.value?.flow)
-                    }
-            }
-        }
-    }
+//    CoroutineScope(Job()).launch {
+//        Handler(Looper.getMainLooper()).post{
+//            vm.infoWebValue.observeForever { result ->
+//                if (result != null)
+//                    if(result.contains("flow")) {
+//                        vmUI.webValue.value = getWebInfoOld(result)
+//                        saveString("memoryWeb", vmUI.webValue.value?.flow)
+//                    }
+//            }
+//        }
+//    }
 }
 
 fun getWebInfoFromZJGD(vm: NetWorkViewModel, vmUI : UIViewModel)  {

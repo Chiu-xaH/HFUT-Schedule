@@ -31,9 +31,12 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -43,15 +46,18 @@ import androidx.compose.ui.window.Dialog
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.zjgd.FeeType
+import com.hfut.schedule.logic.util.network.SimpleUiState
 import com.hfut.schedule.logic.util.network.reEmptyLiveDta
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.BottomButton
+import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.CustomTabRow
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.LoadingLargeCard
+import com.hfut.schedule.ui.component.LoadingUI
 import com.hfut.schedule.ui.component.StatusUI
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.WebDialog
@@ -121,8 +127,6 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
     var loading by  remember { mutableStateOf(true)}
     var refresh by  remember { mutableStateOf(true)}
 
-    var textLogin by  remember { mutableStateOf("登录") }
-    var textLogout by  remember { mutableStateOf("注销") }
 
     val titles = remember { listOf("合肥","宣城") }
     val pagerState = rememberPagerState(pageCount = { 2 }, initialPage =
@@ -130,32 +134,6 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
             Campus.XUANCHENG -> XUANCHENG_TAB
             Campus.HEFEI -> HEFEI_TAB
     })
-
-    fun refresh() {
-        CoroutineScope(Job()).launch {
-            async {
-                vm.getWebInfo()
-            }.await()
-            async {
-                Handler(Looper.getMainLooper()).post {
-                    vm.resultValue.observeForever { result ->
-                        if (result != null) {
-                            if(result.contains("登录成功") && !result.contains("已使用")) {
-                                vm.getWebInfo()
-                                textLogin = "已登录"
-                                textLogout = "注销"
-                                // textStatus = "已登录"
-                            } else if(result.contains("已使用")) {
-                                textLogout = "已注销"
-                                //  textStatus = "已注销"
-                                textLogin   = "登录"
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     fun refreshFlow() {
         refresh = true
@@ -188,8 +166,35 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
         }
     }
 
+    val scope = rememberCoroutineScope()
+    val uiState by vm.loginSchoolNetResponse.state.collectAsState()
+    var textLogin by  remember { mutableStateOf("登录") }
+    var textLogout by  remember { mutableStateOf("注销") }
+    LaunchedEffect(Unit) {
+        vm.loginSchoolNetResponse.emitPrepare()
+    }
+    val loadingLogin = uiState is SimpleUiState.Loading
 
-    refresh()
+    LaunchedEffect(uiState) {
+        when(uiState) {
+            is SimpleUiState.Error -> {
+                textLogin = "登录失败"
+                textLogout = "注销失败"
+            }
+            is SimpleUiState.Success -> {
+                val data = (uiState as SimpleUiState.Success).data
+                if(data) {
+                    textLogin = "已登录"
+                    textLogout = "注销"
+                } else {
+                    textLogout = "已注销"
+                    textLogin   = "登录"
+                }
+            }
+            else -> {}
+        }
+    }
+
 
     if(refresh) {
         refreshFlow()
@@ -355,30 +360,39 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
 
 
                             Spacer(Modifier.height(10.dp))
-                            Row(modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = appHorizontalDp())) {
-                                Button(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .weight(.5f),
-                                    onClick = {
-                                        vm.loginWeb()
-                                        vm.loginWeb2()
+                            if(loadingLogin) {
+                                LoadingUI()
+                            } else {
+                                Row(modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = appHorizontalDp())) {
+                                    Button(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .weight(.5f),
+                                        onClick = {
+                                            scope.launch {
+                                                vm.loginSchoolNetResponse.clear()
+                                                vm.loginSchoolNet(Campus.XUANCHENG)
+                                            }
+                                        }
+                                    ) {
+                                        Text(textLogin)
                                     }
-                                ) {
-                                    Text(textLogin)
-                                }
-                                Spacer(Modifier.width(10.dp))
-                                FilledTonalButton(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .weight(.5f),
-                                    onClick = {
-                                        vm.logoutWeb()
+                                    Spacer(Modifier.width(10.dp))
+                                    FilledTonalButton(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .weight(.5f),
+                                        onClick = {
+                                            scope.launch {
+                                                vm.loginSchoolNetResponse.clear()
+                                                vm.logoutSchoolNet(Campus.XUANCHENG)
+                                            }
+                                        }
+                                    ) {
+                                        Text(textLogout)
                                     }
-                                ) {
-                                    Text(textLogout)
                                 }
                             }
                             if(textLogin == "已登录") {

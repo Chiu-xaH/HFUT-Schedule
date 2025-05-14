@@ -72,11 +72,11 @@ fun About(vm : NetWorkViewModel) {
     )
 
     LaunchedEffect(Unit) {
-        vm.githubData.clear()
-        vm.getStarsNum()
+        vm.githubStarsData.clear()
+        vm.getStarNum()
     }
     var starsNum by remember { mutableStateOf("") }
-    val uiState by vm.githubData.state.collectAsState()
+    val uiState by vm.githubStarsData.state.collectAsState()
     var loading = uiState is SimpleUiState.Loading
     LaunchedEffect(uiState) {
         if(uiState is SimpleUiState.Success) {

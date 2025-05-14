@@ -7,33 +7,7 @@ import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import org.json.JSONObject
 
-// 废弃的方法
-fun getWebInfoOld(html : String) : WebInfo {
-
-    try {
-        //本段照搬前端
-        val flow = html.substringAfter("flow").substringBefore(" ").substringAfter("'").toDouble()
-        val fee = html.substringAfter("fee").substringBefore(" ").substringAfter("'").toDouble()
-        var flow0 = flow % 1024
-        val flow1 = flow - flow0
-        flow0 *= 1000
-        flow0 -= flow0 % 1024
-        var fee1 = fee - fee % 100
-        var flow3 = "."
-        if (flow0 / 1024 < 10) flow3 = ".00"
-        else { if (flow0 / 1024 < 100) flow3 = ".0"; }
-        val resultFee = (fee1 / 10000).toString()
-        val resultFlow : String = ((flow1 / 1024).toString() + flow3 + (flow0 / 1024)).substringBefore(".")
-
-        return WebInfo(resultFee,resultFlow)
-    } catch (e : Exception) {
-        return WebInfo("未获取到数据","未获取到数据")
-    }
-
-}
-
 data class WebInfo(val fee : String, val flow : String,val postJson : String = "")
-
 
 fun getIdentifyID() : String? {
     return try {
@@ -50,7 +24,6 @@ fun getIdentifyID() : String? {
 }
 
 
-// 新的方法
 fun getWebInfo(vm: NetWorkViewModel) : WebInfo? {
     val json = vm.infoValue.value
     try {

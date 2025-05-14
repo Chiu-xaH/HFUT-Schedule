@@ -69,8 +69,8 @@ import com.hfut.schedule.logic.model.zjgd.BillResponse
 import com.hfut.schedule.logic.model.zjgd.ChangeLimitResponse
 import com.hfut.schedule.logic.model.zjgd.FeeType
 import com.hfut.schedule.logic.model.zjgd.FeeType.ELECTRIC_XUANCHENG
-import com.hfut.schedule.logic.model.zjgd.FeeType.SHOWER_XUANCHENG
 import com.hfut.schedule.logic.model.zjgd.FeeType.NET_XUANCHENG
+import com.hfut.schedule.logic.model.zjgd.FeeType.SHOWER_XUANCHENG
 import com.hfut.schedule.logic.model.zjgd.PayStep1Response
 import com.hfut.schedule.logic.model.zjgd.PayStep2Response
 import com.hfut.schedule.logic.model.zjgd.PayStep3Response
@@ -120,10 +120,10 @@ import com.hfut.schedule.logic.network.servicecreator.WorkServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.XuanChengServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.ZJGDBillServiceCreator
 import com.hfut.schedule.logic.util.network.Encrypt
+import com.hfut.schedule.logic.util.network.HfutCAS
 import com.hfut.schedule.logic.util.network.NetWork
 import com.hfut.schedule.logic.util.network.NetWork.launchRequestSimple
 import com.hfut.schedule.logic.util.network.SimpleStateHolder
-import com.hfut.schedule.logic.util.network.HfutCAS
 import com.hfut.schedule.logic.util.network.supabaseEventDtoToEntity
 import com.hfut.schedule.logic.util.network.supabaseEventEntityToDto
 import com.hfut.schedule.logic.util.network.supabaseEventForkDtoToEntity
@@ -133,6 +133,7 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveInt
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.WebInfo
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getIdentifyID
 import com.hfut.schedule.ui.screen.home.search.function.life.getLocation
 import com.hfut.schedule.ui.screen.home.search.function.mail.MailResponse
@@ -198,9 +199,9 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     var lessonIds = MutableLiveData<List<Int>>()
     var token = MutableLiveData<String>()
 
-    var githubData = SimpleStateHolder<Int>()
-    suspend fun getStarsNum() = launchRequestSimple(
-        holder = githubData,
+    var githubStarsData = SimpleStateHolder<Int>()
+    suspend fun getStarNum() = launchRequestSimple(
+        holder = githubStarsData,
         request = { github.getRepoInfo().awaitResponse() },
         transformSuccess = { _,json -> parseGithubStarNum(json) }
     )
@@ -1771,8 +1772,8 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     )
 // 宣城校园网 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    val loginWebXCResponse = SimpleStateHolder<Boolean>()
-    suspend fun loginWebNew(campus: Campus = getCampus()) = withContext(Dispatchers.IO) {
+    val loginSchoolNetResponse = SimpleStateHolder<Boolean>()
+    suspend fun loginSchoolNet(campus: Campus = getCampus()) = withContext(Dispatchers.IO) {
         getPersonInfo().username?.let { uid -> getIdentifyID()?.let { pwd ->
             when(campus) {
                 HEFEI -> {
@@ -1783,23 +1784,50 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
                     val location = "宣州Login"
                     launch {
                         launchRequestSimple(
-                            holder = loginWebXCResponse,
+                            holder = loginSchoolNetResponse,
                             request = { loginWeb.loginWeb(uid, pwd,location).awaitResponse() },
-                            transformSuccess = { _,body -> parseLoginWebXC(body) }
+                            transformSuccess = { _,body -> parseLoginSchoolNet(body) }
                         )
                     }
                     launch {
                         launchRequestSimple(
-                            holder = loginWebXCResponse,
+                            holder = loginSchoolNetResponse,
                             request = { loginWeb2.loginWeb(uid, pwd,location).awaitResponse() },
-                            transformSuccess = { _,body -> parseLoginWebXC(body) }
+                            transformSuccess = { _,body -> parseLoginSchoolNet(body) }
                         )
                     }
                 }
             }
         } }
     }
-    private fun parseLoginWebXC(result : String) : Boolean = try {
+    suspend fun logoutSchoolNet(campus: Campus = getCampus()) = withContext(Dispatchers.IO) {
+        getPersonInfo().username?.let { uid -> getIdentifyID()?.let { pwd ->
+            when(campus) {
+                HEFEI -> {
+                    showToast("暂未支持")
+                    return@withContext
+                }
+                XUANCHENG -> {
+                    launch {
+                        launchRequestSimple(
+                            holder = loginSchoolNetResponse,
+                            request = { loginWeb.logoutWeb().awaitResponse() },
+                            transformSuccess = { _,body -> parseLoginSchoolNet(body) }
+                        )
+                    }
+                    launch {
+                        launchRequestSimple(
+                            holder = loginSchoolNetResponse,
+                            request = { loginWeb2.logoutWeb().awaitResponse() },
+                            transformSuccess = { _,body -> parseLoginSchoolNet(body) }
+                        )
+                    }
+                }
+            }
+        } }
+    }
+    // 目前仅适配了宣区
+    private fun parseLoginSchoolNet(result : String) : Boolean = try {
         if(result.contains("登录成功") && !result.contains("已使用")) {
             true
         } else if(result.contains("已使用")) {
@@ -1809,76 +1837,37 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         }
     } catch (e : Exception) { throw e }
 
-    val resultValue = MutableLiveData<String?>()
-    fun loginWeb() {
-        val call = getPersonInfo().username?.let { getIdentifyID()?.let { it1 -> loginWeb.loginWeb(it, it1,"宣州Login") } }
-        call?.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                resultValue.value = response.body()?.string()
-            }
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                t.printStackTrace()
-                resultValue.value = "Error"
-            }
-        })
-    }
 
-    val result2Value = MutableLiveData<String?>()
-    fun loginWeb2() {
-
-        val call = getPersonInfo().username?.let { getIdentifyID()?.let { it1 -> loginWeb2.loginWeb(it, it1,"宣州Login") } }
-
-        call?.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                result2Value.value = response.body()?.string()
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                t.printStackTrace()
-                result2Value.value = "Error"
-            }
-        })
-    }
-
-    fun logoutWeb() {
-        val call =  loginWeb.logoutWeb()
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                resultValue.value = response.body()?.string()
-            }
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                t.printStackTrace()
-                resultValue.value = "Error"
-            }
-        })
-    }
-
-    val infoWebValue = MutableLiveData<String?>()
-    fun getWebInfo() {
-        val call =  loginWeb.getInfo()
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                infoWebValue.value = response.body()?.string()
-            }
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                t.printStackTrace()
-                infoWebValue.value = "Error"
-            }
-        })
-    }
-
-    fun getWebInfo2() {
-        val call =  loginWeb2.getInfo()
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                infoWebValue.value = response.body()?.string()
-            }
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                t.printStackTrace()
-                infoWebValue.value = "Error"
-            }
-        })
-    }
+    val infoWebValue = SimpleStateHolder<WebInfo>()
+    suspend fun getWebInfo() = launchRequestSimple(
+        holder = infoWebValue,
+        request = { loginWeb.getInfo().awaitResponse() },
+        transformSuccess = { _,json -> parseWebInfo(json) }
+    )
+    suspend fun getWebInfo2() = launchRequestSimple(
+        holder = infoWebValue,
+        request = { loginWeb2.getInfo().awaitResponse() },
+        transformSuccess = { _,json -> parseWebInfo(json) }
+    )
+    private fun parseWebInfo(html : String) : WebInfo = try {
+        //本段照搬前端
+        val flow = html.substringAfter("flow").substringBefore(" ").substringAfter("'").toDouble()
+        val fee = html.substringAfter("fee").substringBefore(" ").substringAfter("'").toDouble()
+        var flow0 = flow % 1024
+        val flow1 = flow - flow0
+        flow0 *= 1000
+        flow0 -= flow0 % 1024
+        var fee1 = fee - fee % 100
+        var flow3 = "."
+        if (flow0 / 1024 < 10) flow3 = ".00"
+        else { if (flow0 / 1024 < 100) flow3 = ".0"; }
+        val resultFee = (fee1 / 10000).toString()
+        val resultFlow : String = ((flow1 / 1024).toString() + flow3 + (flow0 / 1024)).substringBefore(".")
+        val result = WebInfo(resultFee,resultFlow)
+//        vmUI.webValue.value = result
+        saveString("memoryWeb", result.flow)
+        result
+    } catch (e : Exception) { throw e }
 
     fun getUpdate() {
 
