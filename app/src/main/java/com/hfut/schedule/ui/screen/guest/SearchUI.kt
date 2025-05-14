@@ -33,7 +33,7 @@ import com.hfut.schedule.ui.screen.home.search.function.notification.Notificatio
 import com.hfut.schedule.ui.screen.home.search.function.program.GuestProgram
 import com.hfut.schedule.ui.screen.home.search.function.repair.Repair
 import com.hfut.schedule.ui.screen.home.search.function.schoolCalendar.SchoolCalendar
-import com.hfut.schedule.ui.screen.home.search.function.shower.Shower
+import com.hfut.schedule.ui.screen.home.search.function.huiXin.shower.Shower
 import com.hfut.schedule.ui.screen.home.search.function.teacherSearch.TeacherSearch
 import com.hfut.schedule.ui.screen.home.search.function.webLab.WebUI
 import com.hfut.schedule.ui.screen.home.search.function.work.Work

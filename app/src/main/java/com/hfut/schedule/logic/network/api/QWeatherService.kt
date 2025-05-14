@@ -1,7 +1,10 @@
 package com.hfut.schedule.logic.network.api
 
 import com.hfut.schedule.logic.util.network.Encrypt
+import com.hfut.schedule.ui.screen.home.search.function.life.getLocation
 import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
+import com.hfut.schedule.ui.screen.home.search.function.transfer.Campus
+import com.hfut.schedule.ui.screen.home.search.function.transfer.getCampus
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.GET
@@ -39,16 +42,6 @@ interface QWeatherService {
         @Query("location") locationID : String = getLocation(),
         @Header("Authorization") authorization : String = Encrypt.getQWeatherAuth()
     ) : Call<ResponseBody>
-
-    private fun getLocation() : String {
-        val campus = getPersonInfo().school
-        return if (campus != null) {
-            if(campus.contains("宣城") ) "101221401"
-            else "101220101"
-        } else {
-            "101220101"
-        }
-    }
 
     //分钟降水
     @GET("weather/minutely/5m")

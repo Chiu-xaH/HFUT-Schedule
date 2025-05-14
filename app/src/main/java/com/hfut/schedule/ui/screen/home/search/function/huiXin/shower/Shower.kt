@@ -1,14 +1,11 @@
-package com.hfut.schedule.ui.screen.home.search.function.shower
+package com.hfut.schedule.ui.screen.home.search.function.huiXin.shower
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -19,8 +16,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.component.RotatingIcon
-import com.hfut.schedule.ui.screen.home.search.function.transfer.Campus
-import com.hfut.schedule.ui.screen.home.search.function.transfer.getCampus
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -45,7 +40,7 @@ fun Shower(vm: NetWorkViewModel, hazeState: HazeState) {
 
 
     TransplantListItem(
-        headlineContent = { Text(text = "洗浴" + if(getCampus() != Campus.XUANCHENG) "(宣)" else "") },
+        headlineContent = { Text(text = "洗浴") },
         leadingContent = {
             if(loading) {
                 RotatingIcon(R.drawable.progress_activity)

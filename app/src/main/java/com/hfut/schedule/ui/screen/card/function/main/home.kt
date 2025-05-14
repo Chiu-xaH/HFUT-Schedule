@@ -62,7 +62,6 @@ import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.RefreshIndicator
-import com.hfut.schedule.ui.component.ScrollText
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.WebDialog
@@ -73,14 +72,12 @@ import com.hfut.schedule.ui.screen.card.bill.TodayBills
 import com.hfut.schedule.ui.screen.card.function.CardLimit
 import com.hfut.schedule.ui.screen.card.function.SearchBillsUI
 import com.hfut.schedule.ui.screen.card.function.SelecctDateRange
-import com.hfut.schedule.ui.component.onListenStateHolder
 import com.hfut.schedule.ui.screen.home.focus.funiction.initCardNetwork
-import com.hfut.schedule.ui.screen.home.search.function.electric.EleUI
-import com.hfut.schedule.ui.screen.home.search.function.loginWeb.LoginWebScaUI
+import com.hfut.schedule.ui.screen.home.search.function.huiXin.electric.EleUI
+import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.LoginWebScaUI
 import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
-import com.hfut.schedule.ui.screen.home.search.function.shower.ShowerUI
-import com.hfut.schedule.ui.screen.home.search.function.transfer.Campus
-import com.hfut.schedule.ui.screen.home.search.function.transfer.getCampus
+import com.hfut.schedule.ui.screen.home.search.function.huiXin.shower.ShowerUI
+import com.hfut.schedule.ui.screen.home.search.function.huiXin.washing.WashingUI
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.appBlur
 import com.hfut.schedule.ui.style.bottomSheetRound
@@ -148,8 +145,10 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
     var showBottomSheet_ELectric by remember { mutableStateOf(false) }
     var showBottomSheet_Web by remember { mutableStateOf(false) }
     val sheetState_Web = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val sheetState_Shower = rememberModalBottomSheetState()
+    val sheetState_Shower = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val sheetState_Washing = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_Shower by remember { mutableStateOf(false) }
+    var showBottomSheet_Washing by remember { mutableStateOf(false) }
     var showBottomSheet_Fee by remember { mutableStateOf(false) }
     var showBottomSheet_NFC by remember { mutableStateOf(false) }
     var showBottomSheet_Toady by remember { mutableStateOf(false) }
@@ -193,7 +192,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    HazeBottomSheetTopBar("缴费与查询")
+                    HazeBottomSheetTopBar("缴费与查询", isPaddingStatusBar = false)
                 },
             ) { innerPadding ->
                 Column(
@@ -203,7 +202,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                 ) {
 //                    MyCustomCard {
                         StyleCardListItem(
-                            headlineContent = { Text(text = "电费"  + if(getCampus() != Campus.XUANCHENG) "-宣城校区" else "") },
+                            headlineContent = { Text(text = "电费") },
                             leadingContent = {
                                 Icon(painterResource(id = R.drawable.flash_on), contentDescription = "")
                             },
@@ -212,7 +211,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
 //                    }
 //                    MyCustomCard{
                         StyleCardListItem(
-                            headlineContent = { Text(text = "网费"  + if(getCampus() != Campus.XUANCHENG) "-宣城校区" else "") },
+                            headlineContent = { Text(text = "网费"  ) },
                             leadingContent = {
                                 Icon(painterResource(id = R.drawable.net), contentDescription = "")
                             },
@@ -221,7 +220,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
 //                    }
 //                    MyCustomCard {
                         StyleCardListItem(
-                            headlineContent = { Text(text = "洗浴"  + if(getCampus() != Campus.XUANCHENG) "-宣城校区" else "") },
+                            headlineContent = { Text(text = "洗浴" ) },
                             leadingContent = {
                                 Icon(painterResource(id = R.drawable.bathtub), contentDescription = "")
                             },
@@ -229,8 +228,17 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                         )
 //                    }
                     StyleCardListItem(
-                        headlineContent = { Text(text = "合肥校区缴费") },
-                        overlineContent = { Text("慧新易校平台") },
+                        headlineContent = { Text(text = "洗衣机") },
+                        leadingContent = {
+                            Icon(painterResource(id = R.drawable.local_laundry_service), contentDescription = "")
+                        },
+                        modifier = Modifier.clickable {
+                            showBottomSheet_Washing = true
+                        }
+                    )
+
+                    StyleCardListItem(
+                        headlineContent = { Text("慧新易校平台") },
                         leadingContent = {
                             Icon(Icons.Default.ArrowForward, contentDescription = "")
                         },
@@ -274,9 +282,18 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                 showBottomSheet_Shower = false
             },
             sheetState = sheetState_Shower,
-            shape = bottomSheetRound(sheetState_Shower)
         ) {
             ShowerUI(vm,hazeState = hazeState)
+        }
+    }
+    if (showBottomSheet_Washing) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                showBottomSheet_Washing = false
+            },
+            sheetState = sheetState_Washing,
+        ) {
+            WashingUI()
         }
     }
 

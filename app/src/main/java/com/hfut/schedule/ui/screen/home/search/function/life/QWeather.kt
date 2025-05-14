@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.screen.home.search.function.life
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -8,6 +9,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -31,23 +34,57 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.QWeatherNowBean
 import com.hfut.schedule.logic.util.network.SimpleUiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.ui.screen.home.search.function.life.QWeatherLevel.*
-import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
-import com.hfut.schedule.ui.component.BottomTip
 import com.hfut.schedule.ui.component.BottomSheetTopBar
-import com.hfut.schedule.ui.component.DevelopingUI
+import com.hfut.schedule.ui.component.BottomTip
+import com.hfut.schedule.ui.component.CustomTabRow
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.LoadingLargeCard
 import com.hfut.schedule.ui.component.StyleCardListItem
-import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.component.TransplantListItem
+import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.ui.screen.home.search.function.life.QWeatherLevel.DEFAULT
+import com.hfut.schedule.ui.screen.home.search.function.life.QWeatherLevel.HIGH
+import com.hfut.schedule.ui.screen.home.search.function.life.QWeatherLevel.LOW
+import com.hfut.schedule.ui.screen.home.search.function.life.QWeatherLevel.MID
+import com.hfut.schedule.ui.screen.home.search.function.transfer.Campus
+import com.hfut.schedule.ui.screen.home.search.function.transfer.getCampus
 import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import java.nio.file.WatchEvent
 
+fun getLocation(campus : Campus = getCampus()) : String = when(campus) {
+    Campus.XUANCHENG -> "101221401"
+    Campus.HEFEI -> "101220101"
+}
 var countFunc = 0
+private const val HEFEI_TAB = 0
+private const val XUANCHENG_TAB = 1
+
+
+@Composable
+fun WeatherScreen(vm: NetWorkViewModel) {
+    val pagerState = rememberPagerState(pageCount = { 2 }, initialPage =
+        when(getCampus()) {
+            Campus.XUANCHENG -> XUANCHENG_TAB
+            Campus.HEFEI -> HEFEI_TAB
+        }
+    )
+    val titles = remember { listOf("合肥","宣城") }
+    CustomTabRow(pagerState,titles)
+    HorizontalPager(state = pagerState) { page ->
+        Column (modifier = Modifier.fillMaxSize()) {
+            LifeUIS(vm, campus = when(page) {
+                HEFEI_TAB -> Campus.HEFEI
+                XUANCHENG_TAB -> Campus.XUANCHENG
+                else -> getCampus()
+            })
+        }
+    }
+}
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LifeUIS(vm : NetWorkViewModel) {
+private fun LifeUIS(vm : NetWorkViewModel,campus: Campus) {
+
     val sheetState_Weather = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_Weather by remember { mutableStateOf(false) }
     val uiState by vm.qWeatherResult.state.collectAsState()
@@ -58,13 +95,13 @@ fun LifeUIS(vm : NetWorkViewModel) {
     val refreshNetwork: suspend () -> Unit = {
         if(!showWeather) {
             vm.weatherWarningData.clear()
-            vm.getWeatherWarn()
+            vm.getWeatherWarn(campus)
         }
         vm.qWeatherResult.clear()
-        vm.getWeather()
+        vm.getWeather(campus)
     }
     //预加载
-    LaunchedEffect(Unit) {
+    LaunchedEffect(campus) {
         refreshNetwork()
     }
 
@@ -93,7 +130,10 @@ fun LifeUIS(vm : NetWorkViewModel) {
     }
 
 
-    val cityName = remember { if((getPersonInfo().school ?: "合肥").contains("宣城")) "宣城" else "合肥" }
+    val cityName = remember { when (campus) {
+        Campus.HEFEI -> "合肥"
+        Campus.XUANCHENG -> "宣城"
+    } }
     var data by remember { mutableStateOf( QWeatherNowBean("XX","XX","晴","X风","X","XX","XXX")) }
 
     LaunchedEffect(uiState) {
@@ -104,6 +144,7 @@ fun LifeUIS(vm : NetWorkViewModel) {
             }
         }
     }
+
 
     DividerTextExpandedWith(text = "实时天气",false) {
         LoadingLargeCard(
@@ -156,8 +197,6 @@ fun LifeUIS(vm : NetWorkViewModel) {
                 )
             }
         }
-
-
     }
     if (uiStateWarn is SimpleUiState.Success) {
         val list = (uiStateWarn as SimpleUiState.Success).data

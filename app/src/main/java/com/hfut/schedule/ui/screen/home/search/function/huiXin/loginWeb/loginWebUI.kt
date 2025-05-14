@@ -1,15 +1,10 @@
-package com.hfut.schedule.ui.screen.home.search.function.loginWeb
+package com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb
 
+import android.annotation.SuppressLint
 import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,33 +15,27 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -54,38 +43,37 @@ import androidx.compose.ui.window.Dialog
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.zjgd.FeeType
-import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.logic.util.storage.SharedPrefs
-import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.network.reEmptyLiveDta
 import com.hfut.schedule.logic.util.parse.formatDecimal
-import com.hfut.schedule.ui.screen.home.search.function.electric.PayFor
-import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
-import com.hfut.schedule.ui.screen.home.search.function.transfer.Campus
-import com.hfut.schedule.ui.screen.home.search.function.transfer.getCampus
-import com.hfut.schedule.ui.component.appHorizontalDp
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.BottomButton
-import com.hfut.schedule.ui.component.BottomSheetTopBar
+import com.hfut.schedule.ui.component.CustomTabRow
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.LoadingLargeCard
-import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.ui.component.StatusUI
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.WebDialog
+import com.hfut.schedule.ui.component.appHorizontalDp
+import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.ui.screen.home.search.function.huiXin.electric.PayFor
+import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
+import com.hfut.schedule.ui.screen.home.search.function.transfer.Campus
+import com.hfut.schedule.ui.screen.home.search.function.transfer.getCampus
 import com.hfut.schedule.ui.style.HazeBottomSheet
-import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.json.JSONObject
-import java.math.BigDecimal
-import java.math.RoundingMode
 
 
+private const val HEFEI_TAB = 0
+private const val XUANCHENG_TAB = 1
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginWebScaUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) {
@@ -99,22 +87,21 @@ fun LoginWebScaUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeStat
     }
 }
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) {
-    val auth = prefs.getString("auth","")
-    val zjgdUrl = MyApplication.HUIXIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${FeeType.WEB.code}&name=pays&paymentUrl=${MyApplication.HUIXIN_URL}plat&token=" + auth
+    val auth = remember { prefs.getString("auth", "") }
+    val zjgdUrl = remember { MyApplication.HUIXIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${FeeType.NET_XUANCHENG.code}&name=pays&paymentUrl=${MyApplication.HUIXIN_URL}plat&token=" + auth }
     var showDialogWeb by remember { mutableStateOf(false) }
     WebDialog(showDialogWeb, url = zjgdUrl, title = "慧新易校",showChanged = { showDialogWeb = false }, showTop = false)
     // 支付用的变量
     var showDialog2 by remember { mutableStateOf(false) }
     var payNumber by remember { mutableStateOf("") }
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
     var json by remember { mutableStateOf("") }
     // 校园网用的变量
-    val isXuancheng = getCampus() == Campus.XUANCHENG
-    val memoryWeb = SharedPrefs.prefs.getString("memoryWeb","0")
+    val memoryWeb = prefs.getString("memoryWeb","0")
     var flow by remember { mutableStateOf(vmUI.webValue.value?.flow ?: memoryWeb) }
     var fee by remember { mutableStateOf(vmUI.webValue.value?.fee?: "0") }
 
@@ -134,12 +121,15 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
     var loading by  remember { mutableStateOf(true)}
     var refresh by  remember { mutableStateOf(true)}
 
-
-
-
     var textLogin by  remember { mutableStateOf("登录") }
     var textLogout by  remember { mutableStateOf("注销") }
 
+    val titles = remember { listOf("合肥","宣城") }
+    val pagerState = rememberPagerState(pageCount = { 2 }, initialPage =
+        when(getCampus()) {
+            Campus.XUANCHENG -> XUANCHENG_TAB
+            Campus.HEFEI -> HEFEI_TAB
+    })
 
     fun refresh() {
         CoroutineScope(Job()).launch {
@@ -172,7 +162,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
         loading = true
         CoroutineScope(Job()).launch {
             async { reEmptyLiveDta(vm.infoValue) }.await()
-            async { vm.getFee("bearer $auth", FeeType.WEB) }.await()
+            async { vm.getFee("bearer $auth", FeeType.NET_XUANCHENG) }.await()
             async {
                 Handler(Looper.getMainLooper()).post {
                     vm.infoValue.observeForever { result ->
@@ -197,6 +187,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
             }
         }
     }
+
 
     refresh()
 
@@ -294,7 +285,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
 //                val info by remember { mutableStateOf("") }
                 var int by remember { mutableStateOf(payNumber.toFloat()) }
                 if(int > 0) {
-                    PayFor(vm,int,"学号 ${getPersonInfo().username}",json, FeeType.WEB,hazeState)
+                    PayFor(vm,int,"学号 ${getPersonInfo().username}",json, FeeType.NET_XUANCHENG,hazeState)
                 } else showToast("输入数值")
             }
 
@@ -302,163 +293,136 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
     }
 //////////////////////////////布局区///////////////////////////////////
     Column() {
-        HazeBottomSheetTopBar("校园网" + if(getCampus() != Campus.XUANCHENG) "-宣城校区" else "", isPaddingStatusBar = false) {
-            Row {
-                FilledTonalIconButton(
-                    onClick = {
-                        refreshFlow()
-                    },
-                ) {
-                    Icon(painterResource(R.drawable.rotate_right),null)
-                }
-                FilledTonalButton(
-                    onClick = {
-                        showDialogWeb = true
-                    },
-                ) {
-                    Text("官方充值")
-                }
-            }
-        }
-        DividerTextExpandedWith(text = "数据",false) {
-            LoadingLargeCard(
-                title = "已用 $str GB",
-                loading = loading,
-                rightTop =  {
-                    Text(text = "$flow MB")
-                }
-            ) {
-                if(isXuancheng) {
-                    Row {
-                        TransplantListItem(
-                            headlineContent = { Text(text = "余额 ￥${fee}") },
-                            overlineContent = { Text("1GB / ￥1") },
-                            leadingContent = { Icon(painter = painterResource(id = R.drawable.paid), contentDescription = "")},
-                            modifier = Modifier.weight(.5f)
-                        )
-                        TransplantListItem(
-                            overlineContent = { Text(text = "月免费额度 ${MyApplication.MAX_FREE_FLOW}GB") },
-                            headlineContent = { Text(text = "已用 $percent%", fontWeight = FontWeight.Bold)},
-                            leadingContent = { Icon(painterResource(R.drawable.percent), contentDescription = "Localized description",) },
-                            modifier = Modifier.weight(.5f)
-                        )
-                    }
-                    BottomButton(
+        HazeBottomSheetTopBar("校园网", isPaddingStatusBar = false) {
+            if(pagerState.currentPage == XUANCHENG_TAB) {
+                Row {
+                    FilledTonalIconButton(
                         onClick = {
-                            if(!loading) {
-                                showDialog2 = true
-                            }
+                            refreshFlow()
                         },
-                        text = "快速充值"
-                    )
-//                    Divider()
-//                    Box(Modifier.background(MaterialTheme.colorScheme.secondaryContainer)) {
-//                        FilledTonalButton(
-//                            onClick = {
-//                                if(!loading) {
-//                                    showDialog2 = true
-//                                }
-//                            },
-//                            shape = RoundedCornerShape(0.dp),
-//                            colors = ButtonDefaults.filledTonalButtonColors(containerColor = Color.Transparent),
-//                            modifier = Modifier.fillMaxSize(),
-//                        ) {
-//                            Text("快速充值")
-//                        }
-//                    }
-                } else {
-                    Divider()
-                    Row {
-                        Box(modifier = Modifier.background(MaterialTheme.colorScheme.primary).fillMaxWidth().weight(.5f)) {
-                            Button(
-                                modifier = Modifier.fillMaxWidth(),
-                                shape = RoundedCornerShape(0.dp),
-                                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                                onClick = {
-                                    vm.loginWeb()
-                                    vm.loginWeb2()
-                                }
-                            ) {
-                                Text(textLogin)
-                            }
-                        }
-                        Box(modifier = Modifier.background(MaterialTheme.colorScheme.secondaryContainer).fillMaxWidth().weight(.5f)) {
-                            FilledTonalButton(
-                                modifier = Modifier.fillMaxWidth(),
-                                colors = ButtonDefaults.filledTonalButtonColors(containerColor = Color.Transparent),
-                                shape = RoundedCornerShape(0.dp),
-                                onClick = {
-                                    vm.loginWeb()
-                                    vm.loginWeb2()
-                                }
-                            ) {
-                                Text(textLogout)
-                            }
-                        }
-                    }
-                }
-            }
-
-
-            Spacer(Modifier.height(10.dp))
-            if(isXuancheng) {
-                Row(modifier = Modifier.fillMaxWidth().padding(horizontal = appHorizontalDp())) {
-                    Button(
-                        modifier = Modifier.fillMaxWidth().weight(.5f),
-                        onClick = {
-                            vm.loginWeb()
-                            vm.loginWeb2()
-                        }
                     ) {
-                        Text(textLogin)
+                        Icon(painterResource(R.drawable.rotate_right),null)
                     }
-                    Spacer(Modifier.width(10.dp))
                     FilledTonalButton(
-                        modifier = Modifier.fillMaxWidth().weight(.5f),
                         onClick = {
-                            vm.logoutWeb()
-                        }
+                            showDialogWeb = true
+                        },
                     ) {
-                        Text(textLogout)
+                        Text("官方充值")
                     }
-                }
-            }
-            if(textLogin == "已登录") {
-                OutlinedButton(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = appHorizontalDp()),
-                    onClick = {
-                        Starter.startWebUrl("https://cn.bing.com/")
-                    }
-                ) {
-                    Text("测试连通性")
                 }
             }
         }
-        DividerTextExpandedWith(text = "使用说明", defaultIsExpanded = false) {
-            TransplantListItem(
-                headlineContent = { Text(text = "认证初始密码位于 查询中心-个人信息-密码信息") },
-                leadingContent = {
-                    Icon(painter = painterResource(id = R.drawable.key), contentDescription = "")
+        CustomTabRow(pagerState,titles)
+        HorizontalPager(state = pagerState) { page ->
+            when(page) {
+                HEFEI_TAB -> {
+                    StatusUI(R.drawable.manga,"需要合肥校区在读生贡献数据源")
                 }
-            )
-            TransplantListItem(
-                headlineContent = { Text(text = "部分内网必须连接校园网打开") },
-                supportingContent = {
-                    Text(text = "学校提供WEBVPN供外网访问部分内网地址,可在 查询中心-网址导航 打开")
-                },
-                leadingContent = {
-                    Icon(painter = painterResource(id = R.drawable.vpn_key), contentDescription = "")
+                XUANCHENG_TAB -> {
+                    Column {
+                        DividerTextExpandedWith(text = "数据",false) {
+                            LoadingLargeCard(
+                                title = "已用 $str GB",
+                                loading = loading,
+                                rightTop =  {
+                                    Text(text = "$flow MB")
+                                }
+                            ) {
+                                Row {
+                                    TransplantListItem(
+                                        headlineContent = { Text(text = "余额 ￥${fee}") },
+                                        overlineContent = { Text("1GB / ￥1") },
+                                        leadingContent = { Icon(painter = painterResource(id = R.drawable.paid), contentDescription = "")},
+                                        modifier = Modifier.weight(.5f)
+                                    )
+                                    TransplantListItem(
+                                        overlineContent = { Text(text = "月免费额度 ${MyApplication.MAX_FREE_FLOW}GB") },
+                                        headlineContent = { Text(text = "已用 $percent%", fontWeight = FontWeight.Bold)},
+                                        leadingContent = { Icon(painterResource(R.drawable.percent), contentDescription = "Localized description",) },
+                                        modifier = Modifier.weight(.5f)
+                                    )
+                                }
+                                BottomButton(
+                                    onClick = {
+                                        if(!loading) {
+                                            showDialog2 = true
+                                        }
+                                    },
+                                    text = "快速充值"
+                                )
+                            }
+
+
+                            Spacer(Modifier.height(10.dp))
+                            Row(modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = appHorizontalDp())) {
+                                Button(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .weight(.5f),
+                                    onClick = {
+                                        vm.loginWeb()
+                                        vm.loginWeb2()
+                                    }
+                                ) {
+                                    Text(textLogin)
+                                }
+                                Spacer(Modifier.width(10.dp))
+                                FilledTonalButton(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .weight(.5f),
+                                    onClick = {
+                                        vm.logoutWeb()
+                                    }
+                                ) {
+                                    Text(textLogout)
+                                }
+                            }
+                            if(textLogin == "已登录") {
+                                OutlinedButton(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = appHorizontalDp()),
+                                    onClick = {
+                                        Starter.startWebUrl("https://cn.bing.com/")
+                                    }
+                                ) {
+                                    Text("测试连通性")
+                                }
+                            }
+                        }
+                        DividerTextExpandedWith(text = "使用说明", defaultIsExpanded = false) {
+                            TransplantListItem(
+                                headlineContent = { Text(text = "认证初始密码位于 查询中心-个人信息-密码信息") },
+                                leadingContent = {
+                                    Icon(painter = painterResource(id = R.drawable.key), contentDescription = "")
+                                }
+                            )
+                            TransplantListItem(
+                                headlineContent = { Text(text = "部分内网必须连接校园网打开") },
+                                supportingContent = {
+                                    Text(text = "学校提供WEBVPN供外网访问部分内网地址,可在 查询中心-网址导航 打开")
+                                },
+                                leadingContent = {
+                                    Icon(painter = painterResource(id = R.drawable.vpn_key), contentDescription = "")
+                                }
+                            )
+                            TransplantListItem(
+                                headlineContent = { Text(text = "免费时期") },
+                                supportingContent = {
+                                    Text(text = "宣城校区法定节假日与寒暑假不限额度，其余时间限额月50GB；合肥校区不限额")
+                                },
+                                leadingContent = {
+                                    Icon(painter = painterResource(id = R.drawable.paid), contentDescription = "")
+                                }
+                            )
+                        }
+                    }
                 }
-            )
-            TransplantListItem(
-                headlineContent = { Text(text = "免费时期") },
-                supportingContent = {
-                    Text(text = "宣城校区法定节假日与寒暑假不限额度，其余时间限额月50GB；合肥校区不限额")
-                },
-                leadingContent = {
-                    Icon(painter = painterResource(id = R.drawable.paid), contentDescription = "")
-                }
-            )
+            }
         }
     }
 }

@@ -68,9 +68,9 @@ import com.hfut.schedule.logic.model.zjgd.BillRangeResponse
 import com.hfut.schedule.logic.model.zjgd.BillResponse
 import com.hfut.schedule.logic.model.zjgd.ChangeLimitResponse
 import com.hfut.schedule.logic.model.zjgd.FeeType
-import com.hfut.schedule.logic.model.zjgd.FeeType.ELECTRIC
-import com.hfut.schedule.logic.model.zjgd.FeeType.SHOWER
-import com.hfut.schedule.logic.model.zjgd.FeeType.WEB
+import com.hfut.schedule.logic.model.zjgd.FeeType.ELECTRIC_XUANCHENG
+import com.hfut.schedule.logic.model.zjgd.FeeType.SHOWER_XUANCHENG
+import com.hfut.schedule.logic.model.zjgd.FeeType.NET_XUANCHENG
 import com.hfut.schedule.logic.model.zjgd.PayStep1Response
 import com.hfut.schedule.logic.model.zjgd.PayStep2Response
 import com.hfut.schedule.logic.model.zjgd.PayStep3Response
@@ -132,7 +132,9 @@ import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveInt
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
-import com.hfut.schedule.ui.screen.home.search.function.loginWeb.getIdentifyID
+import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getIdentifyID
+import com.hfut.schedule.ui.screen.home.search.function.life.getLocation
 import com.hfut.schedule.ui.screen.home.search.function.mail.MailResponse
 import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.program.ProgramListBean
@@ -147,8 +149,12 @@ import com.hfut.schedule.ui.screen.home.search.function.transfer.GradeAndRank
 import com.hfut.schedule.ui.screen.home.search.function.transfer.MyApplyInfoBean
 import com.hfut.schedule.ui.screen.home.search.function.transfer.PlaceAndTime
 import com.hfut.schedule.ui.screen.home.search.function.transfer.TransferPostResponse
+import com.hfut.schedule.ui.screen.home.search.function.transfer.getCampus
 import com.hfut.schedule.ui.screen.news.home.transferToPostData
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.Headers
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -1090,19 +1096,31 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
         val feeitemid = type.code.toString()
         val levels = when(type) {
-            WEB -> "0"
-            ELECTRIC -> null
-            SHOWER -> "1"
+            NET_XUANCHENG -> "0"
+            ELECTRIC_XUANCHENG -> null
+            SHOWER_XUANCHENG -> "1"
+            FeeType.SHOWER_HEFEI -> "未适配"
+            FeeType.WASHING_HEFEI -> "未适配"
+            FeeType.ELECTRIC_HEFEI_UNDERGRADUATE -> "未适配"
+            FeeType.ELECTRIC_HEFEI_GRADUATE -> "未适配"
         }
         val rooms = when(type) {
-            WEB -> null
-            ELECTRIC -> room
-            SHOWER -> null
+            NET_XUANCHENG -> null
+            ELECTRIC_XUANCHENG -> room
+            SHOWER_XUANCHENG -> null
+            FeeType.SHOWER_HEFEI -> null
+            FeeType.WASHING_HEFEI -> "未适配"
+            FeeType.ELECTRIC_HEFEI_UNDERGRADUATE -> "未适配"
+            FeeType.ELECTRIC_HEFEI_GRADUATE -> "未适配"
         }
         val phoneNumbers = when(type) {
-            WEB -> null
-            ELECTRIC -> null
-            SHOWER -> phoneNumber
+            NET_XUANCHENG -> null
+            ELECTRIC_XUANCHENG -> null
+            SHOWER_XUANCHENG -> phoneNumber
+            FeeType.SHOWER_HEFEI -> phoneNumber
+            FeeType.WASHING_HEFEI -> "未适配"
+            FeeType.ELECTRIC_HEFEI_UNDERGRADUATE -> "未适配"
+            FeeType.ELECTRIC_HEFEI_GRADUATE -> "未适配"
         }
         val call = huiXin.getFee(auth, typeId = feeitemid, room = rooms, level = levels, phoneNumber = phoneNumbers)
 
@@ -1110,9 +1128,10 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 val responseBody = response.body()?.string()
                 when(type) {
-                    WEB -> infoValue.value = responseBody
-                    ELECTRIC ->  electricData.value = responseBody
-                    SHOWER -> showerData.value = responseBody
+                    NET_XUANCHENG -> infoValue.value = responseBody
+                    ELECTRIC_XUANCHENG ->  electricData.value = responseBody
+                    SHOWER_XUANCHENG -> showerData.value = responseBody
+                    else -> { showToast("未适配") }
                 }
             }
 
@@ -1692,9 +1711,9 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     }
 
     val weatherWarningData = SimpleStateHolder<List<QWeatherWarnBean>>()
-    suspend fun getWeatherWarn() = launchRequestSimple(
+    suspend fun getWeatherWarn(campus: Campus) = launchRequestSimple(
         holder = weatherWarningData,
-        request = { qWeather.getWeatherWarn().awaitResponse() },
+        request = { qWeather.getWeatherWarn(locationID = getLocation(campus)).awaitResponse() },
         transformSuccess = { _,json -> parseWeatherWarn(json) }
     )
     private fun parseWeatherWarn(json : String) : List<QWeatherWarnBean> = try {
@@ -1702,9 +1721,9 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     } catch (e : Exception) { throw e }
 
     val qWeatherResult = SimpleStateHolder<QWeatherNowBean>()
-    suspend fun getWeather() = launchRequestSimple(
+    suspend fun getWeather(campus: Campus) = launchRequestSimple(
         holder = qWeatherResult,
-        request = { qWeather.getWeather().awaitResponse() },
+        request = { qWeather.getWeather(locationID = getLocation(campus)).awaitResponse() },
         transformSuccess = { _, json -> parseQweatherNow(json) }
     )
     private fun parseQweatherNow(json : String) : QWeatherNowBean = try {
@@ -1752,9 +1771,46 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     )
 // 宣城校园网 ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    val loginWebXCResponse = SimpleStateHolder<Boolean>()
+    suspend fun loginWebNew(campus: Campus = getCampus()) = withContext(Dispatchers.IO) {
+        getPersonInfo().username?.let { uid -> getIdentifyID()?.let { pwd ->
+            when(campus) {
+                HEFEI -> {
+                    showToast("暂未支持")
+                    return@withContext
+                }
+                XUANCHENG -> {
+                    val location = "宣州Login"
+                    launch {
+                        launchRequestSimple(
+                            holder = loginWebXCResponse,
+                            request = { loginWeb.loginWeb(uid, pwd,location).awaitResponse() },
+                            transformSuccess = { _,body -> parseLoginWebXC(body) }
+                        )
+                    }
+                    launch {
+                        launchRequestSimple(
+                            holder = loginWebXCResponse,
+                            request = { loginWeb2.loginWeb(uid, pwd,location).awaitResponse() },
+                            transformSuccess = { _,body -> parseLoginWebXC(body) }
+                        )
+                    }
+                }
+            }
+        } }
+    }
+    private fun parseLoginWebXC(result : String) : Boolean = try {
+        if(result.contains("登录成功") && !result.contains("已使用")) {
+            true
+        } else if(result.contains("已使用")) {
+            false
+        } else {
+            throw Exception(result)
+        }
+    } catch (e : Exception) { throw e }
+
     val resultValue = MutableLiveData<String?>()
     fun loginWeb() {
-
         val call = getPersonInfo().username?.let { getIdentifyID()?.let { it1 -> loginWeb.loginWeb(it, it1,"宣州Login") } }
         call?.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {

@@ -7,14 +7,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -28,13 +25,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
-import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.Huixin
 import com.hfut.schedule.ui.screen.home.search.function.bus.SchoolBus
 import com.hfut.schedule.ui.screen.home.search.function.card.SchoolCardItem
 import com.hfut.schedule.ui.screen.home.search.function.courseSearch.CoursesSearch
 import com.hfut.schedule.ui.screen.home.search.function.dormitoryScore.DormitoryScoreXuanCheng
-import com.hfut.schedule.ui.screen.home.search.function.electric.Electric
+import com.hfut.schedule.ui.screen.home.search.function.huiXin.electric.Electric
 import com.hfut.schedule.ui.screen.home.search.function.emptyRoom.EmptyRoom
 import com.hfut.schedule.ui.screen.home.search.function.exam.Exam
 import com.hfut.schedule.ui.screen.home.search.function.failRate.FailRate
@@ -44,7 +40,7 @@ import com.hfut.schedule.ui.screen.home.search.function.ietp.IETP
 import com.hfut.schedule.ui.screen.home.search.function.sport.lepao.LePaoYun
 import com.hfut.schedule.ui.screen.home.search.function.library.LibraryItem
 import com.hfut.schedule.ui.screen.home.search.function.life.Life
-import com.hfut.schedule.ui.screen.home.search.function.loginWeb.LoginWeb
+import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.LoginWeb
 import com.hfut.schedule.ui.screen.home.search.function.mail.Mail
 import com.hfut.schedule.ui.screen.home.search.function.news.News
 import com.hfut.schedule.ui.screen.home.search.function.nextCourse.NextCourse
@@ -56,7 +52,7 @@ import com.hfut.schedule.ui.screen.home.search.function.repair.Repair
 import com.hfut.schedule.ui.screen.home.search.function.schoolCalendar.SchoolCalendar
 import com.hfut.schedule.ui.screen.home.search.function.second.Second
 import com.hfut.schedule.ui.screen.home.search.function.selectCourse.SelectCourse
-import com.hfut.schedule.ui.screen.home.search.function.shower.Shower
+import com.hfut.schedule.ui.screen.home.search.function.huiXin.shower.Shower
 import com.hfut.schedule.ui.screen.home.search.function.survey.Survey
 import com.hfut.schedule.ui.screen.home.search.function.teacherSearch.TeacherSearch
 import com.hfut.schedule.ui.screen.home.search.function.student.ToadyCampus
@@ -66,20 +62,15 @@ import com.hfut.schedule.ui.screen.home.search.function.webLab.WebUI
 import com.hfut.schedule.ui.screen.home.search.function.practice.Practice
 import com.hfut.schedule.ui.screen.home.search.function.work.Work
 import com.hfut.schedule.ui.screen.home.search.function.xueXin.XueXin
-import com.hfut.schedule.ui.component.cardNormalColor
-import com.hfut.schedule.ui.component.cardNormalDp
 import com.hfut.schedule.ui.component.SmallCard
 import com.hfut.schedule.ui.screen.home.search.function.alumni.Alumni
 import com.hfut.schedule.ui.screen.home.search.function.holiday.Holiday
+import com.hfut.schedule.ui.screen.home.search.function.huiXin.washing.Washing
 import com.hfut.schedule.ui.screen.home.search.function.supabase.Supabase
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
 import dev.chrisbanes.haze.HazeState
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
-import org.jsoup.Jsoup
 
 @SuppressLint("CoroutineCreationDuringComposition", "SuspiciousIndentation")
 @Composable
@@ -95,8 +86,8 @@ fun SearchScreen(
     val funcMaps : Map<String,@Composable () -> Unit>  = mapOf(
         "一卡通 校园卡 账单 充值 缴费 慧新易校" to { SchoolCardItem(vmUI, true) },  
         "考试" to { Exam(vm, ifSaved,hazeState) },
-        "寝室电费 缴费" to { Electric(vm, false, vmUI,hazeState) }, 
-        "校园网" to { LoginWeb(vmUI, false, vm,hazeState) }, 
+        "寝室电费 缴费 慧新易校" to { Electric(vm, false, vmUI,hazeState) },
+        "校园网 慧新易校 缴费" to { LoginWeb(vmUI, false, vm,hazeState) },
         "教育邮箱" to { Mail(ifSaved, vm,vmUI,hazeState) },
         "一卡通 校园卡 账单 充值 缴费 慧新易校 合肥" to { Huixin() },
         "成绩" to { Grade(vm, ifSaved) },
@@ -133,6 +124,7 @@ fun SearchScreen(
         "校友 毕业" to { Alumni() },
         "国家法定节假日 假期 节日" to { Holiday(hazeState) },
         "云端共建平台 信息共建 日程 网课 网址导航" to { Supabase(vm) },
+        "洗衣机 慧新易校 缴费" to { Washing(hazeState) },
         )
 
     val funcList = funcMaps.values.toList()

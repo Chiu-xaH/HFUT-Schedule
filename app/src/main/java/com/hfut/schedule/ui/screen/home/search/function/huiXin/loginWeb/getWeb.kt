@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.screen.home.search.function.loginWeb
+package com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb
 
 import com.google.gson.Gson
 import com.hfut.schedule.logic.model.zjgd.FeeResponse

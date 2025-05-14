@@ -75,7 +75,7 @@ fun Life(vm : NetWorkViewModel, hazeState: HazeState) {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    LifeUIS(vm)
+                    WeatherScreen(vm)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
@@ -113,7 +113,7 @@ fun ApiFromLife(vm: NetWorkViewModel, hazeState: HazeState) {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    LifeUIS(vm)
+                    WeatherScreen(vm)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }

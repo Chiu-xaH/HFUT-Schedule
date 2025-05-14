@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.screen.home.search.function.electric
+package com.hfut.schedule.ui.screen.home.search.function.huiXin.electric
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.core.Spring
@@ -47,10 +47,11 @@ import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.screen.home.cube.sub.CirclePoint
 import com.hfut.schedule.ui.screen.home.cube.sub.KeyBoard
-import com.hfut.schedule.ui.screen.home.search.function.loginWeb.getIdentifyID
+import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getIdentifyID
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
+import kotlin.collections.iterator
 
 
 @OptIn(ExperimentalMaterial3Api::class)

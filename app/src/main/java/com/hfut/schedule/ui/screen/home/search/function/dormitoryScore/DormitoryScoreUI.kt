@@ -12,6 +12,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,6 +25,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -55,11 +58,14 @@ import com.hfut.schedule.logic.util.network.SimpleUiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
+import com.hfut.schedule.ui.component.CenterScreen
 import com.hfut.schedule.ui.component.CommonNetworkScreen
+import com.hfut.schedule.ui.component.CustomTabRow
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.MenuChip
 import com.hfut.schedule.ui.component.PrepareSearchUI
 import com.hfut.schedule.ui.component.SmallCard
+import com.hfut.schedule.ui.component.StatusUI
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.component.cardNormalDp
@@ -68,8 +74,12 @@ import com.hfut.schedule.ui.screen.home.search.function.transfer.getCampus
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import kotlinx.coroutines.launch
 
+private const val HEFEI_TAB = 0
+private const val XUANCHENG_TAB = 1
 @OptIn(ExperimentalMaterial3Api::class)
-@SuppressLint("CoroutineCreationDuringComposition", "SuspiciousIndentation")
+@SuppressLint("CoroutineCreationDuringComposition", "SuspiciousIndentation",
+    "UnusedMaterial3ScaffoldPaddingParameter"
+)
 @Composable
 fun DormitoryScoreUI(vm : NetWorkViewModel) {
     var code by remember { mutableStateOf(prefs.getString("Room","") ?: "") }
@@ -81,6 +91,14 @@ fun DormitoryScoreUI(vm : NetWorkViewModel) {
     var showitem4 by remember { mutableStateOf(false) }
 
     var menuOffset by remember { mutableStateOf<DpOffset?>(null) }
+
+    val pagerState = rememberPagerState(pageCount = { 2 }, initialPage =
+        when(getCampus()) {
+            Campus.XUANCHENG -> XUANCHENG_TAB
+            Campus.HEFEI -> HEFEI_TAB
+        }
+    )
+    val titles = remember { listOf("合肥","宣城") }
 
     menuOffset?.let {
         DropdownMenu(expanded = showitem, onDismissRequest = { showitem = false }, offset = it) {
@@ -132,123 +150,136 @@ fun DormitoryScoreUI(vm : NetWorkViewModel) {
         modifier = Modifier.fillMaxSize(),
         containerColor = Color.Transparent,
         topBar = {
-            HazeBottomSheetTopBar("寝室评分"  + if(getCampus() != Campus.XUANCHENG) "-宣城校区" else "") {
-                Row() {
-                    if(showitem4)
-                        IconButton(onClick = {roomNumber = roomNumber.replaceFirst(".$".toRegex(), "")}) {
-                            Icon(painter = painterResource(R.drawable.backspace), contentDescription = "description") }
-                    FilledTonalIconButton(onClick = {
-                        scope.launch { refreshNetwork() }
-                    }) { Icon(painter = painterResource(R.drawable.search), contentDescription = "description") }
+            Column {
+                HazeBottomSheetTopBar("寝室评分") {
+                    Row() {
+                        if(showitem4)
+                            IconButton(onClick = {roomNumber = roomNumber.replaceFirst(".$".toRegex(), "")}) {
+                                Icon(painter = painterResource(R.drawable.backspace), contentDescription = "description") }
+                        FilledTonalIconButton(onClick = {
+                            scope.launch { refreshNetwork() }
+                        }) { Icon(painter = painterResource(R.drawable.search), contentDescription = "description") }
+                    }
                 }
+                CustomTabRow(pagerState,titles)
             }
         },
     ) { innerPadding ->
-        Column(
+        Box(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            Column {
-
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = appHorizontalDp(), vertical = 0.dp), horizontalArrangement = Arrangement.Start){
-
-                    MenuChip (
-                        label = { Text(text = "楼栋 $buildingNumber") },
-                    )  {
-                        menuOffset = it
-                        showitem = true
+            HorizontalPager(state = pagerState) { page ->
+                when(page) {
+                    HEFEI_TAB -> {
+                        CenterScreen {
+                            StatusUI(R.drawable.manga,"需要合肥校区在读生贡献数据源")
+                        }
                     }
+                    XUANCHENG_TAB -> {
+                        Column(modifier = Modifier.fillMaxSize()) {
+                            Row(modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = appHorizontalDp(), vertical = 0.dp), horizontalArrangement = Arrangement.Start){
 
-                    Spacer(modifier = Modifier.width(10.dp))
+                                MenuChip (
+                                    label = { Text(text = "楼栋 $buildingNumber") },
+                                )  {
+                                    menuOffset = it
+                                    showitem = true
+                                }
 
-                    AssistChip(
-                        onClick = {directionIsSouth = !directionIsSouth},
-                        label = { Text(text = "南北 ${if (directionIsSouth) "S" else "N"}") },
-                    )
+                                Spacer(modifier = Modifier.width(10.dp))
 
-                    Spacer(modifier = Modifier.width(10.dp))
+                                AssistChip(
+                                    onClick = {directionIsSouth = !directionIsSouth},
+                                    label = { Text(text = "南北 ${if (directionIsSouth) "S" else "N"}") },
+                                )
 
-                    AssistChip(
-                        onClick = { showitem4 = !showitem4 },
-                        label = { Text(text = "寝室 $roomNumber") },
-                    )
-                }
+                                Spacer(modifier = Modifier.width(10.dp))
+
+                                AssistChip(
+                                    onClick = { showitem4 = !showitem4 },
+                                    label = { Text(text = "寝室 $roomNumber") },
+                                )
+                            }
 
 
 
 
-                AnimatedVisibility(
-                    visible = showitem4,
-                    enter = slideInVertically(
-                        initialOffsetY = { -40 }
-                    ) + expandVertically(
-                        expandFrom = Alignment.Top
-                    ) + scaleIn(
-                        transformOrigin = TransformOrigin(0.5f, 0f)
-                    ) + fadeIn(initialAlpha = 0.3f),
-                    exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
-                ){
-                    Column {
-                        Row (modifier = Modifier.padding(horizontal = appHorizontalDp())){
-                            OutlinedCard{
-                                LazyColumn(modifier = Modifier.padding(horizontal = 10.dp)) {
-                                    item {
-                                        Text(text = " 选取寝室号", modifier = Modifier.padding(10.dp))
-                                    }
-                                    item {
-                                        LazyRow {
-                                            items(5) { items ->
-                                                IconButton(onClick = {
-                                                    if (roomNumber.length < 3)
-                                                        roomNumber = roomNumber + items.toString()
-                                                    else Toast.makeText(
-                                                        MyApplication.context,
-                                                        "三位数",
-                                                        Toast.LENGTH_SHORT
-                                                    ).show()
-                                                }) { Text(text = items.toString()) }
+                            AnimatedVisibility(
+                                visible = showitem4,
+                                enter = slideInVertically(
+                                    initialOffsetY = { -40 }
+                                ) + expandVertically(
+                                    expandFrom = Alignment.Top
+                                ) + scaleIn(
+                                    transformOrigin = TransformOrigin(0.5f, 0f)
+                                ) + fadeIn(initialAlpha = 0.3f),
+                                exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
+                            ){
+                                Column {
+                                    Row (modifier = Modifier.padding(horizontal = appHorizontalDp())){
+                                        OutlinedCard{
+                                            LazyColumn(modifier = Modifier.padding(horizontal = 10.dp)) {
+                                                item {
+                                                    Text(text = " 选取寝室号", modifier = Modifier.padding(10.dp))
+                                                }
+                                                item {
+                                                    LazyRow {
+                                                        items(5) { items ->
+                                                            IconButton(onClick = {
+                                                                if (roomNumber.length < 3)
+                                                                    roomNumber = roomNumber + items.toString()
+                                                                else Toast.makeText(
+                                                                    MyApplication.context,
+                                                                    "三位数",
+                                                                    Toast.LENGTH_SHORT
+                                                                ).show()
+                                                            }) { Text(text = items.toString()) }
+                                                        }
+                                                    }
+                                                }
+                                                item {
+                                                    LazyRow {
+                                                        items(5) { items ->
+                                                            val num = items + 5
+                                                            IconButton(onClick = {
+                                                                if (roomNumber.length < 3)
+                                                                    roomNumber = roomNumber + num
+                                                                else Toast.makeText(
+                                                                    MyApplication.context,
+                                                                    "三位数",
+                                                                    Toast.LENGTH_SHORT
+                                                                ).show()
+                                                            }) { Text(text = num.toString()) }
+                                                        }
+                                                    }
+                                                }
                                             }
+                                            Spacer(modifier = Modifier.height(10.dp))
                                         }
                                     }
-                                    item {
-                                        LazyRow {
-                                            items(5) { items ->
-                                                val num = items + 5
-                                                IconButton(onClick = {
-                                                    if (roomNumber.length < 3)
-                                                        roomNumber = roomNumber + num
-                                                    else Toast.makeText(
-                                                        MyApplication.context,
-                                                        "三位数",
-                                                        Toast.LENGTH_SHORT
-                                                    ).show()
-                                                }) { Text(text = num.toString()) }
-                                            }
+                                    Spacer(Modifier.height(cardNormalDp()*2))
+                                }
+
+                            }
+
+                            CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchUI() }) {
+                                val list = (uiState as SimpleUiState.Success).data
+
+                                LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.padding(horizontal = appHorizontalDp()- cardNormalDp())) {
+                                    items(list.size,key = { it }) { item ->
+                                        val listItem = list[item]
+                                        SmallCard(modifier = Modifier.padding(horizontal = cardNormalDp(), vertical = cardNormalDp())) {
+                                            TransplantListItem(
+                                                headlineContent = { Text(text = listItem.date) },
+                                                supportingContent = { Text(text =  "${listItem.score} 分")}
+                                            )
                                         }
                                     }
                                 }
-                                Spacer(modifier = Modifier.height(10.dp))
-                            }
-                        }
-                        Spacer(Modifier.height(cardNormalDp()*2))
-                    }
-
-                }
-
-                CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchUI() }) {
-                    val list = (uiState as SimpleUiState.Success).data
-
-                    LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.padding(horizontal = appHorizontalDp()- cardNormalDp())) {
-                        items(list.size,key = { it }) { item ->
-                            val listItem = list[item]
-                            SmallCard(modifier = Modifier.padding(horizontal = cardNormalDp(), vertical = cardNormalDp())) {
-                                TransplantListItem(
-                                    headlineContent = { Text(text = listItem.date) },
-                                    supportingContent = { Text(text =  "${listItem.score} 分")}
-                                )
                             }
                         }
                     }

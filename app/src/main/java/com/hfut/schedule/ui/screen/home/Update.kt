@@ -68,7 +68,7 @@ fun initNetworkRefresh(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIVie
             val showWeather = DataStoreManager.showFocusWeatherWarn.first()
             val state = vm.weatherWarningData.state.first() // 只发送一次请求 API有次数限制
             if(showWeather && state  !is SimpleUiState.Success) {
-                vm.getWeatherWarn()
+                vm.getWeatherWarn(getCampus())
             }
         }
         // 更新节假日信息

@@ -52,16 +52,15 @@ import com.hfut.schedule.ui.component.RotatingIcon
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.cardNormalColor
-import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.component.onListenStateHolder
 import com.hfut.schedule.ui.screen.home.focus.funiction.TodayUI
 import com.hfut.schedule.ui.screen.home.search.function.card.SchoolCardItem
-import com.hfut.schedule.ui.screen.home.search.function.electric.Electric
-import com.hfut.schedule.ui.screen.home.search.function.life.LifeUIS
-import com.hfut.schedule.ui.screen.home.search.function.loginWeb.LoginWeb
-import com.hfut.schedule.ui.screen.home.search.function.loginWeb.getWebInfo
-import com.hfut.schedule.ui.screen.home.search.function.loginWeb.getWebInfoOld
-import com.hfut.schedule.ui.screen.home.search.function.shower.getInGuaGua
+import com.hfut.schedule.ui.screen.home.search.function.huiXin.electric.Electric
+import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.LoginWeb
+import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getWebInfo
+import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getWebInfoOld
+import com.hfut.schedule.ui.screen.home.search.function.huiXin.shower.getInGuaGua
+import com.hfut.schedule.ui.screen.home.search.function.life.WeatherScreen
 import com.hfut.schedule.ui.screen.home.search.function.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.transfer.getCampus
 import com.hfut.schedule.ui.style.HazeBottomSheet
@@ -74,7 +73,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -229,7 +227,7 @@ fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    LifeUIS(vm)
+                    WeatherScreen(vm)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
@@ -354,7 +352,7 @@ fun getWeb(vm : NetWorkViewModel,vmUI: UIViewModel)  {
 fun getWebInfoFromZJGD(vm: NetWorkViewModel, vmUI : UIViewModel)  {
     val auth = prefs.getString("auth","")
     CoroutineScope(Job()).launch {
-        async { vm.getFee("bearer $auth",FeeType.WEB) }.await()
+        async { vm.getFee("bearer $auth",FeeType.NET_XUANCHENG) }.await()
         async {
             Handler(Looper.getMainLooper()).post{
                 vm.infoValue.observeForever { result ->
@@ -406,7 +404,7 @@ fun getEleNew(vm : NetWorkViewModel, vmUI : UIViewModel) {
     val auth = prefs.getString("auth","")
 
     CoroutineScope(Job()).launch {
-        async { vm.getFee("bearer $auth", FeeType.ELECTRIC, room = input) }.await()
+        async { vm.getFee("bearer $auth", FeeType.ELECTRIC_XUANCHENG, room = input) }.await()
         async {
             Handler(Looper.getMainLooper()).post{
                 vm.electricData.observeForever { result ->

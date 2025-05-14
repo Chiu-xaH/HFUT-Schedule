@@ -1,10 +1,9 @@
-package com.hfut.schedule.ui.screen.home.search.function.electric
+package com.hfut.schedule.ui.screen.home.search.function.huiXin.electric
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -16,8 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.ui.screen.home.search.function.transfer.Campus
-import com.hfut.schedule.ui.screen.home.search.function.transfer.getCampus
 import com.hfut.schedule.ui.component.ScrollText
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.style.HazeBottomSheet
@@ -56,7 +53,7 @@ fun Electric(vm : NetWorkViewModel, card : Boolean, vmUI : UIViewModel, hazeStat
     val memoryEle = prefs.getString("memoryEle","0")
 
     TransplantListItem(
-        headlineContent = { if(!card)Text(text = "寝室电费"  + if(getCampus() != Campus.XUANCHENG) "(宣)" else "") else ScrollText(text = "￥${vmUI.electricValue.value ?: memoryEle}") },
+        headlineContent = { if(!card)Text(text = "寝室电费" ) else ScrollText(text = "￥${vmUI.electricValue.value ?: memoryEle}") },
         overlineContent = { if(!card) ScrollText(text = "￥${vmUI.electricValue.value ?: memoryEle}") else ScrollText(text = room) },
         leadingContent = { Icon(painterResource(R.drawable.flash_on), contentDescription = "Localized description",) },
         modifier = Modifier.clickable { showBottomSheet  = true }

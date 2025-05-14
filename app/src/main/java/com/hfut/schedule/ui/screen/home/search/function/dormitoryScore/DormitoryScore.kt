@@ -36,7 +36,7 @@ fun DormitoryScoreXuanCheng(vm : NetWorkViewModel, hazeState: HazeState) {
     var showBottomSheet_Xuanqu by remember { mutableStateOf(false) }
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = "寝室评分"  + if(getCampus() != Campus.XUANCHENG) "(宣)" else "" ) },
+        headlineContent = { ScrollText(text = "寝室评分" ) },
         leadingContent = { Icon(painter = painterResource(R.drawable.psychiatry),"" ) },
         modifier = Modifier.clickable { showBottomSheet_Xuanqu = true }
     )
