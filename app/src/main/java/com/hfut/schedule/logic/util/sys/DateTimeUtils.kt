@@ -1,6 +1,6 @@
 package com.hfut.schedule.logic.util.sys
 
-import com.hfut.schedule.ui.screen.home.search.function.totalCourse.getStartWeek
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getStartWeek
 import java.text.SimpleDateFormat
 import java.time.Duration
 import java.time.LocalDate

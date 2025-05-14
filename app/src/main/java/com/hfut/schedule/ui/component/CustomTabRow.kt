@@ -34,8 +34,8 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.ui.screen.home.search.function.transfer.Campus
-import com.hfut.schedule.ui.screen.home.search.function.transfer.getCampus
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
 import com.hfut.schedule.ui.style.RowHorizontal
 import kotlinx.coroutines.launch
 

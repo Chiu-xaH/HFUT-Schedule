@@ -108,10 +108,10 @@ import com.hfut.schedule.ui.screen.home.focus.TodayScreen
 import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventFloatButton
 import com.hfut.schedule.ui.screen.home.search.SearchFuncs
 import com.hfut.schedule.ui.screen.home.search.SearchScreen
-import com.hfut.schedule.ui.screen.home.search.function.notification.NotificationItems
-import com.hfut.schedule.ui.screen.home.search.function.notification.getNotifications
-import com.hfut.schedule.ui.screen.home.search.function.totalCourse.CourseTotalForApi
-import com.hfut.schedule.ui.screen.home.search.function.webLab.LabUI
+import com.hfut.schedule.ui.screen.home.search.function.my.notification.NotificationItems
+import com.hfut.schedule.ui.screen.home.search.function.my.notification.getNotifications
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.CourseTotalForApi
+import com.hfut.schedule.ui.screen.home.search.function.my.webLab.LabUI
 import com.hfut.schedule.ui.screen.supabase.login.ApiToSupabase
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.bottomBarBlur

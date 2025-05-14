@@ -53,7 +53,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.CustomTabRow
 import com.hfut.schedule.ui.component.LoadingUI
-import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.ui.util.UIStateHolder.isSupabaseRegistering
 import com.hfut.schedule.viewmodel.UIViewModel

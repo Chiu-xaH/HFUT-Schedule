@@ -135,22 +135,22 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.WebInfo
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getIdentifyID
-import com.hfut.schedule.ui.screen.home.search.function.life.getLocation
-import com.hfut.schedule.ui.screen.home.search.function.mail.MailResponse
-import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
-import com.hfut.schedule.ui.screen.home.search.function.program.ProgramListBean
-import com.hfut.schedule.ui.screen.home.search.function.program.ProgramSearchItem
-import com.hfut.schedule.ui.screen.home.search.function.program.ProgramSearchItemBean
-import com.hfut.schedule.ui.screen.home.search.function.transfer.ApplyGrade
-import com.hfut.schedule.ui.screen.home.search.function.transfer.Campus
-import com.hfut.schedule.ui.screen.home.search.function.transfer.Campus.HEFEI
-import com.hfut.schedule.ui.screen.home.search.function.transfer.Campus.XUANCHENG
-import com.hfut.schedule.ui.screen.home.search.function.transfer.ChangeMajorInfo
-import com.hfut.schedule.ui.screen.home.search.function.transfer.GradeAndRank
-import com.hfut.schedule.ui.screen.home.search.function.transfer.MyApplyInfoBean
-import com.hfut.schedule.ui.screen.home.search.function.transfer.PlaceAndTime
-import com.hfut.schedule.ui.screen.home.search.function.transfer.TransferPostResponse
-import com.hfut.schedule.ui.screen.home.search.function.transfer.getCampus
+import com.hfut.schedule.ui.screen.home.search.function.other.life.getLocation
+import com.hfut.schedule.ui.screen.home.search.function.one.mail.MailResponse
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.program.ProgramListBean
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.program.ProgramSearchItem
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.program.ProgramSearchItemBean
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.ApplyGrade
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus.HEFEI
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus.XUANCHENG
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.ChangeMajorInfo
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.GradeAndRank
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.MyApplyInfoBean
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.PlaceAndTime
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.TransferPostResponse
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
 import com.hfut.schedule.ui.screen.news.home.transferToPostData
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
 import kotlinx.coroutines.Dispatchers
@@ -1086,8 +1086,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
-
-
     }
 
     val infoValue = MutableLiveData<String?>()
@@ -1095,7 +1093,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     val showerData = MutableLiveData<String?>()
     fun getFee(auth: String,type : FeeType,room : String? = null,phoneNumber : String? = null) {
 
-        val feeitemid = type.code.toString()
+        val feeItemId = type.code.toString()
         val levels = when(type) {
             NET_XUANCHENG -> "0"
             ELECTRIC_XUANCHENG -> null
@@ -1123,7 +1121,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             FeeType.ELECTRIC_HEFEI_UNDERGRADUATE -> "未适配"
             FeeType.ELECTRIC_HEFEI_GRADUATE -> "未适配"
         }
-        val call = huiXin.getFee(auth, typeId = feeitemid, room = rooms, level = levels, phoneNumber = phoneNumbers)
+        val call = huiXin.getFee(auth, typeId = feeItemId, room = rooms, level = levels, phoneNumber = phoneNumbers)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -1837,7 +1835,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         }
     } catch (e : Exception) { throw e }
 
-
     val infoWebValue = SimpleStateHolder<WebInfo>()
     suspend fun getWebInfo() = launchRequestSimple(
         holder = infoWebValue,
@@ -1870,14 +1867,11 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     } catch (e : Exception) { throw e }
 
     fun getUpdate() {
-
         val call = gitee.getUpdate()
-
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 saveString("versions",response.body()?.string())
             }
-
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }

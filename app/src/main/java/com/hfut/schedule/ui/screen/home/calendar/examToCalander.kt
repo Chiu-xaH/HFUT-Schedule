@@ -1,7 +1,7 @@
 package com.hfut.schedule.ui.screen.home.calendar
 
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
-import com.hfut.schedule.ui.screen.home.search.function.exam.getExamJXGLSTU
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.getExamJXGLSTU
 import java.time.LocalDate
 
 data class ExamToCalanderBean(

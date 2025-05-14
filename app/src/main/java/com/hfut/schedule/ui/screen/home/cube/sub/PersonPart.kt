@@ -35,7 +35,7 @@ import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.parse.formatDecimal
-import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.component.DepartmentIcons
 import com.hfut.schedule.ui.component.MyCustomCard
 import com.hfut.schedule.ui.component.ScrollText

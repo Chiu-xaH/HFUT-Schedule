@@ -69,9 +69,9 @@ import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.cardNormalColor
 import com.hfut.schedule.ui.component.cardNormalDp
 import com.hfut.schedule.ui.component.showToast
-import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
-import com.hfut.schedule.ui.screen.home.search.function.transfer.EventCampus
-import com.hfut.schedule.ui.screen.home.search.function.transfer.getEventCampus
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.EventCampus
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getEventCampus
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch

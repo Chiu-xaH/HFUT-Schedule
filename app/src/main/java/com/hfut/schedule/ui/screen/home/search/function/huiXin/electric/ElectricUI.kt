@@ -72,9 +72,9 @@ import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.WebDialog
 import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.component.showToast
-import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
-import com.hfut.schedule.ui.screen.home.search.function.transfer.Campus
-import com.hfut.schedule.ui.screen.home.search.function.transfer.getCampus
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState

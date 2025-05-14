@@ -5,10 +5,10 @@ import com.google.gson.annotations.SerializedName
 import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.sys.DateTime
-import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
-import com.hfut.schedule.ui.screen.home.search.function.transfer.Campus
-import com.hfut.schedule.ui.screen.home.search.function.transfer.EventCampus
-import com.hfut.schedule.ui.screen.home.search.function.transfer.getCampus
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.EventCampus
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
 
 data class SupabaseUserLoginBean(

@@ -58,7 +58,7 @@ import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.DetailInfos
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.getCourseINFO
 import com.hfut.schedule.ui.screen.home.cube.apiCheck
-import com.hfut.schedule.ui.screen.home.search.function.card.TodayInfo
+import com.hfut.schedule.ui.screen.home.search.function.huiXin.card.TodayInfo
 import com.hfut.schedule.ui.style.ColumnVertical
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.UIViewModel

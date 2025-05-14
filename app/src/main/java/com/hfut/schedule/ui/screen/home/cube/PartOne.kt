@@ -47,7 +47,7 @@ import com.hfut.schedule.ui.screen.home.cube.sub.update.UpdateUI
 import com.hfut.schedule.ui.screen.home.cube.sub.update.VersionInfo
 import com.hfut.schedule.ui.screen.home.cube.sub.update.getPatchVersions
 import com.hfut.schedule.ui.screen.home.cube.sub.update.getUpdates
-import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.TransplantListItem

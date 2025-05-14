@@ -41,9 +41,9 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.logic.model.community.CourseTotalResponse
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
 import com.hfut.schedule.logic.util.storage.SharedPrefs
-import com.hfut.schedule.ui.screen.home.search.function.totalCourse.DetailItems
-import com.hfut.schedule.ui.screen.home.search.function.totalCourse.getCourse
-import com.hfut.schedule.ui.screen.home.search.function.totalCourse.getTotalCourse
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.DetailItems
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourse
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getTotalCourse
 import com.hfut.schedule.ui.component.cardNormalColor
 import com.hfut.schedule.ui.component.BottomSheetTopBar
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar

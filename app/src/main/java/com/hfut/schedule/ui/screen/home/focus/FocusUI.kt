@@ -57,8 +57,8 @@ import com.hfut.schedule.ui.screen.home.focus.funiction.getTodayJxglstuCourse
 import com.hfut.schedule.ui.screen.home.focus.funiction.getTomorrowJxglstuCourse
 import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
 import com.hfut.schedule.ui.screen.home.initNetworkRefresh
-import com.hfut.schedule.ui.screen.home.search.function.exam.JxglstuExamUI
-import com.hfut.schedule.ui.screen.home.search.function.exam.getExamJXGLSTU
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExamUI
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.getExamJXGLSTU
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel

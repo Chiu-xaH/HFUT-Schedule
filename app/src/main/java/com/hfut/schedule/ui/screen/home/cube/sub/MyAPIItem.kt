@@ -12,7 +12,7 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.getSettingInfo
 //import com.hfut.schedule.logic.utils.parse.getSettingInfo
-import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.component.APIIcons
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.StyleCardListItem

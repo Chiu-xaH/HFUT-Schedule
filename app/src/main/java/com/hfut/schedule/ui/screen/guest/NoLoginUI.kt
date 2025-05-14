@@ -1,12 +1,9 @@
 package com.hfut.schedule.ui.screen.guest
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -58,7 +55,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.enumeration.BottomBarItems
@@ -68,16 +64,15 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.ui.screen.home.cube.sub.MyAPIItem
 import com.hfut.schedule.ui.screen.home.cube.sub.update.getUpdates
 import com.hfut.schedule.ui.screen.home.cube.SettingsScreen
 import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventFloatButton
 import com.hfut.schedule.ui.screen.home.texts
-import com.hfut.schedule.ui.screen.home.search.function.life.ApiFromLife
-import com.hfut.schedule.ui.screen.home.search.function.notification.NotificationItems
-import com.hfut.schedule.ui.screen.home.search.function.notification.getNotifications
-import com.hfut.schedule.ui.screen.home.search.function.webLab.LabUI
+import com.hfut.schedule.ui.screen.home.search.function.other.life.ApiFromLife
+import com.hfut.schedule.ui.screen.home.search.function.my.notification.NotificationItems
+import com.hfut.schedule.ui.screen.home.search.function.my.notification.getNotifications
+import com.hfut.schedule.ui.screen.home.search.function.my.webLab.LabUI
 import com.hfut.schedule.ui.screen.home.search.SearchFuncs
 import com.hfut.schedule.ui.util.NavigateAnimationManager
 import com.hfut.schedule.ui.util.NavigateAnimationManager.currentPage
@@ -86,7 +81,6 @@ import com.hfut.schedule.ui.component.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.ScrollText
 import com.hfut.schedule.ui.component.appHorizontalDp
-import com.hfut.schedule.ui.screen.home.getHolidayYear
 import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.bottomBarBlur
@@ -97,9 +91,6 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "NewApi")
 @OptIn(ExperimentalMaterial3Api::class)

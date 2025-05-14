@@ -13,7 +13,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.activity.BaseActivity
 import com.hfut.schedule.logic.enumeration.SupabaseScreen
 import com.hfut.schedule.ui.component.StatusUI
-import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.supabase.SupabaseHome
 import com.hfut.schedule.ui.screen.supabase.login.SupabaseLoginScreen
 import com.hfut.schedule.ui.util.NavigateAnimationManager

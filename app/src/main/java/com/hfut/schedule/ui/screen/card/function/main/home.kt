@@ -75,7 +75,7 @@ import com.hfut.schedule.ui.screen.card.function.SelecctDateRange
 import com.hfut.schedule.ui.screen.home.focus.funiction.initCardNetwork
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.electric.EleUI
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.LoginWebScaUI
-import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.shower.ShowerUI
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.washing.WashingUI
 import com.hfut.schedule.ui.style.HazeBottomSheet

@@ -84,7 +84,7 @@ import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.screen.home.calendar.examToCalendar
 import com.hfut.schedule.ui.screen.home.calendar.getScheduleDate
 import com.hfut.schedule.ui.screen.home.calendar.next.parseCourseName
-import com.hfut.schedule.ui.screen.home.search.function.totalCourse.getTotalCourse
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getTotalCourse
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.viewmodel.network.LoginViewModel

@@ -53,7 +53,7 @@ import com.hfut.schedule.logic.util.sys.delCourseEvents
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.getMy
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.isNextOpen
 import com.hfut.schedule.ui.screen.home.calendar.next.DatumUI
-import com.hfut.schedule.ui.screen.home.search.function.totalCourse.CourseTotalForApi
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.CourseTotalForApi
 import com.hfut.schedule.ui.component.BottomSheetTopBar
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar

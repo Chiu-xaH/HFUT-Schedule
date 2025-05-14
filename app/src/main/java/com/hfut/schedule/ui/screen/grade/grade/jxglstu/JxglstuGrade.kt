@@ -54,8 +54,8 @@ import com.hfut.schedule.ui.component.cardNormalDp
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.screen.card.count.RadarChart
 import com.hfut.schedule.ui.screen.card.count.RadarData
-import com.hfut.schedule.ui.screen.home.search.function.survey.SurveyUI
-import com.hfut.schedule.ui.screen.home.search.function.totalCourse.CourseTotalForApi
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.survey.SurveyUI
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.CourseTotalForApi
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel

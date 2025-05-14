@@ -18,8 +18,8 @@ import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.ui.screen.home.cube.sub.getEleNew
 import com.hfut.schedule.ui.screen.home.cube.sub.getWebInfoFromZJGD
 import com.hfut.schedule.ui.screen.home.focus.funiction.initCardNetwork
-import com.hfut.schedule.ui.screen.home.search.function.transfer.Campus
-import com.hfut.schedule.ui.screen.home.search.function.transfer.getCampus
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel

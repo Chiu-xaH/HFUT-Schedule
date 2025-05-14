@@ -106,9 +106,9 @@ import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.component.cardNormalColor
 import com.hfut.schedule.ui.component.cardNormalDp
 import com.hfut.schedule.ui.component.showToast
-import com.hfut.schedule.ui.screen.home.search.function.person.getPersonInfo
-import com.hfut.schedule.ui.screen.home.search.function.transfer.EventCampus
-import com.hfut.schedule.ui.screen.home.search.function.transfer.getEventCampus
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.EventCampus
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getEventCampus
 import com.hfut.schedule.ui.screen.supabase.home.getInsertedEventId
 import com.hfut.schedule.ui.screen.supabase.login.loginSupabaseWithCheck
 import com.hfut.schedule.ui.style.RowHorizontal
