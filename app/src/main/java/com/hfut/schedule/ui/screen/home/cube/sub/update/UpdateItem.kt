@@ -62,7 +62,7 @@ fun VersionInfo() {
         UpdateItems("优化 课程表对考试的强调显示", null, UpdateType.OPTIMIZE)
         UpdateItems("优化 日程在明天和当天未开始时的显示逻辑", null, UpdateType.OPTIMIZE)
 //        UpdateItems("优化 添加聚焦卡片适用范围的添加班级逻辑", null, UpdateType.OPTIMIZE)
-//        UpdateItems("优化 部分列表快速滑动时首张卡片卡顿的问题", null, UpdateType.OPTIMIZE)
+//         UpdateItems("优化 部分列表快速滑动时首张卡片卡顿的问题", null, UpdateType.OPTIMIZE)
 //        UpdateItems("优化 层级转场时的圆角", null, UpdateType.OPTIMIZE)
     }
 }
