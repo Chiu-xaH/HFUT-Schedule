@@ -105,18 +105,4 @@ private suspend fun getRangeData(vm: NetWorkViewModel, state: DateRangePickerSta
     onListenStateHolder(vm.huiXinRangeResult) { data ->
         showToast("共支出 $data 元")
     }
-//    withContext(Dispatchers.Main) {
-//        // 只收集第一次流
-//        val state = vm.huixinRangeResult.state.first { it !is SimpleUiState.Loading }
-//        when (state) {
-//            is SimpleUiState.Success -> {
-//                val data = state.data
-//                showToast("共支出 $data 元")
-//            }
-//            is SimpleUiState.Error -> {
-//                showToast("错误 " + state.exception?.message)
-//            }
-//            else -> {}
-//        }
-//    }
 }

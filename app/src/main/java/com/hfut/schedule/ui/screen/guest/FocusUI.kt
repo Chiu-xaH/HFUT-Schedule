@@ -53,7 +53,7 @@ import kotlinx.coroutines.launch
 )
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
-fun TodayScreenNoLogin(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding : PaddingValues, vmUI : UIViewModel, ifSaved : Boolean, webVpn : Boolean, state: PagerState, hazeState : HazeState) {
+fun TodayScreenNoLogin(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding : PaddingValues, vmUI : UIViewModel, state: PagerState, hazeState : HazeState) {
 
     val  TAB_LEFT = 0
     val TAB_RIGHT = 1
@@ -129,7 +129,7 @@ fun TodayScreenNoLogin(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding
                         when(page) {
                             TAB_LEFT -> {
                                 if(showStorageFocus)
-                                    customScheduleList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = false) { refreshDB = !refreshDB } } } }
+                                    customScheduleList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = false,showTomorrow = true) { refreshDB = !refreshDB } } } }
 
                                 scheduleList.let { list -> items(list.size) { item -> activity?.let { ScheduleItem(list[item],false,it) } } }
 
@@ -141,7 +141,7 @@ fun TodayScreenNoLogin(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding
                             TAB_RIGHT -> {
                                 //日程
                                 if(showStorageFocus)
-                                    customScheduleList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = true) { refreshDB = !refreshDB } } } }
+                                    customScheduleList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = true,showTomorrow = false) { refreshDB = !refreshDB } } } }
 
                                 scheduleList.let { list -> items(list.size) { item -> activity?.let { ScheduleItem(list[item],true,it) }  } }
                                 //网课

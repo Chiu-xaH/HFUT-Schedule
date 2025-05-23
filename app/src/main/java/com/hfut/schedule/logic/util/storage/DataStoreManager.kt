@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.useCaptcha
@@ -37,9 +38,9 @@ object DataStoreManager {
     private val USE_CAPTCHA_AUTO = booleanPreferencesKey("use_captcha_auto")
     private val FOCUS_SHOW_SHOWER = booleanPreferencesKey("focus_show_shower")
     private val FOCUS_SHOW_WEATHER_WARN = booleanPreferencesKey("focus_show_weather_warn")
-
-
-
+    private val FOCUS_SHOW_SPECIAL = booleanPreferencesKey("focus_show_special")
+    private val CARD_PASSWORD = stringPreferencesKey("card_password")
+    private val USE_DEFAULT_CARD_PASSWORD = booleanPreferencesKey("use_default_card_password")
 
     enum class ColorMode(val code : Int) {
         LIGHT(1),DARK(2),AUTO(0)
@@ -135,7 +136,21 @@ object DataStoreManager {
             preferences[FOCUS_SHOW_WEATHER_WARN] = value
         }
     }
-
+    suspend fun saveFocusShowSpecial(value: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[FOCUS_SHOW_SPECIAL] = value
+        }
+    }
+    suspend fun saveCardPassword(value: String) {
+        dataStore.edit { preferences ->
+            preferences[CARD_PASSWORD] = value
+        }
+    }
+    suspend fun saveUseDefaultCardPassword(value: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[USE_DEFAULT_CARD_PASSWORD] = value
+        }
+    }
 
 
     val animationTypeFlow: Flow<Int> = dataStore.data
@@ -210,7 +225,18 @@ object DataStoreManager {
         .map { preferences ->
             preferences[FOCUS_SHOW_WEATHER_WARN] ?: true
         }
-
+//    val showFocusSpecial: Flow<Boolean> = dataStore.data
+//        .map { preferences ->
+//            preferences[FOCUS_SHOW_SPECIAL] ?: true
+//        }
+    val cardPassword: Flow<String> = dataStore.data
+        .map { preferences ->
+            preferences[CARD_PASSWORD] ?: ""
+        }
+    val useDefaultCardPassword: Flow<Boolean> = dataStore.data
+        .map { preferences ->
+            preferences[USE_DEFAULT_CARD_PASSWORD] ?: true
+        }
     /* 用法
     val XXX by DataStoreManager.XXX.collectAsState(initial = 默认值)
      */

@@ -51,14 +51,19 @@ fun isUserBirthday() : Boolean = getBirthday()?.let {
             "-"
         )
     )
-} ?: false
+} == true
 // 毕业季
-fun isInGraduation() : Boolean = getGraduationYear()?.let { DateTimeUtils.isCurrentMonth("$it-06") } ?: false
+fun isInGraduation() : Boolean = getGraduationYear()?.let { DateTimeUtils.isCurrentMonth("$it-06") } == true
 // APP周年
 fun isAppBirthday() : Boolean = DateTimeUtils.isTodayAnniversary(DateTimeUtils.APP_BIRTHDAY.substringAfter("-"))
-
 // 节假日
-fun isHoliday() : Boolean = getHolidays().any { it.isOffDay && it.name == DateTimeUtils.Date_yyyy_MM_dd }
+fun isHoliday() : Boolean = getHolidays().any { it.isOffDay && it.date == DateTimeUtils.Date_yyyy_MM_dd }
+//
+fun isHolidayTomorrow() : Boolean = getHolidays().any { it.isOffDay && it.date == DateTimeUtils.tomorrow_YYYY_MM_DD }
+// 今天调休
+fun isSpecificWorkDay() : Boolean = getHolidays().any { !it.isOffDay && it.date == DateTimeUtils.Date_yyyy_MM_dd }
+// 明天调休
+fun isSpecificWorkDayTomorrow() : Boolean = getHolidays().any { !it.isOffDay && it.date == DateTimeUtils.tomorrow_YYYY_MM_DD }
 
 fun getTodayHoliday(): String? = getHolidays().firstOrNull { it.isOffDay && it.date == DateTimeUtils.Date_yyyy_MM_dd }?.name
 

@@ -104,12 +104,10 @@ fun NetWorkScreen(navController: NavController,
             trailingContent = { Switch(checked = upload, onCheckedChange = { uploadch -> upload = uploadch }, enabled = true) }
         )
         TransplantListItem(
-            headlineContent = { Text(text = "云控") },
-            supportingContent = { Text(text = "聚在工大部分内容受云端控制") },
-            leadingContent = { Icon(painterResource(R.drawable.cloud), contentDescription = "Localized description",) },
-            modifier = Modifier.clickable {
-                // TODO
-            }
+            headlineContent = { Text(text = "一卡通密码") },
+            supportingContent = { Text(text = "若您已经修改过一卡通初始密码(身份证后6位),请在此录入新的密码以使用快速充值和校园网登录功能") },
+            leadingContent = { Icon(painterResource(R.drawable.password), contentDescription = "Localized description",) },
+            modifier = Modifier.clickable { navController.navigate(Screen.PasswordScreen.route) }
         )
         Spacer(Modifier.height(innerPaddings.calculateBottomPadding()))
 

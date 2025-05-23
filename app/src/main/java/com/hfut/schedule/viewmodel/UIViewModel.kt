@@ -1,6 +1,7 @@
 package com.hfut.schedule.viewmodel
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
@@ -18,6 +19,8 @@ class UIViewModel : ViewModel()  {
     var webValue = MutableLiveData<WebInfo>()
 
     var isAddUIExpanded by mutableStateOf(false)
+    var specialWOrkDayChange by mutableIntStateOf(0)
+
     private val _isSupabaseRegistering = MutableStateFlow(false)
     val isSupabaseRegistering: StateFlow<Boolean> = _isSupabaseRegistering
     fun setSupabaseRegistering(value: Boolean) {

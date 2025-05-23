@@ -11,6 +11,9 @@
   </component>
   <component name="DBNavigator.Project.DatabaseAssistantManager">
     <assistants>
+      <assistant-state connection-id="c795c548-eba7-4009-aeef-158b9ccaa921" default-profile-name="" selected-profile-name="" selected-model-name="" assistant-type="GENERIC" selected-action="SHOW_SQL" availability="UNAVAILABLE" acknowledgement="NONE">
+        <messages />
+      </assistant-state>
       <assistant-state connection-id="5c34ce96-9043-41ef-ae0d-6f1e0f2552cf" default-profile-name="" selected-profile-name="" selected-model-name="" assistant-type="GENERIC" selected-action="SHOW_SQL" availability="UNAVAILABLE" acknowledgement="NONE">
         <messages />
       </assistant-state>
@@ -23,8 +26,8 @@
     <loaded-nodes />
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
-    <connection id="5c34ce96-9043-41ef-ae0d-6f1e0f2552cf">
-      <console name="Connection" type="STANDARD" schema="" session="Main" />
+    <connection id="c795c548-eba7-4009-aeef-158b9ccaa921">
+      <console name="Connection" type="STANDARD" schema="main" session="Main"><![CDATA[DROP TABLE IF EXISTS special_work_day;]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseEditorStateManager">
@@ -34,14 +37,11 @@
     <open-files />
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
-    <connection id="5c34ce96-9043-41ef-ae0d-6f1e0f2552cf" />
+    <connection id="c795c548-eba7-4009-aeef-158b9ccaa921" />
   </component>
   <component name="DBNavigator.Project.DatasetFilterManager">
-    <filter-actions connection-id="5c34ce96-9043-41ef-ae0d-6f1e0f2552cf" dataset="Schedule.sqlite_sequence" active-filter-id="e5285275-7365-46cb-8f27-b2646101de4a">
-      <filter id="e5285275-7365-46cb-8f27-b2646101de4a" name="Filter 1" temporary="false" custom-name="false" type="basic" join-type="AND">
-        <condition column="name" operator="=" value="" active="true" />
-      </filter>
-    </filter-actions>
+    <filter-actions connection-id="c795c548-eba7-4009-aeef-158b9ccaa921" dataset="main.event" active-filter-id="" />
+    <filter-actions connection-id="c795c548-eba7-4009-aeef-158b9ccaa921" dataset="main.android_metadata" active-filter-id="" />
   </component>
   <component name="DBNavigator.Project.ExecutionManager">
     <retain-sticky-names value="false" />
@@ -52,7 +52,7 @@
       <group-entries value="true" />
       <execution-inputs />
     </execution-history>
-    <argument-values-cache />
+    <execution-variables-cache />
   </component>
   <component name="DBNavigator.Project.ObjectQuickFilterManager">
     <last-used-operator value="EQUAL" />
@@ -60,7 +60,7 @@
   </component>
   <component name="DBNavigator.Project.Settings">
     <connections>
-      <connection id="5c34ce96-9043-41ef-ae0d-6f1e0f2552cf" active="true" signed="true">
+      <connection id="c795c548-eba7-4009-aeef-158b9ccaa921" active="true" signed="true">
         <database>
           <name value="Connection" />
           <description value="" />
@@ -77,7 +77,7 @@
           <tns-folder value="" />
           <tns-profile value="" />
           <files>
-            <file path="D:\Schedule.db" schema="Schedule" />
+            <file path="D:\app-database.db" schema="main" />
           </files>
           <type value="NONE" />
           <user value="" />

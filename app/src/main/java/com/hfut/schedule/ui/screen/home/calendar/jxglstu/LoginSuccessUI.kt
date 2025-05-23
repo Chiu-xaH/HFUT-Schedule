@@ -56,6 +56,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -675,6 +677,10 @@ fun CalendarScreen(
                                         .clickable {
                                             // 只有一节课
                                             if(texts.size == 1) {
+                                                // 如果是考试
+                                                if(texts[0].contains("考试")) {
+                                                    return@clickable
+                                                }
                                                 val name = parseCourseName(if(showAll)tableAll[cell][0] else table[cell][0])
                                                 if(name != null) {
                                                     courseName = name
@@ -700,15 +706,15 @@ fun CalendarScreen(
                                                 val hour = it.startTime?.substringBefore(":")?.toIntOrNull() ?: 99
 
                                                 if(hour in 7..9 && j == 0) {
-                                                    texts.add(it.startTime + "\n" + it.course + "\n" + it.place)
+                                                    texts.add(it.startTime + "\n" + it.course  + "(考试)"+ "\n" + it.place?.replace("学堂",""))
                                                 } else if(hour in 10..12 && j == 1) {
-                                                    texts.add(it.startTime + "\n" + it.course + "\n" + it.place)
+                                                    texts.add(it.startTime + "\n" + it.course + "(考试)" + "\n" + it.place?.replace("学堂",""))
                                                 } else if(hour in 14..15  && j == 2) {
-                                                    texts.add(it.startTime + "\n" + it.course + "\n" + it.place)
+                                                    texts.add(it.startTime + "\n" + it.course  + "(考试)"+ "\n" + it.place?.replace("学堂",""))
                                                 } else if(hour in 16..17  && j == 3) {
-                                                    texts.add(it.startTime + "\n" + it.course + "\n" + it.place)
+                                                    texts.add(it.startTime + "\n" + it.course  + "(考试)"+ "\n" + it.place?.replace("学堂",""))
                                                 } else if(hour >= 18  && j == 4) {
-                                                    texts.add(it.startTime + "\n" + it.course + "\n" + it.place)
+                                                    texts.add(it.startTime + "\n" + it.course  + "(考试)"+ "\n" + it.place?.replace("学堂",""))
                                                 }
                                             }
                                         }
@@ -721,7 +727,10 @@ fun CalendarScreen(
                                                 if(texts.size == 1) texts[0]
                                                 else if(texts.size > 1) "${texts[0].substringBefore("\n")}\n" + "${texts.size}节课冲突\n点击查看"
                                                 else "",
-                                            fontSize = if(showAll)12.sp else 14.sp, textAlign = TextAlign.Center)
+                                            fontSize = if(showAll)12.sp else 14.sp,
+                                            textAlign = TextAlign.Center,
+                                            fontWeight = if(texts.toString().contains("考试")) FontWeight.SemiBold else FontWeight.Normal
+                                        )
                                     }
                                 }
                             }
@@ -885,7 +894,12 @@ private fun MultiCourseSheetUI(week : Int, weekday : Int, courses : List<String>
                     leadingContent = {
                         Text((index+1).toString())
                     },
+                    colors =  if(name.contains("考试")) MaterialTheme.colorScheme.errorContainer else null,
                     modifier = Modifier.clickable {
+                        // 如果是考试
+                        if(name.contains("考试")) {
+                            return@clickable
+                        }
                         courseName = name
                         showBottomSheet_totalCourse = true
                     }

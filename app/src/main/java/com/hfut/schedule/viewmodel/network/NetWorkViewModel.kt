@@ -134,7 +134,7 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs.saveInt
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.WebInfo
-import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getIdentifyID
+import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.screen.home.search.function.other.life.getLocation
 import com.hfut.schedule.ui.screen.home.search.function.one.mail.MailResponse
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
@@ -212,7 +212,8 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     val workSearchResult = SimpleStateHolder<WorkSearchResponse>()
     suspend fun searchWorks(keyword: String?, page: Int = 1,type: Int,campus: Campus) = launchRequestSimple(
         holder = workSearchResult,
-        request = { workSearch.search(
+        request = {
+            workSearch.search(
             keyword = keyword,
             page = page,
             pageSize = prefs.getString("WorkSearchRequest",MyApplication.PAGE_SIZE.toString())?.toIntOrNull() ?: MyApplication.PAGE_SIZE,
@@ -1674,7 +1675,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         })
     }
 
-    var lessonIdsNext = MutableLiveData<List<Int>>()
+    val lessonIdsNext = MutableLiveData<List<Int>>()
     fun getLessonIdsNext(cookie : String, bizTypeId : Int,studentid : String) {
         val call = (SemseterParser.getSemseter().plus(20)).toString().let { jxglstuJSON.getLessonIds(cookie,bizTypeId.toString(), it,studentid) }
         call.enqueue(object : Callback<ResponseBody> {
@@ -1772,7 +1773,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
     val loginSchoolNetResponse = SimpleStateHolder<Boolean>()
     suspend fun loginSchoolNet(campus: Campus = getCampus()) = withContext(Dispatchers.IO) {
-        getPersonInfo().username?.let { uid -> getIdentifyID()?.let { pwd ->
+        getPersonInfo().username?.let { uid -> getCardPsk()?.let { pwd ->
             when(campus) {
                 HEFEI -> {
                     showToast("暂未支持")
@@ -1799,7 +1800,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         } }
     }
     suspend fun logoutSchoolNet(campus: Campus = getCampus()) = withContext(Dispatchers.IO) {
-        getPersonInfo().username?.let { uid -> getIdentifyID()?.let { pwd ->
+        getPersonInfo().username?.let { uid -> getCardPsk()?.let { pwd ->
             when(campus) {
                 HEFEI -> {
                     showToast("暂未支持")

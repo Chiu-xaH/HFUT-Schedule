@@ -174,7 +174,7 @@ fun MainScreen(
     var showBottomSheet by remember { mutableStateOf(false) }
 
     var ifSaved by remember { mutableStateOf(!isLogin) }
-    val defaultCalendar = prefs.getInt("SWITCH_DEFAULT_CALENDAR", CourseType.COMMUNITY.code)
+    val defaultCalendar = prefs.getInt("SWITCH_DEFAULT_CALENDAR", CourseType.JXGLSTU.code)
     var swapUI by remember { mutableIntStateOf(if(ifSaved) defaultCalendar else CourseType.JXGLSTU.code) }
     var isFriend by remember { mutableStateOf(false) }
 

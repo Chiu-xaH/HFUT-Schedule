@@ -2,8 +2,6 @@ package com.hfut.schedule.ui.screen.home.calendar.communtiy
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.animateFloatAsState
@@ -60,21 +58,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
-import com.hfut.schedule.logic.util.sys.DateTimeUtils
-import com.hfut.schedule.logic.util.sys.DateTimeUtils.weeksBetween
 import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
-import com.hfut.schedule.ui.screen.home.calendar.examToCalendar
-import com.hfut.schedule.ui.screen.home.calendar.getScheduleDate
+import com.hfut.schedule.logic.util.sys.DateTimeUtils
+import com.hfut.schedule.logic.util.sys.DateTimeUtils.weeksBetween
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.appHorizontalDp
+import com.hfut.schedule.ui.screen.home.calendar.examToCalendar
+import com.hfut.schedule.ui.screen.home.calendar.getScheduleDate
 import com.hfut.schedule.ui.style.HazeBottomSheet
-import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import java.time.LocalDate
 
-@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class,
     ExperimentalMaterialApi::class
 )
@@ -181,7 +178,7 @@ fun SaveCourse(
 
 
     //切换周数
-    var Bianhuaweeks by rememberSaveable { mutableStateOf(DateTimeUtils.weeksBetween) }
+    var Bianhuaweeks by rememberSaveable { mutableStateOf(weeksBetween) }
     //var date by rememberSaveable { mutableStateOf(LocalDate.now()) }
   //  Log.d("本周", GetDate.a.toString())
 
@@ -670,15 +667,15 @@ fun SaveCourse(
                                         val hour = it.startTime?.substringBefore(":")?.toIntOrNull() ?: 99
 
                                         if(hour in 7..9 && j == 0) {
-                                            texts = it.startTime + "\n" + it.course + "\n" + it.place
+                                            texts = it.startTime + "\n" + it.course  + "(考试)"+ "\n" + it.place?.replace("学堂","")
                                         } else if(hour in 10..12 && j == 1) {
-                                            texts = it.startTime + "\n" + it.course + "\n" + it.place
+                                            texts = it.startTime + "\n" + it.course  + "(考试)"+ "\n" + it.place?.replace("学堂","")
                                         } else if(hour in 14..15  && j == 2) {
-                                            texts = it.startTime + "\n" + it.course + "\n" + it.place
+                                            texts = it.startTime + "\n" + it.course  + "(考试)"+ "\n" + it.place?.replace("学堂","")
                                         } else if(hour in 16..17  && j == 3) {
-                                            texts = it.startTime + "\n" + it.course + "\n" + it.place
+                                            texts = it.startTime + "\n" + it.course  + "(考试)"+ "\n" + it.place?.replace("学堂","")
                                         } else if(hour >= 18  && j == 4) {
-                                            texts = it.startTime + "\n" + it.course + "\n" + it.place
+                                            texts = it.startTime + "\n" + it.course  + "(考试)"+ "\n" + it.place?.replace("学堂","")
                                         }
                                     }
                                 }
@@ -693,7 +690,8 @@ fun SaveCourse(
                                 Text(
                                     text = texts,
                                     fontSize = if (showAll) 12.sp else 14.sp,
-                                    textAlign = TextAlign.Center
+                                    textAlign = TextAlign.Center,
+                                    fontWeight = if(texts.contains("考试")) FontWeight.SemiBold else FontWeight.Normal
                                 )
                             }
 

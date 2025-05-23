@@ -47,7 +47,7 @@ import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.screen.home.cube.sub.CirclePoint
 import com.hfut.schedule.ui.screen.home.cube.sub.KeyBoard
-import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getIdentifyID
+import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
@@ -223,10 +223,10 @@ private fun PayStatusUI(vm : NetWorkViewModel, payNumber : Float, json: String, 
     }
 }
 
-fun getPsk(key : String) : String? {
+suspend fun getPsk(key : String) : String? {
     var result = ""
     return try {
-        val psk = getIdentifyID()
+        val psk = getCardPsk()
         if (psk != null) {
             for(i in psk.indices) {
                 for(j in key.indices) {

@@ -97,7 +97,7 @@ fun APPScreen(navController: NavController,
         saveBoolean("SWITCHFOCUS",true,showfocus)
 //        var showBottomSheet_card by remember { mutableStateOf(false) }
 
-        val switch_default = prefs.getInt("SWITCH_DEFAULT_CALENDAR", CourseType.COMMUNITY.code)
+        val switch_default = prefs.getInt("SWITCH_DEFAULT_CALENDAR", CourseType.JXGLSTU.code)
         var currentDefaultCalendar by remember { mutableStateOf(switch_default) }
         saveInt("SWITCH_DEFAULT_CALENDAR",currentDefaultCalendar)
 
@@ -154,7 +154,7 @@ fun APPScreen(navController: NavController,
                                 },
                                 label = { Text(text = "教务(缓存)") }, selected = currentDefaultCalendar == CourseType.JXGLSTU.code)
                         }
-                        Text(text = if(currentDefaultCalendar == CourseType.COMMUNITY.code)"(荐)智慧社区课程表随时更新,若发生调选退课会有一定延迟,但会自动更新" else "教务课表跟随每次刷新登陆状态而更新,在登陆教务后,发生调选退课立即发生变动,登录过期后缓存在本地,并支持冲突课程的显示" )
+                        Text(text = if(currentDefaultCalendar == CourseType.COMMUNITY.code)"智慧社区课程表由于校方抛弃问题，更新数据跟不上,若发生调选退课会有较大延迟" else "教务课表跟随每次刷新登陆状态而更新,在登陆教务后,发生调选退课立即发生变动,登录过期后缓存在本地,并支持冲突课程的显示和调休设置" )
                     }
                 },
                 leadingContent = { Icon(painterResource(R.drawable.calendar), contentDescription = "Localized description",) },

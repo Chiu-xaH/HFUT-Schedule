@@ -47,6 +47,7 @@ import com.hfut.schedule.ui.screen.home.cube.screen.NetWorkScreen
 import com.hfut.schedule.ui.screen.home.cube.Screen
 import com.hfut.schedule.ui.screen.home.cube.screen.UIScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.DownloadMLUI
+import com.hfut.schedule.ui.screen.home.cube.sub.EditPasswordScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.FocusCardSettings
 import com.hfut.schedule.ui.screen.home.cube.sub.LockUI
 import com.hfut.schedule.ui.screen.home.cube.sub.RequestArrange
@@ -147,6 +148,11 @@ fun SettingsScreen(vm : NetWorkViewModel
                 composable(Screen.RequestRangeScreen.route) {
                     Scaffold {
                         RequestArrange(innerPaddings)
+                    }
+                }
+                composable(Screen.PasswordScreen.route) {
+                    Scaffold {
+                        EditPasswordScreen(hazeState,innerPaddings)
                     }
                 }
             }

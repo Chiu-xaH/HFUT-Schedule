@@ -349,7 +349,7 @@ fun GuestMainScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewMo
 
                 composable(FOCUS.name) {
                     Scaffold {
-                        TodayScreenNoLogin(vm,vm2,innerPadding,vmUI,ifSaved,false,pagerState,hazeState)
+                        TodayScreenNoLogin(vm,vm2,innerPadding,vmUI,pagerState,hazeState)
                     }
                     //Test()
                 }

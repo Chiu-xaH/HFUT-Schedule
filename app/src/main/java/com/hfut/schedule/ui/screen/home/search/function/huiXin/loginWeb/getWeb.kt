@@ -2,22 +2,29 @@ package com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb
 
 import com.google.gson.Gson
 import com.hfut.schedule.logic.model.zjgd.FeeResponse
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
 data class WebInfo(val fee : String, val flow : String,val postJson : String = "")
 
-fun getIdentifyID() : String? {
-    return try {
-        val seven = getPersonInfo().chineseID?.takeLast(7)
-        var id = ""
-        if (seven != null) {
-            id = if(seven.last() == 'X') seven.take(6)
-            else seven.takeLast(6)
+suspend fun getCardPsk() : String? = withContext(Dispatchers.IO) {
+    return@withContext try {
+        val isDefault = DataStoreManager.useDefaultCardPassword.first()
+        if(isDefault) {
+            val seven = getPersonInfo().chineseID?.takeLast(7)
+            if (seven == null) return@withContext null
+            // 处理X结尾
+            if(seven.last() == 'X') seven.take(6) else seven.takeLast(6)
+        } else {
+            val pwd = DataStoreManager.cardPassword.first()
+            if (pwd.isEmpty() || pwd.length != 6) null else pwd
         }
-        id
     } catch (e : Exception) {
         null
     }

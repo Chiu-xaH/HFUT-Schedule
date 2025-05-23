@@ -54,13 +54,8 @@ fun LockUI(innerPadding : PaddingValues,hazeState: HazeState) {
     saveBoolean("SWITCHPIN", false,pin)
 
     var psk = SharedPrefs.prefs.getString("pins",null)
-    // var password by remember { mutableStateOf(psk ?: "") }
     var input by remember { mutableStateOf("") }
-    // Save("pins",password )
     var showDialog by remember { mutableStateOf(psk == null) }
-
-
-//    var sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     Column(
         modifier = Modifier

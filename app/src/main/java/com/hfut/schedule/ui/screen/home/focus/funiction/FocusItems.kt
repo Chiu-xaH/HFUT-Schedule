@@ -2,17 +2,22 @@ package com.hfut.schedule.ui.screen.home.focus.funiction
 
 import android.app.Activity
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.zIndex
 import com.google.gson.Gson
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
@@ -34,10 +40,13 @@ import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.model.Schedule
 import com.hfut.schedule.logic.model.community.TodayResponse
 import com.hfut.schedule.logic.model.community.TodayResult
-import com.hfut.schedule.logic.util.network.parse.ParseJsons.getSchedule
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.getTimeStamp
 import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
+import com.hfut.schedule.logic.util.parse.isHoliday
+import com.hfut.schedule.logic.util.parse.isHolidayTomorrow
+import com.hfut.schedule.logic.util.parse.isSpecificWorkDay
+import com.hfut.schedule.logic.util.parse.isSpecificWorkDayTomorrow
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.logic.util.sys.DateTimeUtils.TimeState.ENDED
@@ -61,6 +70,7 @@ import com.hfut.schedule.ui.screen.home.cube.apiCheck
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.card.TodayInfo
 import com.hfut.schedule.ui.style.ColumnVertical
 import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.style.RowHorizontal
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
@@ -263,7 +273,6 @@ fun CommunityTodayCourseItem(index : Int, vm : NetWorkViewModel, hazeState: Haze
     val state = DateTimeUtils.getTimeState(startTime, endTime,timeNow)
 
     if (showBottomSheet) {
-
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet,
@@ -362,41 +371,44 @@ fun CommunityTomorrowCourseItem(index : Int, vm: NetWorkViewModel, hazeState: Ha
 }
 
 @Composable
-fun CustomItem(item : CustomEventDTO,hazeState: HazeState,isFuture: Boolean,activity: Activity,refresh : () -> Unit) {
+fun CustomItem(item : CustomEventDTO,hazeState: HazeState,isFuture: Boolean,activity: Activity,showTomorrow : Boolean,refresh : () -> Unit) {
     val dateTime = item.dateTime
     val nowTimeNum = (DateTimeUtils.Date_yyyy_MM_dd.replace("-","") + DateTimeUtils.Time_HH_MM.replace(":","")).toLong()
+    val nowDateNum = (DateTimeUtils.Date_yyyy_MM_dd.replace("-","")).toLong()
     val endNum = with(dateTime.end) { "$year${parseTimeItem(month)}${parseTimeItem(day)}${parseTimeItem(hour)}${parseTimeItem(minute)}" }.toLong()
 
     if(item.type == CustomEventType.SCHEDULE) {
-        val startNum = with(dateTime.start) { "$year${parseTimeItem(month)}${parseTimeItem(day)}${parseTimeItem(hour)}${parseTimeItem(minute)}" }.toLong()
-        if(nowTimeNum in startNum .. endNum) {
+        val tomorrowDateNum = (DateTimeUtils.tomorrow_YYYY_MM_DD.replace("-","")).toLong()
+        val startNum = with(dateTime.start) { "$year${parseTimeItem(month)}${parseTimeItem(day)}" }.toLong()
+        val isTomorrow = tomorrowDateNum == startNum
+        if(nowTimeNum <= endNum && (nowDateNum == startNum || (isTomorrow && showTomorrow)) ) {
             // 显示在首页
             if(!isFuture)
-                CustomItemUI(item, isFuture, activity, hazeState, refresh = refresh)
+                CustomItemUI(item, isFuture, activity, hazeState,isTomorrow = isTomorrow && showTomorrow, refresh = refresh)
         } else {
             // 显示在第二页
             if(isFuture)
                 // 判断是否过期
-                CustomItemUI(item, isFuture, activity, hazeState, isOutOfDate = nowTimeNum > endNum, refresh)
+                CustomItemUI(item, isFuture, activity, hazeState, isOutOfDate = nowTimeNum > endNum,isTomorrow = false, refresh)
         }
     } else {
         // 今天截止 并且尚未截止
         if((endNum / 10000 == nowTimeNum  / 10000) && (endNum % 10000 >= nowTimeNum % 10000)) {
             // 显示在首页
             if(!isFuture)
-                CustomItemUI(item, isFuture, activity, hazeState, refresh = refresh)
+                CustomItemUI(item, isFuture, activity, hazeState,isTomorrow = false, refresh = refresh)
         } else {
             // 显示在第二页
             if(isFuture)
                 // 判断是否过期
-                CustomItemUI(item, isFuture, activity, hazeState, isOutOfDate = nowTimeNum > endNum, refresh = refresh)
+                CustomItemUI(item, isFuture, activity, hazeState, isTomorrow = false,isOutOfDate = nowTimeNum > endNum, refresh = refresh)
         }
     }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CustomItemUI(item: CustomEventDTO,isFuture: Boolean,activity: Activity,hazeState: HazeState,isOutOfDate : Boolean = false,refresh: () -> Unit) {
+fun CustomItemUI(item: CustomEventDTO,isFuture: Boolean,activity: Activity,hazeState: HazeState,isOutOfDate : Boolean = false,isTomorrow : Boolean,refresh: () -> Unit) {
     val title = item.title
     val description = item.description
     val dateTime = item.dateTime
@@ -427,11 +439,20 @@ fun CustomItemUI(item: CustomEventDTO,isFuture: Boolean,activity: Activity,hazeS
         overlineContent = { Text(text = item.remark,textDecoration = if(isOutOfDate) TextDecoration.LineThrough else TextDecoration.None) },
         supportingContent = { description?.let { Text(text = it,textDecoration = if(isOutOfDate) TextDecoration.LineThrough else TextDecoration.None) } },
         leadingContent = {
-            Icon(
-                painterResource(if(item.type == CustomEventType.SCHEDULE) R.drawable.calendar else R.drawable.net),
-                contentDescription = "Localized description",
-                tint = if(isOutOfDate) LocalContentColor.current.copy(.5f) else LocalContentColor.current
-            )
+            ColumnVertical {
+                Icon(
+                    painterResource(if(item.type == CustomEventType.SCHEDULE) R.drawable.calendar else R.drawable.net),
+                    contentDescription = "Localized description",
+                    tint = if(isOutOfDate) LocalContentColor.current.copy(.5f) else LocalContentColor.current
+                )
+                if(isTomorrow) {
+                    Icon(
+                        painterResource(R.drawable.exposure_plus_1),
+                        contentDescription = "Localized description",
+                    )
+                }
+            }
+
         },
         trailingContent = {
             ColumnVertical {
@@ -461,6 +482,9 @@ fun CustomItemUI(item: CustomEventDTO,isFuture: Boolean,activity: Activity,hazeS
                             Text("今日截止")
                         }
                     }
+                }
+                if(isTomorrow) {
+                    Text("明天")
                 }
                 Text(if(isOutOfDate) "已过期" else if(item.supabaseId == null)"本地" else "云端导入")
             }
@@ -522,44 +546,63 @@ fun TodayUI(hazeState: HazeState) {
     }
 
     val list = getCourseINFO(weekdayTomorrow,week)
-    val time = if(list.size < 1)
+    val time = if(list.isEmpty())
         ""
     else list[0][0].classTime.substringBefore(":")
 
-    //判断明天是否需要调休
-    var rest by  remember { mutableStateOf(false) }
-    val schedule = getSchedule()
-    for(element in schedule) {
-        if(element.title.contains("调休")) {
-            if(element.time.substringBefore(" ") == DateTimeUtils.tomorrow_MM_DD) {
-                rest = true
-            }
-        }
-    }
+//    //判断明天是否需要调休
+//    var rest by  remember { mutableStateOf(false) }
+//    val schedule = getSchedule()
+//    for(element in schedule) {
+//        if(element.title.contains("调休")) {
+//            if(element.time.substringBefore(" ") == DateTimeUtils.tomorrow_MM_DD) {
+//                rest = true
+//            }
+//        }
+//    }
 
     Box(modifier = Modifier.clickable { showBottomSheet = true }) {
         if( getToday()?.todayExam?.courseName == null &&
             getToday()?.todayCourse?.courseName == null &&
             getToday()?.todayActivity?.activityName == null &&
             getToday()?.bookLending?.bookName == null) {
-
-            TransplantListItem(
-                headlineContent = { ScrollText(text = if(rest) "有调休安排" else if( time == "08")"明天有早八" else if(time == "10") "明天有早十"  else if(time == "14" || time == "16" || time == "19" )  "明天睡懒觉" else "明天没有课") },
-                overlineContent = { ScrollText(text = "明天") },
-                leadingContent = { Icon(painter = painterResource(  if(rest) R.drawable.error else if( time == "08") R.drawable.sentiment_sad else if (time == "10") R.drawable.sentiment_dissatisfied else R.drawable.sentiment_very_satisfied) , contentDescription = "")},
-            )
+            when {
+                isHolidayTomorrow() -> {
+                    TransplantListItem(
+                        headlineContent = { ScrollText(text = "节假日休息" ) },
+                        overlineContent = { ScrollText(text = "明天") },
+                        leadingContent = { Icon(painter = painterResource(R.drawable.sentiment_very_satisfied) , contentDescription = "")},
+                    )
+                }
+                isSpecificWorkDayTomorrow() -> {
+                    TransplantListItem(
+                        headlineContent = { ScrollText(text = "有调休上课" ) },
+                        overlineContent = { ScrollText(text = "明天") },
+                        leadingContent = { Icon(painter = painterResource(R.drawable.warning) , contentDescription = "")},
+                        colors = MaterialTheme.colorScheme.errorContainer
+                    )
+                }
+                else -> {
+                    TransplantListItem(
+                        headlineContent = { ScrollText(text =  if( time == "08")"明天有早八" else if(time == "10") "明天有早十"  else if(time == "14" || time == "16" || time == "19" )  "明天睡懒觉" else "明天没有课") },
+                        overlineContent = { ScrollText(text = "今天") },
+                        leadingContent = { Icon(painter = painterResource( if( time == "08") R.drawable.sentiment_sad else if (time == "10") R.drawable.sentiment_dissatisfied else R.drawable.sentiment_very_satisfied) , contentDescription = "")},
+                    )
+                }
+            }
         } else {
             if(getToday()?.todayExam?.courseName != null) {
                 TransplantListItem(
-                    headlineContent = { ScrollText(text = getToday()?.todayExam?.courseName.toString()) },
+                    headlineContent = { ScrollText(text = (getToday()?.todayExam?.courseName.toString()).replace("学堂","")) },
                     overlineContent = { ScrollText(text = getToday()?.todayExam?.place + "  " + getToday()?.todayExam?.startTime) },
                     leadingContent = { Icon(painter = painterResource(R.drawable.draw), contentDescription = "")},
+                    modifier = Modifier.background(MaterialTheme.colorScheme.errorContainer).zIndex(3f)
                 )
             }
             if(getToday()?.todayCourse?.courseName != null) {
                 TransplantListItem(
                     headlineContent = { ScrollText(text = getToday()?.todayCourse?.courseName.toString()) },
-                    overlineContent = { ScrollText(text = getToday()?.todayCourse?.place + "  " + getToday()?.todayCourse?.startTime) },
+                    overlineContent = { ScrollText(text = getToday()?.todayCourse?.place?.replace("学堂","") + " " + getToday()?.todayCourse?.startTime) },
                     leadingContent = { Icon(painter = painterResource(R.drawable.calendar), contentDescription = "")},
                 )
             }
@@ -577,7 +620,6 @@ fun TodayUI(hazeState: HazeState) {
                     leadingContent = { Icon(painter = painterResource(R.drawable.schedule), contentDescription = "")},
                 )
             }
-
         }
     }
 }
@@ -605,7 +647,7 @@ fun parseTimeItem(item : Int) : String = item.let {
 }
 
 @Composable
-fun JxglstuTodayCourseItem(item : JxglstuCourseSchedule, vmUI : UIViewModel, hazeState: HazeState, timeNow : String,vm : NetWorkViewModel) {
+fun JxglstuTodayCourseItem(item : JxglstuCourseSchedule, hazeState: HazeState, timeNow : String,vm : NetWorkViewModel) {
 
     val switchShowEnded = prefs.getBoolean("SWITCHSHOWENDED",true)
     //课程详情
@@ -680,7 +722,7 @@ fun JxglstuTodayCourseItem(item : JxglstuCourseSchedule, vmUI : UIViewModel, haz
 }
 
 @Composable
-fun JxglstuTomorrowCourseItem(item : JxglstuCourseSchedule, vmUI : UIViewModel, hazeState: HazeState,vm: NetWorkViewModel) {
+fun JxglstuTomorrowCourseItem(item : JxglstuCourseSchedule, hazeState: HazeState,vm: NetWorkViewModel) {
 
     val time = item.time
 
@@ -715,7 +757,7 @@ fun JxglstuTomorrowCourseItem(item : JxglstuCourseSchedule, vmUI : UIViewModel, 
 
 
 // 传入今天日期 YYYY-MM-DD 返回当天课程
-private fun getJxglstuCourse(date : String,vmUI : UIViewModel) : List<JxglstuCourseSchedule> {
+fun getJxglstuCourse(date : String,vmUI : UIViewModel) : List<JxglstuCourseSchedule> {
     val list = vmUI.jxglstuCourseScheduleList
     try {
         val bean = date.split("-")

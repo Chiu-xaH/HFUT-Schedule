@@ -26,7 +26,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,7 +44,7 @@ import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getIdentifyID
+import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.component.DepartmentIcons
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
@@ -89,7 +91,10 @@ fun PersonItems(ifSaved : Boolean) {
     val blurSize by animateDpAsState(targetValue = if (!show) 10.dp else 0.dp, label = "")
     var show2 by remember { mutableStateOf(false) }
     val blurSize2 by animateDpAsState(targetValue = if (!show2) 10.dp else 0.dp, label = "")
-
+    val scope = rememberCoroutineScope()
+    val cardPsk by produceState(initialValue = "") {
+        value = getCardPsk() ?: ""
+    }
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
@@ -261,16 +266,15 @@ fun PersonItems(ifSaved : Boolean) {
                             }
                         )
                     }
-                    getIdentifyID()?.let {
+                    cardPsk.let {
                         TransplantListItem(
                             headlineContent = {  Text(text = it) },
-                            overlineContent = { Text(text = "一卡通&校园网初始密码")},
+                            overlineContent = { Text(text = "一卡通&校园网密码")},
                             modifier = Modifier.clickable {
                                 ClipBoard.copy(it)
                             }
                         )
                     }
-
                 }
             }
 
