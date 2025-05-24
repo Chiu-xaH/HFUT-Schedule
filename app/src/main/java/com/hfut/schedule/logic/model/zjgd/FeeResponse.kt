@@ -12,6 +12,7 @@ enum class FeeType(val code : Int,val payTypeId : Int) {
     ELECTRIC_HEFEI_UNDERGRADUATE(code = 1, payTypeId = -1) ,// PAYTYPEID待定
     ELECTRIC_HEFEI_GRADUATE(code = 2, payTypeId = -1) // PAYTYPEID待定
 }
+
 data class ShowerFeeResponse(val map : ShowerFeeMap)
 data class ShowerFeeMap(val data : ShowerFee)
 data class ShowerFee(val telPhone : String,

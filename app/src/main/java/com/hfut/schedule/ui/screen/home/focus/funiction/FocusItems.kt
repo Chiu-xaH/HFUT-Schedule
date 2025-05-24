@@ -374,15 +374,18 @@ fun CommunityTomorrowCourseItem(index : Int, vm: NetWorkViewModel, hazeState: Ha
 fun CustomItem(item : CustomEventDTO,hazeState: HazeState,isFuture: Boolean,activity: Activity,showTomorrow : Boolean,refresh : () -> Unit) {
     val dateTime = item.dateTime
     val nowTimeNum = (DateTimeUtils.Date_yyyy_MM_dd.replace("-","") + DateTimeUtils.Time_HH_MM.replace(":","")).toLong()
-    val nowDateNum = (DateTimeUtils.Date_yyyy_MM_dd.replace("-","")).toLong()
+//    val nowDateNum = (DateTimeUtils.Date_yyyy_MM_dd.replace("-","")).toLong()
     val endNum = with(dateTime.end) { "$year${parseTimeItem(month)}${parseTimeItem(day)}${parseTimeItem(hour)}${parseTimeItem(minute)}" }.toLong()
+    val startNum = with(dateTime.start) { "$year${parseTimeItem(month)}${parseTimeItem(day)}${parseTimeItem(hour)}${parseTimeItem(minute)}" }.toLong()
 
     if(item.type == CustomEventType.SCHEDULE) {
-        val tomorrowDateNum = (DateTimeUtils.tomorrow_YYYY_MM_DD.replace("-","")).toLong()
-        val startNum = with(dateTime.start) { "$year${parseTimeItem(month)}${parseTimeItem(day)}" }.toLong()
-        val isTomorrow = tomorrowDateNum == startNum
-        if(nowTimeNum <= endNum && (nowDateNum == startNum || (isTomorrow && showTomorrow)) ) {
+//        val tomorrowDateNum = (DateTimeUtils.tomorrow_YYYY_MM_DD.replace("-","")).toLong()
+        val startNumSummary = with(dateTime.start) { "$year-${parseTimeItem(month)}-${parseTimeItem(day)}" }
+        val isTomorrow = DateTimeUtils.tomorrow_YYYY_MM_DD == startNumSummary
+        if(nowTimeNum in startNum..endNum || isTomorrow && showTomorrow || startNumSummary == DateTimeUtils.Date_yyyy_MM_dd) {
+//       if(nowTimeNum <= endNum && (nowDateNum == startNum || (isTomorrow && showTomorrow)) ) {
             // 显示在首页
+            // 显示在首页有三种情况1.日期等于明天（isTomorrow）并且showTomorrow；2.在进行中（nowTimeNum in start .. end）3.未开始但是今天即将开始（startNumSummary==Date.Today）
             if(!isFuture)
                 CustomItemUI(item, isFuture, activity, hazeState,isTomorrow = isTomorrow && showTomorrow, refresh = refresh)
         } else {
@@ -486,7 +489,7 @@ fun CustomItemUI(item: CustomEventDTO,isFuture: Boolean,activity: Activity,hazeS
                 if(isTomorrow) {
                     Text("明天")
                 }
-                Text(if(isOutOfDate) "已过期" else if(item.supabaseId == null)"本地" else "云端导入")
+                Text(if(isOutOfDate) "过期" else if(item.supabaseId == null)"本地" else "导入")
             }
         },
         modifier = Modifier.combinedClickable(
