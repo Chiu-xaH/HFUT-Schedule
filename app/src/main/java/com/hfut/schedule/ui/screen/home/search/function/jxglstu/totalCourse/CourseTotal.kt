@@ -48,12 +48,11 @@ import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import dev.chrisbanes.haze.HazeState
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CourseTotal(vm : NetWorkViewModel, hazeState: HazeState) {
-    val sheetState_Total = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_Total by remember { mutableStateOf(false) }
-    val CommuityTOKEN = prefs.getString("TOKEN","")
     val json = prefs.getString("courses","")
     val jsonNext = prefs.getString("coursesNext","")
 
@@ -78,8 +77,6 @@ fun CourseTotal(vm : NetWorkViewModel, hazeState: HazeState) {
             },
             showBottomSheet = showBottomSheet_Total,
             hazeState = hazeState
-//            sheetState = sheetState_Total,
-//            shape = bottomSheetRound(sheetState_Total)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
@@ -111,11 +108,7 @@ fun CourseTotal(vm : NetWorkViewModel, hazeState: HazeState) {
                         .fillMaxSize()
                 ){
                     CourseTotalUI(
-                        if(next)
-                            jsonNext
-                        else
-                            json
-                        ,
+                        if(next) jsonNext else json,
                         false,
                         sortType,
                         vm,
@@ -130,9 +123,8 @@ fun CourseTotal(vm : NetWorkViewModel, hazeState: HazeState) {
 
 fun periodsSum(json: String) : Double {
     var num = 0.0
-    //val json = prefs.getString("courses","")
-    for(i in 0 until getTotalCourse(json).size) {
-        val credit = getTotalCourse(json)[i].course.credits
+    for(i in getTotalCourse(json)) {
+        val credit = i.course.credits
         if (credit != null) {
             num += credit
         }
@@ -160,13 +152,12 @@ fun SemsterInfo(json : String?) {
 
 }
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CourseTotalForApi(modifier: Modifier = Modifier, vm: NetWorkViewModel, isIconOrText : Boolean = false, next : Boolean = false, hazeState: HazeState, onNextChange : (() -> Unit)? = null) {
-    val sheetState_Total = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_Total by remember { mutableStateOf(false) }
 
-    //
     var next2 by remember { mutableStateOf(false) }
     val json = prefs.getString("courses","")
     val jsonNext = prefs.getString("coursesNext","")
@@ -191,8 +182,6 @@ fun CourseTotalForApi(modifier: Modifier = Modifier, vm: NetWorkViewModel, isIco
             },
             showBottomSheet = showBottomSheet_Total,
             hazeState = hazeState
-//            sheetState = sheetState_Total,
-//            shape = bottomSheetRound(sheetState_Total)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),

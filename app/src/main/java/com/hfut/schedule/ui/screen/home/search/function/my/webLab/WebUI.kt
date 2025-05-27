@@ -33,7 +33,6 @@ import dev.chrisbanes.haze.HazeState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WebUI(hazeState: HazeState) {
-    val sheetState_Web = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_Web by remember { mutableStateOf(false) }
 
 
@@ -53,8 +52,6 @@ fun WebUI(hazeState: HazeState) {
             onDismissRequest = { showBottomSheet_Web = false },
             showBottomSheet = showBottomSheet_Web,
             hazeState = hazeState,
-//            sheetState = sheetState_Web,
-//            shape = bottomSheetRound(sheetState_Web)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),

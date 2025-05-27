@@ -41,6 +41,7 @@ import com.hfut.schedule.ui.screen.home.search.function.other.xueXin.XueXin
 import com.hfut.schedule.ui.component.SmallCard
 import com.hfut.schedule.ui.screen.home.search.function.school.alumni.Alumni
 import com.hfut.schedule.ui.screen.home.search.function.my.holiday.Holiday
+import com.hfut.schedule.ui.screen.home.search.function.other.wechat.WeChatGo
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
 import dev.chrisbanes.haze.HazeState
@@ -80,7 +81,8 @@ fun SearchScreenNoLogin(vm : NetWorkViewModel, ifSaved : Boolean, innerPaddings 
         "教师 老师" to { TeacherSearch(vm,hazeState) },
         "大创 大学生创新创业" to { IETP() },
         "就业 实习 春招 双选 秋招" to { Work(hazeState,vm) },
-        "校友 毕业" to { Alumni() },
+        "微信专区 校友 毕业 第二课堂 今日校园 学工系统 请假 助学金 奖学金 贫困 寝室 心理 日常 空教室 教务 同班同学 快递 取件码 团员 团建" to { WeChatGo(hazeState) },
+//        "校友 毕业" to { Alumni() },
         "国家法定节假日 假期 节日" to { Holiday(hazeState) },
     )
 

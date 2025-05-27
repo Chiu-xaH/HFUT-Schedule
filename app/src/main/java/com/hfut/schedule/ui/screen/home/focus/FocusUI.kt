@@ -1,7 +1,6 @@
 package com.hfut.schedule.ui.screen.home.focus
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
@@ -25,7 +24,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -34,7 +32,6 @@ import androidx.compose.ui.Modifier
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventDTO
 import com.hfut.schedule.logic.database.entity.CustomEventType
-import com.hfut.schedule.logic.database.entity.SpecialWorkDayEntity
 import com.hfut.schedule.logic.enumeration.SortType
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.getCustomEvent
@@ -48,8 +45,6 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.logic.util.sys.JxglstuCourseSchedule
 import com.hfut.schedule.ui.component.RefreshIndicator
-import com.hfut.schedule.ui.component.showToast
-import com.hfut.schedule.ui.screen.home.calendar.communtiy.getCourseINFO
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.cube.sub.FocusCard
 import com.hfut.schedule.ui.screen.home.focus.funiction.CommunityTodayCourseItem
@@ -67,6 +62,7 @@ import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
 import com.hfut.schedule.ui.screen.home.initNetworkRefresh
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExamUI
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.getExamJXGLSTU
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -117,8 +113,8 @@ fun TodayScreen(
     val courseDataSource = prefs.getInt("SWITCH_DEFAULT_CALENDAR", CourseType.JXGLSTU.code)
 
     var lastTime by remember { mutableStateOf("00:00") }
-    var tomorrowCourseList by remember { mutableStateOf<List<List<courseDetailDTOList>>>(emptyList()) }
-    var todayCourseList by remember { mutableStateOf<List<List<courseDetailDTOList>>>(emptyList()) }
+    var tomorrowCourseList by remember { mutableStateOf<List<courseDetailDTOList>>(emptyList()) }
+    var todayCourseList by remember { mutableStateOf<List<courseDetailDTOList>>(emptyList()) }
     var jxglstuLastTime by remember { mutableStateOf("00:00") }
     var tomorrowJxglstuList by remember { mutableStateOf<List<JxglstuCourseSchedule>>(emptyList()) }
     var todayJxglstuList by remember { mutableStateOf<List<JxglstuCourseSchedule>>(emptyList()) }
@@ -151,12 +147,10 @@ fun TodayScreen(
                     when (weekdayToday) { 0 -> weekdayToday = 7 }
                     //判断是否上完今天的课
                     val week = DateTimeUtils.weeksBetween.toInt()
-                    todayCourseList = getCourseINFO(weekdayToday,week)
+                    todayCourseList = getCourseInfoFromCommunity(weekdayToday,week).flatten().distinct()
                     val lastCourse = todayCourseList.lastOrNull()
-                    lastTime = if(lastCourse != null) {
-                        lastCourse[0].classTime.substringAfter("-")
-                    } else { "00:00" }
-                    tomorrowCourseList = getCourseINFO(weekDayTomorrow,nextWeek)
+                    lastTime = lastCourse?.classTime?.substringAfter("-") ?: "00:00"
+                    tomorrowCourseList = getCourseInfoFromCommunity(weekDayTomorrow,nextWeek).flatten().distinct()
                 }
                 CourseType.JXGLSTU.code -> {
                     todayJxglstuList = specialWorkToday?.let { getJxglstuCourse(it,vmUI) } ?: getTodayJxglstuCourse(vmUI)
@@ -208,7 +202,15 @@ fun TodayScreen(
     Box(modifier = Modifier.fillMaxSize().pullRefresh(states)) {
         //lastTime字符串一定得到HH:MM格式，封装一个函数获取本地时间，再写代码比较两者
         HorizontalPager(state = state) { page ->
-            val showTomorrow = DateTimeUtils.compareTime(jxglstuLastTime) != DateTimeUtils.TimeState.NOT_STARTED
+            val showTomorrow = when(courseDataSource) {
+                CourseType.COMMUNITY.code -> {
+                    DateTimeUtils.compareTime(lastTime) != DateTimeUtils.TimeState.NOT_STARTED
+                }
+                CourseType.JXGLSTU.code -> {
+                    DateTimeUtils.compareTime(jxglstuLastTime) != DateTimeUtils.TimeState.NOT_STARTED
+                }
+                else -> true
+            }
             Scaffold {
                 LazyColumn(state = scrollState) {
                     item { Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding())) }
@@ -218,24 +220,34 @@ fun TodayScreen(
                             //课表
                             when(courseDataSource) {
                                 CourseType.COMMUNITY.code -> {
-                                    if (showTomorrow)
-                                        items(tomorrowCourseList.size) { item -> CommunityTomorrowCourseItem(index = item,vm,hazeState) }
-                                    else
-                                        items(todayCourseList.size) { item -> CommunityTodayCourseItem(index = item,vm, hazeState,timeNow) }
+                                    if (showTomorrow) {
+                                        if(!isHolidayTomorrow()) {
+                                            items(tomorrowCourseList.size) { item -> CommunityTomorrowCourseItem(list = tomorrowCourseList[item],vm,hazeState) }
+                                        }
+                                    } else {
+                                        if(!isHoliday()) {
+                                            items(todayCourseList.size) { item -> CommunityTodayCourseItem(list = todayCourseList[item],vm, hazeState,timeNow) }
+                                        }
+                                    }
                                 }
                                 CourseType.JXGLSTU.code -> {
-                                    if (DateTimeUtils.compareTime(jxglstuLastTime) != DateTimeUtils.TimeState.NOT_STARTED)
-                                        tomorrowJxglstuList.let { list ->
-                                            items(list.size) { item ->
-                                                JxglstuTomorrowCourseItem(list[item], hazeState,vm)
+                                    if (showTomorrow) {
+                                        if(!isHolidayTomorrow()) {
+                                            tomorrowJxglstuList.let { list ->
+                                                items(list.size) { item ->
+                                                    JxglstuTomorrowCourseItem(list[item], hazeState,vm)
+                                                }
                                             }
                                         }
-                                    else
-                                        todayJxglstuList.let { list ->
-                                            items(list.size) { item ->
-                                                JxglstuTodayCourseItem(list[item], hazeState,timeNow,vm)
+                                    } else {
+                                        if(!isHoliday()) {
+                                            todayJxglstuList.let { list ->
+                                                items(list.size) { item ->
+                                                    JxglstuTodayCourseItem(list[item], hazeState,timeNow,vm)
+                                                }
                                             }
                                         }
+                                    }
                                 }
                                 CourseType.NEXT.code -> {}
                             }
@@ -302,7 +314,7 @@ fun TodayScreen(
                                     CourseType.COMMUNITY.code -> {
                                         if (DateTimeUtils.compareTime(lastTime) == DateTimeUtils.TimeState.NOT_STARTED) {
                                             items(tomorrowCourseList.size) { item ->
-                                                CommunityTomorrowCourseItem(index = item,vm,hazeState)
+                                                CommunityTomorrowCourseItem(list = tomorrowCourseList[item],vm,hazeState)
                                             }
                                         }
                                     }

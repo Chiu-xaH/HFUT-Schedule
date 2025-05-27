@@ -95,9 +95,9 @@ import com.hfut.schedule.ui.component.ScrollText
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.component.showToast
-import com.hfut.schedule.ui.screen.home.calendar.communtiy.SaveCourse
+import com.hfut.schedule.ui.screen.home.calendar.communtiy.CommunityCourseTableUI
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.ScheduleTopDate
-import com.hfut.schedule.ui.screen.home.calendar.jxglstu.CalendarScreen
+import com.hfut.schedule.ui.screen.home.calendar.jxglstu.JxglstuCourseTableUI
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.calendar.multi.CustomSchedules
 import com.hfut.schedule.ui.screen.home.calendar.multi.MultiScheduleSettings
@@ -108,6 +108,7 @@ import com.hfut.schedule.ui.screen.home.focus.TodayScreen
 import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventFloatButton
 import com.hfut.schedule.ui.screen.home.search.SearchFuncs
 import com.hfut.schedule.ui.screen.home.search.SearchScreen
+import com.hfut.schedule.ui.screen.home.search.function.community.termInfo.ApiForTermInfo
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.NotificationItems
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.getNotifications
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.CourseTotalForApi
@@ -485,7 +486,12 @@ fun MainScreen(
                             actions = {
                                 when(targetPage){
                                     COURSES -> {
-                                        CourseTotalForApi(vm=vm, isIconOrText = true, hazeState = hazeState)
+                                        if(isFriend) {
+                                            ApiForTermInfo(swapUI.toString(),hazeState)
+                                        } else {
+                                            CourseTotalForApi(vm=vm, isIconOrText = true, hazeState = hazeState)
+                                        }
+
                                         IconButton(onClick = {
                                             showBottomSheet_multi = true
                                         }) {
@@ -614,15 +620,15 @@ fun MainScreen(
                             // 非好友课表
                             when (swapUI) {
                                 // 社区 1
-                                CourseType.COMMUNITY.code -> SaveCourse(showAll, innerPadding,vmUI, onDateChange = { new -> today = new}, today = today, vm = vm, hazeState = hazeState)
+                                CourseType.COMMUNITY.code -> CommunityCourseTableUI(showAll, innerPadding,vmUI, onDateChange = { new -> today = new}, today = today, vm = vm, hazeState = hazeState)
                                 // 教务 0
-                                CourseType.JXGLSTU.code -> CalendarScreen(showAll,vm,innerPadding,vmUI,if(isLogin) webVpn else false,vm2,isLogin,{ newDate -> today = newDate},today,hazeState)
+                                CourseType.JXGLSTU.code -> JxglstuCourseTableUI(showAll,vm,innerPadding,vmUI,if(isLogin) webVpn else false,isLogin,{ newDate -> today = newDate},today,hazeState)
                                 // 自定义导入课表 数据库id+3=swapUI
                                 else -> CustomSchedules(showAll,innerPadding,vmUI,swapUI-3,{newDate-> today = newDate}, today)
                             }
                         }
                         else // 好友课表 swapUI为学号
-                            SaveCourse(showAll,innerPadding,vmUI,friendUserName = swapUI.toString(),onDateChange = { new -> today = new}, today = today,vm,hazeState)
+                            CommunityCourseTableUI(showAll,innerPadding,vmUI,friendUserName = swapUI.toString(),onDateChange = { new -> today = new}, today = today,vm,hazeState)
                     }
 
                 }

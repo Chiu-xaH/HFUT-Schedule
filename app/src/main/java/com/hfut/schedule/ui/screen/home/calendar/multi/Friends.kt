@@ -75,7 +75,6 @@ fun getFriendsCourse(studentId : String,vm : NetWorkViewModel) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddCourseUI(vm: NetWorkViewModel, hazeState: HazeState) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
     if (showBottomSheet) {
         HazeBottomSheet(

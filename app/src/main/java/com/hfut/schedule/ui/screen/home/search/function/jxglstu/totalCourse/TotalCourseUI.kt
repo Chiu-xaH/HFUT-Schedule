@@ -3,6 +3,7 @@ package com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,7 +20,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -28,10 +31,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import com.google.gson.Gson
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.database.entity.CustomEventType
+import com.hfut.schedule.logic.enumeration.SortType
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.logic.model.jxglstu.CourseSearchResponse
 import com.hfut.schedule.logic.model.jxglstu.lessonResponse
 import com.hfut.schedule.logic.model.jxglstu.lessons
+import com.hfut.schedule.logic.util.network.toTimestampWithOutT
 import com.hfut.schedule.logic.util.sys.ClipBoard
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.permit
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.ApiToFailRate
@@ -55,31 +61,27 @@ import dev.chrisbanes.haze.HazeState
 @Composable
 fun CourseTotalUI(json : String?, isSearch : Boolean, sortType: Boolean, vm : NetWorkViewModel, hazeState: HazeState) {
 
-    val list = getTotalCourse(json)
-    if(sortType)
-        list.sortBy { it.scheduleWeeksInfo?.substringBefore("~")?.toIntOrNull() }
-    else list.sortBy { it.course.credits }
+    val list = remember { getTotalCourse(json) }
 
-    var numItem by remember { mutableStateOf(0) }
-   // var sortType by remember { mutableStateOf(true) }
 
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val sortList =  if(sortType)
+        list.sortedBy { it.scheduleWeeksInfo?.substringBefore("~")?.toIntOrNull() }
+    else list.sortedBy { it.course.credits }
+
+    var numItem by remember { mutableIntStateOf(0) }
+
     var showBottomSheet by remember { mutableStateOf(false) }
-    //val json = prefs.getString("courses","")
     if (showBottomSheet) {
-
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet,
             hazeState = hazeState
-//            sheetState = sheetState,
-//            shape = bottomSheetRound(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    HazeBottomSheetTopBar(list[numItem].course.nameZh)
+                    HazeBottomSheetTopBar(sortList[numItem].course.nameZh)
                 },
             ) { innerPadding ->
                 Column(
@@ -87,28 +89,28 @@ fun CourseTotalUI(json : String?, isSearch : Boolean, sortType: Boolean, vm : Ne
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    DetailItems(list[numItem],vm,hazeState)
+                    DetailItems(sortList[numItem],vm,hazeState)
                 }
             }
         }
     }
-    if(getTotalCourse(json).size != 0) {
+    if(list.isNotEmpty()) {
         LazyColumn {
             item { SemsterInfo(json) }
-            items(list.size) { item ->
-                val weeksInfo = list[item].scheduleWeeksInfo
+            items(sortList.size, key = { sortList[it].code }) { item ->
+                val data = sortList[item]
+                val weeksInfo = data.scheduleWeeksInfo
 
-                val code = list[item].code
-
+                val code = data.code
                 AnimationCardListItem(
-                    headlineContent = {  Text(list[item].course.nameZh) },
+                    headlineContent = {  Text(data.course.nameZh) },
                     overlineContent = { ScrollText(text =
-                    "学分 ${list[item].course.credits}" +
-                            (if(list[item].scheduleWeeksInfo != null) " | $weeksInfo" else "") +
-                            (if(isSearch && code.contains("--")) " | " + code.substringAfter("--") + "班" else "")
+                        "学分 ${data.course.credits}" +
+                                (if(data.scheduleWeeksInfo != null) " | $weeksInfo" else "") +
+                                (if(isSearch && code.contains("--")) " | " + code.substringAfter("--") + "班" else "")
                     ) },
                     trailingContent = {
-                        val type = list[item].courseType.nameZh
+                        val type = data.courseType.nameZh
 
                         ColumnVertical() {
                             if(type.contains("选修") || type.contains("慕课") || type.contains("公选")) {
@@ -117,19 +119,20 @@ fun CourseTotalUI(json : String?, isSearch : Boolean, sortType: Boolean, vm : Ne
                                 Text("实践")
                             }
                             if(!type.contains("实践")) {
-                                if(list[item].scheduleWeeksInfo == null && list[item].scheduleText.dateTimePlacePersonText.textZh == null) {
+                                if(data.scheduleWeeksInfo == null && data.scheduleText.dateTimePlacePersonText.textZh == null) {
                                     Text("非教室")
                                 }
                             }
                         }
                     },
                     leadingContent = {
-                        list[item].openDepartment.nameZh.let { DepartmentIcons(name = it) }
+                        data.openDepartment.nameZh.let { DepartmentIcons(name = it) }
                     },
                     modifier = Modifier.clickable {
                         showBottomSheet = true
                         numItem = item
                     },
+                    cardModifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null),
                     index = item
                 )
             }

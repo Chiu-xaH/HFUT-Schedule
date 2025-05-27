@@ -19,7 +19,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.one.datas
 import com.hfut.schedule.logic.util.getExceptionDetail
 import com.hfut.schedule.logic.util.getKeyStackTrace
 import com.hfut.schedule.logic.util.network.PARSE_ERROR_CODE
@@ -31,34 +30,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
-//@Composable
-//fun CommonNetworkScreen(
-//    uiState: UiState<*,*>,
-//    modifier: Modifier = Modifier.fillMaxSize(),
-//    successContent : @Composable () -> Unit,
-//) = Box(modifier = modifier) {
-//    when (uiState) {
-//        UiState.Prepare -> {
-//            CenterScreen {
-//                EmptyUI()
-//            }
-//        }
-//        is UiState.Error -> {
-//            CenterScreen {
-//                val e = uiState.errorBody
-//                ErrorUI("错误 $e")
-//            }
-//        }
-//        UiState.Loading -> {
-//            LoadingScreen()
-//        }
-//        is UiState.Success -> {
-//            successContent()
-//        }
-//    }
-//}
-
 
 @Composable
 fun CommonNetworkScreen(

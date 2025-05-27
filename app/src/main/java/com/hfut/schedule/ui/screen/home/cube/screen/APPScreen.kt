@@ -154,7 +154,7 @@ fun APPScreen(navController: NavController,
                                 },
                                 label = { Text(text = "教务(缓存)") }, selected = currentDefaultCalendar == CourseType.JXGLSTU.code)
                         }
-                        Text(text = if(currentDefaultCalendar == CourseType.COMMUNITY.code)"智慧社区课程表由于校方抛弃问题，更新数据跟不上,若发生调选退课会有较大延迟" else "教务课表跟随每次刷新登陆状态而更新,在登陆教务后,发生调选退课立即发生变动,登录过期后缓存在本地,并支持冲突课程的显示和调休设置" )
+                        Text(text = if(currentDefaultCalendar == CourseType.COMMUNITY.code)"智慧社区课表有调课不需要像教务数据源自己手动刷新，基本次日会自动刷新，但是有时会抽风，对面给的数据不新鲜，转专业用户更推荐使用教务数据源" else "教务课表跟随每次刷新登陆状态而更新,在登陆教务后,发生调选退课立即发生变动,登录过期后缓存在本地,支持调休设置" )
                     }
                 },
                 leadingContent = { Icon(painterResource(R.drawable.calendar), contentDescription = "Localized description",) },
@@ -180,13 +180,6 @@ fun APPScreen(navController: NavController,
                                 selected = showStorageFocus,
                                 label = { Text(text = "本地") })
                         }
-
-                        FilterChip(
-                            onClick = {
-                                showToast("正在开发")
-                            },
-                            selected = true,
-                            label = { Text(text = "共建平台(新接口)") },)
 
                     }
                 },
@@ -237,14 +230,14 @@ fun APPScreen(navController: NavController,
                 trailingContent = { Switch(checked = faststart, onCheckedChange = {faststartch -> faststart = faststartch }) },
                 modifier = Modifier.clickable { faststart = !faststart }
             )
-            TransplantListItem(
-                headlineContent = { Text(text = "支付验证") },
-                supportingContent = {
-                    Text(text = "调用校园卡进行网电缴费时,启用生物识别快速验证")
-                },
-                leadingContent = { Icon(painterResource(R.drawable.lock), contentDescription = "Localized description",) },
-                modifier = Modifier.clickable { navController.navigate(Screen.LockScreen.route) }
-            )
+//            TransplantListItem(
+//                headlineContent = { Text(text = "支付验证") },
+//                supportingContent = {
+//                    Text(text = "调用校园卡进行网电缴费时,启用生物识别快速验证")
+//                },
+//                leadingContent = { Icon(painterResource(R.drawable.lock), contentDescription = "Localized description",) },
+//                modifier = Modifier.clickable { navController.navigate(Screen.LockScreen.route) }
+//            )
             TransplantListItem(
                 headlineContent = { Text(text = "图片验证码自动填充") },
                 supportingContent = {
@@ -265,12 +258,12 @@ fun APPScreen(navController: NavController,
                     }
                 }
             )
-            TransplantListItem(
-                headlineContent = { Text(text = "BenchMark(编译优化)") },
-                supportingContent = { Text(text = "通过记录用户使用习惯，空闲时间预编译常用部分，以加速应用(效果不显著)") },
-                leadingContent = { Icon(painterResource(R.drawable.rocket_launch), contentDescription = "Localized description",) },
-                trailingContent = { Switch(checked = false, onCheckedChange = {}, enabled = false) },
-            )
+//            TransplantListItem(
+//                headlineContent = { Text(text = "BenchMark(编译优化)") },
+//                supportingContent = { Text(text = "通过记录用户使用习惯，空闲时间预编译常用部分，以加速应用(效果不显著)") },
+//                leadingContent = { Icon(painterResource(R.drawable.rocket_launch), contentDescription = "Localized description",) },
+//                trailingContent = { Switch(checked = false, onCheckedChange = {}, enabled = false) },
+//            )
             Spacer(Modifier.height(innerPaddings.calculateBottomPadding()))
 
         }

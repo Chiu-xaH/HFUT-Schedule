@@ -20,6 +20,7 @@
         <package android:name="com.xuetangx.ykt" />
         <package android:name="com.chaoxing.mobile" />
         <package android:name="com.netease.edu.ucmooc" />
+        <package android:name="com.tencent.mm" />
     </queries>
 
     <application
@@ -134,16 +135,13 @@
             android:theme="@style/Theme.App.Starting">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter
                 android:scheme="http"
                 tools:ignore="AppLinkUrlError">
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
-
                 <data android:mimeType="text/plain" />
             </intent-filter>
 

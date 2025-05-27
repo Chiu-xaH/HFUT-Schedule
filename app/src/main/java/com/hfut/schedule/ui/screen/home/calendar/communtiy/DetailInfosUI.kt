@@ -1,8 +1,6 @@
 package com.hfut.schedule.ui.screen.home.calendar.communtiy
 
 import android.annotation.SuppressLint
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,14 +15,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,64 +26,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.google.gson.Gson
-import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.logic.model.community.CourseTotalResponse
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.DetailItems
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourse
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getTotalCourse
 import com.hfut.schedule.ui.component.cardNormalColor
-import com.hfut.schedule.ui.component.BottomSheetTopBar
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.MyCustomCard
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.style.HazeBottomSheet
-import com.hfut.schedule.ui.style.bottomSheetRound
 import dev.chrisbanes.haze.HazeState
-
-
-fun getCouses(Week : Int,friendUserName : String? = null) : Array<Array<List<courseDetailDTOList>>> {
-    val dayArray = Array(7) { Array<List<courseDetailDTOList>>(12) { emptyList() } }
-    val result = getCourse(friendUserName)
-    for (i in result.indices){
-        val Name = result[i].courseName
-        val List = result[i].courseDetailDTOList
-        for(j in List.indices) {
-            val section = List[j].section
-            val weekCount = List[j].weekCount
-            val week = List[j].week
-            weekCount.forEach { item ->
-                if(item == Week) {
-                    List[j].name = Name
-                    dayArray[week - 1][section - 1] = listOf(List[j])
-                }
-            }
-        }
-    }
-    return dayArray
-}
-
-fun getCourseINFO(weekday : Int,Week : Int,friendUserName : String? = null) : MutableList<List<courseDetailDTOList>> {
-    val new = mutableListOf<List<courseDetailDTOList>>()
-    return try {
-        if(weekday <= 7) {
-            val days = getCouses(Week,friendUserName)[weekday - 1]
-            for (i in days.indices){
-                if(days[i].isNotEmpty())
-                    days[i].forEach { _ -> new.add(days[i]) }
-            }
-            new
-        } else new
-    } catch (e : Exception) {
-        e.printStackTrace()
-        new
-    }
-}
 
 
 @SuppressLint("SuspiciousIndentation")
@@ -136,16 +83,25 @@ fun DetailInfos(sheet : courseDetailDTOList, isFriend : Boolean = false, vm: Net
                             }
                         )
                         TransplantListItem(
-                                headlineContent = { Text(sheet.teacher ) },
-                        leadingContent = {
-                            Icon(
-                                painterResource(R.drawable.person),
-                                contentDescription = "Localized description",
-                            )
-                        }
+                            headlineContent = { Text(sheet.teacher) },
+                            leadingContent = {
+                                Icon(
+                                    painterResource(R.drawable.person),
+                                    contentDescription = "Localized description",
+                                )
+                            }
                         )
                         TransplantListItem(
-                            headlineContent = { Text("周 ${sheet.week} 第 ${sheet.section.toString()} 节" ) },
+                            headlineContent = { Text(sheet.campus_dictText ) },
+                            leadingContent = {
+                                Icon(
+                                    painterResource(R.drawable.local_library),
+                                    contentDescription = "Localized description",
+                                )
+                            }
+                        )
+                        TransplantListItem(
+                            headlineContent = { Text("周 ${sheet.week} 第 ${sheet.section} 节" ) },
                             supportingContent = { Text(text = "周数 ${sheet.weekCount.toString().replace("[","").replace("]","")} ")},
                             leadingContent = {
                                 Icon(
@@ -156,7 +112,6 @@ fun DetailInfos(sheet : courseDetailDTOList, isFriend : Boolean = false, vm: Net
                         )
                     }
                     if(!isFriend)
-//                    MyCustomCard{
                         StyleCardListItem(
                             headlineContent = { Text( "更多信息") },
                             leadingContent = {
@@ -170,7 +125,6 @@ fun DetailInfos(sheet : courseDetailDTOList, isFriend : Boolean = false, vm: Net
                                 showBottomSheet_totalCourse = true
                             }
                         )
-//                    }
                     Spacer(modifier = Modifier.height(10.dp))
                 }
             }

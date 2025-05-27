@@ -135,8 +135,6 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.WebInfo
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
-import com.hfut.schedule.ui.screen.home.search.function.other.life.getLocation
-import com.hfut.schedule.ui.screen.home.search.function.one.mail.MailResponse
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.program.ProgramListBean
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.program.ProgramSearchItem
@@ -151,6 +149,8 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.MyApply
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.PlaceAndTime
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.TransferPostResponse
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
+import com.hfut.schedule.ui.screen.home.search.function.one.mail.MailResponse
+import com.hfut.schedule.ui.screen.home.search.function.other.life.getLocation
 import com.hfut.schedule.ui.screen.news.home.transferToPostData
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
 import kotlinx.coroutines.Dispatchers
@@ -377,19 +377,21 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         Gson().fromJson(json,ProgramSearchItem::class.java).data
     } catch (e : Exception) { throw e }
 
-    fun downloadHoliday() = {
+    fun downloadHoliday()  {
         val call = githubRaw.getYearHoliday()
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 saveString("HOLIDAY", response.body()?.string())
             }
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                t.printStackTrace()
+            }
         })
     }
 
     val postTransferResponse = SimpleStateHolder<String>()
-    suspend fun postTransfer(cookie: String, batchId: String, id : String, phoneNumber : String ) = launchRequestSimple(
+    suspend fun postTransfer(cookie: String, batchId: String, id : String, phoneNumber : String) = launchRequestSimple(
         holder = postTransferResponse,
         request = {
             jxglstuJSON.postTransfer(

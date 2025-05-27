@@ -33,8 +33,8 @@ android {
         applicationId "com.hfut.schedule"
         minSdk 26
         targetSdk 36
-        versionCode 185
-        versionName "4.15.5.1"
+        versionCode 186
+        versionName "4.15.6"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
@@ -187,5 +187,10 @@ dependencies {
     ksp libs.androidx.room.compiler
     // 协程 Room
     implementation libs.androidx.room.ktx
-    // 共享KMP模块
+    // 适配大屏 自适应布局
+//    implementation libs.androidx.window
+//    implementation libs.androidx.adaptive
+//    implementation libs.androidx.material3.adaptive.navigation.suite
+//    implementation libs.androidx.adaptive.layout
+//    implementation libs.androidx.adaptive.navigation
 }

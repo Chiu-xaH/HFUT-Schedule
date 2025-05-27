@@ -50,7 +50,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.PersonUI
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.program.Program
 import com.hfut.schedule.ui.screen.home.search.function.school.repair.Repair
 import com.hfut.schedule.ui.screen.home.search.function.my.schoolCalendar.SchoolCalendar
-import com.hfut.schedule.ui.screen.home.search.function.school.second.Second
+import com.hfut.schedule.ui.screen.home.search.function.other.wechat.WeChatGo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.selectCourse.SelectCourse
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.shower.Shower
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.survey.Survey
@@ -63,6 +63,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.practice.Practic
 import com.hfut.schedule.ui.screen.home.search.function.school.work.Work
 import com.hfut.schedule.ui.screen.home.search.function.other.xueXin.XueXin
 import com.hfut.schedule.ui.component.SmallCard
+import com.hfut.schedule.ui.screen.home.search.function.community.termInfo.TermInfo
 import com.hfut.schedule.ui.screen.home.search.function.school.alumni.Alumni
 import com.hfut.schedule.ui.screen.home.search.function.my.holiday.Holiday
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.washing.Washing
@@ -117,14 +118,15 @@ fun SearchScreen(
         "教师 老师" to { TeacherSearch(vm,hazeState) }, 
         "学费 费用 欠缴学费" to { Pay(vm,hazeState) },
         "实习" to { Practice(ifSaved) }, 
-        "第二课堂" to { Second() }, 
+        "微信专区 校友 毕业 第二课堂 今日校园 学工系统 请假 助学金 奖学金 贫困 寝室 心理 日常 空教室 教务 同班同学 快递 取件码 团员 团建" to { WeChatGo(hazeState) },
         "今日校园 学工系统 请假 助学金 奖学金 贫困 寝室 心理 日常" to { ToadyCampus(ifSaved,vm) }, 
         "大创 大学生创新创业" to { IETP() }, 
         "就业 实习 春招 双选 秋招" to { Work(hazeState,vm) },
-        "校友 毕业" to { Alumni() },
+//        "校友 毕业" to { Alumni() },
         "国家法定节假日 假期 节日" to { Holiday(hazeState) },
         "云端共建平台 信息共建 日程 网课 网址导航" to { Supabase(vm) },
         "洗衣机 慧新易校 缴费" to { Washing(hazeState) },
+        "作息" to { TermInfo(hazeState) },
         )
 
     val funcList = funcMaps.values.toList()

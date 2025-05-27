@@ -1,6 +1,7 @@
 [versions]
 accompanistSystemuicontroller = "0.31.0-alpha"
 activityCompose = "1.10.1"
+adaptive = "1.2.0-alpha06"
 animation = "1.7.0-beta06" # 1.7.0-beta06
 animationGraphicsAndroid = "1.6.1"
 appcompat = "1.6.1"
@@ -28,6 +29,7 @@ lifecycleRuntimeKtx = "2.3.1"
 lifecycleViewmodelKtx = "2.6.2"
 material = "1.0.5"
 material3 = "1.4.0-alpha12"
+material3AdaptiveNavigationSuite = "1.4.0-alpha15"
 navigationCompose = "2.8.9"
 okhttp = "4.9.0"
 profileinstaller = "1.4.1"
@@ -40,10 +42,14 @@ kotlinStdlib = "2.1.20"
 kotlinTest = "2.1.20"
 runner = "1.5.2"
 core = "1.5.0"
+window = "1.4.0"
 
 [libraries]
 accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontroller" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
+androidx-adaptive = { module = "androidx.compose.material3.adaptive:adaptive", version.ref = "adaptive" }
+androidx-adaptive-layout = { module = "androidx.compose.material3.adaptive:adaptive-layout", version.ref = "adaptive" }
+androidx-adaptive-navigation = { module = "androidx.compose.material3.adaptive:adaptive-navigation", version.ref = "adaptive" }
 androidx-animation = { module = "androidx.compose.animation:animation", version.ref = "animation" }
 androidx-animation-graphics-android = { module = "androidx.compose.animation:animation-graphics-android", version.ref = "animationGraphicsAndroid" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
@@ -65,6 +71,7 @@ androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtim
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
 androidx-material = { module = "androidx.compose.material:material", version.ref = "material" }
 androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
+androidx-material3-adaptive-navigation-suite = { module = "androidx.compose.material3:material3-adaptive-navigation-suite", version.ref = "material3AdaptiveNavigationSuite" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-profileinstaller = { module = "androidx.profileinstaller:profileinstaller", version.ref = "profileinstaller" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
@@ -77,6 +84,7 @@ androidx-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 androidx-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 androidx-uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "uiautomator" }
+androidx-window = { module = "androidx.window:window", version.ref = "window" }
 bsdiff-lib = { module = "com.github.Chiu-xaH:Bsdiff-Lib", version.ref = "bsdiffLib" }
 compose = { module = "com.github.bumptech.glide:compose", version.ref = "glideCompose" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }

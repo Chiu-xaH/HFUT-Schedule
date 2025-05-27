@@ -175,11 +175,11 @@ fun PayFor(vm : NetWorkViewModel, payNumber : Float, tipInfo : String, json : St
     Spacer(modifier = Modifier.height(20.dp))
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
         Button(onClick = {
-            if(!SharedPrefs.prefs.getBoolean("SWITCHPIN",false))
+//            if(!SharedPrefs.prefs.getBoolean("SWITCHPIN",false))
             showDialog = true
-            else {
-                showBottomSheet_pin = true
-            }
+//            else {
+//                showBottomSheet_pin = true
+//            }
         },
             interactionSource = interactionSource,
             modifier = Modifier

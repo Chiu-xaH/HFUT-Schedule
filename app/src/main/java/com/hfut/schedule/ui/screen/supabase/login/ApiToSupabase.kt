@@ -33,14 +33,18 @@ fun ApiToSupabase(vm : NetWorkViewModel) {
     val loading = uiState is SimpleUiState.Loading
     // 预加载 兼顾检查登陆状态
     LaunchedEffect(jwt,supabaseAutoCheck) {
-        if((jwt.isNotBlank() || jwt.isNotEmpty()) && supabaseAutoCheck && vm.supabaseCheckResp.value == null) {
-            vm.supabaseGetEventLatest(jwt)
-            onListenStateHolder(vm.supabaseGetEventLatestResp) { result ->
-                if(result) {
-                    showBadge = true
-                    vm.supabaseCheckResp.value = true
+        if((jwt.isNotBlank() || jwt.isNotEmpty()) && supabaseAutoCheck) {
+            if(vm.supabaseCheckResp.value == null) {
+                vm.supabaseGetEventLatest(jwt)
+                onListenStateHolder(vm.supabaseGetEventLatestResp) { result ->
+                    if(result) {
+                        showBadge = true
+                        vm.supabaseCheckResp.value = true
+                    }
                 }
             }
+        } else {
+            vm.supabaseGetEventLatestResp.emitPrepare()
         }
     }
 

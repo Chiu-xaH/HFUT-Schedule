@@ -5,12 +5,9 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -40,12 +37,11 @@ import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.model.Schedule
 import com.hfut.schedule.logic.model.community.TodayResponse
 import com.hfut.schedule.logic.model.community.TodayResult
+import com.hfut.schedule.logic.model.community.courseDetailDTOList
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.getTimeStamp
 import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
-import com.hfut.schedule.logic.util.parse.isHoliday
 import com.hfut.schedule.logic.util.parse.isHolidayTomorrow
-import com.hfut.schedule.logic.util.parse.isSpecificWorkDay
 import com.hfut.schedule.logic.util.parse.isSpecificWorkDayTomorrow
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
@@ -65,17 +61,17 @@ import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.DetailInfos
-import com.hfut.schedule.ui.screen.home.calendar.communtiy.getCourseINFO
 import com.hfut.schedule.ui.screen.home.cube.apiCheck
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.card.TodayInfo
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
 import com.hfut.schedule.ui.style.ColumnVertical
 import com.hfut.schedule.ui.style.HazeBottomSheet
-import com.hfut.schedule.ui.style.RowHorizontal
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlin.collections.flatten
 
 @Composable
 fun ScheduleItem(listItem : Schedule, isFuture: Boolean, activity : Activity) {
@@ -253,7 +249,7 @@ fun NetCourseItem(listItem : Schedule, isFuture: Boolean, activity: Activity) {
 }
 
 @Composable
-fun CommunityTodayCourseItem(index : Int, vm : NetWorkViewModel, hazeState: HazeState, timeNow : String) {
+fun CommunityTodayCourseItem(list : courseDetailDTOList, vm : NetWorkViewModel, hazeState: HazeState, timeNow : String) {
 
     val switchShowEnded = prefs.getBoolean("SWITCHSHOWENDED",true)
 
@@ -262,7 +258,8 @@ fun CommunityTodayCourseItem(index : Int, vm : NetWorkViewModel, hazeState: Haze
     var weekday = DateTimeUtils.dayWeek
     if(weekday == 0) weekday = 7
     //课程详情
-    val list = getCourseINFO(weekday,week)[index][0]
+//    val list =
+
     var showBottomSheet by remember { mutableStateOf(false) }
     val time = list.classTime
 
@@ -334,7 +331,7 @@ fun CommunityTodayCourseItem(index : Int, vm : NetWorkViewModel, hazeState: Haze
 }
 
 @Composable
-fun CommunityTomorrowCourseItem(index : Int, vm: NetWorkViewModel, hazeState: HazeState) {
+fun CommunityTomorrowCourseItem(list: courseDetailDTOList , vm: NetWorkViewModel, hazeState: HazeState) {
 
     val weekdayTomorrow = DateTimeUtils.dayWeek + 1
     var week = DateTimeUtils.weeksBetween.toInt()
@@ -344,7 +341,7 @@ fun CommunityTomorrowCourseItem(index : Int, vm: NetWorkViewModel, hazeState: Ha
     }
 
     //课程详情
-    val list = getCourseINFO(weekdayTomorrow,week)[index][0]
+//    val list = getCourseInfoFromCommunity(weekdayTomorrow,week)[index][0]
     var showBottomSheet by remember { mutableStateOf(false) }
     if (showBottomSheet) {
         HazeBottomSheet (
@@ -374,16 +371,13 @@ fun CommunityTomorrowCourseItem(index : Int, vm: NetWorkViewModel, hazeState: Ha
 fun CustomItem(item : CustomEventDTO,hazeState: HazeState,isFuture: Boolean,activity: Activity,showTomorrow : Boolean,refresh : () -> Unit) {
     val dateTime = item.dateTime
     val nowTimeNum = (DateTimeUtils.Date_yyyy_MM_dd.replace("-","") + DateTimeUtils.Time_HH_MM.replace(":","")).toLong()
-//    val nowDateNum = (DateTimeUtils.Date_yyyy_MM_dd.replace("-","")).toLong()
     val endNum = with(dateTime.end) { "$year${parseTimeItem(month)}${parseTimeItem(day)}${parseTimeItem(hour)}${parseTimeItem(minute)}" }.toLong()
     val startNum = with(dateTime.start) { "$year${parseTimeItem(month)}${parseTimeItem(day)}${parseTimeItem(hour)}${parseTimeItem(minute)}" }.toLong()
 
     if(item.type == CustomEventType.SCHEDULE) {
-//        val tomorrowDateNum = (DateTimeUtils.tomorrow_YYYY_MM_DD.replace("-","")).toLong()
         val startNumSummary = with(dateTime.start) { "$year-${parseTimeItem(month)}-${parseTimeItem(day)}" }
         val isTomorrow = DateTimeUtils.tomorrow_YYYY_MM_DD == startNumSummary
         if(nowTimeNum in startNum..endNum || isTomorrow && showTomorrow || startNumSummary == DateTimeUtils.Date_yyyy_MM_dd) {
-//       if(nowTimeNum <= endNum && (nowDateNum == startNum || (isTomorrow && showTomorrow)) ) {
             // 显示在首页
             // 显示在首页有三种情况1.日期等于明天（isTomorrow）并且showTomorrow；2.在进行中（nowTimeNum in start .. end）3.未开始但是今天即将开始（startNumSummary==Date.Today）
             if(!isFuture)
@@ -548,7 +542,7 @@ fun TodayUI(hazeState: HazeState) {
         1 -> week += 1
     }
 
-    val list = getCourseINFO(weekdayTomorrow,week)
+    val list = getCourseInfoFromCommunity(weekdayTomorrow,week)
     val time = if(list.isEmpty())
         ""
     else list[0][0].classTime.substringBefore(":")

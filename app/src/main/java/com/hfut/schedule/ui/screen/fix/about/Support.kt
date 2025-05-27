@@ -40,7 +40,7 @@ import dev.chrisbanes.haze.HazeState
 private data class SupportItemBean(val title : String,val android : String,val url : String?,val list: List<Boolean?>)
 
 @Composable
-fun Support(hazeState: HazeState,innerPadding : PaddingValues) {
+fun Support(innerPadding : PaddingValues) {
     val items = listOf(
         // 华为 小米 oppo vivo 荣耀 三星 魅族 类原生
         SupportItemBean("开屏页面","Android 8+","https://github.com/Chiu-xaH/HFUT-Schedule/blob/main/docs/CONTRAST.md#%e8%bf%9b%e5%ba%a6%e5%ae%9e%e6%97%b6%e9%80%9a%e7%9f%a5", listOf(

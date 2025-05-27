@@ -2,16 +2,16 @@ package com.hfut.schedule.logic.util.sys
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.net.Uri
 import android.webkit.CookieManager
+import androidx.core.net.toUri
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.activity.MainActivity
 import com.hfut.schedule.activity.screen.CardActivity
 import com.hfut.schedule.activity.screen.FixActivity
 import com.hfut.schedule.activity.screen.GradeActivity
 import com.hfut.schedule.activity.screen.NewsActivity
-import com.hfut.schedule.activity.screen.SuccessActivity
 import com.hfut.schedule.activity.screen.ShowerActivity
+import com.hfut.schedule.activity.screen.SuccessActivity
 import com.hfut.schedule.activity.screen.SupabaseActivity
 import com.hfut.schedule.logic.enumeration.ShowerScreen
 import com.hfut.schedule.logic.enumeration.SupabaseScreen
@@ -36,7 +36,7 @@ object Starter {
     @JvmStatic
     fun startAppUrl(url : String) {
         try {
-            val intent = Intent(Intent.ACTION_DEFAULT, Uri.parse(url))
+            val intent = Intent(Intent.ACTION_DEFAULT, url.toUri())
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             MyApplication.context.startActivity(intent)
         } catch (e : Exception) {
@@ -47,7 +47,7 @@ object Starter {
     @JvmStatic
     fun startWebUrl(url : String,cookies : String? = null) {
         try {
-            val it = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            val it = Intent(Intent.ACTION_VIEW, url.toUri())
             it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 
             if(cookies != null) {
@@ -123,7 +123,7 @@ object Starter {
     }
     @JvmStatic
     fun emailMe() {
-        val it = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:zsh0908@outlook.com"))
+        val it = Intent(Intent.ACTION_SENDTO, "mailto:zsh0908@outlook.com".toUri())
         it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         MyApplication.context.startActivity(it)
     }

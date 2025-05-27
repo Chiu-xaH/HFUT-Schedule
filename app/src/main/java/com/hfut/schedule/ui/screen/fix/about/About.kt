@@ -64,15 +64,12 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
         Spacer(modifier = Modifier.height(5.dp))
 
         var showBottomSheet by remember { mutableStateOf(false) }
-        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
         if (showBottomSheet) {
             HazeBottomSheet (
                 onDismissRequest = { showBottomSheet = false },
                 showBottomSheet = showBottomSheet,
                 hazeState = hazeState,
                 autoShape = false
-//                sheetState = sheetState,
-                //shape = Round(sheetState)
             ) {
                 Column {
                     Row(modifier = Modifier
@@ -85,15 +82,12 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
                 }
             }
         }
-        val sheetState_version = rememberModalBottomSheetState(skipPartiallyExpanded = true)
         var showBottomSheet_version by remember { mutableStateOf(false) }
         if (showBottomSheet_version) {
             HazeBottomSheet (
                 onDismissRequest = { showBottomSheet_version = false },
                 hazeState = hazeState,
                 showBottomSheet = showBottomSheet_version
-//                sheetState = sheetState_version,
-//                shape = bottomSheetRound(sheetState_version)
             ) {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
@@ -149,7 +143,7 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
                         HazeBottomSheetTopBar("功能可用性支持")
                     },
                 ) { innerPadding ->
-                    Support(hazeState,innerPadding)
+                    Support(innerPadding)
                 }
             }
         }
@@ -157,7 +151,7 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
 
         TransplantListItem(
             headlineContent = { Text(text = "推广本应用") },
-            supportingContent = { Text(text = "如果你觉得好用的话,可以替开发者多多推广\n长按分享APK安装包,点击展示下载链接,双击复制链接")},
+            supportingContent = { Text(text = "如果你觉得好用的话,可以替开发者多多推广\n长按分享APK安装包,点击展示下载链接二维码,双击复制链接")},
             leadingContent = {
                 Icon(
                     painterResource(R.drawable.ios_share),
@@ -172,10 +166,8 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
                 onDoubleClick = {
                     ClipBoard.copy(MyApplication.GITEE_UPDATE_URL + "releases/tag/Android","已将下载链接复制到剪切板")
                 }
-
             )
         )
-
 
         var version by remember { mutableStateOf(getUpdates()) }
         var showBadge by remember { mutableStateOf(false) }

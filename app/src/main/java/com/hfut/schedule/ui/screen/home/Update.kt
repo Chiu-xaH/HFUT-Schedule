@@ -2,6 +2,7 @@ package com.hfut.schedule.ui.screen.home
 
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.lifecycle.Observer
 import com.google.gson.Gson
 import com.google.gson.JsonArray

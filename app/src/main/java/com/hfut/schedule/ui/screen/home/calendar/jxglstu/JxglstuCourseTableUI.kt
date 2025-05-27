@@ -1,17 +1,15 @@
 package com.hfut.schedule.ui.screen.home.calendar.jxglstu
 
-import android.annotation.SuppressLint
 import android.os.Handler
 import android.os.Looper
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.animation.with
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,8 +25,8 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -38,12 +36,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,7 +54,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -67,6 +64,7 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import com.hfut.schedule.logic.model.community.LoginCommunityResponse
+import com.hfut.schedule.logic.model.community.courseDetailDTOList
 import com.hfut.schedule.logic.model.jxglstu.datumResponse
 import com.hfut.schedule.logic.util.network.HfutCAS
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.isNextOpen
@@ -83,13 +81,13 @@ import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
+import com.hfut.schedule.ui.screen.home.calendar.communtiy.DetailInfos
 import com.hfut.schedule.ui.screen.home.calendar.examToCalendar
 import com.hfut.schedule.ui.screen.home.calendar.getScheduleDate
 import com.hfut.schedule.ui.screen.home.calendar.next.parseCourseName
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getTotalCourse
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.UIViewModel
-import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
@@ -100,49 +98,69 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
-@OptIn(ExperimentalAnimationApi::class, ExperimentalAnimationApi::class)
-@SuppressLint("SuspiciousIndentation", "CoroutineCreationDuringComposition",
-    "UnusedMaterial3ScaffoldPaddingParameter"
-)
+//val distinctUnit<T> = { list : List<SnapshotStateList<String>> ->
+//    for(t in list) {
+//        val uniqueItems = t.distinct()
+//        t.clear()
+//        t.addAll(uniqueItems)
+//    }
+//}
+//val clearUnit<T> = { list : List<SnapshotStateList<String>> ->
+//    for(t in list) {
+//        t.clear()
+//    }
+//}
+// 去重
+fun <T>distinctUnit(list : List<SnapshotStateList<T>>) {
+    for(t in list) {
+        val uniqueItems = t.distinct()
+        t.clear()
+        t.addAll(uniqueItems)
+    }
+}
+// 清空
+fun <T>clearUnit(list : List<SnapshotStateList<T>>) {
+    for(t in list) {
+        t.clear()
+    }
+}
 @Composable
-fun CalendarScreen(
+fun JxglstuCourseTableUI(
     showAll: Boolean,
     vm: NetWorkViewModel,
     innerPadding: PaddingValues,
     vmUI: UIViewModel,
     webVpn: Boolean,
-    vm2: LoginViewModel,
     load: Boolean,
     onDateChange: (LocalDate) ->Unit,
     today: LocalDate,
     hazeState: HazeState
 ) {
-    var showBottomSheet_totalCourse by remember { mutableStateOf(false) }
-    var showBottomSheet_multiCourse by remember { mutableStateOf(false) }
+    var showBottomSheetTotalCourse by remember { mutableStateOf(false) }
+    var showBottomSheetMultiCourse by remember { mutableStateOf(false) }
     var courseName by remember { mutableStateOf("") }
 
-
     var courses by remember { mutableStateOf(listOf<String>()) }
-    var multiWeekday by remember { mutableStateOf(0) }
-    var multiWeek by remember { mutableStateOf(0) }
+    var multiWeekday by remember { mutableIntStateOf(0) }
+    var multiWeek by remember { mutableIntStateOf(0) }
 
-    if (showBottomSheet_totalCourse) {
+    if (showBottomSheetTotalCourse) {
         HazeBottomSheet (
             onDismissRequest = {
-                showBottomSheet_totalCourse = false
+                showBottomSheetTotalCourse = false
             },
-            showBottomSheet = showBottomSheet_totalCourse,
+            showBottomSheet = showBottomSheetTotalCourse,
             hazeState = hazeState
         ) {
             CourseDetailApi(courseName = courseName, vm = vm, hazeState = hazeState)
         }
     }
 
-    if (showBottomSheet_multiCourse) {
+    if (showBottomSheetMultiCourse) {
         HazeBottomSheet (
-            showBottomSheet = showBottomSheet_multiCourse,
+            showBottomSheet = showBottomSheetMultiCourse,
             onDismissRequest = {
-                showBottomSheet_multiCourse = false
+                showBottomSheetMultiCourse = false
             },
             autoShape = false,
             hazeState = hazeState
@@ -156,27 +174,15 @@ fun CalendarScreen(
     val table = remember { List(30) { mutableStateListOf<String>() } }
     val tableAll = remember { List(42) { mutableStateListOf<String>() } }
 
+    val dateList  =  getScheduleDate(showAll, today)
+    val examList  = examToCalendar()
 
-
-    var Bianhuaweeks by rememberSaveable { mutableStateOf(
-        if(DateTimeUtils.weeksBetween > 20) {
-            getNewWeek()
-        } else DateTimeUtils.weeksBetween
-    ) }
-
-    // 去重
-    val distinctUnit = { list : List<SnapshotStateList<String>> ->
-        for(t in list) {
-            val uniqueItems = t.distinct()
-            t.clear()
-            t.addAll(uniqueItems)
-        }
-    }
-    // 清空
-    val clearUnit = { list : List<SnapshotStateList<String>> ->
-        for(t in list) {
-            t.clear()
-        }
+    var currentWeek by rememberSaveable {
+        mutableLongStateOf(
+            if(DateTimeUtils.weeksBetween > 20) {
+                getNewWeek()
+            } else DateTimeUtils.weeksBetween
+        )
     }
 
     fun refreshUI(showAll : Boolean) {
@@ -214,7 +220,7 @@ fun CalendarScreen(
 
                 val text = startTime + "\n" + courseId + "\n" + room
 
-                if (item.weekIndex == Bianhuaweeks.toInt()) {
+                if (item.weekIndex == currentWeek.toInt()) {
                     when(item.weekday) {
                         6 -> { Handler(Looper.getMainLooper()).post { vmUI.findNewCourse.value = text.isNotEmpty() } }
                         7 -> { Handler(Looper.getMainLooper()).post { vmUI.findNewCourse.value = text.isNotEmpty() } }
@@ -440,15 +446,11 @@ fun CalendarScreen(
         }
     }
 
-
-
-
-    LaunchedEffect(showAll,loading) {
-        async { refreshUI(showAll) }.await()
+    LaunchedEffect(showAll,loading,currentWeek) {
+        refreshUI(showAll)
     }
 
 //////////////////////////////////////////////////////////////////////////////////
-
    if(load) {
         val cookie = if (!webVpn) prefs.getString(
             "redirect",
@@ -469,7 +471,7 @@ fun CalendarScreen(
 
 
        //检测若登陆成功（200）则解析出CommunityTOKEN
-       val LoginCommunityObserver = Observer<String?> { result ->
+       val loginCommunityObserver = Observer<String?> { result ->
            if (result != null) {
                if (result.contains("200") && result.contains("token")) {
                    try {
@@ -485,7 +487,7 @@ fun CalendarScreen(
        }
 
        //检测CommunityTOKEN的可用性
-       val ExamObserver = Observer<Int> { result ->
+       val examObserver = Observer<Int> { result ->
            if (result == 500) {
                CoroutineScope(Job()).launch {
                    async { vm.gotoCommunity(cookies) }.await()
@@ -495,7 +497,7 @@ fun CalendarScreen(
                    }.await()
                    launch {
                        Handler(Looper.getMainLooper()).post {
-                           vm.loginCommunityData.observeForever(LoginCommunityObserver)
+                           vm.loginCommunityData.observeForever(loginCommunityObserver)
                        }
                    }
                }
@@ -512,7 +514,7 @@ fun CalendarScreen(
                async { vm.goToHuiXin("$ONE;$TGC") }
                async { CommuityTOKEN?.let { vm.getExamFromCommunity(it) } }
 
-               Handler(Looper.getMainLooper()).post { vm.examCodeFromCommunityResponse.observeForever(ExamObserver) }
+               Handler(Looper.getMainLooper()).post { vm.examCodeFromCommunityResponse.observeForever(examObserver) }
 
 
                //登录信息门户的接口,还没做重构（懒）
@@ -565,7 +567,7 @@ fun CalendarScreen(
                 val lessonIdObserver = Observer<List<Int>> { result ->
                     if (result.toString() != "") {
                         val lessonIdsArray = JsonArray()
-                        result?.forEach { lessonIdsArray.add(JsonPrimitive(it)) }
+                        result.forEach { lessonIdsArray.add(JsonPrimitive(it)) }
                         val jsonObject = JsonObject().apply {
                             add("lessonIds", lessonIdsArray)//课程ID
                             addProperty("studentId", vm.studentId.value)//学生ID
@@ -579,7 +581,7 @@ fun CalendarScreen(
                 val lessonIdObserverNext = Observer<List<Int>> { result ->
                     if (result.toString() != "") {
                         val lessonIdsArray = JsonArray()
-                        result?.forEach { lessonIdsArray.add(JsonPrimitive(it)) }
+                        result.forEach { lessonIdsArray.add(JsonPrimitive(it)) }
                         val jsonObject = JsonObject().apply {
                             add("lessonIds", lessonIdsArray)//课程ID
                             addProperty("studentId", vm.studentId.value)//学生ID
@@ -629,14 +631,7 @@ fun CalendarScreen(
         if (prefs.getString("tip", "0") != "0") loading = false
     }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-    val dateList  = getScheduleDate(showAll,today)
-    val examList  = examToCalendar()
-
-        Column(
-            modifier = Modifier.fillMaxSize()
-        ) {
+        Column(modifier = Modifier.fillMaxSize()) {
             AnimatedVisibility(
                 visible = loading,
                 enter = fadeIn(),
@@ -645,7 +640,7 @@ fun CalendarScreen(
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Column() { LoadingUI(if(webVpn) "若加载时间过长，请重新刷新登陆状态" else null) }
                 }
-            }//加载动画居中，3s后消失
+            }
 
             AnimatedVisibility(
                 visible = !loading,
@@ -654,16 +649,14 @@ fun CalendarScreen(
             ) {
                 //在这里插入课程表布局
                 Column {
-                    Box( modifier = Modifier
-                        .fillMaxHeight()
-                    ) {
-                        val scrollstate = rememberLazyGridState()
-                        val shouldShowAddButton by remember { derivedStateOf { scrollstate.firstVisibleItemScrollOffset == 0 } }
+                    Box(modifier = Modifier.fillMaxHeight()) {
+                        val scrollState = rememberLazyGridState()
+                        val shouldShowAddButton by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset == 0 } }
 
                         LazyVerticalGrid(
                             columns = GridCells.Fixed(if(showAll)7 else 5),
                             modifier = Modifier.padding(10.dp),
-                            state = scrollstate
+                            state = scrollState
                         ) {
                             items(if(showAll)7 else 5) { Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding())) }
                             items(if(showAll)42 else 30) { cell ->
@@ -676,23 +669,25 @@ fun CalendarScreen(
                                         .padding(if (showAll) 1.dp else 2.dp)
                                         .clickable {
                                             // 只有一节课
-                                            if(texts.size == 1) {
+                                            if (texts.size == 1) {
                                                 // 如果是考试
-                                                if(texts[0].contains("考试")) {
+                                                if (texts[0].contains("考试")) {
                                                     return@clickable
                                                 }
-                                                val name = parseCourseName(if(showAll)tableAll[cell][0] else table[cell][0])
-                                                if(name != null) {
+                                                val name =
+                                                    parseCourseName(if (showAll) tableAll[cell][0] else table[cell][0])
+                                                if (name != null) {
                                                     courseName = name
-                                                    showBottomSheet_totalCourse = true
+                                                    showBottomSheetTotalCourse = true
                                                 }
-                                            } else if(texts.size > 1) {
-                                                multiWeekday = if(showAll) (cell+1)%7 else (cell+1)%5
-                                                multiWeek = Bianhuaweeks.toInt()
+                                            } else if (texts.size > 1) {
+                                                multiWeekday =
+                                                    if (showAll) (cell + 1) % 7 else (cell + 1) % 5
+                                                multiWeek = currentWeek.toInt()
                                                 courses = texts
-                                                showBottomSheet_multiCourse = true
+                                                showBottomSheetMultiCourse = true
                                             }
-                                                // 空数据
+                                            // 空数据
                                         }
                                 ) {
                                     //存在待考时
@@ -720,7 +715,9 @@ fun CalendarScreen(
                                         }
                                     }
                                     Column(
-                                        modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .verticalScroll(rememberScrollState())
                                     ) {
                                         Text(
                                             text =
@@ -744,18 +741,21 @@ fun CalendarScreen(
                             modifier = Modifier
                                 .align(Alignment.BottomStart)
                                 .padding(innerPadding)
-                                .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
+                                .padding(
+                                    horizontal = appHorizontalDp(),
+                                    vertical = appHorizontalDp()
+                                )
                         ) {
                             if (shouldShowAddButton) {
                                 FloatingActionButton(
                                     onClick = {
-                                        if (Bianhuaweeks > 1) {
-                                            Bianhuaweeks-- - 1
-                                            refreshUI(showAll)
+                                        if (currentWeek > 1) {
+                                            currentWeek-- - 1
+//                                            refreshUI(showAll)
                                             onDateChange(today.minusDays(7))
                                         }
                                     },
-                                ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
+                                ) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Add Button") }
                             }
                         }
                         // 中间
@@ -766,23 +766,27 @@ fun CalendarScreen(
                             modifier = Modifier
                                 .align(Alignment.BottomCenter)
                                 .padding(innerPadding)
-                                .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
+                                .padding(
+                                    horizontal = appHorizontalDp(),
+                                    vertical = appHorizontalDp()
+                                )
                         ) {
                             if (shouldShowAddButton) {
                                 ExtendedFloatingActionButton(
                                     onClick = {
-                                        Bianhuaweeks = DateTimeUtils.weeksBetween
-                                        refreshUI(showAll)
+                                        currentWeek = DateTimeUtils.weeksBetween
+//                                        refreshUI(showAll)
                                         onDateChange(LocalDate.now())
                                     },
                                 ) {
                                     AnimatedContent(
-                                        targetState = Bianhuaweeks,
-                                        transitionSpec = {  scaleIn(animationSpec = tween(500)
-                                        ) with scaleOut(animationSpec = tween(500))
+                                        targetState = currentWeek,
+                                        transitionSpec = {
+                                            scaleIn(animationSpec = tween(500)
+                                            ) togetherWith(scaleOut(animationSpec = tween(500)))
                                         }, label = ""
-                                    ){annumber ->
-                                        Text(text = "第 $annumber 周",)
+                                    ){ n ->
+                                        Text(text = "第 $n 周")
                                     }
                                 }
                             }
@@ -795,11 +799,14 @@ fun CalendarScreen(
                             modifier = Modifier
                                 .align(Alignment.BottomCenter)
                                 .padding(innerPadding)
-                                .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
+                                .padding(
+                                    horizontal = appHorizontalDp(),
+                                    vertical = appHorizontalDp()
+                                )
                         ) {
                             TextButton(onClick = {  }) {
                                 Text(
-                                    text = parseSemseter(getSemseter()) + " 第${Bianhuaweeks}周",
+                                    text = parseSemseter(getSemseter()) + " 第${currentWeek}周",
                                     style = TextStyle(shadow = Shadow(
                                         color = Color.Gray,
                                         offset = Offset(5.0f,5.0f),
@@ -817,18 +824,21 @@ fun CalendarScreen(
                             modifier = Modifier
                                 .align(Alignment.BottomEnd)
                                 .padding(innerPadding)
-                                .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
+                                .padding(
+                                    horizontal = appHorizontalDp(),
+                                    vertical = appHorizontalDp()
+                                )
                         ) {
                             if (shouldShowAddButton) {
                                 FloatingActionButton(
                                     onClick = {
-                                        if (Bianhuaweeks < 20) {
-                                            Bianhuaweeks++ + 1
-                                            refreshUI(showAll)
+                                        if (currentWeek < 20) {
+                                            currentWeek++ + 1
+//                                            refreshUI(showAll)
                                             onDateChange(today.plusDays(7))
                                         }
                                     },
-                                ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
+                                ) { Icon(Icons.AutoMirrored.Filled.ArrowForward, "Add Button") }
                             }
                         }
                     }
@@ -846,26 +856,77 @@ fun getNewWeek() : Long {
         val firstWeekStartJxglstu: LocalDate = LocalDate.parse(resultJxglstu)
         val weeksBetweenJxglstu = ChronoUnit.WEEKS.between(firstWeekStartJxglstu, DateTimeUtils.getToday()) + 1
         weeksBetweenJxglstu  //固定本周
-    } catch (e : Exception) {
+    } catch (_ : Exception) {
         DateTimeUtils.weeksBetween
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun MultiCourseSheetUI(week : Int, weekday : Int, courses : List<String>, vm: NetWorkViewModel, hazeState: HazeState) {
+fun MultiCourseSheetUI(week : Int, weekday : Int, courses : List<courseDetailDTOList>, vm: NetWorkViewModel, hazeState: HazeState,friendUserName : String?) {
+    var sheet by remember { mutableStateOf(courseDetailDTOList(0,0,"","","", listOf(0),0,"","")) }
+
+    var showBottomSheetTotalCourse by remember { mutableStateOf(false) }
+    if (showBottomSheetTotalCourse) {
+        HazeBottomSheet(
+            onDismissRequest = { showBottomSheetTotalCourse = false },
+            showBottomSheet = showBottomSheetTotalCourse,
+            hazeState = hazeState,
+            autoShape = false
+        ) {
+            HazeBottomSheetTopBar(sheet.name, isPaddingStatusBar = false)
+            DetailInfos(sheet,friendUserName != null, vm = vm, hazeState )
+        }
+    }
+    Column {
+        HazeBottomSheetTopBar("第${week}周 周${numToChinese(weekday)}", isPaddingStatusBar = false)
+        LargeCard(
+            title = "${courses.size}节课冲突"
+        ) {
+            for(index in courses.indices) {
+                val course = courses[index]
+                val startTime = course.classTime.substringBefore("-")
+                val name = course.name
+                val place = course.place
+                TransplantListItem(
+                    headlineContent = {
+                        Text(name)
+                    },
+                    supportingContent = {
+                        Text("${place?.replace("学堂","")} $startTime")
+                    },
+                    leadingContent = {
+                        Text((index+1).toString())
+                    },
+                    colors =  if(name.contains("考试")) MaterialTheme.colorScheme.errorContainer else null,
+                    modifier = Modifier.clickable {
+                        // 如果是考试
+                        if(name.contains("考试")) {
+                            return@clickable
+                        }
+                        sheet = course
+                        showBottomSheetTotalCourse = true
+                    }
+                )
+            }
+        }
+        Spacer(Modifier.height(40.dp))
+    }
+
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MultiCourseSheetUI(week : Int, weekday : Int, courses : List<String>, vm: NetWorkViewModel, hazeState: HazeState) {
     var courseName by remember { mutableStateOf("") }
-    val sheetState_totalCourse = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var showBottomSheet_totalCourse by remember { mutableStateOf(false) }
-    if (showBottomSheet_totalCourse) {
+    var showBottomSheetTotalCourse by remember { mutableStateOf(false) }
+    if (showBottomSheetTotalCourse) {
         HazeBottomSheet (
             onDismissRequest = {
-                showBottomSheet_totalCourse = false
+                showBottomSheetTotalCourse = false
             },
             hazeState = hazeState,
-            showBottomSheet = showBottomSheet_totalCourse
-//            sheetState = sheetState_totalCourse,
-//            shape = bottomSheetRound(sheetState_totalCourse)
+            showBottomSheet = showBottomSheetTotalCourse
         ) {
             CourseDetailApi(courseName = courseName, vm = vm, hazeState = hazeState)
         }
@@ -889,7 +950,7 @@ private fun MultiCourseSheetUI(week : Int, weekday : Int, courses : List<String>
                         Text(name)
                     },
                     supportingContent = {
-                        Text("$place $startTime")
+                        Text("${place?.replace("学堂","")} $startTime")
                     },
                     leadingContent = {
                         Text((index+1).toString())
@@ -901,7 +962,7 @@ private fun MultiCourseSheetUI(week : Int, weekday : Int, courses : List<String>
                             return@clickable
                         }
                         courseName = name
-                        showBottomSheet_totalCourse = true
+                        showBottomSheetTotalCourse = true
                     }
                 )
             }
@@ -911,7 +972,7 @@ private fun MultiCourseSheetUI(week : Int, weekday : Int, courses : List<String>
 
 }
 
-fun numToChinese(num : Int) : String {
+private fun numToChinese(num : Int) : String {
     return when(num) {
         1 -> "一"
         2 -> "二"
