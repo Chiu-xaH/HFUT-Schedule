@@ -54,7 +54,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
@@ -267,7 +267,7 @@ fun DormitoryScoreUI(vm : NetWorkViewModel) {
                             }
 
                             CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchUI() }) {
-                                val list = (uiState as SimpleUiState.Success).data
+                                val list = (uiState as UiState.Success).data
 
                                 LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.padding(horizontal = appHorizontalDp()- cardNormalDp())) {
                                     items(list.size,key = { it }) { item ->

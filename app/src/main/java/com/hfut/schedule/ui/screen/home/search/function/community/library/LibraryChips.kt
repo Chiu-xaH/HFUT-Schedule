@@ -28,7 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.LibraryItems
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.AnimationCardListItem
 import com.hfut.schedule.ui.component.appHorizontalDp
@@ -147,7 +147,7 @@ fun BorrowItems(vm : NetWorkViewModel, type : LibraryItems) {
         refreshNetwork()
     }
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-        val list = (uiState as SimpleUiState.Success).data
+        val list = (uiState as UiState.Success).data
         LazyColumn {
             items(list.size){ index ->
                 val item = list[index]

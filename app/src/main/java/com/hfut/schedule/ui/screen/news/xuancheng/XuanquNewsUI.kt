@@ -21,7 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.hfut.schedule.App.MyApplication
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.ui.component.AnimationCardListItem
 import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.PaddingForPageControllerButton
@@ -49,7 +49,7 @@ fun XuanquNewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
     WebDialog(showDialog,{ showDialog = false },MyApplication.NEWS_XC_URL + url,"新闻详情")
 
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-        val list = (uiState as SimpleUiState.Success).data
+        val list = (uiState as UiState.Success).data
         val listState = rememberLazyListState()
         Box(modifier = Modifier.fillMaxSize()) {
             LazyColumn(state = listState) {

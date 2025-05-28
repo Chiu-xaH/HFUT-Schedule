@@ -28,15 +28,14 @@ lifecycleExtensions = "2.2.0"
 lifecycleRuntimeKtx = "2.3.1"
 lifecycleViewmodelKtx = "2.6.2"
 material = "1.0.5"
-material3 = "1.4.0-alpha12"
-material3AdaptiveNavigationSuite = "1.4.0-alpha15"
-navigationCompose = "2.8.9"
+material3 = "1.4.0-alpha12" # 1.4.0-alpha12
+navigationCompose = "2.9.0"
 okhttp = "4.9.0"
 profileinstaller = "1.4.1"
 roomRuntime = "2.6.1"
 tesseract4android = "4.8.0"
 uiautomator = "2.2.0"
-kotlin = "2.1.20"
+kotlin = "2.1.21"
 agp = "8.9.2"
 kotlinStdlib = "2.1.20"
 kotlinTest = "2.1.20"
@@ -71,7 +70,7 @@ androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtim
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
 androidx-material = { module = "androidx.compose.material:material", version.ref = "material" }
 androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
-androidx-material3-adaptive-navigation-suite = { module = "androidx.compose.material3:material3-adaptive-navigation-suite", version.ref = "material3AdaptiveNavigationSuite" }
+androidx-material3-adaptive-navigation-suite = { module = "androidx.compose.material3:material3-adaptive-navigation-suite", version.ref = "material3" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-profileinstaller = { module = "androidx.profileinstaller:profileinstaller", version.ref = "profileinstaller" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }

@@ -61,13 +61,14 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.NewsBarItems
 import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.util.network.Encrypt
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.component.AnimationCardListItem
 import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.PagingController
 import com.hfut.schedule.ui.component.WebDialog
+import com.hfut.schedule.ui.component.WebViewScreen
 import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.component.cardNormalDp
 import com.hfut.schedule.ui.component.showToast
@@ -84,6 +85,7 @@ import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 import kotlinx.coroutines.launch
 import org.json.JSONArray
+import kotlin.text.contains
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -129,14 +131,10 @@ fun NewsActivityUI(vm: NetWorkViewModel) {
                         }
                     }
                 )
-//                if(!blur)
-//                    Divider()
             }
         },
         bottomBar = {
             Column {
-//                if(!blur)
-//                    Divider()
                 NavigationBar(containerColor = Color.Transparent,
                     modifier = Modifier
                         .bottomBarBlur(hazeState)) {
@@ -243,7 +241,7 @@ fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
     WebDialog(showDialog,{ showDialog = false },links,"新闻详情")
 
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-        val list = (uiState as SimpleUiState.Success).data
+        val list = (uiState as UiState.Success).data
         val listState = rememberLazyListState()
         Box(modifier = Modifier.fillMaxSize()) {
             LazyColumn(state = listState) {

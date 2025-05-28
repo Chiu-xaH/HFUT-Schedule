@@ -14,7 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.ui.component.DevelopingUI
 import com.hfut.schedule.ui.component.EmptyUI
 import com.hfut.schedule.ui.screen.card.bill.TodayCount
@@ -60,8 +60,8 @@ fun CardHome(innerPadding : PaddingValues, vm : NetWorkViewModel, pagerState : P
                     LazyColumn() {
                         when (page) {
                             TAB_DAY ->  {
-                                if(uiState is SimpleUiState.Success) {
-                                    val list = (uiState as SimpleUiState.Success).data.data.records
+                                if(uiState is UiState.Success) {
+                                    val list = (uiState as UiState.Success).data.data.records
                                     if(list.isEmpty()) item { EmptyUI() }
                                     else { items(list.size) { item -> TodayCount(list[item]) } }
                                 }

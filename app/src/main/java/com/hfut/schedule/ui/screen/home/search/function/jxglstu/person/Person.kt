@@ -23,7 +23,6 @@ import dev.chrisbanes.haze.HazeState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PersonUI(ifSaved : Boolean,hazeState: HazeState) {
-    val sheetState_Person = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_Person by remember { mutableStateOf(false) }
 
     TransplantListItem(
@@ -39,8 +38,6 @@ fun PersonUI(ifSaved : Boolean,hazeState: HazeState) {
                 showBottomSheet_Person = false
             }, hazeState = hazeState,
             showBottomSheet = showBottomSheet_Person
-//            sheetState = sheetState_Person,
-//            shape = bottomSheetRound(sheetState_Person)
         ) { PersonItems(ifSaved) }
     }
 }

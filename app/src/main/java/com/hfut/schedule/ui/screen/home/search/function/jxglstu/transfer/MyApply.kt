@@ -38,7 +38,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.jxglstu.MyApplyModels
 import com.hfut.schedule.logic.model.jxglstu.TransferData
 import com.hfut.schedule.logic.model.jxglstu.courseType
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.BottomSheetTopBar
 import com.hfut.schedule.ui.component.CommonNetworkScreen
@@ -111,7 +111,7 @@ fun MyApplyListUI(vm: NetWorkViewModel, batchId : String, hazeState: HazeState) 
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
         var showBottomSheet by remember { mutableStateOf(false) }
         val sheetState = rememberModalBottomSheetState()
-        val response = (uiState as SimpleUiState.Success).data
+        val response = (uiState as UiState.Success).data
         val applyList = response.models
         if(showBottomSheet) {
             ModalBottomSheet(
@@ -198,7 +198,7 @@ fun MyApply(vm: NetWorkViewModel, batchId : String, indexs : Int) {
 
     val uiState2 by vm.myApplyInfoData.state.collectAsState()
 
-    var loading = uiState1 !is SimpleUiState.Success
+    var loading = uiState1 !is UiState.Success
     val refreshNetwork2 : suspend () -> Unit = {
         onListenStateHolder(vm.myApplyData) { data ->
             val list = data.models
@@ -223,8 +223,8 @@ fun MyApply(vm: NetWorkViewModel, batchId : String, indexs : Int) {
     var list by remember { mutableStateOf<List<MyApplyModels>?>(null) }
 
     LaunchedEffect(uiState1) {
-        if(uiState1 is SimpleUiState.Success) {
-            val response = (uiState1 as SimpleUiState.Success).data
+        if(uiState1 is UiState.Success) {
+            val response = (uiState1 as UiState.Success).data
             list = response.models
             data = getMyTransfer(response.models,indexs)
         }
@@ -272,7 +272,7 @@ fun MyApply(vm: NetWorkViewModel, batchId : String, indexs : Int) {
 
     DividerTextExpandedWith("成绩") {
         CommonNetworkScreen(uiState2, isFullScreen = false, onReload = refreshNetwork2) {
-            val bean = (uiState2 as SimpleUiState.Success).data
+            val bean = (uiState2 as UiState.Success).data
 
             val grade = bean.grade
 
@@ -366,7 +366,7 @@ private fun TransferCancelStatusUI(vm : NetWorkViewModel, batchId: String, id: I
     }
 
     CommonNetworkScreen(uiState, onReload = refreshNetwork, isFullScreen = false) {
-        val result = (uiState as SimpleUiState.Success).data
+        val result = (uiState as UiState.Success).data
         var msg  by remember { mutableStateOf("结果") }
         msg = if(result) "成功"  else "未知错误"
         StatusUI2(painter = if(msg == "成功") Icons.Filled.Check else Icons.Filled.Close, text = msg)

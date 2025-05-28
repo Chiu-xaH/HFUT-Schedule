@@ -47,7 +47,7 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.ShowerScreen
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
@@ -75,9 +75,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun UseCodeUI(vm: GuaGuaViewModel, hazeState: HazeState, navController: NavHostController) {
     val uiState by vm.useCodeResult.state.collectAsState()
-    var loading = uiState !is SimpleUiState.Success
+    var loading = uiState !is UiState.Success
     var useCode by remember { mutableStateOf("# # #") }
-    var showButton = uiState !is SimpleUiState.Success
+    var showButton = uiState !is UiState.Success
 
     val scale = animateFloatAsState(
         targetValue = if (loading) 0.9f else 1f, // 按下时为0.9，松开时为1
@@ -114,8 +114,8 @@ fun UseCodeUI(vm: GuaGuaViewModel, hazeState: HazeState, navController: NavHostC
     }
 
     LaunchedEffect(uiState) {
-        if (uiState is SimpleUiState.Success) {
-            val response = (uiState as SimpleUiState.Success).data
+        if (uiState is UiState.Success) {
+            val response = (uiState as UiState.Success).data
             response.let {
                 useCode = it
             }
@@ -231,7 +231,7 @@ fun ReSetUseCodeUI(vm: GuaGuaViewModel,navController: NavHostController) {
         Column (modifier = Modifier.height(350.dp)) {
             HazeBottomSheetTopBar("修改使用码", isPaddingStatusBar = false)
             CommonNetworkScreen(uiState,isFullScreen = false, onReload = refreshNetwork) {
-                val msg = (uiState as SimpleUiState.Success).data
+                val msg = (uiState as UiState.Success).data
                 if(msg.contains("成功") == true) {
                     StatusUI2(Icons.Filled.Check,"成功修改为 $password")
                 } else if(msg == "密码错误")  {

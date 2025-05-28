@@ -30,7 +30,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.ui.component.AnimationCardListItem
 import com.hfut.schedule.ui.component.BottomSheetTopBar
 import com.hfut.schedule.ui.component.PaddingForPageControllerButton
@@ -46,7 +46,7 @@ fun FailRateUI(vm : NetWorkViewModel,page : Int,nextPage : (Int) -> Unit, previo
     var showBottomSheet by remember { mutableStateOf(false) }
     var num by remember { mutableIntStateOf(0) }
     val listState = rememberLazyListState()
-    val list = (uiState as SimpleUiState.Success).data
+    val list = (uiState as UiState.Success).data
     Box(modifier = Modifier.fillMaxSize()) {
         PagingController(listState,page, showUp = true,nextPage,previousPage,modifier = Modifier.zIndex(2f))
         LazyColumn(state = listState) {

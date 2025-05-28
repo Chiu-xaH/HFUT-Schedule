@@ -29,7 +29,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.entity.CustomEventType
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.ui.component.CommonNetworkScreen
@@ -56,7 +56,7 @@ fun SupabaseMeScreenRefresh(vm : NetWorkViewModel,innerPadding : PaddingValues) 
         vm.supabaseDelResp.clear()
         vm.supabaseGetMyEvents(jwt)
     }
-    val refreshing = uiState is SimpleUiState.Loading
+    val refreshing = uiState is UiState.Loading
     val scope = rememberCoroutineScope()
     val pullRefreshState = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
         scope.launch { refreshNetwork() }
@@ -119,7 +119,7 @@ private fun SupabaseMeScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,
 
     var showDialogEdit by remember { mutableStateOf(false) }
     val uiState by vm.supabaseGetMyEventsResp.state.collectAsState()
-    val data = (uiState as SimpleUiState.Success).data
+    val data = (uiState as UiState.Success).data
 
     val list = data.filter {
         it.toString().contains(input,ignoreCase = true)

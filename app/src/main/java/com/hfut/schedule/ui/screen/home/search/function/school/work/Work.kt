@@ -35,7 +35,7 @@ import androidx.compose.ui.util.fastMap
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.WorkSearchType
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.ui.component.AnimationCardListItem
 import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.CustomTabRow
@@ -147,7 +147,7 @@ private fun WorkSearchUI(vm : NetWorkViewModel,campus: Campus) {
         }
 
         CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-            val response = (uiState as SimpleUiState.Success).data
+            val response = (uiState as UiState.Success).data
             val repos = response.data
             val listState = rememberLazyListState()
             Box(modifier = Modifier.fillMaxSize()) {

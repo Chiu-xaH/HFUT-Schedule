@@ -41,7 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.AnimationCustomCard
 import com.hfut.schedule.ui.component.CommonNetworkScreen
@@ -201,7 +201,7 @@ fun BooksUI(vm: NetWorkViewModel, hazeState: HazeState) {
         Spacer(modifier = Modifier.height(3.dp))
 
         CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchUI() }) {
-            val books = (uiState as SimpleUiState.Success).data
+            val books = (uiState as UiState.Success).data
             val listState = rememberLazyListState()
 
             Box(modifier = Modifier.fillMaxSize()) {
@@ -273,7 +273,7 @@ fun DetailBookUI(vm: NetWorkViewModel, callNo : String) {
     }
     DividerTextExpandedWith("索书号 $callNo") {
         CommonNetworkScreen(uiState, onReload = refreshNetwork,isFullScreen = false) {
-            val list = (uiState as SimpleUiState.Success).data
+            val list = (uiState as UiState.Success).data
             LazyColumn {
                 items(list.size) { index ->
                     val item = list[index]

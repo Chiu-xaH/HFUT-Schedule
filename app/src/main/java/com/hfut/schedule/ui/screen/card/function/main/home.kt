@@ -53,7 +53,7 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.CardBarItems
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
@@ -94,8 +94,8 @@ import kotlinx.coroutines.launch
 fun loadTodayPay(vm: NetWorkViewModel) : State<String> = produceState(initialValue = "--") {
     var total = 0.0
     try {
-        val uiState = vm.huiXinBillResult.state.first { it !is SimpleUiState.Loading }
-        if(uiState is SimpleUiState.Success) {
+        val uiState = vm.huiXinBillResult.state.first { it !is UiState.Loading }
+        if(uiState is UiState.Success) {
             val list = uiState.data.data.records
             for (item in list) {
                 val get = item.effectdateStr

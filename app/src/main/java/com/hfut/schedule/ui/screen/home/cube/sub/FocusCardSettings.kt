@@ -52,7 +52,7 @@ import com.hfut.schedule.logic.database.entity.SpecialWorkDayEntity
 import com.hfut.schedule.logic.database.util.insertSafely
 import com.hfut.schedule.logic.model.zjgd.FeeResponse
 import com.hfut.schedule.logic.model.zjgd.FeeType
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.parse.isHoliday
 import com.hfut.schedule.logic.util.parse.isSpecificWorkDay
@@ -326,11 +326,11 @@ fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) {
                 if(showWeather) {
                     val uiStateWarn by vm.weatherWarningData.state.collectAsState()
                     AnimatedVisibility(
-                        visible = uiStateWarn is SimpleUiState.Success,
+                        visible = uiStateWarn is UiState.Success,
                         exit = NavigateAnimationManager.fadeAnimation.exit,
                         enter = NavigateAnimationManager.fadeAnimation.enter
                     ) {
-                        val list = (uiStateWarn as SimpleUiState.Success).data
+                        val list = (uiStateWarn as UiState.Success).data
                         AnimatedVisibility(
                             visible = list.isNotEmpty(),
                             exit = NavigateAnimationManager.fadeAnimation.exit,

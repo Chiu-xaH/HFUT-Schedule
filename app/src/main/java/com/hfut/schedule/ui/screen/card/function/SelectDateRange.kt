@@ -29,7 +29,7 @@ import com.google.gson.Gson
 import com.hfut.schedule.logic.enumeration.ShowerScreen
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.logic.model.zjgd.BillRangeResponse
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar

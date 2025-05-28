@@ -69,7 +69,7 @@ fun SearchScreenNoLogin(vm : NetWorkViewModel, ifSaved : Boolean, innerPaddings 
         "报修 维修 后勤" to { Repair(hazeState) },
         "寝室卫生评分 寝室卫生分数" to { DormitoryScoreXuanCheng(vm,hazeState) },
         "消息中心 通知中心 收纳" to { NotificationsCenter(hazeState) },
-        "通知公告 新闻" to { News(vm) },
+        "通知公告 新闻" to { News() },
         "培养方案" to { GuestProgram(vm, hazeState) },
         "校历" to { SchoolCalendar() },
         "校车" to { SchoolBus() },

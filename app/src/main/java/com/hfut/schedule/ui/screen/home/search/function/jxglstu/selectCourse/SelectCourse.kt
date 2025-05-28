@@ -65,7 +65,7 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.logic.enumeration.SelectType
 import com.hfut.schedule.logic.model.jxglstu.SelectCourseInfo
 import com.hfut.schedule.logic.model.jxglstu.SelectPostResponse
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
@@ -488,7 +488,7 @@ fun SelectCourseInfoLoad(courseId : Int, vm: NetWorkViewModel, hazeState: HazeSt
 @Composable
 private fun SelectCourseInfo(vm: NetWorkViewModel,courseId : Int, search : String = "", hazeState: HazeState) {
     val uiState by vm.selectCourseInfoData.state.collectAsState()
-    val list = (uiState as SimpleUiState.Success).data
+    val list = (uiState as UiState.Success).data
     var lessonId by remember { mutableIntStateOf(0) }
     var showBottomSheet by remember { mutableStateOf(false) }
     var name by remember { mutableStateOf("课程详情") }

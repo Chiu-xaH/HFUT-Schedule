@@ -28,7 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
 import com.hfut.schedule.logic.util.storage.SharedPrefs
@@ -103,7 +103,7 @@ fun SurveyUI(vm : NetWorkViewModel, hazeState: HazeState) {
 fun TeacherSurveyListUI(vm : NetWorkViewModel, hazeState: HazeState, refresh : suspend () -> Unit) {
 //    val list =  getSurveyList(vm)
     val uiState by vm.surveyListData.state.collectAsState()
-    val list = (uiState as SimpleUiState.Success).data
+    val list = (uiState as UiState.Success).data
     var showBottomSheet by remember { mutableStateOf(false) }
     var id by remember { mutableIntStateOf(0) }
 

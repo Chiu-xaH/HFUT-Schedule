@@ -33,7 +33,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
@@ -48,7 +48,7 @@ import kotlinx.coroutines.launch
 @Composable
 private fun TotalGrade(vm : NetWorkViewModel) {
     val uiState by vm.gradeFromCommunityResponse.state.collectAsState()
-    val result = (uiState as SimpleUiState.Success).data
+    val result = (uiState as UiState.Success).data
     with(result) {
         AnimationCardListItem(
             headlineContent = {  Text("绩点(GPA)  $gpa") },
@@ -77,7 +77,7 @@ fun GradeItemUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
     val uiState by vm.gradeFromCommunityResponse.state.collectAsState()
 
     LaunchedEffect(Unit) {
-        if(uiState !is SimpleUiState.Success)
+        if(uiState !is UiState.Success)
             vm.gradeFromCommunityResponse.emitPrepare()
     }
 
@@ -138,7 +138,7 @@ fun GradeItemUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
             )
         }
         CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchUI() }) {
-            val bean = (uiState as SimpleUiState.Success).data
+            val bean = (uiState as UiState.Success).data
             val list = bean.scoreInfoDTOList
             if(list.isEmpty()) EmptyUI()
             else {

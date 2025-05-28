@@ -2,8 +2,6 @@ package com.hfut.schedule.viewmodel.network
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.hfut.schedule.logic.util.network.NetWork
-import com.hfut.schedule.logic.network.api.GithubService
 import com.hfut.schedule.logic.network.api.LoginService
 import com.hfut.schedule.logic.network.servicecreator.Login.GetAESKeyServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.Login.GetCookieServiceCreator
@@ -12,10 +10,7 @@ import com.hfut.schedule.logic.network.servicecreator.Login.LoginWebVpnServiceCr
 import com.hfut.schedule.logic.network.servicecreator.MyServiceCreator
 import com.hfut.schedule.logic.network.api.MyService
 import com.hfut.schedule.logic.network.api.WebVpnService
-import com.hfut.schedule.logic.network.servicecreator.GithubServiceCreator
 import com.hfut.schedule.logic.util.network.HfutCAS
-import com.hfut.schedule.logic.util.network.NetWork.launchRequestSimple
-import com.hfut.schedule.logic.util.network.SimpleStateHolder
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import okhttp3.ResponseBody
 import org.jsoup.Jsoup
@@ -84,14 +79,13 @@ class LoginViewModel : ViewModel() {
 
     var webVpnTicket = MutableLiveData<String?>()
     fun getKeyWebVpn() {
-    val ticket = webVpnTicket.value?.substringAfter("wengine_vpn_ticketwebvpn_hfut_edu_cn=")
-        ?.substringBefore(";")
+        val ticket = webVpnTicket.value?.substringAfter("wengine_vpn_ticketwebvpn_hfut_edu_cn=")?.substringBefore(";")
         val call = LoginWebVpn.getKeyWebVpn("show_vpn=1; show_fast=0; heartbeat=1; show_faq=0; wengine_vpn_ticketwebvpn_hfut_edu_cn=${ticket}; refresh=1")
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
 
-                if(response.isSuccessful()){
+                if(response.isSuccessful){
                     val responses = response.body()?.string()
                     saveString("webVpnKey",responses?.substringAfter("LOGIN_FLAVORING=")?.substringBefore(";"))
                 }

@@ -57,7 +57,7 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.ShowerLabelEntity
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.sys.PermissionManager.checkAndRequestCameraPermission
 import com.hfut.schedule.logic.util.other.QRCodeAnalyzer
 import com.hfut.schedule.logic.util.storage.SharedPrefs
@@ -99,7 +99,7 @@ fun ShowerStatusUI(vm : GuaGuaViewModel,input : String) {
     }
 
     CommonNetworkScreen(uiState,isFullScreen = false, onReload = refreshNetwork) {
-        val response = (uiState as SimpleUiState.Success).data
+        val response = (uiState as UiState.Success).data
         StatusUI2(painter = if(response.contains("成功")) Icons.Filled.Check else Icons.Filled.Close, text = response)
     }
 }

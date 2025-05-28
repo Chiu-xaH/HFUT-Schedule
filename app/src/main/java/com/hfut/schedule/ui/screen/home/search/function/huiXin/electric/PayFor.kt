@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.zjgd.FeeType
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
@@ -204,9 +204,9 @@ private fun PayStatusUI(vm : NetWorkViewModel, payNumber : Float, json: String, 
         vm.payResultData.clear()
         // 开始
         vm.payStep1(auth,json, payNumber,type)
-        val orderId = (vm.orderIdData.state.value as? SimpleUiState.Success)?.data ?: return@LaunchedEffect
+        val orderId = (vm.orderIdData.state.value as? UiState.Success)?.data ?: return@LaunchedEffect
         vm.payStep2(auth,orderId,type)
-        val map = (vm.uuIdData.state.value as? SimpleUiState.Success)?.data ?: return@LaunchedEffect
+        val map = (vm.uuIdData.state.value as? UiState.Success)?.data ?: return@LaunchedEffect
         var uuid = ""
         var passwordKey = ""
         for((key,value) in map) {
@@ -218,7 +218,7 @@ private fun PayStatusUI(vm : NetWorkViewModel, payNumber : Float, json: String, 
     }
 
     CommonNetworkScreen(uiState,isFullScreen = false, onReload = { showToast("禁止刷新") }) {
-        val msg = (uiState as SimpleUiState.Success).data
+        val msg = (uiState as UiState.Success).data
         StatusUI(iconId = R.drawable.send_money, text = msg)
     }
 }

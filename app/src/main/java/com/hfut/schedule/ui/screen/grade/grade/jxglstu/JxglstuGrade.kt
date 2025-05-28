@@ -37,7 +37,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.community.GradeResponseJXGLSTU
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.AnimationCardListItem
@@ -139,7 +139,7 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel, showSe
     var input by remember { mutableStateOf("") }
 
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-        val gradeList = (uiState as SimpleUiState.Success).data
+        val gradeList = (uiState as UiState.Success).data
         var searchList = mutableListOf<GradeResponseJXGLSTU>()
         Column {
             if(showSearch) {

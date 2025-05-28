@@ -27,7 +27,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.zjgd.records
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.ui.component.AnimationCardListItem
@@ -75,7 +75,7 @@ fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVie
     }
 
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-        val data = (uiState as SimpleUiState.Success).data.data
+        val data = (uiState as UiState.Success).data.data
         val list = data.records
         val listState = rememberLazyListState()
 
@@ -120,7 +120,7 @@ fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVie
 @Composable
 fun BillsInfo(vm : NetWorkViewModel, Infonum : Int) {
     val uiState by vm.huiXinBillResult.state.collectAsState()
-    val data = (uiState as SimpleUiState.Success).data.data.records
+    val data = (uiState as UiState.Success).data.data.records
     val bills = data[Infonum]
     Column {
         HazeBottomSheetTopBar("详情", isPaddingStatusBar = false)

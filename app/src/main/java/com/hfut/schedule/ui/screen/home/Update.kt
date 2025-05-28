@@ -10,7 +10,7 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import com.hfut.schedule.logic.model.HolidayBean
 import com.hfut.schedule.logic.model.HolidayResponse
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.network.HfutCAS
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs
@@ -68,7 +68,7 @@ fun initNetworkRefresh(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIVie
         launch {
             val showWeather = DataStoreManager.showFocusWeatherWarn.first()
             val state = vm.weatherWarningData.state.first() // 只发送一次请求 API有次数限制
-            if(showWeather && state  !is SimpleUiState.Success) {
+            if(showWeather && state  !is UiState.Success) {
                 vm.getWeatherWarn(getCampus())
             }
         }

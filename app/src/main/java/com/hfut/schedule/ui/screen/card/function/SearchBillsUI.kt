@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.ui.component.AnimationCardListItem
 import com.hfut.schedule.ui.screen.card.bill.main.processTranamt
 import com.hfut.schedule.ui.component.appHorizontalDp
@@ -111,7 +111,7 @@ fun SearchBillsUI(vm : NetWorkViewModel) {
             CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchUI() }) {
                 if(!startUse) startUse = true
 
-                val response = (uiState as SimpleUiState.Success).data
+                val response = (uiState as UiState.Success).data
                 val list = response.records
                 list.let {
                     if(it.isEmpty()) {

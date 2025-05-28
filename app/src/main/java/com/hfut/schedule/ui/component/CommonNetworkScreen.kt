@@ -22,8 +22,8 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.getExceptionDetail
 import com.hfut.schedule.logic.util.getKeyStackTrace
 import com.hfut.schedule.logic.util.network.PARSE_ERROR_CODE
-import com.hfut.schedule.logic.util.network.SimpleStateHolder
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.StateHolder
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.sys.ClipBoard
 import com.hfut.schedule.logic.util.sys.Starter
 import kotlinx.coroutines.Dispatchers
@@ -33,7 +33,7 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun CommonNetworkScreen(
-    uiState: SimpleUiState<*>,
+    uiState: UiState<*>,
     isFullScreen : Boolean = true,
     modifier: Modifier = if(isFullScreen) Modifier.fillMaxSize() else Modifier,
     loadingText : String? = null,
@@ -52,13 +52,13 @@ fun CommonNetworkScreen(
     }
     when (uiState) {
         // 准备状态UI 例如手动搜索时第一次什么也不显示
-        SimpleUiState.Prepare -> {
+        UiState.Prepare -> {
             prepareContent?.let {
                 CenterScreen { it() }
             }
         }
         // 错误UI 数据解析使用了TRY CATCH,数据解析错误时跳转到这里（待开发） 或者网络请求失败
-        is SimpleUiState.Error -> {
+        is UiState.Error -> {
             val e = uiState.exception
             val codeInt = uiState.code
             val ui =  @Composable {
@@ -136,7 +136,7 @@ fun CommonNetworkScreen(
             }
         }
         // 加载UI
-        SimpleUiState.Loading -> {
+        UiState.Loading -> {
             val ui = @Composable {
                 LoadingUI(loadingText)
             }
@@ -149,21 +149,21 @@ fun CommonNetworkScreen(
             }
         }
         // 主UI
-        is SimpleUiState.Success -> {
+        is UiState.Success -> {
             successContent()
         }
     }
 }
 
-suspend fun <T> onListenStateHolder(response : SimpleStateHolder<T>,onError : (() -> Unit)? = null,onSuccess : (T) -> Unit) = withContext(Dispatchers.Main) {
+suspend fun <T> onListenStateHolder(response : StateHolder<T>, onError : (() -> Unit)? = null, onSuccess : (T) -> Unit) = withContext(Dispatchers.Main) {
     // 只收集第一次流
-    val state = response.state.first { it !is SimpleUiState.Loading }
+    val state = response.state.first { it !is UiState.Loading }
     when (state) {
-        is SimpleUiState.Success -> {
+        is UiState.Success -> {
             val data = state.data
             onSuccess(data)
         }
-        is SimpleUiState.Error -> {
+        is UiState.Error -> {
             if(onError == null) {
                 showToast("错误 " + state.exception?.message)
             } else {

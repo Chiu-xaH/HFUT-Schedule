@@ -32,7 +32,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.QWeatherNowBean
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.component.BottomSheetTopBar
 import com.hfut.schedule.ui.component.BottomTip
@@ -91,7 +91,7 @@ private fun LifeUIS(vm : NetWorkViewModel,campus: Campus) {
     val uiStateWarn by vm.weatherWarningData.state.collectAsState()
     val showWeather by DataStoreManager.showFocusWeatherWarn.collectAsState(initial = true)
 
-    var loading = uiState !is SimpleUiState.Success
+    var loading = uiState !is UiState.Success
     val refreshNetwork: suspend () -> Unit = {
         if(!showWeather) {
             vm.weatherWarningData.clear()
@@ -137,8 +137,8 @@ private fun LifeUIS(vm : NetWorkViewModel,campus: Campus) {
     var data by remember { mutableStateOf( QWeatherNowBean("XX","XX","晴","X风","X","XX","XXX")) }
 
     LaunchedEffect(uiState) {
-        if (uiState is SimpleUiState.Success) {
-            val response = (uiState as SimpleUiState.Success).data
+        if (uiState is UiState.Success) {
+            val response = (uiState as UiState.Success).data
             response?.let {
                 data = it
             }
@@ -198,8 +198,8 @@ private fun LifeUIS(vm : NetWorkViewModel,campus: Campus) {
             }
         }
     }
-    if (uiStateWarn is SimpleUiState.Success) {
-        val list = (uiStateWarn as SimpleUiState.Success).data
+    if (uiStateWarn is UiState.Success) {
+        val list = (uiStateWarn as UiState.Success).data
         if(list.isNotEmpty()) {
             DividerTextExpandedWith("气象预警") {
                 LazyColumn {

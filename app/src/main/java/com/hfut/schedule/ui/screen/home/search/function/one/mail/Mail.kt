@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -24,7 +26,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
@@ -33,6 +35,7 @@ import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.ScrollText
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.WebDialog
+import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
 import com.hfut.schedule.ui.style.HazeBottomSheet
@@ -105,8 +108,8 @@ fun MailUI(vm: NetWorkViewModel) {
         refreshNetwork()
     }
 
-    CommonNetworkScreen(uiState, loadingText = "正在登录邮箱 若加载过长请重新打开", isFullScreen = false, onReload = refreshNetwork) {
-        val response = (uiState as SimpleUiState.Success).data
+    CommonNetworkScreen(uiState, loadingText = "正在登录邮箱", isFullScreen = false, onReload = refreshNetwork) {
+        val response = (uiState as UiState.Success).data
         RowHorizontal {
             Button(
                 onClick = {
@@ -123,13 +126,37 @@ fun MailUI(vm: NetWorkViewModel) {
             ) {
                 Text("进入邮箱")
             }
+            Spacer(Modifier.width(appHorizontalDp()))
+            FilledTonalButton (
+                onClick = {
+                    response?.data.let {
+                        if(it != null) {
+                            url = it
+                            Starter.startWebUrl(url)
+                            used = !used
+                        } else {
+                            showToast( "错误 " + response?.msg)
+                        }
+                    }
+                }
+            ) {
+                Text("在浏览器使用")
+            }
         }
         if(isSupabaseRegistering.value) {
             RowHorizontal {
                 Button(
                     onClick = {
-                        Starter.startWebUrl(url)
-                        showToast("请检查最新收件箱 来自Supabase Auth的邮件 点击链接Confirm")
+                        response?.data.let {
+                            if(it != null) {
+                                url = it
+                                Starter.startWebUrl(url)
+                                showToast("请检查最新收件箱 来自Supabase Auth的邮件 点击链接Confirm")
+                                used = !used
+                            } else {
+                                showToast( "错误 " + response?.msg)
+                            }
+                        }
                     }
                 ) {
                     Text("注册激活请选此处")

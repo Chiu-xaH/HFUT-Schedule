@@ -41,7 +41,7 @@ import com.hfut.schedule.logic.model.jxglstu.PlanCoursesSearch
 import com.hfut.schedule.logic.model.jxglstu.ProgramPartThree
 import com.hfut.schedule.logic.model.jxglstu.RequireInfo
 import com.hfut.schedule.logic.model.jxglstu.Type
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.AnimationCardListItem
 import com.hfut.schedule.ui.component.BottomTip
@@ -169,7 +169,7 @@ fun ProgramSearch(vm : NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState)
             Spacer(modifier = Modifier.height(cardNormalDp()))
 
             CommonNetworkScreen(uiState, onReload = refreshNetwork, loadingText = "若加载过长 请搭外网") {
-                val programList = (uiState as SimpleUiState.Success).data
+                val programList = (uiState as UiState.Success).data
                 val searchList = programList.filter {
                     it.name.contains(input) || it.department.contains(input) || it.major.contains(input) || it.grade.contains(input)
                 }
@@ -238,7 +238,7 @@ private fun ProgramSearchInfo(vm: NetWorkViewModel, item: ProgramListBean, campu
 private fun SearchProgramUI(ifSaved: Boolean, hazeState: HazeState,vm: NetWorkViewModel) {
 //    val sheetState_Program = rememberModalBottomSheetState()
     val uiState by vm.programSearchData.state.collectAsState()
-    val bean = (uiState as SimpleUiState.Success).data
+    val bean = (uiState as UiState.Success).data
     var showBottomSheet_Program by remember { mutableStateOf(false) }
     val listOne = getProgramListOneSearch(bean)
     var title by remember { mutableStateOf("培养方案") }

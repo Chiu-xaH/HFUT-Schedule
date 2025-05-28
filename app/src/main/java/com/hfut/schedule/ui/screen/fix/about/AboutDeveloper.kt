@@ -29,7 +29,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
@@ -77,10 +77,10 @@ fun About(vm : NetWorkViewModel) {
     }
     var starsNum by remember { mutableStateOf("") }
     val uiState by vm.githubStarsData.state.collectAsState()
-    var loading = uiState is SimpleUiState.Loading
+    var loading = uiState is UiState.Loading
     LaunchedEffect(uiState) {
-        if(uiState is SimpleUiState.Success) {
-            starsNum = (uiState as SimpleUiState.Success).data.toString()
+        if(uiState is UiState.Success) {
+            starsNum = (uiState as UiState.Success).data.toString()
         }
     }
 

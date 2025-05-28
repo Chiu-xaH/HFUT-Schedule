@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.ui.component.AnimationCardListItem
 import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.ScrollText
@@ -32,7 +32,7 @@ fun GuaguaBills(innerPadding: PaddingValues, vm: GuaGuaViewModel) {
     }
 
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-        val response = (uiState as SimpleUiState.Success).data
+        val response = (uiState as UiState.Success).data
         val list = response.data
         LazyColumn {
             item { Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding())) }

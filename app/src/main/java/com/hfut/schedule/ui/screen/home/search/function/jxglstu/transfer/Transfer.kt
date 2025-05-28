@@ -25,7 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.ui.component.AnimationCardListItem
@@ -201,7 +201,7 @@ private fun TransferListUI(vm: NetWorkViewModel, hazeState: HazeState) {
     }
 
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-        val transferList = (uiState as SimpleUiState.Success).data
+        val transferList = (uiState as UiState.Success).data
         LazyColumn {
             items(transferList.size) { index ->
                 val data = transferList[index]

@@ -35,7 +35,7 @@ import com.google.gson.Gson
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.community.FriendsList
 import com.hfut.schedule.logic.model.community.FriendsResopnse
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.BottomTip
@@ -182,7 +182,7 @@ fun FriendsSetting(vm : NetWorkViewModel) {
             )
         }
         CommonNetworkScreen(uiStateAdd, isFullScreen = false, onReload = { showToast("禁止刷新") }) {
-            val msg = (uiStateAdd as SimpleUiState.Success).data
+            val msg = (uiStateAdd as UiState.Success).data
             BottomTip(str = msg)
         }
     }
@@ -207,7 +207,7 @@ fun FriendsSetting(vm : NetWorkViewModel) {
 
     DividerTextExpandedWith(text = "申请列表(同意后对方可查看你的课表)") {
         CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-            val applyList = (uiState as SimpleUiState.Success).data
+            val applyList = (uiState as UiState.Success).data
             Column {
                 for(i in applyList.indices) {
                     StyleCardListItem(

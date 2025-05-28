@@ -46,7 +46,7 @@ import androidx.compose.ui.window.Dialog
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.zjgd.FeeType
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.network.reEmptyLiveDta
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
@@ -173,16 +173,16 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
     LaunchedEffect(Unit) {
         vm.loginSchoolNetResponse.emitPrepare()
     }
-    val loadingLogin = uiState is SimpleUiState.Loading
+    val loadingLogin = uiState is UiState.Loading
 
     LaunchedEffect(uiState) {
         when(uiState) {
-            is SimpleUiState.Error -> {
+            is UiState.Error -> {
                 textLogin = "登录失败"
                 textLogout = "注销失败"
             }
-            is SimpleUiState.Success -> {
-                val data = (uiState as SimpleUiState.Success).data
+            is UiState.Success -> {
+                val data = (uiState as UiState.Success).data
                 if(data) {
                     textLogin = "已登录"
                     textLogout = "注销"

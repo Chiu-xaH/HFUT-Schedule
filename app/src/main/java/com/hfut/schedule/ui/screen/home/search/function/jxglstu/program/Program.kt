@@ -61,7 +61,7 @@ import com.hfut.schedule.logic.model.jxglstu.ProgramCompletionResponse
 import com.hfut.schedule.logic.model.jxglstu.ProgramPartThree
 import com.hfut.schedule.logic.model.jxglstu.ProgramShow
 import com.hfut.schedule.logic.model.jxglstu.item
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.parse.formatDecimal
@@ -262,7 +262,7 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState) {
     var num by remember { mutableStateOf(0) }
 //    var loadingCard by remember { mutableStateOf(true) }
     val uiState by vm.programCompletionData.state.collectAsState()
-    var loadingCard = uiState !is SimpleUiState.Success
+    var loadingCard = uiState !is UiState.Success
     val scale2 = animateFloatAsState(
         targetValue = if (loadingCard) 0.97f else 1f, // 按下时为0.9，松开时为1
         animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
@@ -351,8 +351,8 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState) {
         }
     }
     LaunchedEffect(uiState) {
-        if (uiState is SimpleUiState.Success) {
-            val response = (uiState as SimpleUiState.Success).data
+        if (uiState is UiState.Success) {
+            val response = (uiState as UiState.Success).data
             response.let {
                 completion = it
             }

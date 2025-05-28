@@ -24,7 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.PayData
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.sys.ClipBoard
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
@@ -108,12 +108,12 @@ fun Pay(vm : NetWorkViewModel, hazeState: HazeState) {
 @Composable
 fun PayUI(url : String,vm: NetWorkViewModel) {
     val uiState by vm.payFeeResponse.state.collectAsState()
-    var loading = uiState !is SimpleUiState.Success
+    var loading = uiState !is UiState.Success
 
     var data by remember { mutableStateOf(PayData("0.00","0.00","0.00","0.00","0.00")) }
     LaunchedEffect(uiState) {
-        if (uiState is SimpleUiState.Success) {
-            val response = (uiState as SimpleUiState.Success).data
+        if (uiState is UiState.Success) {
+            val response = (uiState as UiState.Success).data
             data = response
         }
     }

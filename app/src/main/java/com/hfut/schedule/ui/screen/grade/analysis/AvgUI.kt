@@ -23,7 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
@@ -75,12 +75,12 @@ fun AvgGrade(vm: NetWorkViewModel) {
     val uiState by vm.avgData.state.collectAsState()
 
     LaunchedEffect(Unit) {
-        if(uiState !is SimpleUiState.Success) {
+        if(uiState !is UiState.Success) {
             refreshNetwork()
         }
     }
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-        val resultAvg = (uiState as SimpleUiState.Success).data
+        val resultAvg = (uiState as UiState.Success).data
         MyCustomCard(hasElevation = false, containerColor = cardNormalColor()) {
             Text(text = "我的水平", modifier = Modifier.padding(horizontal = appHorizontalDp(), vertical = 8.dp), color = MaterialTheme.colorScheme.primary)
 
@@ -147,12 +147,12 @@ fun AllGrade(vm: NetWorkViewModel) {
     val uiState by vm.allAvgData.state.collectAsState()
 
     LaunchedEffect(Unit) {
-        if(uiState !is SimpleUiState.Success) {
+        if(uiState !is UiState.Success) {
             refreshNetwork()
         }
     }
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-        val list = (uiState as SimpleUiState.Success).data
+        val list = (uiState as UiState.Success).data
         Column {
             for (index in list.indices) {
                 val item = list[index]

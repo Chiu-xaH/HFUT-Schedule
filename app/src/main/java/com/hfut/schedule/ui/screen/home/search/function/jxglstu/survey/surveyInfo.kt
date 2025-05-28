@@ -35,7 +35,7 @@ import com.hfut.schedule.logic.model.jxglstu.PostSurvey
 import com.hfut.schedule.logic.model.jxglstu.SurveyResponse
 import com.hfut.schedule.logic.model.jxglstu.blankQuestionAnswer
 import com.hfut.schedule.logic.model.jxglstu.radioQuestionAnswer
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.LittleDialog
@@ -127,7 +127,7 @@ private fun SurveyList(vm: NetWorkViewModel,onResult : () -> Unit) {
 //    val choiceNewList = mutableListOf<radioQuestionAnswer>()
 //    val inputNewList = mutableListOf<blankQuestionAnswer>()
     val uiState by vm.surveyData.state.collectAsState()
-    val bean = (uiState as SimpleUiState.Success).data
+    val bean = (uiState as UiState.Success).data
     var postMode by remember { mutableStateOf(PostMode.NORMAL) }
     var showDialog by remember { mutableStateOf(false) }
 

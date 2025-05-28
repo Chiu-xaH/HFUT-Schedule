@@ -40,7 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.jxglstu.TransferData
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.AnimationCardListItem
 import com.hfut.schedule.ui.component.CommonNetworkScreen
@@ -209,7 +209,7 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String, hazeState: HazeState) {
     }
     var input by remember { mutableStateOf("") }
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-        val response = (uiState as SimpleUiState.Success).data
+        val response = (uiState as UiState.Success).data
         val list = response.data
         Column {
             Row(
@@ -296,7 +296,7 @@ fun TransferStatusUI(vm : NetWorkViewModel, batchId: String, id: Int, phoneNumbe
             vm.postTransferResponse.clear()
             vm.fromCookie.clear()
             vm.getFormCookie(it,batchId,id.toString())
-            val preferCookie = (vm.fromCookie.state.value as? SimpleUiState.Success)?.data ?: return@let
+            val preferCookie = (vm.fromCookie.state.value as? UiState.Success)?.data ?: return@let
             vm.postTransfer("$cookie;$preferCookie",batchId,id.toString(),phoneNumber)
         }
     }
@@ -360,7 +360,7 @@ fun TransferStatusUI(vm : NetWorkViewModel, batchId: String, id: Int, phoneNumbe
 //
 
     CommonNetworkScreen(uiState, isFullScreen = false , onReload = refreshNetwork) {
-        val msg = (uiState as SimpleUiState.Success).data
+        val msg = (uiState as UiState.Success).data
         StatusUI2(painter = if(msg == "成功" ) Icons.Filled.Check else Icons.Filled.Close, text = msg)
     }
 

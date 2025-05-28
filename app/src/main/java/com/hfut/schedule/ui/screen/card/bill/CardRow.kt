@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.zjgd.records
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.logic.util.sys.Starter
@@ -103,8 +103,8 @@ fun TodayBills(vm: NetWorkViewModel) {
             HazeBottomSheetTopBar("今日消费")
         },
     ) {innerPadding ->
-        if(uiState is SimpleUiState.Success) {
-            val list = (uiState as SimpleUiState.Success).data.data.records
+        if(uiState is UiState.Success) {
+            val list = (uiState as UiState.Success).data.data.records
             LazyColumn(modifier = Modifier.padding(innerPadding)) {
                 items(list.size) { item ->
                     TodayCount(list[item] )

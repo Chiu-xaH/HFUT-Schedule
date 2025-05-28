@@ -23,7 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.model.TeacherBean
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.cardNormalColor
 import com.hfut.schedule.ui.component.TransplantListItem
@@ -34,7 +34,7 @@ import com.hfut.schedule.ui.component.WebDialog
 @Composable
 fun TeacherListUI(vm: NetWorkViewModel) {
     val uiState by vm.teacherSearchData.state.collectAsState()
-    val dataList = (uiState as SimpleUiState.Success).data.teacherData
+    val dataList = (uiState as UiState.Success).data.teacherData
 
     var showDialog by remember { mutableStateOf(false) }
     var links by remember { mutableStateOf("") }

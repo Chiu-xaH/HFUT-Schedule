@@ -32,7 +32,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.jxglstu.CourseItem
-import com.hfut.schedule.logic.util.network.SimpleUiState
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.AnimationCardListItem
 import com.hfut.schedule.ui.component.AnimationCustomCard
@@ -66,7 +66,7 @@ fun ProgramPerformance(vm : NetWorkViewModel, hazeState: HazeState) {
         ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
         cookie?.let {
             // 禁用每次加载 特殊 数据较大 省流量
-            if(uiState !is SimpleUiState.Success) {
+            if(uiState !is UiState.Success) {
                 vm.programPerformanceData.clear()
                 vm.getProgramPerformance(it)
             }
@@ -103,7 +103,7 @@ fun ProgramPerformance(vm : NetWorkViewModel, hazeState: HazeState) {
     }
 
     CommonNetworkScreen(uiState, loadingText = "培养方案较大 加载较慢", onReload = refreshNetwork) {
-        val bean = (uiState as SimpleUiState.Success).data
+        val bean = (uiState as UiState.Success).data
         val dataList = bean.moduleList
         val outCourse = bean.outerCourseList
         LazyColumn {
@@ -307,7 +307,7 @@ private fun PerformanceInfo(vm: NetWorkViewModel, moduleIndex : Int, hazeState: 
 //    Spacer(modifier = Modifier.height(5.dp))
 
     val uiState by vm.programPerformanceData.state.collectAsState()
-    val bean = (uiState as SimpleUiState.Success).data
+    val bean = (uiState as UiState.Success).data
 
     if(moduleIndex != 999) {
         val dataList = bean.moduleList[moduleIndex]
