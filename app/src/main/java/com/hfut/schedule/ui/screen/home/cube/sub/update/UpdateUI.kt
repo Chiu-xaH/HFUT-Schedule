@@ -55,7 +55,7 @@ import com.hfut.schedule.logic.util.sys.AppDownloadManager.noticeInstall
 import com.hfut.schedule.logic.util.sys.AppDownloadManager.openDownload
 import com.hfut.schedule.logic.util.sys.AppDownloadManager.refused
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.ui.util.NavigateAnimationManager
+import com.hfut.schedule.ui.util.MyAnimationManager
 import com.hfut.schedule.ui.component.BottomButton
 import com.hfut.schedule.ui.component.LoadingUI
 import com.hfut.schedule.ui.component.MyCustomCard
@@ -138,8 +138,8 @@ fun UpdateUI() {
         }
         AnimatedVisibility(
             visible = able,
-            exit = NavigateAnimationManager.upDownAnimation.exit,
-            enter = NavigateAnimationManager.upDownAnimation.enter
+            exit = MyAnimationManager.upDownAnimation.exit,
+            enter = MyAnimationManager.upDownAnimation.enter
         ) {
             BottomButton(
                 onClick = {
@@ -155,8 +155,8 @@ fun UpdateUI() {
     }
     AnimatedVisibility(
         visible = !able || pro > 0,
-        exit = NavigateAnimationManager.upDownAnimation.exit,
-        enter = NavigateAnimationManager.upDownAnimation.enter
+        exit = MyAnimationManager.upDownAnimation.exit,
+        enter = MyAnimationManager.upDownAnimation.enter
     ) {
         Column(modifier = Modifier.padding(horizontal = 7.dp)) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center)  {
@@ -251,8 +251,8 @@ fun PatchUpdateUI(patch: Patch) {
 
             AnimatedVisibility(
                 visible = able,
-                exit = NavigateAnimationManager.upDownAnimation.exit,
-                enter = NavigateAnimationManager.upDownAnimation.enter
+                exit = MyAnimationManager.upDownAnimation.exit,
+                enter = MyAnimationManager.upDownAnimation.enter
             ) {
                 BottomButton(
                     onClick = {
@@ -268,8 +268,8 @@ fun PatchUpdateUI(patch: Patch) {
         }
         AnimatedVisibility(
             visible = !able || pro > 0,
-            exit = NavigateAnimationManager.upDownAnimation.exit,
-            enter = NavigateAnimationManager.upDownAnimation.enter
+            exit = MyAnimationManager.upDownAnimation.exit,
+            enter = MyAnimationManager.upDownAnimation.enter
         ) {
 
             Column(modifier = Modifier.padding(horizontal = 7.dp)) {

@@ -34,12 +34,13 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.ClipBoard
 import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.BottomTip
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
-import com.hfut.schedule.ui.component.appHorizontalDp
+ 
 import com.hfut.schedule.ui.screen.fix.about.createQRCodeBitmap
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import dev.chrisbanes.haze.HazeState
@@ -74,11 +75,11 @@ fun WeChatGo(hazeState : HazeState) {
             Column {
                 Row(modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = appHorizontalDp(), vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
+                    .padding(horizontal = APP_HORIZONTAL_DP, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
                     val qrPainter = createQRCodeBitmap(showedUrl,1000,1000)
                     qrPainter?.let { Image(it.asImageBitmap(), contentDescription = "") }
                 }
-                Spacer(modifier = Modifier.height(appHorizontalDp()))
+                Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
             }
         }
     }

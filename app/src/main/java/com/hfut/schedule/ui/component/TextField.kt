@@ -25,7 +25,7 @@ fun CustomTextField(
         TextField(
             modifier = modifier
                 .weight(1f)
-                .padding(horizontal = appHorizontalDp()),
+                .padding(horizontal = APP_HORIZONTAL_DP),
             value = input,
             onValueChange = onValueChange,
             label = label,

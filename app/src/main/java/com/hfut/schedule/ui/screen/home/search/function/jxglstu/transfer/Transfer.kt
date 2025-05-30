@@ -99,7 +99,7 @@ fun Transfer(ifSaved : Boolean, vm : NetWorkViewModel, hazeState: HazeState){
                     HazeBottomSheetTopBar("转专业") {
                         FilledTonalIconButton(
                             onClick = { showBottomSheet_info = true },
-//                            modifier = Modifier.padding(horizontal = AppHorizontalDp())
+//                            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
                         ) {
                             Icon(painterResource(R.drawable.info),null)
                         }

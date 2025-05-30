@@ -58,6 +58,8 @@ import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.CenterScreen
 import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.CustomTabRow
@@ -67,8 +69,8 @@ import com.hfut.schedule.ui.component.PrepareSearchUI
 import com.hfut.schedule.ui.component.SmallCard
 import com.hfut.schedule.ui.component.StatusUI
 import com.hfut.schedule.ui.component.TransplantListItem
-import com.hfut.schedule.ui.component.appHorizontalDp
-import com.hfut.schedule.ui.component.cardNormalDp
+ 
+  
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -181,7 +183,7 @@ fun DormitoryScoreUI(vm : NetWorkViewModel) {
                         Column(modifier = Modifier.fillMaxSize()) {
                             Row(modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = appHorizontalDp(), vertical = 0.dp), horizontalArrangement = Arrangement.Start){
+                                .padding(horizontal = APP_HORIZONTAL_DP, vertical = 0.dp), horizontalArrangement = Arrangement.Start){
 
                                 MenuChip (
                                     label = { Text(text = "楼栋 $buildingNumber") },
@@ -220,7 +222,7 @@ fun DormitoryScoreUI(vm : NetWorkViewModel) {
                                 exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
                             ){
                                 Column {
-                                    Row (modifier = Modifier.padding(horizontal = appHorizontalDp())){
+                                    Row (modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)){
                                         OutlinedCard{
                                             LazyColumn(modifier = Modifier.padding(horizontal = 10.dp)) {
                                                 item {
@@ -261,7 +263,7 @@ fun DormitoryScoreUI(vm : NetWorkViewModel) {
                                             Spacer(modifier = Modifier.height(10.dp))
                                         }
                                     }
-                                    Spacer(Modifier.height(cardNormalDp()*2))
+                                    Spacer(Modifier.height(CARD_NORMAL_DP*2))
                                 }
 
                             }
@@ -269,10 +271,10 @@ fun DormitoryScoreUI(vm : NetWorkViewModel) {
                             CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchUI() }) {
                                 val list = (uiState as UiState.Success).data
 
-                                LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.padding(horizontal = appHorizontalDp()- cardNormalDp())) {
+                                LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP- CARD_NORMAL_DP)) {
                                     items(list.size,key = { it }) { item ->
                                         val listItem = list[item]
-                                        SmallCard(modifier = Modifier.padding(horizontal = cardNormalDp(), vertical = cardNormalDp())) {
+                                        SmallCard(modifier = Modifier.padding(horizontal = CARD_NORMAL_DP, vertical = CARD_NORMAL_DP)) {
                                             TransplantListItem(
                                                 headlineContent = { Text(text = listItem.date) },
                                                 supportingContent = { Text(text =  "${listItem.score} 分")}

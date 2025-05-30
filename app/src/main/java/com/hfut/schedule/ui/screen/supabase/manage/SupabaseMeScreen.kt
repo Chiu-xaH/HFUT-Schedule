@@ -32,12 +32,13 @@ import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
+import com.hfut.schedule.ui.component.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.CustomTextField
 import com.hfut.schedule.ui.component.LittleDialog
 import com.hfut.schedule.ui.component.RefreshIndicator
 import com.hfut.schedule.ui.component.StyleCardListItem
-import com.hfut.schedule.ui.component.cardNormalDp
+  
 import com.hfut.schedule.ui.component.onListenStateHolder
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
@@ -132,7 +133,7 @@ private fun SupabaseMeScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,
                 label = { Text("搜索") },
                 leadingIcon = { Icon(painterResource(R.drawable.search),null)}
             ) { input = it }
-            Spacer(Modifier.height(cardNormalDp()))
+            Spacer(Modifier.height(CARD_NORMAL_DP))
         }
         items(list.size) { index ->
             val item = list[index]

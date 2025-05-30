@@ -45,6 +45,9 @@ import com.hfut.schedule.logic.model.community.GradeResponseJXGLSTU
 import com.hfut.schedule.logic.model.community.GradeResult
 import com.hfut.schedule.logic.model.community.LibRecord
 import com.hfut.schedule.logic.model.community.LibraryResponse
+import com.hfut.schedule.logic.model.community.TodayResponse
+import com.hfut.schedule.logic.model.community.TodayResult
+import com.hfut.schedule.logic.model.jxglstu.CourseSearchResponse
 import com.hfut.schedule.logic.model.jxglstu.MyApplyResponse
 import com.hfut.schedule.logic.model.jxglstu.ProgramBean
 import com.hfut.schedule.logic.model.jxglstu.ProgramCompletionResponse
@@ -54,6 +57,7 @@ import com.hfut.schedule.logic.model.jxglstu.SurveyTeacherResponse
 import com.hfut.schedule.logic.model.jxglstu.TransferResponse
 import com.hfut.schedule.logic.model.jxglstu.lessonResponse
 import com.hfut.schedule.logic.model.jxglstu.lessonSurveyTasks
+import com.hfut.schedule.logic.model.jxglstu.lessons
 import com.hfut.schedule.logic.model.one.BorrowBooksResponse
 import com.hfut.schedule.logic.model.one.SubBooksResponse
 import com.hfut.schedule.logic.model.one.getTokenResponse
@@ -801,19 +805,26 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     val teacherSearchData = StateHolder<TeacherResponse>()
     suspend fun searchTeacher(name: String = "", direction: String = "") = Repository.searchTeacher(name = name,direction = direction,teacherSearchData)
 
-    val courseData = MutableLiveData<String?>()
-    val courseResponseData = MutableLiveData<String?>()
-    fun searchCourse(cookie: String, className : String?,courseName : String?, semester : Int,courseId : String?) {
-        val call = jxglstuJSON.searchCourse(cookie,studentId.value.toString(),semester,className,"1,${prefs.getString("CourseSearchRequest",MyApplication.PAGE_SIZE.toString()) ?: MyApplication.PAGE_SIZE}",courseName,courseId)
+    val courseSearchResponse = StateHolder<List<lessons>>()
+    suspend fun searchCourse(
+        cookie: String,
+        className : String?,
+        courseName : String?,
+        semester : Int,
+        courseId : String?
+    ) = launchRequestSimple(
+        holder = courseSearchResponse,
+        request = { jxglstuJSON.searchCourse(cookie,studentId.value.toString(),semester,className,"1,${prefs.getString("CourseSearchRequest",MyApplication.PAGE_SIZE.toString()) ?: MyApplication.PAGE_SIZE}",courseName,courseId).awaitResponse() },
+        transformSuccess = { _,json -> parseSearchCourse(json) }
+    )
+    private fun parseSearchCourse(result : String) : List<lessons> = try {
+        Gson().fromJson(result,CourseSearchResponse::class.java).data.map { it.lesson }
+    } catch (e : Exception) { throw e }
 
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                courseData.value = response.code().toString()
-                courseResponseData.value = response.body()?.string()
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
+    fun parseDatumCourse(result: String) : List<lessons> = try {
+        Gson().fromJson(result,lessonResponse::class.java).lessons
+    } catch (e : Exception) {
+        emptyList<lessons>()
     }
 
     val surveyListData = StateHolder<List<lessonSurveyTasks>>()
@@ -853,18 +864,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     private fun parseSurveyToken(headers : Headers) : String = try {
         headers.toString().substringAfter("Set-Cookie:").substringBefore(";")
     } catch(e : Exception) { throw e }
-//    {
-//        val call =
-//
-//        call.enqueue(object : Callback<ResponseBody> {
-//            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-//                 saveString("SurveyCookie", )
-//            }
-//
-//            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-//        })
-//    }
-
 
     val surveyPostData = MutableLiveData<String?>()
     fun postSurvey(cookie : String,json: JsonObject){
@@ -1286,34 +1285,30 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             throw Exception(json)
     } catch (e : Exception) { throw e }
 
-    val examCommunityResponse = MutableLiveData<String?>()
     val examCodeFromCommunityResponse = MutableLiveData<Int>()
     fun getExamFromCommunity(token: String) {
-
         val call = token.let { community.getExam(it) }
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 val responses = response.body()?.string()
                 saveString("Exam", responses)
-                examCommunityResponse.value = responses
                 examCodeFromCommunityResponse.value = response.code()
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                examCommunityResponse.value = "错误"
                 t.printStackTrace()
             }
         })
     }
 
-    val examCode = MutableLiveData<Int>()
+    val jxglstuExamCode = MutableLiveData<Int>()
     fun getExamJXGLSTU(cookie: String) {
         val call = jxglstuJSON.getExam(cookie,studentId.value.toString())
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 val code = response.code()
-                examCode.value = code
+                jxglstuExamCode.value = code
                 if(code == 200) {
                     saveString("examJXGLSTU", response.body()?.string())
                 }
@@ -1460,17 +1455,16 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             throw Exception(json)
     } catch (e : Exception) { throw e }
 
-    fun getToday(token : String) {
+    val todayFormCommunityResponse = StateHolder<TodayResult>()
+    suspend fun getToday(token : String) = launchRequestSimple(
+        holder = todayFormCommunityResponse,
+        request = { community.getToday(token).awaitResponse() },
+        transformSuccess = { _,json -> parseTodayFromCommunity(json) }
+    )
+    private fun parseTodayFromCommunity(result : String) : TodayResult = try {
+        Gson().fromJson(result,TodayResponse::class.java).result
+    } catch (e : Exception) { throw e }
 
-        val call = token.let { community.getToday(it) }
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                saveString("TodayNotice", response.body()?.string())
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
-    }
 
     fun getFriends(token : String) {
 

@@ -3,15 +3,11 @@ package com.hfut.schedule.ui.component
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.EaseInOutQuad
 import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,12 +21,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -38,11 +30,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.zIndex
-import com.hfut.schedule.App.MyApplication
-import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.style.appBlur
+import com.hfut.schedule.ui.util.MyAnimationManager.ANIMATION_SPEED
 
 @Composable
 fun MyCustomCard(
@@ -54,7 +43,7 @@ fun MyCustomCard(
         elevation = CardDefaults.cardElevation(defaultElevation = if(hasElevation) 1.75.dp else 0.dp),
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = appHorizontalDp(), vertical = cardNormalDp()),
+            .padding(horizontal = APP_HORIZONTAL_DP, vertical = CARD_NORMAL_DP),
         shape = MaterialTheme.shapes.medium,
         colors = if(containerColor == null) CardDefaults.cardColors() else CardDefaults.cardColors(containerColor = containerColor)
     ) {
@@ -163,7 +152,7 @@ fun AnimationCardListItem(
     LaunchedEffect(index) {
         animatedProgress.animateTo(
             targetValue = 1f,
-            animationSpec = tween(MyApplication.ANIMATION_SPEED, easing = EaseInOutQuad)
+            animationSpec = tween(ANIMATION_SPEED, easing = EaseInOutQuad)
         )
     }
     StyleCardListItem(
@@ -194,7 +183,7 @@ fun AnimationCustomCard(
     LaunchedEffect(index) {
         animatedProgress.animateTo(
             targetValue = 1f,
-            animationSpec = tween(MyApplication.ANIMATION_SPEED, easing = EaseInOutQuad)
+            animationSpec = tween(ANIMATION_SPEED, easing = EaseInOutQuad)
         )
     }
 
@@ -238,9 +227,9 @@ fun cardNormalColor() : Color = MaterialTheme.colorScheme.onSecondaryContainer.c
 @Composable
 fun largeCardColor() : Color = MaterialTheme.colorScheme.surfaceVariant
 
-fun cardNormalDp() : Dp = 2.5.dp
+val CARD_NORMAL_DP : Dp = 2.5.dp
 
-fun appHorizontalDp() : Dp = 15.dp
+val APP_HORIZONTAL_DP : Dp = 15.dp
 
 @Composable
 fun LargeCard(
@@ -252,8 +241,8 @@ fun LargeCard(
     content: @Composable () -> Unit
 ) {
     Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = appHorizontalDp()),
-        modifier = modifier.fillMaxWidth().padding(horizontal = appHorizontalDp(), vertical = 5.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = APP_HORIZONTAL_DP),
+        modifier = modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP, vertical = 5.dp),
         shape = MaterialTheme.shapes.medium,
         colors = color
     ) {
@@ -285,7 +274,7 @@ fun LoadingLargeCard(
     color : CardColors = CardDefaults.cardColors(containerColor = largeCardColor()),
     content: @Composable () -> Unit
 ) {
-    val speed = MyApplication.ANIMATION_SPEED / 2
+    val speed = ANIMATION_SPEED / 2
     val scale = animateFloatAsState(
         targetValue = if (loading) 0.9f else 1f, // 按下时为0.9，松开时为1
         //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
@@ -300,8 +289,8 @@ fun LoadingLargeCard(
     )
 
     Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = appHorizontalDp()),
-        modifier = Modifier.fillMaxWidth().padding(horizontal = appHorizontalDp(), vertical = 5.dp).scale(scale2.value),
+        elevation = CardDefaults.cardElevation(defaultElevation = APP_HORIZONTAL_DP),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP, vertical = 5.dp).scale(scale2.value),
         shape = MaterialTheme.shapes.medium,
         colors = color
     ) {

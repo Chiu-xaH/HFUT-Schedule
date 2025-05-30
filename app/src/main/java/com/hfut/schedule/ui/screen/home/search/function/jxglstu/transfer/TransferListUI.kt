@@ -42,15 +42,17 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.jxglstu.TransferData
 import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.AnimationCardListItem
+import com.hfut.schedule.ui.component.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.DepartmentIcons
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.ScrollText
 import com.hfut.schedule.ui.component.StatusUI2
 import com.hfut.schedule.ui.component.StyleCardListItem
-import com.hfut.schedule.ui.component.appHorizontalDp
-import com.hfut.schedule.ui.component.cardNormalDp
+ 
+  
 import com.hfut.schedule.ui.screen.home.search.function.other.life.countFunc
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.HazeBottomSheet
@@ -141,7 +143,7 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String, hazeState: HazeState) {
                         TextField(
                             modifier = Modifier
                                 .weight(1f)
-                                .padding(horizontal = appHorizontalDp()),
+                                .padding(horizontal = APP_HORIZONTAL_DP),
                             value = telephone,
                             onValueChange = {
                                 telephone = it
@@ -219,7 +221,7 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String, hazeState: HazeState) {
                 TextField(
                     modifier = Modifier
                         .weight(1f)
-                        .padding(horizontal = appHorizontalDp()),
+                        .padding(horizontal = APP_HORIZONTAL_DP),
                     value = input,
                     onValueChange = {
                         input = it
@@ -242,7 +244,7 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String, hazeState: HazeState) {
                     searchList.add(item)
                 }
             }
-            Spacer(modifier = Modifier.height(cardNormalDp()))
+            Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
 
             LazyColumn {
                 items(searchList.size, key = { it }) {item ->

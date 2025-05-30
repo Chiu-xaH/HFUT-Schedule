@@ -52,6 +52,7 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.delCourseEvents
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.getMy
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.isNextOpen
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.screen.home.calendar.next.DatumUI
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.CourseTotalForApi
 import com.hfut.schedule.ui.component.BottomSheetTopBar
@@ -61,7 +62,7 @@ import com.hfut.schedule.ui.component.LittleDialog
 import com.hfut.schedule.ui.component.LoadingUI
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
-import com.hfut.schedule.ui.component.appHorizontalDp
+ 
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -234,7 +235,7 @@ fun MultiScheduleSettings(
             ) {
                 HazeBottomSheetTopBar("写入日历日程", isPaddingStatusBar = false)
                 EventUI(vmUI,context)
-                Spacer(modifier = Modifier.height(appHorizontalDp()))
+                Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
             }
         }
     }
@@ -256,7 +257,7 @@ fun MultiScheduleSettings(
 
         LazyRow {
             //教务课表
-            item { Spacer(Modifier.width(appHorizontalDp()-3.dp)) }
+            item { Spacer(Modifier.width(APP_HORIZONTAL_DP-3.dp)) }
             item {
                 OutlinedCard (
                     modifier = Modifier
@@ -401,7 +402,7 @@ fun MultiScheduleSettings(
                     }
                 }
             }
-            item { Spacer(Modifier.width(appHorizontalDp()-3.dp)) }
+            item { Spacer(Modifier.width(APP_HORIZONTAL_DP-3.dp)) }
         }
         Spacer(Modifier.height(10.dp))
         DividerTextExpandedWith(text = "操作") {

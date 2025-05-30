@@ -24,9 +24,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
-import com.hfut.schedule.ui.component.appHorizontalDp
+ 
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.style.HazeBottomSheet
@@ -55,11 +56,11 @@ fun EditPasswordScreen(hazeState : HazeState,innerPadding : PaddingValues) {
             showBottomSheet = showDialog
         ) {
             Column {
-                Spacer(Modifier.height(appHorizontalDp()*1.5f))
+                Spacer(Modifier.height(APP_HORIZONTAL_DP*1.5f))
                 CirclePoint(text = "录入新密码" , password = input)
                 Spacer(modifier = Modifier.height(20.dp))
                 KeyBoard(
-                    modifier = Modifier.padding(horizontal = appHorizontalDp()),
+                    modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
                     onKeyClick = { num ->
                         if (input.length < 6) {
                             input += num.toString()

@@ -40,7 +40,8 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.SharedPrefs
-import com.hfut.schedule.ui.component.appHorizontalDp
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
+
 import com.hfut.schedule.ui.component.BottomSheetTopBar
 import com.hfut.schedule.ui.component.MyCustomCard
 import com.hfut.schedule.ui.component.StyleCardListItem
@@ -95,7 +96,7 @@ fun InfoSet() {
                         TextField(
                             modifier = Modifier
                                 .weight(1f)
-                                .padding(horizontal = appHorizontalDp()),
+                                .padding(horizontal = APP_HORIZONTAL_DP),
                             value = inputToken,
                             onValueChange = { inputToken = it },
                             label = { Text("token") },

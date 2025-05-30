@@ -44,7 +44,7 @@ fun CommonNetworkScreen(
     val scope = rememberCoroutineScope()
     val refreshUI = @Composable {
         onReload?.let {
-            Spacer(Modifier.height(appHorizontalDp()*1.5f))
+            Spacer(Modifier.height(APP_HORIZONTAL_DP*1.5f))
             Button(onClick = { scope.launch { it.invoke() }}) {
                 Text("重新加载")
             }
@@ -79,7 +79,7 @@ fun CommonNetworkScreen(
 
                             // 解析出错
                             ErrorUI(text)
-                            Spacer(Modifier.height(appHorizontalDp()*1.5f))
+                            Spacer(Modifier.height(APP_HORIZONTAL_DP*1.5f))
                             if(!showDetail)
                                 Button(onClick = {
                                     showDetail = true
@@ -97,7 +97,7 @@ fun CommonNetworkScreen(
                         }
                         401 -> {
                             StatusUI(R.drawable.login, "登录状态失效")
-                            Spacer(Modifier.height(appHorizontalDp()*1.5f))
+                            Spacer(Modifier.height(APP_HORIZONTAL_DP*1.5f))
                             Button(onClick = {
                                 Starter.refreshLogin()
                             }) {
@@ -155,7 +155,7 @@ fun CommonNetworkScreen(
     }
 }
 
-suspend fun <T> onListenStateHolder(response : StateHolder<T>, onError : (() -> Unit)? = null, onSuccess : (T) -> Unit) = withContext(Dispatchers.Main) {
+suspend fun <T> onListenStateHolder(response : StateHolder<T>, onError : ((Int?, Throwable?) -> Unit)? = null, onSuccess : (T) -> Unit) = withContext(Dispatchers.Main) {
     // 只收集第一次流
     val state = response.state.first { it !is UiState.Loading }
     when (state) {
@@ -164,10 +164,38 @@ suspend fun <T> onListenStateHolder(response : StateHolder<T>, onError : (() -> 
             onSuccess(data)
         }
         is UiState.Error -> {
+            val codeInt = state.code
+            val e = state.exception
             if(onError == null) {
-                showToast("错误 " + state.exception?.message)
+                val text = when(codeInt) {
+                    PARSE_ERROR_CODE -> {
+                        "解析数据错误 ${e?.message?.substringBefore(":")}"
+                    }
+                    401 -> {
+                        "登录状态失效"
+                    }
+                    403 -> {
+                        "禁止操作 可能原因: 密码不正确或无权利进行操作"
+                    }
+                    in 500..599 -> {
+                        "服务器错误 可能的原因: \n1.智慧社区(Community)接口登陆状态失效,需重新刷新登陆状态\n2.对方API发生变更，APP对接失败\n3.对方暂时关闭了API(如选课等周期性活动)"
+                    }
+                    else -> {
+                        // 网络出错
+                        val code = codeInt?.toString() ?: ""
+                        val eMsg = e?.message
+                        if(eMsg?.contains("Unable to resolve host",ignoreCase = true) == true || eMsg?.contains("Failed to connect to",ignoreCase = true) == true ||  eMsg?.contains("Connection reset",ignoreCase = true) == true) {
+                            "网络连接失败"
+                        } else if(eMsg?.contains("10000ms") == true) {
+                            "网络连接超时"
+                        } else {
+                            "错误 $code $e"
+                        }
+                    }
+                }
+                showToast(text)
             } else {
-                onError()
+                onError(codeInt,e)
             }
         }
         else -> {}

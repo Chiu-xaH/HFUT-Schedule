@@ -90,7 +90,9 @@ import com.hfut.schedule.logic.util.network.reEmptyLiveDta
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.addToCalendars
 import com.hfut.schedule.logic.util.sys.parseToDateTime
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.BottomTip
+import com.hfut.schedule.ui.component.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.CustomTextField
 import com.hfut.schedule.ui.component.DateRangePickerModal
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
@@ -102,9 +104,9 @@ import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TimePickerDialog
 import com.hfut.schedule.ui.component.TimeRangePickerDialog
 import com.hfut.schedule.ui.component.TransplantListItem
-import com.hfut.schedule.ui.component.appHorizontalDp
+ 
 import com.hfut.schedule.ui.component.cardNormalColor
-import com.hfut.schedule.ui.component.cardNormalDp
+  
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.EventCampus
@@ -113,6 +115,8 @@ import com.hfut.schedule.ui.screen.supabase.home.getInsertedEventId
 import com.hfut.schedule.ui.screen.supabase.login.loginSupabaseWithCheck
 import com.hfut.schedule.ui.style.RowHorizontal
 import com.hfut.schedule.ui.style.textFiledTransplant
+import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.util.MyAnimationManager
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
@@ -148,7 +152,7 @@ fun AddEventFloatButton(
                     visibilityThreshold = Rect.VisibilityThreshold
                 )
             } else {
-                tween(durationMillis = MyApplication.ANIMATION_SPEED, easing = FastOutSlowInEasing)
+                tween(durationMillis = MyAnimationManager.ANIMATION_SPEED, easing = FastOutSlowInEasing)
             }
         }
     ) }
@@ -162,7 +166,7 @@ fun AddEventFloatButton(
         if(showAddUI) {
             // 进入
             showSurface = false
-            delay(MyApplication.ANIMATION_SPEED * 1L)
+            delay(MyAnimationManager.ANIMATION_SPEED * 1L)
             showSurface = true
         } else {
             // 退出
@@ -174,7 +178,7 @@ fun AddEventFloatButton(
 //            modifier = Modifier.background(MaterialTheme.colorScheme.surface),
             targetState = showAddUI,
             transitionSpec = {
-                fadeIn(animationSpec = tween(durationMillis = MyApplication.ANIMATION_SPEED)) togetherWith fadeOut(animationSpec = tween(durationMillis = MyApplication.ANIMATION_SPEED*2))
+                fadeIn(animationSpec = tween(durationMillis = MyAnimationManager.ANIMATION_SPEED)) togetherWith fadeOut(animationSpec = tween(durationMillis = MyAnimationManager.ANIMATION_SPEED*2))
             },
             label = ""
         ) { targetShowAddUI ->
@@ -220,11 +224,11 @@ private fun SharedTransitionScope.ButtonUI(
         FloatingActionButton(
             modifier = Modifier
                 .padding(innerPaddings)
-                .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
+                .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
                 .sharedBounds(
                     boundsTransform = boundsTransform,
-                    enter = fadeIn(tween(durationMillis = MyApplication.ANIMATION_SPEED)),
-                    exit = fadeOut(tween(durationMillis = MyApplication.ANIMATION_SPEED)),
+                    enter = fadeIn(tween(durationMillis = MyAnimationManager.ANIMATION_SPEED)),
+                    exit = fadeOut(tween(durationMillis = MyAnimationManager.ANIMATION_SPEED)),
                     sharedContentState = rememberSharedContentState(key = "container"),
                     animatedVisibilityScope = animatedContentScope,
                     resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds
@@ -258,10 +262,10 @@ private fun SharedTransitionScope.SurfaceUI(
 //        containerColor = Color.Transparent,
         modifier = Modifier
             .fillMaxSize()
-            .clip(RoundedCornerShape(appHorizontalDp()))
+            .clip(RoundedCornerShape(APP_HORIZONTAL_DP))
             .sharedBounds(
-                enter = fadeIn(tween(durationMillis = MyApplication.ANIMATION_SPEED)),
-                exit = fadeOut(tween(durationMillis = MyApplication.ANIMATION_SPEED)),
+                enter = fadeIn(tween(durationMillis = MyAnimationManager.ANIMATION_SPEED)),
+                exit = fadeOut(tween(durationMillis = MyAnimationManager.ANIMATION_SPEED)),
                 sharedContentState = rememberSharedContentState(key = "container"),
                 animatedVisibilityScope = animatedContentScope,
                 boundsTransform = boundsTransform,
@@ -270,11 +274,7 @@ private fun SharedTransitionScope.SurfaceUI(
         topBar = {
             Column {
                 TopAppBar(
-                    colors = topAppBarColors(
-                        containerColor = Color.Transparent,
-                        titleContentColor = MaterialTheme.colorScheme.primary,
-                        scrolledContainerColor = Color.Transparent,
-                    ),
+                    colors = topBarTransplantColor(),
                     title = { Text("添加") },
                     actions = {
                         Row {
@@ -475,7 +475,7 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = appHorizontalDp())
+                .padding(horizontal = APP_HORIZONTAL_DP)
                 .align(Alignment.BottomCenter)
                 .zIndex(2f)
         ) {
@@ -517,7 +517,7 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                 )
                 Spacer(Modifier.height(5.dp))
                 CustomTextField(input = title, label = { Text("标题") },singleLine = false) { title = it }
-                Spacer(Modifier.height(5.dp + cardNormalDp()))
+                Spacer(Modifier.height(5.dp + CARD_NORMAL_DP))
                 CustomTextField(input = description, label = { Text("备注(可空 可填写网址,地点,位置等)") },singleLine = false) { description = it }
                 Spacer(Modifier.height(5.dp ))
                 MyCustomCard(containerColor = cardNormalColor()) {
@@ -533,8 +533,8 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                             modifier = Modifier
                                 .align(Alignment.Bottom)
                                 .padding(
-                                    horizontal = appHorizontalDp(),
-                                    vertical = appHorizontalDp() - 5.dp
+                                    horizontal = APP_HORIZONTAL_DP,
+                                    vertical = APP_HORIZONTAL_DP - 5.dp
                                 )
                                 .clickable {
                                     showSelectDateDialog = true
@@ -547,8 +547,8 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                             modifier = Modifier
                                 .align(Alignment.Top)
                                 .padding(
-                                    horizontal = appHorizontalDp(),
-                                    vertical = appHorizontalDp() - 5.dp
+                                    horizontal = APP_HORIZONTAL_DP,
+                                    vertical = APP_HORIZONTAL_DP - 5.dp
                                 )
                                 .clickable {
                                     showSelectTimeDialog = true
@@ -558,7 +558,7 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                 }
                 Spacer(Modifier.height(5.dp))
                 CustomTextField(input = remark, label = { Text("自定义时间显示") }, singleLine = false) { remark = it }
-                Spacer(Modifier.height(5.dp - cardNormalDp()*0f))
+                Spacer(Modifier.height(5.dp - CARD_NORMAL_DP*0f))
 
                 if(isSupabase) {
                     var isEditMode by remember { mutableStateOf(false) }
@@ -586,7 +586,7 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                             Column(modifier = Modifier
                                 .clip(MaterialTheme.shapes.medium)
                                 .background(MaterialTheme.colorScheme.surface)) {
-                                Column(modifier = Modifier.padding(appHorizontalDp())) {
+                                Column(modifier = Modifier.padding(APP_HORIZONTAL_DP)) {
                                     Row(
                                         modifier = Modifier.fillMaxWidth(),
                                         horizontalArrangement = Arrangement.Center
@@ -594,7 +594,7 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                                         TextField(
                                             modifier = Modifier
                                                 .weight(1f),
-//                                                .padding(horizontal = appHorizontalDp()),
+//                                                .padding(horizontal = APP_HORIZONTAL_DP),
                                             value = input,
                                             onValueChange = { input = it },
                                             singleLine = true,
@@ -602,7 +602,7 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                                             colors = textFiledTransplant(isColorCopy = false),
                                         )
                                     }
-                                    Spacer(modifier = Modifier.height(appHorizontalDp()))
+                                    Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
 
                                     Row(modifier = Modifier
                                         .fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
@@ -634,7 +634,7 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                             input = ""
                     }
 
-                    Spacer(Modifier.height(5.dp - cardNormalDp()*2f))
+                    Spacer(Modifier.height(5.dp - CARD_NORMAL_DP*2f))
                     MyCustomCard(containerColor = cardNormalColor()) {
                         TransplantListItem(
                             headlineContent = { Text("适用范围" ) },
@@ -685,7 +685,7 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                                                 )
 
                                                 if(index+1 != classList.size) {
-                                                    Spacer(Modifier.width(appHorizontalDp()))
+                                                    Spacer(Modifier.width(APP_HORIZONTAL_DP))
                                                     AssistChip(
                                                         onClick = {
                                                             id = index+1
@@ -709,8 +709,8 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                                 modifier = Modifier
                                     .align(Alignment.Bottom)
                                     .padding(
-                                        horizontal = appHorizontalDp(),
-                                        vertical = appHorizontalDp() - 5.dp
+                                        horizontal = APP_HORIZONTAL_DP,
+                                        vertical = APP_HORIZONTAL_DP - 5.dp
                                     )
                                     .clickable {
                                         showAddDialog = true
@@ -723,8 +723,8 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                                 modifier = Modifier
                                     .align(Alignment.Top)
                                     .padding(
-                                        horizontal = appHorizontalDp(),
-                                        vertical = appHorizontalDp() - 5.dp
+                                        horizontal = APP_HORIZONTAL_DP,
+                                        vertical = APP_HORIZONTAL_DP - 5.dp
                                     )
                                     .clickable {
                                         isEditMode = !isEditMode
@@ -737,8 +737,8 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                                 modifier = Modifier
                                     .align(Alignment.Bottom)
                                     .padding(
-                                        horizontal = appHorizontalDp(),
-                                        vertical = appHorizontalDp() - 5.dp
+                                        horizontal = APP_HORIZONTAL_DP,
+                                        vertical = APP_HORIZONTAL_DP - 5.dp
                                     )
                                     .clickable {
                                         classList.clear()
@@ -751,8 +751,8 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                                 modifier = Modifier
                                     .align(Alignment.Bottom)
                                     .padding(
-                                        horizontal = appHorizontalDp(),
-                                        vertical = appHorizontalDp() - 5.dp
+                                        horizontal = APP_HORIZONTAL_DP,
+                                        vertical = APP_HORIZONTAL_DP - 5.dp
                                     )
                                     .clickable {
                                         val sorted = classList.sorted() // 生成排序后的副本
@@ -762,7 +762,7 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                             )
                         }
                     }
-                    Spacer(Modifier.height(5.dp - cardNormalDp()))
+                    Spacer(Modifier.height(5.dp - CARD_NORMAL_DP))
                     StyleCardListItem(
                         headlineContent = { Text("同时克隆卡片至本地")},
                         supportingContent = { Text(if(isClone)"上传卡片时，同时添加入本地聚焦当中" else "仅共享卡片 自己无需使用")},
@@ -776,7 +776,7 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                 }
             }
 
-            Spacer(Modifier.height(40.dp + appHorizontalDp()))
+            Spacer(Modifier.height(40.dp + APP_HORIZONTAL_DP))
         }
     }
 }

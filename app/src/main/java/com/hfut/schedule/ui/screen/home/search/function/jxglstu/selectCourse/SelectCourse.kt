@@ -69,15 +69,17 @@ import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.screen.home.updateCourses
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.ApiToFailRate
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.permit
 import com.hfut.schedule.ui.screen.home.search.function.school.teacherSearch.ApiToTeacherSearch
 import com.hfut.schedule.ui.component.AnimationCustomCard
-import com.hfut.schedule.ui.component.appHorizontalDp
+ 
 import com.hfut.schedule.ui.component.cardNormalColor
-import com.hfut.schedule.ui.component.cardNormalDp
+  
 import com.hfut.schedule.ui.component.BottomSheetTopBar
+import com.hfut.schedule.ui.component.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.LittleDialog
@@ -344,7 +346,7 @@ fun SelectCourseList(vm: NetWorkViewModel, hazeState: HazeState) {
 //                elevation = CardDefaults.cardElevation(defaultElevation = 1.75.dp),
 //                modifier = Modifier
 //                    .fillMaxWidth()
-//                    .padding(horizontal = AppHorizontalDp(), vertical = 5.dp)
+//                    .padding(horizontal = APP_HORIZONTAL_DP, vertical = 5.dp)
 //                    .clickable {
 //                        courseId = list[item].id
 //                        SharePrefs.Save("courseIDS", list[item].id.toString())
@@ -459,7 +461,7 @@ fun SelectCourseInfoLoad(courseId : Int, vm: NetWorkViewModel, hazeState: HazeSt
                 TextField(
                     modifier = Modifier
                         .weight(1f)
-                        .padding(horizontal = appHorizontalDp()),
+                        .padding(horizontal = APP_HORIZONTAL_DP),
                     value = input,
                     onValueChange = {
                         input = it
@@ -478,7 +480,7 @@ fun SelectCourseInfoLoad(courseId : Int, vm: NetWorkViewModel, hazeState: HazeSt
                     colors = textFiledTransplant(),
                 )
             }
-            Spacer(modifier = Modifier.height(cardNormalDp()))
+            Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
             SelectCourseInfo(vm,courseId,input, hazeState =hazeState )
         }
     }

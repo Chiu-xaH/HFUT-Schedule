@@ -38,9 +38,13 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.community.GradeResponseJXGLSTU
 import com.hfut.schedule.logic.util.network.UiState
+import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.parse.formatDecimal
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.AnimationCardListItem
+import com.hfut.schedule.ui.component.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.EmptyUI
@@ -49,8 +53,8 @@ import com.hfut.schedule.ui.component.LargeCard
 import com.hfut.schedule.ui.component.LittleDialog
 import com.hfut.schedule.ui.component.ScrollText
 import com.hfut.schedule.ui.component.TransplantListItem
-import com.hfut.schedule.ui.component.appHorizontalDp
-import com.hfut.schedule.ui.component.cardNormalDp
+ 
+  
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.screen.card.count.RadarChart
 import com.hfut.schedule.ui.screen.card.count.RadarData
@@ -61,6 +65,7 @@ import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -152,7 +157,7 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel, showSe
                     TextField(
                         modifier = Modifier
                             .weight(1f)
-                            .padding(horizontal = appHorizontalDp()),
+                            .padding(horizontal = APP_HORIZONTAL_DP),
                         value = input,
                         onValueChange = {
                             input = it
@@ -178,7 +183,7 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel, showSe
                     }
                 }
 
-                Spacer(modifier = Modifier.height(cardNormalDp()))
+                Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
             } else {
                 searchList = gradeList.toMutableList()
             }
@@ -221,7 +226,8 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel, showSe
 
 @Composable
 fun GradeInfo(num : GradeResponseJXGLSTU,vm: NetWorkViewModel) {
-    val hazeState = remember { HazeState() }
+    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
     val list = num.grade.split(" ")
     val radarList = mutableListOf<RadarData>()
     list.forEach { item ->

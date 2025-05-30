@@ -1,8 +1,6 @@
 package com.hfut.schedule.ui.screen.home.search.function.huiXin.card
 
 import android.annotation.SuppressLint
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -28,14 +26,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.viewmodel.UIViewModel
+import com.hfut.schedule.logic.model.community.TodayResult
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.ui.screen.home.focus.funiction.getToday
 import com.hfut.schedule.ui.component.EmptyUI
 import com.hfut.schedule.ui.component.ScrollText
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
+import com.hfut.schedule.viewmodel.UIViewModel
 
 
 @SuppressLint("SuspiciousIndentation")
@@ -100,43 +98,52 @@ fun SchoolCardItem(vmUI : UIViewModel,cardBool : Boolean) {
 }
 
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun TodayInfo() {
-    if(getToday()?.todayExam?.courseName == null && getToday()?.todayCourse?.courseName == null && getToday()?.bookLending?.bookName == null && getToday()?.todayActivity?.activityName == null) {
-        EmptyUI()
-    }
-        if(getToday()?.todayExam?.courseName != null) {
+fun TodayInfo(bean : TodayResult) {
+    with(bean) {
+        if(todayExam.courseName == null && todayCourse.courseName == null && bookLending.bookName == null && todayActivity.activityName == null) {
+            EmptyUI()
+        }
+        with(todayExam) {
+            courseName?.let {
                 StyleCardListItem(
-                    headlineContent = { Text(text = getToday()?.todayExam?.courseName.toString()) },
-                    overlineContent = { Text(text = getToday()?.todayExam?.startTime + "~" + getToday()?.todayExam?.endTime) },
-                    supportingContent = { Text(text = getToday()?.todayExam?.place.toString())},
+                    headlineContent = { Text(text = it.toString()) },
+                    overlineContent = { Text(text = "$startTime~$endTime") },
+                    supportingContent = { Text(text = place.toString())},
                     leadingContent = { Icon(painter = painterResource(R.drawable.draw), contentDescription = "")},
                 )
+            }
         }
-        if(getToday()?.todayCourse?.courseName != null) {
+        with(todayCourse) {
+            courseName?.let {
                 StyleCardListItem(
-                    headlineContent = { Text(text = getToday()?.todayCourse?.courseName.toString()) },
-                    overlineContent = { Text(text = getToday()?.todayCourse?.startTime + "~" + getToday()?.todayCourse?.endTime +  "  " +  getToday()?.todayCourse?.place)},
-                    supportingContent = { getToday()?.todayCourse?.className?.let { Text(text = it) } },
+                    headlineContent = { Text(text = it.toString()) },
+                    overlineContent = { Text(text = "$startTime~$endTime  $place")},
+                    supportingContent = { className?.let { Text(text = it) } },
                     leadingContent = { Icon(painter = painterResource(R.drawable.calendar), contentDescription = "")},
                 )
+            }
         }
-        if(getToday()?.bookLending?.bookName != null) {
+        with(bookLending) {
+            bookName?.let {
                 StyleCardListItem(
-                    headlineContent = { Text(text = getToday()?.bookLending?.bookName.toString()) },
-                    supportingContent = { Text(text = "归还时间 " + getToday()?.bookLending?.returnTime) },
-                    overlineContent = { Text(text = "借阅于 " + getToday()?.bookLending?.outTime + "\n应还于 " + getToday()?.bookLending?.dueTime )},
+                    headlineContent = { Text(text = it.toString()) },
+                    supportingContent = { Text(text = "归还时间 $returnTime") },
+                    overlineContent = { Text(text = "借阅于 $outTime\n应还于 $dueTime")},
                     leadingContent = { Icon(painter = painterResource(R.drawable.book), contentDescription = "")},
                 )
+            }
         }
-        if(getToday()?.todayActivity?.activityName != null) {
+        with(todayActivity) {
+            activityName?.let {
                 StyleCardListItem(
-                    headlineContent = { Text(text = getToday()?.todayActivity?.activityName.toString()) },
-                    overlineContent = { Text(text = getToday()?.todayActivity?.startTime.toString()) },
+                    headlineContent = { Text(text = it.toString()) },
+                    overlineContent = { Text(text = startTime.toString()) },
                     leadingContent = { Icon(painter = painterResource(R.drawable.schedule), contentDescription = "")},
                 )
+            }
         }
+    }
 }
 
 

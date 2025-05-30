@@ -18,9 +18,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -38,6 +41,7 @@ import com.hfut.schedule.logic.model.Schedule
 import com.hfut.schedule.logic.model.community.TodayResponse
 import com.hfut.schedule.logic.model.community.TodayResult
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
+import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.getTimeStamp
 import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
@@ -51,6 +55,7 @@ import com.hfut.schedule.logic.util.sys.DateTimeUtils.TimeState.ONGOING
 import com.hfut.schedule.logic.util.sys.JxglstuCourseSchedule
 import com.hfut.schedule.logic.util.sys.addToCalendars
 import com.hfut.schedule.ui.component.BottomTip
+import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.LittleDialog
 import com.hfut.schedule.ui.component.RotatingIcon
@@ -58,6 +63,7 @@ import com.hfut.schedule.ui.component.ScheduleIcons
 import com.hfut.schedule.ui.component.ScrollText
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
+import com.hfut.schedule.ui.component.onListenStateHolder
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.DetailInfos
@@ -506,132 +512,121 @@ fun TimeStampItem() = BottomTip(getTimeStamp())
 fun TermTip() = BottomTip(parseSemseter(getSemseter()))
 
 @Composable
-fun TodayUI(hazeState: HazeState) {
-    var showBottomSheet by  remember { mutableStateOf(false) }
-
-    if (showBottomSheet ) {
-        HazeBottomSheet (
-            onDismissRequest = { showBottomSheet = false },
-            isFullExpand = false,
-            showBottomSheet = showBottomSheet,
-            hazeState = hazeState
-        ) {
-
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("聚焦通知")
-                },) {innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ){
-                    TodayInfo()
-                }
-            }
+fun TodayUI(hazeState: HazeState,vm: NetWorkViewModel) {
+    val data by produceState<TodayResult?>(initialValue = null) {
+        onListenStateHolder(vm.todayFormCommunityResponse, onError = { _,_ -> }) { data ->
+            value = data
         }
     }
-
-    //判断明天是否有早八
-    val weekdayTomorrow = DateTimeUtils.dayWeek + 1
-    var week = DateTimeUtils.weeksBetween.toInt()
-    //当第二天为下一周的周一时，周数+1
-    when(weekdayTomorrow) {
-        1 -> week += 1
-    }
-
-    val list = getCourseInfoFromCommunity(weekdayTomorrow,week)
-    val time = if(list.isEmpty())
-        ""
-    else list[0][0].classTime.substringBefore(":")
-
-//    //判断明天是否需要调休
-//    var rest by  remember { mutableStateOf(false) }
-//    val schedule = getSchedule()
-//    for(element in schedule) {
-//        if(element.title.contains("调休")) {
-//            if(element.time.substringBefore(" ") == DateTimeUtils.tomorrow_MM_DD) {
-//                rest = true
-//            }
-//        }
-//    }
-
-    Box(modifier = Modifier.clickable { showBottomSheet = true }) {
-        if( getToday()?.todayExam?.courseName == null &&
-            getToday()?.todayCourse?.courseName == null &&
-            getToday()?.todayActivity?.activityName == null &&
-            getToday()?.bookLending?.bookName == null) {
-            when {
-                isHolidayTomorrow() -> {
-                    TransplantListItem(
-                        headlineContent = { ScrollText(text = "节假日休息" ) },
-                        overlineContent = { ScrollText(text = "明天") },
-                        leadingContent = { Icon(painter = painterResource(R.drawable.sentiment_very_satisfied) , contentDescription = "")},
-                    )
-                }
-                isSpecificWorkDayTomorrow() -> {
-                    TransplantListItem(
-                        headlineContent = { ScrollText(text = "有调休上课" ) },
-                        overlineContent = { ScrollText(text = "明天") },
-                        leadingContent = { Icon(painter = painterResource(R.drawable.warning) , contentDescription = "")},
-                        colors = MaterialTheme.colorScheme.errorContainer
-                    )
-                }
-                else -> {
-                    TransplantListItem(
-                        headlineContent = { ScrollText(text =  if( time == "08")"明天有早八" else if(time == "10") "明天有早十"  else if(time == "14" || time == "16" || time == "19" )  "明天睡懒觉" else "明天没有课") },
-                        overlineContent = { ScrollText(text = "今天") },
-                        leadingContent = { Icon(painter = painterResource( if( time == "08") R.drawable.sentiment_sad else if (time == "10") R.drawable.sentiment_dissatisfied else R.drawable.sentiment_very_satisfied) , contentDescription = "")},
-                    )
-                }
-            }
-        } else {
-            if(getToday()?.todayExam?.courseName != null) {
+    val noDataUI = @Composable {
+        when {
+            isHolidayTomorrow() -> {
                 TransplantListItem(
-                    headlineContent = { ScrollText(text = (getToday()?.todayExam?.courseName.toString()).replace("学堂","")) },
-                    overlineContent = { ScrollText(text = getToday()?.todayExam?.place + "  " + getToday()?.todayExam?.startTime) },
-                    leadingContent = { Icon(painter = painterResource(R.drawable.draw), contentDescription = "")},
-                    modifier = Modifier.background(MaterialTheme.colorScheme.errorContainer).zIndex(3f)
+                    headlineContent = { ScrollText(text = "节假日休息" ) },
+                    overlineContent = { ScrollText(text = "明天") },
+                    leadingContent = { Icon(painter = painterResource(R.drawable.sentiment_very_satisfied) , contentDescription = "")},
                 )
             }
-            if(getToday()?.todayCourse?.courseName != null) {
+            isSpecificWorkDayTomorrow() -> {
                 TransplantListItem(
-                    headlineContent = { ScrollText(text = getToday()?.todayCourse?.courseName.toString()) },
-                    overlineContent = { ScrollText(text = getToday()?.todayCourse?.place?.replace("学堂","") + " " + getToday()?.todayCourse?.startTime) },
-                    leadingContent = { Icon(painter = painterResource(R.drawable.calendar), contentDescription = "")},
+                    headlineContent = { ScrollText(text = "有调休上课" ) },
+                    overlineContent = { ScrollText(text = "明天") },
+                    leadingContent = { Icon(painter = painterResource(R.drawable.warning) , contentDescription = "")},
+                    colors = MaterialTheme.colorScheme.errorContainer
                 )
             }
-            if(getToday()?.bookLending?.bookName != null) {
+            else -> {
+                //判断明天是否有早八
+                val weekdayTomorrow = DateTimeUtils.dayWeek + 1
+                var week = DateTimeUtils.weeksBetween.toInt()
+                //当第二天为下一周的周一时，周数+1
+                when(weekdayTomorrow) {
+                    1 -> week += 1
+                }
+                val list = getCourseInfoFromCommunity(weekdayTomorrow,week)
+                val time = if(list.isEmpty()) "" else list[0][0].classTime.substringBefore(":")
                 TransplantListItem(
-                    headlineContent = { ScrollText(text = getToday()?.bookLending?.bookName.toString()) },
-                    overlineContent = { ScrollText(text = getToday()?.bookLending?.returnTime.toString()) },
-                    leadingContent = { Icon(painter = painterResource(R.drawable.book), contentDescription = "")},
-                )
-            }
-            if(getToday()?.todayActivity?.activityName != null) {
-                TransplantListItem(
-                    headlineContent = { ScrollText(text = getToday()?.todayActivity?.activityName.toString()) },
-                    overlineContent = { ScrollText(text = getToday()?.todayActivity?.startTime.toString()) },
-                    leadingContent = { Icon(painter = painterResource(R.drawable.schedule), contentDescription = "")},
+                    headlineContent = { ScrollText(text =  if( time == "08")"明天有早八" else if(time == "10") "明天有早十"  else if(time == "14" || time == "16" || time == "19" )  "明天睡懒觉" else "明天没有课") },
+                    overlineContent = { ScrollText(text = "今天") },
+                    leadingContent = { Icon(painter = painterResource( if( time == "08") R.drawable.sentiment_sad else if (time == "10") R.drawable.sentiment_dissatisfied else R.drawable.sentiment_very_satisfied) , contentDescription = "")},
                 )
             }
         }
     }
-}
+    if(data == null) {
+        noDataUI()
+    } else {
+        var showBottomSheet by  remember { mutableStateOf(false) }
 
-fun getToday() : TodayResult? {
-    val json = prefs.getString("TodayNotice","")
-    return try {
-        val result = Gson().fromJson(json,TodayResponse::class.java).result
-        val course = result.todayCourse
-        val book = result.bookLending
-        val exam = result.todayExam
-        val activity = result.todayActivity
-        TodayResult(course,book,exam,activity)
-    } catch (e : Exception) {
-        null
+        if (showBottomSheet ) {
+            HazeBottomSheet (
+                onDismissRequest = { showBottomSheet = false },
+                isFullExpand = false,
+                showBottomSheet = showBottomSheet,
+                hazeState = hazeState
+            ) {
+
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    containerColor = Color.Transparent,
+                    topBar = {
+                        HazeBottomSheetTopBar("聚焦通知")
+                    },) {innerPadding ->
+                    Column(
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .fillMaxSize()
+                    ){
+                        TodayInfo(data!!)
+                    }
+                }
+            }
+        }
+        Box(modifier = Modifier.clickable { showBottomSheet = true }) {
+            with(data!!) {
+                if(todayExam.courseName == null && todayCourse.courseName == null && todayActivity.activityName == null && bookLending.bookName == null) {
+                    noDataUI()
+                } else {
+                    with(todayExam) {
+                        courseName?.let {
+                            TransplantListItem(
+                                headlineContent = { ScrollText(text = (it.toString()).replace("学堂","")) },
+                                overlineContent = { ScrollText(text = "$place  $startTime") },
+                                leadingContent = { Icon(painter = painterResource(R.drawable.draw), contentDescription = "")},
+                                modifier = Modifier.background(MaterialTheme.colorScheme.errorContainer).zIndex(3f)
+                            )
+                        }
+                    }
+                    with(todayCourse) {
+                        courseName?.let {
+                            TransplantListItem(
+                                headlineContent = { ScrollText(text =  it.toString()) },
+                                overlineContent = { ScrollText(text =  place?.replace("学堂","") + " " +  startTime) },
+                                leadingContent = { Icon(painter = painterResource(R.drawable.calendar), contentDescription = "")},
+                            )
+                        }
+                    }
+                    with(bookLending) {
+                        bookName?.let {
+                            TransplantListItem(
+                                headlineContent = { ScrollText(text =  it.toString()) },
+                                overlineContent = { ScrollText(text =  returnTime.toString()) },
+                                leadingContent = { Icon(painter = painterResource(R.drawable.book), contentDescription = "")},
+                            )
+                        }
+                    }
+                    with(todayActivity) {
+                        activityName?.let {
+                            TransplantListItem(
+                                headlineContent = { ScrollText(text =  it.toString()) },
+                                overlineContent = { ScrollText(text =  startTime.toString()) },
+                                leadingContent = { Icon(painter = painterResource(R.drawable.schedule), contentDescription = "")},
+                            )
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 

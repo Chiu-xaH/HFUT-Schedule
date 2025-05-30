@@ -34,6 +34,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.jxglstu.CourseItem
 import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.AnimationCardListItem
 import com.hfut.schedule.ui.component.AnimationCustomCard
 import com.hfut.schedule.ui.component.CommonNetworkScreen
@@ -43,7 +44,7 @@ import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.LargeCard
 import com.hfut.schedule.ui.component.ScrollText
 import com.hfut.schedule.ui.component.TransplantListItem
-import com.hfut.schedule.ui.component.appHorizontalDp
+ 
 import com.hfut.schedule.ui.component.cardNormalColor
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.textFiledTransplant
@@ -266,7 +267,7 @@ private fun PerformanceInfo(vm: NetWorkViewModel, moduleIndex : Int, hazeState: 
         TextField(
             modifier = Modifier
                 .weight(1f)
-                .padding(horizontal = appHorizontalDp()),
+                .padding(horizontal = APP_HORIZONTAL_DP),
             value = input,
             onValueChange = {
                 input = it
@@ -294,7 +295,7 @@ private fun PerformanceInfo(vm: NetWorkViewModel, moduleIndex : Int, hazeState: 
 //    Row(
 //        modifier = Modifier
 //            .fillMaxWidth()
-//            .padding(horizontal = AppHorizontalDp()),
+//            .padding(horizontal = APP_HORIZONTAL_DP),
 //        horizontalArrangement = Arrangement.Start
 //    ) {
 //        AssistChip(onClick = { MyToast("正在开发") }, label = { Text(text = "学期") })

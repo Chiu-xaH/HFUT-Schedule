@@ -29,11 +29,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.R
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.MyCustomCard
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.WebDialog
-import com.hfut.schedule.ui.component.appHorizontalDp
+ 
 import com.hfut.schedule.ui.component.cardNormalColor
 import dev.chrisbanes.haze.HazeState
 
@@ -52,7 +53,7 @@ fun Support(innerPadding : PaddingValues) {
         SupportItemBean("图标动态取色","Android 12+","https://github.com/Chiu-xaH/HFUT-Schedule/blob/main/docs/CONTRAST.md#%E5%8A%A8%E6%80%81%E5%8F%96%E8%89%B2", listOf(
             false,true,null,false,false,true,false,true
         )),
-        SupportItemBean("层级实时模糊","Android 13+","https://github.com/Chiu-xaH/HFUT-Schedule/blob/main/docs/CONTRAST.md#%E5%B1%82%E7%BA%A7%E5%AE%9E%E6%97%B6%E6%A8%A1%E7%B3%8A", listOf(
+        SupportItemBean("层级实时模糊","Android 12+","https://github.com/Chiu-xaH/HFUT-Schedule/blob/main/docs/CONTRAST.md#%E5%B1%82%E7%BA%A7%E5%AE%9E%E6%97%B6%E6%A8%A1%E7%B3%8A", listOf(
             true,true,true,true,true,true,true,true
         )),
         SupportItemBean("预测式返回","Android 13+","https://github.com/Chiu-xaH/HFUT-Schedule/blob/main/docs/CONTRAST.md#%E9%A2%84%E6%B5%8B%E5%BC%8F%E8%BF%94%E5%9B%9E", listOf(
@@ -144,14 +145,14 @@ private fun SupportItem(item : SupportItemBean) {
                     text = item.android,
                     color = MaterialTheme.colorScheme.primary,
                     fontSize = 14.sp,
-                    modifier = Modifier.align(Alignment.Bottom).padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp() - 5.dp)
+                    modifier = Modifier.align(Alignment.Bottom).padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP - 5.dp)
                 )
                 item.url?.let {
                     Text(
                         text = "预览效果",
                         color = MaterialTheme.colorScheme.primary,
                         fontSize = 14.sp,
-                        modifier = Modifier.align(Alignment.Top).padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp() - 5.dp).clickable {
+                        modifier = Modifier.align(Alignment.Top).padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP - 5.dp).clickable {
                             url = it
                             showDialog = true
                         }

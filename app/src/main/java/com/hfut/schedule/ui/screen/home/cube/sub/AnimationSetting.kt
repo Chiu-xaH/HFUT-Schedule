@@ -31,9 +31,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.ui.util.NavigateAnimationManager
-import com.hfut.schedule.ui.util.NavigateAnimationManager.ANIMATION_SPEED
-import com.hfut.schedule.ui.component.appHorizontalDp
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.util.MyAnimationManager
+import com.hfut.schedule.ui.util.MyAnimationManager.ANIMATION_SPEED
+ 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -42,13 +43,13 @@ import kotlinx.coroutines.launch
 //@Preview
 fun AnimationSetting() {
     val lists = listOf(
-        NavigateAnimationManager.upDownAnimation,
-        NavigateAnimationManager.centerAnimation,
-        NavigateAnimationManager.getLeftRightAnimation(0),
-        NavigateAnimationManager.fadeAnimation,
-        NavigateAnimationManager.nullAnimation
+        MyAnimationManager.upDownAnimation,
+        MyAnimationManager.centerAnimation,
+        MyAnimationManager.getLeftRightAnimation(0),
+        MyAnimationManager.fadeAnimation,
+        MyAnimationManager.nullAnimation
     )
-    val currentAnimationIndex by DataStoreManager.animationTypeFlow.collectAsState(initial = 0)
+    val currentAnimationIndex by DataStoreManager.animationTypeFlow.collectAsState(initial = 1)
 
     LazyRow() {
         item { Spacer(Modifier.width(10.dp)) }
@@ -57,13 +58,13 @@ fun AnimationSetting() {
             AnimationCard(lists[index],currentAnimationIndex,index)
         }
         item {
-            Spacer(Modifier.width(appHorizontalDp()))
+            Spacer(Modifier.width(APP_HORIZONTAL_DP))
         }
     }
 }
 
 @Composable
-fun AnimationCard(animation :  NavigateAnimationManager. TransferAnimation, currentAnimationIndex : Int, index : Int) {
+fun AnimationCard(animation :  MyAnimationManager. TransferAnimation, currentAnimationIndex : Int, index : Int) {
     val isSelected = currentAnimationIndex == index
 
     val cor = rememberCoroutineScope()

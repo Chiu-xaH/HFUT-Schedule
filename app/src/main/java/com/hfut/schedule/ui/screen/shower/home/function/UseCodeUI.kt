@@ -1,7 +1,6 @@
 package com.hfut.schedule.ui.screen.shower.home.function
 
 import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -37,20 +36,17 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
-import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.ShowerScreen
 import com.hfut.schedule.logic.util.network.UiState
-import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.BottomTip
 import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.ErrorUI
@@ -58,13 +54,13 @@ import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.StatusUI
 import com.hfut.schedule.ui.component.StatusUI2
 import com.hfut.schedule.ui.component.TransplantListItem
-import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.component.largeCardColor
 import com.hfut.schedule.ui.screen.home.cube.sub.CirclePoint
 import com.hfut.schedule.ui.screen.home.cube.sub.KeyBoard
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.RowHorizontal
 import com.hfut.schedule.ui.style.appBlur
+import com.hfut.schedule.ui.util.MyAnimationManager
 import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.viewmodel.network.GuaGuaViewModel
 import dev.chrisbanes.haze.HazeState
@@ -81,12 +77,12 @@ fun UseCodeUI(vm: GuaGuaViewModel, hazeState: HazeState, navController: NavHostC
 
     val scale = animateFloatAsState(
         targetValue = if (loading) 0.9f else 1f, // 按下时为0.9，松开时为1
-        animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
+        animationSpec = tween(MyAnimationManager.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
         label = "" // 使用弹簧动画
     )
     val scale2 = animateFloatAsState(
         targetValue = if (loading) 0.97f else 1f, // 按下时为0.9，松开时为1
-        animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
+        animationSpec = tween(MyAnimationManager.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
         label = "" // 使用弹簧动画
     )
 
@@ -123,10 +119,10 @@ fun UseCodeUI(vm: GuaGuaViewModel, hazeState: HazeState, navController: NavHostC
     }
 
     Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = appHorizontalDp()),
+        elevation = CardDefaults.cardElevation(defaultElevation = APP_HORIZONTAL_DP),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = appHorizontalDp(), vertical = 5.dp)
+            .padding(horizontal = APP_HORIZONTAL_DP, vertical = 5.dp)
             .scale(scale2.value),
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(containerColor = largeCardColor())
@@ -135,15 +131,15 @@ fun UseCodeUI(vm: GuaGuaViewModel, hazeState: HazeState, navController: NavHostC
             if(!switchAutoRefresh) {
                 androidx.compose.animation.AnimatedVisibility(
                     visible = showButton,
-                    enter = fadeIn(tween(durationMillis = MyApplication.ANIMATION_SPEED)) + scaleIn(tween(durationMillis = MyApplication.ANIMATION_SPEED)),
-                    exit = fadeOut(tween(durationMillis = MyApplication.ANIMATION_SPEED)) + scaleOut(tween(durationMillis = MyApplication.ANIMATION_SPEED)),
+                    enter = fadeIn(tween(durationMillis = MyAnimationManager.ANIMATION_SPEED)) + scaleIn(tween(durationMillis = MyAnimationManager.ANIMATION_SPEED)),
+                    exit = fadeOut(tween(durationMillis = MyAnimationManager.ANIMATION_SPEED)) + scaleOut(tween(durationMillis = MyAnimationManager.ANIMATION_SPEED)),
                     modifier = Modifier
                         .align(Alignment.Center)
                         .zIndex(1f)
                 ) {
 //                    val blurSizeButton by animateDpAsState(
 //                        targetValue = if (!showButton) 4.dp else 0.dp, label = ""
-//                        ,animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
+//                        ,animationSpec = tween(MyAnimationManager.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
 //                    )
                     Button(
                         onClick = { scope.launch { refreshNetwork() } },
@@ -201,11 +197,11 @@ fun ReSetUseCodeUI(vm: GuaGuaViewModel,navController: NavHostController) {
 
     if(password.length != len) {
         Column {
-            Spacer(Modifier.height(appHorizontalDp()*1.5f))
+            Spacer(Modifier.height(APP_HORIZONTAL_DP*1.5f))
             CirclePoint(text = passwordStatus, password = password, num = 5)
             Spacer(modifier = Modifier.height(20.dp))
             KeyBoard(
-                modifier = Modifier.padding(horizontal = appHorizontalDp()),
+                modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
                 onKeyClick = { num ->
                     if (password.length < len) {
                         password += num.toString()

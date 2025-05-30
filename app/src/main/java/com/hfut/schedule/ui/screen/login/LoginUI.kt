@@ -84,6 +84,7 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.BottomSheetTopBar
 import com.hfut.schedule.ui.component.LoadingUI
 import com.hfut.schedule.ui.component.MyCustomCard
@@ -91,7 +92,7 @@ import com.hfut.schedule.ui.component.ShareTwoContainer
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.URLImageWithOCR
-import com.hfut.schedule.ui.component.appHorizontalDp
+ 
 import com.hfut.schedule.ui.component.cardNormalColor
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.screen.home.cube.sub.DownloadMLUI
@@ -290,7 +291,7 @@ fun LoginScreen(vm : LoginViewModel, navController : NavHostController) {
         Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
             TwoTextField(vm,navController,webVpn)
             ShareTwoContainer(
-                modifier = Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(horizontal = 25.dp- appHorizontalDp()),
+                modifier = Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(horizontal = 25.dp- APP_HORIZONTAL_DP),
                 defaultContent = {
                     Column {
                         StyleCardListItem(
@@ -563,7 +564,7 @@ fun TwoTextField(vm : LoginViewModel, navHostController: NavHostController,webVp
                 ) { Text( "登录") }
 
                 if(isAnonymity()) {
-                    Spacer(modifier = Modifier.width(appHorizontalDp()))
+                    Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP))
 
 
                     FilledTonalButton(

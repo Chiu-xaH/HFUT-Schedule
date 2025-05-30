@@ -25,8 +25,8 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,7 +35,6 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -50,10 +49,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -68,17 +63,16 @@ import com.hfut.schedule.logic.model.community.courseDetailDTOList
 import com.hfut.schedule.logic.model.jxglstu.datumResponse
 import com.hfut.schedule.logic.util.network.HfutCAS
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.isNextOpen
-import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
-import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveInt
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.LargeCard
 import com.hfut.schedule.ui.component.LoadingUI
 import com.hfut.schedule.ui.component.TransplantListItem
-import com.hfut.schedule.ui.component.appHorizontalDp
+ 
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.DetailInfos
@@ -742,8 +736,8 @@ fun JxglstuCourseTableUI(
                                 .align(Alignment.BottomStart)
                                 .padding(innerPadding)
                                 .padding(
-                                    horizontal = appHorizontalDp(),
-                                    vertical = appHorizontalDp()
+                                    horizontal = APP_HORIZONTAL_DP,
+                                    vertical = APP_HORIZONTAL_DP
                                 )
                         ) {
                             if (shouldShowAddButton) {
@@ -755,7 +749,7 @@ fun JxglstuCourseTableUI(
                                             onDateChange(today.minusDays(7))
                                         }
                                     },
-                                ) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Add Button") }
+                                ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
                             }
                         }
                         // 中间
@@ -767,8 +761,8 @@ fun JxglstuCourseTableUI(
                                 .align(Alignment.BottomCenter)
                                 .padding(innerPadding)
                                 .padding(
-                                    horizontal = appHorizontalDp(),
-                                    vertical = appHorizontalDp()
+                                    horizontal = APP_HORIZONTAL_DP,
+                                    vertical = APP_HORIZONTAL_DP
                                 )
                         ) {
                             if (shouldShowAddButton) {
@@ -792,30 +786,30 @@ fun JxglstuCourseTableUI(
                             }
                         }
                         // 学期显示
-                        androidx.compose.animation.AnimatedVisibility(
-                            visible = !shouldShowAddButton,
-                            enter = scaleIn(),
-                            exit = scaleOut(),
-                            modifier = Modifier
-                                .align(Alignment.BottomCenter)
-                                .padding(innerPadding)
-                                .padding(
-                                    horizontal = appHorizontalDp(),
-                                    vertical = appHorizontalDp()
-                                )
-                        ) {
-                            TextButton(onClick = {  }) {
-                                Text(
-                                    text = parseSemseter(getSemseter()) + " 第${currentWeek}周",
-                                    style = TextStyle(shadow = Shadow(
-                                        color = Color.Gray,
-                                        offset = Offset(5.0f,5.0f),
-                                        blurRadius = 10.0f
-                                    )
-                                    )
-                                )
-                            }
-                        }
+//                        androidx.compose.animation.AnimatedVisibility(
+//                            visible = !shouldShowAddButton,
+//                            enter = scaleIn(),
+//                            exit = scaleOut(),
+//                            modifier = Modifier
+//                                .align(Alignment.BottomCenter)
+//                                .padding(innerPadding)
+//                                .padding(
+//                                    horizontal = APP_HORIZONTAL_DP,
+//                                    vertical = APP_HORIZONTAL_DP
+//                                )
+//                        ) {
+//                            TextButton(onClick = {  }) {
+//                                Text(
+//                                    text = parseSemseter(getSemseter()) + " 第${currentWeek}周",
+//                                    style = TextStyle(shadow = Shadow(
+//                                        color = Color.Gray,
+//                                        offset = Offset(5.0f,5.0f),
+//                                        blurRadius = 10.0f
+//                                    )
+//                                    )
+//                                )
+//                            }
+//                        }
                         // 下一周
                         androidx.compose.animation.AnimatedVisibility(
                             visible = shouldShowAddButton,
@@ -825,8 +819,8 @@ fun JxglstuCourseTableUI(
                                 .align(Alignment.BottomEnd)
                                 .padding(innerPadding)
                                 .padding(
-                                    horizontal = appHorizontalDp(),
-                                    vertical = appHorizontalDp()
+                                    horizontal = APP_HORIZONTAL_DP,
+                                    vertical = APP_HORIZONTAL_DP
                                 )
                         ) {
                             if (shouldShowAddButton) {
@@ -838,7 +832,7 @@ fun JxglstuCourseTableUI(
                                             onDateChange(today.plusDays(7))
                                         }
                                     },
-                                ) { Icon(Icons.AutoMirrored.Filled.ArrowForward, "Add Button") }
+                                ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
                             }
                         }
                     }

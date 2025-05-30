@@ -43,12 +43,13 @@ import com.hfut.schedule.logic.util.sys.CrashHandler
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.Starter.emailMe
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.BottomSheetTopBar
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.LittleDialog
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
-import com.hfut.schedule.ui.component.appHorizontalDp
+ 
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.screen.home.cube.apiCheck
 import com.hfut.schedule.ui.style.HazeBottomSheet
@@ -342,7 +343,7 @@ fun feedBackUI(vm : NetWorkViewModel) {
                 TextField(
                     modifier = Modifier
                         .weight(1f)
-                        .padding(horizontal = appHorizontalDp()),
+                        .padding(horizontal = APP_HORIZONTAL_DP),
                     value = input,
                     onValueChange = {
                         input = it
@@ -358,7 +359,7 @@ fun feedBackUI(vm : NetWorkViewModel) {
                 TextField(
                     modifier = Modifier
                         .weight(1f)
-                        .padding(horizontal = appHorizontalDp()),
+                        .padding(horizontal = APP_HORIZONTAL_DP),
                     value = inputContact,
                     onValueChange = { inputContact = it },
                     label = { Text("你的联系方式(可不填)" ) },

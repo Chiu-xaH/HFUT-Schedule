@@ -54,13 +54,13 @@ import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.BottomSheetTopBar
+import com.hfut.schedule.ui.component.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.SmallCard
 import com.hfut.schedule.ui.component.TransplantListItem
-import com.hfut.schedule.ui.component.appHorizontalDp
 import com.hfut.schedule.ui.component.cardNormalColor
-import com.hfut.schedule.ui.component.cardNormalDp
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.screen.card.count.drawLineChart
 import com.hfut.schedule.ui.style.bottomSheetRound
@@ -154,7 +154,7 @@ fun MonthBillUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = appHorizontalDp(), vertical = cardNormalDp()),
+                        .padding(horizontal = APP_HORIZONTAL_DP, vertical = CARD_NORMAL_DP),
                     shape = MaterialTheme.shapes.medium,
                     colors = CardDefaults.cardColors(containerColor = cardNormalColor())
                 ){
@@ -175,10 +175,10 @@ fun MonthBillUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
                 }
 
 
-                LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.padding(horizontal = appHorizontalDp() - cardNormalDp()), state = scrollstate){
+                LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP - CARD_NORMAL_DP), state = scrollstate){
 
                     item {
-                        SmallCard(modifier = Modifier.padding(horizontal = cardNormalDp(), vertical = cardNormalDp())) {
+                        SmallCard(modifier = Modifier.padding(horizontal = CARD_NORMAL_DP, vertical = CARD_NORMAL_DP)) {
                             TransplantListItem(
                                 headlineContent = { Text(text = "￥${formatDecimal(total,2)}") },
                                 overlineContent = { Text(text = "支出总和")},
@@ -190,7 +190,7 @@ fun MonthBillUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
                     item {
 //                        val big = BigDecimal()
                         val sumFloat = formatDecimal((total / filteredList.size),2)
-                        SmallCard(modifier = Modifier.padding(horizontal = cardNormalDp(), vertical = cardNormalDp())) {
+                        SmallCard(modifier = Modifier.padding(horizontal = CARD_NORMAL_DP, vertical = CARD_NORMAL_DP)) {
                             TransplantListItem(
                                 headlineContent = { Text(text = "￥$sumFloat") },
                                 overlineContent = { Text(text = "支出平均")},
@@ -202,7 +202,7 @@ fun MonthBillUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
                     items(filteredList.size) { item ->
                         var balance = filteredList[item].balance
                         balance /= 100
-                        SmallCard(modifier = Modifier.padding(horizontal = cardNormalDp(), vertical = cardNormalDp())){
+                        SmallCard(modifier = Modifier.padding(horizontal = CARD_NORMAL_DP, vertical = CARD_NORMAL_DP)){
                             TransplantListItem(
                                 overlineContent = { Text(text = filteredList[item].date) },
                                 headlineContent = { Text(text = "￥$balance") },
@@ -222,7 +222,7 @@ fun MonthBillUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(innerPadding)
-                    .padding(appHorizontalDp())
+                    .padding(APP_HORIZONTAL_DP)
             )
             AnimatedVisibility(
                 visible = shouldShowAddButton,
@@ -231,7 +231,7 @@ fun MonthBillUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
                 modifier = Modifier
                     .align(Alignment.BottomStart)
                     .padding(innerPadding)
-                    .padding(appHorizontalDp())
+                    .padding(APP_HORIZONTAL_DP)
             ) {
                 Row {
                     FloatingActionButton(
@@ -241,7 +241,7 @@ fun MonthBillUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
                             else showToast("请切换年份")
                         },
                     ) { Icon(Icons.Filled.ArrowBack, contentDescription = "") }
-                    Spacer(modifier = Modifier.padding(horizontal =appHorizontalDp()))
+                    Spacer(modifier = Modifier.padding(horizontal =APP_HORIZONTAL_DP))
                     FloatingActionButton(
                         onClick = {
                             if(month.toInt() <= 11)

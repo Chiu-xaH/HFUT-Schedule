@@ -66,13 +66,15 @@ import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.sys.ClipBoard
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.courseSearch.ApiForCourseSearch
 import com.hfut.schedule.ui.screen.home.search.function.other.life.countFunc
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.component.AnimationCardListItem
-import com.hfut.schedule.ui.component.appHorizontalDp
+ 
 import com.hfut.schedule.ui.component.BottomTip
-import com.hfut.schedule.ui.component.cardNormalDp
+import com.hfut.schedule.ui.component.CARD_NORMAL_DP
+
 import com.hfut.schedule.ui.component.DepartmentIcons
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
@@ -85,6 +87,7 @@ import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.StatusUI
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.textFiledTransplant
+import com.hfut.schedule.ui.util.MyAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
@@ -265,7 +268,7 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState) {
     var loadingCard = uiState !is UiState.Success
     val scale2 = animateFloatAsState(
         targetValue = if (loadingCard) 0.97f else 1f, // 按下时为0.9，松开时为1
-        animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
+        animationSpec = tween(MyAnimationManager.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
         label = "" // 使用弹簧动画
     )
 
@@ -390,7 +393,7 @@ fun ProgramUI2(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState) {
             },
             modifier = Modifier
                 .fillMaxWidth().scale(scale2.value)
-                .padding(horizontal = appHorizontalDp(), vertical = 5.dp),
+                .padding(horizontal = APP_HORIZONTAL_DP, vertical = 5.dp),
         ) {
             Text(text = "培养方案进度")
         }
@@ -666,7 +669,7 @@ fun ProgramInfo(courseInfo : ProgramPartThree,vm: NetWorkViewModel,hazeState: Ha
                     overlineContent = { Text("备注") },
                 )
             }
-            Spacer(Modifier.height(appHorizontalDp()))
+            Spacer(Modifier.height(APP_HORIZONTAL_DP))
         }
     }
 
@@ -693,7 +696,7 @@ fun ProgramUIInfo2(num1 : Int, num2 : Int, vm : NetWorkViewModel, ifSaved : Bool
             TextField(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(horizontal = appHorizontalDp()),
+                    .padding(horizontal = APP_HORIZONTAL_DP),
                 value = input,
                 onValueChange = {
                     input = it
@@ -716,7 +719,7 @@ fun ProgramUIInfo2(num1 : Int, num2 : Int, vm : NetWorkViewModel, ifSaved : Bool
                 searchList.add(item)
             }
         }
-        Spacer(modifier = Modifier.height(cardNormalDp()))
+        Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
         LazyColumn {
             items(searchList.size, key = { it }) {item ->
                 val listItem = searchList[item]

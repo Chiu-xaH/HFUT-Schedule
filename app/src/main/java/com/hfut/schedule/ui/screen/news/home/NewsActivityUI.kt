@@ -63,29 +63,27 @@ import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.util.network.Encrypt
 import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.AnimationCardListItem
+import com.hfut.schedule.ui.component.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.PagingController
 import com.hfut.schedule.ui.component.WebDialog
-import com.hfut.schedule.ui.component.WebViewScreen
-import com.hfut.schedule.ui.component.appHorizontalDp
-import com.hfut.schedule.ui.component.cardNormalDp
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.screen.news.department.SchoolsUI
 import com.hfut.schedule.ui.screen.news.xuancheng.XuanquNewsUI
 import com.hfut.schedule.ui.style.bottomBarBlur
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.ui.style.topBarBlur
-import com.hfut.schedule.ui.util.NavigateAnimationManager
-import com.hfut.schedule.ui.util.NavigateAnimationManager.currentPage
+import com.hfut.schedule.ui.util.MyAnimationManager
+import com.hfut.schedule.ui.util.MyAnimationManager.currentPage
 import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 import org.json.JSONArray
-import kotlin.text.contains
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -93,7 +91,8 @@ import kotlin.text.contains
 fun NewsActivityUI(vm: NetWorkViewModel) {
     val navController = rememberNavController()
     val context = LocalActivity.current
-    val hazeState = remember { HazeState() }
+    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
     val currentAnimationIndex by DataStoreManager.animationTypeFlow.collectAsState(initial = 0)
     var targetPage by remember { mutableStateOf(NewsBarItems.News) }
     // 保存上一页页码 用于决定左右动画
@@ -191,7 +190,7 @@ fun NewsActivityUI(vm: NetWorkViewModel) {
         }
     ) {innerPadding ->
 
-        val animation = NavigateAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
+        val animation = MyAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
 
         NavHost(navController = navController,
             startDestination = NewsBarItems.News.name,
@@ -247,7 +246,7 @@ fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
             LazyColumn(state = listState) {
                 item {
                     Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
-                    LazyRow(modifier = Modifier.padding(horizontal = appHorizontalDp())) {
+                    LazyRow(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
                         items(words.size) { index ->
                             val word = words[index]
                             AssistChip(onClick = {
@@ -265,7 +264,7 @@ fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                         TextField(
                             modifier = Modifier
                                 .weight(1f)
-                                .padding(horizontal = appHorizontalDp()),
+                                .padding(horizontal = APP_HORIZONTAL_DP),
                             value = input,
                             onValueChange = {
                                 input = it
@@ -287,7 +286,7 @@ fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                             colors = textFiledTransplant(),
                         )
                     }
-                    Spacer(modifier = Modifier.height(cardNormalDp()))
+                    Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
                 }
                 items(list.size, key = { it }){ item ->
                     val listItem = list[item]

@@ -36,7 +36,7 @@ fun ApiToSupabase(vm : NetWorkViewModel) {
         if((jwt.isNotBlank() || jwt.isNotEmpty()) && supabaseAutoCheck) {
             if(vm.supabaseCheckResp.value == null) {
                 vm.supabaseGetEventLatest(jwt)
-                onListenStateHolder(vm.supabaseGetEventLatestResp) { result ->
+                onListenStateHolder(vm.supabaseGetEventLatestResp,onError = { _,_ -> }) { result ->
                     if(result) {
                         showBadge = true
                         vm.supabaseCheckResp.value = true

@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.ui.util.MyAnimationManager
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -23,7 +24,7 @@ fun bottomSheetRound(sheetState: SheetState, autoShape : Boolean = true) : Round
 private fun roundDp(sheetState : SheetState) : Dp {
     val dpAnimation by animateDpAsState(
         targetValue = if (sheetState.currentValue != SheetValue.Expanded) 28.dp else 0.dp, label = ""
-        ,animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
+        ,animationSpec = tween(MyAnimationManager.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
     )
     return dpAnimation
 }

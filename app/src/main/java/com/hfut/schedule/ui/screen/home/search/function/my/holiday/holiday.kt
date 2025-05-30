@@ -22,11 +22,12 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.ui.component.BottomTip
+import com.hfut.schedule.ui.component.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.ScrollText
 import com.hfut.schedule.ui.component.SmallCard
 import com.hfut.schedule.ui.component.TransplantListItem
-import com.hfut.schedule.ui.component.cardNormalDp
+  
 import com.hfut.schedule.ui.screen.home.getHolidays
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import dev.chrisbanes.haze.HazeState
@@ -82,7 +83,7 @@ fun HolidayUI() {
             val item = list[index]
             val isOffDay = item.isOffDay
             SmallCard(
-                modifier = Modifier.padding(horizontal = cardNormalDp(), vertical = cardNormalDp()),
+                modifier = Modifier.padding(CARD_NORMAL_DP),
                 color = if(!isOffDay) MaterialTheme.colorScheme.errorContainer else null
             ) {
                 TransplantListItem(

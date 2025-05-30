@@ -16,6 +16,7 @@ import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.ui.util.MyAnimationManager
 
 // 小标题
 @Composable
@@ -40,7 +42,7 @@ fun DividerText(text: String, onClick: (() -> Unit?)? = null) {
     var isPressed by remember { mutableStateOf(false) }
     val scale = animateFloatAsState(
         targetValue = if (isPressed) 0.9f else 1f, // 按下时为0.9，松开时为1
-        animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
+        animationSpec = tween(MyAnimationManager.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
         label = "" // 使用弹簧动画
     )
     val color by animateColorAsState(
@@ -52,7 +54,7 @@ fun DividerText(text: String, onClick: (() -> Unit?)? = null) {
         text = text,
         color = color,
         modifier = Modifier
-            .padding(horizontal = appHorizontalDp() + cardNormalDp(), vertical = 10.dp)
+            .padding(horizontal = APP_HORIZONTAL_DP + CARD_NORMAL_DP, vertical = 10.dp)
             .clickable { onClick?.invoke() }
             .pointerInput(Unit) {
                 detectTapGestures(
@@ -79,8 +81,7 @@ fun DividerTextExpandedWith(
     content: @Composable () -> Unit
 ) {
 
-
-    val speed = MyApplication.ANIMATION_SPEED
+    val speed = MyAnimationManager.ANIMATION_SPEED
 
     val motionBlur by DataStoreManager.motionBlurFlow.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
 

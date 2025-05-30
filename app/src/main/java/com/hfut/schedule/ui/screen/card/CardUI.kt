@@ -43,14 +43,15 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.enumeration.CardBarItems
 import com.hfut.schedule.logic.model.NavigationBarItemData
+import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.screen.card.function.main.HomeScreen
 import com.hfut.schedule.ui.screen.card.bill.main.CardBills
 import com.hfut.schedule.ui.screen.card.count.CardHome
 //import com.hfut.schedule.ui.activity.card.function.main.turnToBottomBar
 import com.hfut.schedule.ui.screen.home.focus.funiction.initCardNetwork
-import com.hfut.schedule.ui.util.NavigateAnimationManager
-import com.hfut.schedule.ui.util.NavigateAnimationManager.currentPage
+import com.hfut.schedule.ui.util.MyAnimationManager
+import com.hfut.schedule.ui.util.MyAnimationManager.currentPage
 //import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
 
 import com.hfut.schedule.ui.component.CustomTabRow
@@ -59,6 +60,7 @@ import com.hfut.schedule.ui.style.bottomBarBlur
 import com.hfut.schedule.ui.style.topBarBlur
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
@@ -90,7 +92,8 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
-    val hazeState = remember { HazeState() }
+    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
     val navController = rememberNavController()
     var bottomBarItems by remember { mutableStateOf(CardBarItems.HOME) }
 
@@ -204,7 +207,7 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
 
         }
     ) {innerPadding ->
-        val animation = NavigateAnimationManager.getAnimationType(currentAnimationIndex,bottomBarItems.page)
+        val animation = MyAnimationManager.getAnimationType(currentAnimationIndex,bottomBarItems.page)
 
         NavHost(navController = navController,
             startDestination = CardBarItems.HOME.name,

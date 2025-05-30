@@ -47,7 +47,7 @@ fun CenterScreen(content : @Composable () -> Unit) {
 }
 
 @Composable
-fun StatusUI(iconId : Int, text : String, padding : Dp = 15.dp) {
+fun StatusUI(iconId : Int, text : String, padding : Dp = APP_HORIZONTAL_DP) {
     Column {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
             Icon(
@@ -60,14 +60,14 @@ fun StatusUI(iconId : Int, text : String, padding : Dp = 15.dp) {
         Spacer(Modifier.height(padding))
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
             Text(text, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(
-                horizontal = appHorizontalDp()
+                horizontal = APP_HORIZONTAL_DP
             ))
         }
     }
 }
 
 @Composable
-fun StatusUI2(painter : ImageVector, text : String, padding : Dp = appHorizontalDp()) {
+fun StatusUI2(painter : ImageVector, text : String, padding : Dp = APP_HORIZONTAL_DP) {
     Column {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
             Icon(
@@ -81,7 +81,7 @@ fun StatusUI2(painter : ImageVector, text : String, padding : Dp = appHorizontal
 
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
             Text(text, color = MaterialTheme.colorScheme.primary,modifier = Modifier.padding(
-                horizontal = appHorizontalDp()
+                horizontal = APP_HORIZONTAL_DP
             ))
         }
     }

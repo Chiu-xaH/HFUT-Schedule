@@ -63,7 +63,7 @@ fun CustomTabRow(pagerState: PagerState, titles: List<String>,modifier: Modifier
                         .padding(5.dp)
                         .background(
                             color = if (selected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent,
-                            shape = RoundedCornerShape(appHorizontalDp())
+                            shape = RoundedCornerShape(APP_HORIZONTAL_DP)
                         ),
                     onClick = {
                         scope.launch {

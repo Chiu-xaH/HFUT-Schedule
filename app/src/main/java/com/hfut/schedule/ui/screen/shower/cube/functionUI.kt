@@ -38,7 +38,8 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveBoolean
 import com.hfut.schedule.logic.util.sys.Starter.loginGuaGua
-import com.hfut.schedule.ui.component.appHorizontalDp
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
+
 
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.component.TransplantListItem
@@ -100,7 +101,7 @@ fun EditLoginCode(isOnLogin: Boolean = false, onClickLogin: (() -> Unit)? = null
         TextField(
             modifier = Modifier
                 .weight(1f)
-                .padding(horizontal = appHorizontalDp()),
+                .padding(horizontal = APP_HORIZONTAL_DP),
             value = input,
             onValueChange = {
                 input = it

@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -28,7 +28,7 @@ import com.hfut.schedule.ui.screen.home.cube.sub.FocusCardSettings
 import com.hfut.schedule.ui.screen.home.cube.sub.LockUI
 import com.hfut.schedule.ui.screen.home.cube.sub.RequestArrange
 import com.hfut.schedule.ui.screen.home.cube.sub.TEST
-import com.hfut.schedule.ui.util.NavigateAnimationManager
+import com.hfut.schedule.ui.util.MyAnimationManager
 import com.hfut.schedule.ui.util.isCurrentRoute
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -56,7 +56,7 @@ fun SettingsScreen(vm : NetWorkViewModel
                             modifier = Modifier.padding(innerPaddings),
                             onClick = { it.popBackStack() },
                         ) {
-                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "")
+                            Icon(Icons.Filled.ArrowBack, contentDescription = "")
                         }
                     }
                 }
@@ -66,10 +66,10 @@ fun SettingsScreen(vm : NetWorkViewModel
                 navController = navController,
                 startDestination = Screen.HomeScreen.route,
                 enterTransition = {
-                    NavigateAnimationManager.centerAnimation.enter
+                    MyAnimationManager.centerAnimation.enter
                 },
                 exitTransition = {
-                    NavigateAnimationManager.centerAnimation.exit
+                    MyAnimationManager.centerAnimation.exit
                 }
             ) {
 

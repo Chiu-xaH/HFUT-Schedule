@@ -59,8 +59,8 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.ui.screen.shower.bill.GuaguaBills
 import com.hfut.schedule.ui.screen.shower.cube.GuaGuaSettings
 import com.hfut.schedule.ui.screen.shower.home.GuaguaStart
-import com.hfut.schedule.ui.util.NavigateAnimationManager
-import com.hfut.schedule.ui.util.NavigateAnimationManager.currentPage
+import com.hfut.schedule.ui.util.MyAnimationManager
+import com.hfut.schedule.ui.util.MyAnimationManager.currentPage
 //import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
 
 import com.hfut.schedule.ui.util.navigateAndSave
@@ -69,6 +69,7 @@ import com.hfut.schedule.ui.style.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
+import dev.chrisbanes.haze.rememberHazeState
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -76,7 +77,8 @@ import dev.chrisbanes.haze.haze
 fun ShowerGuaGua(vm: GuaGuaViewModel, netVm : NetWorkViewModel, navHostController: NavHostController) {
     val navController = rememberNavController()
     val context = LocalActivity.current
-    val hazeState = remember { HazeState() }
+    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
 
     val currentAnimationIndex by DataStoreManager.animationTypeFlow.collectAsState(initial = 0)
     var targetPage by remember { mutableStateOf(ShowerBarItems.HOME) }
@@ -169,7 +171,7 @@ fun ShowerGuaGua(vm: GuaGuaViewModel, netVm : NetWorkViewModel, navHostControlle
 
         }
     ) {innerPadding ->
-        val animation = NavigateAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
+        val animation = MyAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
 
         NavHost(navController = navController,
             startDestination = ShowerBarItems.HOME.name,

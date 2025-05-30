@@ -3,7 +3,6 @@ package com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-//import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -20,10 +18,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -31,13 +29,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import com.google.gson.Gson
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.database.entity.CustomEventType
-import com.hfut.schedule.logic.enumeration.SortType
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.logic.model.jxglstu.CourseSearchResponse
 import com.hfut.schedule.logic.model.jxglstu.lessonResponse
 import com.hfut.schedule.logic.model.jxglstu.lessons
-import com.hfut.schedule.logic.util.network.toTimestampWithOutT
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.ClipBoard
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.permit
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.ApiToFailRate
@@ -52,16 +48,36 @@ import com.hfut.schedule.ui.component.DepartmentIcons
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.TransplantListItem
+import com.hfut.schedule.ui.component.onListenStateHolder
 import com.hfut.schedule.ui.style.ColumnVertical
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import dev.chrisbanes.haze.HazeState
 
+enum class TotalCourseDataSource {
+    MINE,MINE_NEXT,SEARCH
+}
+
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CourseTotalUI(json : String?, isSearch : Boolean, sortType: Boolean, vm : NetWorkViewModel, hazeState: HazeState) {
+fun CourseTotalUI(dataSource : TotalCourseDataSource, sortType: Boolean, vm : NetWorkViewModel, hazeState: HazeState) {
 
-    val list = remember { getTotalCourse(json) }
+    val list by produceState(initialValue = emptyList<lessons>()) {
+        when(dataSource) {
+            TotalCourseDataSource.MINE -> {
+                prefs.getString("courses","")?.let { value = vm.parseDatumCourse(it) }
+            }
+            TotalCourseDataSource.SEARCH -> {
+                onListenStateHolder(vm.courseSearchResponse) { data ->
+                    value = data
+                }
+            }
+            TotalCourseDataSource.MINE_NEXT -> {
+                prefs.getString("coursesNext","")?.let { value = vm.parseDatumCourse(it) }
+            }
+        }
+    }
+    val isSearch = dataSource == TotalCourseDataSource.SEARCH
 
 
     val sortList =  if(sortType)
@@ -96,7 +112,7 @@ fun CourseTotalUI(json : String?, isSearch : Boolean, sortType: Boolean, vm : Ne
     }
     if(list.isNotEmpty()) {
         LazyColumn {
-            item { SemsterInfo(json) }
+            item { TermFirstlyInfo(list,isSearch) }
             items(sortList.size, key = { sortList[it].code }) { item ->
                 val data = sortList[item]
                 val weeksInfo = data.scheduleWeeksInfo

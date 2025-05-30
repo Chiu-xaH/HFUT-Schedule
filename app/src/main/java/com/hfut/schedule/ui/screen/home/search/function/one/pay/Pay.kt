@@ -70,7 +70,7 @@ fun Pay(vm : NetWorkViewModel, hazeState: HazeState) {
 //                        actions = {
 //                            FilledTonalButton(
 //                                onClick = { Starter.startWebUrl(url) },
-//                                modifier = Modifier.padding(horizontal = AppHorizontalDp())
+//                                modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
 //                            ) {
 //                                Text(text = "缴费")
 //                            }
@@ -83,7 +83,7 @@ fun Pay(vm : NetWorkViewModel, hazeState: HazeState) {
                                 Text(text = "缴费")
                             }
                     }
-//                    Text("学费", color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(AppHorizontalDp()), fontSize = 22.sp)
+//                    Text("学费", color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(APP_HORIZONTAL_DP), fontSize = 22.sp)
 //                    TopAppBar(
 //                        title = { ScrollText(text = "学费") },
 //                        colors = TopAppBarDefaults.mediumTopAppBarColors(

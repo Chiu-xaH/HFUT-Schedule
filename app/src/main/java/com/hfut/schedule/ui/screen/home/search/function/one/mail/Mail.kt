@@ -30,12 +30,13 @@ import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.ScrollText
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.WebDialog
-import com.hfut.schedule.ui.component.appHorizontalDp
+ 
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
 import com.hfut.schedule.ui.style.HazeBottomSheet
@@ -126,7 +127,7 @@ fun MailUI(vm: NetWorkViewModel) {
             ) {
                 Text("进入邮箱")
             }
-            Spacer(Modifier.width(appHorizontalDp()))
+            Spacer(Modifier.width(APP_HORIZONTAL_DP))
             FilledTonalButton (
                 onClick = {
                     response?.data.let {

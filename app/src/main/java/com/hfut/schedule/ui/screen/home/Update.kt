@@ -53,6 +53,11 @@ fun initNetworkRefresh(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIVie
         communityToken?.let {
             launch { vm.getCoursesFromCommunity(it) }
             launch { vm.getFriends(it) }
+            if(showToday)
+                launch {
+                    vm.todayFormCommunityResponse.clear()
+                    vm.getToday(communityToken)
+                }
         }
         //检查更新
         launch { vm.getUpdate() }
@@ -61,8 +66,6 @@ fun initNetworkRefresh(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIVie
             launch { getWebInfoFromZJGD(vm,vmUI) }
         if(showEle)
             launch { getEleNew(vm, vmUI) }
-        if(showToday)
-            launch { getTodayNet(vm) }
         if(showCard)
             launch { initCardNetwork(vm,vmUI) }
         launch {
@@ -79,7 +82,6 @@ fun initNetworkRefresh(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIVie
     }
 }
 
-private suspend fun getTodayNet(vm : NetWorkViewModel) = withContext(Dispatchers.IO) { prefs.getString("TOKEN","")?.let { vm.getToday(it) } }
 
 //更新教务课表与课程汇总
 suspend fun updateCourses(vm: NetWorkViewModel, vmUI: UIViewModel) = withContext(Dispatchers.IO) {

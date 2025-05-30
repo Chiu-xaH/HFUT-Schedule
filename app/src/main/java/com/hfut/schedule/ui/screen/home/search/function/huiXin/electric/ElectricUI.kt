@@ -61,6 +61,7 @@ import com.hfut.schedule.logic.model.zjgd.FeeType
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.BottomTip
 import com.hfut.schedule.ui.component.CustomTabRow
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
@@ -70,7 +71,7 @@ import com.hfut.schedule.ui.component.MenuChip
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.WebDialog
-import com.hfut.schedule.ui.component.appHorizontalDp
+ 
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
@@ -390,14 +391,14 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                             },
                             color = MaterialTheme.colorScheme.secondaryContainer
                         )
-                        Spacer(Modifier.height(appHorizontalDp()*2))
+                        Spacer(Modifier.height(APP_HORIZONTAL_DP*2))
                     }
                 }
                 XUANCHENG_TAB -> {
                     Column {
                         Row(modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = appHorizontalDp(), vertical = 0.dp), horizontalArrangement = Arrangement.Start) {
+                            .padding(horizontal = APP_HORIZONTAL_DP, vertical = 0.dp), horizontalArrangement = Arrangement.Start) {
 
                             MenuChip(
                                 label = { Text(text = "楼栋 $BuildingsNumber") },
@@ -448,7 +449,7 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                             ) + fadeIn(initialAlpha = 0.3f),
                             exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
                         ){
-                            Row (modifier = Modifier.padding(horizontal = appHorizontalDp())){
+                            Row (modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)){
                                 OutlinedCard{
                                     LazyColumn(modifier = Modifier.padding(horizontal = 10.dp)) {
                                         item {
@@ -518,11 +519,11 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                                     )
                                 }
 //                Card(
-//                    elevation = CardDefaults.cardElevation(defaultElevation = AppHorizontalDp()),
+//                    elevation = CardDefaults.cardElevation(defaultElevation = APP_HORIZONTAL_DP),
 //                    modifier = Modifier
 //                        .fillMaxWidth()
 //                        .scale(scale2.value)
-//                        .padding(horizontal = AppHorizontalDp(), vertical = 5.dp),
+//                        .padding(horizontal = APP_HORIZONTAL_DP, vertical = 5.dp),
 //                    shape = MaterialTheme.shapes.medium,
 //                    colors = CardForListColor()
 //                ) {
@@ -549,7 +550,7 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                 }
             }
         }
-        Spacer(modifier = Modifier.height(appHorizontalDp()))
+        Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
     }
 
 }

@@ -24,6 +24,7 @@ import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.ui.style.dialogBlur
 import dev.chrisbanes.haze.HazeDialog
 import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.rememberHazeState
 
 @Composable
 fun LittleDialog(
@@ -35,25 +36,25 @@ fun LittleDialog(
     dismissText : String = "取消",
     hazeState: HazeState? = null
 ) {
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = AppVersion.CAN_HAZE_BLUR)
+    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
     val modifier = if(blur && hazeState != null) {
         Modifier.dialogBlur(hazeState)
     } else {
         Modifier
     }
     HazeDialog(
-        hazeState = hazeState ?: HazeState(),
+        hazeState = hazeState ?: rememberHazeState(blurEnabled = blur),
         onDismissRequest = onDismissRequest,
     ) {
         Surface(
             shape = MaterialTheme.shapes.large,
             color = MaterialTheme.colorScheme.surface.copy(if(blur) 1f else 0.95f),
-            modifier = Modifier.padding(appHorizontalDp())
+            modifier = Modifier.padding(APP_HORIZONTAL_DP)
         ) {
             Column(modifier = modifier) {
                 Column(
                     modifier = Modifier.padding(22.dp),
-                    verticalArrangement = Arrangement.spacedBy(appHorizontalDp())
+                    verticalArrangement = Arrangement.spacedBy(APP_HORIZONTAL_DP)
                 ) {
                     Text(
                         text = dialogTitle,

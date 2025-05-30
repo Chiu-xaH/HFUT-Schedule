@@ -88,12 +88,13 @@ import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.logic.util.sys.DateTimeUtils.Date_MM_dd
 import com.hfut.schedule.logic.util.sys.DateTimeUtils.weeksBetween
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.CustomTabRow
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.ScrollText
 import com.hfut.schedule.ui.component.StyleCardListItem
-import com.hfut.schedule.ui.component.appHorizontalDp
+ 
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CommunityCourseTableUI
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.ScheduleTopDate
@@ -117,15 +118,17 @@ import com.hfut.schedule.ui.screen.supabase.login.ApiToSupabase
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.bottomBarBlur
 import com.hfut.schedule.ui.style.topBarBlur
+import com.hfut.schedule.ui.style.topBarTransplantColor
 import com.hfut.schedule.ui.style.transitionBackground
-import com.hfut.schedule.ui.util.NavigateAnimationManager
-import com.hfut.schedule.ui.util.NavigateAnimationManager.currentPage
+import com.hfut.schedule.ui.util.MyAnimationManager
+import com.hfut.schedule.ui.util.MyAnimationManager.currentPage
 import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -146,7 +149,8 @@ fun MainScreen(
     var isEnabled by remember { mutableStateOf(!isLogin) }
     val switch = prefs.getBoolean("SWITCH",true)
     var showlable by remember { mutableStateOf(switch) }
-    val hazeState = remember { HazeState() }
+    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
 
     val showBadge by remember { mutableStateOf(getUpdates().version != AppVersion.getVersionName()) }
 
@@ -241,7 +245,7 @@ fun MainScreen(
                     vmUI,
                     hazeState
                 )
-                Spacer(modifier = Modifier.height(appHorizontalDp()))
+                Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
             }
         }
     }
@@ -268,7 +272,7 @@ fun MainScreen(
             saveInt("FIRST",0)
         }
         Handler(Looper.getMainLooper()).post {
-            if(!isLogin) vm.examCode.observeForever(examObserver)
+            if(!isLogin) vm.jxglstuExamCode.observeForever(examObserver)
             vmUI.findNewCourse.observeForever(courseObserver)
         }
         // 等待加载完毕可切换标签
@@ -347,7 +351,7 @@ fun MainScreen(
                         }
                     }
                 )
-                Spacer(Modifier.height(appHorizontalDp()))
+                Spacer(Modifier.height(APP_HORIZONTAL_DP))
             }
         }
     }
@@ -417,7 +421,7 @@ fun MainScreen(
 //        } else {
 //            Spacer(modifier = Modifier.width(7.5.dp))
 //            Text(text = if(webVpn)"WEBVPN" else "已登录", color = MaterialTheme.colorScheme.primary)
-//            Spacer(modifier = Modifier.width(appHorizontalDp()))
+//            Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP))
 //        }
 //    }
 
@@ -443,14 +447,10 @@ fun MainScreen(
                 Column(modifier = Modifier.topBarBlur(hazeState)) {
                     if(targetPage == FOCUS) {
                         MediumTopAppBar(
-                            colors = topAppBarColors(
-                                containerColor = Color.Transparent,
-                                titleContentColor = MaterialTheme.colorScheme.primary,
-                                scrolledContainerColor = Color.Transparent,
-                            ),
+                            colors = topBarTransplantColor(),
                             navigationIcon = {
                                 if(isNavigationIconVisible && celebrationText != null) {
-                                    Box(modifier = Modifier.padding(horizontal = appHorizontalDp()-3.dp)) {
+                                    Box(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP-3.dp)) {
                                         Text(
                                             text = celebrationText,
                                             fontSize = 30.sp,
@@ -465,11 +465,7 @@ fun MainScreen(
                         )
                     } else {
                         TopAppBar(
-                            colors = topAppBarColors(
-                                containerColor = Color.Transparent,
-                                titleContentColor = MaterialTheme.colorScheme.primary,
-                                scrolledContainerColor = Color.Transparent,
-                            ),
+                            colors = topBarTransplantColor(),
                             title = {
                                 if(targetPage != SEARCH) {
                                     ScrollText(texts(targetPage))
@@ -516,10 +512,10 @@ fun MainScreen(
                                             } else {
                                                 Spacer(modifier = Modifier.width(7.5.dp))
                                                 Text(text = if(webVpn)"WEBVPN" else "已登录", color = MaterialTheme.colorScheme.primary)
-                                                Spacer(modifier = Modifier.width(appHorizontalDp()))
+                                                Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP))
                                             }
                                         } else {
-                                            Spacer(modifier = Modifier.width(appHorizontalDp()))
+                                            Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP))
                                         }
                                     }
                                     FOCUS -> focusActions()
@@ -589,15 +585,15 @@ fun MainScreen(
                 }
 //                AnimatedVisibility(
 //                    visible = !isAddUIExpanded,
-//                    enter = expandVertically(animationSpec = tween(durationMillis = MyApplication.ANIMATION_SPEED),expandFrom = Alignment.Top,),
-//                    exit = shrinkVertically(animationSpec = tween(durationMillis = MyApplication.ANIMATION_SPEED),shrinkTowards = Alignment.Top,),
+//                    enter = expandVertically(animationSpec = tween(durationMillis = MyAnimationManager.ANIMATION_SPEED),expandFrom = Alignment.Top,),
+//                    exit = shrinkVertically(animationSpec = tween(durationMillis = MyAnimationManager.ANIMATION_SPEED),shrinkTowards = Alignment.Top,),
 //                ) {
 //
 //                }
             },
         ) { innerPadding ->
             innerPaddingValues = innerPadding
-            val animation = NavigateAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
+            val animation = MyAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
             NavHost(
                 navController = navController,
                 startDestination = first.name,

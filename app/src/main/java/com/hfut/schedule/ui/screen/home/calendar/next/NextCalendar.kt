@@ -51,9 +51,10 @@ import com.google.gson.Gson
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.logic.model.jxglstu.datumResponse
 import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.screen.home.calendar.next.DatumMode.*
-import com.hfut.schedule.ui.component.appHorizontalDp
+ 
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.bottomSheetRound
@@ -754,7 +755,7 @@ fun DatumUI(showAll : Boolean,
                 modifier = Modifier
                     .align(Alignment.BottomStart)
                     .padding(innerPadding)
-                    .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
+                    .padding(APP_HORIZONTAL_DP)
             ) {
                 if (shouldShowAddButton) {
                     FloatingActionButton(
@@ -777,7 +778,7 @@ fun DatumUI(showAll : Boolean,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(innerPadding)
-                    .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
+                    .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
             ) {
                 if (shouldShowAddButton) {
                     ExtendedFloatingActionButton(
@@ -806,7 +807,7 @@ fun DatumUI(showAll : Boolean,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(innerPadding)
-                    .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
+                    .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
             ) {
                 if (shouldShowAddButton) {
                     FloatingActionButton(

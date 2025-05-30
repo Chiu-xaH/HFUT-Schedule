@@ -37,11 +37,12 @@ import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.AnimationCardListItem
 import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.EmptyUI
 import com.hfut.schedule.ui.component.PrepareSearchUI
-import com.hfut.schedule.ui.component.appHorizontalDp
+ 
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import kotlinx.coroutines.launch
 
@@ -89,7 +90,7 @@ fun GradeItemUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
     }
     val scope = rememberCoroutineScope()
     var showItemYear by remember { mutableStateOf(false) }
-    DropdownMenu(expanded = showItemYear, onDismissRequest = { showItemYear = false }, offset = DpOffset(appHorizontalDp(),0.dp)) {
+    DropdownMenu(expanded = showItemYear, onDismissRequest = { showItemYear = false }, offset = DpOffset(APP_HORIZONTAL_DP,0.dp)) {
         DropdownMenuItem(text = { Text(text = "${(DateTimeUtils.Date_yyyy.toInt() - 3).toString()} - ${(DateTimeUtils.Date_yyyy.toInt() - 2).toString()}" )}, onClick = {
             year = (DateTimeUtils.Date_yyyy.toInt() - 3)
             showItemYear = false})
@@ -114,7 +115,7 @@ fun GradeItemUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
     }
     Column {
         Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
-        Row(modifier = Modifier.fillMaxWidth().padding(horizontal = appHorizontalDp(), vertical = 0.dp), horizontalArrangement = Arrangement.Start){
+        Row(modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP, vertical = 0.dp), horizontalArrangement = Arrangement.Start){
 
             AssistChip(
                 onClick = { showItemYear = true },

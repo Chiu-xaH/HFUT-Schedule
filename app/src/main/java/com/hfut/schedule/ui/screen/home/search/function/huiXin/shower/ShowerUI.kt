@@ -58,6 +58,7 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.Starter.loginGuaGua
 import com.hfut.schedule.logic.util.sys.Starter.startGuaGua
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.CustomTabRow
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
@@ -66,7 +67,7 @@ import com.hfut.schedule.ui.component.LoadingUI
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.WebDialog
-import com.hfut.schedule.ui.component.appHorizontalDp
+ 
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.electric.PayFor
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
@@ -324,7 +325,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
             Column() {
                 when(page) {
                     HEFEI_TAB -> {
-//                        Spacer(Modifier.height(appHorizontalDp()*3))
+//                        Spacer(Modifier.height(APP_HORIZONTAL_DP*3))
                         StyleCardListItem(
                             headlineContent = { Text("官方充值查询入口") },
                             modifier = Modifier.clickable {
@@ -338,13 +339,13 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
                             },
                             color = MaterialTheme.colorScheme.secondaryContainer
                         )
-                        Spacer(Modifier.height(appHorizontalDp()*3))
+                        Spacer(Modifier.height(APP_HORIZONTAL_DP*3))
                     }
                     XUANCHENG_TAB -> {
                         Column {
                             Row(modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = appHorizontalDp()), horizontalArrangement = Arrangement.Start) {
+                                .padding(horizontal = APP_HORIZONTAL_DP), horizontalArrangement = Arrangement.Start) {
                                 AssistChip(
                                     onClick = { showitem4 = !showitem4 },
                                     label = { Text(text = "手机号 ${phoneNumber}") },
@@ -365,7 +366,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
                             ) {
                                 Column {
                                     Spacer(modifier = Modifier.height(7.dp))
-                                    Row (modifier = Modifier.padding(horizontal = appHorizontalDp())){
+                                    Row (modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)){
                                         OutlinedCard{
                                             LazyColumn(modifier = Modifier.padding(horizontal = 10.dp)) {
                                                 item {
@@ -429,7 +430,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
                                         )
                                     }
                                 }
-                                Spacer(Modifier.height(appHorizontalDp()*3))
+                                Spacer(Modifier.height(APP_HORIZONTAL_DP*3))
                             }
                         }
                     }

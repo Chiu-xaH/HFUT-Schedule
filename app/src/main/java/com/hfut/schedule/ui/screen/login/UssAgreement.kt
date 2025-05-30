@@ -39,7 +39,8 @@ import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.ui.component.appHorizontalDp
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
+
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.util.navigateAndClear
@@ -48,12 +49,14 @@ import com.hfut.schedule.ui.style.topBarBlur
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 //@Preview
 fun UseAgreementScreen(navController : NavHostController) {
-    val hazeState = remember { HazeState() }
+    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
 
     val argeements = listOf(
         "本应用所使用权限为：网络、日历(用于向日历写入聚焦日程)、存储(用于导入导出课程表文件)、相机(用于洗浴扫码)、通知(用于提醒更新包已准备好)，均由用户自由决定是否授予",
@@ -107,7 +110,7 @@ fun UseAgreementScreen(navController : NavHostController) {
             )
         },
         bottomBar = {
-            Row(modifier = Modifier.padding(appHorizontalDp()).statusBarsPadding().bottomBarBlur(hazeState),horizontalArrangement = Arrangement.Center) {
+            Row(modifier = Modifier.padding(APP_HORIZONTAL_DP).statusBarsPadding().bottomBarBlur(hazeState),horizontalArrangement = Arrangement.Center) {
                 Button(
                     onClick = {
                         SharedPrefs.saveBoolean("canUse", default = false, save = true)
@@ -119,7 +122,7 @@ fun UseAgreementScreen(navController : NavHostController) {
                 ) {
                     Text("同意")
                 }
-                Spacer(modifier = Modifier.width(appHorizontalDp()))
+                Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP))
                 FilledTonalButton(
                     onClick = {
                         showToast("已关闭APP")

@@ -63,9 +63,10 @@ import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
 import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.getNewWeek
 import com.hfut.schedule.ui.component.LoadingUI
-import com.hfut.schedule.ui.component.appHorizontalDp
+ 
 import com.hfut.schedule.ui.component.showToast
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -774,7 +775,7 @@ fun CustomSchedules(showAll : Boolean,
                         modifier = Modifier
                             .align(Alignment.BottomStart)
                             .padding(innerPadding)
-                            .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
+                            .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
                     ) {
                         if (shouldShowAddButton) {
                             FloatingActionButton(
@@ -797,7 +798,7 @@ fun CustomSchedules(showAll : Boolean,
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
                             .padding(innerPadding)
-                            .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
+                            .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
                     ) {
                         if (shouldShowAddButton) {
                             ExtendedFloatingActionButton(
@@ -818,27 +819,27 @@ fun CustomSchedules(showAll : Boolean,
                             }
                         }
                     }
-                    androidx.compose.animation.AnimatedVisibility(
-                        visible = !shouldShowAddButton,
-                        enter = scaleIn(),
-                        exit = scaleOut(),
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .padding(innerPadding)
-                            .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
-                    ) {
-                        TextButton(onClick = {  }) {
-                            Text(
-                                text = parseSemseter(getSemseter()) + " 第${Bianhuaweeks}周",
-                                style = TextStyle(shadow = Shadow(
-                                    color = Color.Gray,
-                                    offset = Offset(5.0f,5.0f),
-                                    blurRadius = 10.0f
-                                )
-                                )
-                            )
-                        }
-                    }
+//                    androidx.compose.animation.AnimatedVisibility(
+//                        visible = !shouldShowAddButton,
+//                        enter = scaleIn(),
+//                        exit = scaleOut(),
+//                        modifier = Modifier
+//                            .align(Alignment.BottomCenter)
+//                            .padding(innerPadding)
+//                            .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
+//                    ) {
+//                        TextButton(onClick = {  }) {
+//                            Text(
+//                                text = parseSemseter(getSemseter()) + " 第${Bianhuaweeks}周",
+//                                style = TextStyle(shadow = Shadow(
+//                                    color = Color.Gray,
+//                                    offset = Offset(5.0f,5.0f),
+//                                    blurRadius = 10.0f
+//                                )
+//                                )
+//                            )
+//                        }
+//                    }
                     androidx.compose.animation.AnimatedVisibility(
                         visible = shouldShowAddButton,
                         enter = scaleIn(),
@@ -846,7 +847,7 @@ fun CustomSchedules(showAll : Boolean,
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
                             .padding(innerPadding)
-                            .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
+                            .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
                     ) {
                         if (shouldShowAddButton) {
                             FloatingActionButton(

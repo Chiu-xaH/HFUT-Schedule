@@ -79,13 +79,13 @@ object Repository {
     private val workSearch = WorkServiceCreator.create(WorkService::class.java)
     private val news = NewsServiceCreator.create(NewsService::class.java)
     private val searchEle = SearchEleServiceCreator.create(FWDTService::class.java)
-//    private val lePaoYun = LePaoYunServiceCreator.create(LePaoYunService::class.java)
     private val xuanChengDormitory = DormitoryScoreServiceCreator.create(DormitoryScore::class.java)
     private val qWeather = QWeatherServiceCreator.create(QWeatherService::class.java)
     private val github = GithubServiceCreator.create(GithubService::class.java)
     private val gitee = GiteeServiceCreator.create(GiteeService::class.java)
     private val githubRaw = GithubRawServiceCreator.create(GithubRawService::class.java)
     private val guaGua = GuaGuaServiceCreator.create(GuaGuaService::class.java)
+//    private val lePaoYun = LePaoYunServiceCreator.create(LePaoYunService::class.java)
 
     //引入接口
     // 通用的网络请求方法，支持自定义的操作
@@ -397,7 +397,6 @@ object Repository {
         data
     }  catch (e : Exception) { throw e }
 
-
     suspend fun getWeatherWarn(campus: Campus,weatherWarningData : StateHolder<List<QWeatherWarnBean>>) = launchRequestSimple(
         holder = weatherWarningData,
         request = { qWeather.getWeatherWarn(locationID = getLocation(campus)).awaitResponse() },
@@ -412,11 +411,11 @@ object Repository {
     suspend fun getWeather(campus: Campus,qWeatherResult : StateHolder<QWeatherNowBean>) = launchRequestSimple(
         holder = qWeatherResult,
         request = { qWeather.getWeather(locationID = getLocation(campus)).awaitResponse() },
-        transformSuccess = { _, json -> parseQweatherNow(json) }
+        transformSuccess = { _, json -> parseWeatherNow(json) }
     )
 
     @JvmStatic
-    private fun parseQweatherNow(json : String) : QWeatherNowBean = try {
+    private fun parseWeatherNow(json : String) : QWeatherNowBean = try {
         if(json.contains("200"))
             Gson().fromJson(json, QWeatherResponse::class.java).now
         else

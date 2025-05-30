@@ -37,9 +37,10 @@ import com.hfut.schedule.logic.model.jxglstu.blankQuestionAnswer
 import com.hfut.schedule.logic.model.jxglstu.radioQuestionAnswer
 import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.LittleDialog
-import com.hfut.schedule.ui.component.appHorizontalDp
+ 
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.component.onListenStateHolder
 import com.hfut.schedule.ui.style.RowHorizontal
@@ -152,7 +153,7 @@ private fun SurveyList(vm: NetWorkViewModel,onResult : () -> Unit) {
     }
 
     Box() {
-        Row(modifier = Modifier.padding(horizontal = appHorizontalDp()).align(Alignment.BottomCenter).navigationBarsPadding()) {
+        Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP).align(Alignment.BottomCenter).navigationBarsPadding()) {
             Button(
                 modifier = Modifier.fillMaxWidth().weight(.5f),
                 onClick = {

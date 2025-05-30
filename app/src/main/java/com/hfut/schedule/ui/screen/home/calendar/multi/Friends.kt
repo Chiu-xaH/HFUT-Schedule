@@ -38,13 +38,14 @@ import com.hfut.schedule.logic.model.community.FriendsResopnse
 import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.BottomTip
 import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.ScrollText
 import com.hfut.schedule.ui.component.StyleCardListItem
-import com.hfut.schedule.ui.component.appHorizontalDp
+ 
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.textFiledTransplant
@@ -157,7 +158,7 @@ fun FriendsSetting(vm : NetWorkViewModel) {
             TextField(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(horizontal = appHorizontalDp()),
+                    .padding(horizontal = APP_HORIZONTAL_DP),
                 value = input,
                 onValueChange = {
                     input = it
@@ -215,7 +216,7 @@ fun FriendsSetting(vm : NetWorkViewModel) {
                         leadingContent = { Icon(painterResource(id = R.drawable.person_add), contentDescription = "")},
                         overlineContent = { applyList[i]?.let { Text(text = it.applyUserId) } },
                         trailingContent = {
-                            Row(modifier = Modifier.padding(horizontal = appHorizontalDp())) {
+                            Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
                                 FilledTonalButton(onClick = {
                                     val id = applyList[i]?.id
                                     id?.let { token?.let { it1 ->
@@ -225,7 +226,7 @@ fun FriendsSetting(vm : NetWorkViewModel) {
                                 }) {
                                     Text(text = "同意")
                                 }
-                                Spacer(modifier = Modifier.width(appHorizontalDp()))
+                                Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP))
                                 FilledTonalButton(onClick = {
                                     val id = applyList[i]?.id
                                     token?.let { id?.let { it1 ->

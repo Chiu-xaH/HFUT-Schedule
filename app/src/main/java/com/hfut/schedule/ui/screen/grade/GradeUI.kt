@@ -52,8 +52,8 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.screen.grade.analysis.GradeCountUI
 import com.hfut.schedule.ui.screen.grade.grade.community.GradeItemUI
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GradeItemUIJXGLSTU
-import com.hfut.schedule.ui.util.NavigateAnimationManager
-import com.hfut.schedule.ui.util.NavigateAnimationManager.currentPage
+import com.hfut.schedule.ui.util.MyAnimationManager
+import com.hfut.schedule.ui.util.MyAnimationManager.currentPage
 
 import com.hfut.schedule.ui.component.BottomSheetTopBar
 import com.hfut.schedule.ui.component.StyleCardListItem
@@ -64,15 +64,17 @@ import com.hfut.schedule.ui.style.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
+import dev.chrisbanes.haze.rememberHazeState
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GradeScreen(ifSaved : Boolean, vm : NetWorkViewModel) {
-    val hazeState = remember { HazeState() }
+    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
     val navController = rememberNavController()
     val context = LocalActivity.current
-    val animation by remember { mutableIntStateOf(prefs.getInt("ANIMATION", MyApplication.ANIMATION_SPEED)) }
+    val animation by remember { mutableIntStateOf(prefs.getInt("ANIMATION", MyAnimationManager.ANIMATION_SPEED)) }
 
     var showSearch by remember { mutableStateOf(false) }
 
@@ -198,7 +200,7 @@ fun GradeScreen(ifSaved : Boolean, vm : NetWorkViewModel) {
             }
         }
         ) { innerPadding ->
-        val animation = NavigateAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
+        val animation = MyAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
 
         NavHost(navController = navController,
                 startDestination = GradeBarItems.GRADE.name,

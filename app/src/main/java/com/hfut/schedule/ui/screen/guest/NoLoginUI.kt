@@ -64,6 +64,7 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.screen.home.cube.sub.MyAPIItem
 import com.hfut.schedule.ui.screen.home.cube.sub.update.getUpdates
 import com.hfut.schedule.ui.screen.home.cube.SettingsScreen
@@ -74,23 +75,25 @@ import com.hfut.schedule.ui.screen.home.search.function.my.notification.Notifica
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.getNotifications
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.LabUI
 import com.hfut.schedule.ui.screen.home.search.SearchFuncs
-import com.hfut.schedule.ui.util.NavigateAnimationManager
-import com.hfut.schedule.ui.util.NavigateAnimationManager.currentPage
+import com.hfut.schedule.ui.util.MyAnimationManager
+import com.hfut.schedule.ui.util.MyAnimationManager.currentPage
 import com.hfut.schedule.ui.component.CustomTabRow
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.ScrollText
-import com.hfut.schedule.ui.component.appHorizontalDp
+ 
 import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.bottomBarBlur
 import com.hfut.schedule.ui.style.topBarBlur
+import com.hfut.schedule.ui.style.topBarTransplantColor
 import com.hfut.schedule.ui.style.transitionBackground
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "NewApi")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -101,7 +104,8 @@ fun GuestMainScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewMo
     val isEnabled by remember { mutableStateOf(true) }
     val switch = SharedPrefs.prefs.getBoolean("SWITCH",true)
     var showlable by remember { mutableStateOf(switch) }
-    val hazeState = remember { HazeState() }
+    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
 
     var showBadge by remember { mutableStateOf(false) }
     if (getUpdates().version != AppVersion.getVersionName()) showBadge = true
@@ -206,14 +210,10 @@ fun GuestMainScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewMo
                 Column(modifier = Modifier.topBarBlur(hazeState)) {
                     if(targetPage == FOCUS && celebrationText != null) {
                         MediumTopAppBar(
-                            colors = topAppBarColors(
-                                containerColor = Color.Transparent,
-                                titleContentColor = MaterialTheme.colorScheme.primary,
-                                scrolledContainerColor = Color.Transparent,
-                            ),
+                            colors = topBarTransplantColor(),
                             navigationIcon = {
                                 if(isNavigationIconVisible) {
-                                    Box(modifier = Modifier.padding(horizontal = appHorizontalDp()-3.dp)) {
+                                    Box(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP-3.dp)) {
                                         Text(
                                             text = celebrationText,
                                             fontSize = 30.sp,
@@ -257,7 +257,7 @@ fun GuestMainScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewMo
                                                 Icon(painter = painterResource(id =  R.drawable.login), contentDescription = "")
                                             }
                                         }
-                                        Spacer(modifier = Modifier.width(appHorizontalDp()))
+                                        Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP))
                                         //null
                                     }
                                     else -> {}
@@ -280,7 +280,7 @@ fun GuestMainScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewMo
                         modifier = Modifier.bottomBarBlur(hazeState)
                     ) {
                         //悬浮底栏效果
-                        //modifier = Modifier.padding(AppHorizontalDp()).shadow(10.dp).clip(RoundedCornerShape(14.dp))
+                        //modifier = Modifier.padding(APP_HORIZONTAL_DP).shadow(10.dp).clip(RoundedCornerShape(14.dp))
                         val items = listOf(
                             NavigationBarItemData(
                                 FOCUS.name,"聚焦", painterResource(R.drawable.lightbulb), painterResource(
@@ -333,7 +333,7 @@ fun GuestMainScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewMo
         ) { innerPadding ->
             innerPaddingValues = innerPadding
 
-            val animation = NavigateAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
+            val animation = MyAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
 
             NavHost(
                 navController = navController,

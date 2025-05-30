@@ -23,7 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.ui.util.NavigateAnimationManager
+import com.hfut.schedule.ui.util.MyAnimationManager
 import kotlinx.coroutines.launch
 
 // 翻页器
@@ -42,9 +42,9 @@ fun BoxScope.PagingController(
     } }
     AnimatedVisibility(
         visible = shouldShowButton,
-        modifier = modifier.align(Alignment.BottomStart).padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp()),
-        exit = NavigateAnimationManager.centerFadeAnimation.exit,
-        enter = NavigateAnimationManager.centerFadeAnimation.enter
+        modifier = modifier.align(Alignment.BottomStart).padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP),
+        exit = MyAnimationManager.centerFadeAnimation.exit,
+        enter = MyAnimationManager.centerFadeAnimation.enter
     ){
         FloatingActionButton(
             onClick = {
@@ -59,9 +59,9 @@ fun BoxScope.PagingController(
     }
     AnimatedVisibility(
         visible = shouldShowButton,
-        modifier = modifier.align(Alignment.BottomCenter).padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp()),
-        exit = NavigateAnimationManager.centerFadeAnimation.exit,
-        enter = NavigateAnimationManager.centerFadeAnimation.enter
+        modifier = modifier.align(Alignment.BottomCenter).padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP),
+        exit = MyAnimationManager.centerFadeAnimation.exit,
+        enter = MyAnimationManager.centerFadeAnimation.enter
     ){
         ExtendedFloatingActionButton(
             onClick = {
@@ -72,9 +72,9 @@ fun BoxScope.PagingController(
     }
     AnimatedVisibility(
         visible = shouldShowButton,
-        modifier = modifier.align(Alignment.BottomEnd).padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp()),
-        exit = NavigateAnimationManager.centerFadeAnimation.exit,
-        enter = NavigateAnimationManager.centerFadeAnimation.enter
+        modifier = modifier.align(Alignment.BottomEnd).padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP),
+        exit = MyAnimationManager.centerFadeAnimation.exit,
+        enter = MyAnimationManager.centerFadeAnimation.enter
     ){
         FloatingActionButton(
             onClick = {
@@ -86,9 +86,9 @@ fun BoxScope.PagingController(
         val scope = rememberCoroutineScope()
         AnimatedVisibility(
             visible = !shouldShowButton,
-            modifier = modifier.align(Alignment.BottomEnd).padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp()),
-            exit = NavigateAnimationManager.centerFadeAnimation.exit,
-            enter = NavigateAnimationManager.centerFadeAnimation.enter
+            modifier = modifier.align(Alignment.BottomEnd).padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP),
+            exit = MyAnimationManager.centerFadeAnimation.exit,
+            enter = MyAnimationManager.centerFadeAnimation.enter
         ){
             FloatingActionButton(
                 onClick = {

@@ -37,6 +37,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.WorkSearchType
 import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.ui.component.AnimationCardListItem
+import com.hfut.schedule.ui.component.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.CustomTabRow
 import com.hfut.schedule.ui.component.CustomTextField
@@ -45,7 +46,7 @@ import com.hfut.schedule.ui.component.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.PagingController
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.WebDialog
-import com.hfut.schedule.ui.component.cardNormalDp
+  
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
 import com.hfut.schedule.ui.style.HazeBottomSheet
@@ -172,7 +173,7 @@ private fun WorkSearchUI(vm : NetWorkViewModel,campus: Campus) {
                                 }
                             } else null
                         ) { input = it }
-                        Spacer(Modifier.height(cardNormalDp()))
+                        Spacer(Modifier.height(CARD_NORMAL_DP))
                     }
                     items(repos.size, key = { it }) { index ->
                         with(repos[index]) {

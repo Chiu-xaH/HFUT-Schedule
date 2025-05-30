@@ -31,13 +31,14 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.Party
 import com.hfut.schedule.ui.component.ScrollText
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.URLImage
-import com.hfut.schedule.ui.component.appHorizontalDp
+ 
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 
 private data class Build(
@@ -93,7 +94,7 @@ fun About(vm : NetWorkViewModel) {
                 HazeBottomSheetTopBar("关于")
             },
             bottomBar = {
-                Row(modifier = Modifier.padding(appHorizontalDp()),horizontalArrangement = Arrangement.Center) {
+                Row(modifier = Modifier.padding(APP_HORIZONTAL_DP),horizontalArrangement = Arrangement.Center) {
                     Button(
                         onClick = { Starter.startWebUrl("https://github.com/${MyApplication.GITHUB_DEVELOPER_NAME}/${MyApplication.GITHUB_REPO_NAME}") },
                         modifier = Modifier
@@ -103,7 +104,7 @@ fun About(vm : NetWorkViewModel) {
                         Text("Stars ⭐ $starsNum")
                     }
 
-                    Spacer(modifier = Modifier.width(appHorizontalDp()))
+                    Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP))
                     FilledTonalButton(
                         onClick = { Starter.startWebUrl("https://github.com/${MyApplication.GITHUB_DEVELOPER_NAME}/${MyApplication.GITHUB_REPO_NAME}/releases/latest") },
                         modifier = Modifier

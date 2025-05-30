@@ -12,7 +12,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.useCaptcha
 import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.ui.util.NavigateAnimationManager
+import com.hfut.schedule.ui.util.MyAnimationManager
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -155,7 +155,7 @@ object DataStoreManager {
 
     val animationTypeFlow: Flow<Int> = dataStore.data
         .map { preferences ->
-            preferences[ANIMATION_TYPE] ?: NavigateAnimationManager.AnimationTypes.FadeAnimation.code
+            preferences[ANIMATION_TYPE] ?: MyAnimationManager.AnimationTypes.CenterAnimation.code
         }
     val stuCookieFlow: Flow<String> = dataStore.data
         .map { preferences ->
@@ -175,7 +175,7 @@ object DataStoreManager {
         }
     val hazeBlurFlow: Flow<Boolean> = dataStore.data
         .map { preferences ->
-            preferences[HAZE_BLUR] ?: AppVersion.CAN_HAZE_BLUR
+            preferences[HAZE_BLUR] ?: true
         }
     val motionAnimationTypeFlow: Flow<Boolean> = dataStore.data
         .map { preferences ->

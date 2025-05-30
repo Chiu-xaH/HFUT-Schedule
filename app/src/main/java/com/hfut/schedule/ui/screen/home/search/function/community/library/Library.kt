@@ -43,6 +43,7 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.AnimationCustomCard
 import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
@@ -53,7 +54,7 @@ import com.hfut.schedule.ui.component.PrepareSearchUI
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.WebDialog
-import com.hfut.schedule.ui.component.appHorizontalDp
+ 
 import com.hfut.schedule.ui.component.cardNormalColor
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.textFiledTransplant
@@ -102,7 +103,7 @@ fun LibraryItem(vm : NetWorkViewModel, hazeState: HazeState) {
                             ) {
                                 Text(text = "官网")
                             }
-                            Spacer(Modifier.width(appHorizontalDp()/3))
+                            Spacer(Modifier.width(APP_HORIZONTAL_DP/3))
                             FilledTonalButton(
                                 onClick = {
                                     showDialog2 = true
@@ -178,7 +179,7 @@ fun BooksUI(vm: NetWorkViewModel, hazeState: HazeState) {
             TextField(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(horizontal = appHorizontalDp()),
+                    .padding(horizontal = APP_HORIZONTAL_DP),
                 value = input,
                 onValueChange = {
                     input = it

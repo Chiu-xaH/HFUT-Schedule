@@ -1,28 +1,19 @@
 package com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,17 +24,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.model.jxglstu.lessons
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.isNextOpen
 import com.hfut.schedule.ui.component.AnimationCardListItem
-import com.hfut.schedule.ui.component.appHorizontalDp
-import com.hfut.schedule.ui.component.BottomSheetTopBar
+
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.MyCustomCard
-import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.ui.component.ScrollText
-import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import dev.chrisbanes.haze.HazeState
@@ -53,8 +41,6 @@ import dev.chrisbanes.haze.HazeState
 @Composable
 fun CourseTotal(vm : NetWorkViewModel, hazeState: HazeState) {
     var showBottomSheet_Total by remember { mutableStateOf(false) }
-    val json = prefs.getString("courses","")
-    val jsonNext = prefs.getString("coursesNext","")
 
     TransplantListItem(
         headlineContent = { Text(text = "课程汇总") },
@@ -108,8 +94,7 @@ fun CourseTotal(vm : NetWorkViewModel, hazeState: HazeState) {
                         .fillMaxSize()
                 ){
                     CourseTotalUI(
-                        if(next) jsonNext else json,
-                        false,
+                        if(next) TotalCourseDataSource.MINE_NEXT else TotalCourseDataSource.MINE,
                         sortType,
                         vm,
                         hazeState
@@ -121,9 +106,9 @@ fun CourseTotal(vm : NetWorkViewModel, hazeState: HazeState) {
     }
 }
 
-fun periodsSum(json: String) : Double {
+fun periodsSum(list: List<lessons>) : Double {
     var num = 0.0
-    for(i in getTotalCourse(json)) {
+    for(i in list) {
         val credit = i.course.credits
         if (credit != null) {
             num += credit
@@ -134,22 +119,24 @@ fun periodsSum(json: String) : Double {
 
 
 @Composable
-fun SemsterInfo(json : String?) {
+fun TermFirstlyInfo(list: List<lessons>, isSearch : Boolean) {
+    if(list.isEmpty()) return
 
-    val semsterInfo = getTotalCourse(json)[0].semester
+    val info = list[0].semester
     AnimationCardListItem(
-        overlineContent = { Text(text = semsterInfo.startDate + " ~ " + semsterInfo.endDate)},
-        headlineContent = {  ScrollText(semsterInfo.nameZh) },
+        overlineContent = { Text(text = info.startDate + " ~ " + info.endDate)},
+        headlineContent = {  ScrollText(info.nameZh) },
         leadingContent = { Icon(
             painterResource(R.drawable.category),
             contentDescription = "Localized description",
         ) },
-        modifier = Modifier.clickable {},
         color = MaterialTheme.colorScheme.primaryContainer,
-        trailingContent = { if (json != null) { if(json.contains("lessonIds"))Text(text = "学分 ${periodsSum(json)}") } },
+        trailingContent = {
+            if(!isSearch)
+                Text(text = "学分 ${periodsSum(list)}")
+        },
         index = 0
     )
-
 }
 
 
@@ -223,14 +210,13 @@ fun CourseTotalForApi(modifier: Modifier = Modifier, vm: NetWorkViewModel, isIco
                 ){
                     CourseTotalUI(
                         if(isNextOpen() && onNextChange == null) {
-                            if(next2) jsonNext
-                            else json
+                            if(next2) TotalCourseDataSource.MINE_NEXT
+                            else TotalCourseDataSource.MINE
                         } else {
-                            if(next) jsonNext
-                            else json
+                            if(next) TotalCourseDataSource.MINE_NEXT
+                            else TotalCourseDataSource.MINE
                         }
                         ,
-                        false,
                         sortType,
                         vm,
                         hazeState

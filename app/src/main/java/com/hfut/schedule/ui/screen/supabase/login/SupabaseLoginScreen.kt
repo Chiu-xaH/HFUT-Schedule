@@ -51,8 +51,10 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.CustomTabRow
 import com.hfut.schedule.ui.component.LoadingUI
+ 
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.ui.util.UIStateHolder.isSupabaseRegistering
@@ -137,7 +139,7 @@ fun SupabaseLoginScreen(vm : NetWorkViewModel,vmUI: UIViewModel,navHostControlle
 
             CustomTabRow(pagerState,titles, modifier = Modifier.padding(horizontal = 20.dp))
 
-            Spacer(modifier = Modifier.height(15.dp))
+            Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
 
             HorizontalPager(state = pagerState) { page ->
 

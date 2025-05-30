@@ -23,8 +23,6 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Card
@@ -34,7 +32,6 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -48,22 +45,18 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
-import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
-import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.logic.util.sys.DateTimeUtils.weeksBetween
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.appHorizontalDp
+ 
 import com.hfut.schedule.ui.screen.home.calendar.examToCalendar
 import com.hfut.schedule.ui.screen.home.calendar.getScheduleDate
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.MultiCourseSheetUI
@@ -72,11 +65,11 @@ import com.hfut.schedule.ui.screen.home.calendar.jxglstu.distinctUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.getNewWeek
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
 import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.util.MyAnimationManager
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import java.time.LocalDate
-import kotlin.text.isNotEmpty
 
 @Composable
 fun CommunityCourseTableUI(
@@ -500,7 +493,7 @@ fun CommunityCourseTableUI(
                     modifier = Modifier
                         .align(Alignment.BottomStart)
                         .padding(innerPaddings)
-                        .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
+                        .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
                 ) {
                     if (shouldShowAddButton) {
                         FloatingActionButton(
@@ -510,7 +503,7 @@ fun CommunityCourseTableUI(
                                     onDateChange(today.minusDays(7))
                                 }
                             },
-                        ) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Add Button") }
+                        ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
                     }
                 }
 
@@ -522,7 +515,7 @@ fun CommunityCourseTableUI(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .padding(innerPaddings)
-                        .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
+                        .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
                 ) {
                     if (shouldShowAddButton) {
                         ExtendedFloatingActionButton(
@@ -544,26 +537,26 @@ fun CommunityCourseTableUI(
                     }
                 }
 
-                androidx.compose.animation.AnimatedVisibility(
-                    visible = !shouldShowAddButton,
-                    enter = scaleIn(),
-                    exit = scaleOut(),
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(innerPaddings)
-                        .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
-                ) {
-                    TextButton(onClick = {  }) {
-                        Text(
-                            text = parseSemseter(getSemseter()) + " 第${currentWeek}周",
-                            style = TextStyle(shadow = Shadow(
-                                color = Color.Gray,
-                                offset = Offset(5.0f,5.0f),
-                                blurRadius = 10.0f
-                            ))
-                        )
-                    }
-                }
+//                androidx.compose.animation.AnimatedVisibility(
+//                    visible = !shouldShowAddButton,
+//                    enter = scaleIn(),
+//                    exit = scaleOut(),
+//                    modifier = Modifier
+//                        .align(Alignment.BottomCenter)
+//                        .padding(innerPaddings)
+//                        .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
+//                ) {
+//                    TextButton(onClick = {  }) {
+//                        Text(
+//                            text = parseSemseter(getSemseter()) + " 第${currentWeek}周",
+//                            style = TextStyle(shadow = Shadow(
+//                                color = Color.Gray,
+//                                offset = Offset(5.0f,5.0f),
+//                                blurRadius = 10.0f
+//                            ))
+//                        )
+//                    }
+//                }
 
                 androidx.compose.animation.AnimatedVisibility(
                     visible = shouldShowAddButton,
@@ -572,7 +565,7 @@ fun CommunityCourseTableUI(
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .padding(innerPaddings)
-                        .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
+                        .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
                 ) {
                     if (shouldShowAddButton) {
                         FloatingActionButton(
@@ -582,7 +575,7 @@ fun CommunityCourseTableUI(
                                     onDateChange(today.plusDays(7))
                                 }
                             },
-                        ) { Icon(Icons.AutoMirrored.Filled.ArrowForward, "Add Button") }
+                        ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
                     }
                 }
             }
@@ -606,7 +599,7 @@ fun ScheduleTopDate(showAll: Boolean,today : LocalDate) {
                 val fontSize = if (showAll) 12f else 14f
                 val fontSizeAnimated by animateFloatAsState(
                     targetValue = if (isToday && animated) fontSize*1.25f else fontSize,
-                    animationSpec = tween(durationMillis = MyApplication.ANIMATION_SPEED), label = "fontSizeAnimation",
+                    animationSpec = tween(durationMillis = MyAnimationManager.ANIMATION_SPEED), label = "fontSizeAnimation",
                     finishedListener = { if (isToday) animated = false }
                 )
                 LaunchedEffect(isToday) {

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.ui.util.MyAnimationManager
 
 // 容器共享切换
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -21,7 +22,7 @@ fun <S> ShareContainer(modifier: Modifier = Modifier,label: S,contents : Map<S,(
         AnimatedContent(
             targetState = label,
             transitionSpec = {
-                fadeIn(animationSpec = tween(durationMillis = MyApplication.ANIMATION_SPEED)) togetherWith fadeOut(animationSpec = tween(durationMillis = MyApplication.ANIMATION_SPEED*2))
+                fadeIn(animationSpec = tween(durationMillis = MyAnimationManager.ANIMATION_SPEED)) togetherWith fadeOut(animationSpec = tween(durationMillis = MyAnimationManager.ANIMATION_SPEED*2))
             },
             label = ""
         ) { targetLabel ->
@@ -31,7 +32,7 @@ fun <S> ShareContainer(modifier: Modifier = Modifier,label: S,contents : Map<S,(
 //            // 只有在动画中应用模糊
 //            val blurSize by animateDpAsState(
 //                targetValue = if (isTransitionRunning) 10.dp else 0.dp,
-//                animationSpec = tween(MyApplication.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
+//                animationSpec = tween(MyAnimationManager.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
 //                label = "blurDuringTransition"
 //            )
 

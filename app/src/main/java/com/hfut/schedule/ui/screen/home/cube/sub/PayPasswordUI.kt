@@ -38,8 +38,9 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveBoolean
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.BottomSheetTopBar
-import com.hfut.schedule.ui.component.appHorizontalDp
+ 
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.style.HazeBottomSheet
@@ -95,11 +96,11 @@ fun LockUI(innerPadding : PaddingValues,hazeState: HazeState) {
             showBottomSheet = showDialog
         ) {
             Column {
-                Spacer(Modifier.height(appHorizontalDp()*1.5f))
+                Spacer(Modifier.height(APP_HORIZONTAL_DP*1.5f))
                 CirclePoint(text = if(!pin)"录入新密码" else "请输入密码", password = input)
                 Spacer(modifier = Modifier.height(20.dp))
                 KeyBoard(
-                    modifier = Modifier.padding(horizontal = appHorizontalDp()),
+                    modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
                     onKeyClick = { num ->
                         if (input.length < 6) {
                             input += num.toString()

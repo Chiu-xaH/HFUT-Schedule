@@ -36,9 +36,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.Party
-import com.hfut.schedule.ui.component.appHorizontalDp
+ 
 import com.hfut.schedule.ui.style.RowHorizontal
 import kotlin.math.roundToInt
 
@@ -78,7 +79,7 @@ fun Egg() {
                     }
             },
             bottomBar = {
-                Column(modifier = Modifier.padding(appHorizontalDp())) {
+                Column(modifier = Modifier.padding(APP_HORIZONTAL_DP)) {
                     Row(horizontalArrangement = Arrangement.Center) {
                         Button(
                             onClick = {
@@ -91,7 +92,7 @@ fun Egg() {
                             Text("阻尼++")
                         }
                         if(dampingRatio >= period) {
-                            Spacer(Modifier.width(appHorizontalDp()))
+                            Spacer(Modifier.width(APP_HORIZONTAL_DP))
                             Button(
                                 onClick = {
                                     dampingRatio -= period
@@ -116,7 +117,7 @@ fun Egg() {
                             Text("刚度++")
                         }
                         if(stiffness >= period) {
-                            Spacer(Modifier.width(appHorizontalDp()))
+                            Spacer(Modifier.width(APP_HORIZONTAL_DP))
                             Button(
                                 onClick = {
                                     stiffness -= period

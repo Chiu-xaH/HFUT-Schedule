@@ -43,7 +43,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.ui.util.NavigateAnimationManager
+import com.hfut.schedule.ui.util.MyAnimationManager
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -98,7 +98,7 @@ fun WebViewScreen(url: String,cookies : String? = null,showChanged : () -> Unit,
         },
         bottomBar = {
             if(!showTop){
-                Spacer(Modifier.height(appHorizontalDp()*2.75f))
+                Spacer(Modifier.height(APP_HORIZONTAL_DP*2.75f))
             }
         }
     ) { innerPadding ->
@@ -109,9 +109,9 @@ fun WebViewScreen(url: String,cookies : String? = null,showChanged : () -> Unit,
         ) {
             AnimatedVisibility(
                 visible = visible,
-                enter = NavigateAnimationManager.hiddenRightAnimation.enter,
-                exit = NavigateAnimationManager.hiddenRightAnimation.exit,
-                modifier = Modifier.padding(innerPadding).padding(horizontal = appHorizontalDp()).align(Alignment.CenterEnd).zIndex(1f)
+                enter = MyAnimationManager.hiddenRightAnimation.enter,
+                exit = MyAnimationManager.hiddenRightAnimation.exit,
+                modifier = Modifier.padding(innerPadding).padding(horizontal = APP_HORIZONTAL_DP).align(Alignment.CenterEnd).zIndex(1f)
             ) {
                 VerticalFloatingToolbar (expanded = true) {
                     tools()
@@ -225,9 +225,9 @@ fun WebViewUI(innerPadding : PaddingValues,showChanged: () -> Unit,cookies : Str
     ) {
         AnimatedVisibility(
             visible = visible,
-            enter = NavigateAnimationManager.hiddenRightAnimation.enter,
-            exit = NavigateAnimationManager.hiddenRightAnimation.exit,
-            modifier = Modifier.padding(innerPadding).padding(horizontal = appHorizontalDp()).align(Alignment.CenterEnd).zIndex(1f)
+            enter = MyAnimationManager.hiddenRightAnimation.enter,
+            exit = MyAnimationManager.hiddenRightAnimation.exit,
+            modifier = Modifier.padding(innerPadding).padding(horizontal = APP_HORIZONTAL_DP).align(Alignment.CenterEnd).zIndex(1f)
         ) {
             VerticalFloatingToolbar (expanded = true) {
                 tools()

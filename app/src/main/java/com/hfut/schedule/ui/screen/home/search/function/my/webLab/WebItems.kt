@@ -24,8 +24,10 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.ui.component.appHorizontalDp
-import com.hfut.schedule.ui.component.cardNormalDp
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.CARD_NORMAL_DP
+
+
 import com.hfut.schedule.ui.component.ScrollText
 import com.hfut.schedule.ui.component.SmallCard
 import com.hfut.schedule.ui.component.TransplantListItem
@@ -40,11 +42,11 @@ fun WebItem() {
         WebItemData(title = "服务大厅", icon = R.drawable.credit_card, url = MyApplication.CARD_URL, remark = "需接入校园网\n校园卡官方网址"),
     )
 
-    Column(modifier = Modifier.padding(horizontal = appHorizontalDp())) {
+    Column(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
         for(index in webs.indices step 2) {
             Row {
                 val item = webs[index]
-                SmallCard(modifier = Modifier.padding(horizontal = cardNormalDp(), vertical = cardNormalDp()).weight(.5f)) {
+                SmallCard(modifier = Modifier.padding(horizontal = CARD_NORMAL_DP, vertical = CARD_NORMAL_DP).weight(.5f)) {
                     TransplantListItem(
                         headlineContent = { Text(item.title) },
                         overlineContent = if(item.remark != null) {
@@ -63,7 +65,7 @@ fun WebItem() {
                 }
                 if(index+1 != webs.size) {
                     val item2 = webs[index+1]
-                    SmallCard(modifier = Modifier.padding(horizontal = cardNormalDp(), vertical = cardNormalDp()).weight(.5f)) {
+                    SmallCard(modifier = Modifier.padding(horizontal = CARD_NORMAL_DP, vertical = CARD_NORMAL_DP).weight(.5f)) {
                         TransplantListItem(
                             headlineContent = { Text(item2.title) },
                             overlineContent = if(item2.remark != null) {

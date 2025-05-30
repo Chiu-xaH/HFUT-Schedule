@@ -38,12 +38,11 @@ fun CameraScan(imageAnalysis: ImageAnalysis, modifier: Modifier = Modifier.fillM
     AndroidView(
         factory = { ctx ->
             val previewView = PreviewView(ctx)
-//            val cameraProviderFuture = ProcessCameraProvider.getInstance(ctx)
 
             cameraProviderFuture.addListener({
                 val cameraProvider = cameraProviderFuture.get()
                 val preview = Preview.Builder().build().also {
-                    it.setSurfaceProvider(previewView.surfaceProvider)
+                    it.surfaceProvider = previewView.surfaceProvider
                 }
                 val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
                 cameraProvider.bindToLifecycle(

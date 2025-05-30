@@ -59,6 +59,7 @@ import com.hfut.schedule.logic.enumeration.SortType
 import com.hfut.schedule.logic.util.network.reEmptyLiveDta
 import com.hfut.schedule.logic.util.network.toTimestampWithOutT
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.ui.component.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.CenterScreen
 import com.hfut.schedule.ui.component.CustomTextField
 import com.hfut.schedule.ui.component.DevelopingUI
@@ -67,7 +68,7 @@ import com.hfut.schedule.ui.component.MyCustomCard
 import com.hfut.schedule.ui.component.RefreshIndicator
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.cardNormalColor
-import com.hfut.schedule.ui.component.cardNormalDp
+  
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.EventCampus
@@ -189,7 +190,7 @@ private fun SupabaseScheduleUI(vm: NetWorkViewModel,sortType : SortType,sortReve
                     label = { Text("搜索") },
                     leadingIcon = { Icon(painterResource(R.drawable.search),null)}
                 ) { input = it }
-                Spacer(Modifier.height(cardNormalDp()))
+                Spacer(Modifier.height(CARD_NORMAL_DP))
             }
             items(sortList.size, key = { sortList[it].id }) { index ->
                 val item = sortList[index]

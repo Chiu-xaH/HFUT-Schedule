@@ -8,7 +8,7 @@ import com.hfut.schedule.activity.BaseActivity
 import com.hfut.schedule.logic.enumeration.ShowerScreen
 import com.hfut.schedule.ui.screen.shower.ShowerGuaGua
 import com.hfut.schedule.ui.screen.shower.login.ShowerLogin
-import com.hfut.schedule.ui.util.NavigateAnimationManager
+import com.hfut.schedule.ui.util.MyAnimationManager
 
 
 class ShowerActivity : BaseActivity() {
@@ -20,10 +20,10 @@ class ShowerActivity : BaseActivity() {
             navController = navController,
             startDestination = first,
             enterTransition = {
-                NavigateAnimationManager.fadeAnimation.enter
+                MyAnimationManager.fadeAnimation.enter
             },
             exitTransition = {
-                NavigateAnimationManager.fadeAnimation.exit
+                MyAnimationManager.fadeAnimation.exit
             }
         ) {
             // 主UI

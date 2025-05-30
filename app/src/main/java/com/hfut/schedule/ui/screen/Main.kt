@@ -31,7 +31,7 @@ import com.hfut.schedule.ui.screen.login.MainNav
 import com.hfut.schedule.ui.screen.login.LoginScreen
 import com.hfut.schedule.ui.screen.login.UseAgreementScreen
 import com.hfut.schedule.ui.screen.guest.GuestMainScreen
-import com.hfut.schedule.ui.util.NavigateAnimationManager
+import com.hfut.schedule.ui.util.MyAnimationManager
 import com.hfut.schedule.ui.component.Party
 import com.hfut.schedule.ui.component.RotatingIcon
 import com.hfut.schedule.ui.screen.supabase.login.loginSupabaseWithCheck
@@ -93,8 +93,8 @@ fun MainHost(networkVm : NetWorkViewModel, loginVm : LoginViewModel, uiVm : UIVi
     NavHost(
         navController = navController,
         startDestination = first,
-        enterTransition = { NavigateAnimationManager.fadeAnimation.enter },
-        exitTransition = { NavigateAnimationManager.fadeAnimation.exit }
+        enterTransition = { MyAnimationManager.fadeAnimation.enter },
+        exitTransition = { MyAnimationManager.fadeAnimation.exit }
     ) {
         // 主UI
         composable(MainNav.HOME.name) {

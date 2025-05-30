@@ -43,10 +43,11 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.sys.ClipBoard
 import com.hfut.schedule.logic.util.sys.Share
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.screen.home.cube.Screen
 import com.hfut.schedule.ui.screen.home.cube.sub.update.VersionInfo
 import com.hfut.schedule.ui.screen.home.cube.sub.update.getUpdates
-import com.hfut.schedule.ui.component.appHorizontalDp
+ 
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.style.HazeBottomSheet
@@ -74,11 +75,11 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
                 Column {
                     Row(modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = appHorizontalDp(), vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
+                        .padding(horizontal = APP_HORIZONTAL_DP, vertical = 5.dp), horizontalArrangement = Arrangement.Center) {
                         val qrPainter = createQRCodeBitmap(MyApplication.GITEE_UPDATE_URL + "releases/tag/Android",1000,1000)
                         qrPainter?.let { Image(it.asImageBitmap(), contentDescription = "") }
                     }
-                    Spacer(modifier = Modifier.height(appHorizontalDp()))
+                    Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
                 }
             }
         }

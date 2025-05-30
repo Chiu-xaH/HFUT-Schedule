@@ -12,8 +12,6 @@ class MyApplication : Application() {
         lateinit var context: Context
         // 全局模糊半径 DP
         val BLUR_RADIUS = 20.dp
-        // 全局动画速度 MS
-        const val ANIMATION_SPEED = 400
         // 宣城校区免费流量额度 GB
         const val MAX_FREE_FLOW = 30
         // 默认每页数量

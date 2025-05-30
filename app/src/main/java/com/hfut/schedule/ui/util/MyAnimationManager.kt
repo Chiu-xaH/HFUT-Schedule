@@ -18,14 +18,16 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.ui.Alignment
 import androidx.navigation.NavHostController
 
-object NavigateAnimationManager {
+object MyAnimationManager {
     data class TransferAnimation(val remark : String,val enter : EnterTransition, val exit : ExitTransition)
-
+    // 全局动画速度 毫秒
     const val ANIMATION_SPEED = 400
 
-    private val enterAnimation1 = scaleIn(animationSpec = tween(durationMillis = ANIMATION_SPEED)) +
+    private val enterAnimation1 =
+        scaleIn(animationSpec = tween(durationMillis = ANIMATION_SPEED)) +
             expandVertically(expandFrom = Alignment.Top,animationSpec = tween(durationMillis = ANIMATION_SPEED))
-    private val exitAnimation1 = scaleOut(animationSpec = tween(durationMillis = ANIMATION_SPEED)) +
+    private val exitAnimation1 =
+        scaleOut(animationSpec = tween(durationMillis = ANIMATION_SPEED)) +
             shrinkVertically(shrinkTowards = Alignment.Top,animationSpec = tween(durationMillis = ANIMATION_SPEED))
     val upDownAnimation = TransferAnimation("底栏吸附",enterAnimation1, exitAnimation1)
 
@@ -142,7 +144,7 @@ object NavigateAnimationManager {
             AnimationTypes.LeftRightAnimation.code -> getLeftRightAnimation(targetPage)
             AnimationTypes.FadeAnimation.code -> fadeAnimation
             AnimationTypes.NullAnimation.code -> nullAnimation
-            else -> fadeAnimation
+            else -> centerAnimation
         }
     }
 

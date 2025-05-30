@@ -83,7 +83,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCamp
 import com.hfut.schedule.ui.screen.home.search.function.other.life.WeatherScreen
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.bottomSheetRound
-import com.hfut.schedule.ui.util.NavigateAnimationManager
+import com.hfut.schedule.ui.util.MyAnimationManager
 import com.hfut.schedule.viewmodel.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
@@ -276,7 +276,7 @@ fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) {
                         if(showToday)
                             Box(modifier = Modifier
                                 .weight(.5f)) {
-                                TodayUI(hazeState)
+                                TodayUI(hazeState,vm)
                             }
                     }
                 if(showWeb || showEle)
@@ -327,14 +327,14 @@ fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) {
                     val uiStateWarn by vm.weatherWarningData.state.collectAsState()
                     AnimatedVisibility(
                         visible = uiStateWarn is UiState.Success,
-                        exit = NavigateAnimationManager.fadeAnimation.exit,
-                        enter = NavigateAnimationManager.fadeAnimation.enter
+                        exit = MyAnimationManager.fadeAnimation.exit,
+                        enter = MyAnimationManager.fadeAnimation.enter
                     ) {
                         val list = (uiStateWarn as UiState.Success).data
                         AnimatedVisibility(
                             visible = list.isNotEmpty(),
-                            exit = NavigateAnimationManager.fadeAnimation.exit,
-                            enter = NavigateAnimationManager.fadeAnimation.enter
+                            exit = MyAnimationManager.fadeAnimation.exit,
+                            enter = MyAnimationManager.fadeAnimation.enter
                         ) {
                             with(list[0]) {
                                 TransplantListItem(

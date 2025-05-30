@@ -16,7 +16,7 @@ import com.hfut.schedule.ui.component.StatusUI
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.supabase.SupabaseHome
 import com.hfut.schedule.ui.screen.supabase.login.SupabaseLoginScreen
-import com.hfut.schedule.ui.util.NavigateAnimationManager
+import com.hfut.schedule.ui.util.MyAnimationManager
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 
@@ -36,10 +36,10 @@ class SupabaseActivity : BaseActivity() {
                 navController = navController,
                 startDestination = first,
                 enterTransition = {
-                    NavigateAnimationManager.fadeAnimation.enter
+                    MyAnimationManager.fadeAnimation.enter
                 },
                 exitTransition = {
-                    NavigateAnimationManager.fadeAnimation.exit
+                    MyAnimationManager.fadeAnimation.exit
                 }
             ) {
                 // 登录

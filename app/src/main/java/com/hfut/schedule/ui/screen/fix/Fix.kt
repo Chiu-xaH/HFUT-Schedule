@@ -43,23 +43,26 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.logic.enumeration.FixBarItems
 import com.hfut.schedule.logic.model.NavigationBarItemData
+import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.screen.fix.about.AboutUI
 import com.hfut.schedule.ui.screen.fix.fix.FixUI
-import com.hfut.schedule.ui.util.NavigateAnimationManager
-import com.hfut.schedule.ui.util.NavigateAnimationManager.currentPage
+import com.hfut.schedule.ui.util.MyAnimationManager
+import com.hfut.schedule.ui.util.MyAnimationManager.currentPage
 
 import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.ui.style.bottomBarBlur
 import com.hfut.schedule.ui.style.topBarBlur
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
+import dev.chrisbanes.haze.rememberHazeState
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Fix(vm : LoginViewModel, vm2 : NetWorkViewModel) {
-    val hazeState = remember { HazeState() }
+    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
     val navController = rememberNavController()
     val currentAnimationIndex by DataStoreManager.animationTypeFlow.collectAsState(initial = 0)
     var targetPage by remember { mutableStateOf(FixBarItems.Fix) }
@@ -149,7 +152,7 @@ fun Fix(vm : LoginViewModel, vm2 : NetWorkViewModel) {
 
         }
     ) {innerPadding ->
-        val animation = NavigateAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
+        val animation = MyAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
 
         NavHost(navController = navController,
             startDestination = FixBarItems.Fix.name,

@@ -9,9 +9,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun RowHorizontal(content: @Composable () -> Unit) {
+fun RowHorizontal(modifier: Modifier = Modifier.fillMaxWidth(),content: @Composable () -> Unit) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier,
         horizontalArrangement = Arrangement.Center
     ) {
         content() // 插入传入的布局内容
@@ -20,7 +20,7 @@ fun RowHorizontal(content: @Composable () -> Unit) {
 
 
 @Composable
-fun ColumnVertical(content: @Composable () -> Unit) {
+fun ColumnVertical(modifier: Modifier = Modifier,content: @Composable () -> Unit) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         content()
     }

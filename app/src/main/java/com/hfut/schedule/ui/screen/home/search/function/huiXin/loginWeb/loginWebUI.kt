@@ -51,6 +51,7 @@ import com.hfut.schedule.logic.util.network.reEmptyLiveDta
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.BottomButton
 import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.CustomTabRow
@@ -61,7 +62,7 @@ import com.hfut.schedule.ui.component.LoadingUI
 import com.hfut.schedule.ui.component.StatusUI
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.WebDialog
-import com.hfut.schedule.ui.component.appHorizontalDp
+ 
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.electric.PayFor
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
@@ -365,7 +366,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
                             } else {
                                 Row(modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(horizontal = appHorizontalDp())) {
+                                    .padding(horizontal = APP_HORIZONTAL_DP)) {
                                     Button(
                                         modifier = Modifier
                                             .fillMaxWidth()
@@ -399,7 +400,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
                                 OutlinedButton(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(horizontal = appHorizontalDp()),
+                                        .padding(horizontal = APP_HORIZONTAL_DP),
                                     onClick = {
                                         Starter.startWebUrl("https://cn.bing.com/")
                                     }

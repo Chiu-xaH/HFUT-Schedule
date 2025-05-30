@@ -32,7 +32,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
-import com.hfut.schedule.ui.screen.home.focus.funiction.getToday
 import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -102,12 +101,12 @@ fun DateRangePickerModal(
             DateRangePicker(
                 state = dateRangePickerState,
                 title = {  },
-                headline = { Text("开始 ${startDateString ?: ""}\n结束 ${endDateString ?: ""}" , modifier = Modifier.padding(appHorizontalDp())) },
+                headline = { Text("开始 ${startDateString ?: ""}\n结束 ${endDateString ?: ""}" , modifier = Modifier.padding(APP_HORIZONTAL_DP)) },
                 showModeToggle = true,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(500.dp)
-                    .padding(appHorizontalDp()/3)
+                    .padding(APP_HORIZONTAL_DP/3)
             )
         } else {
             val datePickerState = rememberDatePickerState()
@@ -122,12 +121,12 @@ fun DateRangePickerModal(
             DatePicker(
                 state = datePickerState,
                 title = {   },
-                headline = { Text("截止 ${endDateString ?: ""}", modifier = Modifier.padding(appHorizontalDp())) },
+                headline = { Text("截止 ${endDateString ?: ""}", modifier = Modifier.padding(APP_HORIZONTAL_DP)) },
                 showModeToggle = true,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(500.dp)
-                    .padding(appHorizontalDp()/3)
+                    .padding(APP_HORIZONTAL_DP/3)
             )
         }
     }
@@ -174,7 +173,7 @@ fun TimeRangePicker(
             TextButton(onClick = onDismiss, colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)) {
                 Text("取消")
             }
-            Spacer(Modifier.width(appHorizontalDp()))
+            Spacer(Modifier.width(APP_HORIZONTAL_DP))
             TextButton(
                 enabled = enabled,
                 onClick = {
@@ -207,7 +206,7 @@ fun TimeOnePicker(onSelected: (String) -> Unit,onDismiss: () -> Unit) {
             TextButton(onClick = onDismiss, colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)) {
                 Text("取消")
             }
-            Spacer(Modifier.width(appHorizontalDp()))
+            Spacer(Modifier.width(APP_HORIZONTAL_DP))
             TextButton(
                 enabled = enabled,
                 onClick = {
@@ -226,14 +225,14 @@ fun TimePickerDialog(onSelected: (String) -> Unit,onDismiss: () -> Unit)  {
         Surface(
             shape = MaterialTheme.shapes.large,
             color = MaterialTheme.colorScheme.surface,
-            modifier = Modifier.padding(appHorizontalDp())
+            modifier = Modifier.padding(APP_HORIZONTAL_DP)
         ) {
             Column {
                 Column(
-                    modifier = Modifier.padding(horizontal = appHorizontalDp()*2, vertical = appHorizontalDp()),
-                    verticalArrangement = Arrangement.spacedBy(appHorizontalDp())
+                    modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP*2, vertical = APP_HORIZONTAL_DP),
+                    verticalArrangement = Arrangement.spacedBy(APP_HORIZONTAL_DP)
                 ) {
-                    Spacer(Modifier.height(appHorizontalDp()/3))
+                    Spacer(Modifier.height(APP_HORIZONTAL_DP/3))
                     Text(
                         text = "输入截止时间",
                         style = MaterialTheme.typography.titleLarge,
@@ -254,14 +253,14 @@ fun TimeRangePickerDialog(isSchedule: Boolean,onSelected: (Pair<String,String>) 
         Surface(
             shape = MaterialTheme.shapes.large,
             color = MaterialTheme.colorScheme.surface,
-            modifier = Modifier.padding(appHorizontalDp())
+            modifier = Modifier.padding(APP_HORIZONTAL_DP)
         ) {
             Column {
                 Column(
-                    modifier = Modifier.padding(horizontal = appHorizontalDp()*2, vertical = appHorizontalDp()),
-                    verticalArrangement = Arrangement.spacedBy(appHorizontalDp())
+                    modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP*2, vertical = APP_HORIZONTAL_DP),
+                    verticalArrangement = Arrangement.spacedBy(APP_HORIZONTAL_DP)
                 ) {
-                    Spacer(Modifier.height(appHorizontalDp()/3))
+                    Spacer(Modifier.height(APP_HORIZONTAL_DP/3))
                     Text(
                         text = if(isSchedule) "输入起止时间" else "输入截止时间",
                         style = MaterialTheme.typography.titleLarge,

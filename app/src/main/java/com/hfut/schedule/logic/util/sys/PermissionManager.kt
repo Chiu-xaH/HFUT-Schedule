@@ -12,6 +12,7 @@ import android.os.Looper
 import android.provider.Settings
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 
 object PermissionManager {
     @JvmStatic
@@ -20,7 +21,7 @@ object PermissionManager {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 if (!Environment.isExternalStorageManager()) {
                     val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-                    intent.data = Uri.parse("package:" + activity.packageName)
+                    intent.data = ("package:" + activity.packageName).toUri()
                     activity.startActivityForResult(intent, 1)
                 }
             } else {
@@ -57,7 +58,6 @@ object PermissionManager {
             if(ContextCompat.checkSelfPermission(activity,Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
                 ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.CAMERA),1)
         }
-
     }
     @JvmStatic
     fun checkAndRequestNotificationPermission(activity: Activity) {

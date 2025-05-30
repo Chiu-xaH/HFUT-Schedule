@@ -33,12 +33,13 @@ import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.AnimationCardListItem
 import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.EmptyUI
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.PaddingForPageControllerButton
-import com.hfut.schedule.ui.component.appHorizontalDp
+ 
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -76,7 +77,7 @@ fun SurveyUI(vm : NetWorkViewModel, hazeState: HazeState) {
                 onClick = { semester -= 20 },
                 modifier = Modifier
                     .align(Alignment.BottomStart)
-                    .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
+                    .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
                 ,
             ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
 
@@ -85,14 +86,14 @@ fun SurveyUI(vm : NetWorkViewModel, hazeState: HazeState) {
                 onClick = { scope.launch { refreshNetwork() } },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
+                    .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
             ) { Text(text = parseSemseter(semester),) }
 
             FloatingActionButton(
                 onClick = { semester += 20 },
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(horizontal = appHorizontalDp(), vertical = appHorizontalDp())
+                    .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
             ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
         }
     }

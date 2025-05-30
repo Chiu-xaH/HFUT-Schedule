@@ -45,7 +45,8 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.model.lepaoyun.LePaoYunHomeResponse
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.ui.component.appHorizontalDp
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
+
 import com.hfut.schedule.ui.component.cardNormalColor
 import com.hfut.schedule.ui.component.BottomSheetTopBar
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
@@ -102,7 +103,7 @@ fun LePaoYun(hazeState: HazeState) {
                     },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.cardio_load), contentDescription = "") }
                 )
-                Spacer(Modifier.height(appHorizontalDp()))
+                Spacer(Modifier.height(APP_HORIZONTAL_DP))
             }
         }
     }

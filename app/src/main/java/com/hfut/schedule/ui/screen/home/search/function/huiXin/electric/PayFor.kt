@@ -39,11 +39,12 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.zjgd.FeeType
 import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.LittleDialog
 import com.hfut.schedule.ui.component.StatusUI
-import com.hfut.schedule.ui.component.appHorizontalDp
+ 
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.screen.home.cube.sub.CirclePoint
 import com.hfut.schedule.ui.screen.home.cube.sub.KeyBoard
@@ -97,11 +98,11 @@ fun PayFor(vm : NetWorkViewModel, payNumber : Float, tipInfo : String, json : St
                 autoShape = false
             ) {
                 Column {
-                    Spacer(Modifier.height(appHorizontalDp()*1.5f))
+                    Spacer(Modifier.height(APP_HORIZONTAL_DP*1.5f))
                     CirclePoint(text = passwordStatus, password = password)
                     Spacer(modifier = Modifier.height(20.dp))
                     KeyBoard(
-                        modifier = Modifier.padding(horizontal = appHorizontalDp()),
+                        modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
                         onKeyClick = { num ->
                             if (password.length < 6) {
                                 password += num.toString()
@@ -185,7 +186,7 @@ fun PayFor(vm : NetWorkViewModel, payNumber : Float, tipInfo : String, json : St
             modifier = Modifier
                 .weight(1f)
                 .scale(scale.value)
-                .padding(horizontal = appHorizontalDp())) {
+                .padding(horizontal = APP_HORIZONTAL_DP)) {
             Text(text = "支付")
         }
     }

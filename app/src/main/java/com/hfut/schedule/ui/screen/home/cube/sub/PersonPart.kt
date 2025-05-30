@@ -59,7 +59,7 @@ fun PersonPart() {
 //                modifier = Modifier
 //                    .fillMaxWidth()
 //                    .padding(
-//                        horizontal = AppHorizontalDp(),
+//                        horizontal = APP_HORIZONTAL_DP,
 //                        vertical = 4.dp
 //                    ),
 //                shape = MaterialTheme.shapes.medium,
