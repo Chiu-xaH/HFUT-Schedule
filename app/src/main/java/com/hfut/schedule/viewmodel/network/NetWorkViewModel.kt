@@ -51,6 +51,7 @@ import com.hfut.schedule.logic.model.jxglstu.CourseSearchResponse
 import com.hfut.schedule.logic.model.jxglstu.MyApplyResponse
 import com.hfut.schedule.logic.model.jxglstu.ProgramBean
 import com.hfut.schedule.logic.model.jxglstu.ProgramCompletionResponse
+import com.hfut.schedule.logic.model.jxglstu.ProgramResponse
 import com.hfut.schedule.logic.model.jxglstu.SelectCourseInfo
 import com.hfut.schedule.logic.model.jxglstu.SurveyResponse
 import com.hfut.schedule.logic.model.jxglstu.SurveyTeacherResponse
@@ -765,19 +766,19 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         })
     }
 
-    val programData = MutableLiveData<String?>()
-    fun getProgram(cookie: String) {
-        val call = jxglstuJSON.getProgram(cookie,studentId.value.toString())
-
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val body = response.body()?.string()
-                saveString("program", body)
-                programData.value = body
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
+    val programData = StateHolder<ProgramResponse>()
+    suspend fun getProgram(cookie: String) = launchRequestSimple(
+        holder = programData,
+        request = { jxglstuJSON.getProgram(cookie,studentId.value.toString()).awaitResponse() },
+        transformSuccess = { _,json -> parseProgram(json) }
+    )
+    private fun parseProgram(result: String) : ProgramResponse {
+        saveString("program", result)
+        return try {
+            Gson().fromJson(result,ProgramResponse::class.java)
+        } catch (e : Exception) {
+            throw e
+        }
     }
 
     val programCompletionData = StateHolder<ProgramCompletionResponse>()
@@ -1402,8 +1403,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
         val call = token.let { community.switchShare(it, CommunityService.RequestJson(1)) }
         call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-            }
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {}
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })

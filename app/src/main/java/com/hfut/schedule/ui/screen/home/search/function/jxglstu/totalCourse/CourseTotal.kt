@@ -146,8 +146,6 @@ fun CourseTotalForApi(modifier: Modifier = Modifier, vm: NetWorkViewModel, isIco
     var showBottomSheet_Total by remember { mutableStateOf(false) }
 
     var next2 by remember { mutableStateOf(false) }
-    val json = prefs.getString("courses","")
-    val jsonNext = prefs.getString("coursesNext","")
 
     if(isIconOrText) {
         IconButton(onClick = {
