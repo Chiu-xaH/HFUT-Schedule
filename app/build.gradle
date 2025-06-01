@@ -34,7 +34,7 @@ android {
         minSdk 26
         targetSdk 36
         versionCode 187
-        versionName "4.15.6.1 Preview"
+        versionName "4.15.6.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
@@ -188,9 +188,9 @@ dependencies {
     // 协程 Room
     implementation libs.androidx.room.ktx
     // 适配大屏 自适应布局
-    implementation libs.androidx.window
-    implementation libs.androidx.adaptive
-    implementation libs.androidx.material3.adaptive.navigation.suite
-    implementation libs.androidx.adaptive.layout
-    implementation libs.androidx.adaptive.navigation
+//    implementation libs.androidx.window
+//    implementation libs.androidx.adaptive
+//    implementation libs.androidx.material3.adaptive.navigation.suite
+//    implementation libs.androidx.adaptive.layout
+//    implementation libs.androidx.adaptive.navigation
 }

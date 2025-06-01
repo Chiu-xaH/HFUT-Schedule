@@ -1,8 +1,8 @@
 package com.hfut.schedule.ui.screen.home.search.function.jxglstu.program
 
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
@@ -22,12 +20,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -38,9 +34,8 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.jxglstu.PlanCoursesSearch
-import com.hfut.schedule.logic.model.jxglstu.ProgramPartThree
-import com.hfut.schedule.logic.model.jxglstu.RequireInfo
-import com.hfut.schedule.logic.model.jxglstu.Type
+import com.hfut.schedule.logic.model.jxglstu.ProgramListBean
+import com.hfut.schedule.logic.model.jxglstu.ProgramSearchBean
 import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
@@ -51,10 +46,6 @@ import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.DepartmentIcons
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.StatusUI
- 
-
-import com.hfut.schedule.ui.component.showToast
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.courseSearch.ApiForCourseSearch
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus.HEFEI
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus.XUANCHENG
@@ -65,13 +56,6 @@ import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 
-data class ProgramListBean(
-    val id : Int,
-    val grade : String,
-    val name : String,
-    val department : String,
-    val major : String
-)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -182,7 +166,6 @@ fun ProgramSearch(vm : NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState)
                             var department = data.department
                             val name = data.name
                             department = department.substringBefore("（")
-//                            MyCustomCard {
                             AnimationCardListItem(
                                 headlineContent = { Text(name) },
                                 overlineContent = { Text(data.grade + "级 " + department + " " + data.major) },
@@ -193,7 +176,6 @@ fun ProgramSearch(vm : NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState)
                                 },
                                 index = index
                             )
-//                            }
                         }
                     }
                 } else {
@@ -231,156 +213,95 @@ private fun ProgramSearchInfo(vm: NetWorkViewModel, item: ProgramListBean, campu
         refreshNetwork()
     }
     CommonNetworkScreen(uiState, onReload = refreshNetwork, loadingText = "培养方案较大 加载中") {
-        SearchProgramUI(ifSaved, hazeState =hazeState,vm)
+        val bean = (uiState as UiState.Success).data
+        ProgramSearchChildrenUI(bean,hazeState,vm,ifSaved)
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
-private fun SearchProgramUI(ifSaved: Boolean, hazeState: HazeState,vm: NetWorkViewModel) {
-//    val sheetState_Program = rememberModalBottomSheetState()
-    val uiState by vm.programSearchData.state.collectAsState()
-    val bean = (uiState as UiState.Success).data
+fun ProgramSearchChildrenUI(entity : ProgramSearchBean?, hazeState : HazeState,vm: NetWorkViewModel,ifSaved : Boolean) {
+    if(entity == null) return
+    val children = entity.children
+    val planCourses = entity.planCourses.sortedBy { it.terms.let { if(it.isNotEmpty()) it[0] else null } }
+
     var showBottomSheet_Program by remember { mutableStateOf(false) }
-    val listOne = getProgramListOneSearch(bean)
-    var title by remember { mutableStateOf("培养方案") }
-    var num by remember { mutableStateOf(0) }
+
+    if(children.isNotEmpty()) {
+        var bean by remember { mutableStateOf<ProgramSearchBean?>(null) }
+        bean?.let {
+            if (showBottomSheet_Program) {
+                HazeBottomSheet (
+                    onDismissRequest = { showBottomSheet_Program = false },
+                    hazeState = hazeState,
+                    showBottomSheet = showBottomSheet_Program
+                ) {
+                    Scaffold(
+                        modifier = Modifier.fillMaxSize(),
+                        containerColor = Color.Transparent,
+                        topBar = {
+                            HazeBottomSheetTopBar(it.type?.nameZh ?: "培养方案")
+                        },) {innerPadding ->
+                        Column(
+                            modifier = Modifier
+                                .padding(innerPadding)
+                                .fillMaxSize()
+                        ){
+                            ProgramSearchChildrenUI(it, hazeState = hazeState,vm,ifSaved)
+                            Spacer(modifier = Modifier.height(20.dp))
+                        }
+                    }
+                }
+            }
+        }
 
 
-    var total = 0.0
-    LazyColumn {
-        items(listOne.size, key = { it }) {item ->
-            total += listOne[item].requiedCredits ?: 0.0
-//            MyCustomCard {
-            AnimationCardListItem(
-                    headlineContent = { Text(text = listOne[item].type + " | 学分要求 " + listOne[item].requiedCredits) },
-                    trailingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "")},
-                    //   leadingContent = { Icon(painterResource(id = R.drawable.calendar), contentDescription = "Localized description") },
+        LazyColumn {
+            items(children.size, key = { it }) { item ->
+                val dataItem = children[item]
+                AnimationCardListItem(
+                    headlineContent = { Text(text = dataItem.type?.nameZh + dataItem.requireInfo?.requiredCredits.let { if(it != 0.0)" (要求" + it + "学分)" else "" }) },
+                    supportingContent = { dataItem.remark?.let { Text(it) } },
                     modifier = Modifier.clickable {
                         showBottomSheet_Program = true
-                        num = item
-                        title = listOne[item].type.toString()
+                        bean = dataItem
                     },
-                index = item
-                )
-//            }
-        }
-
-        item { BottomTip(str = "总修 $total 学分") }
-    }
-
-    if (showBottomSheet_Program ) {
-        HazeBottomSheet (
-            onDismissRequest = { showBottomSheet_Program = false },
-//            sheetState = sheetState_Program,
-//            shape = bottomSheetRound(sheetState_Program),
-            hazeState = hazeState,
-            showBottomSheet = showBottomSheet_Program
-//            modifier = Modifier.nestedScroll(nestedScrollConnection)
-        ) {
-
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar(title)
-                },) {innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ){
-                    SearchProgramUIInfo(num,bean, ifSaved, hazeState =hazeState,vm )
-                    Spacer(modifier = Modifier.height(20.dp))
-                }
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun SearchProgramUIInfo(num : Int, bean: ProgramSearchItemBean, ifSaved: Boolean, hazeState: HazeState,vm : NetWorkViewModel) {
-    val listTwo = getProgramListTwoSearch(num,bean)
-    var show by remember { mutableStateOf(true) }
-    val sheetState_Program = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var showBottomSheet_Program by remember { mutableStateOf(false) }
-    var title by remember { mutableStateOf("培养方案") }
-    var num2 by remember { mutableIntStateOf(0) }
-    if (showBottomSheet_Program ) {
-        HazeBottomSheet (
-            onDismissRequest = { showBottomSheet_Program = false },
-            showBottomSheet = showBottomSheet_Program,
-            hazeState = hazeState
-//            sheetState = sheetState_Program,
-//            shape = bottomSheetRound(sheetState_Program)
-        ) {
-
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar(title)
-                },) {innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ){
-                    SearchProgramUIInfo2(num,num2,bean, ifSaved, hazeState =hazeState ,vm)
-                    Spacer(modifier = Modifier.height(20.dp))
-                }
-            }
-        }
-    }
-
-    listTwo.forEach{ item->
-        show = item.type != "直接跳转"
-    }
-    if(show) {
-        LazyColumn {
-            items(listTwo.size, key = { it }) {item ->
-//                MyCustomCard{
-                AnimationCardListItem(
-                        headlineContent = { Text(text = listTwo[item].type + " | 学分要求 " + listTwo[item].requiedCredits) },
-                        trailingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "")},
-                        //   leadingContent = { Icon(painterResource(id = R.drawable.calendar), contentDescription = "Localized description") },
-                        modifier = Modifier.clickable {
-                            showBottomSheet_Program = true
-                            num2 = item
-                            title = listTwo[item].type + " | 学分要求 " + listTwo[item].requiedCredits
-                        },
                     index = item
+                )
+            }
+            entity.requireInfo?.let {
+                if(it.requiredCredits == 0.0 && it.requiredCourseNum == 0) {
+                    return@let
+                }
+                item {
+                    BottomTip(
+                        "要求 " +
+                                it.requiredCredits.let { num ->
+                                    if(num == 0.0) "" else "" + num + "学分"
+                                }
+                                +
+                                it.requiredCourseNum.let { num ->
+                                    if(num == 0) "" else " " + num + "门"
+                                }
                     )
-//                }
+                }
+            }
+            entity.remark?.let { item { BottomTip(str = it) } }
+        }
+    }
+    if(planCourses.isNotEmpty()) {
+        var input by remember { mutableStateOf("") }
+
+        var courseInfo by remember { mutableStateOf<PlanCoursesSearch?>(null) }
+        var showInfo by remember { mutableStateOf(false) }
+        if(showInfo) {
+            courseInfo?.let {
+                planCoursesTransform(it)?.let { b ->
+                    ProgramDetailInfo(courseInfo = b,vm, hazeState, ifSaved){ showInfo = false }
+                }
             }
         }
-    } else {
-        SearchProgramUIInfo2(num,num2,bean, ifSaved,hazeState,vm)
-    }
 
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun SearchProgramUIInfo2(num1 : Int, num2 : Int, bean: ProgramSearchItemBean, ifSaved : Boolean, hazeState: HazeState,vm: NetWorkViewModel) {
-    val listThree = getProgramListThreeSearch(num1,num2,bean)
-
-    var showBottomSheet_Search by remember { mutableStateOf(false) }
-    var courseName by remember { mutableStateOf("") }
-    ApiForCourseSearch(vm,courseName,null,showBottomSheet_Search, hazeState = hazeState) {
-        showBottomSheet_Search = false
-    }
-
-    var courseInfo by remember { mutableStateOf<ProgramPartThree?>(null) }
-    var showInfo by remember { mutableStateOf(false) }
-    if(showInfo && courseInfo != null) {
-        ProgramInfo(courseInfo = courseInfo!!,vm, hazeState, ifSaved){ showInfo = false }
-    }
-
-    if(listThree.size != 0) {
-        listThree.sortBy { it.term }
-        var input by remember { mutableStateOf("") }
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -397,8 +318,7 @@ private fun SearchProgramUIInfo2(num1 : Int, num2 : Int, bean: ProgramSearchItem
                 label = { Text("搜索课程" ) },
                 singleLine = true,
                 trailingIcon = {
-                    IconButton(
-                        onClick = {}) {
+                    IconButton(onClick = {}) {
                         Icon(painter = painterResource(R.drawable.search), contentDescription = "description")
                     }
                 },
@@ -406,194 +326,52 @@ private fun SearchProgramUIInfo2(num1 : Int, num2 : Int, bean: ProgramSearchItem
                 colors = textFiledTransplant(),
             )
         }
-        val searchList = mutableListOf<ProgramPartThreeSearch>()
-        listThree.forEach { item->
-            if(item.name.contains(input) || input.contains(item.name)) {
+        val searchList = mutableListOf<PlanCoursesSearch>()
+        planCourses.forEach { item ->
+            if(item.course.nameZh.contains(input)) {
                 searchList.add(item)
             }
         }
+
         Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
         LazyColumn {
             items(searchList.size, key = { it }) {item ->
-//                MyCustomCard{
-                var department = searchList[item].depart
-                if(department.contains("（")) department = department.substringBefore("（")
-                val name = searchList[item].name
+                val listItem = searchList[item]
+                val course = listItem.course
+                val name = course.nameZh
+                val department = listItem.openDepartment.nameZh.substringBefore("（")
+                val term = listItem.terms.let { if(it.isNotEmpty()) it[0] else null }?.substringAfter("_")?.toIntOrNull()
                 AnimationCardListItem(
-                        headlineContent = { Text(text = name) },
-                        supportingContent = { Text(text = department) },
-                        overlineContent = { Text(text = "第" + searchList[item].term + "学期 | 学分 ${searchList[item].credit}")},
-                        leadingContent = { DepartmentIcons(name = searchList[item].depart) },
-                        modifier = Modifier.clickable {
-                            if(!ifSaved) {
-                                courseName = name
-                                showBottomSheet_Search = true
-                            } else {
-                                showToast("登录教务后可查询开课")
-                                Starter.refreshLogin()
-                            }
-                        },
+                    headlineContent = { Text(text = name) },
+                    supportingContent = { Text(text = department) },
+                    overlineContent = { Text(text = term?.let { "第" + it + "学期  " }+ course.credits?.let { "| 学分 $it" })},
+                    leadingContent = { DepartmentIcons(name = department) },
+                    trailingContent = if(!listItem.compulsory){{ Text("选修") }} else null,
+                    modifier = Modifier.clickable {
+                        courseInfo = listItem
+                        showInfo = true
+                    },
                     index = item
+                )
+            }
+            entity.requireInfo?.let {
+                if(it.requiredCredits == 0.0 && it.requiredCourseNum == 0) {
+                    return@let
+                }
+                item {
+                    BottomTip(
+                        "要求 " +
+                                it.requiredCredits.let { num ->
+                                    if(num == 0.0) "" else "" + num + "学分"
+                                }
+                                +
+                                it.requiredCourseNum.let { num ->
+                                    if(num == 0) "" else " " + num + "门"
+                                }
                     )
-//                }
+                }
             }
-        }
-    } else {
-        Box(modifier = Modifier.fillMaxSize()) {
-//            Column(modifier = Modifier.align(Alignment.Center)) {
-                StatusUI(R.drawable.manga,"选修课不做显示")
-//            }
+            entity.remark?.let { item { BottomTip(str = it) } }
         }
     }
 }
-
-
-data class ProgramSearchItem(
-    val data : ProgramSearchItemBean
-)
-data class ProgramSearchItemBean(
-    val requireInfo : SearchRequireInfo,
-    val children : List<ProgramResponseSearch>
-)
-data class SearchRequireInfo(
-    val requiredSubModuleNum : Double,
-    val requiredCredits : Double,
-    val requiredCourseNum : Double
-)
-
-//fun getProgramSearchItem(vm: NetWorkViewModel) : ProgramSearchItemBean? {
-//    val json = vm.programSearchData.value
-//    try {
-//        val data = Gson().fromJson(json,ProgramSearchItem::class.java).data
-//        return data
-//    } catch (e : Exception) {
-//        return null
-//    }
-//}
-data class ProgramResponseSearch(
-                           val type : Type?,
-
-                           val requireInfo : RequireInfo?,
-                           val planCourses : List<PlanCoursesSearch>,
-    val children : List<ProgramResponseSearch>,
-                           val remark : String?,
-    )
-
-
-data class ProgramPartOneSearch(val type : String?,
-                          val requiedCredits : Double?,
-                          val partCourse : List<PlanCoursesSearch>,
-
-                                val children : List<ProgramResponseSearch>, )
-data class ProgramPartThreeSearch(val term : Int?,
-                            val name : String,
-                            val credit : Double?,
-                            val depart :String)
-
-data class ProgramPartTwoSearch(val type : String?,
-                          val requiedCredits : Double?,
-                          val part : List<PlanCoursesSearch>,
-                                //方向
-    val children : List<ProgramResponseSearch>,)
-
-fun getProgramListOneSearch(bean : ProgramSearchItemBean): MutableList<ProgramPartOneSearch> {
-    val list = mutableListOf<ProgramPartOneSearch>()
-    return try {
-        val children = bean.children
-
-        for(i in children.indices) {
-            val type = children[i].type?.nameZh
-            val requiedCredits = children[i].requireInfo?.requiredCredits
-            val partCourse = children[i].planCourses
-            val child = children[i].children
-            list.add(ProgramPartOneSearch(type, requiedCredits,partCourse,child))
-        }
-        list
-    } catch (e : Exception) {
-        e.printStackTrace()
-//        Log.d("eeee",e.toString())
-        list
-    }
-}
-
-fun getProgramListTwoSearch(item : Int, bean: ProgramSearchItemBean): MutableList<ProgramPartTwoSearch> {
-    val list = mutableListOf<ProgramPartTwoSearch>()
-    try {
-        val partl = getProgramListOneSearch(bean)[item]
-//        val part = partl.partCourse
-
-        if(partl.children.isEmpty()) {
-            val part = partl.partCourse
-            list.add(ProgramPartTwoSearch("直接跳转",null, part, emptyList()))
-            return list
-        } else {
-            val part = partl.children
-            for(i in part.indices) {
-                val partTwo = part[i]
-                val type = partTwo.type?.nameZh
-                val requiredCredits = partTwo.requireInfo?.requiredCredits
-                val course = partTwo.planCourses
-                val driections = partTwo.children
-                ProgramPartTwoSearch(type,requiredCredits, course,driections).let { list.add(it) }
-            }
-            return list
-        }
-
-//        for(i in part.indices) {
-//            val term = part[i].terms[0].substringAfter("_").toIntOrNull() ?: 0
-//            val course = part[i].course
-//            val courseName = course.nameZh
-//            val credit = course.credits
-//            val depart = part[i].openDepartment.nameZh
-//            list.add(ProgramPartThreeSearch(term,courseName,credit,depart?:""))
-//        }
-//        return list
-    } catch (e : Exception) {
-        e.printStackTrace()
-        return list
-    }
-}
-
-
-fun getProgramListDirectionSearch(children: List<ProgramResponseSearch>): MutableList<ProgramPartOneSearch> {
-    val list = mutableListOf<ProgramPartOneSearch>()
-    return try {
-        for(i in children.indices) {
-            val type = children[i].type?.nameZh + " " + children[i].remark
-            val requiedCredits = children[i].requireInfo?.requiredCredits
-            val partCourse = children[i].planCourses
-            val child = children[i].children
-            list.add(ProgramPartOneSearch(type, requiedCredits,partCourse,child))
-        }
-        list
-    } catch (e : Exception) {
-        e.printStackTrace()
-//        Log.d("eeee",e.toString())
-        list
-    }
-}
-
-
-fun getProgramListThreeSearch(item1 : Int, item2 : Int, bean: ProgramSearchItemBean): MutableList<ProgramPartThreeSearch> {
-    val list = mutableListOf<ProgramPartThreeSearch>()
-    try {
-        val partl = getProgramListTwoSearch(item1,bean)[item2]
-//        val partChilren = partl
-        val part = partl.part
-
-        for(i in part.indices) {
-
-            val term = part[i].terms[0].substringAfter("_").toIntOrNull() ?: 0
-            val course = part[i].course
-            val courseName = course.nameZh
-            val credit = course.credits
-            val depart = part[i].openDepartment.nameZh
-            list.add(ProgramPartThreeSearch(term,courseName,credit,depart?:""))
-        }
-        return list
-    } catch (e : Exception) {
-        e.printStackTrace()
-        return list
-    }
-}
-

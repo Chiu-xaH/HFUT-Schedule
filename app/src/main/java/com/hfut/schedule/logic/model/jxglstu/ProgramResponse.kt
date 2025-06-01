@@ -1,12 +1,47 @@
 package com.hfut.schedule.logic.model.jxglstu
 
-data class ProgramResponse(val children : List<ProgramResponse>,
-                           val type : Type?,
-                           val requireInfo : RequireInfo?,
-                           val remark : String?,
-                           val reference : Boolean,
-                           val planCourses : List<PlanCourses>,
-                           //val periodInfoRatio : PeriodInfoRatio,
+
+data class ProgramListBean(
+    val id : Int,
+    val grade : String,
+    val name : String,
+    val department : String,
+    val major : String
+)
+
+abstract class BaseProgramResponse {
+    abstract val children : List<BaseProgramResponse>
+    abstract val type : Type?
+    abstract val requireInfo : Any?
+    abstract val remark : String?
+    abstract val reference : Boolean
+    abstract val planCourses : List<Any>
+}
+
+
+data class ProgramSearchResponse(val data : ProgramSearchBean)
+
+data class ProgramSearchBean(
+    override val children : List<ProgramSearchBean>,
+    override val type : Type?,
+    override val requireInfo : SearchRequireInfo?,
+    override val remark : String?,
+    override val reference : Boolean,
+    override val planCourses : List<PlanCoursesSearch>
+) : BaseProgramResponse()
+
+data class SearchRequireInfo(
+    val requiredSubModuleNum : Int,
+    val requiredCredits : Double,
+    val requiredCourseNum : Int
+)
+
+data class ProgramResponse(override val children : List<ProgramResponse>,
+                           override val type : Type?,
+                           override val requireInfo : RequireInfo?,
+                           override val remark : String?,
+                           override val reference : Boolean,
+                           override val planCourses : List<PlanCourses>,
                            val sumChildrenNum : Int,
                            val sumChildrenRequiredCredits : Double,
                            val numBySubModule : Map<String,Int>,
@@ -17,11 +52,11 @@ data class ProgramResponse(val children : List<ProgramResponse>,
                            val sumChildrenRequiredCourseNum : Int,
                            val sumPlanCourseCredits : Double,
                            val sumPlanCourseNum : Int
-)
+) : BaseProgramResponse()
 
 data class Type(val nameZh : String)
 
-data class RequireInfo(val requiredSubModuleNum : Double?,
+data class RequireInfo(val requiredSubModuleNum : Int?,
                        val requiredCourseNum : Int?,
                        val totalTheoryPeriods : Int?,
                        val totalTheoryCredits : Double?,
@@ -31,32 +66,32 @@ data class RequireInfo(val requiredSubModuleNum : Double?,
                        val requiredTotalPeriods : Int?,)
 
 data class PlanCourses(val readableTerms : List<Int>,
-                       val compulsory : Boolean,
+                       override val compulsory : Boolean,
                        val readableSuggestTerms : List<String>,
-                       val remark : String?,
-                       val course : course,
-                       val openDepartment : courseType
-)
+                       override val remark : String?,
+                       override val course : course,
+                       override val openDepartment : courseType
+) : BasePlanCourse()
+
+data class courseForSearch(val nameZh : String,val credits : Double?,val code : String,val courseType : courseType)
+
 data class PlanCoursesSearch(
                        val terms : List<String>,
-//                       val readableSuggestTerms : List<String>,
-                       val remark : String?,
-                       val course : course,
-                       val openDepartment : courseType
-)
+                       override val compulsory : Boolean,
+                       override val remark : String?,
+                       override val course : courseForSearch,
+                       val periodInfo : PeriodInfo,
+                       override val openDepartment : courseType
+) : BasePlanCourse()
+
+abstract class BasePlanCourse {
+    abstract val compulsory: Boolean
+    abstract val remark: String?
+    abstract val course: Any
+    abstract val openDepartment: courseType
+}
 //readableTerms开课学期，readableSuggestTerms建议修读学期
 
-//data class PeriodInfoRatio()
-
-//data class InProgramResponse(val ProgramShow : List<ProgramShow>)
-
-data class ProgramPartOne(val type : String?,
-                          val requiedCredits : Double?,
-                          val partChildren : List<ProgramResponse?>,
-                          val partCourse : List<PlanCourses>)
-data class ProgramPartTwo(val type : String?,
-                          val requiedCredits : Double?,
-                          val part : List<PlanCourses>)
 data class ProgramPartThree(val term : Int?,
                             val name : String,
                             val credit : Double?,
@@ -67,17 +102,10 @@ data class ProgramPartThree(val term : Int?,
                             val remark : String?,
                             val isCompulsory : Boolean
 )
-data class ProgramShow(val name : String,
-                       val type : String?,
-                       val credit : Double?,
-                       val term : List<Int?>,
-                       val studyMust : Boolean?,
-                       val school : String?,
-                       val remark : String?)
+
 
 data class ProgramCompletionResponse(val total : item,val other : List<item>)
 data class item(val name : String,val actual : Double,val full : Double)
-
 
 
 data class ProgramBean(

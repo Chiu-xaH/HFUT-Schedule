@@ -51,7 +51,10 @@ import com.hfut.schedule.logic.model.jxglstu.CourseSearchResponse
 import com.hfut.schedule.logic.model.jxglstu.MyApplyResponse
 import com.hfut.schedule.logic.model.jxglstu.ProgramBean
 import com.hfut.schedule.logic.model.jxglstu.ProgramCompletionResponse
+import com.hfut.schedule.logic.model.jxglstu.ProgramListBean
 import com.hfut.schedule.logic.model.jxglstu.ProgramResponse
+import com.hfut.schedule.logic.model.jxglstu.ProgramSearchBean
+import com.hfut.schedule.logic.model.jxglstu.ProgramSearchResponse
 import com.hfut.schedule.logic.model.jxglstu.SelectCourseInfo
 import com.hfut.schedule.logic.model.jxglstu.SurveyResponse
 import com.hfut.schedule.logic.model.jxglstu.SurveyTeacherResponse
@@ -110,9 +113,6 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.WebInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.program.ProgramListBean
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.program.ProgramSearchItem
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.program.ProgramSearchItemBean
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.ApplyGrade
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus.HEFEI
@@ -292,7 +292,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         data
     } catch (e : Exception) { throw e }
 
-    val programSearchData = StateHolder<ProgramSearchItemBean>()
+    val programSearchData = StateHolder<ProgramSearchBean>()
     suspend fun getProgramListInfo(id : Int,campus : Campus) = launchRequestSimple(
         holder = programSearchData,
         request = { myAPI.getProgram(
@@ -304,8 +304,8 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         ).awaitResponse() },
         transformSuccess = { _,json -> parseProgramSearchInfo(json) }
     )
-    private fun parseProgramSearchInfo(json : String) : ProgramSearchItemBean = try {
-        Gson().fromJson(json,ProgramSearchItem::class.java).data
+    private fun parseProgramSearchInfo(json : String) : ProgramSearchBean = try {
+        Gson().fromJson(json,ProgramSearchResponse::class.java).data
     } catch (e : Exception) { throw e }
 
     fun downloadHoliday()  = Repository.downloadHoliday()

@@ -197,52 +197,16 @@ fun ProgramPerformance(vm : NetWorkViewModel, hazeState: HazeState) {
                             )
                         }
                     }
-//                    if(true) {
-//
-//                    }
                 }
             }
-//            if (true) {
-//
-//            }
         }
     }
-//    Box {
-//        AnimatedVisibility(
-//            visible = loading,
-//            enter = fadeIn(),
-//            exit = fadeOut()
-//        ) {
-//            Column {
-//                Spacer(modifier = Modifier.height(5.dp))
-//                RowHorizontal{
-//                    LoadingUI()
-//                }
-//                Spacer(modifier = Modifier.height(5.dp))
-//                RowHorizontal {
-//                    TextButton(onClick = { /*TODO*/ }) {
-//                        Text(text = )
-//                    }
-//                }
-//            }
-//        }
-//        AnimatedVisibility(
-//            visible = !loading,
-//            enter = fadeIn(),
-//            exit = fadeOut()
-//        ) {
-//
-//        }
-//    }
-//
-
 }
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PerformanceInfo(vm: NetWorkViewModel, moduleIndex : Int, hazeState: HazeState) {
-//    val sheetState = rememberModalBottomSheetState(true)
     var showBottomSheet by remember { mutableStateOf(false) }
 
     var input by remember { mutableStateOf("") }
@@ -292,21 +256,6 @@ private fun PerformanceInfo(vm: NetWorkViewModel, moduleIndex : Int, hazeState: 
 
     Spacer(modifier = Modifier.height(5.dp))
 
-//    Row(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(horizontal = APP_HORIZONTAL_DP),
-//        horizontalArrangement = Arrangement.Start
-//    ) {
-//        AssistChip(onClick = { MyToast("正在开发") }, label = { Text(text = "学期") })
-//        Spacer(modifier = Modifier.width(10.dp))
-//        AssistChip(onClick = { MyToast("正在开发") }, label = { Text(text = "类型") })
-//        Spacer(modifier = Modifier.width(10.dp))
-//        AssistChip(onClick = { MyToast("正在开发") }, label = { Text(text = "排序") })
-//    }
-//
-//    Spacer(modifier = Modifier.height(5.dp))
-
     val uiState by vm.programPerformanceData.state.collectAsState()
     val bean = (uiState as UiState.Success).data
 
@@ -330,7 +279,6 @@ private fun PerformanceInfo(vm: NetWorkViewModel, moduleIndex : Int, hazeState: 
                         "UNREPAIRED" -> "待修"
                         else -> item.resultType
                     }
-//                    MyCustomCard {
                         AnimationCardListItem(
                             headlineContent = { Text(text = item.nameZh) },
                             supportingContent = {
@@ -360,7 +308,6 @@ private fun PerformanceInfo(vm: NetWorkViewModel, moduleIndex : Int, hazeState: 
                             },
                             index = index
                         )
-//                    }
                 }
             }
         }
@@ -382,7 +329,6 @@ private fun PerformanceInfo(vm: NetWorkViewModel, moduleIndex : Int, hazeState: 
                         "UNREPAIRED" -> "待修"
                         else -> item.resultType
                     }
-//                    MyCustomCard {
                         AnimationCardListItem(
                             headlineContent = { Text(text = item.nameZh) },
                             supportingContent = {
@@ -406,7 +352,6 @@ private fun PerformanceInfo(vm: NetWorkViewModel, moduleIndex : Int, hazeState: 
                             },
                             index = index
                         )
-//                    }
                 }
             }
         }
