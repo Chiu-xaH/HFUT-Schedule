@@ -27,6 +27,7 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
@@ -57,6 +58,7 @@ import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.CustomTabRow
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.LargeButton
 import com.hfut.schedule.ui.component.LoadingLargeCard
 import com.hfut.schedule.ui.component.LoadingUI
 import com.hfut.schedule.ui.component.StatusUI
@@ -323,7 +325,77 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
         HorizontalPager(state = pagerState) { page ->
             when(page) {
                 HEFEI_TAB -> {
-                    StatusUI(R.drawable.manga,"需要合肥校区在读生贡献数据源")
+                    Column {
+                        DividerTextExpandedWith(text = "登录",false) {
+                            Row(modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = APP_HORIZONTAL_DP)) {
+                                LargeButton(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .weight(.5f),
+                                    onClick = {
+                                        scope.launch {
+                                            vm.loginSchoolNetResponse.clear()
+                                            vm.loginSchoolNet(Campus.HEFEI)
+                                        }
+                                    },
+                                    text = textLogin,
+                                    icon = R.drawable.login
+                                )
+                                Spacer(Modifier.width(APP_HORIZONTAL_DP/2))
+                                LargeButton(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .weight(.5f),
+                                    onClick = {
+                                        scope.launch {
+                                            vm.loginSchoolNetResponse.clear()
+                                            vm.logoutSchoolNet(Campus.HEFEI)
+                                        }
+                                    },
+                                    text = textLogout,
+                                    icon = R.drawable.logout,
+                                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                                )
+                            }
+                            if(textLogin == "已登录") {
+                                Spacer(Modifier.height(APP_HORIZONTAL_DP/2))
+                                OutlinedButton(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = APP_HORIZONTAL_DP),
+                                    shape = MaterialTheme.shapes.medium,
+                                    onClick = {
+                                        Starter.startWebUrl("https://cn.bing.com/")
+                                    }
+                                ) {
+                                    Text("测试连通性")
+                                }
+                            }
+                        }
+                        DividerTextExpandedWith(text = "使用说明", defaultIsExpanded = false) {
+                            TransplantListItem(
+                                headlineContent = { Text(text = "认证初始密码位于 查询中心-个人信息-密码信息") },
+                                supportingContent = {
+                                    Text("如您修改了一卡通默认密码，请前往 选项-网络相关-一卡通密码 填入新的密码才可登陆校园网")
+                                },
+                                leadingContent = {
+                                    Icon(painter = painterResource(id = R.drawable.key), contentDescription = "")
+                                }
+                            )
+                            TransplantListItem(
+                                headlineContent = { Text(text = "部分内网必须连接校园网打开") },
+                                supportingContent = {
+                                    Text(text = "学校提供WEBVPN供外网访问部分内网地址,可在 查询中心-网址导航 打开")
+                                },
+                                leadingContent = {
+                                    Icon(painter = painterResource(id = R.drawable.vpn_key), contentDescription = "")
+                                }
+                            )
+                        }
+                    }
                 }
                 XUANCHENG_TAB -> {
                     Column {
@@ -360,14 +432,14 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
                             }
 
 
-                            Spacer(Modifier.height(10.dp))
+                            Spacer(Modifier.height(APP_HORIZONTAL_DP))
                             if(loadingLogin) {
                                 LoadingUI()
                             } else {
                                 Row(modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(horizontal = APP_HORIZONTAL_DP)) {
-                                    Button(
+                                    LargeButton(
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .weight(.5f),
@@ -376,12 +448,12 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
                                                 vm.loginSchoolNetResponse.clear()
                                                 vm.loginSchoolNet(Campus.XUANCHENG)
                                             }
-                                        }
-                                    ) {
-                                        Text(textLogin)
-                                    }
-                                    Spacer(Modifier.width(10.dp))
-                                    FilledTonalButton(
+                                        },
+                                        text = textLogin,
+                                        icon = R.drawable.login
+                                    )
+                                    Spacer(Modifier.width(APP_HORIZONTAL_DP/2))
+                                    LargeButton(
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .weight(.5f),
@@ -390,17 +462,22 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
                                                 vm.loginSchoolNetResponse.clear()
                                                 vm.logoutSchoolNet(Campus.XUANCHENG)
                                             }
-                                        }
-                                    ) {
-                                        Text(textLogout)
-                                    }
+                                        },
+                                        text = textLogout,
+                                        icon = R.drawable.logout,
+                                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                                    )
                                 }
                             }
+
                             if(textLogin == "已登录") {
+                                Spacer(Modifier.height(APP_HORIZONTAL_DP/2))
                                 OutlinedButton(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(horizontal = APP_HORIZONTAL_DP),
+                                    shape = MaterialTheme.shapes.medium,
                                     onClick = {
                                         Starter.startWebUrl("https://cn.bing.com/")
                                     }
@@ -412,6 +489,9 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
                         DividerTextExpandedWith(text = "使用说明", defaultIsExpanded = false) {
                             TransplantListItem(
                                 headlineContent = { Text(text = "认证初始密码位于 查询中心-个人信息-密码信息") },
+                                supportingContent = {
+                                    Text("如您修改了一卡通默认密码，请前往 选项-网络相关-一卡通密码 填入新的密码才可登陆校园网")
+                                },
                                 leadingContent = {
                                     Icon(painter = painterResource(id = R.drawable.key), contentDescription = "")
                                 }
@@ -428,7 +508,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
                             TransplantListItem(
                                 headlineContent = { Text(text = "免费时期") },
                                 supportingContent = {
-                                    Text(text = "宣城校区法定节假日与寒暑假不限额度，其余时间限额月50GB；合肥校区不限额")
+                                    Text(text = "法定节假日与寒暑假不限额度不限时间，其余时间限额月${MyApplication.MAX_FREE_FLOW}GB，每日熄灯期间禁用；合肥校区不限额")
                                 },
                                 leadingContent = {
                                     Icon(painter = painterResource(id = R.drawable.paid), contentDescription = "")
@@ -441,3 +521,5 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
         }
     }
 }
+
+

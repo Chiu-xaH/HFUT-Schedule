@@ -88,7 +88,7 @@ create or replace function get_latest_event_end_time(
 returns timestamp as $$
 begin
     return (
-        select max(end_time)
+        select max(created_time)
         from event
         where (
             applicable_classes = ''

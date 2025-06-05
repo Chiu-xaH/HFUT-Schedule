@@ -35,6 +35,7 @@ import com.hfut.schedule.logic.network.servicecreator.GithubRawServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.GithubServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.GuaGuaServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.Login.LoginWeb2ServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.Login.LoginWebHefeiServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.Login.LoginWebServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.NewsServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.QWeatherServiceCreator
@@ -72,6 +73,7 @@ import retrofit2.awaitResponse
 import java.util.Locale
 // Repo迁移计划
 object Repository {
+    private val loginWebHefei = LoginWebHefeiServiceCreator.create(LoginWebsService::class.java)
     private val loginWeb = LoginWebServiceCreator.create(LoginWebsService::class.java)
     private val loginWeb2 = LoginWeb2ServiceCreator.create(LoginWebsService::class.java)
     private val teacher = TeacherServiceCreator.create(TeachersService::class.java)
@@ -166,8 +168,14 @@ object Repository {
                 getCardPsk()?.let { pwd ->
                     when (campus) {
                         Campus.HEFEI -> {
-                            showToast("暂未支持")
-                            return@withContext
+                            val location = "123"
+                            launchRequestSimple(
+                                holder = loginSchoolNetResponse,
+                                request = {
+                                    loginWebHefei.loginWeb(uid, pwd, location).awaitResponse()
+                                },
+                                transformSuccess = { _, body -> parseLoginSchoolNet(body) }
+                            )
                         }
 
                         Campus.XUANCHENG -> {
@@ -201,8 +209,14 @@ object Repository {
                 getCardPsk()?.let { pwd ->
                     when (campus) {
                         Campus.HEFEI -> {
-                            showToast("暂未支持")
-                            return@withContext
+                            val location = "123"
+                            launchRequestSimple(
+                                holder = loginSchoolNetResponse,
+                                request = {
+                                    loginWebHefei.loginWeb(uid, pwd, location).awaitResponse()
+                                },
+                                transformSuccess = { _, body -> parseLoginSchoolNet(body) }
+                            )
                         }
 
                         Campus.XUANCHENG -> {
@@ -228,7 +242,7 @@ object Repository {
     // 目前仅适配了宣区
     @JvmStatic
     private fun parseLoginSchoolNet(result : String) : Boolean = try {
-        if(result.contains("登录成功") && !result.contains("已使用")) {
+        if(result.contains("成功") && !result.contains("已使用")) {
             true
         } else if(result.contains("已使用")) {
             false

@@ -18,6 +18,8 @@ import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.ScrollText
 import com.hfut.schedule.ui.component.TransplantListItem
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.UIViewModel
@@ -27,29 +29,41 @@ import dev.chrisbanes.haze.HazeState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginWeb(vmUI : UIViewModel, card : Boolean, vm : NetWorkViewModel, hazeState: HazeState) {
-
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
 
-    val memoryWeb = prefs.getString("memoryWeb","0")
+    when(getCampus()) {
+        Campus.HEFEI -> {
+            TransplantListItem(
+                headlineContent = { if(!card)Text(text = "校园网") else ScrollText(text = "登录") },
+                overlineContent = { if(!card) ScrollText(text = "登录") else Text(text = "校园网")},
+                leadingContent = { Icon(
+                    painterResource(R.drawable.net),
+                    contentDescription = "Localized description",
+                ) },
+                modifier = Modifier.clickable { showBottomSheet = true }
+            )
+        }
+        Campus.XUANCHENG -> {
+            val memoryWeb = prefs.getString("memoryWeb","0")
 
-    val flow = vmUI.webValue.value?.flow?: memoryWeb
-    val gB = (flow?.toDouble() ?: 0.0) / 1024
-//    val bd = BigDecimal(gB)
-    val str = formatDecimal(gB,2)
+            val flow = vmUI.webValue.value?.flow?: memoryWeb
+            val gB = (flow?.toDouble() ?: 0.0) / 1024
+            val str = formatDecimal(gB,2)
 
-//    val bd2 = BigDecimal()
-    val precent = formatDecimal(((flow?.toDouble() ?: 0.0) / (1024 * MyApplication.MAX_FREE_FLOW)) * 100,1)
+            val precent = formatDecimal(((flow?.toDouble() ?: 0.0) / (1024 * MyApplication.MAX_FREE_FLOW)) * 100,1)
 
-    TransplantListItem(
-        headlineContent = { if(!card)Text(text = "校园网") else ScrollText(text = "${str}GB") },
-        overlineContent = { if(!card) ScrollText(text = "${vmUI.webValue.value?.flow?: memoryWeb}MB") else Text(text = "校园网 ${precent}%")},
-        leadingContent = { Icon(
-            painterResource(R.drawable.net),
-            contentDescription = "Localized description",
-        ) },
-        modifier = Modifier.clickable { showBottomSheet = true }
-    )
+            TransplantListItem(
+                headlineContent = { if(!card)Text(text = "校园网") else ScrollText(text = "${str}GB") },
+                overlineContent = { if(!card) ScrollText(text = "${vmUI.webValue.value?.flow?: memoryWeb}MB") else Text(text = "校园网 ${precent}%")},
+                leadingContent = { Icon(
+                    painterResource(R.drawable.net),
+                    contentDescription = "Localized description",
+                ) },
+                modifier = Modifier.clickable { showBottomSheet = true }
+            )
+        }
+    }
+
 
     if (showBottomSheet) {
         HazeBottomSheet (
@@ -57,8 +71,6 @@ fun LoginWeb(vmUI : UIViewModel, card : Boolean, vm : NetWorkViewModel, hazeStat
             autoShape = false,
             hazeState = hazeState,
             showBottomSheet = showBottomSheet
-//            sheetState = sheetState,
-//            shape = Round(sheetState)
         ) {
             LoginWebScaUI(vmUI, vm,hazeState)
         }

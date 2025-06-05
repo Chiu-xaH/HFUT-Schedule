@@ -64,6 +64,7 @@ import com.hfut.schedule.ui.style.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
+import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -206,7 +207,7 @@ fun GradeScreen(ifSaved : Boolean, vm : NetWorkViewModel) {
                 startDestination = GradeBarItems.GRADE.name,
                 enterTransition = { animation.enter },
                 exitTransition = { animation.exit },
-                modifier = Modifier.haze(state = hazeState)
+                modifier = Modifier.hazeSource(state = hazeState)
             ) {
                 composable(GradeBarItems.GRADE.name) {
 

@@ -123,7 +123,7 @@ fun SearchScreenNoLogin(vm : NetWorkViewModel, ifSaved : Boolean, innerPaddings 
 fun Login() {
 //    MyCard {
         androidx.compose.material3.ListItem(
-            headlineContent = { Text(text = "登录解锁查询中心30+功能及课程表、聚焦完全版") },
+            headlineContent = { Text(text = "登录解锁查询中心40+功能及课程表、聚焦完全版") },
             trailingContent = {
                 FilledTonalIconButton(onClick = { refreshLogin() }) {
                     Icon(painterResource(id = R.drawable.login), contentDescription = null)

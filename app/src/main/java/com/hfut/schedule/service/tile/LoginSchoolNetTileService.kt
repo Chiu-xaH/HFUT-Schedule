@@ -6,27 +6,21 @@ import com.hfut.schedule.logic.network.repo.Repository
 import com.hfut.schedule.logic.util.network.StateHolder
 import com.hfut.schedule.ui.component.onListenStateHolder
 import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus.XUANCHENG
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-class LoginSchoolNetTileService : TileService() {
-    fun canUse() {
-        if(getCampus() != XUANCHENG) {
-            qsTile.state = Tile.STATE_UNAVAILABLE
-        } else {
-            qsTile.state = Tile.STATE_INACTIVE
-        }
-        qsTile.updateTile()
-    }
+open class LoginSchoolNetTileService(private val campus : Campus) : TileService() {
 
     val loginSchoolNetResponse = StateHolder<Boolean>()
 
     override fun onTileAdded() {
         super.onTileAdded()
-        canUse()
+        qsTile.label = "登录校园网"
+        qsTile.updateTile()
     }
 
     override fun onClick() {
@@ -34,7 +28,7 @@ class LoginSchoolNetTileService : TileService() {
         val job = Job()
         CoroutineScope(job).launch {
             loginSchoolNetResponse.clear()
-            Repository.loginSchoolNet(loginSchoolNetResponse = loginSchoolNetResponse)
+            Repository.loginSchoolNet(campus = campus,loginSchoolNetResponse = loginSchoolNetResponse)
             onListenStateHolder(loginSchoolNetResponse, onError = null) { data ->
                 if(data) {
                     qsTile.state = Tile.STATE_ACTIVE
@@ -54,7 +48,6 @@ class LoginSchoolNetTileService : TileService() {
 
     override fun onStopListening() {
         super.onStopListening()
-        canUse()
     }
 
     override fun onTileRemoved() {

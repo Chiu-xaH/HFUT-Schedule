@@ -54,6 +54,8 @@ class MyApplication : Application() {
         // 宣城校区校园网
         const val LOGIN_WEB_XC_URL = "http://172.18.3.3/"
         const val LOGIN_WEB_XC2_URL = "http://172.18.2.2/"
+        // 合肥校区校园网
+        const val LOGIN_WEB_HEFEI_URL = "http://172.16.200.11/"
         // 登陆失败 重定向
         const val REDIRECT_URL = "https://cas.hfut.edu.cn/cas/login?service=http%3A%2F%2Fjxglstu.hfut.edu.cn%2Feams5-student%2Fneusoft-sso%2Flogin&exception.message=A+problem+occurred+restoring+the+flow+execution+with+key+%27e1s1%27"
         // 呱呱物联小程序

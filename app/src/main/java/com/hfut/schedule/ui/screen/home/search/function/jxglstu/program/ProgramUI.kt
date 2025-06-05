@@ -328,7 +328,7 @@ fun ProgramChildrenUI(entity : ProgramResponse?, hazeState : HazeState,vm: NetWo
                 onValueChange = {
                     input = it
                 },
-                label = { Text("搜索课程" ) },
+                label = { Text("搜索课程、类型或代码" ) },
                 singleLine = true,
                 trailingIcon = {
                     IconButton(onClick = {}) {
@@ -341,7 +341,13 @@ fun ProgramChildrenUI(entity : ProgramResponse?, hazeState : HazeState,vm: NetWo
         }
         val searchList = mutableListOf<PlanCourses>()
         planCourses.forEach { item ->
-            if(item.course.nameZh.contains(input)) {
+            val has =
+                item.course.nameZh.contains(input,ignoreCase = true) ||
+                        item.course.courseType.nameZh.contains(input) ||
+                        item.course.code.contains(input,ignoreCase = true) ||
+                        item.remark?.contains(input) == true ||
+                        item.openDepartment.nameZh.contains(input)
+            if(has) {
                 searchList.add(item)
             }
         }

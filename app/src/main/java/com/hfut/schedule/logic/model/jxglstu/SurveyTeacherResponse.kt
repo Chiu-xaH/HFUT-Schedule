@@ -2,7 +2,13 @@ package com.hfut.schedule.logic.model.jxglstu
 
 //获取教师
 data class SurveyTeacherResponse(val forStdLessonSurveySearchVms : List<forStdLessonSurveySearchVms>)
-data class forStdLessonSurveySearchVms(val lessonSurveyTasks : List<lessonSurveyTasks>)
+data class forStdLessonSurveySearchVms(
+    val code : String,
+    val openEndTimeContent : String?,
+    val course : courseType,
+    val openDepartment : courseType,
+    val lessonSurveyTasks : List<lessonSurveyTasks>
+)
 data class lessonSurveyTasks(val id : Int,val submitted : Boolean,val teacher : teacher)
 
 

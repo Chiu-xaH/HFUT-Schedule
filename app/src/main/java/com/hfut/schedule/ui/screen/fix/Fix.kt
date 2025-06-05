@@ -55,6 +55,7 @@ import com.hfut.schedule.ui.style.bottomBarBlur
 import com.hfut.schedule.ui.style.topBarBlur
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
+import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -158,11 +159,8 @@ fun Fix(vm : LoginViewModel, vm2 : NetWorkViewModel) {
             startDestination = FixBarItems.Fix.name,
             enterTransition = { animation.enter },
             exitTransition = { animation.exit },
-            modifier = Modifier
-            .haze(
-                state = hazeState,
-                //backgroundColor = MaterialTheme.colorScheme.surface,
-            )) {
+            modifier = Modifier.hazeSource(state = hazeState)
+        ) {
             composable(FixBarItems.Fix.name) {
                 Scaffold {
                     FixUI(innerPadding = innerPadding,vm, vm2,hazeState)

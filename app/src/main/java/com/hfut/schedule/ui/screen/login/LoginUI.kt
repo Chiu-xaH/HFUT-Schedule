@@ -88,7 +88,7 @@ import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.BottomSheetTopBar
 import com.hfut.schedule.ui.component.LoadingUI
 import com.hfut.schedule.ui.component.MyCustomCard
-import com.hfut.schedule.ui.component.ShareTwoContainer
+import com.hfut.schedule.ui.component.ShareTwoContainer2D
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.URLImageWithOCR
@@ -290,7 +290,7 @@ fun LoginScreen(vm : LoginViewModel, navController : NavHostController) {
     ) {innerPadding ->
         Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
             TwoTextField(vm,navController,webVpn)
-            ShareTwoContainer(
+            ShareTwoContainer2D(
                 modifier = Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(horizontal = 25.dp- APP_HORIZONTAL_DP),
                 defaultContent = {
                     Column {

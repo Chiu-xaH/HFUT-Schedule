@@ -17,7 +17,9 @@ data class GradeResponseJXGLSTU(val title : String,
                                 val score : String,
                                 val GPA : String,
                                 val grade : String,
-                                val totalGrade : String)
+                                val totalGrade : String,
+                                val code: String
+)
 
 data class GradeAvgResponse(val result : AvgResult)
 

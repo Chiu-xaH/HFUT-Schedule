@@ -13,6 +13,7 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.Spring.StiffnessMediumLow
 import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.spring
@@ -148,6 +149,7 @@ fun AddEventFloatButton(
         BoundsTransform { _, _ ->
             if(!isCenterAnimation) {
                 spring(
+                    dampingRatio = Spring.DampingRatioLowBouncy*1.15f,
                     stiffness = StiffnessMediumLow,
                     visibilityThreshold = Rect.VisibilityThreshold
                 )
@@ -227,8 +229,8 @@ private fun SharedTransitionScope.ButtonUI(
                 .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
                 .sharedBounds(
                     boundsTransform = boundsTransform,
-                    enter = fadeIn(tween(durationMillis = MyAnimationManager.ANIMATION_SPEED)),
-                    exit = fadeOut(tween(durationMillis = MyAnimationManager.ANIMATION_SPEED)),
+                    enter = MyAnimationManager.fadeAnimation.enter,
+                    exit = MyAnimationManager.fadeAnimation.exit,
                     sharedContentState = rememberSharedContentState(key = "container"),
                     animatedVisibilityScope = animatedContentScope,
                     resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds
@@ -262,10 +264,10 @@ private fun SharedTransitionScope.SurfaceUI(
 //        containerColor = Color.Transparent,
         modifier = Modifier
             .fillMaxSize()
-            .clip(RoundedCornerShape(APP_HORIZONTAL_DP))
+//            .clip(RoundedCornerShape(APP_HORIZONTAL_DP))
             .sharedBounds(
-                enter = fadeIn(tween(durationMillis = MyAnimationManager.ANIMATION_SPEED)),
-                exit = fadeOut(tween(durationMillis = MyAnimationManager.ANIMATION_SPEED)),
+                enter = MyAnimationManager.fadeAnimation.enter,
+                exit = MyAnimationManager.fadeAnimation.exit,
                 sharedContentState = rememberSharedContentState(key = "container"),
                 animatedVisibilityScope = animatedContentScope,
                 boundsTransform = boundsTransform,
@@ -293,23 +295,38 @@ private fun SharedTransitionScope.SurfaceUI(
             }
         },
     ) { innerPadding ->
-        if(showSurface) {
-            AnimatedVisibility(
-                visible = true,
-                enter  = fadeIn(),
-                exit = fadeOut()
-            ) {
-                Column(modifier = Modifier
-                    .padding(innerPadding)
-                    .background(Color.Transparent)) {
-                    if(loading) {
-                        LoadingUI("正在核对登录")
-                    } else {
-                        AddEventUI(vm,isSupabase,showChange)
-                    }
+        AnimatedVisibility(
+            visible = showSurface,
+            enter  = fadeIn(),
+            exit = fadeOut(tween(durationMillis = 0))
+        ) {
+            Column(modifier = Modifier
+                .padding(innerPadding)
+                .background(Color.Transparent)) {
+                if(loading) {
+                    LoadingUI("正在核对登录")
+                } else {
+                    AddEventUI(vm,isSupabase,showChange)
                 }
             }
         }
+//        if(showSurface) {
+//            AnimatedVisibility(
+//                visible = true,
+//                enter  = fadeIn(),
+//                exit = fadeOut()
+//            ) {
+//                Column(modifier = Modifier
+//                    .padding(innerPadding)
+//                    .background(Color.Transparent)) {
+//                    if(loading) {
+//                        LoadingUI("正在核对登录")
+//                    } else {
+//                        AddEventUI(vm,isSupabase,showChange)
+//                    }
+//                }
+//            }
+//        }
     }
 }
 

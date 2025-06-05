@@ -44,6 +44,7 @@ import com.hfut.schedule.ui.component.BottomTip
 import com.hfut.schedule.ui.component.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.DepartmentIcons
+import com.hfut.schedule.ui.component.EmptyUI
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.StatusUI
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
@@ -179,22 +180,22 @@ fun ProgramSearch(vm : NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState)
                         }
                     }
                 } else {
-                    val campusText = when(campus) {
-                        HEFEI -> "合肥"
-                        XUANCHENG -> "宣城"
-                    }
-                    Column {
-                        StatusUI(R.drawable.manga,"需要${campusText}校区在读生贡献数据源")
-                        Spacer(Modifier.height(5.dp))
-                        RowHorizontal {
-                            Button(
-                                onClick = {
-                                    Starter.startWebUrl("https://github.com/${MyApplication.GITHUB_DEVELOPER_NAME}/${MyApplication.GITHUB_REPO_NAME}/blob/main/tools/All-Programs-Get-Python/README.md")
+                    if(campus == HEFEI && programList.isEmpty()) {
+                        Column {
+                            StatusUI(R.drawable.manga,"需合肥校区在读生贡献数据源")
+                            Spacer(Modifier.height(5.dp))
+                            RowHorizontal {
+                                Button(
+                                    onClick = {
+                                        Starter.startWebUrl("https://github.com/${MyApplication.GITHUB_DEVELOPER_NAME}/${MyApplication.GITHUB_REPO_NAME}/blob/main/tools/All-Programs-Get-Python/README.md")
+                                    }
+                                ) {
+                                    Text("接入指南(Github)")
                                 }
-                            ) {
-                                Text("接入指南(Github)")
                             }
                         }
+                    } else {
+                        EmptyUI()
                     }
                 }
             }
@@ -315,7 +316,7 @@ fun ProgramSearchChildrenUI(entity : ProgramSearchBean?, hazeState : HazeState,v
                 onValueChange = {
                     input = it
                 },
-                label = { Text("搜索课程" ) },
+                label = { Text("搜索课程、类型或代码" ) },
                 singleLine = true,
                 trailingIcon = {
                     IconButton(onClick = {}) {
@@ -328,7 +329,13 @@ fun ProgramSearchChildrenUI(entity : ProgramSearchBean?, hazeState : HazeState,v
         }
         val searchList = mutableListOf<PlanCoursesSearch>()
         planCourses.forEach { item ->
-            if(item.course.nameZh.contains(input)) {
+            val has =
+                item.course.nameZh.contains(input,ignoreCase = true) ||
+                item.course.courseType.nameZh.contains(input) ||
+                item.course.code.contains(input,ignoreCase = true) ||
+                item.remark?.contains(input) == true ||
+                item.openDepartment.nameZh.contains(input)
+            if(has) {
                 searchList.add(item)
             }
         }

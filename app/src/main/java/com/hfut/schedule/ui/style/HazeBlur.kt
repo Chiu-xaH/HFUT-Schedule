@@ -1,6 +1,7 @@
 package com.hfut.schedule.ui.style
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -193,24 +194,24 @@ fun transitionBackground(isExpanded : Boolean) : Modifier {
     val transition by DataStoreManager.transitionFlow.collectAsState(initial = false)
     // 稍微晚于运动结束
     val blurSize by animateDpAsState(
-        targetValue = if (isExpanded && motionBlur) 12.dp else 0.dp, label = ""
-        ,animationSpec = tween(MyAnimationManager.ANIMATION_SPEED + 100, easing = LinearOutSlowInEasing),
+        targetValue = if (isExpanded && motionBlur) MyApplication.BLUR_RADIUS else 0.dp, label = ""
+        ,animationSpec = tween(MyAnimationManager.ANIMATION_SPEED + MyAnimationManager.ANIMATION_SPEED/2, easing = FastOutSlowInEasing),
     )
     val scale = animateFloatAsState(
-        targetValue = if (isExpanded) 0.8f else 1f, // 按下时为0.9，松开时为1
-        animationSpec = tween(MyAnimationManager.ANIMATION_SPEED + 100, easing = LinearOutSlowInEasing),
+        targetValue = if (isExpanded) 0.825f else 1f, // 按下时为0.9，松开时为1
+        animationSpec = tween(MyAnimationManager.ANIMATION_SPEED + MyAnimationManager.ANIMATION_SPEED/2, easing = FastOutSlowInEasing),
         label = "" // 使用弹簧动画
     )
     val backgroundColor by animateColorAsState(
-        targetValue = if(isExpanded) Color.Black.copy(.3f) else Color.Transparent,
-        animationSpec = tween(MyAnimationManager.ANIMATION_SPEED, easing = LinearOutSlowInEasing),
+        targetValue = if(isExpanded) Color.Black.copy(.25f) else Color.Transparent,
+        animationSpec = tween(MyAnimationManager.ANIMATION_SPEED, easing = FastOutSlowInEasing),
         label = "",
     )
     val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
     LaunchedEffect(isExpanded) {
         if(blur && transition) {
             DataStoreManager.saveHazeBlur(false)
-            delay((MyAnimationManager.ANIMATION_SPEED + 100)*1L)
+            delay((MyAnimationManager.ANIMATION_SPEED + MyAnimationManager.ANIMATION_SPEED/2)*1L)
             DataStoreManager.saveHazeBlur(true)
         }
     }

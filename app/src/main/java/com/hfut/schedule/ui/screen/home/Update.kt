@@ -62,7 +62,7 @@ fun initNetworkRefresh(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIVie
         //检查更新
         launch { vm.getUpdate() }
         // 更新聚焦卡片
-        if(showWeb)
+        if(showWeb && getCampus() == Campus.XUANCHENG)
             launch { getWebInfoFromZJGD(vm,vmUI) }
         if(showEle)
             launch { getEleNew(vm, vmUI) }

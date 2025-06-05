@@ -37,9 +37,10 @@ fun ApiToSupabase(vm : NetWorkViewModel) {
             if(vm.supabaseCheckResp.value == null) {
                 vm.supabaseGetEventLatest(jwt)
                 onListenStateHolder(vm.supabaseGetEventLatestResp,onError = { _,_ -> }) { result ->
+                    vm.supabaseCheckResp.value = true
                     if(result) {
+                        // 有新的日程
                         showBadge = true
-                        vm.supabaseCheckResp.value = true
                     }
                 }
             }

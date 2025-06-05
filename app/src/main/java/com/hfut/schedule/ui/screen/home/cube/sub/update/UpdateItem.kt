@@ -24,7 +24,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-06-01") },
+                overlineContent = { Text(text = "2025-06-05") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -53,10 +53,16 @@ fun VersionInfo() {
 //        UpdateItems("重构 提纯出CAS统一认证登录逻辑，为更多平台的一键登录做准备", null,UpdateType.RENEW)
 //        UpdateItems("新增 本地聚焦卡片快速转化为云端卡片，一键共享本地卡片", null, UpdateType.ADD)
 //        UpdateItems("新增 对共建平台已上传卡片的信息编辑", null, UpdateType.ADD)
-        UpdateItems("重构 网络请求层，重新进行封装，使用Flow代替LiveData，优化潜在的内存泄漏问题，增加不同状态下的展示", "进度: 完成60/总99",UpdateType.RENEW)
-        UpdateItems("重构 培养方案的相关代码，使其支持所有的培养方案", null, UpdateType.RENEW)
-        UpdateItems("新增 层级实时模糊向下适配至所有安卓版本，但Android11及其以下设备不支持顶栏底栏模糊", null, UpdateType.ADD)
-        UpdateItems("优化 应用内打开邮箱链接无法跳转的问题，新增浏览器打开按钮", null, UpdateType.OPTIMIZE)
+        UpdateItems("新增 登录/注销校园网 For 合肥校区", null, UpdateType.ADD)
+        UpdateItems("新增 评教按课程归类教师", null, UpdateType.ADD)
+        UpdateItems("修复 发送评教界面错位的Bug", null, UpdateType.FIX)
+        UpdateItems("修复 共建平台不检查新增日程的Bug", null, UpdateType.FIX)
+        UpdateItems("优化 培养方案搜索时的广度", null, UpdateType.OPTIMIZE)
+        UpdateItems("优化 成绩跳转评教的体验", null, UpdateType.OPTIMIZE)
+        UpdateItems("优化 登录/注销校园网提示失败但实际成功的问题", null, UpdateType.OPTIMIZE)
+        UpdateItems("优化 添加聚焦日程按钮的转场动画",null, UpdateType.OPTIMIZE)
+        UpdateItems("优化 部分界面的显示", null, UpdateType.OPTIMIZE)
+//        UpdateItems("重构 网络请求层，重新进行封装，使用Flow代替LiveData，优化潜在的内存泄漏问题，增加不同状态下的展示", "进度: 完成60/总99",UpdateType.RENEW)
 //        UpdateItems("重构 部分界面，使其适配平板、折叠屏等大屏设备", null, UpdateType.RENEW)
 //        UpdateItems("优化 添加聚焦卡片适用范围的添加班级逻辑", null, UpdateType.OPTIMIZE)
 //         UpdateItems("优化 部分列表快速滑动时首张卡片卡顿的问题", null, UpdateType.OPTIMIZE)

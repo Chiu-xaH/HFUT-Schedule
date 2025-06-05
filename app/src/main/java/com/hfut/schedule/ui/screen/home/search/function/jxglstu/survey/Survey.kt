@@ -52,9 +52,7 @@ fun Survey(ifSaved : Boolean, vm : NetWorkViewModel, hazeState: HazeState){
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    HazeBottomSheetTopBar("评教") {
-                        CourseTotalForApi(vm=vm, hazeState = hazeState)
-                    }
+                    HazeBottomSheetTopBar("评教")
                 },
             ) { innerPadding ->
                 Column(

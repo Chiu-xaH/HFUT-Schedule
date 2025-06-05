@@ -1,6 +1,7 @@
 package com.hfut.schedule.viewmodel.network
 
 import android.util.Base64
+import android.util.Log
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -59,6 +60,7 @@ import com.hfut.schedule.logic.model.jxglstu.SelectCourseInfo
 import com.hfut.schedule.logic.model.jxglstu.SurveyResponse
 import com.hfut.schedule.logic.model.jxglstu.SurveyTeacherResponse
 import com.hfut.schedule.logic.model.jxglstu.TransferResponse
+import com.hfut.schedule.logic.model.jxglstu.forStdLessonSurveySearchVms
 import com.hfut.schedule.logic.model.jxglstu.lessonResponse
 import com.hfut.schedule.logic.model.jxglstu.lessonSurveyTasks
 import com.hfut.schedule.logic.model.jxglstu.lessons
@@ -236,14 +238,19 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         request = { supabase.getEventLatestTime(authorization = "Bearer $jwt").awaitResponse() },
         transformSuccess = { _,body -> parseSupabaseLatestEventTime(body) }
     )
-    private fun parseSupabaseLatestEventTime(body : String) : Boolean = try {
-        if(prefs.getString("SUPABASE_LATEST",null) != body) {
-            saveString("SUPABASE_LATEST",body)
-            true
-        } else {
-            false
-        }
-    } catch (e : Exception) { throw e }
+    private fun parseSupabaseLatestEventTime(body : String) : Boolean {
+        try {
+            if(prefs.getString("SUPABASE_LATEST",null) == body) {
+                // 没有新的日程
+                return false
+            } else {
+                // 有新的日程
+                // 保存
+                saveString("SUPABASE_LATEST",body)
+                return true
+            }
+        } catch (e : Exception) { throw e }
+    }
 
     // 定制 展示自己上传过的日程
     val supabaseGetMyEventsResp = StateHolder<List<SupabaseEventsInput>>()
@@ -652,11 +659,12 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             val tds = row.select("td") // 选择tr标签下的所有td标签
             if(!tds.isEmpty()) {
                 val titles = tds[0].text()
+                val codes = tds[2].text()
                 val scores =tds[3].text()
                 val gpa = tds[4].text()
                 val totalGrade = tds[5].text()
                 val grades = tds[6].text()
-                list.add(GradeResponseJXGLSTU(titles,scores,gpa,grades,totalGrade))
+                list.add(GradeResponseJXGLSTU(titles,scores,gpa,grades,totalGrade,codes))
             }
         }
         list
@@ -828,22 +836,14 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         emptyList<lessons>()
     }
 
-    val surveyListData = StateHolder<List<lessonSurveyTasks>>()
+    val surveyListData = StateHolder<List<forStdLessonSurveySearchVms>>()
     suspend fun getSurveyList(cookie: String, semester : Int) = launchRequestSimple(
         holder = surveyListData,
         request = { jxglstuJSON.getSurveyList(cookie,studentId.value.toString(),semester).awaitResponse() },
         transformSuccess = { _,json -> parseSurveyList(json) }
     )
-    private fun parseSurveyList(json : String) : List<lessonSurveyTasks> = try {
-        val list = mutableListOf<lessonSurveyTasks>()
-        val result = Gson().fromJson(json, SurveyTeacherResponse::class.java).forStdLessonSurveySearchVms
-        for(i in result.indices) {
-            val teacherList = result[i].lessonSurveyTasks
-            for(j in teacherList.indices) {
-                list.add(teacherList[j])
-            }
-        }
-        list
+    private fun parseSurveyList(json : String) : List<forStdLessonSurveySearchVms> = try {
+            Gson().fromJson(json, SurveyTeacherResponse::class.java).forStdLessonSurveySearchVms
     } catch (e : Exception) { throw e }
 
     val surveyData = StateHolder<SurveyResponse>()

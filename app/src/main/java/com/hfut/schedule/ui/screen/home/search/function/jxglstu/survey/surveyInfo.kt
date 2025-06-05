@@ -5,13 +5,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -38,41 +42,25 @@ import com.hfut.schedule.logic.model.jxglstu.radioQuestionAnswer
 import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.CommonNetworkScreen
+import com.hfut.schedule.ui.component.LargeButton
 import com.hfut.schedule.ui.component.LittleDialog
  
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.component.onListenStateHolder
+import com.hfut.schedule.ui.style.ColumnVertical
 import com.hfut.schedule.ui.style.RowHorizontal
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Composable
-fun SurveyInfoUI(id : Int, vm: NetWorkViewModel,onDismiss : () -> Unit) {
-//    var loading by remember { mutableStateOf(true) }
-
-
-
-//    CoroutineScope(Job()).launch{
-//        async { cookie?.let { vm.getSurveyToken(it,id.toString()) } }
-//        async{ cookie?.let { vm.getSurvey(it,id.toString()) } }.await()
-//        async {
-//            Handler(Looper.getMainLooper()).post{
-//                vm.surveyData.observeForever { result ->
-//                    if (result != null) {
-//                        if(result.contains("lessonSurveyLesson")) {
-//                            loading = false
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
+fun SurveyInfoUI(id : Int, vm: NetWorkViewModel,scope : CoroutineScope,onDismiss : () -> Unit) {
     val uiState by vm.surveyData.state.collectAsState()
-//    val token by vm.surveyData.state.collectAsState()
 
     val refreshNetwork: suspend () -> Unit = {
         val cookie = if (!vm.webVpn) prefs.getString(
@@ -88,51 +76,20 @@ fun SurveyInfoUI(id : Int, vm: NetWorkViewModel,onDismiss : () -> Unit) {
     LaunchedEffect(Unit) {
         refreshNetwork()
     }
-    CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-//        val bean = (uiState as SimpleUiState.Success).data
-        SurveyList(vm) {
+    CommonNetworkScreen(uiState, onReload = refreshNetwork, isFullScreen = false) {
+        SurveyList(vm, scope) {
             onDismiss()
         }
     }
-//    Box() {
-//        AnimatedVisibility(
-//            visible = loading,
-//            enter = fadeIn(),
-//            exit = fadeOut()
-//        ) {
-//            Row(
-//                modifier = Modifier.fillMaxWidth(),
-//                horizontalArrangement = Arrangement.Center
-//            ) {
-//                Spacer(modifier = Modifier.height(5.dp))
-//                LoadingUI()
-//            }
-//        }////加载动画居中，3s后消失
-//
-//
-//        AnimatedVisibility(
-//            visible = !loading,
-//            enter = fadeIn(),
-//            exit = fadeOut()
-//        ) {
-//
-//        }
-//    }
-
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SurveyList(vm: NetWorkViewModel,onResult : () -> Unit) {
-//    val choiceList = getSurveyChoice(bean)
-//    val inputList = getSurveyInput(bean)
-//    val choiceNewList = mutableListOf<radioQuestionAnswer>()
-//    val inputNewList = mutableListOf<blankQuestionAnswer>()
+private fun SurveyList(vm: NetWorkViewModel, scope: CoroutineScope,onResult : () -> Unit) {
     val uiState by vm.surveyData.state.collectAsState()
     val bean = (uiState as UiState.Success).data
     var postMode by remember { mutableStateOf(PostMode.NORMAL) }
     var showDialog by remember { mutableStateOf(false) }
 
-    val scope = rememberCoroutineScope()
     if(showDialog) {
         LittleDialog(
             onDismissRequest = { showDialog = false },
@@ -152,42 +109,42 @@ private fun SurveyList(vm: NetWorkViewModel,onResult : () -> Unit) {
         )
     }
 
-    Box() {
-        Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP).align(Alignment.BottomCenter).navigationBarsPadding()) {
-            Button(
+    Column (modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP).navigationBarsPadding()) {
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+            Icon(
+                painterResource(R.drawable.arrow_upward),
+                contentDescription = "",
+                Modifier.size(100.dp),
+                tint = MaterialTheme.colorScheme.primary
+            )
+        }
+        RowHorizontal {
+            Text("请选择发送(留言默认为:'好')", color = MaterialTheme.colorScheme.primary)
+        }
+        Spacer(Modifier.height(APP_HORIZONTAL_DP))
+        RowHorizontal {
+            LargeButton(
                 modifier = Modifier.fillMaxWidth().weight(.5f),
                 onClick = {
-                    showDialog = true
                     postMode = PostMode.GOOD
-                }) {
-                Text("好评 100分")
-            }
-            Button(
-                modifier = Modifier.fillMaxWidth().weight(.5f),
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.errorContainer),
-                onClick = {
                     showDialog = true
+                },
+                text = "好评 100分",
+                icon = R.drawable.thumb_up,
+            )
+            Spacer(Modifier.width(APP_HORIZONTAL_DP/2))
+            LargeButton (
+                modifier = Modifier.fillMaxWidth().weight(.5f),
+                onClick = {
                     postMode = PostMode.BAD
-                }) {
-                Text("差评 0分")
-            }
+                    showDialog = true
+                },
+                icon = R.drawable.thumb_down,
+                text = "差评 0分",
+                containerColor = MaterialTheme.colorScheme.error
+            )
         }
-        Column {
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                Icon(
-                    painterResource(R.drawable.arrow_upward),
-                    contentDescription = "",
-                    Modifier.size(100.dp),
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            }
-            RowHorizontal {
-                Text("请选择发送", color = MaterialTheme.colorScheme.primary)
-            }
-            RowHorizontal {
-                Text( "评(100分 \"好\") / 差评(0分 \"好\")", color = MaterialTheme.colorScheme.primary)
-            }
-        }
+        Spacer(Modifier.height(APP_HORIZONTAL_DP))
     }
 }
 

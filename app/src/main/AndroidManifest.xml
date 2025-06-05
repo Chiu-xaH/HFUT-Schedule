@@ -90,9 +90,22 @@
         </provider>
 
         <service
-            android:name=".service.tile.LoginSchoolNetTileService"
+            android:name=".service.tile.LoginHefeiSchoolNetTileService"
             android:exported="true"
-            android:label="@string/login_web"
+            android:label="@string/login_web_hefei"
+            android:icon="@drawable/net"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <meta-data android:name="android.service.quicksettings.ACTIVE_TILE"
+                android:value="true" />
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".service.tile.LoginXuanChengSchoolNetTileService"
+            android:exported="true"
+            android:label="@string/login_web_xuancheng"
             android:icon="@drawable/net"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <meta-data android:name="android.service.quicksettings.ACTIVE_TILE"
