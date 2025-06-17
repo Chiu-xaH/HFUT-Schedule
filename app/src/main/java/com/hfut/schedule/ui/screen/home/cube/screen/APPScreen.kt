@@ -239,6 +239,11 @@ fun APPScreen(navController: NavController,
 //                modifier = Modifier.clickable { navController.navigate(Screen.LockScreen.route) }
 //            )
             TransplantListItem(
+                headlineContent = { Text(text = "默认添加日程账户") },
+                leadingContent = { Icon(painterResource(R.drawable.calendar_add_on), contentDescription = "Localized description",) },
+                modifier = Modifier.clickable { navController.navigate(Screen.CalendarScreen.route) }
+            )
+            TransplantListItem(
                 headlineContent = { Text(text = "图片验证码自动填充") },
                 supportingContent = {
                     Text(text = "登录教务时,使用Tesseract库提供的机器学习OCR能力,填充验证码")
@@ -246,6 +251,7 @@ fun APPScreen(navController: NavController,
                 leadingContent = { Icon(painterResource(R.drawable.center_focus_strong), contentDescription = "Localized description",) },
                 modifier = Modifier.clickable { navController.navigate(Screen.DownloadScreen.route) }
             )
+
             TransplantListItem(
                 headlineContent = { Text(text = "学期") },
                 leadingContent = {

@@ -18,14 +18,13 @@ fun CustomTextField(
     enabled: Boolean = true,
     isError: Boolean = false,
     singleLine: Boolean = true,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
     onValueChange : (String) -> Unit
 ) {
     Row {
         TextField(
             modifier = modifier
-                .weight(1f)
-                .padding(horizontal = APP_HORIZONTAL_DP),
+                .weight(1f),
             value = input,
             onValueChange = onValueChange,
             label = label,

@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 
 @Composable
-fun EmptyUI() = StatusUI(R.drawable.manga,"结果为空")
+fun EmptyUI(text: String = "结果为空") = StatusUI(R.drawable.upcoming,text)
 @Composable
 fun DevelopingUI() = StatusUI(R.drawable.sdk,"正在开发")
 @Composable

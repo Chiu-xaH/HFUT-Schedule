@@ -23,11 +23,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
@@ -39,6 +43,7 @@ import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
+import kotlinx.coroutines.launch
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
@@ -83,7 +88,7 @@ fun Exam(vm : NetWorkViewModel, ifSaved : Boolean, hazeState: HazeState) {
                         .fillMaxSize()
                 ){
                     if(ifSaved) {
-                        if(getExam().size == 0) EmptyUI()
+                        if(getExam().isEmpty()) EmptyUI()
                         else LazyColumn { items(getExam().size) { item -> ExamItems(item,false) } }
                     } else {
                         if(getExamJXGLSTU().isEmpty()) EmptyUI()
@@ -98,11 +103,11 @@ fun Exam(vm : NetWorkViewModel, ifSaved : Boolean, hazeState: HazeState) {
 private fun ExamItems(item : Int,status : Boolean) {
 
     var date = DateTimeUtils.Date_yyyy_MM_dd
-    val todaydate = date?.substring(0, 4) + date?.substring(5, 7)  + date?.substring(8, 10)
+    val todayDate = date.substring(0, 4) + date.substring(5, 7) + date.substring(8, 10)
     val get = getExam()[item].formatEndTime
     //判断考完试不显示信息
 
-    val examdate = (get?.substring(0,4)+ get?.substring(5, 7) ) + get?.substring(8, 10)
+    val examDate = (get?.substring(0,4)+ get?.substring(5, 7) ) + get?.substring(8, 10)
 
     val st = getExam()[item].formatStartTime
 
@@ -116,16 +121,16 @@ private fun ExamItems(item : Int,status : Boolean) {
                         overlineContent = { Text(text = st?.substring(5,st.length - 3) + "~" + get?.substring(11,get.length-3)) },
                         supportingContent = { getExam()[item].place?.let { Text(text = it) } },
                         leadingContent = {
-                            if(status==true) Icon(painterResource(R.drawable.draw), contentDescription = "Localized description",)
-                            else if(examdate.toInt() >= todaydate.toInt()) Icon(painterResource(R.drawable.schedule), contentDescription = "Localized description",)
+                            if(status) Icon(painterResource(R.drawable.draw), contentDescription = "Localized description",)
+                            else if(examDate.toInt() >= todayDate.toInt()) Icon(painterResource(R.drawable.schedule), contentDescription = "Localized description",)
                             else Icon(Icons.Filled.Check, contentDescription = "Localized description",)
                         },
                         trailingContent = {
-                            if(examdate.toInt() < todaydate.toInt()) Text(text = "已结束")
-                            else if(examdate.toInt() == todaydate.toInt()) Text(text = "今日")
-                            else if(examdate.toInt() > todaydate.toInt()) Text(text = "待考")
+                            if(examDate.toInt() < todayDate.toInt()) Text(text = "已结束")
+                            else if(examDate.toInt() == todayDate.toInt()) Text(text = "今日")
+                            else if(examDate.toInt() > todayDate.toInt()) Text(text = "待考")
                                           },
-                        color =  if(examdate.toInt() >= todaydate.toInt())
+                        color =  if(examDate.toInt() >= todayDate.toInt())
                             MaterialTheme.colorScheme.errorContainer
                         else null,
                         modifier = Modifier.clickable {},
@@ -136,7 +141,7 @@ private fun ExamItems(item : Int,status : Boolean) {
     }
 
     if(status){
-        if(examdate.toInt() >= todaydate.toInt()) Item()
+        if(examDate.toInt() >= todayDate.toInt()) Item()
     } else Item()
 
 }
@@ -150,57 +155,63 @@ fun JxglstuExamUI(item : Map<String,String>,status : Boolean) {
     val examDate = item["日期时间"]
     val examDateNum = examDate?.substringBefore(" ")?.replace("-","")?.toLongOrNull() ?: 0
 
-
     val activity = LocalActivity.current
-//    var date = DateTimeManager.Date_MM_dd
-//    val todaydate = (date?.substring(0, 2) ) + date?.substring(3, 5)
-//    val get = item["日期时间"]
-//    val examdate = (get?.substring(5, 7) ) + get?.substring(8, 10)
-    //判断考完试不显示信息
-    //  Log.d("exam",examdate)
-    //Log.d("today",todaydate)
+
+    val course = item["课程名称"]
+    val time = item["日期时间"]
+    val place  = item["考场"]
+
+    val year = time?.substringBefore("-")
+    val month = time?.substring(5,7)
+    val day = time?.substring(8,10)
+    val startTimeHour = time?.substringAfter(" ")?.substringBefore(":")
+    val startTimeMinute = time?.substringAfter(":")?.substringBefore("~")
+    val endTimeHour = time?.substringAfter("~")?.substringBefore(":")
+    val endTimeMinute = time?.substringAfter("~")?.substringAfter(":")
+
     if(status) {
+        // 判断是否考完
+//        val endTime = time?.substringBefore(" ") ?: return
+        val isFinished = examDateNum < newToday
+//            DateTimeUtils.compareTimeDate(endTime = endTime) == DateTimeUtils.TimeState.ENDED
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
             Column() {
-//                MyCustomCard{
-                    StyleCardListItem(
-                        headlineContent = {  Text(text = "${item["课程名称"]}") },
-                        overlineContent = { examDate?.let { Text(text = it) } },
-                        supportingContent = { Text(text = "${item["考场"]}") },
-                        leadingContent = {
-                            if(examDateNum >= newToday)
-                                Icon(painterResource(R.drawable.schedule), contentDescription = "Localized description",)
-                            else Icon(Icons.Filled.Check, contentDescription = "Localized description",)
-                        },
-                        trailingContent = {
-                            if(examDateNum < newToday) Text(text = "已结束")
-                            else if(examDateNum == newToday) Text("今日")
-                        },
-                        modifier = Modifier.clickable {},
-                    )
-//                }
+                StyleCardListItem(
+                    headlineContent = {  Text(text = course.toString(), textDecoration = if(isFinished) TextDecoration.LineThrough else TextDecoration.None) },
+                    overlineContent = { examDate?.let { Text(text = it,textDecoration = if(isFinished) TextDecoration.LineThrough else TextDecoration.None) } },
+                    supportingContent = { place?.let { Text(text = it,textDecoration = if(isFinished) TextDecoration.LineThrough else TextDecoration.None) } },
+                    leadingContent = {
+                        if(!isFinished)
+                            Icon(painterResource(R.drawable.schedule), contentDescription = "Localized description",)
+                        else Icon(Icons.Filled.Check, contentDescription = "Localized description",)
+                    },
+                    trailingContent = {
+                        if(isFinished) Text(text = "已结束")
+                        else if(examDateNum == newToday) Text("今日")
+                    },
+                    modifier = Modifier.clickable {},
+                )
             }
         }
     } else {
         if(examDateNum >= newToday) {
             //如果是今天考试，那么判断考试结束后不显示 待做
-
-            val course = item["课程名称"]
-            val time = item["日期时间"]
-            val place  = item["考场"]
-
-            val year = time?.substringBefore("-")
-            val month = time?.substring(5,7)
-            val day = time?.substring(8,10)
-            val startTimeHour = time?.substringAfter(" ")?.substringBefore(":")
-            val startTimeMinute = time?.substringAfter(":")?.substringBefore("~")
-            val endTimeHour = time?.substringAfter("~")?.substringBefore(":")
-            val endTimeMinute = time?.substringAfter("~")?.substringAfter(":")
+//            val course = item["课程名称"]
+//            val time = item["日期时间"]
+//            val place  = item["考场"]
+//
+//            val year = time?.substringBefore("-")
+//            val month = time?.substring(5,7)
+//            val day = time?.substring(8,10)
+//            val startTimeHour = time?.substringAfter(" ")?.substringBefore(":")
+//            val startTimeMinute = time?.substringAfter(":")?.substringBefore("~")
+//            val endTimeHour = time?.substringAfter("~")?.substringBefore(":")
+//            val endTimeMinute = time?.substringAfter("~")?.substringAfter(":")
 
             //如果是今天
 
           //  Log.d("打印测试","${year}年 ${month}月 ${day}日 起始 ${startTimeHour}时 ${startTimeMinute}分 结束 ${endTimeHour}时 ${endTimeMinute}分")
-
+            val scope = rememberCoroutineScope()
             //今天 && 已经考完
             if("$month-$day" == DateTimeUtils.Date_MM_dd
                 && DateTimeUtils.compareTime("$endTimeHour:$endTimeMinute") == DateTimeUtils.TimeState.ENDED) {
@@ -231,30 +242,32 @@ fun JxglstuExamUI(item : Map<String,String>,status : Boolean) {
                                             FilledTonalIconButton(
                                                 colors = IconButtonDefaults.filledTonalIconButtonColors(MaterialTheme.colorScheme.error.copy(alpha = 0.1f)),
                                                 onClick = {
-                                                    try {
-                                                        val startDateList = year?.let { month?.let { it1 ->
-                                                            day?.let { it2 ->
-                                                                startTimeHour?.let { it3 ->
-                                                                    startTimeMinute?.let { it4 ->
-                                                                        listOf(it.toInt(),
-                                                                            it1.toInt(), it2.toInt(), it3.toInt(), it4.toInt())
+                                                    scope.launch {
+                                                        try {
+                                                            val startDateList = year?.let { month?.let { it1 ->
+                                                                day?.let { it2 ->
+                                                                    startTimeHour?.let { it3 ->
+                                                                        startTimeMinute?.let { it4 ->
+                                                                            listOf(it.toInt(),
+                                                                                it1.toInt(), it2.toInt(), it3.toInt(), it4.toInt())
+                                                                        }
                                                                     }
                                                                 }
-                                                            }
-                                                        } }
-                                                        val endDateList = year?.let { month?.let { it1 ->
-                                                            day?.let { it2 ->
-                                                                endTimeHour?.let { it3 ->
-                                                                    endTimeMinute?.let { it4 ->
-                                                                        listOf(it.toInt(),
-                                                                            it1.toInt(), it2.toInt(), it3.toInt(), it4.toInt())
+                                                            } }
+                                                            val endDateList = year?.let { month?.let { it1 ->
+                                                                day?.let { it2 ->
+                                                                    endTimeHour?.let { it3 ->
+                                                                        endTimeMinute?.let { it4 ->
+                                                                            listOf(it.toInt(),
+                                                                                it1.toInt(), it2.toInt(), it3.toInt(), it4.toInt())
+                                                                        }
                                                                     }
                                                                 }
-                                                            }
-                                                        } }
-                                                        activity?.let { it0 -> course?.let { place?.let { it1 -> startDateList?.let { it2 -> endDateList?.let { it3 -> addToCalendars(it2, it3, it1, it,"考试", it0) } } } } }
-                                                    } catch (e : Exception) {
-                                                        e.printStackTrace()
+                                                            } }
+                                                            activity?.let { it0 -> course?.let { place?.let { it1 -> startDateList?.let { it2 -> endDateList?.let { it3 -> addToCalendars(it2, it3, it1, it,"考试", it0, remind = true) } } } } }
+                                                        } catch (e : Exception) {
+                                                            e.printStackTrace()
+                                                        }
                                                     }
                                                 }) {
                                                 Icon(painter = painterResource(id = R.drawable.event_upcoming), contentDescription = "")

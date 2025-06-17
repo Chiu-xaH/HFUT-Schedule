@@ -510,7 +510,9 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                     supportingContent =  if(description.isNotBlank() && description.isNotEmpty()) { { Text(description,maxLines = 1,overflow = TextOverflow.Ellipsis) } } else null,
                     trailingContent = { FilledTonalIconButton(
                         onClick = {
-                            activity?.let { addToCalendars(startDate = date.first, startTime = time.first, endDate = date.second, endTime = time.second, description, title,null, it) }
+                            scope.launch {
+                                activity?.let { addToCalendars(startDate = date.first, startTime = time.first, endDate = date.second, endTime = time.second, description, title,null, it) }
+                            }
                         }, enabled = enabled
                     ) { Icon(painterResource(R.drawable.event_upcoming),null) } },
                     modifier = Modifier.clickable { openOperation(description) }

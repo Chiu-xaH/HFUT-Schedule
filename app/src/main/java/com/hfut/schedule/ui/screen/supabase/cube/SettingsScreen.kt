@@ -3,12 +3,15 @@ package com.hfut.schedule.ui.screen.supabase.cube
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
@@ -23,8 +26,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.logic.util.storage.SharedPrefs.saveInt
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.BottomTip
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
@@ -32,6 +37,7 @@ import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -138,8 +144,8 @@ fun SupabaseSettingsScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,ha
                 }
             )
             TransplantListItem(
-                headlineContent = { Text("过滤不适用于自己的日程") },
-                supportingContent = { Text("展示${if(!filter) "所有" else "包含 " + getPersonInfo().school  + getPersonInfo().classes + " 的"}日程" ) },
+                headlineContent = { Text("过滤不适用日程") },
+                supportingContent = { Text("仅展示${if(!filter) "所有" else "包含 " + getPersonInfo().school  + getPersonInfo().classes + " 的"}日程" ) },
                 leadingContent = { Icon(painterResource(R.drawable.filter_alt), null) },
                 trailingContent = {
                     Switch(checked = filter, onCheckedChange = {  scope.launch { DataStoreManager.saveSupabaseFilterEvent(!filter) } })

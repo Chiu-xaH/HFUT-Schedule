@@ -9,6 +9,7 @@ import com.hfut.schedule.logic.model.SupabaseEventsInput
 import com.hfut.schedule.logic.util.sys.DateTime
 import com.hfut.schedule.logic.util.sys.DateTimeBean
 import com.hfut.schedule.logic.util.sys.DateTimeUtils
+import com.hfut.schedule.logic.util.sys.fromUTC
 import com.hfut.schedule.logic.util.sys.toUTC
 import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
@@ -32,11 +33,11 @@ fun supabaseEventDtoToEntity(dto : SupabaseEventOutput) : SupabaseEventEntity = 
 fun supabaseEventEntityToDto(entity : SupabaseEventEntity) : SupabaseEventsInput? = with(entity) {
     toDateTimeBean(startTime)?.let { start ->
         toDateTimeBean(endTime)?.let { end ->
-            createTime?.let {
-                toDateTimeStr(it)?.let { create ->
-                    email?.substringBefore("@")?.let { emailName -> if(isValidStudentId(emailName)) emailName else return null }?.let { studentId ->
-                        myClass?.let {
-                            id?.let { it1 ->
+            email?.substringBefore("@")?.let { emailName -> if(isValidStudentId(emailName)) emailName else return null }?.let { studentId ->
+                myClass?.let {
+                    id?.let { it1 ->
+                        createTime?.let { str ->
+                            toDateTimeBean(str)?.let { create ->
                                 SupabaseEventsInput(
                                     id = it1,
                                     name = name,
@@ -50,9 +51,9 @@ fun supabaseEventEntityToDto(entity : SupabaseEventEntity) : SupabaseEventsInput
                                     },
                                     url = url,
                                     applicableClasses = applicableClasses.split(","),
-                                    dateTime = DateTime(start = start.toUTC(-8), end = end.toUTC(-8)),
+                                    dateTime = DateTime(start = start.fromUTC(), end = end.fromUTC()),
                                     contributorId = studentId,
-                                    createTime = create,
+                                    createTime = create.fromUTC(),
                                     contributorClass = it,
                                     campus = EventCampus.valueOf(campus)
                                 )
@@ -125,6 +126,9 @@ private fun toDateTimeStr(str: String) : String? {
 
 fun toDateTimeBeanForSupabase() : String = DateTimeBean(year = DateTimeUtils.Date_yyyy.toInt(), month = DateTimeUtils.Date_MM.toInt(), day = DateTimeUtils.Date_dd.toInt(), hour = DateTimeUtils.Time_Hour.toInt(), minute = DateTimeUtils.Time_Minute.toInt()).toUTC().toTimestamp()
 
-
-
 fun supabaseEventForkDtoToEntity(eventId : Int) : SupabaseEventForkEntity = SupabaseEventForkEntity(eventId = eventId)
+
+
+fun DateTimeBean.toStr() : String = with(this) {
+    return@with "$year-${parseTimeItem(month)}-${parseTimeItem(day)} ${parseTimeItem(hour)}:${parseTimeItem(minute)}"
+}

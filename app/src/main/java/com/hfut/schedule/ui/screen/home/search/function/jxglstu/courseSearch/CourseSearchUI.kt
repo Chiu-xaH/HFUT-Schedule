@@ -95,6 +95,14 @@ fun CourseSearchUI(vm : NetWorkViewModel, hazeState: HazeState) {
     }
 
     val loading = uiState is UiState.Loading
+    if(!firstSearch) {
+        LaunchedEffect(loading) {
+            if(!loading) {
+                showSearch = false
+            }
+        }
+    }
+
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),

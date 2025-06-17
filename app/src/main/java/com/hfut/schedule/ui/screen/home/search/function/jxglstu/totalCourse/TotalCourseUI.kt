@@ -5,8 +5,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -31,6 +33,7 @@ import com.google.gson.Gson
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.logic.model.jxglstu.CourseSearchResponse
+import com.hfut.schedule.logic.model.jxglstu.PlanCourses
 import com.hfut.schedule.logic.model.jxglstu.lessonResponse
 import com.hfut.schedule.logic.model.jxglstu.lessons
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
@@ -40,6 +43,8 @@ import com.hfut.schedule.ui.screen.home.search.function.community.failRate.ApiTo
 import com.hfut.schedule.ui.screen.home.search.function.school.teacherSearch.ApiToTeacherSearch
 import com.hfut.schedule.ui.component.AnimationCardListItem
 import com.hfut.schedule.ui.component.BottomSheetTopBar
+import com.hfut.schedule.ui.component.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.CustomTextField
 import com.hfut.schedule.ui.component.EmptyUI
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.style.bottomSheetRound
@@ -52,6 +57,7 @@ import com.hfut.schedule.ui.component.onListenStateHolder
 import com.hfut.schedule.ui.style.ColumnVertical
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import dev.chrisbanes.haze.HazeState
+import kotlin.text.contains
 
 enum class TotalCourseDataSource {
     MINE,MINE_NEXT,SEARCH
@@ -79,10 +85,25 @@ fun CourseTotalUI(dataSource : TotalCourseDataSource, sortType: Boolean, vm : Ne
     }
     val isSearch = dataSource == TotalCourseDataSource.SEARCH
 
+    var input by remember { mutableStateOf("") }
+    val sortList =  list
+        .filter {
+            input.isBlank() || it.course.nameZh.contains(input) || it.course.courseType.nameZh.contains(input) || it.openDepartment.nameZh.contains(input) || it.code.contains(input) ||( it.remark?.contains(input) == true)
+        }
+        .let { filtered ->
+            if (sortType) {
+                filtered.sortedBy { it.scheduleWeeksInfo?.substringBefore("~")?.toIntOrNull() }
+            } else {
+                filtered.sortedBy { it.course.credits }
+            }
+        }
 
-    val sortList =  if(sortType)
-        list.sortedBy { it.scheduleWeeksInfo?.substringBefore("~")?.toIntOrNull() }
-    else list.sortedBy { it.course.credits }
+//        if(sortType) {
+//        list.sortedBy { it.scheduleWeeksInfo?.substringBefore("~")?.toIntOrNull() }
+//    } else {
+//        list.sortedBy { it.course.credits }
+//    }
+
 
     var numItem by remember { mutableIntStateOf(0) }
 
@@ -111,6 +132,16 @@ fun CourseTotalUI(dataSource : TotalCourseDataSource, sortType: Boolean, vm : Ne
         }
     }
     if(list.isNotEmpty()) {
+        if(!isSearch) {
+            CustomTextField(
+                input = input,
+                label = { Text("筛选 学院、课程、代码、类型")},
+                leadingIcon = {
+                    Icon(painterResource(R.drawable.search),null)
+                }
+            ) { input = it }
+            Spacer(Modifier.height(CARD_NORMAL_DP))
+        }
         LazyColumn {
             item { TermFirstlyInfo(list,isSearch) }
             items(sortList.size, key = { sortList[it].code }) { item ->

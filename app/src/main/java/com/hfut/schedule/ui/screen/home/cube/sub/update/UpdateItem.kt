@@ -24,7 +24,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-06-05") },
+                overlineContent = { Text(text = "2025-06-17") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -49,24 +49,40 @@ fun VersionInfo() {
         VersionInfoCard()
     }
     DividerTextExpandedWith(text = "新特性") {
+        // 当前版本
+        UpdateItems("新增 课程汇总的检索")
+        UpdateItems("新增 教评可自定义留言")
+        UpdateItems("新增 支持切换添加日程时的账户","位于 选项-应用行为-配置")
+        UpdateItems("新增 成绩中对GPA的规则说明和显示", "来源于一位用户的贡献")
+        UpdateItems("修复 开课查询无法自动收起搜索组件的Bug")
+        UpdateItems("修复 点击合肥校区校园网登录时不切换到加载界面的Bug")
+        UpdateItems("修复 共建平台上传时间时区错误的Bug")
+        UpdateItems("优化 考试添加到日程无提醒")
+        UpdateItems("优化 考试界面完成考试的显示")
+        UpdateItems("优化 共建平台列表中对学号的显示")
+        UpdateItems("优化 通知公告中的常用标签")
+        UpdateItems("优化 选课系统关闭时的显示")
+        // 未实现
+//        UpdateItems("新增 洗衣机中的空闲设备", "数据源：海乐生活")
+//        UpdateItems("修复 好友课表之间无法切换的Bug")
 //        UpdateItems("新增 教务课程表导出为ics文件", "位于 课程表-多课表-写入日历日程",UpdateType.ADD)
 //        UpdateItems("重构 提纯出CAS统一认证登录逻辑，为更多平台的一键登录做准备", null,UpdateType.RENEW)
 //        UpdateItems("新增 本地聚焦卡片快速转化为云端卡片，一键共享本地卡片", null, UpdateType.ADD)
 //        UpdateItems("新增 对共建平台已上传卡片的信息编辑", null, UpdateType.ADD)
-        UpdateItems("新增 登录/注销校园网 For 合肥校区", null, UpdateType.ADD)
-        UpdateItems("新增 评教按课程归类教师", null, UpdateType.ADD)
-        UpdateItems("修复 发送评教界面错位的Bug", null, UpdateType.FIX)
-        UpdateItems("修复 共建平台不检查新增日程的Bug", null, UpdateType.FIX)
-        UpdateItems("优化 培养方案搜索时的广度", null, UpdateType.OPTIMIZE)
-        UpdateItems("优化 成绩跳转评教的体验", null, UpdateType.OPTIMIZE)
-        UpdateItems("优化 登录/注销校园网提示失败但实际成功的问题", null, UpdateType.OPTIMIZE)
-        UpdateItems("优化 添加聚焦日程按钮的转场动画",null, UpdateType.OPTIMIZE)
-        UpdateItems("优化 部分界面的显示", null, UpdateType.OPTIMIZE)
 //        UpdateItems("重构 网络请求层，重新进行封装，使用Flow代替LiveData，优化潜在的内存泄漏问题，增加不同状态下的展示", "进度: 完成60/总99",UpdateType.RENEW)
 //        UpdateItems("重构 部分界面，使其适配平板、折叠屏等大屏设备", null, UpdateType.RENEW)
 //        UpdateItems("优化 添加聚焦卡片适用范围的添加班级逻辑", null, UpdateType.OPTIMIZE)
-//         UpdateItems("优化 部分列表快速滑动时首张卡片卡顿的问题", null, UpdateType.OPTIMIZE)
 //        UpdateItems("优化 层级转场时的圆角", null, UpdateType.OPTIMIZE)
+
+        // 下版本规划
+//        UpdateItems("优化 下学期课程表与新重构的课表的对齐", null, UpdateType.OPTIMIZE)
+
+        // v5.0 2025-07+ 远期规划
+//        UpdateItems("新增 磁钉体系", "位于 选项-应用行为，构建全局磁钉体系，任何支持的界面向边缘滑动即可缩放为磁钉最小化", UpdateType.ADD)
+//        UpdateItems("重构 CAS登录", "完全重写底层，使其支持更多平台的边界接入，修复部分功能登陆失败的Bug、修复外地访问下无法使用邮箱等功能的Bug、修复偶见无法登录教务的Bug、优化刷新登陆状态后仍需等待较长时间才可操作的逻辑、支持对外开放API等", UpdateType.RENEW)
+//        UpdateItems("重构 全局转场动画体系", "现在，转场时的动画完全重写，优化整体观感，并优化首次展开时动画卡顿的问题", UpdateType.RENEW)
+//        UpdateItems("新增 动画速度挡位调节", null, UpdateType.ADD)
+//        UpdateItems("新增 学工系统", null, UpdateType.ADD)
     }
 }
 
@@ -87,7 +103,23 @@ private enum class UpdateType(val res : Int) {
 }
 
 @Composable
-private fun UpdateItems(title : String,info : String?,type : UpdateType) {
+private fun UpdateItems(
+    title : String,
+    info : String? = null,
+    type : UpdateType = when(title.substringBefore(" ")) {
+        "新增" -> UpdateType.ADD
+        "重构" -> UpdateType.RENEW
+        "重写" -> UpdateType.RENEW
+        "优化" -> UpdateType.OPTIMIZE
+        "修复" -> UpdateType.FIX
+        "更新" -> UpdateType.UPDATE
+        "升级" -> UpdateType.UPDATE
+        "下线" -> UpdateType.DEGREE
+        "移除" -> UpdateType.DEGREE
+        "删除" -> UpdateType.DEGREE
+        else -> UpdateType.OTHER
+    }
+) {
     TransplantListItem(
         headlineContent = { Text(text = title) },
         supportingContent = { info?.let { Text(text = it) } },

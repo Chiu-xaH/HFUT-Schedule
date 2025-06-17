@@ -7,12 +7,14 @@ import android.provider.CalendarContract
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.model.jxglstu.datumResponse
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.PermissionManager.checkAndRequestCalendarPermission
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.viewmodel.UIViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
@@ -21,40 +23,39 @@ import java.time.ZoneOffset
 import java.util.Calendar
 
 // 是否存在日程
-private fun isExistEvent(dateTime: DateTime, title: String): Long? {
-    val resolver = MyApplication.context.contentResolver
-
-    val projection = arrayOf(CalendarContract.Events._ID)
-    val selection = """
-        ${CalendarContract.Events.TITLE} = ? 
-        AND ${CalendarContract.Events.DTSTART} BETWEEN ? AND ?
-        AND ${CalendarContract.Events.CALENDAR_ID} = ?
-    """.trimIndent()
-
-    val beginTime = Calendar.getInstance().apply {
-        set(dateTime.start.year, dateTime.start.month - 1, dateTime.start.day, dateTime.start.hour, dateTime.start.minute)
-    }
-
-    val selectionArgs = arrayOf(
-        title,
-        (beginTime.timeInMillis - 60000).toString(), // 放宽 1 分钟范围
-        (beginTime.timeInMillis + 60000).toString(),
-        "1" // 日历 ID
-    )
-
+private suspend fun isExistEvent(dateTime: DateTime, title: String): Long? = withContext(Dispatchers.IO) {
     try {
+        val resolver = MyApplication.context.contentResolver
+
+        val projection = arrayOf(CalendarContract.Events._ID)
+        val selection = """
+            ${CalendarContract.Events.TITLE} = ? 
+            AND ${CalendarContract.Events.DTSTART} BETWEEN ? AND ?
+            AND ${CalendarContract.Events.CALENDAR_ID} = ?
+        """.trimIndent()
+
+        val beginTime = Calendar.getInstance().apply {
+            set(dateTime.start.year, dateTime.start.month - 1, dateTime.start.day, dateTime.start.hour, dateTime.start.minute)
+        }
+        val id = DataStoreManager.defaultCalendarAccount.first()
+        val selectionArgs = arrayOf(
+            title,
+            (beginTime.timeInMillis - 60000).toString(), // 放宽 1 分钟范围
+            (beginTime.timeInMillis + 60000).toString(),
+            "$id"
+        )
         resolver.query(CalendarContract.Events.CONTENT_URI, projection, selection, selectionArgs, null).use { cursor ->
             if (cursor != null && cursor.moveToFirst()) {
-                return cursor.getLong(0) // 返回事件 ID
+                return@withContext cursor.getLong(0) // 返回事件 ID
             }
         }
     } catch (e: Exception) {
-        return null
+        return@withContext null
     }
-    return null
+    return@withContext null
 }
 
-private fun checkExistEvent(dateTime: DateTime, title: String, activity: Activity, showToast: Boolean = true): Long? {
+private suspend fun checkExistEvent(dateTime: DateTime, title: String, activity: Activity, showToast: Boolean = true): Long? {
     checkAndRequestCalendarPermission(activity)
     return try {
         val result = isExistEvent(dateTime, title)
@@ -71,7 +72,7 @@ private fun checkExistEvent(dateTime: DateTime, title: String, activity: Activit
 }
 
 // 添加一次性日程
-private fun addEvent(
+private suspend fun addEvent(
     dateTime: DateTime,
     title : String,
     place : String? = null,
@@ -79,7 +80,7 @@ private fun addEvent(
     timeZone: String = "Asia/Shanghai",
     reminderMinutes: Int? = null, // 提前多少分钟提,
     showToast : Boolean = true
-) {
+) = withContext(Dispatchers.IO) {
     try {
         val beginTime = Calendar.getInstance().apply {
             set(dateTime.start.year, dateTime.start.month - 1, dateTime.start.day, dateTime.start.hour, dateTime.start.minute)
@@ -89,7 +90,8 @@ private fun addEvent(
         }
 
         val values = ContentValues().apply {
-            put(CalendarContract.Events.CALENDAR_ID, 1) // 日历的ID，可以通过查询日历提供者获取
+            val id = DataStoreManager.defaultCalendarAccount.first()
+            put(CalendarContract.Events.CALENDAR_ID,id ) // 日历的ID，可以通过查询日历提供者获取
             put(CalendarContract.Events.TITLE, title) // 标题
             remark?.let { put(CalendarContract.Events.DESCRIPTION, remark) } // 备注
             put(CalendarContract.Events.DTSTART, beginTime.timeInMillis)
@@ -121,7 +123,7 @@ private fun addEvent(
     }
 }
 // 使用规范的时间bean 推荐
-fun addToCalendars(
+suspend fun addToCalendars(
     bean: DateTime,
     place : String? = null,
     title : String,
@@ -139,7 +141,7 @@ fun addToCalendars(
     }
 }
 // 传入标准格式化的YYYY-MM-DD与HH:SS
-fun addToCalendars(
+suspend fun addToCalendars(
     startDate : String,
     startTime : String,
     endDate : String,
@@ -161,7 +163,7 @@ fun addToCalendars(
     }
 }
 // 旧方法改造
-fun addToCalendars(
+suspend fun addToCalendars(
     start : List<Int>,
     end : List<Int>,
     place : String? = null,
@@ -184,68 +186,6 @@ fun addToCalendars(
 // 添加重复日程
 enum class RepeatFrequency {
     DAILY, WEEKLY, MONTHLY, YEARLY
-}
-
-
-fun addRecurringEvent(
-    dateTime: DateTime,
-    title: String,
-    place: String? = null,
-    remark: String? = null,
-    timeZone: String = "Asia/Shanghai",
-    reminderMinutes: Int? = null, // 为空时不添加提醒
-    repeatFrequency: RepeatFrequency, // 频率：DAILY, WEEKLY, MONTHLY, YEARLY
-    interval: Int = 1, // 每 interval 天/周/月/年重复一次（默认为 1，即每次都重复）
-    repeatUntil: DateTime? = null // 为空时无限重复
-) = try {
-    val beginTime = Calendar.getInstance().apply {
-        set(dateTime.start.year, dateTime.start.month - 1, dateTime.start.day, dateTime.start.hour, dateTime.start.minute)
-    }
-    val endTime = Calendar.getInstance().apply {
-        set(dateTime.end.year, dateTime.end.month - 1, dateTime.end.day, dateTime.end.hour, dateTime.end.minute)
-    }
-
-    val values = ContentValues().apply {
-        put(CalendarContract.Events.CALENDAR_ID, 1) // 日历ID，需根据设备情况修改
-        put(CalendarContract.Events.TITLE, title) // 标题
-        remark?.let { put(CalendarContract.Events.DESCRIPTION, it) } // 备注
-        put(CalendarContract.Events.DTSTART, beginTime.timeInMillis)
-        put(CalendarContract.Events.DTEND, endTime.timeInMillis)
-        put(CalendarContract.Events.EVENT_TIMEZONE, timeZone) // 时区
-        place?.let { put(CalendarContract.Events.EVENT_LOCATION, it) } // 地点
-        put(CalendarContract.Events.HAS_ALARM, if (reminderMinutes != null) 1 else 0) // 是否有提醒
-
-        // **设置重复规则**
-        val rrule = buildString {
-            append("FREQ=${repeatFrequency.name};INTERVAL=$interval") // 例如 FREQ=WEEKLY;INTERVAL=2 表示每两周一次
-            repeatUntil?.let {
-                val until = String.format("%04d%02d%02dT235959Z", it.end.year, it.end.month, it.end.day)
-                append(";UNTIL=$until") // 设置重复结束时间
-            }
-        }
-        put(CalendarContract.Events.RRULE, rrule) // 规则示例：FREQ=WEEKLY;INTERVAL=1;UNTIL=20250630T235959Z
-    }
-
-    val resolver = MyApplication.context.contentResolver
-    val eventUri = resolver.insert(CalendarContract.Events.CONTENT_URI, values)
-
-    // **获取事件ID**
-    val eventId = eventUri?.lastPathSegment?.toLongOrNull()
-    if (eventId != null && reminderMinutes != null) {
-        // **插入提醒**
-        val reminderValues = ContentValues().apply {
-            put(CalendarContract.Reminders.EVENT_ID, eventId)
-            put(CalendarContract.Reminders.MINUTES, reminderMinutes) // 提前提醒的时间（分钟）
-            put(CalendarContract.Reminders.METHOD, CalendarContract.Reminders.METHOD_ALERT) // 提醒方式：通知
-        }
-        resolver.insert(CalendarContract.Reminders.CONTENT_URI, reminderValues)
-        showToast("添加成功(日程开始前的${reminderMinutes}分钟后提醒)")
-    } else {
-        showToast("添加成功(无提醒)")
-    }
-} catch (e: Exception) {
-    e.printStackTrace()
-    showToast("添加失败(可能是权限问题)")
 }
 
 data class DateTime(val start : DateTimeBean, val end : DateTimeBean)
@@ -302,6 +242,8 @@ fun DateTimeBean.toUTC(offsetHours: Int = 8): DateTimeBean {
     )
 }
 
+fun DateTimeBean.fromUTC(offsetHours: Int = 8): DateTimeBean = toUTC(-offsetHours)
+
 fun parseStrToDateTimeBean(date: String, time: String) : DateTimeBean? {
     val dates = date.split("-")
     if(dates.size != 3) return null
@@ -316,7 +258,6 @@ fun parseStrToDateTimeBean(date: String, time: String) : DateTimeBean? {
 }
 
 data class JxglstuCourseSchedule(val time : DateTime, val place : String, val courseName : String)
-
 
 fun getJxglstuCourseSchedule(jstr : String? = null) : List<JxglstuCourseSchedule>  {
     val json = jstr ?: prefs.getString("json", "")
@@ -422,5 +363,40 @@ private fun delEvent(id : Long,showToast: Boolean = true) : Boolean {
         false
     }
 }
+
+fun queryCalendars(): List<Pair<Long, String>> {
+    val calendarList = mutableListOf<Pair<Long, String>>()
+    val uri = CalendarContract.Calendars.CONTENT_URI
+    val projection = arrayOf(
+        CalendarContract.Calendars._ID,
+        CalendarContract.Calendars.CALENDAR_DISPLAY_NAME
+    )
+    val selection = "${CalendarContract.Calendars.VISIBLE} = 1"
+
+    val cursor = MyApplication.context.contentResolver.query(
+        uri,
+        projection,
+        selection,
+        null,
+        null
+    )
+
+    cursor?.use {
+        val idIndex = it.getColumnIndex(CalendarContract.Calendars._ID)
+        val nameIndex = it.getColumnIndex(CalendarContract.Calendars.CALENDAR_DISPLAY_NAME)
+
+        while (it.moveToNext()) {
+            val id = it.getLong(idIndex)
+            var name = it.getString(nameIndex)
+            if(id == 1L) {
+                name = "本地默认"
+            }
+            calendarList.add(id to name)
+        }
+    }
+
+    return calendarList
+}
+
 
 

@@ -25,6 +25,7 @@ import com.hfut.schedule.logic.model.zjgd.FeeType
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.CustomTabRow
+import com.hfut.schedule.ui.component.EmptyUI
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.StatusUI
 import com.hfut.schedule.ui.component.StyleCardListItem
@@ -105,7 +106,7 @@ fun WashingUI() {
                         )
                     }
                     XUANCHENG_TAB -> {
-                        StatusUI(R.drawable.manga,"暂时未收集到洗衣机有充值入口")
+                        EmptyUI("暂时未收集到洗衣机有充值入口")
                     }
                 }
                 Spacer(Modifier.height(APP_HORIZONTAL_DP*3))

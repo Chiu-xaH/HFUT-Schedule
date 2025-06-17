@@ -220,7 +220,7 @@ fun NewsActivityUI(vm: NetWorkViewModel) {
 @Composable
 fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
     val words = remember { listOf(
-        "放假","转专业","竞赛","奖学金"
+        "放假","转专业","周考试安排"
     ) }
     var input by remember { mutableStateOf( words[0]) }
     var page by remember { mutableIntStateOf(1) }

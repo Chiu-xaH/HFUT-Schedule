@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -41,6 +42,8 @@ object DataStoreManager {
     private val FOCUS_SHOW_SPECIAL = booleanPreferencesKey("focus_show_special")
     private val CARD_PASSWORD = stringPreferencesKey("card_password")
     private val USE_DEFAULT_CARD_PASSWORD = booleanPreferencesKey("use_default_card_password")
+    private val DEFAULT_CALENDAR_ACCOUNT = longPreferencesKey("default_calendar_account")
+
 
     enum class ColorMode(val code : Int) {
         LIGHT(1),DARK(2),AUTO(0)
@@ -151,6 +154,12 @@ object DataStoreManager {
             preferences[USE_DEFAULT_CARD_PASSWORD] = value
         }
     }
+    suspend fun saveDefaultCalendarAccount(value: Long) {
+        dataStore.edit { preferences ->
+            preferences[DEFAULT_CALENDAR_ACCOUNT] = value
+        }
+    }
+
 
 
     val animationTypeFlow: Flow<Int> = dataStore.data
@@ -236,6 +245,10 @@ object DataStoreManager {
     val useDefaultCardPassword: Flow<Boolean> = dataStore.data
         .map { preferences ->
             preferences[USE_DEFAULT_CARD_PASSWORD] ?: true
+        }
+    val defaultCalendarAccount: Flow<Long> = dataStore.data
+        .map { preferences ->
+            preferences[DEFAULT_CALENDAR_ACCOUNT] ?: 1
         }
     /* 用法
     val XXX by DataStoreManager.XXX.collectAsState(initial = 默认值)

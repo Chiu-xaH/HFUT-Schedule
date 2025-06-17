@@ -140,14 +140,17 @@ private fun CustomItemUI(item: CustomEventDTO,activity: Activity,hazeState: Haze
                 } else {
                     FilledTonalIconButton(
                         onClick = {
-                            addToCalendars(
-                                dateTime,
-                                description,
-                                title,
-                                null,
-                                activity,
-                                item.type == CustomEventType.SCHEDULE
-                            )
+                            scope.launch {
+                                addToCalendars(
+                                    dateTime,
+                                    description,
+                                    title,
+                                    null,
+                                    activity,
+                                    item.type == CustomEventType.SCHEDULE
+                                )
+                            }
+
                         }
                     ) { Icon(painterResource(R.drawable.event_upcoming), null) }
                 }

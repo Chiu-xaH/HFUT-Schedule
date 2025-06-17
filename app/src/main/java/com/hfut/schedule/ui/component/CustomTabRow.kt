@@ -80,7 +80,7 @@ private const val HEFEI_TAB = 0
 private const val XUANCHENG_TAB = 1
 @Composable
 fun CampusSelectTab(xuanChengContent : @Composable () -> Unit,heFeiContent : @Composable () -> Unit = {
-    StatusUI(R.drawable.manga,"需要合肥校区在读生贡献数据源")
+    EmptyUI("需要合肥校区在读生贡献数据源")
 }) {
     val pagerState = rememberPagerState(pageCount = { 2 }, initialPage =
         when(getCampus()) {

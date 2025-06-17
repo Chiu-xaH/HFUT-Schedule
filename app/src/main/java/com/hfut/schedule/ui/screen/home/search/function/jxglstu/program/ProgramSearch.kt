@@ -182,7 +182,7 @@ fun ProgramSearch(vm : NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState)
                 } else {
                     if(campus == HEFEI && programList.isEmpty()) {
                         Column {
-                            StatusUI(R.drawable.manga,"需合肥校区在读生贡献数据源")
+                            EmptyUI("需合肥校区在读生贡献数据源")
                             Spacer(Modifier.height(5.dp))
                             RowHorizontal {
                                 Button(

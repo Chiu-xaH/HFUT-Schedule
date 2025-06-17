@@ -327,39 +327,44 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
                 HEFEI_TAB -> {
                     Column {
                         DividerTextExpandedWith(text = "登录",false) {
-                            Row(modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = APP_HORIZONTAL_DP)) {
-                                LargeButton(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .weight(.5f),
-                                    onClick = {
-                                        scope.launch {
-                                            vm.loginSchoolNetResponse.clear()
-                                            vm.loginSchoolNet(Campus.HEFEI)
-                                        }
-                                    },
-                                    text = textLogin,
-                                    icon = R.drawable.login
-                                )
-                                Spacer(Modifier.width(APP_HORIZONTAL_DP/2))
-                                LargeButton(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .weight(.5f),
-                                    onClick = {
-                                        scope.launch {
-                                            vm.loginSchoolNetResponse.clear()
-                                            vm.logoutSchoolNet(Campus.HEFEI)
-                                        }
-                                    },
-                                    text = textLogout,
-                                    icon = R.drawable.logout,
-                                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                                )
+                            if(loadingLogin) {
+                                LoadingUI()
+                            } else {
+                                Row(modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = APP_HORIZONTAL_DP)) {
+                                    LargeButton(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .weight(.5f),
+                                        onClick = {
+                                            scope.launch {
+                                                vm.loginSchoolNetResponse.clear()
+                                                vm.loginSchoolNet(Campus.HEFEI)
+                                            }
+                                        },
+                                        text = textLogin,
+                                        icon = R.drawable.login
+                                    )
+                                    Spacer(Modifier.width(APP_HORIZONTAL_DP/2))
+                                    LargeButton(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .weight(.5f),
+                                        onClick = {
+                                            scope.launch {
+                                                vm.loginSchoolNetResponse.clear()
+                                                vm.logoutSchoolNet(Campus.HEFEI)
+                                            }
+                                        },
+                                        text = textLogout,
+                                        icon = R.drawable.logout,
+                                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                                    )
+                                }
                             }
+
                             if(textLogin == "已登录") {
                                 Spacer(Modifier.height(APP_HORIZONTAL_DP/2))
                                 OutlinedButton(

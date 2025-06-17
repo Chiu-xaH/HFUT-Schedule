@@ -12,11 +12,14 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -44,6 +47,7 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.CommonNetworkScreen
+import com.hfut.schedule.ui.component.CustomTextField
 import com.hfut.schedule.ui.component.LargeButton
 import com.hfut.schedule.ui.component.LittleDialog
  
@@ -89,13 +93,15 @@ private fun SurveyList(vm: NetWorkViewModel, scope: CoroutineScope,onResult : ()
     val bean = (uiState as UiState.Success).data
     var postMode by remember { mutableStateOf(PostMode.NORMAL) }
     var showDialog by remember { mutableStateOf(false) }
+    var showTextField by remember { mutableStateOf(false) }
+    var input by remember { mutableStateOf("好") }
 
     if(showDialog) {
         LittleDialog(
             onDismissRequest = { showDialog = false },
             onConfirmation = {
                 scope.launch {
-                    async { selectMode(vm,postMode,bean) }.await()
+                    async { selectMode(vm,postMode,bean,input) }.await()
                     launch {
                         showDialog = false
                         onResult()
@@ -122,6 +128,35 @@ private fun SurveyList(vm: NetWorkViewModel, scope: CoroutineScope,onResult : ()
             Text("请选择发送(留言默认为:'好')", color = MaterialTheme.colorScheme.primary)
         }
         Spacer(Modifier.height(APP_HORIZONTAL_DP))
+        if(showTextField) {
+            CustomTextField(
+                input = input,
+                trailingIcon = {
+                    IconButton(
+                        onClick = { showTextField = false }
+                    ) {
+                        Icon(Icons.Filled.Close,null)
+                    }
+                },
+                label = {
+                    Text("填写评价")
+                },
+                modifier = Modifier,
+                singleLine = false
+            ) { input = it }
+        } else {
+            LargeButton(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = {
+                    showTextField = true
+                },
+                text = "自定义留言",
+                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                icon = R.drawable.edit,
+            )
+        }
+        Spacer(Modifier.height(APP_HORIZONTAL_DP/2))
         RowHorizontal {
             LargeButton(
                 modifier = Modifier.fillMaxWidth().weight(.5f),
@@ -149,7 +184,7 @@ private fun SurveyList(vm: NetWorkViewModel, scope: CoroutineScope,onResult : ()
 }
 
 @SuppressLint("SuspiciousIndentation")
-suspend fun selectMode(vm : NetWorkViewModel, mode : PostMode,bean: SurveyResponse) = withContext(Dispatchers.IO) {
+suspend fun selectMode(vm : NetWorkViewModel, mode : PostMode,bean: SurveyResponse,comment: String = "好") = withContext(Dispatchers.IO) {
 
     val cookie = if (!vm.webVpn) prefs.getString(
         "redirect",
@@ -164,11 +199,11 @@ suspend fun selectMode(vm : NetWorkViewModel, mode : PostMode,bean: SurveyRespon
                 showToast("提交完成")
             }
             PostMode.GOOD ->  {
-                vm.postSurvey("$cookie;$token", postResult(true, bean))
+                vm.postSurvey("$cookie;$token", postResult(true, bean, comment))
                 showToast("提交完成")
             }
             PostMode.BAD -> {
-                vm.postSurvey("$cookie;$token", postResult(false,bean))
+                vm.postSurvey("$cookie;$token", postResult(false,bean, comment))
                 showToast("提交完成")
             }
         }
@@ -190,7 +225,7 @@ suspend fun selectMode(vm : NetWorkViewModel, mode : PostMode,bean: SurveyRespon
 }
 
 //true为好评，false为差评
-fun postResult(goodMode: Boolean,bean : SurveyResponse): JsonObject {
+fun postResult(goodMode: Boolean,bean : SurveyResponse,comment : String = "好"): JsonObject {
     val surveyAssoc = getSurveyAssoc(bean)
     val lessonSurveyTaskAssoc = prefs.getInt("teacherID", 0)
     val choiceList = getSurveyChoice(bean)
@@ -207,7 +242,7 @@ fun postResult(goodMode: Boolean,bean : SurveyResponse): JsonObject {
 
     for (j in inputList.indices) {
         val id = inputList[j].id
-        inputNewList.add(blankQuestionAnswer(id, "好"))
+        inputNewList.add(blankQuestionAnswer(id, comment))
     }
 
     // 组装数据

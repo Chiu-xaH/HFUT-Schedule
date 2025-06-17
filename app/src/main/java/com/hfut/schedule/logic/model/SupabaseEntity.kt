@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName
 import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.sys.DateTime
+import com.hfut.schedule.logic.util.sys.DateTimeBean
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.EventCampus
@@ -75,7 +76,7 @@ data class SupabaseEventsInput(
     val contributorClass : String,
     val campus : EventCampus,
     val url : String?,
-    val createTime : String
+    val createTime : DateTimeBean
 )
 
 // 实体类 接收数据库

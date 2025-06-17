@@ -123,6 +123,25 @@ object DateTimeUtils {
             return TimeState.NOT_STARTED
         }
     }
+    //<0是已完成 >0未完成
+    fun compareTimeDate(endTime: String,startTime : String = Date_yyyy_MM_dd): TimeState {
+        // 将字符串转换为 LocalTime 格式
+        try {
+            val last = LocalTime.parse(endTime, formatter_YYYY_MM_DD)
+            val now = LocalTime.parse(startTime, formatter_YYYY_MM_DD)
+
+            // 比较时间：返回值 <0 表示 last 早于 now，>0 表示 last 晚于 now，0 表示相等
+            return if(last > now) {
+                TimeState.NOT_STARTED
+            } else if(last < now) {
+                TimeState.ENDED
+            } else {
+                TimeState.ONGOING
+            }
+        } catch (e: Exception) {
+            return TimeState.NOT_STARTED
+        }
+    }
 
 
     /*

@@ -56,7 +56,11 @@ import com.hfut.schedule.ui.util.MyAnimationManager
 import com.hfut.schedule.ui.util.MyAnimationManager.currentPage
 
 import com.hfut.schedule.ui.component.BottomSheetTopBar
+import com.hfut.schedule.ui.component.DividerTextExpandedWith
+import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.StyleCardListItem
+import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GPAWithScore
+import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.ui.style.bottomBarBlur
@@ -93,16 +97,16 @@ fun GradeScreen(ifSaved : Boolean, vm : NetWorkViewModel) {
 
 
     if (showBottomSheet) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet= false },
-            sheetState = sheetState,
-            shape = bottomSheetRound(sheetState)
+            showBottomSheet = showBottomSheet,
+            hazeState = hazeState
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    BottomSheetTopBar("说明")
+                    HazeBottomSheetTopBar("说明")
                 },) {innerPadding ->
                 Column(
                     modifier = Modifier
@@ -230,22 +234,15 @@ fun GradeScreen(ifSaved : Boolean, vm : NetWorkViewModel) {
 
 @Composable
 fun Infos() {
-//    MyCustomCard {
-        StyleCardListItem(
-            headlineContent = { Text(text = "平时因数") },
-            supportingContent = { Text(text = "平时因数=除去期末成绩各项平均分/期末分数,可大致反映最终成绩平时分占比;\n越接近1则平衡,越>1则表明最终成绩可能更靠平时分,越<1表明最终成绩可能因平时分拖后腿")}
-        )
-//    }
-//    MyCustomCard {
-        StyleCardListItem(
-            headlineContent = { Text(text = "绩点与均分") },
-            supportingContent = { Text(text = "满绩 4.3 均分 95-100\n绩点 3.7 均分 85-89\n绩点 3.3 均分 83-84\n绩点 3.0 均分 78-82\n2.7之后不清楚,欢迎联系开发者补充")}
-        )
-//    }
-//    MyCustomCard{
-        StyleCardListItem(
-            headlineContent = { Text(text = "校务行") },
-            supportingContent = { Text(text = "微信小程序搜校务行，注意宣区选择 合肥工业大学（宣城校区），学号为账号，身份证后六位为密码（包括最后的X）")}
-        )
-//    }
+    DividerTextExpandedWith("绩点与分数对应关系") {
+        GPAWithScore()
+    }
+    StyleCardListItem(
+        headlineContent = { Text(text = "平均绩点的计算") },
+        supportingContent = { Text(text = "每门课的(学分*绩点)累加后，除以所有课的总学分")}
+    )
+    StyleCardListItem(
+        headlineContent = { Text(text = "校务行") },
+        supportingContent = { Text(text = "微信小程序搜校务行，注意宣区选择 合肥工业大学（宣城校区），学号为账号，身份证后六位为密码（包括最后的X）")}
+    )
 }

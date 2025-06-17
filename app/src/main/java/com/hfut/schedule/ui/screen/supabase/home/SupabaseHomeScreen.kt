@@ -57,6 +57,7 @@ import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.database.util.CustomEventMapper
 import com.hfut.schedule.logic.enumeration.SortType
 import com.hfut.schedule.logic.util.network.reEmptyLiveDta
+import com.hfut.schedule.logic.util.network.toStr
 import com.hfut.schedule.logic.util.network.toTimestampWithOutT
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.component.CARD_NORMAL_DP
@@ -150,7 +151,6 @@ private fun SupabaseScheduleUI(vm: NetWorkViewModel,sortType : SortType,sortReve
 //    var sortType by remember { mutableStateOf(SortType.ID) }
     val filter by DataStoreManager.supabaseFilterEventFlow.collectAsState(initial = false)
 
-
     if(refresh) {
         LoadingScreen()
     } else {
@@ -174,7 +174,7 @@ private fun SupabaseScheduleUI(vm: NetWorkViewModel,sortType : SortType,sortReve
                 CustomEventType.NET_COURSE -> it.dateTime.end.toTimestampWithOutT()
                 CustomEventType.SCHEDULE -> it.dateTime.start.toTimestampWithOutT()
             } }
-            SortType.CREATE_TIME -> filterList.sortedBy { it.createTime }
+            SortType.CREATE_TIME -> filterList.sortedBy { it.createTime.toTimestampWithOutT() }
         }.let { if (sortReversed) it.reversed() else it }.filter {
             it.toString().contains(input,ignoreCase = true)
         }
@@ -201,7 +201,7 @@ private fun SupabaseScheduleUI(vm: NetWorkViewModel,sortType : SortType,sortReve
                 LaunchedEffect(item.id) {
                     async { vm.supabaseGetEventForkCount(jwt,item.id) }.await()
                 }
-                val isExpanded = expandedStates[index] ?: !filter
+                val isExpanded = expandedStates[index] ?: false
                 var downloaded by remember { mutableStateOf(false) }
                 Box(modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null)) {
                     MyCustomCard(containerColor = cardNormalColor()) {
@@ -327,12 +327,13 @@ private fun SupabaseScheduleUI(vm: NetWorkViewModel,sortType : SortType,sortReve
                                 HorizontalDivider()
                                 TransplantListItem(
                                     overlineContent = {
-                                        Text("上传时间 ${item.createTime}" ) },
+                                        Text("上传时间 ${item.createTime.toStr()}" ) },
                                     headlineContent = { Text(
                                         "来自 " +
-                                                item.contributorClass +
-                                                " ******" +
-                                                item.contributorId.substring(6,10)
+                                                item.contributorClass
+                                                +
+                                                " *********" +
+                                                item.contributorId.substring(9,10)
                                     ) },
                                     leadingContent = {
                                         Icon(painterResource(R.drawable.person),null)

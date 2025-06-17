@@ -80,9 +80,12 @@ import com.hfut.schedule.ui.component.cardNormalColor
   
 import com.hfut.schedule.ui.component.BottomSheetTopBar
 import com.hfut.schedule.ui.component.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.CenterScreen
 import com.hfut.schedule.ui.component.CommonNetworkScreen
+import com.hfut.schedule.ui.component.EmptyUI
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.LittleDialog
+import com.hfut.schedule.ui.component.StatusUI
 import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.ui.component.StyleCardListItem
@@ -249,7 +252,7 @@ fun selectCourseListLoading(vm : NetWorkViewModel, hazeState: HazeState) {
                 Handler(Looper.getMainLooper()).post{
                     vm.selectCourseData.observeForever { result ->
                         if (result != null) {
-                            if (result.contains("name")) {
+                            if (result.contains("[")) {
                                loading = false
                                 refresh = false
                             }
@@ -274,22 +277,17 @@ fun selectCourseListLoading(vm : NetWorkViewModel, hazeState: HazeState) {
 @Composable
 fun SelectCourseList(vm: NetWorkViewModel, hazeState: HazeState) {
     val list = getSelectCourseList(vm)
-    var courseId by remember { mutableStateOf(0) }
+    var courseId by remember { mutableIntStateOf(0) }
     var name by remember { mutableStateOf("选课") }
     var showBottomSheet by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-
 
     var showBottomSheet_selected by remember { mutableStateOf(false) }
-    val sheetState_selected = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     if (showBottomSheet_selected) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet_selected = false },
             showBottomSheet = showBottomSheet_selected,
             hazeState = hazeState
-//            sheetState = sheetState_selected,
-//            shape = bottomSheetRound(sheetState_selected)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
@@ -313,8 +311,6 @@ fun SelectCourseList(vm: NetWorkViewModel, hazeState: HazeState) {
             onDismissRequest = { showBottomSheet = false },
             hazeState = hazeState,
             showBottomSheet = showBottomSheet
-//            sheetState = sheetState,
-//            shape = bottomSheetRound(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
@@ -338,69 +334,62 @@ fun SelectCourseList(vm: NetWorkViewModel, hazeState: HazeState) {
         }
     }
 
-    LazyColumn {
-        items(list.size) { item ->
-            var expand by remember { mutableStateOf(false) }
+    if(list.isNotEmpty()) {
+        LazyColumn {
+            items(list.size) { item ->
+                var expand by remember { mutableStateOf(false) }
 
-//            Card(
-//                elevation = CardDefaults.cardElevation(defaultElevation = 1.75.dp),
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(horizontal = APP_HORIZONTAL_DP, vertical = 5.dp)
-//                    .clickable {
-//                        courseId = list[item].id
-//                        SharePrefs.Save("courseIDS", list[item].id.toString())
-//                        name = list[item].name
-//                        showBottomSheet = true
-//                    },
-//                shape = MaterialTheme.shapes.medium,
-//            )
-            AnimationCustomCard (Modifier.clickable {
+                AnimationCustomCard (Modifier.clickable {
                     courseId = list[item].id
                     SharedPrefs.saveString("courseIDS", list[item].id.toString())
                     name = list[item].name
                     showBottomSheet = true
                 },
-                index = item,
-                hasElevation = false,
-                containerColor = cardNormalColor()
-            ) {
-                TransplantListItem(
-                    headlineContent = { Text(text = list[item].name) },
-                    overlineContent = { Text(text = list[item].selectDateTimeText)},
-                    trailingContent = { FilledTonalIconButton(onClick = { expand = !expand }) {
-                        Icon(painter = painterResource(id = if(expand) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "")
-                    }},
-                )
-                AnimatedVisibility(
-                    visible = expand,
-                    enter = slideInVertically(
-                        initialOffsetY = { -40 }
-                    ) + expandVertically(
-                        expandFrom = Alignment.Top
-                    ) + scaleIn(
-                        transformOrigin = TransformOrigin(0.5f, 0f)
-                    ) + fadeIn(initialAlpha = 0.3f),
-                    exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
+                    index = item,
+                    hasElevation = false,
+                    containerColor = cardNormalColor()
                 ) {
-                    Column {
-                        TransplantListItem(
-                            headlineContent = { Text(text = "选课公告") },
-                            supportingContent = {
-                                Text(text = list[item].bulletin)
-                            }
-                        )
-                        TransplantListItem(
-                            headlineContent = { Text(text = "选课规则") },
-                            supportingContent = {
-                                for (i in list[item].addRulesText) {
-                                    Text(text = "$i ")
+                    TransplantListItem(
+                        headlineContent = { Text(text = list[item].name) },
+                        overlineContent = { Text(text = list[item].selectDateTimeText)},
+                        trailingContent = { FilledTonalIconButton(onClick = { expand = !expand }) {
+                            Icon(painter = painterResource(id = if(expand) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "")
+                        }},
+                    )
+                    AnimatedVisibility(
+                        visible = expand,
+                        enter = slideInVertically(
+                            initialOffsetY = { -40 }
+                        ) + expandVertically(
+                            expandFrom = Alignment.Top
+                        ) + scaleIn(
+                            transformOrigin = TransformOrigin(0.5f, 0f)
+                        ) + fadeIn(initialAlpha = 0.3f),
+                        exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
+                    ) {
+                        Column {
+                            TransplantListItem(
+                                headlineContent = { Text(text = "选课公告") },
+                                supportingContent = {
+                                    Text(text = list[item].bulletin)
                                 }
-                            }
-                        )
+                            )
+                            TransplantListItem(
+                                headlineContent = { Text(text = "选课规则") },
+                                supportingContent = {
+                                    for (i in list[item].addRulesText) {
+                                        Text(text = "$i ")
+                                    }
+                                }
+                            )
+                        }
                     }
                 }
             }
+        }
+    } else {
+        CenterScreen {
+            EmptyUI("当前无选课")
         }
     }
 }

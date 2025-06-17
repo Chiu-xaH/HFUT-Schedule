@@ -18,8 +18,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -32,16 +30,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.zIndex
-import com.google.gson.Gson
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventDTO
 import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.model.Schedule
-import com.hfut.schedule.logic.model.community.TodayResponse
 import com.hfut.schedule.logic.model.community.TodayResult
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
-import com.hfut.schedule.logic.util.network.UiState
 import com.hfut.schedule.logic.util.network.parse.ParseJsons.getTimeStamp
 import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
@@ -55,7 +50,6 @@ import com.hfut.schedule.logic.util.sys.DateTimeUtils.TimeState.ONGOING
 import com.hfut.schedule.logic.util.sys.JxglstuCourseSchedule
 import com.hfut.schedule.logic.util.sys.addToCalendars
 import com.hfut.schedule.ui.component.BottomTip
-import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.LittleDialog
 import com.hfut.schedule.ui.component.RotatingIcon
@@ -77,7 +71,6 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import kotlin.collections.flatten
 
 @Composable
 fun ScheduleItem(listItem : Schedule, isFuture: Boolean, activity : Activity) {
@@ -127,6 +120,7 @@ private fun ScheduleItemUI(listItem: Schedule, isFuture : Boolean, activity : Ac
     val title = listItem.title
     val showPublic = listItem.showPublic
 
+    val scope = rememberCoroutineScope()
     val itemUI = @Composable {
             StyleCardListItem(
                 headlineContent = {  Text(text = title) },
@@ -138,14 +132,16 @@ private fun ScheduleItemUI(listItem: Schedule, isFuture : Boolean, activity : Ac
                     if(isFuture)
                         FilledTonalIconButton(
                             onClick = {
-                                try {
-                                    val startTime = listItem.startTime
-                                    val endTime = listItem.endTime
-                                    addToCalendars(startTime,endTime, info, title,time,activity,true)
-                                    showToast("添加到系统日历成功")
-                                } catch (e : SecurityException) {
-                                    showToast("未授予权限")
-                                    e.printStackTrace()
+                                scope.launch {
+                                    try {
+                                        val startTime = listItem.startTime
+                                        val endTime = listItem.endTime
+                                        addToCalendars(startTime,endTime, info, title,time,activity,true)
+                                        showToast("添加到系统日历成功")
+                                    } catch (e : SecurityException) {
+                                        showToast("未授予权限")
+                                        e.printStackTrace()
+                                    }
                                 }
                             }
                         ) {
@@ -175,7 +171,7 @@ fun NetCourseItem(listItem : Schedule, isFuture: Boolean, activity: Activity) {
     val title = listItem.title
     val showPublic = listItem.showPublic
 
-
+    val scope = rememberCoroutineScope()
     val itemUI = @Composable {
         if(prefs.getString("my","")?.contains("Schedule") == true) {
             val startTime = listItem.startTime
@@ -210,7 +206,16 @@ fun NetCourseItem(listItem : Schedule, isFuture: Boolean, activity: Activity) {
                             trailingContent = {
                                 FilledTonalIconButton(
                                     onClick = {
-                                        addToCalendars(startTime,endTime, info, title,time,activity)
+                                        scope.launch {
+                                            addToCalendars(
+                                                startTime,
+                                                endTime,
+                                                info,
+                                                title,
+                                                time,
+                                                activity
+                                            )
+                                        }
 
                                     }
                                 ) {
@@ -470,14 +475,16 @@ fun CustomItemUI(item: CustomEventDTO,isFuture: Boolean,activity: Activity,hazeS
                     if(isFuture) {
                         FilledTonalIconButton(
                             onClick = {
-                                addToCalendars(
-                                    dateTime,
-                                    description,
-                                    title,
-                                    null,
-                                    activity,
-                                    item.type == CustomEventType.SCHEDULE
-                                )
+                                scope.launch {
+                                    addToCalendars(
+                                        dateTime,
+                                        description,
+                                        title,
+                                        null,
+                                        activity,
+                                        item.type == CustomEventType.SCHEDULE
+                                    )
+                                }
                             }
                         ) { Icon(painterResource(R.drawable.event_upcoming), null) }
                     } else {
@@ -593,7 +600,9 @@ fun TodayUI(hazeState: HazeState,vm: NetWorkViewModel) {
                                 headlineContent = { ScrollText(text = (it.toString()).replace("学堂","")) },
                                 overlineContent = { ScrollText(text = "$place  $startTime") },
                                 leadingContent = { Icon(painter = painterResource(R.drawable.draw), contentDescription = "")},
-                                modifier = Modifier.background(MaterialTheme.colorScheme.errorContainer).zIndex(3f)
+                                modifier = Modifier
+                                    .background(MaterialTheme.colorScheme.errorContainer)
+                                    .zIndex(3f)
                             )
                         }
                     }

@@ -63,6 +63,7 @@ import com.hfut.schedule.ui.component.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.CenterScreen
 import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.CustomTabRow
+import com.hfut.schedule.ui.component.EmptyUI
 import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.MenuChip
 import com.hfut.schedule.ui.component.PrepareSearchUI
@@ -176,7 +177,7 @@ fun DormitoryScoreUI(vm : NetWorkViewModel) {
                 when(page) {
                     HEFEI_TAB -> {
                         CenterScreen {
-                            StatusUI(R.drawable.manga,"需要合肥校区在读生贡献数据源")
+                            EmptyUI("需要合肥校区在读生贡献数据源")
                         }
                     }
                     XUANCHENG_TAB -> {

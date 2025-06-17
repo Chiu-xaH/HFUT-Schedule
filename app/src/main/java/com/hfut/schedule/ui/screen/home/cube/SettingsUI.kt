@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.screen.home.cube
 
+import com.hfut.schedule.ui.screen.home.cube.sub.CalendarSettingsScreen
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -111,6 +112,11 @@ fun SettingsScreen(vm : NetWorkViewModel
                 composable(Screen.DownloadScreen.route) {
                     Scaffold {
                         DownloadMLUI(innerPaddings)
+                    }
+                }
+                composable(Screen.CalendarScreen.route) {
+                    Scaffold {
+                        CalendarSettingsScreen(innerPaddings)
                     }
                 }
                 composable(Screen.LockScreen.route) {
