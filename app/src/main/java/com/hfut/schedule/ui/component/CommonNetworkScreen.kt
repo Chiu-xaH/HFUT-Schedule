@@ -19,13 +19,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.getExceptionDetail
-import com.hfut.schedule.logic.util.getKeyStackTrace
-import com.hfut.schedule.logic.util.network.PARSE_ERROR_CODE
-import com.hfut.schedule.logic.util.network.StateHolder
-import com.hfut.schedule.logic.util.network.UiState
-import com.hfut.schedule.logic.util.sys.ClipBoard
+import com.hfut.schedule.logic.util.development.getExceptionDetail
+import com.hfut.schedule.logic.util.development.getKeyStackTrace
+import com.hfut.schedule.logic.util.network.state.PARSE_ERROR_CODE
+import com.hfut.schedule.logic.util.network.state.StateHolder
+import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.custom.LoadingUI
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -88,7 +90,7 @@ fun CommonNetworkScreen(
                                 }
                             else
                                 Button(onClick = {
-                                    e?.let { ClipBoard.copy(getExceptionDetail(it)) }
+                                    e?.let { ClipBoardUtils.copy(getExceptionDetail(it)) }
                                     showToast("请截图或粘贴详细错误信息，并注明功能，发送邮件")
                                     Starter.emailMe()
                                 }) {

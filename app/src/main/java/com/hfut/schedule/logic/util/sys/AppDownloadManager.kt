@@ -69,7 +69,7 @@ object AppDownloadManager {
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     fun downloadPatch(filename: String,activity: Activity) {
-        PermissionManager.checkAndRequestNotificationPermission(activity)
+        PermissionSet.checkAndRequestNotificationPermission(activity)
         downloadManage(
             fileName = filename,
             url = "${MyApplication.GITEE_UPDATE_URL}releases/download/Android/$filename",
@@ -80,7 +80,7 @@ object AppDownloadManager {
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     fun update(version: String,activity: Activity) {
-        PermissionManager.checkAndRequestNotificationPermission(activity)
+        PermissionSet.checkAndRequestNotificationPermission(activity)
         downloadManage(
             fileName = "聚在工大_${version}.apk",
             url = "${MyApplication.GITEE_UPDATE_URL}releases/download/Android/${version}.apk",

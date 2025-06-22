@@ -36,7 +36,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.jxglstu.PlanCoursesSearch
 import com.hfut.schedule.logic.model.jxglstu.ProgramListBean
 import com.hfut.schedule.logic.model.jxglstu.ProgramSearchBean
-import com.hfut.schedule.logic.util.network.UiState
+import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.AnimationCardListItem
@@ -45,8 +45,7 @@ import com.hfut.schedule.ui.component.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.DepartmentIcons
 import com.hfut.schedule.ui.component.EmptyUI
-import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.StatusUI
+import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus.HEFEI
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus.XUANCHENG

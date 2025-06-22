@@ -1,6 +1,5 @@
 package com.hfut.schedule.ui.screen.home.cube.sub
 
-import android.app.Activity
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -18,7 +17,6 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,19 +26,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.AppDownloadManager
 import com.hfut.schedule.logic.util.sys.AppDownloadManager.getDownloadProgress
-import com.hfut.schedule.logic.util.sys.PermissionManager
+import com.hfut.schedule.logic.util.sys.PermissionSet
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveBoolean
 import com.hfut.schedule.logic.util.ocr.TesseractUtils
 import com.hfut.schedule.logic.util.ocr.TesseractUtils.isModelInDownloadFolder
 import com.hfut.schedule.logic.util.ocr.TesseractUtils.moveDownloadedModel
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.TransplantListItem
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -48,7 +45,7 @@ import com.hfut.schedule.ui.component.TransplantListItem
 @Composable
 fun DownloadMLUI(innerPadding : PaddingValues) {
     val activity = LocalActivity.current
-    activity?.let { PermissionManager.checkAndRequestStoragePermission(it) }
+    activity?.let { PermissionSet.checkAndRequestStoragePermission(it) }
 
 
     val switch_open = prefs.getBoolean("SWITCH_ML",false)

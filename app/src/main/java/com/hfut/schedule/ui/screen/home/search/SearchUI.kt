@@ -70,7 +70,7 @@ import com.hfut.schedule.ui.screen.home.search.function.huiXin.washing.Washing
 import com.hfut.schedule.ui.screen.home.search.function.my.supabase.Supabase
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.viewmodel.UIViewModel
+import com.hfut.schedule.viewmodel.ui.UIViewModel
 import dev.chrisbanes.haze.HazeState
 
 @SuppressLint("CoroutineCreationDuringComposition", "SuspiciousIndentation")

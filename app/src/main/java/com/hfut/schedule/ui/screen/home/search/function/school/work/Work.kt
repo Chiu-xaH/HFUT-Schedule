@@ -35,13 +35,13 @@ import androidx.compose.ui.util.fastMap
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.WorkSearchType
-import com.hfut.schedule.logic.util.network.UiState
+import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.ui.component.AnimationCardListItem
 import com.hfut.schedule.ui.component.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.CommonNetworkScreen
-import com.hfut.schedule.ui.component.CustomTabRow
-import com.hfut.schedule.ui.component.CustomTextField
-import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.custom.CustomTabRow
+import com.hfut.schedule.ui.component.custom.CustomTextField
+import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.PagingController
 import com.hfut.schedule.ui.component.TransplantListItem

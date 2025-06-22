@@ -27,6 +27,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -75,12 +76,12 @@ import com.hfut.schedule.ui.screen.home.search.function.my.notification.Notifica
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.getNotifications
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.LabUI
 import com.hfut.schedule.ui.screen.home.search.SearchFuncs
-import com.hfut.schedule.ui.util.MyAnimationManager
-import com.hfut.schedule.ui.util.MyAnimationManager.currentPage
-import com.hfut.schedule.ui.component.CustomTabRow
+import com.hfut.schedule.ui.util.AppAnimationManager
+import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
+import com.hfut.schedule.ui.component.custom.CustomTabRow
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.ScrollText
+import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.custom.ScrollText
  
 import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.ui.style.HazeBottomSheet
@@ -90,8 +91,7 @@ import com.hfut.schedule.ui.style.topBarTransplantColor
 import com.hfut.schedule.ui.style.transitionBackground
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.viewmodel.UIViewModel
-import dev.chrisbanes.haze.HazeState
+import com.hfut.schedule.viewmodel.ui.UIViewModel
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 
@@ -324,7 +324,9 @@ fun GuestMainScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewMo
                                                 Badge{ Text(text = "1") }
                                         }
                                     }) { Icon(if(selected)item.filledIcon else item.icon, contentDescription = item.label) }
-                                }
+                                },
+                                colors = NavigationBarItemDefaults.colors(indicatorColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = .9f))
+
                             )
                         }
                     }
@@ -333,7 +335,7 @@ fun GuestMainScreen(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewMo
         ) { innerPadding ->
             innerPaddingValues = innerPadding
 
-            val animation = MyAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
+            val animation = AppAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
 
             NavHost(
                 navController = navController,

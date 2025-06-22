@@ -33,6 +33,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -61,7 +62,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.NewsBarItems
 import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.util.network.Encrypt
-import com.hfut.schedule.logic.util.network.UiState
+import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.AnimationCardListItem
@@ -70,14 +71,14 @@ import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.PagingController
 import com.hfut.schedule.ui.component.WebDialog
-import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.news.department.SchoolsUI
 import com.hfut.schedule.ui.screen.news.xuancheng.XuanquNewsUI
 import com.hfut.schedule.ui.style.bottomBarBlur
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.ui.style.topBarBlur
-import com.hfut.schedule.ui.util.MyAnimationManager
-import com.hfut.schedule.ui.util.MyAnimationManager.currentPage
+import com.hfut.schedule.ui.util.AppAnimationManager
+import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
 import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.haze
@@ -181,7 +182,9 @@ fun NewsActivityUI(vm: NetWorkViewModel) {
                             label = { Text(text = item.label) },
                             icon = {
                                 BadgedBox(badge = {}) { Icon(if(selected)item.filledIcon else item.icon, contentDescription = item.label) }
-                            }
+                            },
+                            colors = NavigationBarItemDefaults.colors(indicatorColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = .9f))
+
                         )
                     }
                 }
@@ -190,7 +193,7 @@ fun NewsActivityUI(vm: NetWorkViewModel) {
         }
     ) {innerPadding ->
 
-        val animation = MyAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
+        val animation = AppAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
 
         NavHost(navController = navController,
             startDestination = NewsBarItems.News.name,
@@ -220,7 +223,7 @@ fun NewsActivityUI(vm: NetWorkViewModel) {
 @Composable
 fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
     val words = remember { listOf(
-        "放假","转专业","周考试安排"
+        "放假","转专业","周考试安排","选课"
     ) }
     var input by remember { mutableStateOf( words[0]) }
     var page by remember { mutableIntStateOf(1) }

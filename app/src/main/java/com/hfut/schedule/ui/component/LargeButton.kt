@@ -1,7 +1,6 @@
 package com.hfut.schedule.ui.component
 
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -12,8 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import com.hfut.schedule.R
-import com.hfut.schedule.logic.enumeration.PostMode
 import com.hfut.schedule.ui.style.ColumnVertical
 
 
@@ -36,7 +33,7 @@ fun LargeButton(
     ) {
         ColumnVertical {
             Icon(painterResource(icon),null)
-            Spacer(Modifier.height(CARD_NORMAL_DP))
+            Spacer(Modifier.Companion.height(CARD_NORMAL_DP))
             Text(text)
         }
     }

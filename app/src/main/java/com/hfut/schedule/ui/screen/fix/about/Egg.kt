@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.Party
  
 import com.hfut.schedule.ui.style.RowHorizontal

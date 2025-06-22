@@ -48,14 +48,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.gson.Gson
-import com.hfut.schedule.viewmodel.UIViewModel
+import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.logic.model.jxglstu.datumResponse
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.screen.home.calendar.next.DatumMode.*
  
-import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel

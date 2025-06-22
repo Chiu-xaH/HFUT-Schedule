@@ -11,7 +11,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.hfut.schedule.ui.util.MyAnimationManager
+import com.hfut.schedule.ui.util.AppAnimationManager
 
 // 容器共享切换
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -21,7 +21,7 @@ fun <S> ShareContainer2D(modifier: Modifier = Modifier, label: S, contents : Map
         AnimatedContent(
             targetState = label,
             transitionSpec = {
-                fadeIn(animationSpec = tween(durationMillis = MyAnimationManager.ANIMATION_SPEED)) togetherWith fadeOut(animationSpec = tween(durationMillis = MyAnimationManager.ANIMATION_SPEED*2))
+                fadeIn(animationSpec = tween(durationMillis = AppAnimationManager.ANIMATION_SPEED)) togetherWith fadeOut(animationSpec = tween(durationMillis = AppAnimationManager.ANIMATION_SPEED*2))
             },
             label = ""
         ) { targetLabel ->

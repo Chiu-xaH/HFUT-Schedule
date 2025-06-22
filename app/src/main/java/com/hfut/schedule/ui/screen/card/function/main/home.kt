@@ -53,22 +53,22 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.CardBarItems
-import com.hfut.schedule.logic.util.network.UiState
+import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.sys.DateTimeUtils
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.RefreshIndicator
+import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.custom.RefreshIndicator
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.WebDialog
 
 import com.hfut.schedule.ui.component.largeCardColor
-import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.card.bill.TodayBills
 import com.hfut.schedule.ui.screen.card.function.CardLimit
 import com.hfut.schedule.ui.screen.card.function.SearchBillsUI
@@ -81,10 +81,9 @@ import com.hfut.schedule.ui.screen.home.search.function.huiXin.shower.ShowerUI
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.washing.WashingUI
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.appBlur
-import com.hfut.schedule.ui.style.bottomSheetRound
-import com.hfut.schedule.ui.util.MyAnimationManager
+import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.navigateAndSave
-import com.hfut.schedule.viewmodel.UIViewModel
+import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
@@ -98,7 +97,7 @@ fun loadTodayPay(vm: NetWorkViewModel) : State<String> = produceState(initialVal
     try {
         val uiState = vm.huiXinBillResult.state.first { it !is UiState.Loading }
         if(uiState is UiState.Success) {
-            val list = uiState.data.data.records
+            val list = uiState.data.records
             for (item in list) {
                 val get = item.effectdateStr
                 val name = item.resume
@@ -108,7 +107,7 @@ fun loadTodayPay(vm: NetWorkViewModel) : State<String> = produceState(initialVal
                 if(num.length == 1)
                     num = "00$num"
                 num = num.substring(0, num.length - 2) + "." + num.substring(num.length - 2)
-                if (DateTimeUtils.Date_yyyy_MM_dd == todayDate) {
+                if (DateTimeManager.Date_yyyy_MM_dd == todayDate) {
                     if (!name.contains("充值")) total += num.toFloat()
                 }
             }
@@ -382,13 +381,13 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
     val scale = animateFloatAsState(
         targetValue = if (refreshing) 0.9f else 1f, // 按下时为0.9，松开时为1
         //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-        animationSpec = tween(MyAnimationManager.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
+        animationSpec = tween(AppAnimationManager.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
         label = "" // 使用弹簧动画
     )
     val scale2 = animateFloatAsState(
         targetValue = if (refreshing) 0.97f else 1f, // 按下时为0.9，松开时为1
         //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-        animationSpec = tween(MyAnimationManager.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
+        animationSpec = tween(AppAnimationManager.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
         label = "" // 使用弹簧动画
     )
 

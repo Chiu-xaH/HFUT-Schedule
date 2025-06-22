@@ -28,7 +28,7 @@ import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
  
-import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import dev.chrisbanes.haze.HazeState

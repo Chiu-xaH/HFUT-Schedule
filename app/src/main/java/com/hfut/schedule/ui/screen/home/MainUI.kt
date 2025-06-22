@@ -39,12 +39,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -78,24 +78,24 @@ import com.hfut.schedule.logic.enumeration.BottomBarItems.SEARCH
 import com.hfut.schedule.logic.enumeration.BottomBarItems.SETTINGS
 import com.hfut.schedule.logic.enumeration.SortType
 import com.hfut.schedule.logic.model.NavigationBarItemData
-import com.hfut.schedule.logic.util.network.parse.ParseJsons.isNextOpen
+import com.hfut.schedule.logic.util.network.ParseJsons.isNextOpen
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveInt
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
-import com.hfut.schedule.logic.util.sys.DateTimeUtils
-import com.hfut.schedule.logic.util.sys.DateTimeUtils.Date_MM_dd
-import com.hfut.schedule.logic.util.sys.DateTimeUtils.weeksBetween
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.Date_MM_dd
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.weeksBetween
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.CustomTabRow
+import com.hfut.schedule.ui.component.custom.CustomTabRow
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.ScrollText
+import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.custom.ScrollText
 import com.hfut.schedule.ui.component.StyleCardListItem
  
-import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CommunityCourseTableUI
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.ScheduleTopDate
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.JxglstuCourseTableUI
@@ -120,13 +120,12 @@ import com.hfut.schedule.ui.style.bottomBarBlur
 import com.hfut.schedule.ui.style.topBarBlur
 import com.hfut.schedule.ui.style.topBarTransplantColor
 import com.hfut.schedule.ui.style.transitionBackground
-import com.hfut.schedule.ui.util.MyAnimationManager
-import com.hfut.schedule.ui.util.MyAnimationManager.currentPage
+import com.hfut.schedule.ui.util.AppAnimationManager
+import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
 import com.hfut.schedule.ui.util.navigateAndSave
-import com.hfut.schedule.viewmodel.UIViewModel
+import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
@@ -173,7 +172,7 @@ fun MainScreen(
     ) }
     // 记录上一个
 
-    var showAll by remember { mutableStateOf(DateTimeUtils.isOnWeekend()) }
+    var showAll by remember { mutableStateOf(DateTimeManager.isOnWeekend()) }
     var findCourse by remember { mutableStateOf(false) }
 
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -255,7 +254,7 @@ fun MainScreen(
         findCourse = result
     }
 
-    var today by remember { mutableStateOf(DateTimeUtils.getToday()) }
+    var today by remember { mutableStateOf(DateTimeManager.getToday()) }
 
     val pagerState = rememberPagerState(pageCount = {2})
 
@@ -578,7 +577,9 @@ fun MainScreen(
                                                 Badge{ Text(text = "1")}
                                         }
                                     }) { Icon(if(selected)item.filledIcon else item.icon, contentDescription = item.label) }
-                                }
+                                },
+                                colors = NavigationBarItemDefaults.colors(indicatorColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = .9f))
+
                             )
                         }
                     }
@@ -593,7 +594,7 @@ fun MainScreen(
             },
         ) { innerPadding ->
             innerPaddingValues = innerPadding
-            val animation = MyAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
+            val animation = AppAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
             NavHost(
                 navController = navController,
                 startDestination = first.name,
@@ -662,7 +663,7 @@ fun texts(num : BottomBarItems) : String = when(num) {
     SEARCH -> "查询中心"
     SETTINGS -> "选项"
     else -> {
-        val chineseNumber  = when (DateTimeUtils.dayWeek) {
+        val chineseNumber  = when (DateTimeManager.dayWeek) {
             1 -> "一"
             2 -> "二"
             3 -> "三"

@@ -43,7 +43,7 @@ import com.hfut.schedule.ui.screen.home.search.function.school.alumni.Alumni
 import com.hfut.schedule.ui.screen.home.search.function.my.holiday.Holiday
 import com.hfut.schedule.ui.screen.home.search.function.other.wechat.WeChatGo
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.viewmodel.UIViewModel
+import com.hfut.schedule.viewmodel.ui.UIViewModel
 import dev.chrisbanes.haze.HazeState
 
 @SuppressLint("CoroutineCreationDuringComposition", "SuspiciousIndentation")

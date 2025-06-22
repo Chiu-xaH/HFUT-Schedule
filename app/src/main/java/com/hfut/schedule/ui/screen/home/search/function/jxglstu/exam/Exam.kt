@@ -29,15 +29,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.sys.DateTimeUtils
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.addToCalendars
 import com.hfut.schedule.ui.component.EmptyUI
-import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.style.HazeBottomSheet
@@ -102,7 +100,7 @@ fun Exam(vm : NetWorkViewModel, ifSaved : Boolean, hazeState: HazeState) {
 @Composable
 private fun ExamItems(item : Int,status : Boolean) {
 
-    var date = DateTimeUtils.Date_yyyy_MM_dd
+    var date = DateTimeManager.Date_yyyy_MM_dd
     val todayDate = date.substring(0, 4) + date.substring(5, 7) + date.substring(8, 10)
     val get = getExam()[item].formatEndTime
     //判断考完试不显示信息
@@ -150,7 +148,7 @@ private fun ExamItems(item : Int,status : Boolean) {
 @Composable
 fun JxglstuExamUI(item : Map<String,String>,status : Boolean) {
     //时隔一年修补这里的Bug
-    val newDate = DateTimeUtils.Date_yyyy_MM_dd
+    val newDate = DateTimeManager.Date_yyyy_MM_dd
     val newToday = newDate.replace("-","").toLongOrNull() ?: 0
     val examDate = item["日期时间"]
     val examDateNum = examDate?.substringBefore(" ")?.replace("-","")?.toLongOrNull() ?: 0
@@ -213,8 +211,8 @@ fun JxglstuExamUI(item : Map<String,String>,status : Boolean) {
           //  Log.d("打印测试","${year}年 ${month}月 ${day}日 起始 ${startTimeHour}时 ${startTimeMinute}分 结束 ${endTimeHour}时 ${endTimeMinute}分")
             val scope = rememberCoroutineScope()
             //今天 && 已经考完
-            if("$month-$day" == DateTimeUtils.Date_MM_dd
-                && DateTimeUtils.compareTime("$endTimeHour:$endTimeMinute") == DateTimeUtils.TimeState.ENDED) {
+            if("$month-$day" == DateTimeManager.Date_MM_dd
+                && DateTimeManager.compareTime("$endTimeHour:$endTimeMinute") == DateTimeManager.TimeState.ENDED) {
 
             } else {
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
@@ -234,7 +232,7 @@ fun JxglstuExamUI(item : Map<String,String>,status : Boolean) {
                                 },
                                 modifier = Modifier.clickable {},
                                 trailingContent = {
-                                    if("$month-$day" == DateTimeUtils.Date_MM_dd) {
+                                    if("$month-$day" == DateTimeManager.Date_MM_dd) {
                                         Text("今日")
                                     } else {
                                         Column(horizontalAlignment = Alignment.CenterHorizontally
@@ -274,7 +272,7 @@ fun JxglstuExamUI(item : Map<String,String>,status : Boolean) {
                                             }
                                             time?.substringBefore(" ")?.let {
 //                                                Row(horizontalArrangement = Arrangement.Center) {
-                                                    Text("${DateTimeUtils.daysBetween(it)}天")
+                                                    Text("${DateTimeManager.daysBetween(it)}天")
 //                                                }
                                             }
                                         }

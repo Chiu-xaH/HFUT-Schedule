@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.ui.util.MyAnimationManager
+import com.hfut.schedule.ui.util.AppAnimationManager
 
 // 小标题
 @Composable
@@ -42,7 +42,7 @@ fun DividerText(text: String, onClick: (() -> Unit?)? = null) {
     var isPressed by remember { mutableStateOf(false) }
     val scale = animateFloatAsState(
         targetValue = if (isPressed) 0.9f else 1f, // 按下时为0.9，松开时为1
-        animationSpec = tween(MyAnimationManager.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
+        animationSpec = tween(AppAnimationManager.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
         label = "" // 使用弹簧动画
     )
     val color by animateColorAsState(
@@ -81,7 +81,7 @@ fun DividerTextExpandedWith(
     content: @Composable () -> Unit
 ) {
 
-    val speed = MyAnimationManager.ANIMATION_SPEED
+    val speed = AppAnimationManager.ANIMATION_SPEED
 
     val motionBlur by DataStoreManager.motionBlurFlow.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
 

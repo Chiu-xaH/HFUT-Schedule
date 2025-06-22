@@ -28,20 +28,20 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.zjgd.records
-import com.hfut.schedule.logic.util.network.UiState
+import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.sys.DateTimeUtils
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.AnimationCustomCard
 import com.hfut.schedule.ui.component.BillsIcons
-import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.ScrollText
+import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.custom.ScrollText
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.screen.card.bill.main.processTranamt
 import com.hfut.schedule.ui.screen.card.function.main.loadTodayPay
 import com.hfut.schedule.ui.style.HazeBottomSheet
-import com.hfut.schedule.viewmodel.UIViewModel
+import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 
@@ -104,7 +104,7 @@ fun TodayBills(vm: NetWorkViewModel) {
         },
     ) {innerPadding ->
         if(uiState is UiState.Success) {
-            val list = (uiState as UiState.Success).data.data.records
+            val list = (uiState as UiState.Success).data.records
             LazyColumn(modifier = Modifier.padding(innerPadding)) {
                 items(list.size) { item ->
                     TodayCount(list[item] )
@@ -121,7 +121,7 @@ fun TodayCount(item : records) = with(item) {
     val time = effectdateStr
     val getTime = time.substringBefore(" ")
 
-    if(DateTimeUtils.Date_yyyy_MM_dd == getTime) {
+    if(DateTimeManager.Date_yyyy_MM_dd == getTime) {
         StyleCardListItem(
             headlineContent = { Text(text = name) },
             supportingContent = { Text(text = processTranamt(item)) },

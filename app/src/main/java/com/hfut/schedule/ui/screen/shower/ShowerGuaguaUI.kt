@@ -24,6 +24,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -59,8 +60,8 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.ui.screen.shower.bill.GuaguaBills
 import com.hfut.schedule.ui.screen.shower.cube.GuaGuaSettings
 import com.hfut.schedule.ui.screen.shower.home.GuaguaStart
-import com.hfut.schedule.ui.util.MyAnimationManager
-import com.hfut.schedule.ui.util.MyAnimationManager.currentPage
+import com.hfut.schedule.ui.util.AppAnimationManager
+import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
 //import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
 
 import com.hfut.schedule.ui.util.navigateAndSave
@@ -163,7 +164,9 @@ fun ShowerGuaGua(vm: GuaGuaViewModel, netVm : NetWorkViewModel, navHostControlle
                             label = { Text(text = item.label) },
                             icon = {
                                 BadgedBox(badge = {}) { Icon(if(selected)item.filledIcon else item.icon, contentDescription = item.label) }
-                            }
+                            },
+                            colors = NavigationBarItemDefaults.colors(indicatorColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = .9f))
+
                         )
                     }
                 }
@@ -171,7 +174,7 @@ fun ShowerGuaGua(vm: GuaGuaViewModel, netVm : NetWorkViewModel, navHostControlle
 
         }
     ) {innerPadding ->
-        val animation = MyAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
+        val animation = AppAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
 
         NavHost(navController = navController,
             startDestination = ShowerBarItems.HOME.name,

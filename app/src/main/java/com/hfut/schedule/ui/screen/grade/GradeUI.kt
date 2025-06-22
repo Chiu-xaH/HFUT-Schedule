@@ -17,13 +17,12 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -42,32 +41,26 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.enumeration.GradeBarItems
 import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.screen.grade.analysis.GradeCountUI
 import com.hfut.schedule.ui.screen.grade.grade.community.GradeItemUI
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GradeItemUIJXGLSTU
-import com.hfut.schedule.ui.util.MyAnimationManager
-import com.hfut.schedule.ui.util.MyAnimationManager.currentPage
+import com.hfut.schedule.ui.util.AppAnimationManager
+import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
 
-import com.hfut.schedule.ui.component.BottomSheetTopBar
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GPAWithScore
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.util.navigateAndSave
-import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.ui.style.bottomBarBlur
 import com.hfut.schedule.ui.style.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.haze
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 
@@ -79,7 +72,7 @@ fun GradeScreen(ifSaved : Boolean, vm : NetWorkViewModel) {
     val hazeState = rememberHazeState(blurEnabled = blur)
     val navController = rememberNavController()
     val context = LocalActivity.current
-    val animation by remember { mutableIntStateOf(prefs.getInt("ANIMATION", MyAnimationManager.ANIMATION_SPEED)) }
+    val animation by remember { mutableIntStateOf(prefs.getInt("ANIMATION", AppAnimationManager.ANIMATION_SPEED)) }
 
     var showSearch by remember { mutableStateOf(false) }
 
@@ -198,14 +191,16 @@ fun GradeScreen(ifSaved : Boolean, vm : NetWorkViewModel) {
                             label = { Text(text = item.label) },
                             icon = {
                                  Icon(if(selected)item.filledIcon else item.icon, contentDescription = item.label)
-                            }
+                            },
+                            colors = NavigationBarItemDefaults.colors(indicatorColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = .9f))
+
                         )
                     }
                 }
             }
         }
         ) { innerPadding ->
-        val animation = MyAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
+        val animation = AppAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
 
         NavHost(navController = navController,
                 startDestination = GradeBarItems.GRADE.name,

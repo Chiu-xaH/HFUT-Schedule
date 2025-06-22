@@ -30,9 +30,9 @@ import com.hfut.schedule.logic.model.MyAPIResponse
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.logic.util.network.parse.ParseJsons.getMy
+import com.hfut.schedule.logic.util.network.ParseJsons.getMy
 import com.hfut.schedule.ui.component.WebViewScreen
-import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.WebDialog
 import java.io.File

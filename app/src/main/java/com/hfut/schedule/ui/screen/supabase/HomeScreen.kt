@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -24,6 +23,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -53,9 +53,8 @@ import com.hfut.schedule.logic.enumeration.CardBarItems
 import com.hfut.schedule.logic.enumeration.SortType
 import com.hfut.schedule.logic.enumeration.SupabaseScreen
 import com.hfut.schedule.logic.model.NavigationBarItemData
-import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.ui.component.CustomTabRow
+import com.hfut.schedule.ui.component.custom.CustomTabRow
 import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventFloatButton
 import com.hfut.schedule.ui.screen.supabase.cube.SupabaseSettingsScreen
 import com.hfut.schedule.ui.screen.supabase.focus.SupabaseStorageScreen
@@ -64,12 +63,11 @@ import com.hfut.schedule.ui.screen.supabase.manage.SupabaseMeScreenRefresh
 import com.hfut.schedule.ui.style.bottomBarBlur
 import com.hfut.schedule.ui.style.topBarBlur
 import com.hfut.schedule.ui.style.transitionBackground
-import com.hfut.schedule.ui.util.MyAnimationManager
-import com.hfut.schedule.ui.util.MyAnimationManager.currentPage
+import com.hfut.schedule.ui.util.AppAnimationManager
+import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
 import com.hfut.schedule.ui.util.navigateAndSave
-import com.hfut.schedule.viewmodel.UIViewModel
+import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 
@@ -208,7 +206,9 @@ fun SupabaseHome(vm : NetWorkViewModel,navHostController: NavHostController,vmUI
                                 label = { Text(text = item.label) },
                                 icon = {
                                     Icon(if(selected)item.filledIcon else item.icon, contentDescription = item.label)
-                                }
+                                },
+                                colors = NavigationBarItemDefaults.colors(indicatorColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = .9f))
+
                             )
                         }
                     }
@@ -217,7 +217,7 @@ fun SupabaseHome(vm : NetWorkViewModel,navHostController: NavHostController,vmUI
             }
         ) { innerPadding ->
             innerPaddingValues = innerPadding
-            val animation = MyAnimationManager.getAnimationType(currentAnimationIndex,bottomBarItems.page)
+            val animation = AppAnimationManager.getAnimationType(currentAnimationIndex,bottomBarItems.page)
 
             NavHost(navController = navController,
                 startDestination = CardBarItems.HOME.name,

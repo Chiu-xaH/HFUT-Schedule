@@ -18,7 +18,7 @@ import com.hfut.schedule.ui.screen.home.search.function.huiXin.shower.ShowerUI
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.shower.tranamt
 import com.hfut.schedule.ui.screen.shower.login.getGuaGuaPersonInfo
 import com.hfut.schedule.ui.component.LargeCard
-import com.hfut.schedule.ui.component.ScrollText
+import com.hfut.schedule.ui.component.custom.ScrollText
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel

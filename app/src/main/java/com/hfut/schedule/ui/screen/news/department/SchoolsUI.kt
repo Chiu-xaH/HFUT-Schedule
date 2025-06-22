@@ -9,15 +9,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.AnimationCardListItem
-import com.hfut.schedule.ui.component.MyCustomCard
-import com.hfut.schedule.ui.component.ScrollText
+import com.hfut.schedule.ui.component.custom.ScrollText
 import com.hfut.schedule.ui.component.DepartmentIcons
-import com.hfut.schedule.ui.component.StyleCardListItem
 
 @Composable
 fun SchoolsUI(innerPdding : PaddingValues? = null) {

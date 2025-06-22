@@ -19,6 +19,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -40,25 +41,23 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.viewmodel.UIViewModel
+import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.logic.enumeration.CardBarItems
 import com.hfut.schedule.logic.model.NavigationBarItemData
-import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.screen.card.function.main.HomeScreen
 import com.hfut.schedule.ui.screen.card.bill.main.CardBills
 import com.hfut.schedule.ui.screen.card.count.CardHome
 //import com.hfut.schedule.ui.activity.card.function.main.turnToBottomBar
 import com.hfut.schedule.ui.screen.home.focus.funiction.initCardNetwork
-import com.hfut.schedule.ui.util.MyAnimationManager
-import com.hfut.schedule.ui.util.MyAnimationManager.currentPage
+import com.hfut.schedule.ui.util.AppAnimationManager
+import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
 //import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
 
-import com.hfut.schedule.ui.component.CustomTabRow
+import com.hfut.schedule.ui.component.custom.CustomTabRow
 import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.ui.style.bottomBarBlur
 import com.hfut.schedule.ui.style.topBarBlur
-import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.async
@@ -97,8 +96,8 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
     val navController = rememberNavController()
     var bottomBarItems by remember { mutableStateOf(CardBarItems.HOME) }
 
-    val pagerState = rememberPagerState(pageCount = { 3 })
-    val titles = listOf("日","月","学期")
+    val pagerState = rememberPagerState(pageCount = { 4 })
+    val titles = remember { listOf("概况", "日", "月","年") }
 
     var refresh by remember { mutableStateOf(false) }
 
@@ -199,7 +198,8 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
                             label = { Text(text = item.label) },
                             icon = {
                                 BadgedBox(badge = {}) { Icon(if(selected)item.filledIcon else item.icon, contentDescription = item.label) }
-                            }
+                            },
+                            colors = NavigationBarItemDefaults.colors(indicatorColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = .9f))
                         )
                     }
                 }
@@ -207,7 +207,7 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
 
         }
     ) {innerPadding ->
-        val animation = MyAnimationManager.getAnimationType(currentAnimationIndex,bottomBarItems.page)
+        val animation = AppAnimationManager.getAnimationType(currentAnimationIndex,bottomBarItems.page)
 
         NavHost(navController = navController,
             startDestination = CardBarItems.HOME.name,

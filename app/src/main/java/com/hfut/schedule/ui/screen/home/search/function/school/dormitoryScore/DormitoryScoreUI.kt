@@ -54,7 +54,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.network.UiState
+import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
@@ -62,13 +62,12 @@ import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.CenterScreen
 import com.hfut.schedule.ui.component.CommonNetworkScreen
-import com.hfut.schedule.ui.component.CustomTabRow
+import com.hfut.schedule.ui.component.custom.CustomTabRow
 import com.hfut.schedule.ui.component.EmptyUI
-import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.MenuChip
+import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.custom.MenuChip
 import com.hfut.schedule.ui.component.PrepareSearchUI
 import com.hfut.schedule.ui.component.SmallCard
-import com.hfut.schedule.ui.component.StatusUI
 import com.hfut.schedule.ui.component.TransplantListItem
  
   

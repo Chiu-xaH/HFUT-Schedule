@@ -7,9 +7,9 @@ import com.hfut.schedule.logic.model.community.CourseResult
 import com.hfut.schedule.logic.model.community.CourseTotalResponse
 import com.hfut.schedule.logic.model.community.courseBasicInfoDTOList
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
-import com.hfut.schedule.logic.util.sys.DateTimeUtils
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.network.parse.ParseJsons.getMy
+import com.hfut.schedule.logic.util.network.ParseJsons.getMy
 import java.time.LocalDate
 // 之前的奇葩脑回路，完全看不懂咋写的
 private fun getCourse(friendUserName : String? = null): List<courseBasicInfoDTOList>  {
@@ -79,12 +79,12 @@ fun getStartWeek() : LocalDate {
     } catch (e : Exception) {
         var start = getMy()?.startDay
         if(start == null) {
-            val month = DateTimeUtils.Date_MM.toIntOrNull() ?: 9
+            val month = DateTimeManager.Date_MM.toIntOrNull() ?: 9
             start = when(month) {
-                1 -> DateTimeUtils.Date_yyyy + "-02-23"
-                in 2..7 -> DateTimeUtils.Date_yyyy + "-02-23"
-                in 8..12 -> DateTimeUtils.Date_yyyy + "-09-09"
-                else -> DateTimeUtils.Date_yyyy + "-09-09"
+                1 -> DateTimeManager.Date_yyyy + "-02-23"
+                in 2..7 -> DateTimeManager.Date_yyyy + "-02-23"
+                in 8..12 -> DateTimeManager.Date_yyyy + "-09-09"
+                else -> DateTimeManager.Date_yyyy + "-09-09"
             }
         }
         return LocalDate.parse(start)

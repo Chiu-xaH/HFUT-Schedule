@@ -8,12 +8,12 @@ import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.enumeration.SupabaseScreen
 import com.hfut.schedule.logic.model.SupabaseLoginResponse
-import com.hfut.schedule.logic.util.network.reEmptyLiveDta
+import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.Starter.loginSupabase
 import com.hfut.schedule.logic.util.sys.Starter.startSupabase
-import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.util.navigateAndClear
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel

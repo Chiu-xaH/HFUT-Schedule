@@ -1,7 +1,6 @@
 package com.hfut.schedule.viewmodel.network
 
 import android.util.Base64
-import android.util.Log
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,6 +12,8 @@ import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.enumeration.LibraryItems
 import com.hfut.schedule.logic.enumeration.LoginType
+import com.hfut.schedule.logic.model.ForecastAllBean
+import com.hfut.schedule.logic.model.ForecastBean
 import com.hfut.schedule.logic.model.NewsResponse
 import com.hfut.schedule.logic.model.PayData
 import com.hfut.schedule.logic.model.PayResponse
@@ -62,12 +63,12 @@ import com.hfut.schedule.logic.model.jxglstu.SurveyTeacherResponse
 import com.hfut.schedule.logic.model.jxglstu.TransferResponse
 import com.hfut.schedule.logic.model.jxglstu.forStdLessonSurveySearchVms
 import com.hfut.schedule.logic.model.jxglstu.lessonResponse
-import com.hfut.schedule.logic.model.jxglstu.lessonSurveyTasks
 import com.hfut.schedule.logic.model.jxglstu.lessons
 import com.hfut.schedule.logic.model.one.BorrowBooksResponse
 import com.hfut.schedule.logic.model.one.SubBooksResponse
+import com.hfut.schedule.logic.model.one.datas
 import com.hfut.schedule.logic.model.one.getTokenResponse
-import com.hfut.schedule.logic.model.zjgd.BillDatas
+import com.hfut.schedule.logic.model.zjgd.BillBean
 import com.hfut.schedule.logic.model.zjgd.BillMonth
 import com.hfut.schedule.logic.model.zjgd.BillMonthResponse
 import com.hfut.schedule.logic.model.zjgd.BillRangeResponse
@@ -103,8 +104,10 @@ import com.hfut.schedule.logic.network.servicecreator.StuServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.SupabaseServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.ZJGDBillServiceCreator
 import com.hfut.schedule.logic.util.network.Encrypt
-import com.hfut.schedule.logic.util.network.HfutCAS
-import com.hfut.schedule.logic.util.network.StateHolder
+import com.hfut.schedule.logic.util.network.state.CasInHFUT
+import com.hfut.schedule.logic.util.network.state.PARSE_ERROR_CODE
+import com.hfut.schedule.logic.util.network.state.StateHolder
+import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.network.supabaseEventDtoToEntity
 import com.hfut.schedule.logic.util.network.supabaseEventEntityToDto
 import com.hfut.schedule.logic.util.network.supabaseEventForkDtoToEntity
@@ -112,7 +115,8 @@ import com.hfut.schedule.logic.util.parse.SemseterParser
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveInt
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
-import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.onListenStateHolder
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.WebInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.ApplyGrade
@@ -127,6 +131,9 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Transfe
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
 import com.hfut.schedule.ui.screen.home.search.function.one.mail.MailResponse
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withContext
 import okhttp3.Headers
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -136,6 +143,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.awaitResponse
+import kotlin.ranges.contains
 
 // 106个函数
 class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
@@ -426,7 +434,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
     val selectCourseData = MutableLiveData<String?>()
     fun getSelectCourse(cookie: String) {
-        val bizTypeId = HfutCAS.bizTypeId ?: return
+        val bizTypeId = CasInHFUT.bizTypeId ?: return
         val call = jxglstuJSON.getSelectCourse(bizTypeId,studentId.value.toString(), cookie)
 
         call.enqueue(object : Callback<ResponseBody> {
@@ -921,15 +929,21 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         })
     }
 
-    val huiXinBillResult = StateHolder<BillResponse>()
-    suspend fun getCardBill(auth : String, page : Int) = launchRequestSimple(
+    val huiXinBillResult = StateHolder<BillBean>()
+    suspend fun getCardBill(
+        auth : String,
+        page : Int,
+        size : Int =
+            prefs.getString("CardRequest", MyApplication.PAGE_SIZE.toString())?.toIntOrNull()
+                ?: MyApplication.PAGE_SIZE
+    ) = launchRequestSimple(
         holder = huiXinBillResult,
-        request = { huiXin.Cardget(auth,page, prefs.getString("CardRequest", MyApplication.PAGE_SIZE.toString()) ?: MyApplication.PAGE_SIZE.toString()).awaitResponse() },
+        request = { huiXin.Cardget(auth,page,size.toString() ).awaitResponse() },
         transformSuccess = { _,json -> parseHuiXinBills(json) }
     )
-    private fun parseHuiXinBills(json : String) : BillResponse = try {
+    private fun parseHuiXinBills(json : String) : BillBean = try {
         if(json.contains("操作成功")){
-            Gson().fromJson(json, BillResponse::class.java)
+            Gson().fromJson(json, BillResponse::class.java).data
         } else
             throw Exception(json)
     } catch (e : Exception) { throw e }
@@ -947,6 +961,38 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
+    }
+
+    val cardPredictedResponse = StateHolder<ForecastAllBean>()
+    suspend fun getCardPredicted(auth: String) = withContext(Dispatchers.IO) {
+        suspend fun reloadAllBills(origin: BillBean) {
+            huiXinBillResult.clear()
+            getCardBill(auth, page = 1, size = origin.total)
+
+            val newState = huiXinBillResult.state.first()
+            if (newState is UiState.Success) {
+                Repository.getCardPredicted(newState.data, cardPredictedResponse)
+            }
+        }
+
+        val currentState = huiXinBillResult.state.first()
+
+        when (currentState) {
+            is UiState.Success -> {
+                val data = currentState.data
+                if(data.size != data.total) {
+                    reloadAllBills(data)
+                }
+            }
+            else -> {
+                // 第一次加载，拉取一条记录获取总数
+                getCardBill(auth, page = 1, size = 1)
+                val stateAfterInit = huiXinBillResult.state.first()
+                if (stateAfterInit is UiState.Success) {
+                    reloadAllBills(stateAfterInit.data)
+                }
+            }
+        }
     }
 
     val infoValue = MutableLiveData<String?>()
@@ -1125,13 +1171,13 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         }
     } catch (e : Exception) { throw e }
 
-    val huiXinSearchBillsResult = StateHolder<BillDatas>()
+    val huiXinSearchBillsResult = StateHolder<BillBean>()
     suspend fun searchBills(auth : String, info: String,page : Int) = launchRequestSimple(
         holder = huiXinSearchBillsResult,
         request = { huiXin.searchBills(auth,info,page, prefs.getString("CardRequest","30") ?: MyApplication.PAGE_SIZE.toString()).awaitResponse() },
         transformSuccess = { _, json -> parseHuiXinSearchBills(json) }
     )
-    private fun parseHuiXinSearchBills(result : String) : BillDatas = try {
+    private fun parseHuiXinSearchBills(result : String) : BillBean = try {
         if(result.contains("操作成功")) {
             Gson().fromJson(result,BillResponse::class.java).data
         } else {

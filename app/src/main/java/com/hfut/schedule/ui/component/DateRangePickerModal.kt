@@ -31,7 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.hfut.schedule.logic.util.sys.DateTimeUtils
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -56,12 +56,12 @@ fun DateRangePickerModal(
 
     if(!isSchedule) {
         LaunchedEffect(Unit) {
-            val todayStartMillis = DateTimeUtils.getToday()
+            val todayStartMillis = DateTimeManager.getToday()
                 .atStartOfDay(ZoneId.systemDefault())
                 .toInstant()
                 .toEpochMilli()
             startDate = todayStartMillis
-            startDateString = DateTimeUtils.simpleFormatter_YYYY_MM_DD.format(startDate)
+            startDateString = DateTimeManager.simpleFormatter_YYYY_MM_DD.format(startDate)
         }
     }
 
@@ -93,8 +93,8 @@ fun DateRangePickerModal(
                     launch { endDate = dateRangePickerState.selectedEndDateMillis }
                 }.await()
                 launch {
-                    launch { startDateString = if(startDate != null) DateTimeUtils.simpleFormatter_YYYY_MM_DD.format(startDate) else null }
-                    launch { endDateString = if(endDate != null) DateTimeUtils.simpleFormatter_YYYY_MM_DD.format(endDate) else null }
+                    launch { startDateString = if(startDate != null) DateTimeManager.simpleFormatter_YYYY_MM_DD.format(startDate) else null }
+                    launch { endDateString = if(endDate != null) DateTimeManager.simpleFormatter_YYYY_MM_DD.format(endDate) else null }
                 }
             }
 
@@ -115,7 +115,7 @@ fun DateRangePickerModal(
                     launch { endDate = datePickerState.selectedDateMillis }
                 }.await()
                 launch {
-                    launch { endDateString = if(endDate != null) DateTimeUtils.simpleFormatter_YYYY_MM_DD.format(endDate) else null }
+                    launch { endDateString = if(endDate != null) DateTimeManager.simpleFormatter_YYYY_MM_DD.format(endDate) else null }
                 }
             }
             DatePicker(

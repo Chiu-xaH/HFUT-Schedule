@@ -14,10 +14,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.network.UiState
+import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.ui.component.AnimationCardListItem
 import com.hfut.schedule.ui.component.CommonNetworkScreen
-import com.hfut.schedule.ui.component.ScrollText
+import com.hfut.schedule.ui.component.custom.ScrollText
 import com.hfut.schedule.viewmodel.network.GuaGuaViewModel
 
 @Composable

@@ -2,7 +2,6 @@ package com.hfut.schedule.ui.screen.home
 
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.lifecycle.Observer
 import com.google.gson.Gson
 import com.google.gson.JsonArray
@@ -10,12 +9,12 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import com.hfut.schedule.logic.model.HolidayBean
 import com.hfut.schedule.logic.model.HolidayResponse
-import com.hfut.schedule.logic.util.network.UiState
-import com.hfut.schedule.logic.util.network.HfutCAS
+import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.logic.util.network.state.CasInHFUT
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.sys.DateTimeUtils
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.ui.screen.home.cube.sub.getEleNew
 import com.hfut.schedule.ui.screen.home.cube.sub.getWebInfoFromZJGD
 import com.hfut.schedule.ui.screen.home.focus.funiction.initCardNetwork
@@ -23,7 +22,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.viewmodel.UIViewModel
+import com.hfut.schedule.viewmodel.ui.UIViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -76,7 +75,7 @@ fun initNetworkRefresh(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIVie
             }
         }
         // 更新节假日信息
-        if(DateTimeUtils.Date_yyyy != getHolidayYear()) {
+        if(DateTimeManager.Date_yyyy != getHolidayYear()) {
             launch { vm.downloadHoliday() }
         }
     }
@@ -97,7 +96,7 @@ suspend fun updateCourses(vm: NetWorkViewModel, vmUI: UIViewModel) = withContext
     val getBizTypeIdObserver = Observer<String?> { result ->
         if(result != null) {
             // 开始解析
-            val bizTypeId = HfutCAS.bizTypeId ?: HfutCAS.getBizTypeId(result)
+            val bizTypeId = CasInHFUT.bizTypeId ?: CasInHFUT.getBizTypeId(result)
             if(bizTypeId != null) {
                 vm.getLessonIds(cookie!!,bizTypeId,vm.studentId.value.toString())
             }

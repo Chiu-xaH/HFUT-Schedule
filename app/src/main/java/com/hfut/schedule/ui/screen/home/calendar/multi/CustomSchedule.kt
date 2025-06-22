@@ -1,11 +1,8 @@
 package com.hfut.schedule.ui.screen.home.calendar.multi
 
 import android.annotation.SuppressLint
-import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
@@ -31,13 +28,11 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -48,26 +43,19 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.gson.Gson
-import com.hfut.schedule.viewmodel.UIViewModel
+import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.logic.model.jxglstu.datumResponse
 import com.hfut.schedule.logic.database.DataBaseManager
-import com.hfut.schedule.logic.util.sys.DateTimeUtils
-import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
-import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
-import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.getNewWeek
-import com.hfut.schedule.ui.component.LoadingUI
+import com.hfut.schedule.ui.component.custom.LoadingUI
  
-import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.logic.util.sys.showToast
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -217,9 +205,9 @@ fun CustomSchedules(showAll : Boolean,
     )
 
     var Bianhuaweeks by rememberSaveable { mutableStateOf(
-        if(DateTimeUtils.weeksBetween > 20) {
+        if(DateTimeManager.weeksBetween > 20) {
             getNewWeek()
-        } else DateTimeUtils.weeksBetween
+        } else DateTimeManager.weeksBetween
     ) }
 
 
@@ -803,7 +791,7 @@ fun CustomSchedules(showAll : Boolean,
                         if (shouldShowAddButton) {
                             ExtendedFloatingActionButton(
                                 onClick = {
-                                    Bianhuaweeks = DateTimeUtils.weeksBetween
+                                    Bianhuaweeks = DateTimeManager.weeksBetween
                                     if(showAll) UpdateAll() else Update()
                                     onDateChange(LocalDate.now())
                                 },

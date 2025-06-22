@@ -44,13 +44,13 @@ import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.ShowerScreen
-import com.hfut.schedule.logic.util.network.UiState
+import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.BottomTip
 import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.ErrorUI
-import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.StatusUI
 import com.hfut.schedule.ui.component.StatusUI2
 import com.hfut.schedule.ui.component.TransplantListItem
@@ -60,7 +60,7 @@ import com.hfut.schedule.ui.screen.home.cube.sub.KeyBoard
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.RowHorizontal
 import com.hfut.schedule.ui.style.appBlur
-import com.hfut.schedule.ui.util.MyAnimationManager
+import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.viewmodel.network.GuaGuaViewModel
 import dev.chrisbanes.haze.HazeState
@@ -77,12 +77,12 @@ fun UseCodeUI(vm: GuaGuaViewModel, hazeState: HazeState, navController: NavHostC
 
     val scale = animateFloatAsState(
         targetValue = if (loading) 0.9f else 1f, // 按下时为0.9，松开时为1
-        animationSpec = tween(MyAnimationManager.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
+        animationSpec = tween(AppAnimationManager.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
         label = "" // 使用弹簧动画
     )
     val scale2 = animateFloatAsState(
         targetValue = if (loading) 0.97f else 1f, // 按下时为0.9，松开时为1
-        animationSpec = tween(MyAnimationManager.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
+        animationSpec = tween(AppAnimationManager.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
         label = "" // 使用弹簧动画
     )
 
@@ -131,8 +131,8 @@ fun UseCodeUI(vm: GuaGuaViewModel, hazeState: HazeState, navController: NavHostC
             if(!switchAutoRefresh) {
                 androidx.compose.animation.AnimatedVisibility(
                     visible = showButton,
-                    enter = fadeIn(tween(durationMillis = MyAnimationManager.ANIMATION_SPEED)) + scaleIn(tween(durationMillis = MyAnimationManager.ANIMATION_SPEED)),
-                    exit = fadeOut(tween(durationMillis = MyAnimationManager.ANIMATION_SPEED)) + scaleOut(tween(durationMillis = MyAnimationManager.ANIMATION_SPEED)),
+                    enter = fadeIn(tween(durationMillis = AppAnimationManager.ANIMATION_SPEED)) + scaleIn(tween(durationMillis = AppAnimationManager.ANIMATION_SPEED)),
+                    exit = fadeOut(tween(durationMillis = AppAnimationManager.ANIMATION_SPEED)) + scaleOut(tween(durationMillis = AppAnimationManager.ANIMATION_SPEED)),
                     modifier = Modifier
                         .align(Alignment.Center)
                         .zIndex(1f)

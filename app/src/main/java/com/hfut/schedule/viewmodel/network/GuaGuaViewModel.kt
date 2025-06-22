@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.hfut.schedule.logic.model.guagua.GuaGuaLoginResponse
 import com.hfut.schedule.logic.model.guagua.GuaguaBillsResponse
 import com.hfut.schedule.logic.network.repo.Repository
-import com.hfut.schedule.logic.util.network.StateHolder
+import com.hfut.schedule.logic.util.network.state.StateHolder
 
 // 5个函数
 class GuaGuaViewModel : ViewModel() {

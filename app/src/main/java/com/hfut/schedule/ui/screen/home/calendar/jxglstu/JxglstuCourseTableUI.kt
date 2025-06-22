@@ -61,19 +61,19 @@ import com.google.gson.JsonPrimitive
 import com.hfut.schedule.logic.model.community.LoginCommunityResponse
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
 import com.hfut.schedule.logic.model.jxglstu.datumResponse
-import com.hfut.schedule.logic.util.network.HfutCAS
-import com.hfut.schedule.logic.util.network.parse.ParseJsons.isNextOpen
+import com.hfut.schedule.logic.util.network.state.CasInHFUT
+import com.hfut.schedule.logic.util.network.ParseJsons.isNextOpen
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveInt
-import com.hfut.schedule.logic.util.sys.DateTimeUtils
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.LargeCard
-import com.hfut.schedule.ui.component.LoadingUI
+import com.hfut.schedule.ui.component.custom.LoadingUI
 import com.hfut.schedule.ui.component.TransplantListItem
  
-import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.DetailInfos
 import com.hfut.schedule.ui.screen.home.calendar.examToCalendar
@@ -81,7 +81,7 @@ import com.hfut.schedule.ui.screen.home.calendar.getScheduleDate
 import com.hfut.schedule.ui.screen.home.calendar.next.parseCourseName
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getTotalCourse
 import com.hfut.schedule.ui.style.HazeBottomSheet
-import com.hfut.schedule.viewmodel.UIViewModel
+import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
@@ -173,9 +173,9 @@ fun JxglstuCourseTableUI(
 
     var currentWeek by rememberSaveable {
         mutableLongStateOf(
-            if(DateTimeUtils.weeksBetween > 20) {
+            if(DateTimeManager.weeksBetween > 20) {
                 getNewWeek()
-            } else DateTimeUtils.weeksBetween
+            } else DateTimeManager.weeksBetween
         )
     }
 
@@ -451,7 +451,7 @@ fun JxglstuCourseTableUI(
             ""
         ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
         var num2 = 1
-        val ONE = HfutCAS.casCookies
+        val ONE = CasInHFUT.casCookies
         val TGC = prefs.getString("TGC", "")
         val cardvalue = prefs.getString("borrow", "")
         val cookies = "$ONE;$TGC"
@@ -549,7 +549,7 @@ fun JxglstuCourseTableUI(
                 val getBizTypeIdObserver = Observer<String?> { result ->
                     if(result != null) {
                         // 开始解析
-                        val bizTypeId = HfutCAS.bizTypeId ?: HfutCAS.getBizTypeId(result)
+                        val bizTypeId = CasInHFUT.bizTypeId ?: CasInHFUT.getBizTypeId(result)
                         if(bizTypeId != null) {
                             vm.getLessonIds(cookie!!,bizTypeId,vm.studentId.value.toString())
                             if(nextBoolean) {
@@ -768,7 +768,7 @@ fun JxglstuCourseTableUI(
                             if (shouldShowAddButton) {
                                 ExtendedFloatingActionButton(
                                     onClick = {
-                                        currentWeek = DateTimeUtils.weeksBetween
+                                        currentWeek = DateTimeManager.weeksBetween
 //                                        refreshUI(showAll)
                                         onDateChange(LocalDate.now())
                                     },
@@ -848,10 +848,10 @@ fun getNewWeek() : Long {
         val jxglstuJson = prefs.getString("courses","")
         val resultJxglstu = getTotalCourse(jxglstuJson)[0].semester.startDate
         val firstWeekStartJxglstu: LocalDate = LocalDate.parse(resultJxglstu)
-        val weeksBetweenJxglstu = ChronoUnit.WEEKS.between(firstWeekStartJxglstu, DateTimeUtils.getToday()) + 1
+        val weeksBetweenJxglstu = ChronoUnit.WEEKS.between(firstWeekStartJxglstu, DateTimeManager.getToday()) + 1
         weeksBetweenJxglstu  //固定本周
     } catch (_ : Exception) {
-        DateTimeUtils.weeksBetween
+        DateTimeManager.weeksBetween
     }
 }
 

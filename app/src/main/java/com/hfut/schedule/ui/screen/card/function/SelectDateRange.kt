@@ -1,7 +1,5 @@
 package com.hfut.schedule.ui.screen.card.function
 
-import android.os.Handler
-import android.os.Looper
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -25,22 +23,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import com.google.gson.Gson
-import com.hfut.schedule.logic.enumeration.ShowerScreen
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.logic.model.zjgd.BillRangeResponse
-import com.hfut.schedule.logic.util.network.UiState
-import com.hfut.schedule.logic.util.sys.DateTimeUtils
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.onListenStateHolder
-import com.hfut.schedule.ui.component.showToast
-import com.hfut.schedule.ui.util.navigateAndClear
-import kotlinx.coroutines.CoroutineScope
+import com.hfut.schedule.logic.util.sys.showToast
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Date
@@ -95,8 +84,8 @@ private suspend fun getRangeData(vm: NetWorkViewModel, state: DateRangePickerSta
     val startDate = Date(state.selectedStartDateMillis!!)
     val endDate = Date(state.selectedEndDateMillis!!)
 
-    val startDateString = DateTimeUtils.simpleFormatter_YYYY_MM_DD.format(startDate)
-    val endDateString = DateTimeUtils.simpleFormatter_YYYY_MM_DD.format(endDate)
+    val startDateString = DateTimeManager.simpleFormatter_YYYY_MM_DD.format(startDate)
+    val endDateString = DateTimeManager.simpleFormatter_YYYY_MM_DD.format(endDate)
 
     val auth = prefs.getString("auth", "")
     vm.huiXinRangeResult.clear()

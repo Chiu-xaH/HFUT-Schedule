@@ -28,7 +28,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
-import com.hfut.schedule.ui.component.LoadingUI
+import com.hfut.schedule.ui.component.custom.LoadingUI
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
@@ -65,7 +65,7 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.logic.enumeration.SelectType
 import com.hfut.schedule.logic.model.jxglstu.SelectCourseInfo
 import com.hfut.schedule.logic.model.jxglstu.SelectPostResponse
-import com.hfut.schedule.logic.util.network.UiState
+import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
@@ -78,22 +78,21 @@ import com.hfut.schedule.ui.component.AnimationCustomCard
  
 import com.hfut.schedule.ui.component.cardNormalColor
   
-import com.hfut.schedule.ui.component.BottomSheetTopBar
+import com.hfut.schedule.ui.component.custom.BottomSheetTopBar
 import com.hfut.schedule.ui.component.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.CenterScreen
 import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.EmptyUI
-import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.LittleDialog
-import com.hfut.schedule.ui.component.StatusUI
-import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.custom.LittleDialog
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.WebDialog
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.textFiledTransplant
-import com.hfut.schedule.viewmodel.UIViewModel
+import com.hfut.schedule.viewmodel.ui.UIViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job

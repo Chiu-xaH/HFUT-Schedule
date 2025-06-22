@@ -27,12 +27,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.logic.util.network.HfutCAS
+import com.hfut.schedule.logic.util.network.state.CasInHFUT
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.screen.home.search.function.other.life.countFunc
-import com.hfut.schedule.ui.component.BottomSheetTopBar
-import com.hfut.schedule.ui.component.LoadingUI
+import com.hfut.schedule.ui.component.custom.BottomSheetTopBar
+import com.hfut.schedule.ui.component.custom.LoadingUI
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.ui.component.StatusUI2
@@ -133,7 +133,7 @@ fun LoginStu(vm : NetWorkViewModel) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginStuUI(vm : NetWorkViewModel) {
-    val ONE = HfutCAS.casCookies
+    val ONE = CasInHFUT.casCookies
     val TGC = prefs.getString("TGC", "")
     val cookies = "$ONE;$TGC"
 

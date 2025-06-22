@@ -37,28 +37,28 @@ import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.model.Schedule
 import com.hfut.schedule.logic.model.community.TodayResult
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
-import com.hfut.schedule.logic.util.network.parse.ParseJsons.getTimeStamp
+import com.hfut.schedule.logic.util.network.ParseJsons.getTimeStamp
 import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
-import com.hfut.schedule.logic.util.parse.isHolidayTomorrow
-import com.hfut.schedule.logic.util.parse.isSpecificWorkDayTomorrow
+import com.hfut.schedule.logic.util.sys.datetime.isHolidayTomorrow
+import com.hfut.schedule.logic.util.sys.datetime.isSpecificWorkDayTomorrow
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.sys.DateTimeUtils
-import com.hfut.schedule.logic.util.sys.DateTimeUtils.TimeState.ENDED
-import com.hfut.schedule.logic.util.sys.DateTimeUtils.TimeState.NOT_STARTED
-import com.hfut.schedule.logic.util.sys.DateTimeUtils.TimeState.ONGOING
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.TimeState.ENDED
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.TimeState.NOT_STARTED
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.TimeState.ONGOING
 import com.hfut.schedule.logic.util.sys.JxglstuCourseSchedule
 import com.hfut.schedule.logic.util.sys.addToCalendars
 import com.hfut.schedule.ui.component.BottomTip
-import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.LittleDialog
+import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.custom.LittleDialog
 import com.hfut.schedule.ui.component.RotatingIcon
 import com.hfut.schedule.ui.component.ScheduleIcons
-import com.hfut.schedule.ui.component.ScrollText
+import com.hfut.schedule.ui.component.custom.ScrollText
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.onListenStateHolder
-import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.DetailInfos
 import com.hfut.schedule.ui.screen.home.cube.apiCheck
@@ -66,7 +66,7 @@ import com.hfut.schedule.ui.screen.home.search.function.huiXin.card.TodayInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
 import com.hfut.schedule.ui.style.ColumnVertical
 import com.hfut.schedule.ui.style.HazeBottomSheet
-import com.hfut.schedule.viewmodel.UIViewModel
+import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
@@ -99,7 +99,7 @@ fun ScheduleItem(listItem : Schedule, isFuture: Boolean, activity : Activity) {
         val getEndTime = "${endYear}${endMonthStr}${endDateStr}".toLong()
 
 
-        val nowTime = DateTimeUtils.Date_yyyy_MM_dd.replace("-","").toLong()
+        val nowTime = DateTimeManager.Date_yyyy_MM_dd.replace("-","").toLong()
 
 
         if(!isFuture) {
@@ -188,7 +188,7 @@ fun NetCourseItem(listItem : Schedule, isFuture: Boolean, activity: Activity) {
             val getEndTime = "${endYear}${endMonthStr}${endDateStr}".toLong()
 
 
-            val nowTime = DateTimeUtils.Date_yyyy_MM_dd.replace("-","").toLong()
+            val nowTime = DateTimeManager.Date_yyyy_MM_dd.replace("-","").toLong()
 
 
             if(isFuture) {
@@ -264,9 +264,9 @@ fun CommunityTodayCourseItem(list : courseDetailDTOList, vm : NetWorkViewModel, 
 
     val switchShowEnded = prefs.getBoolean("SWITCHSHOWENDED",true)
 
-    val week = DateTimeUtils.weeksBetween.toInt()
+    val week = DateTimeManager.weeksBetween.toInt()
 
-    var weekday = DateTimeUtils.dayWeek
+    var weekday = DateTimeManager.dayWeek
     if(weekday == 0) weekday = 7
     //课程详情
 //    val list =
@@ -278,7 +278,7 @@ fun CommunityTodayCourseItem(list : courseDetailDTOList, vm : NetWorkViewModel, 
     val endTime = time.substringAfter("-")
 
 
-    val state = DateTimeUtils.getTimeState(startTime, endTime,timeNow)
+    val state = DateTimeManager.getTimeState(startTime, endTime,timeNow)
 
     if (showBottomSheet) {
         HazeBottomSheet (
@@ -344,8 +344,8 @@ fun CommunityTodayCourseItem(list : courseDetailDTOList, vm : NetWorkViewModel, 
 @Composable
 fun CommunityTomorrowCourseItem(list: courseDetailDTOList , vm: NetWorkViewModel, hazeState: HazeState) {
 
-    val weekdayTomorrow = DateTimeUtils.dayWeek + 1
-    var week = DateTimeUtils.weeksBetween.toInt()
+    val weekdayTomorrow = DateTimeManager.dayWeek + 1
+    var week = DateTimeManager.weeksBetween.toInt()
     //当第二天为下一周的周一时，周数+1
     when(weekdayTomorrow) {
         1 -> week += 1
@@ -381,14 +381,14 @@ fun CommunityTomorrowCourseItem(list: courseDetailDTOList , vm: NetWorkViewModel
 @Composable
 fun CustomItem(item : CustomEventDTO,hazeState: HazeState,isFuture: Boolean,activity: Activity,showTomorrow : Boolean,refresh : () -> Unit) {
     val dateTime = item.dateTime
-    val nowTimeNum = (DateTimeUtils.Date_yyyy_MM_dd.replace("-","") + DateTimeUtils.Time_HH_MM.replace(":","")).toLong()
+    val nowTimeNum = (DateTimeManager.Date_yyyy_MM_dd.replace("-","") + DateTimeManager.Time_HH_MM.replace(":","")).toLong()
     val endNum = with(dateTime.end) { "$year${parseTimeItem(month)}${parseTimeItem(day)}${parseTimeItem(hour)}${parseTimeItem(minute)}" }.toLong()
     val startNum = with(dateTime.start) { "$year${parseTimeItem(month)}${parseTimeItem(day)}${parseTimeItem(hour)}${parseTimeItem(minute)}" }.toLong()
 
     if(item.type == CustomEventType.SCHEDULE) {
         val startNumSummary = with(dateTime.start) { "$year-${parseTimeItem(month)}-${parseTimeItem(day)}" }
-        val isTomorrow = DateTimeUtils.tomorrow_YYYY_MM_DD == startNumSummary
-        if(nowTimeNum in startNum..endNum || isTomorrow && showTomorrow || startNumSummary == DateTimeUtils.Date_yyyy_MM_dd) {
+        val isTomorrow = DateTimeManager.tomorrow_YYYY_MM_DD == startNumSummary
+        if(nowTimeNum in startNum..endNum || isTomorrow && showTomorrow || startNumSummary == DateTimeManager.Date_yyyy_MM_dd) {
             // 显示在首页
             // 显示在首页有三种情况1.日期等于明天（isTomorrow）并且showTomorrow；2.在进行中（nowTimeNum in start .. end）3.未开始但是今天即将开始（startNumSummary==Date.Today）
             if(!isFuture)
@@ -544,8 +544,8 @@ fun TodayUI(hazeState: HazeState,vm: NetWorkViewModel) {
             }
             else -> {
                 //判断明天是否有早八
-                val weekdayTomorrow = DateTimeUtils.dayWeek + 1
-                var week = DateTimeUtils.weeksBetween.toInt()
+                val weekdayTomorrow = DateTimeManager.dayWeek + 1
+                var week = DateTimeManager.weeksBetween.toInt()
                 //当第二天为下一周的周一时，周数+1
                 when(weekdayTomorrow) {
                     1 -> week += 1
@@ -658,7 +658,7 @@ fun JxglstuTodayCourseItem(item : JxglstuCourseSchedule, hazeState: HazeState, t
     val endTime = with(time.end) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
 
 
-    val state = DateTimeUtils.getTimeState(startTime, endTime,timeNow)
+    val state = DateTimeManager.getTimeState(startTime, endTime,timeNow)
     val name = item.courseName
     var showBottomSheet by remember { mutableStateOf(false) }
     if (showBottomSheet) {
@@ -780,7 +780,7 @@ fun getJxglstuCourse(date : String,vmUI : UIViewModel) : List<JxglstuCourseSched
 }
 
 fun getTodayJxglstuCourse(vmUI : UIViewModel) : List<JxglstuCourseSchedule> = getJxglstuCourse(
-    DateTimeUtils.Date_yyyy_MM_dd,vmUI)
+    DateTimeManager.Date_yyyy_MM_dd,vmUI)
 
 fun getTomorrowJxglstuCourse(vmUI : UIViewModel) : List<JxglstuCourseSchedule> = getJxglstuCourse(
-    DateTimeUtils.tomorrow_YYYY_MM_DD,vmUI)
+    DateTimeManager.tomorrow_YYYY_MM_DD,vmUI)

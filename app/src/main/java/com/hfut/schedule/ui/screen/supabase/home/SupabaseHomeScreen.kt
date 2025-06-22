@@ -56,21 +56,21 @@ import com.hfut.schedule.logic.database.entity.CustomEventDTO
 import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.database.util.CustomEventMapper
 import com.hfut.schedule.logic.enumeration.SortType
-import com.hfut.schedule.logic.util.network.reEmptyLiveDta
+import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
 import com.hfut.schedule.logic.util.network.toStr
 import com.hfut.schedule.logic.util.network.toTimestampWithOutT
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.component.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.CenterScreen
-import com.hfut.schedule.ui.component.CustomTextField
+import com.hfut.schedule.ui.component.custom.CustomTextField
 import com.hfut.schedule.ui.component.DevelopingUI
-import com.hfut.schedule.ui.component.LoadingScreen
+import com.hfut.schedule.ui.component.custom.LoadingScreen
 import com.hfut.schedule.ui.component.MyCustomCard
-import com.hfut.schedule.ui.component.RefreshIndicator
+import com.hfut.schedule.ui.component.custom.RefreshIndicator
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.cardNormalColor
   
-import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.EventCampus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getEventCampus
@@ -330,10 +330,10 @@ private fun SupabaseScheduleUI(vm: NetWorkViewModel,sortType : SortType,sortReve
                                         Text("上传时间 ${item.createTime.toStr()}" ) },
                                     headlineContent = { Text(
                                         "来自 " +
-                                                item.contributorClass
+                                                item.contributorClass.substringBefore("-") + "级"
                                                 +
-                                                " *********" +
-                                                item.contributorId.substring(9,10)
+                                                " ********" +
+                                                item.contributorId.substring(8,10)
                                     ) },
                                     leadingContent = {
                                         Icon(painterResource(R.drawable.person),null)

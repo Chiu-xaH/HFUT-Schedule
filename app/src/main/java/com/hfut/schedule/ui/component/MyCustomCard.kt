@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.ui.style.appBlur
-import com.hfut.schedule.ui.util.MyAnimationManager.ANIMATION_SPEED
+import com.hfut.schedule.ui.util.AppAnimationManager.ANIMATION_SPEED
 
 @Composable
 fun MyCustomCard(

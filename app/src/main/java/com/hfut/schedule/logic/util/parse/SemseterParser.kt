@@ -1,7 +1,7 @@
 package com.hfut.schedule.logic.util.parse
 
-import com.hfut.schedule.logic.util.sys.DateTimeUtils
-import com.hfut.schedule.logic.util.network.parse.ParseJsons.getMy
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
+import com.hfut.schedule.logic.util.network.ParseJsons.getMy
 
 object SemseterParser {
     @JvmStatic
@@ -61,7 +61,7 @@ object SemseterParser {
     @JvmStatic
     fun getSemseter() : Int {
         return try {
-            reverseGetSemester(DateTimeUtils.Date_yyyy_MM) ?: 0
+            reverseGetSemester(DateTimeManager.Date_yyyy_MM) ?: 0
         } catch (e:Exception) {
             getMy()!!.semesterId.toInt()
         }

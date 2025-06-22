@@ -34,17 +34,17 @@ import com.hfut.schedule.logic.database.entity.CustomEventDTO
 import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.enumeration.SortType
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
-import com.hfut.schedule.logic.util.network.parse.ParseJsons.getCustomEvent
-import com.hfut.schedule.logic.util.network.parse.ParseJsons.getNetCourse
-import com.hfut.schedule.logic.util.network.parse.ParseJsons.getSchedule
+import com.hfut.schedule.logic.util.network.ParseJsons.getCustomEvent
+import com.hfut.schedule.logic.util.network.ParseJsons.getNetCourse
+import com.hfut.schedule.logic.util.network.ParseJsons.getSchedule
 import com.hfut.schedule.logic.util.network.toTimestampWithOutT
-import com.hfut.schedule.logic.util.parse.isHoliday
-import com.hfut.schedule.logic.util.parse.isHolidayTomorrow
+import com.hfut.schedule.logic.util.sys.datetime.isHoliday
+import com.hfut.schedule.logic.util.sys.datetime.isHolidayTomorrow
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.sys.DateTimeUtils
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.JxglstuCourseSchedule
-import com.hfut.schedule.ui.component.RefreshIndicator
+import com.hfut.schedule.ui.component.custom.RefreshIndicator
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.cube.sub.FocusCard
 import com.hfut.schedule.ui.screen.home.focus.funiction.CommunityTodayCourseItem
@@ -63,7 +63,7 @@ import com.hfut.schedule.ui.screen.home.initNetworkRefresh
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExamUI
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.getExamJXGLSTU
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
-import com.hfut.schedule.viewmodel.UIViewModel
+import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
@@ -92,13 +92,13 @@ fun TodayScreen(
     var scheduleList by remember { mutableStateOf(getSchedule()) }
     var netCourseList by remember { mutableStateOf(getNetCourse()) }
     var refreshing by remember { mutableStateOf(false) }
-    var timeNow by remember { mutableStateOf(DateTimeUtils.Time_HH_MM) }
+    var timeNow by remember { mutableStateOf(DateTimeManager.Time_HH_MM) }
     val activity = LocalActivity.current
     val scope = rememberCoroutineScope()
     val states = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
         scope.launch {
             async { refreshing = true }.await()
-            async { DateTimeUtils.updateTime { timeNow = it } }.await()
+            async { DateTimeManager.updateTime { timeNow = it } }.await()
             async { initNetworkRefresh(vm,vm2,vmUI,ifSaved) }.await()
             launch { netCourseList = getNetCourse() }
             launch { scheduleList = getSchedule() }
@@ -138,15 +138,15 @@ fun TodayScreen(
         launch {
             when(courseDataSource) {
                 CourseType.COMMUNITY.code -> {
-                    val weekDayTomorrow = DateTimeUtils.dayWeek + 1
-                    var weekdayToday = DateTimeUtils.dayWeek
-                    var nextWeek = DateTimeUtils.weeksBetween.toInt()
+                    val weekDayTomorrow = DateTimeManager.dayWeek + 1
+                    var weekdayToday = DateTimeManager.dayWeek
+                    var nextWeek = DateTimeManager.weeksBetween.toInt()
                     //当今天为周日时，变0为7
                     //当第二天为下一周的周一时，周数+1
                     when(weekDayTomorrow) { 1 -> nextWeek += 1 }
                     when (weekdayToday) { 0 -> weekdayToday = 7 }
                     //判断是否上完今天的课
-                    val week = DateTimeUtils.weeksBetween.toInt()
+                    val week = DateTimeManager.weeksBetween.toInt()
                     todayCourseList = getCourseInfoFromCommunity(weekdayToday,week).flatten().distinct()
                     val lastCourse = todayCourseList.lastOrNull()
                     lastTime = lastCourse?.classTime?.substringAfter("-") ?: "00:00"
@@ -177,7 +177,7 @@ fun TodayScreen(
         launch {
             while (true) {
                 delay(1000L*60)
-                DateTimeUtils.updateTime { timeNow = it }
+                DateTimeManager.updateTime { timeNow = it }
             }
         }
     }
@@ -204,10 +204,10 @@ fun TodayScreen(
         HorizontalPager(state = state) { page ->
             val showTomorrow = when(courseDataSource) {
                 CourseType.COMMUNITY.code -> {
-                    DateTimeUtils.compareTime(lastTime) != DateTimeUtils.TimeState.NOT_STARTED
+                    DateTimeManager.compareTime(lastTime) != DateTimeManager.TimeState.NOT_STARTED
                 }
                 CourseType.JXGLSTU.code -> {
-                    DateTimeUtils.compareTime(jxglstuLastTime) != DateTimeUtils.TimeState.NOT_STARTED
+                    DateTimeManager.compareTime(jxglstuLastTime) != DateTimeManager.TimeState.NOT_STARTED
                 }
                 else -> true
             }
@@ -312,14 +312,14 @@ fun TodayScreen(
                             if(!isHolidayTomorrow()) {
                                 when(courseDataSource) {
                                     CourseType.COMMUNITY.code -> {
-                                        if (DateTimeUtils.compareTime(lastTime) == DateTimeUtils.TimeState.NOT_STARTED) {
+                                        if (DateTimeManager.compareTime(lastTime) == DateTimeManager.TimeState.NOT_STARTED) {
                                             items(tomorrowCourseList.size) { item ->
                                                 CommunityTomorrowCourseItem(list = tomorrowCourseList[item],vm,hazeState)
                                             }
                                         }
                                     }
                                     CourseType.JXGLSTU.code -> {
-                                        if (DateTimeUtils.compareTime(jxglstuLastTime) == DateTimeUtils.TimeState.NOT_STARTED) {
+                                        if (DateTimeManager.compareTime(jxglstuLastTime) == DateTimeManager.TimeState.NOT_STARTED) {
                                             tomorrowJxglstuList.let { list ->
                                                 items(list.size) { item ->
                                                     JxglstuTomorrowCourseItem(list[item], hazeState,vm)

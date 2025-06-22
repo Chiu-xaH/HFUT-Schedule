@@ -2,7 +2,6 @@ package com.hfut.schedule.ui.screen.home.search.function.jxglstu.survey
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,10 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -28,9 +24,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -42,18 +36,16 @@ import com.hfut.schedule.logic.model.jxglstu.PostSurvey
 import com.hfut.schedule.logic.model.jxglstu.SurveyResponse
 import com.hfut.schedule.logic.model.jxglstu.blankQuestionAnswer
 import com.hfut.schedule.logic.model.jxglstu.radioQuestionAnswer
-import com.hfut.schedule.logic.util.network.UiState
+import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.CommonNetworkScreen
-import com.hfut.schedule.ui.component.CustomTextField
+import com.hfut.schedule.ui.component.custom.CustomTextField
 import com.hfut.schedule.ui.component.LargeButton
-import com.hfut.schedule.ui.component.LittleDialog
+import com.hfut.schedule.ui.component.custom.LittleDialog
  
-import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.onListenStateHolder
-import com.hfut.schedule.ui.style.ColumnVertical
 import com.hfut.schedule.ui.style.RowHorizontal
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import kotlinx.coroutines.CoroutineScope

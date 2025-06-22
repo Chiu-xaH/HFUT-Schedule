@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import com.google.gson.Gson
 import com.hfut.schedule.logic.model.community.ExamResponse
 import com.hfut.schedule.logic.model.community.examArrangementList
-import com.hfut.schedule.logic.util.sys.DateTimeUtils
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import org.jsoup.Jsoup
 import java.text.SimpleDateFormat
@@ -28,7 +28,7 @@ fun getNewExam() : MutableList<examArrangementList> {
     try {
         val result = Gson().fromJson(json,ExamResponse::class.java)
         val list = result.result.examArrangementList
-        val date = DateTimeUtils.Date_yyyy_MM_dd
+        val date = DateTimeManager.Date_yyyy_MM_dd
         val todaydate = date.substring(0, 4) + date.substring(5, 7) + date.substring(8, 10)
 
 

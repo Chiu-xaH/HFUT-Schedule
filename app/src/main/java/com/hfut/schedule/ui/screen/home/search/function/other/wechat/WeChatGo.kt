@@ -11,9 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,12 +30,12 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.sys.ClipBoard
+import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.BottomTip
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
  
@@ -148,7 +146,7 @@ fun WeChatGo(hazeState : HazeState) {
                                             showedUrl = url
                                             showBottomSheetQRCode = true
                                         },
-                                        onLongClick = { ClipBoard.copy(url) },
+                                        onLongClick = { ClipBoardUtils.copy(url) },
                                     )
                                 )
                             }
@@ -165,7 +163,7 @@ fun WeChatGo(hazeState : HazeState) {
                                     headlineContent = { Text(name)},
                                     supportingContent = text?.let { { Text(it) } },
                                     leadingContent = { Icon(painterResource(icon),null)},
-                                    modifier = Modifier.clickable { ClipBoard.copy(name) }
+                                    modifier = Modifier.clickable { ClipBoardUtils.copy(name) }
                                 )
                             }
                         }

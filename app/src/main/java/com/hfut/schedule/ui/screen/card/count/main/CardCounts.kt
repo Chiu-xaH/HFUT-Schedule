@@ -50,18 +50,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.zjgd.BillMonth
-import com.hfut.schedule.logic.util.network.UiState
+import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.SharedPrefs
-import com.hfut.schedule.logic.util.sys.DateTimeUtils
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.BottomSheetTopBar
+import com.hfut.schedule.ui.component.custom.BottomSheetTopBar
 import com.hfut.schedule.ui.component.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.SmallCard
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.cardNormalColor
-import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.card.count.drawLineChart
 import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -71,8 +71,8 @@ private fun withoutMonthBills(originalList : List<BillMonth>) : List<BillMonth> 
     val iterator = list.iterator()
     while (iterator.hasNext()) {
         val billMonth = iterator.next()
-        if(DateTimeUtils.Date_yyyy_MM == billMonth.date.substring(0,7)) {
-            if(DateTimeUtils.Date_MM_dd.replace("-","").toInt() < billMonth.date.substringAfter("-").replace("-","").toInt()) {
+        if(DateTimeManager.Date_yyyy_MM == billMonth.date.substring(0,7)) {
+            if(DateTimeManager.Date_MM_dd.replace("-","").toInt() < billMonth.date.substringAfter("-").replace("-","").toInt()) {
                 iterator.remove() // 使用迭代器删除元素
             }
         }
@@ -85,8 +85,8 @@ private fun withoutMonthBills(originalList : List<BillMonth>) : List<BillMonth> 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MonthBillUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
-    var month  by remember { mutableIntStateOf(DateTimeUtils.Date_MM.toInt()) }
-    var year by remember { mutableStateOf(DateTimeUtils.Date_yyyy) }
+    var month  by remember { mutableIntStateOf(DateTimeManager.Date_MM.toInt()) }
+    var year by remember { mutableStateOf(DateTimeManager.Date_yyyy) }
     val uiState by vm.huiXinMonthBillResult.state.collectAsState()
     val refreshNetwork: suspend () -> Unit = {
         val auth = SharedPrefs.prefs.getString("auth","")
@@ -98,9 +98,6 @@ fun MonthBillUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
     LaunchedEffect(Unit,month,year) {
         refreshNetwork()
     }
-    val scope = rememberCoroutineScope()
-
-//    var expanded by remember { mutableStateOf(true) }
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
     val scrollstate = rememberLazyGridState()
@@ -127,8 +124,8 @@ fun MonthBillUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
                         items(7) { item ->
                             AssistChip(
                                 modifier = Modifier.padding(horizontal = 5.dp),
-                                onClick = { year = (DateTimeUtils.Date_yyyy.toInt() + (item - 3)).toString() },
-                                label = { Text(text = (DateTimeUtils.Date_yyyy.toInt() + (item - 3)).toString()) })
+                                onClick = { year = (DateTimeManager.Date_yyyy.toInt() + (item - 3)).toString() },
+                                label = { Text(text = (DateTimeManager.Date_yyyy.toInt() + (item - 3)).toString()) })
                         }
                     }
                     LazyVerticalGrid(columns = GridCells.Fixed(4), modifier = Modifier.padding(horizontal = 10.dp)) {
@@ -150,6 +147,7 @@ fun MonthBillUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
         //填充界面
         Box(modifier = Modifier.fillMaxSize()) {
             Column{
+                Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
                 Spacer(modifier = Modifier.height(5.dp))
                 Card(
                     modifier = Modifier

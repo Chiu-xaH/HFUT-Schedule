@@ -53,28 +53,27 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat
-import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.ShowerLabelEntity
-import com.hfut.schedule.logic.util.network.UiState
-import com.hfut.schedule.logic.util.sys.PermissionManager.checkAndRequestCameraPermission
+import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.logic.util.sys.PermissionSet.checkAndRequestCameraPermission
 import com.hfut.schedule.logic.util.other.QRCodeAnalyzer
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.BottomSheetTopBar
+import com.hfut.schedule.ui.component.custom.BottomSheetTopBar
 import com.hfut.schedule.ui.component.BottomTip
 import com.hfut.schedule.ui.component.CameraScan
 import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.LittleDialog
+import com.hfut.schedule.ui.component.custom.LittleDialog
  
-import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.StatusUI2
 import com.hfut.schedule.ui.style.RowHorizontal
 import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.ui.style.textFiledTransplant
-import com.hfut.schedule.ui.util.MyAnimationManager
+import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.GuaGuaViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.Dispatchers
@@ -150,7 +149,7 @@ fun StartShowerUI(vm: GuaGuaViewModel, hazeState: HazeState) {
     var isFull by remember { mutableStateOf(false) }
     val height by animateDpAsState(
         targetValue = if(isFull) 1000.dp else 500.dp, label = "",
-        animationSpec = tween(MyAnimationManager.ANIMATION_SPEED, easing = FastOutSlowInEasing)
+        animationSpec = tween(AppAnimationManager.ANIMATION_SPEED, easing = FastOutSlowInEasing)
     )
 
     if(show) {

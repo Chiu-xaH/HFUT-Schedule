@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.hfut.schedule.logic.util.sys.DateTime
 import com.hfut.schedule.logic.util.sys.DateTimeBean
-import com.hfut.schedule.logic.util.sys.DateTimeUtils
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import java.util.Date
 
 @Entity("event")

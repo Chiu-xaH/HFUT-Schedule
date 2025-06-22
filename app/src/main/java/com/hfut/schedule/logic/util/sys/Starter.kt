@@ -15,8 +15,8 @@ import com.hfut.schedule.activity.screen.SuccessActivity
 import com.hfut.schedule.activity.screen.SupabaseActivity
 import com.hfut.schedule.logic.enumeration.ShowerScreen
 import com.hfut.schedule.logic.enumeration.SupabaseScreen
-import com.hfut.schedule.logic.util.network.WebVpn
-import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.logic.util.network.state.WebVpn
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 
 object Starter {

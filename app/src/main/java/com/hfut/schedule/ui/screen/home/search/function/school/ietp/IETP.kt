@@ -12,8 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.network.parse.ParseJsons.getMy
-import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.logic.util.network.ParseJsons.getMy
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.WebDialog
 

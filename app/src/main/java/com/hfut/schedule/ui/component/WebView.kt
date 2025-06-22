@@ -43,7 +43,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.ui.util.MyAnimationManager
+import com.hfut.schedule.ui.util.AppAnimationManager
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -109,8 +109,8 @@ fun WebViewScreen(url: String,cookies : String? = null,showChanged : () -> Unit,
         ) {
             AnimatedVisibility(
                 visible = visible,
-                enter = MyAnimationManager.hiddenRightAnimation.enter,
-                exit = MyAnimationManager.hiddenRightAnimation.exit,
+                enter = AppAnimationManager.hiddenRightAnimation.enter,
+                exit = AppAnimationManager.hiddenRightAnimation.exit,
                 modifier = Modifier.padding(innerPadding).padding(horizontal = APP_HORIZONTAL_DP).align(Alignment.CenterEnd).zIndex(1f)
             ) {
                 VerticalFloatingToolbar (expanded = true) {
@@ -225,8 +225,8 @@ fun WebViewUI(innerPadding : PaddingValues,showChanged: () -> Unit,cookies : Str
     ) {
         AnimatedVisibility(
             visible = visible,
-            enter = MyAnimationManager.hiddenRightAnimation.enter,
-            exit = MyAnimationManager.hiddenRightAnimation.exit,
+            enter = AppAnimationManager.hiddenRightAnimation.enter,
+            exit = AppAnimationManager.hiddenRightAnimation.exit,
             modifier = Modifier.padding(innerPadding).padding(horizontal = APP_HORIZONTAL_DP).align(Alignment.CenterEnd).zIndex(1f)
         ) {
             VerticalFloatingToolbar (expanded = true) {

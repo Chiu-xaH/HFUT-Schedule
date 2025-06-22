@@ -1,8 +1,6 @@
 package com.hfut.schedule.logic.util.network
 
 import android.util.Base64
-import com.hfut.schedule.logic.util.network.Encrypt.encryptXiaoWuXing
-import com.hfut.schedule.logic.util.network.qweather.GenerateQWeather
 import java.security.MessageDigest
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec

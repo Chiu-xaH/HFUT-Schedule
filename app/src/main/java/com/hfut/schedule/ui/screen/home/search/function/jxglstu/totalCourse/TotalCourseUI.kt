@@ -33,24 +33,23 @@ import com.google.gson.Gson
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.logic.model.jxglstu.CourseSearchResponse
-import com.hfut.schedule.logic.model.jxglstu.PlanCourses
 import com.hfut.schedule.logic.model.jxglstu.lessonResponse
 import com.hfut.schedule.logic.model.jxglstu.lessons
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.sys.ClipBoard
+import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.permit
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.ApiToFailRate
 import com.hfut.schedule.ui.screen.home.search.function.school.teacherSearch.ApiToTeacherSearch
 import com.hfut.schedule.ui.component.AnimationCardListItem
-import com.hfut.schedule.ui.component.BottomSheetTopBar
+import com.hfut.schedule.ui.component.custom.BottomSheetTopBar
 import com.hfut.schedule.ui.component.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.CustomTextField
+import com.hfut.schedule.ui.component.custom.CustomTextField
 import com.hfut.schedule.ui.component.EmptyUI
-import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.style.bottomSheetRound
-import com.hfut.schedule.ui.component.ScrollText
+import com.hfut.schedule.ui.component.custom.ScrollText
 import com.hfut.schedule.ui.component.DepartmentIcons
-import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.onListenStateHolder
@@ -426,7 +425,7 @@ fun DetailItems(lessons: lessons, vm : NetWorkViewModel, hazeState: HazeState) {
                             },
                             modifier = Modifier
                                 .clickable {
-                                    ClipBoard.copy(code)
+                                    ClipBoardUtils.copy(code)
                                 }
                                 .weight(.5f),
                         )

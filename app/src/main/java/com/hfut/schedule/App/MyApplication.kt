@@ -95,6 +95,8 @@ class MyApplication : Application() {
         const val PE_URL = "https://bdlp.hfut.edu.cn/"
         // Supabase
         const val SUPABASE_URL = "https://uadgxvstybecnhqemxvj.supabase.co/"
+        // Vercel
+        const val VERCEL_FORECAST_URL = "https://consumption-forecast.vercel.app/"
         // Github常量池
         const val GITHUB_USER_ID = 116127902
         const val GITHUB_DEVELOPER_NAME = "Chiu-xaH"

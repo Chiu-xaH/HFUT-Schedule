@@ -1,7 +1,7 @@
 package com.hfut.schedule.ui.screen.home.focus.funiction
 
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.logic.util.sys.showToast
 // U校园 U校园AI版 微信 超星学习通 长江雨课堂 中国大学MOOC
 fun openOperation(info : String) {
     if(info.contains("学习通")) Starter.startLaunchAPK("com.chaoxing.mobile","学习通")

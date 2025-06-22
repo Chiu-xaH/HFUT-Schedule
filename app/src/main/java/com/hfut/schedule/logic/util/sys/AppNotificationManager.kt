@@ -12,7 +12,7 @@ import androidx.core.app.NotificationCompat
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.logic.util.sys.DateTimeUtils.getPassedMinutesInRange
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.getPassedMinutesInRange
 
 object AppNotificationManager {
     // 发送通知自动递增

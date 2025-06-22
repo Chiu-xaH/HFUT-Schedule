@@ -33,8 +33,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.network.UiState
-import com.hfut.schedule.logic.util.sys.DateTimeUtils
+import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
@@ -65,15 +65,15 @@ private fun TotalGrade(vm : NetWorkViewModel) {
 fun GradeItemUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
     var year by remember {
         mutableIntStateOf(
-            if (DateTimeUtils.Date_MM.toInt() <= 8)
-                DateTimeUtils.Date_yyyy.toInt() - 1
+            if (DateTimeManager.Date_MM.toInt() <= 8)
+                DateTimeManager.Date_yyyy.toInt() - 1
             else
-                DateTimeUtils.Date_yyyy.toInt()
+                DateTimeManager.Date_yyyy.toInt()
         )
     }
 
     var isUpTerm by remember { mutableStateOf(
-        DateTimeUtils.Date_MM.toInt().let { it >= 9 || it <= 2 }
+        DateTimeManager.Date_MM.toInt().let { it >= 9 || it <= 2 }
     ) }
     val uiState by vm.gradeFromCommunityResponse.state.collectAsState()
 
@@ -91,26 +91,26 @@ fun GradeItemUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
     val scope = rememberCoroutineScope()
     var showItemYear by remember { mutableStateOf(false) }
     DropdownMenu(expanded = showItemYear, onDismissRequest = { showItemYear = false }, offset = DpOffset(APP_HORIZONTAL_DP,0.dp)) {
-        DropdownMenuItem(text = { Text(text = "${(DateTimeUtils.Date_yyyy.toInt() - 3).toString()} - ${(DateTimeUtils.Date_yyyy.toInt() - 2).toString()}" )}, onClick = {
-            year = (DateTimeUtils.Date_yyyy.toInt() - 3)
+        DropdownMenuItem(text = { Text(text = "${(DateTimeManager.Date_yyyy.toInt() - 3).toString()} - ${(DateTimeManager.Date_yyyy.toInt() - 2).toString()}" )}, onClick = {
+            year = (DateTimeManager.Date_yyyy.toInt() - 3)
             showItemYear = false})
-        DropdownMenuItem(text = { Text(text = "${(DateTimeUtils.Date_yyyy.toInt() - 2).toString()} - ${(DateTimeUtils.Date_yyyy.toInt() - 1).toString()}" )}, onClick = {
-            year =  (DateTimeUtils.Date_yyyy.toInt() - 2)
+        DropdownMenuItem(text = { Text(text = "${(DateTimeManager.Date_yyyy.toInt() - 2).toString()} - ${(DateTimeManager.Date_yyyy.toInt() - 1).toString()}" )}, onClick = {
+            year =  (DateTimeManager.Date_yyyy.toInt() - 2)
             showItemYear = false})
-        DropdownMenuItem(text = { Text(text = "${(DateTimeUtils.Date_yyyy.toInt() - 1).toString()} - ${(DateTimeUtils.Date_yyyy.toInt() ).toString()}" )},onClick = {
-            year =  (DateTimeUtils.Date_yyyy.toInt() - 1)
+        DropdownMenuItem(text = { Text(text = "${(DateTimeManager.Date_yyyy.toInt() - 1).toString()} - ${(DateTimeManager.Date_yyyy.toInt() ).toString()}" )},onClick = {
+            year =  (DateTimeManager.Date_yyyy.toInt() - 1)
             showItemYear = false})
-        DropdownMenuItem(text = { Text(text = "${(DateTimeUtils.Date_yyyy.toInt() ).toString()} - ${(DateTimeUtils.Date_yyyy.toInt() + 1).toString()}" )}, onClick = {
-            year =  DateTimeUtils.Date_yyyy.toInt()
+        DropdownMenuItem(text = { Text(text = "${(DateTimeManager.Date_yyyy.toInt() ).toString()} - ${(DateTimeManager.Date_yyyy.toInt() + 1).toString()}" )}, onClick = {
+            year =  DateTimeManager.Date_yyyy.toInt()
             showItemYear = false})
-        DropdownMenuItem(text = { Text(text = "${(DateTimeUtils.Date_yyyy.toInt() + 1).toString()} - ${(DateTimeUtils.Date_yyyy.toInt() + 2).toString()}" )}, onClick = {
-            year =  (DateTimeUtils.Date_yyyy.toInt() + 1)
+        DropdownMenuItem(text = { Text(text = "${(DateTimeManager.Date_yyyy.toInt() + 1).toString()} - ${(DateTimeManager.Date_yyyy.toInt() + 2).toString()}" )}, onClick = {
+            year =  (DateTimeManager.Date_yyyy.toInt() + 1)
             showItemYear = false})
-        DropdownMenuItem(text = { Text(text = "${(DateTimeUtils.Date_yyyy.toInt() + 2).toString()} - ${(DateTimeUtils.Date_yyyy.toInt() + 3).toString()}" )}, onClick = {
-            year =  (DateTimeUtils.Date_yyyy.toInt() + 2)
+        DropdownMenuItem(text = { Text(text = "${(DateTimeManager.Date_yyyy.toInt() + 2).toString()} - ${(DateTimeManager.Date_yyyy.toInt() + 3).toString()}" )}, onClick = {
+            year =  (DateTimeManager.Date_yyyy.toInt() + 2)
             showItemYear = false})
-        DropdownMenuItem(text = { Text(text = "${(DateTimeUtils.Date_yyyy.toInt() + 3).toString()} - ${(DateTimeUtils.Date_yyyy.toInt() + 4).toString()}" )}, onClick = {
-            year =  (DateTimeUtils.Date_yyyy.toInt() + 3)
+        DropdownMenuItem(text = { Text(text = "${(DateTimeManager.Date_yyyy.toInt() + 3).toString()} - ${(DateTimeManager.Date_yyyy.toInt() + 4).toString()}" )}, onClick = {
+            year =  (DateTimeManager.Date_yyyy.toInt() + 3)
             showItemYear = false})
     }
     Column {

@@ -47,10 +47,10 @@ import com.hfut.schedule.logic.model.jxglstu.ProgramCompletionResponse
 import com.hfut.schedule.logic.model.jxglstu.ProgramPartThree
 import com.hfut.schedule.logic.model.jxglstu.ProgramResponse
 import com.hfut.schedule.logic.model.jxglstu.item
-import com.hfut.schedule.logic.util.network.UiState
+import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.sys.ClipBoard
+import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.AnimationCardListItem
@@ -58,17 +58,17 @@ import com.hfut.schedule.ui.component.BottomTip
 import com.hfut.schedule.ui.component.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.DepartmentIcons
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.LoadingLargeCard
-import com.hfut.schedule.ui.component.LoadingUI
+import com.hfut.schedule.ui.component.custom.LoadingUI
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.onListenStateHolder
-import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.courseSearch.ApiForCourseSearch
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.textFiledTransplant
-import com.hfut.schedule.ui.util.MyAnimationManager
+import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
@@ -92,7 +92,7 @@ fun ProgramScreen(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState) 
     var loadingCard = uiState !is UiState.Success
     val scale2 = animateFloatAsState(
         targetValue = if (loadingCard) 0.97f else 1f, // 按下时为0.9，松开时为1
-        animationSpec = tween(MyAnimationManager.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
+        animationSpec = tween(AppAnimationManager.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
         label = "" // 使用弹簧动画
     )
 
@@ -467,7 +467,7 @@ fun ProgramDetailInfo(courseInfo : ProgramPartThree, vm: NetWorkViewModel, hazeS
                         },
                         overlineContent = { Text("课程代码") },
                         modifier = Modifier.weight(.5f).clickable {
-                            ClipBoard.copy(it)
+                            ClipBoardUtils.copy(it)
                         }
                     )
                 }

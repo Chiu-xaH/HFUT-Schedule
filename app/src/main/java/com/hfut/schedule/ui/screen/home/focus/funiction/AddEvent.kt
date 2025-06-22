@@ -35,14 +35,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
@@ -58,7 +56,6 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -80,35 +77,33 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.zIndex
-import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventDTO
 import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.database.util.CustomEventMapper
 import com.hfut.schedule.logic.model.SupabaseEventOutput
-import com.hfut.schedule.logic.util.network.reEmptyLiveDta
+import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.addToCalendars
 import com.hfut.schedule.logic.util.sys.parseToDateTime
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.BottomTip
 import com.hfut.schedule.ui.component.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.CustomTextField
+import com.hfut.schedule.ui.component.custom.CustomTextField
 import com.hfut.schedule.ui.component.DateRangePickerModal
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.LittleDialog
-import com.hfut.schedule.ui.component.LoadingUI
+import com.hfut.schedule.ui.component.custom.LittleDialog
+import com.hfut.schedule.ui.component.custom.LoadingUI
 import com.hfut.schedule.ui.component.MyCustomCard
 import com.hfut.schedule.ui.component.RotatingIcon
 import com.hfut.schedule.ui.component.StyleCardListItem
-import com.hfut.schedule.ui.component.TimePickerDialog
 import com.hfut.schedule.ui.component.TimeRangePickerDialog
 import com.hfut.schedule.ui.component.TransplantListItem
  
 import com.hfut.schedule.ui.component.cardNormalColor
   
-import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.EventCampus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getEventCampus
@@ -117,10 +112,9 @@ import com.hfut.schedule.ui.screen.supabase.login.loginSupabaseWithCheck
 import com.hfut.schedule.ui.style.RowHorizontal
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.ui.style.topBarTransplantColor
-import com.hfut.schedule.ui.util.MyAnimationManager
-import com.hfut.schedule.viewmodel.UIViewModel
+import com.hfut.schedule.ui.util.AppAnimationManager
+import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -154,7 +148,7 @@ fun AddEventFloatButton(
                     visibilityThreshold = Rect.VisibilityThreshold
                 )
             } else {
-                tween(durationMillis = MyAnimationManager.ANIMATION_SPEED, easing = FastOutSlowInEasing)
+                tween(durationMillis = AppAnimationManager.ANIMATION_SPEED, easing = FastOutSlowInEasing)
             }
         }
     ) }
@@ -168,7 +162,7 @@ fun AddEventFloatButton(
         if(showAddUI) {
             // 进入
             showSurface = false
-            delay(MyAnimationManager.ANIMATION_SPEED * 1L)
+            delay(AppAnimationManager.ANIMATION_SPEED * 1L)
             showSurface = true
         } else {
             // 退出
@@ -180,7 +174,7 @@ fun AddEventFloatButton(
 //            modifier = Modifier.background(MaterialTheme.colorScheme.surface),
             targetState = showAddUI,
             transitionSpec = {
-                fadeIn(animationSpec = tween(durationMillis = MyAnimationManager.ANIMATION_SPEED)) togetherWith fadeOut(animationSpec = tween(durationMillis = MyAnimationManager.ANIMATION_SPEED*2))
+                fadeIn(animationSpec = tween(durationMillis = AppAnimationManager.ANIMATION_SPEED)) togetherWith fadeOut(animationSpec = tween(durationMillis = AppAnimationManager.ANIMATION_SPEED*2))
             },
             label = ""
         ) { targetShowAddUI ->
@@ -229,8 +223,8 @@ private fun SharedTransitionScope.ButtonUI(
                 .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
                 .sharedBounds(
                     boundsTransform = boundsTransform,
-                    enter = MyAnimationManager.fadeAnimation.enter,
-                    exit = MyAnimationManager.fadeAnimation.exit,
+                    enter = AppAnimationManager.fadeAnimation.enter,
+                    exit = AppAnimationManager.fadeAnimation.exit,
                     sharedContentState = rememberSharedContentState(key = "container"),
                     animatedVisibilityScope = animatedContentScope,
                     resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds
@@ -266,8 +260,8 @@ private fun SharedTransitionScope.SurfaceUI(
             .fillMaxSize()
 //            .clip(RoundedCornerShape(APP_HORIZONTAL_DP))
             .sharedBounds(
-                enter = MyAnimationManager.fadeAnimation.enter,
-                exit = MyAnimationManager.fadeAnimation.exit,
+                enter = AppAnimationManager.fadeAnimation.enter,
+                exit = AppAnimationManager.fadeAnimation.exit,
                 sharedContentState = rememberSharedContentState(key = "container"),
                 animatedVisibilityScope = animatedContentScope,
                 boundsTransform = boundsTransform,

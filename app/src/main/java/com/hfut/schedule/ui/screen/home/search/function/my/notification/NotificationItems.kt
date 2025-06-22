@@ -15,7 +15,7 @@ import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.Notifications
 import com.hfut.schedule.ui.component.EmptyUI
-import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.WebDialog
 

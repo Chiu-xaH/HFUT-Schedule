@@ -18,7 +18,7 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.logic.util.sys.PermissionManager
+import com.hfut.schedule.logic.util.sys.PermissionSet
 import com.hfut.schedule.logic.util.sys.queryCalendars
 import com.hfut.schedule.ui.component.TransplantListItem
 import kotlinx.coroutines.launch
@@ -28,7 +28,7 @@ fun CalendarSettingsScreen(innerPadding : PaddingValues) {
     val activity = LocalActivity.current
     LaunchedEffect(activity) {
         activity?.let {
-            PermissionManager.checkAndRequestCalendarPermission(it)
+            PermissionSet.checkAndRequestCalendarPermission(it)
         }
     }
     val defaultCalendarAccount by DataStoreManager.defaultCalendarAccount.collectAsState(initial = 1)

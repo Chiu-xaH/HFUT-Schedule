@@ -1,7 +1,6 @@
 package com.hfut.schedule.ui.screen.home.cube
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
@@ -34,8 +33,6 @@ import androidx.navigation.NavController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.App.MyApplication.Companion.context
 import com.hfut.schedule.R
-import com.hfut.schedule.activity.MainActivity
-import com.hfut.schedule.logic.enumeration.CardBarItems
 import com.hfut.schedule.logic.enumeration.FixBarItems
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.Starter.startWebUrl
@@ -49,7 +46,7 @@ import com.hfut.schedule.ui.screen.home.cube.sub.update.getPatchVersions
 import com.hfut.schedule.ui.screen.home.cube.sub.update.getUpdates
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel

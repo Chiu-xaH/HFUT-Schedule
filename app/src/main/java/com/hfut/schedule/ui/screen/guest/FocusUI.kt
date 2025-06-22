@@ -31,17 +31,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.hfut.schedule.logic.database.entity.CustomEventDTO
-import com.hfut.schedule.logic.util.network.parse.ParseJsons.getCustomEvent
-import com.hfut.schedule.logic.util.network.parse.ParseJsons.getNetCourse
-import com.hfut.schedule.logic.util.network.parse.ParseJsons.getSchedule
+import com.hfut.schedule.logic.util.network.ParseJsons.getCustomEvent
+import com.hfut.schedule.logic.util.network.ParseJsons.getNetCourse
+import com.hfut.schedule.logic.util.network.ParseJsons.getSchedule
 import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.logic.util.sys.DateTimeUtils
-import com.hfut.schedule.ui.component.RefreshIndicator
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
+import com.hfut.schedule.ui.component.custom.RefreshIndicator
 import com.hfut.schedule.ui.screen.home.focus.funiction.CustomItem
 import com.hfut.schedule.ui.screen.home.focus.funiction.NetCourseItem
 import com.hfut.schedule.ui.screen.home.focus.funiction.ScheduleItem
 import com.hfut.schedule.ui.screen.home.focus.funiction.TimeStampItem
-import com.hfut.schedule.viewmodel.UIViewModel
+import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
@@ -58,7 +58,7 @@ fun TodayScreenNoLogin(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding
     val  TAB_LEFT = 0
     val TAB_RIGHT = 1
     var refreshing by remember { mutableStateOf(false) }
-    var timeNow by remember { mutableStateOf(DateTimeUtils.Time_HH_MM) }
+    var timeNow by remember { mutableStateOf(DateTimeManager.Time_HH_MM) }
 
     var refreshDB by remember { mutableStateOf(false) }
     val showStorageFocus by DataStoreManager.showFocusFlow.collectAsState(initial = true)
@@ -78,7 +78,7 @@ fun TodayScreenNoLogin(vm : NetWorkViewModel, vm2 : LoginViewModel, innerPadding
                 refreshing = true
 
             }.await()
-            async { DateTimeUtils.updateTime { timeNow = it } }.await()
+            async { DateTimeManager.updateTime { timeNow = it } }.await()
             async { initGuestNetwork(vm,vm2) }.await()
             launch {
                 refreshing = false

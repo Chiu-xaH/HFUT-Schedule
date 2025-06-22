@@ -29,16 +29,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.UserInfo
-import com.hfut.schedule.logic.util.sys.DateTimeUtils
-import com.hfut.schedule.logic.util.other.AppVersion
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.component.DepartmentIcons
 import com.hfut.schedule.ui.component.MyCustomCard
-import com.hfut.schedule.ui.component.ScrollText
+import com.hfut.schedule.ui.component.custom.ScrollText
 import com.hfut.schedule.ui.component.TransplantListItem
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -74,7 +72,7 @@ fun PersonPart() {
                     headlineContent = { Text(text = getPersonInfo().name ?: "游客")  },
                     trailingContent = {
                         if(startDate != null && endDate != null && startDate != "" && endDate != "") {
-                            Text(text = "已过 ${formatDecimal(DateTimeUtils.getPercent(startDate,endDate),1)}%")
+                            Text(text = "已过 ${formatDecimal(DateTimeManager.getPercent(startDate,endDate),1)}%")
                         } else { null }
                         },
 //                    colors = ListItemDefaults.colors(containerColor = Color.Transparent),

@@ -22,7 +22,7 @@ import com.hfut.schedule.viewmodel.network.GuaGuaViewModel
 import com.hfut.schedule.viewmodel.network.NetworkViewModelFactory
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.viewmodel.UIViewModel
+import com.hfut.schedule.viewmodel.ui.UIViewModel
 
 abstract class BaseActivity : ComponentActivity() {
     val loginVm by lazy { ViewModelProvider(this)[LoginViewModel::class.java] }

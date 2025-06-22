@@ -39,8 +39,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.logic.util.sys.ClipBoard
-import com.hfut.schedule.logic.util.sys.DateTimeUtils
+import com.hfut.schedule.logic.util.sys.ClipBoardUtils
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.DataStoreManager
@@ -49,8 +49,8 @@ import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardP
  
 import com.hfut.schedule.ui.component.DepartmentIcons
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.style.appBlur
 import org.jsoup.Jsoup
@@ -133,7 +133,7 @@ fun PersonItems(ifSaved : Boolean) {
                             )
                         },
                         modifier = Modifier.clickable {
-                             ClipBoard.copy(it)
+                             ClipBoardUtils.copy(it)
                         }
                     )
                 }
@@ -154,7 +154,7 @@ fun PersonItems(ifSaved : Boolean) {
                                     )
                                 },
                                 modifier = Modifier.clickable {
-                                    ClipBoard.copy(it)
+                                    ClipBoardUtils.copy(it)
                                 }
                             )
                         }
@@ -184,7 +184,7 @@ fun PersonItems(ifSaved : Boolean) {
                             DepartmentIcons(name = it)
                         },
                         modifier = Modifier.clickable {
-                             ClipBoard.copy(it)
+                             ClipBoardUtils.copy(it)
                         }
                     )
                 }
@@ -204,7 +204,7 @@ fun PersonItems(ifSaved : Boolean) {
                             )
                         },
                         modifier = Modifier.clickable {
-                           ClipBoard.copy(it)
+                           ClipBoardUtils.copy(it)
                         }
                     )
                 }
@@ -220,7 +220,7 @@ fun PersonItems(ifSaved : Boolean) {
                             )
                         },
                         modifier = Modifier.clickable {
-                            ClipBoard.copy(it)
+                            ClipBoardUtils.copy(it)
                         }
                     )
                 }
@@ -250,7 +250,7 @@ fun PersonItems(ifSaved : Boolean) {
                             headlineContent = { Text(text = it) },
                             overlineContent = { Text(text = "CAS统一认证密码")},
                             modifier = Modifier.clickable {
-                                ClipBoard.copy(it)
+                                ClipBoardUtils.copy(it)
                             }
                         )
                     }
@@ -263,7 +263,7 @@ fun PersonItems(ifSaved : Boolean) {
                             },
                             overlineContent = { Text(text = "教务系统初始密码")},
                             modifier = Modifier.clickable {
-                                ClipBoard.copy(d)
+                                ClipBoardUtils.copy(d)
                             }
                         )
                     }
@@ -272,7 +272,7 @@ fun PersonItems(ifSaved : Boolean) {
                             headlineContent = {  Text(text = it) },
                             overlineContent = { Text(text = "一卡通&校园网密码")},
                             modifier = Modifier.clickable {
-                                ClipBoard.copy(it)
+                                ClipBoardUtils.copy(it)
                             }
                         )
                     }
@@ -326,11 +326,11 @@ fun PersonItems(ifSaved : Boolean) {
                     },
                     trailingContent = {
                         if(startDate != null && endDate != null && startDate != "" && endDate != "") {
-                            Text(text = "已过 ${formatDecimal(DateTimeUtils.getPercent(startDate,endDate),1)}%")
+                            Text(text = "已过 ${formatDecimal(DateTimeManager.getPercent(startDate,endDate),1)}%")
                         } else { null }
                     },
                     modifier = Modifier.clickable {
-                        xueJiStatus?.let { ClipBoard.copy(it) }
+                        xueJiStatus?.let { ClipBoardUtils.copy(it) }
                     }
                 )
                 TransplantListItem(
@@ -429,7 +429,7 @@ fun PersonItems(ifSaved : Boolean) {
                             Icon(painterResource(R.drawable.call),null)
                         },
                         modifier = Modifier.clickable {
-                            ClipBoard.copy(mobile)
+                            ClipBoardUtils.copy(mobile)
                         }
                     )
                 } else {
@@ -441,7 +441,7 @@ fun PersonItems(ifSaved : Boolean) {
                                 Icon(painterResource(R.drawable.smartphone),null)
                             },
                             modifier = Modifier.clickable {
-                                ClipBoard.copy(it)
+                                ClipBoardUtils.copy(it)
                             }
                         )
                     }
@@ -453,7 +453,7 @@ fun PersonItems(ifSaved : Boolean) {
                                 Icon(painterResource(R.drawable.call),null)
                             },
                             modifier = Modifier.clickable {
-                                ClipBoard.copy(it)
+                                ClipBoardUtils.copy(it)
                             }
                         )
                     }
@@ -467,7 +467,7 @@ fun PersonItems(ifSaved : Boolean) {
                             Icon(painterResource(R.drawable.alternate_email),null)
                         },
                         modifier = Modifier.clickable {
-                            ClipBoard.copy(it)
+                            ClipBoardUtils.copy(it)
                         }
                     )
                 }
@@ -479,7 +479,7 @@ fun PersonItems(ifSaved : Boolean) {
                             Icon(painterResource(R.drawable.home),null)
                         },
                         modifier = Modifier.clickable {
-                            ClipBoard.copy(it)
+                            ClipBoardUtils.copy(it)
                         }
                     )
                 }
@@ -492,7 +492,7 @@ fun PersonItems(ifSaved : Boolean) {
                             Icon(painterResource(R.drawable.mail),null)
                         },
                         modifier = Modifier.clickable {
-                            ClipBoard.copy(it)
+                            ClipBoardUtils.copy(it)
                         }
                     )
                 }

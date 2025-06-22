@@ -24,13 +24,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.PayData
-import com.hfut.schedule.logic.util.network.UiState
-import com.hfut.schedule.logic.util.sys.ClipBoard
+import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.LoadingLargeCard
-import com.hfut.schedule.ui.component.ScrollText
+import com.hfut.schedule.ui.component.custom.ScrollText
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -176,7 +176,7 @@ fun PayUI(url : String,vm: NetWorkViewModel) {
                 contentDescription = ""
             )},
             modifier = Modifier.clickable {
-                ClipBoard.copy(url)
+                ClipBoardUtils.copy(url)
             }
         )
     }

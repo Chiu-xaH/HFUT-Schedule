@@ -5,7 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.hfut.schedule.logic.database.entity.SpecialWorkDayEntity
-import com.hfut.schedule.logic.util.sys.DateTimeUtils
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 
 
 @Dao
@@ -24,8 +24,8 @@ interface SpecialWorkDayDao {
     suspend fun search(originDate: String): SpecialWorkDayEntity?
 
     @Query("SELECT target_date FROM special_work_day WHERE origin_date = :originDate")
-    suspend fun searchToday(originDate: String = DateTimeUtils.Date_yyyy_MM_dd): String?
+    suspend fun searchToday(originDate: String = DateTimeManager.Date_yyyy_MM_dd): String?
 
     @Query("SELECT target_date FROM special_work_day WHERE origin_date = :originDate")
-    suspend fun searchTomorrow(originDate: String = DateTimeUtils.tomorrow_YYYY_MM_DD): String?
+    suspend fun searchTomorrow(originDate: String = DateTimeManager.tomorrow_YYYY_MM_DD): String?
 }

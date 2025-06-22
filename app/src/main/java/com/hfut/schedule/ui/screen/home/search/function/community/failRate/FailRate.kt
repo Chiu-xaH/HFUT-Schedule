@@ -33,7 +33,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.CommonNetworkScreen
-import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.PrepareSearchUI
 import com.hfut.schedule.ui.component.TransplantListItem
  

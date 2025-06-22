@@ -10,7 +10,7 @@ import com.hfut.schedule.logic.network.servicecreator.Login.LoginWebVpnServiceCr
 import com.hfut.schedule.logic.network.servicecreator.MyServiceCreator
 import com.hfut.schedule.logic.network.api.MyService
 import com.hfut.schedule.logic.network.api.WebVpnService
-import com.hfut.schedule.logic.util.network.HfutCAS
+import com.hfut.schedule.logic.util.network.state.CasInHFUT
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import okhttp3.ResponseBody
 import org.jsoup.Jsoup
@@ -36,7 +36,7 @@ class LoginViewModel : ViewModel() {
     fun login(username : String,password : String,keys : String,imageCode : String,webVpn : Boolean)  {
 
         val cookies : String = sessionLiveData.value  + jSessionId.value +";" + keys
-        HfutCAS.casCookies = cookies
+        CasInHFUT.casCookies = cookies
 
         val ticket = webVpnTicket.value?.substringAfter("wengine_vpn_ticketwebvpn_hfut_edu_cn=")?.substringBefore(";")
         val call =

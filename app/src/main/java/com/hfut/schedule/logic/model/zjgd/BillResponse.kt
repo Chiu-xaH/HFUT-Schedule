@@ -1,10 +1,8 @@
 package com.hfut.schedule.logic.model.zjgd
 
-data class BillResponse(val data : BillDatas)
+data class BillResponse(val data : BillBean)
 
-data class BillDatas(val records : List<records>,
-                     val pages : Int,
-                     val msg : String?)
+data class BillBean(val records : List<records>, val total : Int,val size : Int)
 
 data class records(val tranamt : Int?,
                    val resume : String,

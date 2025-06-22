@@ -50,12 +50,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
-import com.hfut.schedule.logic.util.sys.DateTimeUtils
-import com.hfut.schedule.logic.util.sys.DateTimeUtils.weeksBetween
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.weeksBetween
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
  
 import com.hfut.schedule.ui.screen.home.calendar.examToCalendar
 import com.hfut.schedule.ui.screen.home.calendar.getScheduleDate
@@ -65,8 +64,8 @@ import com.hfut.schedule.ui.screen.home.calendar.jxglstu.distinctUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.getNewWeek
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
 import com.hfut.schedule.ui.style.HazeBottomSheet
-import com.hfut.schedule.ui.util.MyAnimationManager
-import com.hfut.schedule.viewmodel.UIViewModel
+import com.hfut.schedule.ui.util.AppAnimationManager
+import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import java.time.LocalDate
@@ -478,7 +477,7 @@ fun CommunityCourseTableUI(
                                         else "",
                                     fontSize = if (showAll) 12.sp else 14.sp,
                                     textAlign = TextAlign.Center,
-                                    fontWeight = if(friendUserName == null && texts.contains("考试")) FontWeight.SemiBold else FontWeight.Normal
+                                    fontWeight = if(friendUserName == null && texts.toString().contains("考试")) FontWeight.SemiBold else FontWeight.Normal
                                 )
                             }
 
@@ -585,7 +584,7 @@ fun CommunityCourseTableUI(
 @Composable
 fun ScheduleTopDate(showAll: Boolean,today : LocalDate) {
     val mondayOfCurrentWeek = today.minusDays(today.dayOfWeek.value - 1L)
-    val todayDate = DateTimeUtils.Date_yyyy_MM_dd
+    val todayDate = DateTimeManager.Date_yyyy_MM_dd
 
     Column(modifier = Modifier.background(Color.Transparent)) {
         Spacer(modifier = Modifier.height(5.dp))
@@ -599,7 +598,7 @@ fun ScheduleTopDate(showAll: Boolean,today : LocalDate) {
                 val fontSize = if (showAll) 12f else 14f
                 val fontSizeAnimated by animateFloatAsState(
                     targetValue = if (isToday && animated) fontSize*1.25f else fontSize,
-                    animationSpec = tween(durationMillis = MyAnimationManager.ANIMATION_SPEED), label = "fontSizeAnimation",
+                    animationSpec = tween(durationMillis = AppAnimationManager.ANIMATION_SPEED), label = "fontSizeAnimation",
                     finishedListener = { if (isToday) animated = false }
                 )
                 LaunchedEffect(isToday) {

@@ -28,10 +28,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.parse.formatDecimal
-import com.hfut.schedule.logic.util.sys.ClipBoard
-import com.hfut.schedule.logic.util.sys.DateTimeUtils
+import com.hfut.schedule.logic.util.sys.ClipBoardUtils
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.LargeCard
 import com.hfut.schedule.ui.component.MyCustomCard
 import com.hfut.schedule.ui.component.StyleCardListItem
@@ -95,7 +95,7 @@ fun TermInfoUI(friendUserName : String? = null) {
                         modifier = Modifier.weight(.5f)
                     )
                     TransplantListItem(
-                        headlineContent = { Text("${formatDecimal(DateTimeUtils.getPercent(startDate,endDate),1)}%") },
+                        headlineContent = { Text("${formatDecimal(DateTimeManager.getPercent(startDate,endDate),1)}%") },
                         overlineContent = { Text("已过")},
                         modifier = Modifier.weight(.5f)
                     )
@@ -148,7 +148,7 @@ fun TermInfoUI(friendUserName : String? = null) {
                     overlineContent = { Text("学分 ${item.credit}" + " | $id"+ str)},
                     leadingContent = { Text((index+1).toString())},
                     modifier = Modifier.clickable {
-                        ClipBoard.copy(id)
+                        ClipBoardUtils.copy(id)
                     }
                 )
             }

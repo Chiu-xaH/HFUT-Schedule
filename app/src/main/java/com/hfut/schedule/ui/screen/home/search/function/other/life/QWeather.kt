@@ -1,6 +1,5 @@
 package com.hfut.schedule.ui.screen.home.search.function.other.life
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -32,16 +31,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.QWeatherNowBean
-import com.hfut.schedule.logic.util.network.UiState
+import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.ui.component.BottomSheetTopBar
+import com.hfut.schedule.ui.component.custom.BottomSheetTopBar
 import com.hfut.schedule.ui.component.BottomTip
-import com.hfut.schedule.ui.component.CustomTabRow
+import com.hfut.schedule.ui.component.custom.CustomTabRow
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.LoadingLargeCard
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
-import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.search.function.other.life.QWeatherLevel.DEFAULT
 import com.hfut.schedule.ui.screen.home.search.function.other.life.QWeatherLevel.HIGH
 import com.hfut.schedule.ui.screen.home.search.function.other.life.QWeatherLevel.LOW
@@ -50,7 +49,6 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
 import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import java.nio.file.WatchEvent
 
 fun getLocation(campus : Campus = getCampus()) : String = when(campus) {
     Campus.XUANCHENG -> "101221401"

@@ -41,21 +41,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.network.UiState
+import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.sys.ClipBoard
+import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.CommonNetworkScreen
-import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.PrepareSearchUI
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.CourseTotalUI
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.TotalCourseDataSource
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.textFiledTransplant
-import com.hfut.schedule.ui.util.MyAnimationManager
+import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
@@ -111,8 +111,8 @@ fun CourseSearchUI(vm : NetWorkViewModel, hazeState: HazeState) {
             HazeBottomSheetTopBar("开课查询") {
                 AnimatedVisibility(
                     visible = !showSearch,
-                    enter = MyAnimationManager.upDownAnimation.enter,
-                    exit = MyAnimationManager.upDownAnimation.exit
+                    enter = AppAnimationManager.upDownAnimation.enter,
+                    exit = AppAnimationManager.upDownAnimation.exit
                 ) {
                     FilledTonalButton(
                         onClick = {
@@ -133,8 +133,8 @@ fun CourseSearchUI(vm : NetWorkViewModel, hazeState: HazeState) {
             Column {
                 AnimatedVisibility(
                     visible = showSearch,
-                    enter = MyAnimationManager.downUpAnimation.enter,
-                    exit = MyAnimationManager.downUpAnimation.exit
+                    enter = AppAnimationManager.downUpAnimation.enter,
+                    exit = AppAnimationManager.downUpAnimation.exit
                 ) {
                     Column {
                         Row(
@@ -159,7 +159,7 @@ fun CourseSearchUI(vm : NetWorkViewModel, hazeState: HazeState) {
                                     {
                                         IconButton(
                                             onClick = {
-                                                courseId = ClipBoard.paste()
+                                                courseId = ClipBoardUtils.paste()
                                             },
                                         ) {
                                             Icon(painterResource(R.drawable.content_paste),null)
@@ -183,7 +183,7 @@ fun CourseSearchUI(vm : NetWorkViewModel, hazeState: HazeState) {
                                      {
                                         IconButton(
                                             onClick = {
-                                                courseName = ClipBoard.paste()
+                                                courseName = ClipBoardUtils.paste()
                                             },
                                         ) {
                                             Icon(painterResource(R.drawable.content_paste),null)

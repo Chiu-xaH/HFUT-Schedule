@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.ShowerScreen
-import com.hfut.schedule.logic.util.sys.ClipBoard
+import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveBoolean
@@ -41,7 +41,7 @@ import com.hfut.schedule.logic.util.sys.Starter.loginGuaGua
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 
 
-import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.util.navigateAndClear
 import com.hfut.schedule.ui.util.navigateAndSave
@@ -121,7 +121,7 @@ fun EditLoginCode(isOnLogin: Boolean = false, onClickLogin: (() -> Unit)? = null
                 } else {
                     IconButton(
                         onClick = {
-                            ClipBoard.copy(input)
+                            ClipBoardUtils.copy(input)
                         }) {
                         Icon(painter = painterResource(R.drawable.copy_all), contentDescription = "description")
                     }

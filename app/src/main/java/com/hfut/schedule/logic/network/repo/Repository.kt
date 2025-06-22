@@ -3,6 +3,9 @@ package com.hfut.schedule.logic.network.repo
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.logic.model.ForecastAllBean
+import com.hfut.schedule.logic.model.ForecastBean
+import com.hfut.schedule.logic.model.ForecastResponse
 import com.hfut.schedule.logic.model.GithubBean
 import com.hfut.schedule.logic.model.NewsResponse
 import com.hfut.schedule.logic.model.QWeatherNowBean
@@ -17,6 +20,8 @@ import com.hfut.schedule.logic.model.XuanquResponse
 import com.hfut.schedule.logic.model.guagua.GuaGuaLoginResponse
 import com.hfut.schedule.logic.model.guagua.GuaguaBillsResponse
 import com.hfut.schedule.logic.model.guagua.UseCodeResponse
+import com.hfut.schedule.logic.model.toVercelForecastRequestBody
+import com.hfut.schedule.logic.model.zjgd.BillBean
 import com.hfut.schedule.logic.network.api.DormitoryScore
 import com.hfut.schedule.logic.network.api.FWDTService
 import com.hfut.schedule.logic.network.api.GiteeService
@@ -27,6 +32,7 @@ import com.hfut.schedule.logic.network.api.LoginWebsService
 import com.hfut.schedule.logic.network.api.NewsService
 import com.hfut.schedule.logic.network.api.QWeatherService
 import com.hfut.schedule.logic.network.api.TeachersService
+import com.hfut.schedule.logic.network.api.VercelForecastService
 import com.hfut.schedule.logic.network.api.WorkService
 import com.hfut.schedule.logic.network.api.XuanChengService
 import com.hfut.schedule.logic.network.servicecreator.DormitoryScoreServiceCreator
@@ -41,15 +47,15 @@ import com.hfut.schedule.logic.network.servicecreator.NewsServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.QWeatherServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.SearchEleServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.TeacherServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.VercelForecastServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.WorkServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.XuanChengServiceCreator
 import com.hfut.schedule.logic.util.network.Encrypt
-import com.hfut.schedule.logic.util.network.PARSE_ERROR_CODE
-import com.hfut.schedule.logic.util.network.StateHolder
+import com.hfut.schedule.logic.util.network.state.PARSE_ERROR_CODE
+import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
-import com.hfut.schedule.ui.component.showToast
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.WebInfo
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
@@ -87,6 +93,8 @@ object Repository {
     private val gitee = GiteeServiceCreator.create(GiteeService::class.java)
     private val githubRaw = GithubRawServiceCreator.create(GithubRawService::class.java)
     private val guaGua = GuaGuaServiceCreator.create(GuaGuaService::class.java)
+    private val forecast = VercelForecastServiceCreator.create(VercelForecastService::class.java)
+
 //    private val lePaoYun = LePaoYunServiceCreator.create(LePaoYunService::class.java)
 
     //引入接口
@@ -533,5 +541,21 @@ object Repository {
     @JvmStatic
     private fun parseGuaGuaReSetUseCode(result: String) : String = try {
         Gson().fromJson(result,StatusMsgResponse::class.java).message
+    } catch (e : Exception) { throw e }
+
+    suspend fun getCardPredicted(bean : BillBean,cardPredictedData : StateHolder<ForecastAllBean>) = launchRequestSimple(
+        holder = cardPredictedData,
+        request = { forecast.getData(toVercelForecastRequestBody(bean)).awaitResponse() },
+        transformSuccess = { _,json -> parseCardPredicted(json) }
+    )
+
+    @JvmStatic
+    private fun parseCardPredicted(json : String) : ForecastAllBean = try {
+        val data = Gson().fromJson(json,ForecastResponse::class.java)
+        if(data.state == 200) {
+            data.data
+        } else {
+            throw Exception(data.msg ?: "错误")
+        }
     } catch (e : Exception) { throw e }
 }

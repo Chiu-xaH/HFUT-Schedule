@@ -10,6 +10,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -21,44 +24,66 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.zjgd.records
-import com.hfut.schedule.logic.util.network.UiState
+import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.sys.DateTimeUtils
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.ui.component.AnimationCardListItem
 import com.hfut.schedule.ui.component.BillsIcons
+import com.hfut.schedule.ui.component.BottomTip
 import com.hfut.schedule.ui.component.CommonNetworkScreen
-import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.MyCustomCard
 import com.hfut.schedule.ui.component.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.PagingController
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.cardNormalColor
+import com.hfut.schedule.ui.component.custom.RefreshIndicator
 import com.hfut.schedule.ui.screen.card.bill.CardRow
 import com.hfut.schedule.ui.style.HazeBottomSheet
-import com.hfut.schedule.viewmodel.UIViewModel
+import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import java.math.BigDecimal
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIViewModel, hazeState : HazeState) {
+    val auth = prefs.getString("auth","")
     var page by remember { mutableIntStateOf(1) }
     val uiState by vm.huiXinBillResult.state.collectAsState()
-    val refreshNetwork: suspend () -> Unit = {
-        val auth = prefs.getString("auth","")
+    var refreshNetwork : suspend () -> Unit = refreshNetwork@ {
+        // 有缓存
+        if(uiState is UiState.Success) {
+            return@refreshNetwork
+        }
         vm.huiXinBillResult.clear()
         vm.getCardBill("bearer $auth",page)
     }
+    val refreshing = uiState is UiState.Loading
+    val scope = rememberCoroutineScope()
+    val pullRefreshState = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
+        scope.launch {
+            refreshNetwork()
+        }
+    })
+
+
     LaunchedEffect(page) {
         refreshNetwork()
     }
+
 
     var showBottomSheet by remember { mutableStateOf(false) }
     var infoNum by remember { mutableIntStateOf(0) }
@@ -75,11 +100,12 @@ fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVie
     }
 
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-        val data = (uiState as UiState.Success).data.data
+        val data = (uiState as UiState.Success).data
         val list = data.records
         val listState = rememberLazyListState()
 
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(modifier = Modifier.fillMaxSize().pullRefresh(pullRefreshState)) {
+            RefreshIndicator(refreshing, pullRefreshState, Modifier.align(Alignment.TopCenter).padding(innerPaddings).zIndex(1f))
             LazyColumn(state = listState) {
                 item { Spacer(modifier = Modifier.height(innerPaddings.calculateTopPadding())) }
                 if (page == 1)
@@ -97,7 +123,7 @@ fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVie
                         overlineContent = { Text(text = time) },
                         leadingContent = { BillsIcons(name) },
                         color =
-                            if(DateTimeUtils.Date_yyyy_MM_dd == getTime)
+                            if(DateTimeManager.Date_yyyy_MM_dd == getTime)
                                 MaterialTheme.colorScheme.primaryContainer
                             else null,
                         modifier = Modifier.clickable {
@@ -106,6 +132,9 @@ fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVie
                         },
                         index = item
                     )
+                }
+                item {
+                    BottomTip("总 ${data.total} 条")
                 }
                 item { Spacer(modifier = Modifier.height(innerPaddings.calculateBottomPadding())) }
                 item { PaddingForPageControllerButton() }
@@ -120,7 +149,7 @@ fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVie
 @Composable
 fun BillsInfo(vm : NetWorkViewModel, Infonum : Int) {
     val uiState by vm.huiXinBillResult.state.collectAsState()
-    val data = (uiState as UiState.Success).data.data.records
+    val data = (uiState as UiState.Success).data.records
     val bills = data[Infonum]
     Column {
         HazeBottomSheetTopBar("详情", isPaddingStatusBar = false)

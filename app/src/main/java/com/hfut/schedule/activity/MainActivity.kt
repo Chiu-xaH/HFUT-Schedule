@@ -6,9 +6,9 @@ import androidx.compose.runtime.Composable
 import androidx.lifecycle.lifecycleScope
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomCourseTableEntity
-import com.hfut.schedule.logic.util.sys.PermissionManager.checkAndRequestStoragePermission
+import com.hfut.schedule.logic.util.sys.PermissionSet.checkAndRequestStoragePermission
 import com.hfut.schedule.ui.screen.MainHost
-import com.hfut.schedule.ui.component.showToast
+import com.hfut.schedule.logic.util.sys.showToast
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.io.BufferedReader

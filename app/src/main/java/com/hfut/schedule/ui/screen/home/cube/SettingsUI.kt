@@ -29,7 +29,7 @@ import com.hfut.schedule.ui.screen.home.cube.sub.FocusCardSettings
 import com.hfut.schedule.ui.screen.home.cube.sub.LockUI
 import com.hfut.schedule.ui.screen.home.cube.sub.RequestArrange
 import com.hfut.schedule.ui.screen.home.cube.sub.TEST
-import com.hfut.schedule.ui.util.MyAnimationManager
+import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.isCurrentRoute
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -67,10 +67,10 @@ fun SettingsScreen(vm : NetWorkViewModel
                 navController = navController,
                 startDestination = Screen.HomeScreen.route,
                 enterTransition = {
-                    MyAnimationManager.centerAnimation.enter
+                    AppAnimationManager.centerAnimation.enter
                 },
                 exitTransition = {
-                    MyAnimationManager.centerAnimation.exit
+                    AppAnimationManager.centerAnimation.exit
                 }
             ) {
 

@@ -20,11 +20,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.sys.DateTimeUtils
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.ui.component.BottomTip
 import com.hfut.schedule.ui.component.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.ScrollText
+import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.custom.ScrollText
 import com.hfut.schedule.ui.component.SmallCard
 import com.hfut.schedule.ui.component.TransplantListItem
   
@@ -59,7 +59,7 @@ fun Holiday(hazeState : HazeState) {
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    HazeBottomSheetTopBar("${DateTimeUtils.Date_yyyy}年 国家法定假日")
+                    HazeBottomSheetTopBar("${DateTimeManager.Date_yyyy}年 国家法定假日")
                 },
             ) { innerPadding ->
                 Column (

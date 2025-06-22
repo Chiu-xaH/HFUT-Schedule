@@ -37,7 +37,7 @@ import com.hfut.schedule.logic.util.other.AppVersion.HAZE_BLUR_FOR_S
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 
 import com.hfut.schedule.ui.component.largeCardColor
-import com.hfut.schedule.ui.util.MyAnimationManager
+import com.hfut.schedule.ui.util.AppAnimationManager
 import dev.chrisbanes.haze.HazeDefaults.blurEnabled
 import dev.chrisbanes.haze.HazeEffectScope
 import dev.chrisbanes.haze.HazeProgressive
@@ -45,6 +45,7 @@ import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
 
@@ -74,11 +75,6 @@ fun Modifier.bottomBarBlur(hazeState : HazeState) : Modifier {
             })
     } else {
         return this.background(Brush.verticalGradient(
-//            colorStops = arrayOf(
-//                0.0f to Color.Transparent, // 0%位置是透明
-//                0.7f to surfaceColor,      // 20%位置已经变到surfaceColor
-//                1.0f to surfaceColor       // 后面都保持surfaceColor
-//            )
             listOf(Color.Transparent, surfaceColor)
         ))
     }
@@ -108,11 +104,6 @@ fun Modifier.topBarBlur(hazeState : HazeState) : Modifier {
         )
     } else {
          this.background(Brush.verticalGradient(
-//             colorStops = arrayOf(
-//                 0.0f to surfaceColor,   // 0%位置是surfaceColor
-//                 0.3f to surfaceColor,   // 80%位置还是surfaceColor
-//                 1.0f to Color.Transparent // 从80%-100%逐渐变透明
-//             )
              listOf(surfaceColor, Color.Transparent)
         ))
     }
@@ -195,23 +186,23 @@ fun transitionBackground(isExpanded : Boolean) : Modifier {
     // 稍微晚于运动结束
     val blurSize by animateDpAsState(
         targetValue = if (isExpanded && motionBlur) MyApplication.BLUR_RADIUS else 0.dp, label = ""
-        ,animationSpec = tween(MyAnimationManager.ANIMATION_SPEED + MyAnimationManager.ANIMATION_SPEED/2, easing = FastOutSlowInEasing),
+        ,animationSpec = tween(AppAnimationManager.ANIMATION_SPEED + AppAnimationManager.ANIMATION_SPEED/2, easing = FastOutSlowInEasing),
     )
     val scale = animateFloatAsState(
         targetValue = if (isExpanded) 0.825f else 1f, // 按下时为0.9，松开时为1
-        animationSpec = tween(MyAnimationManager.ANIMATION_SPEED + MyAnimationManager.ANIMATION_SPEED/2, easing = FastOutSlowInEasing),
+        animationSpec = tween(AppAnimationManager.ANIMATION_SPEED + AppAnimationManager.ANIMATION_SPEED/2, easing = FastOutSlowInEasing),
         label = "" // 使用弹簧动画
     )
     val backgroundColor by animateColorAsState(
         targetValue = if(isExpanded) Color.Black.copy(.25f) else Color.Transparent,
-        animationSpec = tween(MyAnimationManager.ANIMATION_SPEED, easing = FastOutSlowInEasing),
+        animationSpec = tween(AppAnimationManager.ANIMATION_SPEED, easing = FastOutSlowInEasing),
         label = "",
     )
     val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
     LaunchedEffect(isExpanded) {
         if(blur && transition) {
             DataStoreManager.saveHazeBlur(false)
-            delay((MyAnimationManager.ANIMATION_SPEED + MyAnimationManager.ANIMATION_SPEED/2)*1L)
+            delay((AppAnimationManager.ANIMATION_SPEED + AppAnimationManager.ANIMATION_SPEED/2)*1L)
             DataStoreManager.saveHazeBlur(true)
         }
     }
@@ -227,7 +218,7 @@ fun transitionBackground(isExpanded : Boolean) : Modifier {
 fun appBlur(
     showBlur: Boolean,
     radius: Dp = 10.dp,
-    tweenDuration: Int = MyAnimationManager.ANIMATION_SPEED / 2
+    tweenDuration: Int = AppAnimationManager.ANIMATION_SPEED / 2
 ): Modifier {
     val motionBlur by DataStoreManager.motionBlurFlow.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
 

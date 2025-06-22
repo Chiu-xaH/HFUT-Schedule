@@ -2,7 +2,6 @@ package com.hfut.schedule.ui.screen.grade.grade.jxglstu
 
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -44,14 +43,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import androidx.room.Index
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.Score
 import com.hfut.schedule.logic.model.ScoreGrade
 import com.hfut.schedule.logic.model.ScoreWithGPA
 import com.hfut.schedule.logic.model.community.GradeResponseJXGLSTU
 import com.hfut.schedule.logic.model.scoreWithGPA
-import com.hfut.schedule.logic.util.network.UiState
+import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
@@ -61,18 +58,17 @@ import com.hfut.schedule.ui.component.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.EmptyUI
-import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.LargeCard
-import com.hfut.schedule.ui.component.LittleDialog
+import com.hfut.schedule.ui.component.custom.LittleDialog
 import com.hfut.schedule.ui.component.MyCustomCard
-import com.hfut.schedule.ui.component.RefreshIndicator
-import com.hfut.schedule.ui.component.ScrollText
-import com.hfut.schedule.ui.component.StyleCardListItem
+import com.hfut.schedule.ui.component.custom.RefreshIndicator
+import com.hfut.schedule.ui.component.custom.ScrollText
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.cardNormalColor
-import com.hfut.schedule.ui.component.showToast
-import com.hfut.schedule.ui.screen.card.count.RadarChart
-import com.hfut.schedule.ui.screen.card.count.RadarData
+import com.hfut.schedule.ui.component.chart.RadarChart
+import com.hfut.schedule.ui.component.chart.RadarData
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.survey.SurveyUI
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.textFiledTransplant
@@ -80,7 +76,6 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)

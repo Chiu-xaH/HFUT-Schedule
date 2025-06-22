@@ -34,7 +34,6 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,25 +47,24 @@ import androidx.compose.ui.zIndex
 import com.google.gson.Gson
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
-import com.hfut.schedule.logic.database.entity.SpecialWorkDayEntity
 import com.hfut.schedule.logic.database.util.insertSafely
 import com.hfut.schedule.logic.model.zjgd.FeeResponse
 import com.hfut.schedule.logic.model.zjgd.FeeType
-import com.hfut.schedule.logic.util.network.UiState
+import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.formatDecimal
-import com.hfut.schedule.logic.util.parse.isHoliday
-import com.hfut.schedule.logic.util.parse.isSpecificWorkDay
-import com.hfut.schedule.logic.util.parse.isSpecificWorkDayTomorrow
+import com.hfut.schedule.logic.util.sys.datetime.isHoliday
+import com.hfut.schedule.logic.util.sys.datetime.isSpecificWorkDay
+import com.hfut.schedule.logic.util.sys.datetime.isSpecificWorkDayTomorrow
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
-import com.hfut.schedule.logic.util.sys.DateTimeUtils
-import com.hfut.schedule.ui.component.BottomSheetTopBar
-import com.hfut.schedule.ui.component.HazeBottomSheetTopBar
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
+import com.hfut.schedule.ui.component.custom.BottomSheetTopBar
+import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.MyCustomCard
 import com.hfut.schedule.ui.component.RotatingIcon
-import com.hfut.schedule.ui.component.ScrollText
+import com.hfut.schedule.ui.component.custom.ScrollText
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.cardNormalColor
@@ -83,8 +81,8 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCamp
 import com.hfut.schedule.ui.screen.home.search.function.other.life.WeatherScreen
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.bottomSheetRound
-import com.hfut.schedule.ui.util.MyAnimationManager
-import com.hfut.schedule.viewmodel.UIViewModel
+import com.hfut.schedule.ui.util.AppAnimationManager
+import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
@@ -291,7 +289,7 @@ fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) {
                                 LoginWeb(vmUI,true,vm,hazeState)
                             }
                     }
-                if(DateTimeUtils.Time_Hour.toInt() in 22 until 25 && showShower) {
+                if(DateTimeManager.Time_Hour.toInt() in 22 until 25 && showShower) {
                     Row(
                         modifier = Modifier.clickable {
                             getInGuaGua(vm) { loading = it }
@@ -327,14 +325,14 @@ fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) {
                     val uiStateWarn by vm.weatherWarningData.state.collectAsState()
                     AnimatedVisibility(
                         visible = uiStateWarn is UiState.Success,
-                        exit = MyAnimationManager.fadeAnimation.exit,
-                        enter = MyAnimationManager.fadeAnimation.enter
+                        exit = AppAnimationManager.fadeAnimation.exit,
+                        enter = AppAnimationManager.fadeAnimation.enter
                     ) {
                         val list = (uiStateWarn as UiState.Success).data
                         AnimatedVisibility(
                             visible = list.isNotEmpty(),
-                            exit = MyAnimationManager.fadeAnimation.exit,
-                            enter = MyAnimationManager.fadeAnimation.enter
+                            exit = AppAnimationManager.fadeAnimation.exit,
+                            enter = AppAnimationManager.fadeAnimation.enter
                         ) {
                             with(list[0]) {
                                 TransplantListItem(
@@ -486,7 +484,7 @@ fun Special(vmUI: UIViewModel,hazeState : HazeState) {
     }
     if(isSpecificWorkDay) {
         LaunchedEffect(showBottomSheet) {
-            targetDate = DataBaseManager.specialWorkDayDao.search(DateTimeUtils.Date_yyyy_MM_dd)?.targetDate
+            targetDate = DataBaseManager.specialWorkDayDao.search(DateTimeManager.Date_yyyy_MM_dd)?.targetDate
         }
         Row(modifier = Modifier
             .background(MaterialTheme.colorScheme.errorContainer)
@@ -509,7 +507,7 @@ fun Special(vmUI: UIViewModel,hazeState : HazeState) {
         }
     } else if(isSpecificWorkDayTomorrow) {
         LaunchedEffect(showBottomSheet) {
-            targetDate = DataBaseManager.specialWorkDayDao.search(DateTimeUtils.tomorrow_YYYY_MM_DD)?.targetDate
+            targetDate = DataBaseManager.specialWorkDayDao.search(DateTimeManager.tomorrow_YYYY_MM_DD)?.targetDate
         }
         Row(modifier = Modifier
             .background(MaterialTheme.colorScheme.surfaceContainer)
@@ -536,7 +534,7 @@ fun Special(vmUI: UIViewModel,hazeState : HazeState) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChangeCourseUI(isTomorrow : Boolean,onDismiss : (Boolean) -> Unit) {
-    val date = remember { if(isTomorrow) DateTimeUtils.tomorrow_YYYY_MM_DD else DateTimeUtils.Date_yyyy_MM_dd }
+    val date = remember { if(isTomorrow) DateTimeManager.tomorrow_YYYY_MM_DD else DateTimeManager.Date_yyyy_MM_dd }
     var targetDate by remember { mutableStateOf<String?>(null) }
 
     val state = rememberDatePickerState()
@@ -544,7 +542,7 @@ fun ChangeCourseUI(isTomorrow : Boolean,onDismiss : (Boolean) -> Unit) {
     val scope = rememberCoroutineScope()
     LaunchedEffect(state.selectedDateMillis) {
         targetDate = try {
-            DateTimeUtils.simpleFormatter_YYYY_MM_DD.format(state.selectedDateMillis)
+            DateTimeManager.simpleFormatter_YYYY_MM_DD.format(state.selectedDateMillis)
         } catch (e : Exception) { null }
     }
 

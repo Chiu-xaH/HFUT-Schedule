@@ -11,9 +11,9 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.hfut.schedule.App.MyApplication
-import com.hfut.schedule.logic.util.network.parse.ParseJsons.useCaptcha
+import com.hfut.schedule.logic.util.network.ParseJsons.useCaptcha
 import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.ui.util.MyAnimationManager
+import com.hfut.schedule.ui.util.AppAnimationManager
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -164,7 +164,7 @@ object DataStoreManager {
 
     val animationTypeFlow: Flow<Int> = dataStore.data
         .map { preferences ->
-            preferences[ANIMATION_TYPE] ?: MyAnimationManager.AnimationTypes.CenterAnimation.code
+            preferences[ANIMATION_TYPE] ?: AppAnimationManager.AnimationTypes.CenterAnimation.code
         }
     val stuCookieFlow: Flow<String> = dataStore.data
         .map { preferences ->

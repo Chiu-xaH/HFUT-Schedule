@@ -24,7 +24,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-06-17") },
+                overlineContent = { Text(text = "2025-06-22") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -50,18 +50,6 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         // 当前版本
-        UpdateItems("新增 课程汇总的检索")
-        UpdateItems("新增 教评可自定义留言")
-        UpdateItems("新增 支持切换添加日程时的账户","位于 选项-应用行为-配置")
-        UpdateItems("新增 成绩中对GPA的规则说明和显示", "来源于一位用户的贡献")
-        UpdateItems("修复 开课查询无法自动收起搜索组件的Bug")
-        UpdateItems("修复 点击合肥校区校园网登录时不切换到加载界面的Bug")
-        UpdateItems("修复 共建平台上传时间时区错误的Bug")
-        UpdateItems("优化 考试添加到日程无提醒")
-        UpdateItems("优化 考试界面完成考试的显示")
-        UpdateItems("优化 共建平台列表中对学号的显示")
-        UpdateItems("优化 通知公告中的常用标签")
-        UpdateItems("优化 选课系统关闭时的显示")
         // 未实现
 //        UpdateItems("新增 洗衣机中的空闲设备", "数据源：海乐生活")
 //        UpdateItems("修复 好友课表之间无法切换的Bug")
@@ -73,7 +61,11 @@ fun VersionInfo() {
 //        UpdateItems("重构 部分界面，使其适配平板、折叠屏等大屏设备", null, UpdateType.RENEW)
 //        UpdateItems("优化 添加聚焦卡片适用范围的添加班级逻辑", null, UpdateType.OPTIMIZE)
 //        UpdateItems("优化 层级转场时的圆角", null, UpdateType.OPTIMIZE)
-
+        UpdateItems("新增 一卡通消费预测","位于 查询中心-一卡通-统计")
+        UpdateItems("重构 一卡通统计功能","月统计功能回归")
+        UpdateItems("修复 社区课程表不加粗显示考试的Bug")
+        UpdateItems("优化 一卡通账单的缓存机制")
+        UpdateItems("优化 共建平台贡献者的信息显示")
         // 下版本规划
 //        UpdateItems("优化 下学期课程表与新重构的课表的对齐", null, UpdateType.OPTIMIZE)
 
@@ -126,5 +118,4 @@ private fun UpdateItems(
         leadingContent = { Icon(painter = painterResource(id = type.res), contentDescription = "") }
     )
 }
-
 

@@ -3,41 +3,30 @@ package com.hfut.schedule.ui.screen
 import android.annotation.SuppressLint
 import android.os.Handler
 import android.os.Looper
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.res.painterResource
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.parse.getCelebration
-import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.ui.screen.grade.GradeScreen
+import com.hfut.schedule.logic.util.sys.datetime.getCelebration
 import com.hfut.schedule.ui.screen.home.MainScreen
 import com.hfut.schedule.ui.screen.login.MainNav
 import com.hfut.schedule.ui.screen.login.LoginScreen
 import com.hfut.schedule.ui.screen.login.UseAgreementScreen
 import com.hfut.schedule.ui.screen.guest.GuestMainScreen
-import com.hfut.schedule.ui.util.MyAnimationManager
+import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.component.Party
-import com.hfut.schedule.ui.component.RotatingIcon
-import com.hfut.schedule.ui.screen.supabase.login.loginSupabaseWithCheck
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.viewmodel.UIViewModel
+import com.hfut.schedule.viewmodel.ui.UIViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
@@ -93,8 +82,8 @@ fun MainHost(networkVm : NetWorkViewModel, loginVm : LoginViewModel, uiVm : UIVi
     NavHost(
         navController = navController,
         startDestination = first,
-        enterTransition = { MyAnimationManager.fadeAnimation.enter },
-        exitTransition = { MyAnimationManager.fadeAnimation.exit }
+        enterTransition = { AppAnimationManager.fadeAnimation.enter },
+        exitTransition = { AppAnimationManager.fadeAnimation.exit }
     ) {
         // 主UI
         composable(MainNav.HOME.name) {
