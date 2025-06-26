@@ -102,6 +102,29 @@ begin
 end;
 $$ language plpgsql;
 
+
+drop function if exists get_user_count;
+
+create function get_user_count()
+returns bigint
+security definer --
+as $$
+  select count(distinct (user_name, student_id)) from public.user_app_usage;
+$$ language sql stable;
+
+
+drop function if exists get_today_visit_count;
+
+create function get_today_visit_count()
+returns bigint
+security definer --
+as $$
+  select count(*)
+from user_app_usage
+where date_time >= (now() at time zone 'UTC+8')::date
+  and date_time < ((now() at time zone 'UTC+8')::date + interval '1 day');
+$$ language sql stable;
+
 CREATE TABLE "user_app_usage" (
   "date_time" TIMESTAMP NOT NULL DEFAULT NOW(),
   "user_name" VARCHAR(20) NOT NULL,

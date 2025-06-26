@@ -16,9 +16,6 @@
       <SelectionState runConfigName="shower">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="ExampleStartupBenchmark">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
       <SelectionState runConfigName="SupabaseActivity">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>

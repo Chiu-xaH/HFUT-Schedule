@@ -59,9 +59,9 @@ SDK: 目标36(Android 16.0) \ 最低26(Android 8.0)
 
 Jetpack Compose v1.7.6
 
-UI: Material You (Material Design 3) v1.4.0-alpha12 + Material Design 1 v1.0.5
+UI: Material You (Material Design 3) v1.4.0-alpha12
 
-IDE: Android Studio Meerkat(猫鼬)
+IDE: Android Studio Meerkat
 
 ## 开源库(鸣谢)
 [OkHttp](https://github.com/square/okhttp) 网络请求
@@ -92,6 +92,7 @@ IDE: Android Studio Meerkat(猫鼬)
 
 ## [其他内容(P2)](/docs/OTHER.md)
 
+[![Star history chart](https://api.star-history.com/svg?repos=Chiu-xaH/HFUT-SChedule&type=Date)](https://www.star-history.com/#Chiu-xaH/HFUT-Schedule&Date)
 
 
 

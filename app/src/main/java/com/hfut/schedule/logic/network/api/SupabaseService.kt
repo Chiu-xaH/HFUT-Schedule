@@ -133,4 +133,15 @@ interface SupabaseService {
         @Header("apikey") publicKey : String = getSupabasePublicKey(),
         @Body entity : SupabaseUsageEntity = SupabaseUsageEntity()
     ) : Call<ResponseBody>
+
+    // 查询今日访问量
+    @POST("rest/v1/rpc/get_today_visit_count")
+    fun getTodayVisitCount(
+        @Header("apikey") publicKey : String = getSupabasePublicKey(),
+    ) : Call<ResponseBody>
+    // 查询用户总数
+    @POST("rest/v1/rpc/get_user_count")
+    fun getUserCount(
+        @Header("apikey") publicKey : String = getSupabasePublicKey(),
+    ) : Call<ResponseBody>
 }

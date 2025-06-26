@@ -41,6 +41,9 @@ fun initNetworkRefresh(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIVie
     val showCard = prefs.getBoolean("SWITCHCARD",true)
     val cookie = if(!vm.webVpn) prefs.getString("redirect", "")  else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket","")
     CoroutineScope(Job()).apply {
+        launch {
+
+        }
         // 刷新个人接口
         launch { vm2.getMyApi() }
         // 用于更新ifSaved

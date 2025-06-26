@@ -61,11 +61,6 @@ fun VersionInfo() {
 //        UpdateItems("重构 部分界面，使其适配平板、折叠屏等大屏设备", null, UpdateType.RENEW)
 //        UpdateItems("优化 添加聚焦卡片适用范围的添加班级逻辑", null, UpdateType.OPTIMIZE)
 //        UpdateItems("优化 层级转场时的圆角", null, UpdateType.OPTIMIZE)
-        UpdateItems("新增 一卡通消费预测","位于 查询中心-一卡通-统计")
-        UpdateItems("重构 一卡通统计功能","月统计功能回归")
-        UpdateItems("修复 社区课程表不加粗显示考试的Bug")
-        UpdateItems("优化 一卡通账单的缓存机制")
-        UpdateItems("优化 共建平台贡献者的信息显示")
         // 下版本规划
 //        UpdateItems("优化 下学期课程表与新重构的课表的对齐", null, UpdateType.OPTIMIZE)
 

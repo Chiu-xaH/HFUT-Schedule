@@ -2,41 +2,165 @@ import sqlite3
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import matplotlib
+import pytz
+from datetime import datetime, timedelta
 
-# 读取 .sql 文件内容
-sql_file = "UserData.sql"
-with open(sql_file, 'r', encoding='utf-8') as file:
-    sql_script = file.read()
+def parse_datetime_flexible(s):
+    try:
+        return datetime.strptime(s, "%Y-%m-%d %H:%M:%S.%f")
+    except ValueError:
+        return datetime.strptime(s, "%Y-%m-%d %H:%M:%S")
 
-# 创建内存数据库并执行 SQL 脚本
-conn = sqlite3.connect(":memory:")
-cursor = conn.cursor()
-cursor.executescript(sql_script)
+def merge_small_categories(series, threshold=0.005):
+    total = series.sum()
+    small_items = [idx for idx, val in series.items() if val / total < threshold]
 
-# 从数据库中读取数据
-query = "SELECT * FROM UserData"  # 替换为你的表名
-df = pd.read_sql_query(query, conn)
+    def group_func(x):
+        return x if x not in small_items else '其他'
 
-# 数据预处理：提取日期
-df['dateTime'] = pd.to_datetime(df['dateTime'])
-df['date'] = df['dateTime'].dt.date
+    grouped = series.groupby(group_func).sum()
 
-# 按日期统计每天的总访问量
-daily_visits = df.groupby('date').size().reset_index(name='total_visits')
+    if '其他' in grouped.index and small_items:
+        # 省略学院
+        other_items = [
+            str(x)[:2] if "学院" in str(x) else str(x)
+            for x in small_items
+            ]
+        other_label = f"其他({','.join(other_items)})" if other_items else "其他"
 
-# 绘制图表
-plt.figure(figsize=(12, 6))
-sns.lineplot(data=daily_visits, x='date', y='total_visits', marker='o')
-plt.title("Visitors (Server During 3-Month)")
-plt.xlabel("")
-plt.ylabel("")
-# plt.xticks(rotation=0)
-plt.grid()
-plt.tight_layout()
+        grouped = grouped.rename(index={'其他': other_label})
 
-# 保存或展示图表
-plt.savefig("visitsChart.png")
-# plt.show()
+    return grouped
 
-# 关闭数据库连接
-conn.close()
+def build_usage_query(start: str = None, end: str = None) -> str:
+    base_query = "SELECT DISTINCT * FROM user_app_usage"
+    conditions = []
+
+    tz_cst = pytz.timezone("Asia/Shanghai")
+
+    if start:
+        # 转为东八区时间，再转 UTC 时间
+        dt_start = tz_cst.localize(datetime.strptime(start, "%Y-%m-%d"))
+        utc_start = dt_start.astimezone(pytz.utc)
+        conditions.append(f"date_time >= '{utc_start.strftime('%Y-%m-%d %H:%M:%S')}'")
+
+    if end:
+        # 当天23:59:59 CST，转为 UTC
+        dt_end = tz_cst.localize(datetime.strptime(end, "%Y-%m-%d") + timedelta(hours=23, minutes=59, seconds=59))
+        utc_end = dt_end.astimezone(pytz.utc)
+        conditions.append(f"date_time <= '{utc_end.strftime('%Y-%m-%d %H:%M:%S')}'")
+
+    if conditions:
+        base_query += " WHERE " + " AND ".join(conditions)
+
+    return base_query
+
+
+if(__name__ == "__main__"):
+    # 设置全局字体为支持中文的字体（根据系统设置不同）
+    matplotlib.rcParams['font.sans-serif'] = ['SimHei']  # 黑体，适用于 Windows
+    matplotlib.rcParams['axes.unicode_minus'] = False    # 负号正常显示
+    c_sql_file = "create.sql"
+    with open(c_sql_file, 'r', encoding='utf-8') as file:
+        create_sql_script = file.read()
+    # 读取 .sql 文件内容
+    sql_file = "user_app_usage_rows.sql"
+    with open(sql_file, 'r', encoding='utf-8') as file:
+        sql_script = file.read()
+
+    # 创建内存数据库并执行 SQL 脚本
+    conn = sqlite3.connect(":memory:")
+    cursor = conn.cursor()
+    cursor.executescript(create_sql_script)
+    cursor.executescript(sql_script)
+
+
+    # 从数据库中读取数据
+    query = "SELECT * FROM user_app_usage"  # 替换为你的表名
+    df = pd.read_sql_query(query, conn)
+
+    # 数据预处理：提取日期
+    df['date_time'] = df['date_time'].apply(parse_datetime_flexible)
+    # df['date_time'] = pd.to_datetime(df['date_time'])
+    df['date'] = df['date_time'].dt.date
+
+    # 计算数据库中最新的时间并转为东八区
+    utc_latest = df['date_time'].max().replace(tzinfo=pytz.utc)
+    cst_latest = utc_latest.astimezone(pytz.timezone('Asia/Shanghai'))
+    latest_time_str = f"截止：{cst_latest.strftime('%Y-%m-%d %H:%M:%S')}"
+
+
+    # 按日期统计每天的总访问量
+    daily_visits = df.groupby('date').size().reset_index(name='total_visits')
+
+    # 绘制图表
+    plt.figure(figsize=(12, 6))
+    sns.lineplot(data=daily_visits, x='date', y='total_visits', marker='o')
+    plt.title("Visitors")
+    plt.xlabel("")
+    plt.ylabel("")
+    # plt.xticks(rotation=0)
+    plt.grid()
+    plt.tight_layout()
+
+    # 保存或展示图表
+    plt.savefig("visits.png")
+    # plt.show()
+    # 从数据库中读取数据
+    query = build_usage_query()  # 饼图数据源
+    df = pd.read_sql_query(query, conn)
+    # 饼图
+    # 确保 student_id 是字符串
+    df['student_id'] = df['student_id'].astype(str)
+
+    # 提取前两位作为类别
+    df['student_prefix'] = df['student_id'].str[:4]
+
+    # 2*2布局
+    fig, axes = plt.subplots(2, 2, figsize=(18, 6))
+
+    # campus 饼图
+    df['campus'].value_counts().plot.pie(
+        ax=axes[0][0],
+        autopct='%1.1f%%',
+        startangle=140,
+        title='校区'
+    )
+
+    # department 饼图
+    merge_small_categories(df['department'].value_counts()).plot.pie(
+        ax=axes[0][1],
+        autopct='%1.1f%%',
+        startangle=140,
+        title='学院'
+    )
+
+    # student_id 前缀 饼图
+    df['student_prefix'].value_counts().plot.pie(
+        ax=axes[1][0],
+        autopct='%1.1f%%',
+        startangle=140,
+        title='学号年份'
+    )
+
+    # student_id 前缀 饼图
+    merge_small_categories(df['system_version'].value_counts()).plot.pie(
+        ax=axes[1][1],
+        autopct='%1.1f%%',
+        startangle=140,
+        title='Android API 版本'
+    )
+    
+
+    for row in axes:
+        for ax in row:
+            ax.set_ylabel("")
+
+
+    plt.tight_layout()
+    fig.text(0.5, -0.05, latest_time_str, ha='center', fontsize=10)
+    plt.savefig("pie_charts.png", bbox_inches="tight")
+    # plt.show()
+    # 关闭数据库连接
+    conn.close()
