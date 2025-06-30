@@ -272,7 +272,7 @@ fun MainScreen(
             saveInt("FIRST",0)
         }
         if(!isLogin) {
-            onListenStateHolder(vm.studentId) { data ->
+            onListenStateHolder(vm.bizTypeIdResponse) { data ->
                 // 检测是否教务token还有效
                 ifSaved = if(data != -1) {
                     false

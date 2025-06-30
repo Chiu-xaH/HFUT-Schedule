@@ -40,7 +40,9 @@ fun initNetworkRefresh(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIVie
         // 用于更新ifSaved
         launch {
             vm.getStudentId(cookie!!)
-            vm.getExamJXGLSTU(cookie)
+            val studentId = (vm.studentId.state.value as? UiState.Success)?.data ?: return@launch
+            launch { vm.getBizTypeId(cookie,studentId) }
+            launch { vm.getExamJXGLSTU(cookie) }
         }
         // 更新课程表
         if(!ifSaved)
@@ -84,9 +86,13 @@ suspend fun updateCourses(vm: NetWorkViewModel, vmUI: UIViewModel) = withContext
     val cookie = (if (!vm.webVpn) prefs.getString("redirect", "") else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", ""))
         ?: return@withContext
 
-    vm.getStudentId(cookie)
+    if(vm.studentId.state.first() !is UiState.Success) {
+        vm.getStudentId(cookie)
+    }
     val studentId = (vm.studentId.state.value as? UiState.Success)?.data ?: return@withContext
-    vm.getBizTypeId(cookie,studentId)
+    if(vm.bizTypeIdResponse.state.first() !is UiState.Success) {
+        vm.getBizTypeId(cookie,studentId)
+    }
     val bizTypeId = (vm.bizTypeIdResponse.state.value as? UiState.Success)?.data ?: return@withContext
     vm.getLessonIds(cookie, studentId = studentId, bizTypeId = bizTypeId)
     val lessonResponse = (vm.lessonIds.state.value as? UiState.Success)?.data ?: return@withContext
