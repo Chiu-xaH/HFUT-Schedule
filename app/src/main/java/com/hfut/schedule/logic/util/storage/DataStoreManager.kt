@@ -43,6 +43,7 @@ object DataStoreManager {
     private val CARD_PASSWORD = stringPreferencesKey("card_password")
     private val USE_DEFAULT_CARD_PASSWORD = booleanPreferencesKey("use_default_card_password")
     private val DEFAULT_CALENDAR_ACCOUNT = longPreferencesKey("default_calendar_account")
+    private val COURSE_TABLE_TIME = stringPreferencesKey("course_table_time")
 
 
     enum class ColorMode(val code : Int) {
@@ -159,6 +160,11 @@ object DataStoreManager {
             preferences[DEFAULT_CALENDAR_ACCOUNT] = value
         }
     }
+    suspend fun saveCourseTable(value: String) {
+        dataStore.edit { preferences ->
+            preferences[COURSE_TABLE_TIME] = value
+        }
+    }
 
 
 
@@ -249,6 +255,10 @@ object DataStoreManager {
     val defaultCalendarAccount: Flow<Long> = dataStore.data
         .map { preferences ->
             preferences[DEFAULT_CALENDAR_ACCOUNT] ?: 1
+        }
+    val courseTableTime: Flow<String> = dataStore.data
+        .map { preferences ->
+            preferences[COURSE_TABLE_TIME] ?: ""
         }
     /* 用法
     val XXX by DataStoreManager.XXX.collectAsState(initial = 默认值)

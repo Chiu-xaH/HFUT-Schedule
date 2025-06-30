@@ -96,6 +96,7 @@ import com.hfut.schedule.ui.component.custom.ScrollText
 import com.hfut.schedule.ui.component.StyleCardListItem
  
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.onListenStateHolder
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CommunityCourseTableUI
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.ScheduleTopDate
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.JxglstuCourseTableUI
@@ -184,17 +185,17 @@ fun MainScreen(
 
     var showBottomSheet_multi by remember { mutableStateOf(false) }
 
-    val examObserver = Observer<Int> { result ->
-        ifSaved = when(result) {
-            200 -> {
-                false
-                //登录Token未过期
-            }
-            else -> {
-                true
-            }
-        }
-    }
+//    val examObserver = Observer<Int> { result ->
+//        ifSaved = when(result) {
+//            200 -> {
+//                false
+//                //登录Token未过期
+//            }
+//            else -> {
+//                true
+//            }
+//        }
+//    }
 
     if (showBottomSheet) {
         saveString("Notifications", getNotifications().size.toString())
@@ -270,8 +271,17 @@ fun MainScreen(
             //重置
             saveInt("FIRST",0)
         }
+        if(!isLogin) {
+            onListenStateHolder(vm.studentId) { data ->
+                // 检测是否教务token还有效
+                ifSaved = if(data != -1) {
+                    false
+                } else {
+                    true
+                }
+            }
+        }
         Handler(Looper.getMainLooper()).post {
-            if(!isLogin) vm.jxglstuExamCode.observeForever(examObserver)
             vmUI.findNewCourse.observeForever(courseObserver)
         }
         // 等待加载完毕可切换标签

@@ -13,7 +13,6 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.enumeration.LibraryItems
 import com.hfut.schedule.logic.enumeration.LoginType
 import com.hfut.schedule.logic.model.ForecastAllBean
-import com.hfut.schedule.logic.model.ForecastBean
 import com.hfut.schedule.logic.model.NewsResponse
 import com.hfut.schedule.logic.model.PayData
 import com.hfut.schedule.logic.model.PayResponse
@@ -50,6 +49,8 @@ import com.hfut.schedule.logic.model.community.LibraryResponse
 import com.hfut.schedule.logic.model.community.TodayResponse
 import com.hfut.schedule.logic.model.community.TodayResult
 import com.hfut.schedule.logic.model.jxglstu.CourseSearchResponse
+import com.hfut.schedule.logic.model.jxglstu.CourseUnitBean
+import com.hfut.schedule.logic.model.jxglstu.LessonTimesResponse
 import com.hfut.schedule.logic.model.jxglstu.MyApplyResponse
 import com.hfut.schedule.logic.model.jxglstu.ProgramBean
 import com.hfut.schedule.logic.model.jxglstu.ProgramCompletionResponse
@@ -61,12 +62,12 @@ import com.hfut.schedule.logic.model.jxglstu.SelectCourseInfo
 import com.hfut.schedule.logic.model.jxglstu.SurveyResponse
 import com.hfut.schedule.logic.model.jxglstu.SurveyTeacherResponse
 import com.hfut.schedule.logic.model.jxglstu.TransferResponse
+import com.hfut.schedule.logic.model.jxglstu.datumResponse
 import com.hfut.schedule.logic.model.jxglstu.forStdLessonSurveySearchVms
 import com.hfut.schedule.logic.model.jxglstu.lessonResponse
 import com.hfut.schedule.logic.model.jxglstu.lessons
 import com.hfut.schedule.logic.model.one.BorrowBooksResponse
 import com.hfut.schedule.logic.model.one.SubBooksResponse
-import com.hfut.schedule.logic.model.one.datas
 import com.hfut.schedule.logic.model.one.getTokenResponse
 import com.hfut.schedule.logic.model.zjgd.BillBean
 import com.hfut.schedule.logic.model.zjgd.BillMonth
@@ -105,15 +106,14 @@ import com.hfut.schedule.logic.network.servicecreator.SupabaseServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.ZJGDBillServiceCreator
 import com.hfut.schedule.logic.util.network.Encrypt
 import com.hfut.schedule.logic.util.network.state.CasInHFUT
-import com.hfut.schedule.logic.util.network.state.PARSE_ERROR_CODE
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.network.supabaseEventDtoToEntity
 import com.hfut.schedule.logic.util.network.supabaseEventEntityToDto
 import com.hfut.schedule.logic.util.network.supabaseEventForkDtoToEntity
 import com.hfut.schedule.logic.util.parse.SemseterParser
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.storage.SharedPrefs.saveInt
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.onListenStateHolder
@@ -143,7 +143,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.awaitResponse
-import kotlin.ranges.contains
 
 // 106个函数
 class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
@@ -159,9 +158,9 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     private val stu = StuServiceCreator.create(StuService::class.java)
     private val supabase = SupabaseServiceCreator.create(SupabaseService::class.java)
 
-
-    var studentId = MutableLiveData<Int>(prefs.getInt("STUDENTID",0))
-    var lessonIds = MutableLiveData<List<Int>>()
+    // prefs.getInt("STUDENTID",0)
+    val studentId = StateHolder<Int>()
+    val lessonIds = StateHolder<lessonResponse>()
     var token = MutableLiveData<String>()
 
     var githubStarsData = StateHolder<Int>()
@@ -326,20 +325,27 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     fun downloadHoliday()  = Repository.downloadHoliday()
 
     val postTransferResponse = StateHolder<String>()
-    suspend fun postTransfer(cookie: String, batchId: String, id : String, phoneNumber : String) = launchRequestSimple(
-        holder = postTransferResponse,
-        request = {
-            jxglstuJSON.postTransfer(
-                cookie = cookie,
-                redirectUrl = "/for-std/change-major-apply/apply?PARENT_URL=/for-std/change-major-apply/index/${studentId.value}&batchId=${batchId}&studentId=${studentId.value}".toRequestBody("text/plain".toMediaTypeOrNull()),
-                batchId = batchId.toRequestBody("text/plain".toMediaTypeOrNull()),
-                id = id.toRequestBody("text/plain".toMediaTypeOrNull()),
-                studentID = studentId.value.toString().toRequestBody("text/plain".toMediaTypeOrNull()),
-                telephone = phoneNumber.toRequestBody("text/plain".toMediaTypeOrNull())
-            ).awaitResponse()
-        },
-        transformSuccess = { _,json -> parsePostTransfer(json) }
-    )
+    suspend fun postTransfer(cookie: String, batchId: String, id : String, phoneNumber : String) {
+        onListenStateHolder(studentId) { sId ->
+            launchRequestSimple(
+                holder = postTransferResponse,
+                request = {
+                    jxglstuJSON.postTransfer(
+                        cookie = cookie,
+                        redirectUrl = "/for-std/change-major-apply/apply?PARENT_URL=/for-std/change-major-apply/index/${sId}&batchId=${batchId}&studentId=${sId}".toRequestBody(
+                            "text/plain".toMediaTypeOrNull()
+                        ),
+                        batchId = batchId.toRequestBody("text/plain".toMediaTypeOrNull()),
+                        id = id.toRequestBody("text/plain".toMediaTypeOrNull()),
+                        studentID = sId.toString()
+                            .toRequestBody("text/plain".toMediaTypeOrNull()),
+                        telephone = phoneNumber.toRequestBody("text/plain".toMediaTypeOrNull())
+                    ).awaitResponse()
+                },
+                transformSuccess = { _, json -> parsePostTransfer(json) }
+            )
+        }
+    }
     private fun parsePostTransfer(result : String) : String = try {
         var msg = ""
         if(result.contains("result")) {
@@ -362,19 +368,21 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         cookie: String,
         batchId: String,
         id : String,
-    ) = launchRequestSimple(
-        holder = fromCookie,
-        request = {
-            jxglstuHTML.getFormCookie(
-                cookie = cookie,
-                id = id,
-                studentId = studentId.value.toString(),
-                redirectUrl = "/for-std/change-major-apply/apply?PARENT_URL=/for-std/change-major-apply/index/${studentId.value}&batchId=${batchId}&studentId=${studentId.value}",
-                batchId = batchId
-            ).awaitResponse()
-        },
-        transformSuccess = { headers,_ -> parseFromCookie(headers) }
-    )
+    ) = onListenStateHolder(studentId) { sId ->
+        launchRequestSimple(
+            holder = fromCookie,
+            request = {
+                jxglstuHTML.getFormCookie(
+                    cookie = cookie,
+                    id = id,
+                    studentId = sId.toString(),
+                    redirectUrl = "/for-std/change-major-apply/apply?PARENT_URL=/for-std/change-major-apply/index/${sId}&batchId=${batchId}&studentId=${sId}",
+                    batchId = batchId
+                ).awaitResponse()
+            },
+            transformSuccess = { headers,_ -> parseFromCookie(headers) }
+        )
+    }
     private fun parseFromCookie(headers : Headers) : String = try {
         headers["Set-Cookie"].toString().let {
             it.split(";")[0]
@@ -387,20 +395,22 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         cookie: String,
         batchId: String,
         id : String,
-    ) = launchRequestSimple(
-        holder = cancelTransferResponse,
-        request = {
-            jxglstuJSON.cancelTransfer(
-                cookie = cookie,
-                redirectUrl = "/for-std/change-major-apply/apply?PARENT_URL=/for-std/change-major-apply/index/${studentId.value}&batchId=${batchId}&studentId=${studentId.value}",
-                batchId = batchId,
-                studentId = studentId.value.toString(),
-                applyId = id
-            ).awaitResponse()
-        },
-        transformSuccess = { _,json -> false },
-        transformRedirect = { _ -> true }
-    )
+    ) = onListenStateHolder(studentId) { sId ->
+        launchRequestSimple(
+            holder = cancelTransferResponse,
+            request = {
+                jxglstuJSON.cancelTransfer(
+                    cookie = cookie,
+                    redirectUrl = "/for-std/change-major-apply/apply?PARENT_URL=/for-std/change-major-apply/index/${sId}&batchId=${batchId}&studentId=${sId}",
+                    batchId = batchId,
+                    studentId = sId.toString(),
+                    applyId = id
+                ).awaitResponse()
+            },
+            transformSuccess = { _, json -> false },
+            transformRedirect = { _ -> true }
+        )
+    }
 
     fun postUser() {
         val call = supabase.postUsage()
@@ -433,21 +443,24 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     }
 
     val selectCourseData = MutableLiveData<String?>()
-    fun getSelectCourse(cookie: String) {
-        val bizTypeId = CasInHFUT.bizTypeId ?: return
-        val call = jxglstuJSON.getSelectCourse(bizTypeId,studentId.value.toString(), cookie)
+    suspend fun getSelectCourse(cookie: String) {
+        onListenStateHolder(studentId) { sId ->
+            onListenStateHolder(bizTypeIdResponse) { bizTypeId ->
+                val call = jxglstuJSON.getSelectCourse(bizTypeId,sId.toString(), cookie)
 
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                if (response.isSuccessful) {
-                    selectCourseData.value = response.body()?.string()
-                }
-            }
+                call.enqueue(object : Callback<ResponseBody> {
+                    override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                        if (response.isSuccessful) {
+                            selectCourseData.value = response.body()?.string()
+                        }
+                    }
 
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                t.printStackTrace()
+                    override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                        t.printStackTrace()
+                    }
+                })
             }
-        })
+        }
     }
 
     val selectCourseInfoData = StateHolder<List<SelectCourseInfo>>()
@@ -477,67 +490,78 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     }
 
     val requestIdData = MutableLiveData<String?>()
-    fun getRequestID(cookie: String,lessonId : String,courseId : String,type : String) {
-        val call = jxglstuJSON.getRequestID(studentId.value.toString(),lessonId,courseId,cookie,type)
+    suspend fun getRequestID(cookie: String, lessonId : String, courseId : String, type : String) {
+        onListenStateHolder(studentId) { sId ->
+            val call = jxglstuJSON.getRequestID(sId.toString(),lessonId,courseId,cookie,type)
 
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                requestIdData.value = response.body()?.string()
-            }
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    requestIdData.value = response.body()?.string()
+                }
 
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                t.printStackTrace()
-            }
-        })
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    t.printStackTrace()
+                }
+            })
+        }
     }
 
     val selectedData = MutableLiveData<String?>()
-    fun getSelectedCourse(cookie: String,courseId : String) {
-        val call = jxglstuJSON.getSelectedCourse(studentId.value.toString(),courseId,cookie)
+    suspend fun getSelectedCourse(cookie: String, courseId : String) {
+        onListenStateHolder(studentId) { sId ->
+            val call = jxglstuJSON.getSelectedCourse(sId.toString(),courseId,cookie)
 
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                selectedData.value = response.body()?.string()
-            }
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    selectedData.value = response.body()?.string()
+                }
 
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                t.printStackTrace()
-            }
-        })
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    t.printStackTrace()
+                }
+            })
+        }
+
     }
 
     val selectResultData = MutableLiveData<String?>()
-    fun postSelect(cookie: String,requestId : String) {
-        val call = jxglstuJSON.postSelect(studentId.value.toString(), requestId,cookie)
+    suspend fun postSelect(cookie: String,requestId : String) {
+        onListenStateHolder(studentId) { sId ->
+            val call = jxglstuJSON.postSelect(sId.toString(), requestId,cookie)
 
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                selectResultData.value = response.body()?.string()
-            }
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    selectResultData.value = response.body()?.string()
+                }
 
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                t.printStackTrace()
-            }
-        })
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    t.printStackTrace()
+                }
+            })
+        }
     }
 
 // 转专业 ////////////////////////////////////////////////////////////////////////////////////////////////
     val transferData = StateHolder<TransferResponse>()
-    suspend fun getTransfer(cookie: String,batchId: String) = launchRequestSimple(
-        holder = transferData,
-        request = { jxglstuJSON.getTransfer(cookie,true, batchId, studentId.value ?: 0).awaitResponse() },
-        transformSuccess = { _,json -> parseTransfer(json) }
-    )
+    suspend fun getTransfer(cookie: String,batchId: String) = onListenStateHolder(studentId) { sId ->
+        launchRequestSimple(
+            holder = transferData,
+            request = { jxglstuJSON.getTransfer(cookie, true, batchId, sId).awaitResponse() },
+            transformSuccess = { _, json -> parseTransfer(json) }
+        )
+    }
     private fun parseTransfer(json : String) : TransferResponse = try {
         Gson().fromJson(json, TransferResponse::class.java)
     } catch (e : Exception) { throw e }
 
     val transferListData = StateHolder<List<ChangeMajorInfo>>()
-    suspend fun getTransferList(cookie: String) = launchRequestSimple(
-        holder = transferListData,
-        request = { jxglstuHTML.getTransferList(cookie,studentId.value ?: 0).awaitResponse() },
-        transformSuccess = { _,html -> parseTransferList(html) }
-    )
+    suspend fun getTransferList(cookie: String) = onListenStateHolder(studentId) { sId ->
+        launchRequestSimple(
+            holder = transferListData,
+            request = { jxglstuHTML.getTransferList(cookie, sId).awaitResponse() },
+            transformSuccess = { _, html -> parseTransferList(html) }
+        )
+    }
     private fun parseTransferList(html : String) : List<ChangeMajorInfo> = try {
         val document = Jsoup.parse(html)
         val result = mutableListOf<ChangeMajorInfo>()
@@ -566,21 +590,25 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
 
     val myApplyData = StateHolder<MyApplyResponse>()
-    suspend fun getMyApply(cookie: String,batchId: String) = launchRequestSimple(
-        holder = myApplyData,
-        request = { jxglstuJSON.getMyTransfer(cookie,batchId,studentId.value ?: 0).awaitResponse() },
-        transformSuccess = { _,json -> parseMyApply(json) }
-    )
+    suspend fun getMyApply(cookie: String,batchId: String) = onListenStateHolder(studentId) { sId ->
+        launchRequestSimple(
+            holder = myApplyData,
+            request = { jxglstuJSON.getMyTransfer(cookie, batchId, sId).awaitResponse() },
+            transformSuccess = { _, json -> parseMyApply(json) }
+        )
+    }
     private fun parseMyApply(json: String) : MyApplyResponse = try {
         Gson().fromJson(json, MyApplyResponse::class.java)
     } catch (e : Exception) { throw e }
 
     val myApplyInfoData = StateHolder<MyApplyInfoBean>()
-    suspend fun getMyApplyInfo(cookie: String, listId: Int) = launchRequestSimple(
-        holder = myApplyInfoData,
-        request = { jxglstuHTML.getMyTransferInfo(cookie,listId,studentId.value ?: 0).awaitResponse() },
-        transformSuccess = { _,html -> parseMyApplyGradeInfo(html) }
-    )
+    suspend fun getMyApplyInfo(cookie: String, listId: Int) = onListenStateHolder(studentId) { sId ->
+        launchRequestSimple(
+            holder = myApplyInfoData,
+            request = { jxglstuHTML.getMyTransferInfo(cookie, listId, sId).awaitResponse() },
+            transformSuccess = { _, html -> parseMyApplyGradeInfo(html) }
+        )
+    }
     private fun parseMyApplyGradeInfo(html: String) : MyApplyInfoBean = try {
         val doc = Jsoup.parse(html)
         // 面试安排
@@ -654,11 +682,13 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     }
 
     val jxglstuGradeData = StateHolder<List<GradeResponseJXGLSTU>>()
-    suspend fun getGradeFromJxglstu(cookie: String, semester: Int?) = launchRequestSimple(
-        holder = jxglstuGradeData,
-        request = { jxglstuHTML.getGrade(cookie,studentId.value.toString(), semester).awaitResponse() },
-        transformSuccess = { _,html -> parseJxglstuGrade(html) }
-    )
+    suspend fun getGradeFromJxglstu(cookie: String, semester: Int?) = onListenStateHolder(studentId) { sId ->
+        launchRequestSimple(
+            holder = jxglstuGradeData,
+            request = { jxglstuHTML.getGrade(cookie, sId.toString(), semester).awaitResponse() },
+            transformSuccess = { _, html -> parseJxglstuGrade(html) }
+        )
+    }
     private fun parseJxglstuGrade(html : String) : List<GradeResponseJXGLSTU> = try {
         val doc = Jsoup.parse(html)
         val rows = doc.select("tr")
@@ -689,105 +719,218 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         })
     }
 
-    val bizTypeIdResponse = MutableLiveData<String?>()
-    fun getBizTypeId(cookie: String) {
-        studentId.value?.let { Repository.makeRequest(
-            call = jxglstuHTML.getBizTypeId(cookie,it),
-            liveData = bizTypeIdResponse
-        ) }
+    val bizTypeIdResponse = StateHolder<Int>()
+    suspend fun getBizTypeId(cookie: String,studentId : Int) = launchRequestSimple(
+        holder = bizTypeIdResponse,
+        request = { jxglstuHTML.getBizTypeId(cookie, studentId).awaitResponse() },
+        transformSuccess = { _, html -> parseBizTypeId(html) }
+    )
+    private fun parseBizTypeId(html : String): Int = try{
+        CasInHFUT.getBizTypeId(html)!!
+    } catch (e : Exception) {
+        throw e
     }
 
-    fun getStudentId(cookie : String) {
+//    {
+//        sId?.let { Repository.makeRequest(
+//            call = jxglstuHTML.getBizTypeId(cookie,it),
+//            liveData = bizTypeIdResponse
+//        ) }
+//    }
 
-        val call = jxglstuJSON.getStudentId(cookie)
-
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                if (response.headers()["Location"].toString().contains("/eams5-student/for-std/course-table/info/")) {
-                    studentId.value = response.headers()["Location"].toString()
-                        .substringAfter("/eams5-student/for-std/course-table/info/").toInt()
-                    saveInt("STUDENTID",studentId.value ?: 0)
+    suspend fun getStudentId(cookie : String) = launchRequestSimple(
+        holder = studentId,
+        request = { jxglstuJSON.getStudentId(cookie).awaitResponse() },
+        transformRedirect = { headers -> parseStudentId(headers) },
+        transformSuccess = { _,_ -> -1 }
+    ) 
+    suspend fun isValidStudentId() : Boolean {
+        val state = studentId.state.first()
+        when (state) {
+            is UiState.Success -> {
+                val data = state.data
+                if(data > 0) {
+                    return true
                 }
             }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
+            else -> {}
+        }
+        return false
     }
-
-    fun getLessonIds(cookie : String, bizTypeId : Int,studentid : String) {
-        //bizTypeId不是年级数！  //dataId为学生ID  //semesterId为学期Id，例如23-24第一学期为234
-        val call =  jxglstuJSON.getLessonIds(
-            cookie,
-            bizTypeId.toString(),
-            SemseterParser.getSemseter().toString(),
-            studentid
-        )
-
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val json = response.body()?.string()
-                if (json != null) {
-                    try {
-                        val id = Gson().fromJson(json, lessonResponse::class.java)
-                        lessonIds.value = id.lessonIds
-                    } catch (_ : Exception) { }
-                    saveString("courses",json)
-                }
+    private fun parseStudentId(headers: Headers): Int {
+        val i = "/eams5-student/for-std/course-table/info/"
+        try {
+            if (headers["Location"].toString().contains(i)) {
+                return headers["Location"].toString().substringAfter(i).toInt()
+//            saveInt("STUDENTID",sId ?: 0)
+            } else {
+                throw Exception(headers["Location"])
             }
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
+        } catch (e : Exception) {
+            throw e
+        }
+    }
+//    {
+//
+//        val call = jxglstuJSON.getStudentId(cookie)
+//
+//        call.enqueue(object : Callback<ResponseBody> {
+//            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+//                if (response.headers()["Location"].toString().contains("/eams5-student/for-std/course-table/info/")) {
+//                    sId = response.headers()["Location"].toString()
+//                        .substringAfter("/eams5-student/for-std/course-table/info/").toInt()
+//                    saveInt("STUDENTID",sId ?: 0)
+//                }
+//            }
+//
+//            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+//        })
+//    }
+
+    //bizTypeId不是年级数！  //dataId为学生ID  //semesterId为学期Id，例如23-24第一学期为234
+    suspend fun getLessonIds(cookie : String,studentId : Int,bizTypeId : Int) = launchRequestSimple(
+        holder = lessonIds,
+        request = {
+            jxglstuJSON.getLessonIds(
+                cookie,
+                bizTypeId.toString(),
+                SemseterParser.getSemseter().toString(),
+                studentId.toString()
+            ).awaitResponse()
+        },
+        transformSuccess = { _, json -> parseLessonIds(json) }
+    )
+//    {
+//        val call =  jxglstuJSON.getLessonIds(
+//            cookie,
+//            bizTypeId.toString(),
+//            SemseterParser.getSemseter().toString(),
+//            studentid
+//        )
+//
+//        call.enqueue(object : Callback<ResponseBody> {
+//            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+//                val json = response.body()?.string()
+//                if (json != null) {
+//                    try {
+//                        val id = Gson().fromJson(json, lessonResponse::class.java)
+//                        val timeCampusId = id.timeTableLayoutId
+//                        lessonIds.value = id.lessonIds
+//                    } catch (_ : Exception) { }
+//                    saveString("courses",json)
+//                }
+//            }
+//            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+//        })
+//    }
+//
+    private fun parseLessonIds(json : String) : lessonResponse {
+        saveString("courses",json)
+        try {
+            return Gson().fromJson(json, lessonResponse::class.java)
+        } catch (e : Exception) { throw e }
     }
 
-    val datumData = MutableLiveData<String?>()
-    fun getDatum(cookie : String, lessonIds: JsonObject) {
-
+    val datumData = StateHolder<String>()
+    suspend fun getDatum(cookie : String,lessonIdList : List<Int>) = onListenStateHolder(studentId){ sId ->
         val lessonIdsArray = JsonArray()
-        this@NetWorkViewModel.lessonIds.value?.forEach {lessonIdsArray.add(JsonPrimitive(it))}
-
-        val call = jxglstuJSON.getDatum(cookie,lessonIds)
-
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val body = response.body()?.string()
-                datumData.value = body
-                if (body != null && body.contains("result")) {
-                    saveString("json", body)
-                }
+        lessonIdList.forEach { lessonIdsArray.add(JsonPrimitive(it)) }
+        val jsonObject = JsonObject().apply {
+            add("lessonIds", lessonIdsArray)//课程ID
+            addProperty("studentId",sId)//学生ID
+            addProperty("weekIndex", "")
+        }
+        launchRequestSimple(
+            holder = datumData,
+            request = { jxglstuJSON.getDatum(cookie, jsonObject).awaitResponse() },
+            transformSuccess = { _, json -> parseDatum(json) }
+        )
+    }
+    private fun parseDatum(json : String) : String {
+        if (json.contains("result")) {
+            saveString("json", json)
+            try {
+                return json
+//                Gson().fromJson(json, datumResponse::class.java)
+            } catch (e : Exception) {
+                throw e
             }
+        } else {
+            throw Exception(json)
+        }
+    }
+//    {
+//        val lessonIdsArray = JsonArray()
+//        this@NetWorkViewModel.lessonIds.value?.forEach {lessonIdsArray.add(JsonPrimitive(it))}
 
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
+//        val call = jxglstuJSON.getDatum(cookie,lessonIds)
+//
+//        call.enqueue(object : Callback<ResponseBody> {
+//            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+//                val body = response.body()?.string()
+//                datumData.value = body
+//                if (body != null && body.contains("result")) {
+//                    saveString("json", body)
+//                }
+//            }
+//
+//            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+//        })
+//    }
+//
+    suspend fun getInfo(cookie : String) {
+        onListenStateHolder(studentId) { sId ->
+            val call = jxglstuHTML.getInfo(cookie,sId.toString())
+
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    saveString("info", response.body()?.string())
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+            })
+            val call2 = jxglstuHTML.getMyProfile(cookie)
+
+            call2.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    saveString("profile", response.body()?.string())
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+            })
+        }
     }
 
-    fun getInfo(cookie : String) {
 
-        val call = jxglstuHTML.getInfo(cookie,studentId.value.toString())
-
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                saveString("info", response.body()?.string())
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
-
-        val call2 = jxglstuHTML.getMyProfile(cookie)
-
-        call2.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                saveString("profile", response.body()?.string())
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
+    val lessonTimesResponse = StateHolder<List<CourseUnitBean>>()
+    suspend fun getLessonTimes(cookie: String,timeCampusId : Int) = launchRequestSimple(
+        holder = lessonTimesResponse,
+        request = { jxglstuJSON.getLessonTimes(cookie, JxglstuService.LessonTimeRequest(timeCampusId)).awaitResponse() },
+        transformSuccess = { _,json -> parseLessonTimes(json) }
+    )
+    val lessonTimesResponseNext = StateHolder<List<CourseUnitBean>>()
+    suspend fun getLessonTimesNext(cookie: String,timeCampusId : Int) = launchRequestSimple(
+        holder = lessonTimesResponseNext,
+        request = { jxglstuJSON.getLessonTimes(cookie, JxglstuService.LessonTimeRequest(timeCampusId)).awaitResponse() },
+        transformSuccess = { _,json -> parseLessonTimes(json) }
+    )
+    private suspend fun parseLessonTimes(result: String) : List<CourseUnitBean> = withContext(Dispatchers.IO){
+        DataStoreManager.saveCourseTable(result)
+        return@withContext try {
+            Gson().fromJson(result, LessonTimesResponse::class.java).result.courseUnitList
+        } catch (e : Exception) {
+            throw e
+        }
     }
 
     val programData = StateHolder<ProgramResponse>()
-    suspend fun getProgram(cookie: String) = launchRequestSimple(
-        holder = programData,
-        request = { jxglstuJSON.getProgram(cookie,studentId.value.toString()).awaitResponse() },
-        transformSuccess = { _,json -> parseProgram(json) }
-    )
+    suspend fun getProgram(cookie: String) = onListenStateHolder(studentId) { sId ->
+        launchRequestSimple(
+            holder = programData,
+            request = { jxglstuJSON.getProgram(cookie, sId.toString()).awaitResponse() },
+            transformSuccess = { _, json -> parseProgram(json) }
+        )
+    }
     private fun parseProgram(result: String) : ProgramResponse {
         saveString("program", result)
         return try {
@@ -810,11 +953,13 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     } catch (e : Exception) { throw e }
 
     val programPerformanceData = StateHolder<ProgramBean>()
-    suspend fun getProgramPerformance(cookie: String) = launchRequestSimple(
-        holder = programPerformanceData,
-        request = { jxglstuJSON.getProgramPerformance(cookie, studentId.value ?: 0).awaitResponse() },
-        transformSuccess = { _,json -> parseProgramPerformance(json) }
-    )
+    suspend fun getProgramPerformance(cookie: String) = onListenStateHolder(studentId) { sId ->
+        launchRequestSimple(
+            holder = programPerformanceData,
+            request = { jxglstuJSON.getProgramPerformance(cookie, sId).awaitResponse() },
+            transformSuccess = { _, json -> parseProgramPerformance(json) }
+        )
+    }
     private fun parseProgramPerformance(json : String) : ProgramBean = try {
         Gson().fromJson(json,ProgramBean::class.java)
     } catch (e : Exception) { throw e }
@@ -829,11 +974,28 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         courseName : String?,
         semester : Int,
         courseId : String?
-    ) = launchRequestSimple(
-        holder = courseSearchResponse,
-        request = { jxglstuJSON.searchCourse(cookie,studentId.value.toString(),semester,className,"1,${prefs.getString("CourseSearchRequest",MyApplication.PAGE_SIZE.toString()) ?: MyApplication.PAGE_SIZE}",courseName,courseId).awaitResponse() },
-        transformSuccess = { _,json -> parseSearchCourse(json) }
-    )
+    ) = onListenStateHolder(studentId) { sId ->
+        launchRequestSimple(
+            holder = courseSearchResponse,
+            request = {
+                jxglstuJSON.searchCourse(
+                    cookie,
+                    sId.toString(),
+                    semester,
+                    className,
+                    "1,${
+                        prefs.getString(
+                            "CourseSearchRequest",
+                            MyApplication.PAGE_SIZE.toString()
+                        ) ?: MyApplication.PAGE_SIZE
+                    }",
+                    courseName,
+                    courseId
+                ).awaitResponse()
+            },
+            transformSuccess = { _, json -> parseSearchCourse(json) }
+        )
+    }
     private fun parseSearchCourse(result : String) : List<lessons> = try {
         Gson().fromJson(result,CourseSearchResponse::class.java).data.map { it.lesson }
     } catch (e : Exception) { throw e }
@@ -845,11 +1007,15 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     }
 
     val surveyListData = StateHolder<List<forStdLessonSurveySearchVms>>()
-    suspend fun getSurveyList(cookie: String, semester : Int) = launchRequestSimple(
-        holder = surveyListData,
-        request = { jxglstuJSON.getSurveyList(cookie,studentId.value.toString(),semester).awaitResponse() },
-        transformSuccess = { _,json -> parseSurveyList(json) }
-    )
+    suspend fun getSurveyList(cookie: String, semester : Int) = onListenStateHolder(studentId) { sId ->
+        launchRequestSimple(
+            holder = surveyListData,
+            request = {
+                jxglstuJSON.getSurveyList(cookie, sId.toString(), semester).awaitResponse()
+            },
+            transformSuccess = { _, json -> parseSurveyList(json) }
+        )
+    }
     private fun parseSurveyList(json : String) : List<forStdLessonSurveySearchVms> = try {
             Gson().fromJson(json, SurveyTeacherResponse::class.java).forStdLessonSurveySearchVms
     } catch (e : Exception) { throw e }
@@ -865,11 +1031,19 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     } catch (e : Exception) { throw e }
 
     val surveyToken = StateHolder<String>()
-    suspend fun getSurveyToken(cookie: String, id : String) = launchRequestSimple(
-        holder = surveyToken,
-        request = { jxglstuJSON.getSurveyToken(cookie,id,"/for-std/lesson-survey/semester-index/${studentId.value}").awaitResponse() },
-        transformSuccess = { headers,_ -> parseSurveyToken(headers) }
-    )
+    suspend fun getSurveyToken(cookie: String, id : String) = onListenStateHolder(studentId) { sId ->
+        launchRequestSimple(
+            holder = surveyToken,
+            request = {
+                jxglstuJSON.getSurveyToken(
+                    cookie,
+                    id,
+                    "/for-std/lesson-survey/semester-index/${sId}"
+                ).awaitResponse()
+            },
+            transformSuccess = { headers, _ -> parseSurveyToken(headers) }
+        )
+    }
     private fun parseSurveyToken(headers : Headers) : String = try {
         headers.toString().substringAfter("Set-Cookie:").substringBefore(";")
     } catch(e : Exception) { throw e }
@@ -887,24 +1061,26 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         })
     }
 
-    fun getPhoto(cookie : String){
-        val call = jxglstuJSON.getPhoto(cookie,studentId.value.toString())
+    suspend fun getPhoto(cookie : String){
+        onListenStateHolder(studentId) { sId ->
+            val call = jxglstuJSON.getPhoto(cookie,sId.toString())
 
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                //保存图片
-                // 将响应体转换为字节数组
-                try {
-                    val bytes = response.body()?.bytes()
-                    // 将字节数组转换为Base64编码的字符串
-                    val base64String = Base64.encodeToString(bytes, Base64.DEFAULT)
-                    // 保存编码后的字符串
-                    saveString("photo",base64String)
-                } catch (_ : Exception) { }
-            }
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    //保存图片
+                    // 将响应体转换为字节数组
+                    try {
+                        val bytes = response.body()?.bytes()
+                        // 将字节数组转换为Base64编码的字符串
+                        val base64String = Base64.encodeToString(bytes, Base64.DEFAULT)
+                        // 保存编码后的字符串
+                        saveString("photo",base64String)
+                    } catch (_ : Exception) { }
+                }
 
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+            })
+        }
     }
 
     fun goToOne(cookie : String)  {// 创建一个Call对象，用于发送异步请求
@@ -1349,20 +1525,22 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     }
 
     val jxglstuExamCode = MutableLiveData<Int>()
-    fun getExamJXGLSTU(cookie: String) {
-        val call = jxglstuJSON.getExam(cookie,studentId.value.toString())
+    suspend fun getExamJXGLSTU(cookie: String) {
+        onListenStateHolder(studentId) { sId ->
+            val call = jxglstuJSON.getExam(cookie,sId.toString())
 
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val code = response.code()
-                jxglstuExamCode.value = code
-                if(code == 200) {
-                    saveString("examJXGLSTU", response.body()?.string())
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    val code = response.code()
+                    jxglstuExamCode.value = code
+                    if(code == 200) {
+                        saveString("examJXGLSTU", response.body()?.string())
+                    }
                 }
-            }
 
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+            })
+        }
     }
 
     val gradeFromCommunityResponse = StateHolder<GradeResult>()
@@ -1531,39 +1709,58 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         })
     }
 
-    val lessonIdsNext = MutableLiveData<List<Int>>()
-    fun getLessonIdsNext(cookie : String, bizTypeId : Int,studentid : String) {
-        val call = (SemseterParser.getSemseter().plus(20)).toString().let { jxglstuJSON.getLessonIds(cookie,bizTypeId.toString(), it,studentid) }
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val json = response.body()?.string()
-                if (json != null) {
-                    try {
-                        val id = Gson().fromJson(json, lessonResponse::class.java)
-                        saveString("coursesNext",json)
-                        lessonIdsNext.value = id.lessonIds
-                    } catch (_ : Exception) {}
-                }
-            }
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
+    val lessonIdsNext = StateHolder<lessonResponse>()
+    suspend fun getLessonIdsNext(cookie : String, studentId : Int, bizTypeId: Int) = launchRequestSimple(
+        holder = lessonIdsNext,
+        request = { (SemseterParser.getSemseter().plus(20)).toString().let { jxglstuJSON.getLessonIds(cookie,bizTypeId.toString(), it,studentId.toString()).awaitResponse() }},
+        transformSuccess = { _,json -> parseLessonIdsNext(json) }
+    )
+    private fun parseLessonIdsNext(json : String) : lessonResponse {
+        saveString("coursesNext",json)
+        try {
+            return Gson().fromJson(json, lessonResponse::class.java)
+        } catch (e : Exception) { throw e }
     }
+//            {
+//        val call = (SemseterParser.getSemseter().plus(20)).toString().let { jxglstuJSON.getLessonIds(cookie,bizTypeId.toString(), it,studentId.toString()) }
+//        call.enqueue(object : Callback<ResponseBody> {
+//            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+//                val json = response.body()?.string()
+//                if (json != null) {
+//                    try {
+//                        val id = Gson().fromJson(json, lessonResponse::class.java)
+//                        saveString("coursesNext",json)
+//                        lessonIdsNext.value = id.lessonIds
+//                    } catch (_ : Exception) {}
+//                }
+//            }
+//            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+//        })
+//    }
 
-    fun getDatumNext(cookie : String, lessonIds: JsonObject) {
-
-        val lessonIdsArray = JsonArray()
-        this@NetWorkViewModel.lessonIds.value?.forEach {lessonIdsArray.add(JsonPrimitive(it))}
-
-        val call = jxglstuJSON.getDatum(cookie,lessonIds)
-
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val body = response.body()?.string()
-                saveString("jsonNext", body)
+    suspend fun getDatumNext(cookie : String, lessonIdList: List<Int>) {
+//        val lessonIdsArray = JsonArray()
+//        this@NetWorkViewModel.lessonIds.value?.forEach {lessonIdsArray.add(JsonPrimitive(it))}
+        onListenStateHolder(studentId) { sId ->
+            val lessonIdsArray = JsonArray()
+            lessonIdList.forEach { lessonIdsArray.add(JsonPrimitive(it)) }
+            val jsonObject = JsonObject().apply {
+                add("lessonIds", lessonIdsArray)//课程ID
+                addProperty("studentId",sId)//学生ID
+                addProperty("weekIndex", "")
             }
+            val call = jxglstuJSON.getDatum(cookie,jsonObject)
 
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    val body = response.body()?.string()
+                    saveString("jsonNext", body)
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+            })
+        }
+
     }
 
     val weatherWarningData = StateHolder<List<QWeatherWarnBean>>()

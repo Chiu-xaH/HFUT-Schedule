@@ -1,6 +1,12 @@
 package com.hfut.schedule.logic.model.jxglstu
 
-data class lessonResponse(val lessonIds : List<Int>, val lessons : List<lessons>)
+data class lessonResponse(
+    val lessonIds : List<Int>,
+    val lessons : List<lessons>,
+    val timeTableLayoutId : Int,
+    val weekIndices : List<Int>,
+    val currentWeek : Int
+)
 data class lessons(val nameZh : String?,
                    val remark : String?,
                    val scheduleText : scheduleText,

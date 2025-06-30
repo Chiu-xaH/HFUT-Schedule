@@ -229,8 +229,7 @@ fun selectCourseListLoading(vm : NetWorkViewModel, hazeState: HazeState) {
         ""
     ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
 
-
-
+    val scope = rememberCoroutineScope()
     if(refresh) {
         loading = true
         CoroutineScope(Job()).launch{
@@ -241,7 +240,9 @@ fun selectCourseListLoading(vm : NetWorkViewModel, hazeState: HazeState) {
                        // Log.d("sss",result.toString())
                         if (result != null) {
                             if (result.contains("302")) {
-                                cookie?.let { vm.getSelectCourse(it) }
+                                scope.launch {
+                                    cookie?.let { vm.getSelectCourse(it) }
+                                }
                             }
                         }
                     }
@@ -616,7 +617,7 @@ fun selectCourseResultLoad(vm : NetWorkViewModel, courseId : Int, lessonId : Int
         "redirect",
         ""
     ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
-
+    val scope = rememberCoroutineScope()
 
     if(refresh) {
         loading = true
@@ -626,7 +627,10 @@ fun selectCourseResultLoad(vm : NetWorkViewModel, courseId : Int, lessonId : Int
                 Handler(Looper.getMainLooper()).post{
                     vm.requestIdData.observeForever { result ->
                         if (result != null) {
-                            cookie?.let { vm.postSelect(it,result) }
+                            scope.launch {
+                                cookie?.let { vm.postSelect(it,result) }
+
+                            }
                         }
                     }
                 }

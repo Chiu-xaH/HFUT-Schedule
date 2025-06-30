@@ -134,7 +134,7 @@ object Repository {
     suspend fun <T> launchRequestSimple(
         holder: StateHolder<T>,
         request: suspend () -> Response<ResponseBody>,
-        transformSuccess: (Headers, String) -> T,
+        transformSuccess: suspend (Headers, String) -> T,
         transformRedirect: ((Headers) -> T)? = null
     ) = try {
         holder.setLoading()

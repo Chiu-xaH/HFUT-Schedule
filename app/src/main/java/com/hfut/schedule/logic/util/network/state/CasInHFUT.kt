@@ -26,9 +26,9 @@ object CasInHFUT {
                 val matchResult = regex.find(scriptText)
                 if (matchResult != null) {
                     val id = matchResult.groupValues[1].toIntOrNull()
-                    if(id != null) {
-                        bizTypeId = id
-                    }
+//                    if(id != null) {
+//                        bizTypeId = id
+//                    }
                     return id
                 }
             }

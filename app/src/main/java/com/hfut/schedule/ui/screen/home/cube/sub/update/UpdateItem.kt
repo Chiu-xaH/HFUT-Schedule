@@ -24,7 +24,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-06-22") },
+                overlineContent = { Text(text = "2025-07-04") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -51,19 +51,31 @@ fun VersionInfo() {
     DividerTextExpandedWith(text = "新特性") {
         // 当前版本
         // 未实现
-//        UpdateItems("新增 洗衣机中的空闲设备", "数据源：海乐生活")
 //        UpdateItems("修复 好友课表之间无法切换的Bug")
 //        UpdateItems("新增 教务课程表导出为ics文件", "位于 课程表-多课表-写入日历日程",UpdateType.ADD)
 //        UpdateItems("重构 提纯出CAS统一认证登录逻辑，为更多平台的一键登录做准备", null,UpdateType.RENEW)
 //        UpdateItems("新增 本地聚焦卡片快速转化为云端卡片，一键共享本地卡片", null, UpdateType.ADD)
 //        UpdateItems("新增 对共建平台已上传卡片的信息编辑", null, UpdateType.ADD)
-//        UpdateItems("重构 网络请求层，重新进行封装，使用Flow代替LiveData，优化潜在的内存泄漏问题，增加不同状态下的展示", "进度: 完成60/总99",UpdateType.RENEW)
+        UpdateItems("重构 网络请求层，重新进行封装，使用Flow代替LiveData，优化潜在的内存泄漏问题，增加不同状态下的展示", "进度: 完成66/总99",UpdateType.RENEW)
 //        UpdateItems("重构 部分界面，使其适配平板、折叠屏等大屏设备", null, UpdateType.RENEW)
 //        UpdateItems("优化 添加聚焦卡片适用范围的添加班级逻辑", null, UpdateType.OPTIMIZE)
 //        UpdateItems("优化 层级转场时的圆角", null, UpdateType.OPTIMIZE)
         // 下版本规划
 //        UpdateItems("优化 下学期课程表与新重构的课表的对齐", null, UpdateType.OPTIMIZE)
-
+        UpdateItems("新增 洗衣机中的空闲设备", "数据源：海乐生活，适用于翡翠湖和宣城校区")
+        UpdateItems("新增 一卡通-统计中消费预测与统计功能的本地化分析")
+        UpdateItems("新增 外地访问(WEBVPN)在登陆状态内自动检查")
+        UpdateItems("新增 开发者选项","可供有能力者使用某些功能")
+        UpdateItems("重构 通知公告，现在，将新增通知公告细分为按学院、教务处等")
+        UpdateItems("修复 教务课程表在第一学期翡翠湖校区和第二学期合肥校区由于作息时间与宣城校区不一致而导致显示缺失的Bug，同时重构教务课程表显示课程逻辑为根据各自作息表")
+        UpdateItems("修复 日历账户设置在未申请日历权限前进入崩溃的Bug")
+        UpdateItems("修复 材料与化工学院之间图标一致的Bug")
+        UpdateItems("修复 体测平台、报修打开白屏的Bug")
+        UpdateItems("修复 上个版本造成的一卡通账单翻页无效的Bug")
+        UpdateItems("移除 游客模式，与其合并","经过前期对网络层的重构，已经不需要单独开一个游客界面了")
+        UpdateItems("优化 下学期课程表在未开放入口时的点击操作")
+        UpdateItems("优化 部分区域的引导提示(共建平台注册、通知公告)")
+        UpdateItems("重构 课程表起始日期的判断逻辑")
         // v5.0 2025-07+ 远期规划
 //        UpdateItems("新增 磁钉体系", "位于 选项-应用行为，构建全局磁钉体系，任何支持的界面向边缘滑动即可缩放为磁钉最小化", UpdateType.ADD)
 //        UpdateItems("重构 CAS登录", "完全重写底层，使其支持更多平台的边界接入，修复部分功能登陆失败的Bug、修复外地访问下无法使用邮箱等功能的Bug、修复偶见无法登录教务的Bug、优化刷新登陆状态后仍需等待较长时间才可操作的逻辑、支持对外开放API等", UpdateType.RENEW)

@@ -26,12 +26,12 @@ import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.BottomTip
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
-import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel

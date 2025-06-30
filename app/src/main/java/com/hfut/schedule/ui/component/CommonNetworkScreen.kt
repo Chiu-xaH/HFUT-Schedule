@@ -157,7 +157,11 @@ fun CommonNetworkScreen(
     }
 }
 
-suspend fun <T> onListenStateHolder(response : StateHolder<T>, onError : ((Int?, Throwable?) -> Unit)? = null, onSuccess : (T) -> Unit) = withContext(Dispatchers.Main) {
+suspend fun <T> onListenStateHolder(
+    response : StateHolder<T>,
+    onError : ((Int?, Throwable?) -> Unit)? = null,
+    onSuccess : suspend (T) -> Unit
+) = withContext(Dispatchers.Main) {
     // 只收集第一次流
     val state = response.state.first { it !is UiState.Loading }
     when (state) {

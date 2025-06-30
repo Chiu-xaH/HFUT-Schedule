@@ -63,6 +63,7 @@ import com.hfut.schedule.logic.model.community.courseDetailDTOList
 import com.hfut.schedule.logic.model.jxglstu.datumResponse
 import com.hfut.schedule.logic.util.network.state.CasInHFUT
 import com.hfut.schedule.logic.util.network.ParseJsons.isNextOpen
+import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveInt
@@ -444,6 +445,7 @@ fun JxglstuCourseTableUI(
         refreshUI(showAll)
     }
 
+
 //////////////////////////////////////////////////////////////////////////////////
    if(load) {
         val cookie = if (!webVpn) prefs.getString(
@@ -514,8 +516,6 @@ fun JxglstuCourseTableUI(
                //登录信息门户的接口,还没做重构（懒）
                if (token != null) {
                    if (token.contains("AT") && cardvalue != "未获取") {
-//                       async { vm.getSubBooks("Bearer $token") }
-//                       async { vm.getBorrowBooks("Bearer $token") }
                    } else {
                        async {
                            async { vm.goToOne(cookies) }.await()
@@ -532,94 +532,133 @@ fun JxglstuCourseTableUI(
         if (nextBoolean) saveInt("FIRST", 1)
 
 
-        scope.launch {
+       LaunchedEffect(Unit) {
+           if(loading == false) return@LaunchedEffect
+           cookie?: return@LaunchedEffect
+           vm.getStudentId(cookie)
+           val studentId = (vm.studentId.state.value as? UiState.Success)?.data ?: return@LaunchedEffect
+           launch { vm.getInfo(cookie) }
+           launch {
+               if (prefs.getString("photo", "") == null || prefs.getString("photo", "") == "")
+                   vm.getPhoto(cookie)
+           }
+           vm.getBizTypeId(cookie,studentId)
+           val bizTypeId = (vm.bizTypeIdResponse.state.value as? UiState.Success)?.data ?: return@LaunchedEffect
+           launch {
+               vm.getLessonIds(cookie, studentId = studentId, bizTypeId = bizTypeId)
+               val lessonResponse = (vm.lessonIds.state.value as? UiState.Success)?.data ?: return@launch
+               vm.getLessonTimes(cookie,lessonResponse.timeTableLayoutId)
+               vm.getDatum(cookie,lessonResponse.lessonIds)
+               val datum = (vm.datumData.state.value as? UiState.Success)?.data
+               if(datum == null) {
+                   showToast("数据为空,尝试刷新")
+                   return@launch
+               }
+               async {
+                   delay(200)
+                   a++
+                   loading = false
+               }
+           }
+
+           launch {
+               if(nextBoolean) {
+                   vm.getLessonIdsNext(cookie, studentId = studentId, bizTypeId = bizTypeId)
+                   val lessonResponse = (vm.lessonIdsNext.state.value as? UiState.Success)?.data ?: return@launch
+                   vm.getLessonTimesNext(cookie,lessonResponse.timeTableLayoutId)
+                   vm.getDatumNext(cookie,lessonResponse.lessonIds)
+               }
+           }
+       }
+//        scope.launch {
 //加载其他教务信息////////////////////////////////////////////////////////////////////////////////////////////////////
-            async {
-                val studentIdObserver = Observer<Int> { result ->
-                    if (result != 0) {
-                        SharedPrefs.saveString("studentId", result.toString())
-                        CoroutineScope(Job()).launch {
-                            async { vm.getBizTypeId(cookie!!) }.await()
-                            async { vm.getInfo(cookie!!) }
-                            if(prefs.getString("photo","") == null || prefs.getString("photo","") == "")
-                            async { cookie?.let { vm.getPhoto(it) } }
-                        }
-                    }
-                }
-                val getBizTypeIdObserver = Observer<String?> { result ->
-                    if(result != null) {
-                        // 开始解析
-                        val bizTypeId = CasInHFUT.bizTypeId ?: CasInHFUT.getBizTypeId(result)
-                        if(bizTypeId != null) {
-                            vm.getLessonIds(cookie!!,bizTypeId,vm.studentId.value.toString())
-                            if(nextBoolean) {
-                                vm.getLessonIdsNext(cookie,bizTypeId,vm.studentId.value.toString())
-                            }
-                        }
-                    }
-                }
-                val lessonIdObserver = Observer<List<Int>> { result ->
-                    if (result.toString() != "") {
-                        val lessonIdsArray = JsonArray()
-                        result.forEach { lessonIdsArray.add(JsonPrimitive(it)) }
-                        val jsonObject = JsonObject().apply {
-                            add("lessonIds", lessonIdsArray)//课程ID
-                            addProperty("studentId", vm.studentId.value)//学生ID
-                            addProperty("weekIndex", "")
-                        }
-                        vm.getDatum(cookie!!, jsonObject)
-                        vm.bizTypeIdResponse.removeObserver(getBizTypeIdObserver)
-                        vm.studentId.removeObserver(studentIdObserver)
-                    }
-                }
-                val lessonIdObserverNext = Observer<List<Int>> { result ->
-                    if (result.toString() != "") {
-                        val lessonIdsArray = JsonArray()
-                        result.forEach { lessonIdsArray.add(JsonPrimitive(it)) }
-                        val jsonObject = JsonObject().apply {
-                            add("lessonIds", lessonIdsArray)//课程ID
-                            addProperty("studentId", vm.studentId.value)//学生ID
-                            addProperty("weekIndex", "")
-                        }
-                        vm.getDatumNext(cookie!!, jsonObject)
-                        // vm.lessonIdsNext.removeObserver(lessonIdObserver)
-                    }
-                }
+//            async {
+//                val studentIdObserver = Observer<Int> { result ->
+//                    if (result != 0) {
+//                        SharedPrefs.saveString("studentId", result.toString())
+//                        CoroutineScope(Job()).launch {
+//                            async { vm.getBizTypeId(cookie!!) }.await()
+//                            async { vm.getInfo(cookie!!) }
+//                            if(prefs.getString("photo","") == null || prefs.getString("photo","") == "")
+//                            async { cookie?.let { vm.getPhoto(it) } }
+//                        }
+//                    }
+//                }
+//                val getBizTypeIdObserver = Observer<String?> { result ->
+//                    if(result != null) {
+//                        // 开始解析
+//                        val bizTypeId = CasInHFUT.bizTypeId ?: CasInHFUT.getBizTypeId(result)
+//                        if(bizTypeId != null) {
+//                            vm.getLessonIds(cookie!!,bizTypeId,vm.studentId.value.toString())
+//                            if(nextBoolean) {
+//                                vm.getLessonIdsNext(cookie,bizTypeId,vm.studentId.value.toString())
+//                            }
+//                        }
+//                    }
+//                }
+//                val lessonIdObserver = Observer<List<Int>> { result ->
+//                    if (result.toString() != "") {
+//                        val lessonIdsArray = JsonArray()
+//                        result.forEach { lessonIdsArray.add(JsonPrimitive(it)) }
+//                        val jsonObject = JsonObject().apply {
+//                            add("lessonIds", lessonIdsArray)//课程ID
+//                            addProperty("studentId", vm.studentId.value)//学生ID
+//                            addProperty("weekIndex", "")
+//                        }
+//                        vm.getDatum(cookie!!, jsonObject)
+//                        vm.bizTypeIdResponse.removeObserver(getBizTypeIdObserver)
+//                        vm.studentId.removeObserver(studentIdObserver)
+//                    }
+//                }
+//                val lessonIdObserverNext = Observer<List<Int>> { result ->
+//                    if (result.toString() != "") {
+//                        val lessonIdsArray = JsonArray()
+//                        result.forEach { lessonIdsArray.add(JsonPrimitive(it)) }
+//                        val jsonObject = JsonObject().apply {
+//                            add("lessonIds", lessonIdsArray)//课程ID
+//                            addProperty("studentId", vm.studentId.value)//学生ID
+//                            addProperty("weekIndex", "")
+//                        }
+//                        vm.getDatumNext(cookie!!, jsonObject)
+//                        // vm.lessonIdsNext.removeObserver(lessonIdObserver)
+//                    }
+//                }
 
-                val datumObserver = Observer<String?> { result ->
-                    if (result != null) {
-                        if (result.contains("result")) {
-                            CoroutineScope(Job()).launch {
+//                val datumObserver = Observer<String?> { result ->
+//                    if (result != null) {
+//                        if (result.contains("result")) {
+//                            CoroutineScope(Job()).launch {
 //                                async { if (showAll) updateAll() else update() }.await()
-                                async {
-                                    Handler(Looper.getMainLooper()).post {
-                                        vm.lessonIds.removeObserver(
-                                            lessonIdObserver
-                                        )
-                                    }
-                                }
-                                async {
-                                    delay(200)
-                                    a++
-                                    loading = false
-                                }
-                            }
-                        } else showToast("数据为空,尝试刷新")
-                    }
-                }
+//                                async {
+//                                    Handler(Looper.getMainLooper()).post {
+//                                        vm.lessonIds.removeObserver(
+//                                            lessonIdObserver
+//                                        )
+//                                    }
+//                                }
+//                                async {
+//                                    delay(200)
+//                                    a++
+//                                    loading = false
+//                                }
+//                            }
+//                        } else showToast("数据为空,尝试刷新")
+//                    }
+//                }
 
-                async { vm.getStudentId(cookie!!) }.await()
+//                async { vm.getStudentId(cookie!!) }.await()
 
-                Handler(Looper.getMainLooper()).post {
-                    vm.studentId.observeForever(studentIdObserver)
-                    vm.bizTypeIdResponse.observeForever(getBizTypeIdObserver)
-                    vm.lessonIds.observeForever(lessonIdObserver)
-                    vm.datumData.observeForever(datumObserver)
-                    if (nextBoolean)
-                        vm.lessonIdsNext.observeForever(lessonIdObserverNext)
-                }
-            }
-        }
+//                Handler(Looper.getMainLooper()).post {
+//                    vm.studentId.observeForever(studentIdObserver)
+//                    vm.bizTypeIdResponse.observeForever(getBizTypeIdObserver)
+//                    vm.lessonIds.observeForever(lessonIdObserver)
+//                    vm.datumData.observeForever(datumObserver)
+//                    if (nextBoolean)
+//                        vm.lessonIdsNext.observeForever(lessonIdObserverNext)
+//                }
+
+//            }
+//        }
 
         if (a > 0) job.cancel()
         if (prefs.getString("tip", "0") != "0") loading = false
