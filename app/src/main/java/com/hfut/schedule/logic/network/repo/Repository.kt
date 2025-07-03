@@ -45,7 +45,6 @@ import com.hfut.schedule.logic.network.servicecreator.Login.LoginWebHefeiService
 import com.hfut.schedule.logic.network.servicecreator.Login.LoginWebServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.NewsServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.QWeatherServiceCreator
-import com.hfut.schedule.logic.network.servicecreator.SearchEleServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.TeacherServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.VercelForecastServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.WorkServiceCreator
@@ -86,7 +85,6 @@ object Repository {
     private val xuanCheng = XuanChengServiceCreator.create(XuanChengService::class.java)
     private val workSearch = WorkServiceCreator.create(WorkService::class.java)
     private val news = NewsServiceCreator.create(NewsService::class.java)
-    private val searchEle = SearchEleServiceCreator.create(FWDTService::class.java)
     private val xuanChengDormitory = DormitoryScoreServiceCreator.create(DormitoryScore::class.java)
     private val qWeather = QWeatherServiceCreator.create(QWeatherService::class.java)
     private val github = GithubServiceCreator.create(GithubService::class.java)
@@ -380,11 +378,6 @@ object Repository {
         newsList
     } catch (e : Exception) { throw e }
 
-    suspend fun searchEle(json : String,electricOldData : StateHolder<String>) = launchRequestSimple(
-        holder = electricOldData,
-        request = { searchEle.searchEle(json,"synjones.onecard.query.elec.roominfo",true).awaitResponse() },
-        transformSuccess = { _,json -> parseElectric(json) }
-    )
 
     @JvmStatic
     private fun parseElectric(result : String) : String = try {

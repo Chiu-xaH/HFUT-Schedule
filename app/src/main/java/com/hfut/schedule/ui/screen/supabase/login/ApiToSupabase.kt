@@ -12,6 +12,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
@@ -20,12 +21,15 @@ import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.component.RotatingIcon
 import com.hfut.schedule.ui.component.onListenStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun ApiToSupabase(vm : NetWorkViewModel) {
     val supabaseAutoCheck by DataStoreManager.supabaseAutoCheck.collectAsState(initial = true)
-
+    val scope = rememberCoroutineScope()
     val jwt by DataStoreManager.supabaseJwtFlow.collectAsState(initial = "")
+    val check by vm.supabaseCheckResp.state.collectAsState()
+
     val refreshToken by DataStoreManager.supabaseRefreshTokenFlow.collectAsState(initial = "")
     var showBadge by remember { mutableStateOf(false) }
 
@@ -34,10 +38,10 @@ fun ApiToSupabase(vm : NetWorkViewModel) {
     // 预加载 兼顾检查登陆状态
     LaunchedEffect(jwt,supabaseAutoCheck) {
         if((jwt.isNotBlank() || jwt.isNotEmpty()) && supabaseAutoCheck) {
-            if(vm.supabaseCheckResp.value == null) {
+            if(check is UiState.Prepare) {
                 vm.supabaseGetEventLatest(jwt)
                 onListenStateHolder(vm.supabaseGetEventLatestResp,onError = { _,_ -> }) { result ->
-                    vm.supabaseCheckResp.value = true
+                    vm.supabaseCheckResp.emitData(true)
                     if(result) {
                         // 有新的日程
                         showBadge = true
@@ -52,7 +56,9 @@ fun ApiToSupabase(vm : NetWorkViewModel) {
 
     IconButton(
         onClick = {
-            loginSupabaseWithCheck(jwt,refreshToken,vm) {}
+            scope.launch {
+                loginSupabaseWithCheck(jwt,refreshToken,vm)
+            }
         },
         colors = IconButtonDefaults.iconButtonColors(contentColor = MaterialTheme.colorScheme.primary)
     ) {

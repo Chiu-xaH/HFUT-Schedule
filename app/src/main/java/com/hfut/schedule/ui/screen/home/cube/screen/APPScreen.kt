@@ -219,7 +219,10 @@ fun APPScreen(navController: NavController,
 //                modifier = Modifier.clickable { navController.navigate(Screen.LockScreen.route) }
 //            )
             TransplantListItem(
-                headlineContent = { Text(text = "默认添加日程账户") },
+                headlineContent = { Text(text = "默认日程账户") },
+                supportingContent = {
+                    Text("自定义添加到系统日历的账户")
+                },
                 leadingContent = { Icon(painterResource(R.drawable.calendar_add_on), contentDescription = "Localized description",) },
                 modifier = Modifier.clickable { navController.navigate(Screen.CalendarScreen.route) }
             )

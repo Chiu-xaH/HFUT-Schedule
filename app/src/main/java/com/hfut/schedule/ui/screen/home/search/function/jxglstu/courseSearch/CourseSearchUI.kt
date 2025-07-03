@@ -40,10 +40,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
@@ -66,10 +68,10 @@ fun CourseSearchUI(vm : NetWorkViewModel, hazeState: HazeState) {
     var className by remember { mutableStateOf( getPersonInfo().classes ?: "") }
     var courseName by remember { mutableStateOf("") }
     var courseId by remember { mutableStateOf("") }
+    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
 
-    val cookie = remember {
-        if (!vm.webVpn) prefs.getString("redirect", "") else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
-    }
+    val cookie = if (!vm.webVpn) prefs.getString("redirect", "") else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
+
 
     var showSearch by remember { mutableStateOf(true) }
 
@@ -309,10 +311,10 @@ fun CourseSearchUI(vm : NetWorkViewModel, hazeState: HazeState) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ApiForCourseSearch(vm: NetWorkViewModel, courseName : String?, courseId : String?, showBottomSheet : Boolean, hazeState: HazeState, onDismissRequest :  () -> Unit) {
-    val cookie = remember {
-        if (!vm.webVpn) prefs.getString("redirect", "")
-        else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
-    }
+    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
+
+    val cookie = if (!vm.webVpn) prefs.getString("redirect", "")
+    else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
     if(showBottomSheet) {
         var semester by remember { mutableIntStateOf(getSemseter()) }
         val refreshNetwork : suspend () -> Unit = {

@@ -43,6 +43,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.ScoreGrade
 import com.hfut.schedule.logic.model.ScoreWithGPA
@@ -83,8 +84,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel, showSearch : Boolean, hazeState: HazeState) {
     val uiState by vm.jxglstuGradeData.state.collectAsState()
+    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
+
     val refreshNetwork: suspend () -> Unit = {
-        val cookie = if(!vm.webVpn) prefs.getString("redirect", "")  else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket","")
+        val cookie = if(!vm.webVpn) prefs.getString("redirect", "")  else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
         cookie?.let {
             vm.jxglstuGradeData.clear()
             vm.getGradeFromJxglstu(cookie,null)

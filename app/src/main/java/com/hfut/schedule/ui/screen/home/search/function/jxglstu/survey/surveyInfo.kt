@@ -30,6 +30,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.PostMode
 import com.hfut.schedule.logic.model.jxglstu.PostSurvey
@@ -37,6 +38,7 @@ import com.hfut.schedule.logic.model.jxglstu.SurveyResponse
 import com.hfut.schedule.logic.model.jxglstu.blankQuestionAnswer
 import com.hfut.schedule.logic.model.jxglstu.radioQuestionAnswer
 import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.CommonNetworkScreen
@@ -51,18 +53,20 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Composable
 fun SurveyInfoUI(id : Int, vm: NetWorkViewModel,scope : CoroutineScope,onDismiss : () -> Unit) {
     val uiState by vm.surveyData.state.collectAsState()
+    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
 
     val refreshNetwork: suspend () -> Unit = {
         val cookie = if (!vm.webVpn) prefs.getString(
             "redirect",
             ""
-        ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
+        ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
         cookie?.let {
             vm.surveyData.clear()
             vm.getSurveyToken(it,id.toString())
@@ -181,7 +185,7 @@ suspend fun selectMode(vm : NetWorkViewModel, mode : PostMode,bean: SurveyRespon
     val cookie = if (!vm.webVpn) prefs.getString(
         "redirect",
         ""
-    ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
+    ) else MyApplication.WEBVPN_COOKIE_HEADER + DataStoreManager.webVpnCookie.first()
 //    val token = prefs.getString("SurveyCookie","")
     // 主线程监听 StateFlow
     onListenStateHolder(vm.surveyToken) { token ->

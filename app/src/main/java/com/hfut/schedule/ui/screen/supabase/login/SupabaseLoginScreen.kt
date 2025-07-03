@@ -84,7 +84,7 @@ fun SupabaseLoginScreen(vm : NetWorkViewModel,vmUI: UIViewModel,navHostControlle
     var password2 by remember { mutableStateOf("") }
 
     // 创建一个动画值，根据按钮的按下状态来改变阴影的大小
-    val showTip by remember { mutableStateOf("如需共建分享信息，需要在开发者搭建的平台登录您的账号，首次使用请注册") }
+    val showTip by remember { mutableStateOf("如需共建分享信息，需要在开发者搭建的平台登录您的账号，首次使用请注册，注册之前需要激活校园邮箱才可收到邮件(位于信息门户)") }
     val scope = rememberCoroutineScope()
 
 
@@ -233,8 +233,11 @@ fun SupabaseLoginScreen(vm : NetWorkViewModel,vmUI: UIViewModel,navHostControlle
                                         if(isReg) {
                                             isSupabaseRegistering.value = true
                                             regSupabase(password,vm) { loading = it }
-                                        } else
-                                            loginSupabaseWithPassword(password,vm,navHostController) { loading = it }
+                                        } else {
+                                            loading = true
+                                            loginSupabaseWithPassword(password,vm,navHostController)
+                                            loading = false
+                                        }
                                     }
                                 },
                                 modifier = Modifier.fillMaxWidth().padding(horizontal = 25.dp).scale(scale.value),

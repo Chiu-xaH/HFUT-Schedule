@@ -68,7 +68,6 @@ import com.hfut.schedule.ui.component.custom.ScrollText
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.cardNormalColor
-import com.hfut.schedule.ui.component.onListenStateHolder
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.focus.funiction.TodayUI
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.card.SchoolCardItem
@@ -86,11 +85,9 @@ import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -223,7 +220,6 @@ fun FocusCardSettings(innerPadding : PaddingValues) {
 
 @SuppressLint("SuspiciousIndentation", "CoroutineCreationDuringComposition")
 @OptIn(ExperimentalMaterial3Api::class)
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) {
     val showEle = prefs.getBoolean("SWITCHELE",getCampus() == Campus.XUANCHENG)
@@ -364,7 +360,7 @@ fun getWeb(vm : NetWorkViewModel,vmUI: UIViewModel)  {
 //    }
 }
 
-fun getWebInfoFromZJGD(vm: NetWorkViewModel, vmUI : UIViewModel)  {
+fun getWebInfoFromHuiXin(vm: NetWorkViewModel, vmUI : UIViewModel)  {
     val auth = prefs.getString("auth","")
     CoroutineScope(Job()).launch {
         async { vm.getFee("bearer $auth",FeeType.NET_XUANCHENG) }.await()
@@ -381,36 +377,7 @@ fun getWebInfoFromZJGD(vm: NetWorkViewModel, vmUI : UIViewModel)  {
     }
 }
 
-
-//废弃旧的方法
-suspend fun getEle(vm : NetWorkViewModel, vmUI : UIViewModel) = withContext(Dispatchers.IO) {
-    val BuildingsNumber = prefs.getString("BuildNumber", "0")
-    val RoomNumber = prefs.getString("RoomNumber", "")
-    val EndNumber = prefs.getString("EndNumber", "")
-
-    var input = "300$BuildingsNumber$RoomNumber$EndNumber"
-    var jsons = "{ \"query_elec_roominfo\": { \"aid\":\"0030000000007301\", \"account\": \"24027\",\"room\": { \"roomid\": \"${input}\", \"room\": \"${input}\" },  \"floor\": { \"floorid\": \"\", \"floor\": \"\" }, \"area\": { \"area\": \"\", \"areaname\": \"\" }, \"building\": { \"buildingid\": \"\", \"building\": \"\" },\"extdata\":\"info1=\" } }"
-    vm.electricOldData.clear()
-    vm.searchEle(jsons)
-    onListenStateHolder(vm.electricOldData) { data ->
-        vmUI.electricValue.value = data
-        saveString("memoryEle",vmUI.electricValue.value)
-    }
-//    withContext(Dispatchers.Main) {
-//        val state = .state.first { it !is SimpleUiState.Loading }
-//        when (state) {
-//            is SimpleUiState.Success -> {
-//                val data = state.data
-//                
-//            }
-//            is SimpleUiState.Error -> {
-//                showToast("错误 " + state.exception?.message)
-//            }
-//            else -> {}
-//        }
-//    }
-}
-fun getEleNew(vm : NetWorkViewModel, vmUI : UIViewModel) {
+fun getElectricFromHuiXin(vm : NetWorkViewModel, vmUI : UIViewModel) {
     val BuildingsNumber = prefs.getString("BuildNumber", "0")
     val RoomNumber = prefs.getString("RoomNumber", "")
     val EndNumber = prefs.getString("EndNumber", "")

@@ -15,7 +15,7 @@ fun DepartmentIcons(name : String, modifier: Modifier = Modifier) {
     else if(name.contains("外国语")) Icon(painterResource(R.drawable.translate), contentDescription,modifier)
     else if(name.contains("马克思主义")) Icon(painterResource(R.drawable.neurology), contentDescription,modifier)
     else if(name.contains("机械工程")) Icon(painterResource(R.drawable.settings), contentDescription,modifier)
-    else if(name.contains("材料科学")) Icon(painterResource(R.drawable.science), contentDescription,modifier)
+    else if(name.contains("材料科学")) Icon(painterResource(R.drawable.texture), contentDescription,modifier)
     else if(name.contains("电气与自动化工程")) Icon(painterResource(R.drawable.flash_on), contentDescription,modifier)
     else if(name.contains("土木与水利工程")) Icon(painterResource(R.drawable.precision_manufacturing), contentDescription,modifier)
     else if(name.contains("化学与化工")) Icon(painterResource(R.drawable.science), contentDescription,modifier)

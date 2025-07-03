@@ -34,11 +34,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.jxglstu.MyApplyModels
 import com.hfut.schedule.logic.model.jxglstu.TransferData
 import com.hfut.schedule.logic.model.jxglstu.courseType
 import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.custom.BottomSheetTopBar
 import com.hfut.schedule.ui.component.CommonNetworkScreen
@@ -64,10 +66,12 @@ import kotlinx.coroutines.launch
 @Composable
 fun MyApplyListUI(vm: NetWorkViewModel, batchId : String, hazeState: HazeState) {
     var indexs by remember { mutableIntStateOf(0) }
-    val cookie = remember { if (!vm.webVpn) prefs.getString(
+    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
+
+    val cookie =if (!vm.webVpn) prefs.getString(
         "redirect",
         ""
-    ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "") }
+    ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
 
     var showBottomSheet_apply by remember { mutableStateOf(false) }
 
@@ -174,13 +178,14 @@ fun MyApplyListUI(vm: NetWorkViewModel, batchId : String, hazeState: HazeState) 
 
 @Composable
 fun MyApply(vm: NetWorkViewModel, batchId : String, indexs : Int) {
+    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
 
-    val cookie = remember {
+    val cookie =
         if (!vm.webVpn) prefs.getString(
             "redirect",
             ""
-        ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
-    }
+        ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
+
 
 
     val uiState1 by vm.myApplyData.state.collectAsState()
@@ -351,11 +356,13 @@ fun MyApply(vm: NetWorkViewModel, batchId : String, indexs : Int) {
 @Composable
 private fun TransferCancelStatusUI(vm : NetWorkViewModel, batchId: String, id: Int) {
     val uiState by vm.cancelTransferResponse.state.collectAsState()
+    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
+
     val refreshNetwork: suspend () -> Unit = {
         var cookie = if (!vm.webVpn) prefs.getString(
             "redirect",
             ""
-        ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
+        ) else MyApplication.WEBVPN_COOKIE_HEADER +webVpnCookie
         cookie?.let {
             vm.cancelTransferResponse.clear()
             vm.cancelTransfer(it,batchId,id.toString())

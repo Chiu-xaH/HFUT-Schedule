@@ -13,6 +13,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,16 +22,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.network.ParseJsons.isNextOpen
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.screen.home.calendar.next.DatumUI
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.CourseTotalForApi
 import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.custom.ScrollText
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.WebDialog
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
@@ -47,6 +51,20 @@ fun NextCourse(ifSaved : Boolean, vmUI : UIViewModel, vm : NetWorkViewModel, haz
 
     var showAll by remember { mutableStateOf(false) }
 
+    var showDialogN by remember { mutableStateOf(false) }
+    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
+
+    val cookie = if (!vm.webVpn) prefs.getString(
+        "redirect",
+        ""
+    ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
+    WebDialog(
+        showDialogN,
+        { showDialogN = false },
+        url = if(vm.webVpn) MyApplication.JXGLSTU_WEBVPN_URL else MyApplication.JXGLSTU_URL + "for-std/course-table",
+        title = "教务系统",
+        cookie = cookie
+    )
 
     if (showBottomSheet_next) {
         HazeBottomSheet (
@@ -97,7 +115,11 @@ fun NextCourse(ifSaved : Boolean, vmUI : UIViewModel, vm : NetWorkViewModel, haz
                     else refreshLogin()
                 } else showBottomSheet_next = true
             } else {
-                showToast("入口暂未开放")
+                if(!ifSaved) {
+                    showDialogN = true
+                } else {
+                    showToast("入口暂未开放")
+                }
             }
         }
     )

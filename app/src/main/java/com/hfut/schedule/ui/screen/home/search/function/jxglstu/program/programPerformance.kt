@@ -30,9 +30,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.jxglstu.CourseItem
 import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.AnimationCardListItem
@@ -58,13 +60,15 @@ fun ProgramPerformance(vm : NetWorkViewModel, hazeState: HazeState) {
     var showBottomSheet by remember { mutableStateOf(false) }
     var moduleIndex by remember { mutableIntStateOf(-1) }
     var title by remember { mutableStateOf("完成情况") }
+    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
 
+    val cookie = if (!vm.webVpn) prefs.getString(
+        "redirect",
+        ""
+    ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
     val uiState by vm.programPerformanceData.state.collectAsState()
     val refreshNetwork: suspend () -> Unit = {
-        val cookie = if (!vm.webVpn) prefs.getString(
-            "redirect",
-            ""
-        ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
+
         cookie?.let {
             // 禁用每次加载 特殊 数据较大 省流量
             if(uiState !is UiState.Success) {

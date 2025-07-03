@@ -41,6 +41,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.jxglstu.PlanCourses
 import com.hfut.schedule.logic.model.jxglstu.ProgramCompletionResponse
@@ -49,6 +50,7 @@ import com.hfut.schedule.logic.model.jxglstu.ProgramResponse
 import com.hfut.schedule.logic.model.jxglstu.item
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.formatDecimal
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
@@ -79,13 +81,14 @@ import kotlin.plus
 fun ProgramScreen(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState) {
 
     var showBottomSheet_Performance by remember { mutableStateOf(false) }
+    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
 
-    val cookie = remember {
+    val cookie =
         if (!vm.webVpn) prefs.getString(
             "redirect",
             ""
-        ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
-    }
+        ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
+
 
 
     val uiState by vm.programCompletionData.state.collectAsState()

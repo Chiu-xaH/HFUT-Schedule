@@ -38,9 +38,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.jxglstu.TransferData
 import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.AnimationCardListItem
@@ -69,11 +71,13 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String, hazeState: HazeState) {
 
     var id by remember { mutableIntStateOf(0) }
     val uiState by vm.transferData.state.collectAsState()
+    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
+
     val refreshNetwork: suspend () -> Unit = {
         val cookie = if (!vm.webVpn) prefs.getString(
             "redirect",
             ""
-        ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
+        ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
         cookie?.let {
             vm.transferData.clear()
             vm.getTransfer(it,batchId)
@@ -285,14 +289,15 @@ data class ErrorText(val textZh : String)
 fun TransferStatusUI(vm : NetWorkViewModel, batchId: String, id: Int, phoneNumber : String) {
 
 //    var loading by remember { mutableStateOf(true) }
+    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
 //
 //    var msg  by remember { mutableStateOf("") }
-    var cookie = remember {
+    var cookie =
         if (!vm.webVpn) prefs.getString(
             "redirect",
             ""
-        ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
-    }
+        ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
+
     val refreshNetwork : suspend () -> Unit = {
         cookie?.let {
             vm.postTransferResponse.clear()

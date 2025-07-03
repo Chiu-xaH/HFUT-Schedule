@@ -5,6 +5,8 @@ import kotlinx.coroutines.flow.StateFlow
 
 
 const val PARSE_ERROR_CODE = 1000
+const val LISTEN_ERROR_CODE = 1001
+
 
 class StateHolder<T> {
     private val _state = MutableStateFlow<UiState<T>>(UiState.Loading)

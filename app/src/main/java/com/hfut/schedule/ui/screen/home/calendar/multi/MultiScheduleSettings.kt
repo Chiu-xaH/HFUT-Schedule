@@ -28,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -50,6 +51,7 @@ import com.hfut.schedule.logic.util.sys.addCourseToEvent
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.delCourseEvents
 import com.hfut.schedule.logic.util.network.ParseJsons.isNextOpen
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.screen.home.calendar.next.DatumUI
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.CourseTotalForApi
@@ -62,6 +64,7 @@ import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
  
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.WebDialog
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
@@ -237,6 +240,21 @@ fun MultiScheduleSettings(
             }
         }
     }
+    var showDialogN by remember { mutableStateOf(false) }
+    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
+
+    val cookie = if (!vm.webVpn) prefs.getString(
+        "redirect",
+        ""
+    ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
+    WebDialog(
+        showDialogN,
+        { showDialogN = false },
+        url = if(vm.webVpn) MyApplication.JXGLSTU_WEBVPN_URL else MyApplication.JXGLSTU_URL + "for-std/course-table",
+        title = "教务系统",
+        cookie = cookie
+    )
+
     val selectedColor = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
     val normalColor = CardDefaults.outlinedCardColors(containerColor = Color.Transparent)
 
@@ -307,7 +325,11 @@ fun MultiScheduleSettings(
                                     else refreshLogin()
                                 } else showBottomSheet_next = true
                             } else {
-                                showToast("入口暂未开放")
+                                if(!ifSaved) {
+                                    showDialogN = true
+                                } else {
+                                    showToast("入口暂未开放")
+                                }
                             }
                         },
                     colors = if(selected == CourseType.NEXT.code) selectedColor else normalColor

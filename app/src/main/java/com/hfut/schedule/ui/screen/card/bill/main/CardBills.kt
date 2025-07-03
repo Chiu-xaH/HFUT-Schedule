@@ -25,6 +25,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -63,11 +64,8 @@ fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVie
     val auth = prefs.getString("auth","")
     var page by remember { mutableIntStateOf(1) }
     val uiState by vm.huiXinBillResult.state.collectAsState()
-    var refreshNetwork : suspend () -> Unit = refreshNetwork@ {
+    val refreshNetwork : suspend () -> Unit = refreshNetwork@ {
         // 有缓存
-        if(uiState is UiState.Success) {
-            return@refreshNetwork
-        }
         vm.huiXinBillResult.clear()
         vm.getCardBill("bearer $auth",page)
     }

@@ -274,11 +274,7 @@ fun MainScreen(
         if(!isLogin) {
             onListenStateHolder(vm.bizTypeIdResponse) { data ->
                 // 检测是否教务token还有效
-                ifSaved = if(data != -1) {
-                    false
-                } else {
-                    true
-                }
+                ifSaved = data == -1
             }
         }
         Handler(Looper.getMainLooper()).post {

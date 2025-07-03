@@ -44,6 +44,7 @@ object DataStoreManager {
     private val USE_DEFAULT_CARD_PASSWORD = booleanPreferencesKey("use_default_card_password")
     private val DEFAULT_CALENDAR_ACCOUNT = longPreferencesKey("default_calendar_account")
     private val COURSE_TABLE_TIME = stringPreferencesKey("course_table_time")
+    private val WEBVPN_COOKIE = stringPreferencesKey("webvpn_cookie")
 
 
     enum class ColorMode(val code : Int) {
@@ -165,6 +166,11 @@ object DataStoreManager {
             preferences[COURSE_TABLE_TIME] = value
         }
     }
+    suspend fun saveWebVpnCookie(value: String) {
+        dataStore.edit { preferences ->
+            preferences[WEBVPN_COOKIE] = value
+        }
+    }
 
 
 
@@ -259,6 +265,10 @@ object DataStoreManager {
     val courseTableTime: Flow<String> = dataStore.data
         .map { preferences ->
             preferences[COURSE_TABLE_TIME] ?: ""
+        }
+    val webVpnCookie: Flow<String> = dataStore.data
+        .map { preferences ->
+            preferences[WEBVPN_COOKIE] ?: ""
         }
     /* 用法
     val XXX by DataStoreManager.XXX.collectAsState(initial = 默认值)

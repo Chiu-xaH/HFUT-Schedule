@@ -64,14 +64,10 @@ fun apiCheck() : Boolean {
 }
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun PartOne(vm : NetWorkViewModel,
-            showlable : Boolean,
-            showlablechanged :(Boolean) -> Unit,
-            ifSaved : Boolean,
-            navController: NavController) {
+fun PartOne(navController: NavController) {
     TransplantListItem(
         headlineContent = { Text(text = "界面显示") },
-        supportingContent = { Text(text = "实时模糊 运动曲线 转场动画")},
+        supportingContent = { Text(text = "色彩 动效 动态模糊")},
         leadingContent = {
             Icon(painter = painterResource(id = R.drawable.stacks), contentDescription ="" )
         },
@@ -79,7 +75,7 @@ fun PartOne(vm : NetWorkViewModel,
     )
     TransplantListItem(
         headlineContent = { Text(text = "应用行为") },
-        supportingContent = { Text(text = "默认设置 机器学习 增量更新")},
+        supportingContent = { Text(text = "默认偏好 配置")},
         leadingContent = {
             Icon(painter = painterResource(id = R.drawable.empty_dashboard), contentDescription ="" )
         },
@@ -87,7 +83,7 @@ fun PartOne(vm : NetWorkViewModel,
     )
     TransplantListItem(
         headlineContent = { Text(text = "网络相关") },
-        supportingContent = { Text(text = "网络接口 请求范围 登录状态")},
+        supportingContent = { Text(text = "网络接口 请求范围")},
         leadingContent = {
             Icon(painter = painterResource(id = R.drawable.net), contentDescription ="" )
         },
@@ -95,7 +91,7 @@ fun PartOne(vm : NetWorkViewModel,
     )
     TransplantListItem(
         headlineContent = { Text(text = "维护关于") },
-        supportingContent = { Text(text = "疑难修复 联系反馈 分享推广")},
+        supportingContent = { Text(text = "疑难修复 联系反馈")},
         leadingContent = {
             Icon(painter = painterResource(id = R.drawable.responsive_layout), contentDescription ="" )
         },
@@ -175,7 +171,7 @@ fun HomeSettingScreen(navController: NavController,
 
 
         DividerTextExpandedWith(text = "应用设置") {
-            PartOne(vm,showlable,showlablechanged,ifSaved,navController)
+            PartOne(navController)
         }
 
         Spacer(modifier = Modifier.height(5.dp))

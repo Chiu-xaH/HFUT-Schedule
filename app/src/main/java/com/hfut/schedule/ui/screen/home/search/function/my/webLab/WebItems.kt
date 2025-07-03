@@ -26,7 +26,6 @@ fun WebItem() {
         WebItemData(title = "信息门户", icon = R.drawable.person, url = MyApplication.ONE_URL),
         WebItemData(title = "教务系统", icon = R.drawable.school, url = MyApplication.JXGLSTU_URL),
         WebItemData(title = "WEBVPN", icon = R.drawable.vpn_key, url = MyApplication.WEBVPN_URL),
-        WebItemData(title = "服务大厅", icon = R.drawable.credit_card, url = MyApplication.CARD_URL, remark = "需接入校园网\n校园卡官方网址"),
     )
 
     Column(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {

@@ -7,10 +7,11 @@ import androidx.compose.ui.unit.dp
 
 class MyApplication : Application() {
     companion object {
+        // 全局动画速度ANIMATION_SPEED=400ms已经迁移到AnimationManager
         @SuppressLint("StaticFieldLeak")
         // 全局上下文
         lateinit var context: Context
-        // 全局模糊半径 DP
+        // 全局模糊半径
         val BLUR_RADIUS = 20.dp
         // 宣城校区免费流量额度 GB
         const val MAX_FREE_FLOW = 30
@@ -21,28 +22,28 @@ class MyApplication : Application() {
         // Github
         const val GITHUB_API_URL = "https://api.github.com/"
         const val GITHUB_RAW_URL = "https://raw.githubusercontent.com/"
-        // 教务系统-WEBVPN 校外访问
-        const val JXGLSTU_WEBVPN_URL = "https://webvpn.hfut.edu.cn/http/77726476706e69737468656265737421faef469034247d1e760e9cb8d6502720ede479/eams5-student/"
         // WEBVPN 校外访问
         const val WEBVPN_URL = "https://webvpn.hfut.edu.cn/"
+        // 教务系统-WEBVPN 校外访问
+        const val JXGLSTU_WEBVPN_URL = WEBVPN_URL + "/http/" + "77726476706e69737468656265737421faef469034247d1e760e9cb8d6502720ede479/eams5-student/"
         // 通知公告
         const val NEWS_URL = "https://news.hfut.edu.cn/"
-        // 合工大教务
-        const val JWGLAPP_URL = "https://jwglapp.hfut.edu.cn/"
+        // 合工大教务 微信UNI-APP
+        const val UNI_APP_URL = "https://jwglapp.hfut.edu.cn/"
         // 更新渠道
         const val GITEE_UPDATE_URL = "https://gitee.com/chiu-xah/HFUT-Schedule/"
-        // 校园卡内网平台（哈尔滨中新）
-        const val ELECTRIC_URL = "http://172.31.248.26:8988/"
         // 智慧社区
         const val COMMUNITY_URL = "https://community.hfut.edu.cn/"
-        // 指尖工大 慧新易校
+        // 慧新易校
         const val HUIXIN_URL = "http://121.251.19.62/"
         // 乐跑云运动
         const val LEPAO_URL = "http://210.45.246.53:8080/"
+        // 支付宝打开URL
+        private const val ALIPAY_URL = "alipays://platformapi/startapp?appId=20000067&url="
         // 支付宝 校园卡
-        const val ALIPAY_CARD_URL = "alipays://platformapi/startapp?appId=20000067&url=https://ur.alipay.com/_4kQhV32216tp7bzlDc3E1k"
+        const val ALIPAY_CARD_URL = ALIPAY_URL + "https://ur.alipay.com/_4kQhV32216tp7bzlDc3E1k"
         // 支付宝 趣智校园
-        const val ALIPAY_HOT_WATER_URL = "alipays://platformapi/startapp?appId=20000067&url=https://ur.alipay.com/_3B2YzKjbV75xL9a2oapcNz"
+        const val ALIPAY_HOT_WATER_URL = ALIPAY_URL + "https://ur.alipay.com/_3B2YzKjbV75xL9a2oapcNz"
         // 信息门户
         const val ONE_URL = "https://one.hfut.edu.cn/"
         // CAS统一认证
@@ -57,9 +58,9 @@ class MyApplication : Application() {
         // 合肥校区校园网
         const val LOGIN_WEB_HEFEI_URL = "http://172.16.200.11/"
         // 登陆失败 重定向
-        const val REDIRECT_URL = "https://cas.hfut.edu.cn/cas/login?service=http%3A%2F%2Fjxglstu.hfut.edu.cn%2Feams5-student%2Fneusoft-sso%2Flogin&exception.message=A+problem+occurred+restoring+the+flow+execution+with+key+%27e1s1%27"
+        const val REDIRECT_URL = CAS_LOGIN_URL + "cas/login?service=http%3A%2F%2Fjxglstu.hfut.edu.cn%2Feams5-student%2Fneusoft-sso%2Flogin&exception.message=A+problem+occurred+restoring+the+flow+execution+with+key+%27e1s1%27"
         // 呱呱物联小程序
-        const val SHOWER_URL = "https://guagua.klcxkj-qzxy.cn/"
+        const val SHOWER_URL = "https://bathing.hfut.edu.cn/"
         // 宣城校区通知公告
         const val NEWS_XC_URL = "https://xc.hfut.edu.cn/"
         // 教师检索
@@ -74,12 +75,11 @@ class MyApplication : Application() {
         const val REPAIR_XC_URL = "http://xcfw.hfut.edu.cn/school/"
         // 智慧后勤 合肥
         const val REPAIR_URL = "http://zhhq.hfut.edu.cn/school/"
-        // 哈尔滨中新官网 校园卡
-        const val CARD_URL = "http://172.31.248.26:8088/"
-        // 图书馆
+        // 老图书馆 校园网
         const val OLD_LIBRARY_URL = "http://210.45.242.5:8080/"
+        // 新图书馆
         const val NEW_LIBRARY_URL = "https://lib.hfut.edu.cn/"
-        // 座位预约
+        // 座位预约 校园网
         const val LIBRARY_SEAT = "http://210.45.242.57/"
         // 就业
         const val WORK_URL = "https://gdjy.hfut.edu.cn/"
@@ -103,6 +103,8 @@ class MyApplication : Application() {
         const val GITHUB_REPO_NAME = "HFUT-Schedule"
         // 邮箱
         const val EMAIL = "@mail.hfut.edu.cn"
+        // WEBVPN COOKIE前缀
+        const val WEBVPN_COOKIE_HEADER = "wengine_vpn_ticketwebvpn_hfut_edu_cn="
     }
 
     override fun onCreate() {

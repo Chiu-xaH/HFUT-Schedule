@@ -37,6 +37,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -58,12 +59,14 @@ import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.model.community.LoginCommunityResponse
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
 import com.hfut.schedule.logic.model.jxglstu.datumResponse
 import com.hfut.schedule.logic.util.network.state.CasInHFUT
 import com.hfut.schedule.logic.util.network.ParseJsons.isNextOpen
 import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveInt
@@ -448,10 +451,12 @@ fun JxglstuCourseTableUI(
 
 //////////////////////////////////////////////////////////////////////////////////
    if(load) {
-        val cookie = if (!webVpn) prefs.getString(
+       val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
+
+       val cookie = if (!webVpn) prefs.getString(
             "redirect",
             ""
-        ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
+        ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
         var num2 = 1
         val ONE = CasInHFUT.casCookies
         val TGC = prefs.getString("TGC", "")

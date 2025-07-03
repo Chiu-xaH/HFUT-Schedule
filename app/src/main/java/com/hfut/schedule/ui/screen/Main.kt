@@ -13,6 +13,7 @@ import androidx.compose.runtime.setValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
@@ -21,7 +22,6 @@ import com.hfut.schedule.ui.screen.home.MainScreen
 import com.hfut.schedule.ui.screen.login.MainNav
 import com.hfut.schedule.ui.screen.login.LoginScreen
 import com.hfut.schedule.ui.screen.login.UseAgreementScreen
-import com.hfut.schedule.ui.screen.guest.GuestMainScreen
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.component.Party
 import com.hfut.schedule.viewmodel.network.LoginViewModel
@@ -34,7 +34,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun MainHost(networkVm : NetWorkViewModel, loginVm : LoginViewModel, uiVm : UIViewModel, login : Boolean) {
     val switchUpload by remember { mutableStateOf(prefs.getBoolean("SWITCHUPLOAD",true )) }
-    val startActivity by remember { mutableStateOf(prefs.getBoolean("SWITCHFASTSTART",prefs.getString("TOKEN","")?.isNotEmpty() ?: false)) }
+    val startActivity = prefs.getBoolean("SWITCHFASTSTART",prefs.getString("TOKEN","")?.isNotEmpty() ?: false)
     val navController = rememberNavController()
     val first by remember { mutableStateOf(if(prefs.getBoolean("canUse",false)) MainNav.HOME.name else MainNav.USE_AGREEMENT.name) }
     var value by remember { mutableIntStateOf(0) }
@@ -49,24 +49,31 @@ fun MainHost(networkVm : NetWorkViewModel, loginVm : LoginViewModel, uiVm : UIVi
             launch { SharedPrefs.saveString("tip","0") }
             launch {  loginVm.getKey() }
             launch {
-                async { loginVm.getTicket() }.await()
-                launch {
-                    Handler(Looper.getMainLooper()).post{
-                        loginVm.webVpnTicket.observeForever { result ->
-                            if (result != null) {
-                                if (result.contains("wengine_vpn_ticketwebvpn_hfut_edu_cn")) {
-                                    val ticket = result.substringAfter("wengine_vpn_ticketwebvpn_hfut_edu_cn=").substringBefore(";")
-                                    loginVm.putKey(ticket)
-                                }
-                            }
-                        }
-                        loginVm.status.observeForever { result ->
-                            if (result == 200) {
-                                loginVm.getKeyWebVpn()
-                            }
-                        }
-                    }
+//                async {  }.await()
+                loginVm.getTicket()
+                val cookie = (loginVm.webVpnTicket.state.value as? UiState.Success)?.data ?: return@launch
+                loginVm.putKey(cookie)
+                val status = (loginVm.status.state.value as? UiState.Success)?.data ?: return@launch
+                if(status) {
+                    loginVm.getKeyWebVpn()
                 }
+//                launch {
+//                    Handler(Looper.getMainLooper()).post{
+//                        loginVm.webVpnTicket.observeForever { result ->
+//                            if (result != null) {
+//                                if (result.contains("wengine_vpn_ticketwebvpn_hfut_edu_cn")) {
+//                                    val ticket = result.substringAfter("wengine_vpn_ticketwebvpn_hfut_edu_cn=").substringBefore(";")
+//                                    loginVm.putKey(ticket)
+//                                }
+//                            }
+//                        }
+//                        loginVm.status.observeForever { result ->
+//                            if (result == 200) {
+//                                loginVm.getKeyWebVpn()
+//                            }
+//                        }
+//                    }
+//                }
             }
         } else { // 否则进入的是主界面
             //上传用户统计数据
@@ -103,14 +110,6 @@ fun MainHost(networkVm : NetWorkViewModel, loginVm : LoginViewModel, uiVm : UIVi
         composable(MainNav.USE_AGREEMENT.name) {
             Party(timeSecond = 3L) {
                 UseAgreementScreen(navController)
-            }
-        }
-        // 游客模式
-        composable(MainNav.GUEST.name) {
-            getCelebration().let {
-                Party(show = it.use, timeSecond = it.time) {
-                    GuestMainScreen(networkVm,loginVm,uiVm, it.str)
-                }
             }
         }
     }

@@ -365,36 +365,40 @@ private fun delEvent(id : Long,showToast: Boolean = true) : Boolean {
 
 fun queryCalendars(): List<Pair<Long, String>> {
     val calendarList = mutableListOf<Pair<Long, String>>()
-    val uri = CalendarContract.Calendars.CONTENT_URI
-    val projection = arrayOf(
-        CalendarContract.Calendars._ID,
-        CalendarContract.Calendars.CALENDAR_DISPLAY_NAME
-    )
-    val selection = "${CalendarContract.Calendars.VISIBLE} = 1"
+    try {
+        val uri = CalendarContract.Calendars.CONTENT_URI
+        val projection = arrayOf(
+            CalendarContract.Calendars._ID,
+            CalendarContract.Calendars.CALENDAR_DISPLAY_NAME
+        )
+        val selection = "${CalendarContract.Calendars.VISIBLE} = 1"
 
-    val cursor = MyApplication.context.contentResolver.query(
-        uri,
-        projection,
-        selection,
-        null,
-        null
-    )
+        val cursor = MyApplication.context.contentResolver.query(
+            uri,
+            projection,
+            selection,
+            null,
+            null
+        )
 
-    cursor?.use {
-        val idIndex = it.getColumnIndex(CalendarContract.Calendars._ID)
-        val nameIndex = it.getColumnIndex(CalendarContract.Calendars.CALENDAR_DISPLAY_NAME)
+        cursor?.use {
+            val idIndex = it.getColumnIndex(CalendarContract.Calendars._ID)
+            val nameIndex = it.getColumnIndex(CalendarContract.Calendars.CALENDAR_DISPLAY_NAME)
 
-        while (it.moveToNext()) {
-            val id = it.getLong(idIndex)
-            var name = it.getString(nameIndex)
-            if(id == 1L) {
-                name = "本地默认"
+            while (it.moveToNext()) {
+                val id = it.getLong(idIndex)
+                var name = it.getString(nameIndex)
+                if(id == 1L) {
+                    name = "本地默认"
+                }
+                calendarList.add(id to name)
             }
-            calendarList.add(id to name)
         }
-    }
 
-    return calendarList
+        return calendarList
+    } catch (e : Exception) {
+        return calendarList
+    }
 }
 
 

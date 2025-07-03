@@ -66,6 +66,7 @@ import com.hfut.schedule.logic.enumeration.SelectType
 import com.hfut.schedule.logic.model.jxglstu.SelectCourseInfo
 import com.hfut.schedule.logic.model.jxglstu.SelectPostResponse
 import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
@@ -107,13 +108,14 @@ fun SelectCourse(ifSaved : Boolean, vm : NetWorkViewModel, hazeState: HazeState,
 
     var showBottomSheet_info by remember { mutableStateOf(false) }
     val sheetState_info = rememberModalBottomSheetState()
+    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
 
     val scope = rememberCoroutineScope()
     var showDialog by remember { mutableStateOf(false) }
     val cookie = if (!vm.webVpn) prefs.getString(
         "redirect",
         ""
-    ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
+    ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
     WebDialog(
         showDialog,
         { showDialog = false },
@@ -224,10 +226,12 @@ fun SelectShuoming() {
 fun selectCourseListLoading(vm : NetWorkViewModel, hazeState: HazeState) {
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
+    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
+
     val cookie = if (!vm.webVpn) prefs.getString(
         "redirect",
         ""
-    ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
+    ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
 
     val scope = rememberCoroutineScope()
     if(refresh) {
@@ -426,11 +430,13 @@ fun SelectCourseInfoLoad(courseId : Int, vm: NetWorkViewModel, hazeState: HazeSt
 //
     var input by remember { mutableStateOf("") }
     val uiState by vm.selectCourseInfoData.state.collectAsState()
+    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
+
     val refreshNetwork: suspend () -> Unit = {
         val cookie = if (!vm.webVpn) prefs.getString(
             "redirect",
             ""
-        ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
+        ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
         cookie?.let {
             vm.selectCourseInfoData.clear()
             vm.getSelectCourseInfo(it,courseId)
@@ -485,12 +491,14 @@ private fun SelectCourseInfo(vm: NetWorkViewModel,courseId : Int, search : Strin
     var name by remember { mutableStateOf("课程详情") }
     var num by remember { mutableIntStateOf(0) }
     var showBottomSheet_info by remember { mutableStateOf(false) }
-    val cookie = remember {
+    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
+
+    val cookie =
         if (!vm.webVpn) prefs.getString(
             "redirect",
             ""
-        ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
-    }
+        ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
+
     if (showBottomSheet) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
@@ -613,10 +621,12 @@ fun selectCourseResultLoad(vm : NetWorkViewModel, courseId : Int, lessonId : Int
     var refresh by remember { mutableStateOf(true) }
     var statusText by remember { mutableStateOf("提交中") }
     var statusBoolean by remember { mutableStateOf(false) }
+    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
+
     val cookie = if (!vm.webVpn) prefs.getString(
         "redirect",
         ""
-    ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
+    ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
     val scope = rememberCoroutineScope()
 
     if(refresh) {
@@ -833,10 +843,12 @@ fun courseInfo(num : Int, lists : List<SelectCourseInfo>, vm: NetWorkViewModel, 
 fun HaveSelectedCourseLoad(vm: NetWorkViewModel, courseId: Int, hazeState: HazeState) {
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
+    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
+
     val cookie = if (!vm.webVpn) prefs.getString(
         "redirect",
         ""
-    ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
+    ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
 
 
     if(refresh) {

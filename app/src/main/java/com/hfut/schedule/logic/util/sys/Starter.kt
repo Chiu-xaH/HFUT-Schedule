@@ -85,6 +85,14 @@ object Starter {
         MyApplication.context.startActivity(it)
     }
     @JvmStatic
+    fun goToMain() {
+        val it = Intent(MyApplication.context, MainActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            putExtra("nologin",true)
+        }
+        MyApplication.context.startActivity(it)
+    }
+    @JvmStatic
     fun loginGuaGua() {
         val it = Intent(MyApplication.context, ShowerActivity::class.java).apply {
             putExtra("FIRST",ShowerScreen.LOGIN.name)

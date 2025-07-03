@@ -1,14 +1,15 @@
 package com.hfut.schedule.ui.screen.home
 
 import com.google.gson.Gson
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.model.HolidayBean
 import com.hfut.schedule.logic.model.HolidayResponse
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
-import com.hfut.schedule.ui.screen.home.cube.sub.getEleNew
-import com.hfut.schedule.ui.screen.home.cube.sub.getWebInfoFromZJGD
+import com.hfut.schedule.ui.screen.home.cube.sub.getElectricFromHuiXin
+import com.hfut.schedule.ui.screen.home.cube.sub.getWebInfoFromHuiXin
 import com.hfut.schedule.ui.screen.home.focus.funiction.initCardNetwork
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
@@ -23,68 +24,84 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 // 应用冷启动主界面时的网络请求
-fun initNetworkRefresh(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel, ifSaved : Boolean){
+suspend fun initNetworkRefresh(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel, ifSaved : Boolean) = withContext(
+    Dispatchers.IO) {
     val isXuanCheng = getCampus() == Campus.XUANCHENG
     val communityToken = prefs.getString("TOKEN","")
     val showEle = prefs.getBoolean("SWITCHELE", isXuanCheng)
     val showToday = prefs.getBoolean("SWITCHTODAY",true)
     val showWeb = prefs.getBoolean("SWITCHWEB",isXuanCheng)
     val showCard = prefs.getBoolean("SWITCHCARD",true)
-    val cookie = if(!vm.webVpn) prefs.getString("redirect", "")  else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket","")
-    CoroutineScope(Job()).apply {
-        launch {
+    val webVpnCookie = DataStoreManager.webVpnCookie.first()
 
-        }
-        // 刷新个人接口
-        launch { vm2.getMyApi() }
-        // 用于更新ifSaved
-        launch {
-            vm.getStudentId(cookie!!)
+    val cookie = if(!vm.webVpn) prefs.getString("redirect", "") else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
+    // 刷新个人接口
+    launch { vm2.getMyApi() }
+    // 用于更新ifSaved
+    launch {
+        vm.getStudentId(cookie!!)
+        val studentId = (vm.studentId.state.value as? UiState.Success)?.data
+        if(studentId == null) {
+            val c = MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
+            vm.getStudentId(c)
             val studentId = (vm.studentId.state.value as? UiState.Success)?.data ?: return@launch
+            vm.webVpn = true
+            launch { vm.getBizTypeId(c,studentId) }
+            launch { vm.getExamJXGLSTU(c) }
+        } else {
             launch { vm.getBizTypeId(cookie,studentId) }
             launch { vm.getExamJXGLSTU(cookie) }
         }
-        // 更新课程表
-        if(!ifSaved)
-            launch { updateCourses(vm,vmUI) }
-        // 更新社区
-        communityToken?.let {
-            launch { vm.getCoursesFromCommunity(it) }
-            launch { vm.getFriends(it) }
-            if(showToday)
-                launch {
-                    vm.todayFormCommunityResponse.clear()
-                    vm.getToday(communityToken)
-                }
-        }
-        //检查更新
-        launch { vm.getUpdate() }
-        // 更新聚焦卡片
-        if(showWeb && getCampus() == Campus.XUANCHENG)
-            launch { getWebInfoFromZJGD(vm,vmUI) }
-        if(showEle)
-            launch { getEleNew(vm, vmUI) }
-        if(showCard)
-            launch { initCardNetwork(vm,vmUI) }
-        launch {
-            val showWeather = DataStoreManager.showFocusWeatherWarn.first()
-            val state = vm.weatherWarningData.state.first() // 只发送一次请求 API有次数限制
-            if(showWeather && state  !is UiState.Success) {
-                vm.getWeatherWarn(getCampus())
+    }
+    // 更新课程表
+    if(!ifSaved)
+        launch { updateCourses(vm,vmUI) }
+    // 更新社区
+    communityToken?.let {
+        launch { vm.getCoursesFromCommunity(it) }
+        launch { vm.getFriends(it) }
+        if(showToday)
+            launch {
+                vm.todayFormCommunityResponse.clear()
+                vm.getToday(communityToken)
             }
+    }
+    //检查更新
+    launch { vm.getUpdate() }
+    // 更新聚焦卡片
+    if(showWeb && getCampus() == Campus.XUANCHENG)
+        launch { getWebInfoFromHuiXin(vm,vmUI) }
+    if(showEle)
+        launch { getElectricFromHuiXin(vm, vmUI) }
+    if(showCard)
+        launch { initCardNetwork(vm,vmUI) }
+    launch {
+        val showWeather = DataStoreManager.showFocusWeatherWarn.first()
+        val state = vm.weatherWarningData.state.first() // 只发送一次请求 API有次数限制
+        if(showWeather && state  !is UiState.Success) {
+            vm.getWeatherWarn(getCampus())
         }
-        // 更新节假日信息
-        if(DateTimeManager.Date_yyyy != getHolidayYear()) {
-            launch { vm.downloadHoliday() }
-        }
+    }
+    // 更新节假日信息
+    if(DateTimeManager.Date_yyyy != getHolidayYear()) {
+        launch { vm.downloadHoliday() }
     }
 }
 
 
 //更新教务课表与课程汇总
 suspend fun updateCourses(vm: NetWorkViewModel, vmUI: UIViewModel) = withContext(Dispatchers.IO) {
-    val cookie = (if (!vm.webVpn) prefs.getString("redirect", "") else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", ""))
-        ?: return@withContext
+    val webVpnCookie = DataStoreManager.webVpnCookie.first()
+
+    val cookie = if (!vm.webVpn) {
+            prefs.getString("redirect", "") ?: return@withContext
+        } else {
+            if(webVpnCookie.isEmpty()) {
+                return@withContext
+            } else {
+                MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
+            }
+        }
 
     if(vm.studentId.state.first() !is UiState.Success) {
         vm.getStudentId(cookie)

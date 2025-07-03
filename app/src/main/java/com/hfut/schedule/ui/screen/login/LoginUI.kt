@@ -78,10 +78,12 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.Encrypt
 import com.hfut.schedule.logic.util.network.ParseJsons.useCaptcha
+import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.saveBoolean
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
@@ -95,6 +97,8 @@ import com.hfut.schedule.ui.component.URLImageWithOCR
  
 import com.hfut.schedule.ui.component.cardNormalColor
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.BottomTip
+import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.DownloadMLUI
 import com.hfut.schedule.ui.style.RowHorizontal
 import com.hfut.schedule.ui.style.bottomSheetRound
@@ -146,7 +150,9 @@ private fun loginClick(vm : LoginViewModel, username : String, inputAES : String
                                     onResult("请输入正确的账号")
                                 else {
                                     onResult("登陆成功")
-                                    vm.loginJxglstu()
+                                    CoroutineScope(Job()).launch {
+                                        vm.loginJxglstu()
+                                    }
                                     Starter.loginSuccess()
                                 }
                             }
@@ -177,26 +183,33 @@ private fun loginClick(vm : LoginViewModel, username : String, inputAES : String
 @Composable
 fun ImageCodeUI(webVpn : Boolean, vm: LoginViewModel, onRefresh: Int = 1, onResult : (String) -> Unit) {
     // refresh当webVpn关闭才起效，开启时不需要refresh，直接重载图片
-    var refresh by remember { mutableStateOf(true) }
-    if(webVpn) {
-        refresh = false
+    val jSessionId by vm.jSessionId.state.collectAsState()
+    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
+//    var refresh by remember { mutableStateOf(true) }
+//    if(webVpn) {
+//        refresh = false
+//    } else {
+//        if(refresh) {
+//            LaunchedEffect(Unit) {
+//                launch {
+//                    Handler(Looper.getMainLooper()).post{
+//                        vm.jSessionId.observeForever { result ->
+//                            if(result != null) {
+//                                refresh = false
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
+    val w by vm.webVpnTicket.state.collectAsState()
+//    prefs.getString("webVpnTicket", "")
+    val refresh = if(webVpn) {
+        w is UiState.Loading
     } else {
-        if(refresh) {
-            LaunchedEffect(Unit) {
-                launch {
-                    Handler(Looper.getMainLooper()).post{
-                        vm.jSessionId.observeForever { result ->
-                            if(result != null) {
-                                refresh = false
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        jSessionId is UiState.Loading
     }
-
-
     if(refresh) {
         CircularProgressIndicator()
     } else  {
@@ -206,7 +219,10 @@ fun ImageCodeUI(webVpn : Boolean, vm: LoginViewModel, onRefresh: Int = 1, onResu
                 ) + "cas/vercode"
         // 让 URL 可变，每次点击时更新
         var imageUrl by remember { mutableStateOf("$url?timestamp=${System.currentTimeMillis()}") }
-        val cookies = if(webVpn) "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "") else vm.jSessionId.value
+        val cookies = if(webVpn) MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie else {
+            (jSessionId as? UiState.Success)?.data?.jSession
+        }
+
         // webVpn开关变化时重载
         LaunchedEffect(webVpn,onRefresh) {
             imageUrl = "$url?timestamp=${System.currentTimeMillis()}"
@@ -242,12 +258,7 @@ fun LoginScreen(vm : LoginViewModel, navController : NavHostController) {
     val context = LocalActivity.current
     var showBadge by remember { mutableStateOf(false) }
     if (AppVersion.getVersionName() != prefs.getString("version", AppVersion.getVersionName())) showBadge = true
-    val useCaptcha by DataStoreManager.useCaptcha.collectAsState(initial = useCaptcha())
-    val useCaptchaAuto by DataStoreManager.useCaptchaAuto.collectAsState(initial = true)
     var webVpn by remember { mutableStateOf(false) }
-    var showToolBar by remember { mutableStateOf(true) }
-
-    val scope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
@@ -270,7 +281,7 @@ fun LoginScreen(vm : LoginViewModel, navController : NavHostController) {
                 actions = {
                     Row {
                         IconButton(onClick = {
-                            showToolBar = !showToolBar
+                            Starter.startFix()
                         }) {
                             Icon(painterResource(id = R.drawable.build), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
                         }
@@ -290,56 +301,14 @@ fun LoginScreen(vm : LoginViewModel, navController : NavHostController) {
     ) {innerPadding ->
         Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
             TwoTextField(vm,navController,webVpn)
-            ShareTwoContainer2D(
-                modifier = Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(horizontal = 25.dp- APP_HORIZONTAL_DP),
-                defaultContent = {
-                    Column {
-                        StyleCardListItem(
-                            headlineContent = { Text("外地访问") },
-                            leadingContent = { Icon(painterResource(R.drawable.vpn_key),null) },
-                            trailingContent = {
-                                Switch(checked = webVpn,onCheckedChange = { ch -> webVpn = ch })
-                            },
-                            modifier = Modifier.clickable { webVpn = !webVpn },
-                        )
-                        MyCustomCard(containerColor = cardNormalColor(),) {
-                            TransplantListItem(
-                                headlineContent = { Text("图片验证码") },
-                                leadingContent = { Icon(painterResource(R.drawable.password),null) },
-                                trailingContent = {
-                                    Switch(checked = useCaptcha,onCheckedChange = { scope.launch { DataStoreManager.saveUseCaptcha(!useCaptcha) } }, enabled = !useCaptchaAuto)
-                                },
-                                modifier = Modifier.clickable { if(!useCaptchaAuto) scope.launch { DataStoreManager.saveUseCaptcha(!useCaptcha) } },
-                            )
-                            TransplantListItem(
-                                headlineContent = { Text("跟随云控(自动托管)") },
-                                leadingContent = { Icon(painterResource(R.drawable.cloud),null) },
-                                trailingContent = {
-                                    Switch(checked = useCaptchaAuto,onCheckedChange = { scope.launch { DataStoreManager.saveUseCaptchaAuto(!useCaptchaAuto) } })
-                                },
-                                modifier = Modifier.clickable { scope.launch { DataStoreManager.saveUseCaptchaAuto(!useCaptchaAuto) } },
-                            )
-                        }
-                        StyleCardListItem(
-                            headlineContent = { Text("遇到问题") },
-                            leadingContent = { Icon(painterResource(R.drawable.build),null) },
-                            trailingContent = {
-                                Icon(Icons.Filled.ArrowForward,null)
-                            },
-                            modifier = Modifier.clickable { Starter.startFix() },
-                        )
-                    }
+            StyleCardListItem(
+                headlineContent = { Text("外地访问") },
+                leadingContent = { Icon(painterResource(R.drawable.vpn_key),null) },
+                trailingContent = {
+                    Switch(checked = webVpn,onCheckedChange = { ch -> webVpn = ch })
                 },
-                secondContent = {
-                    StyleCardListItem(
-                        headlineContent = { Text("展开工具") },
-                        trailingContent = {
-                            Icon(painterResource(if(showToolBar) R.drawable.collapse_content else R.drawable.expand_content),null)
-                        },
-                        modifier = Modifier.clickable { showToolBar = !showToolBar },
-                    )
-                },
-                show = !showToolBar
+                modifier = Modifier.clickable { webVpn = !webVpn },
+                cardModifier = Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(horizontal = 25.dp- APP_HORIZONTAL_DP)
             )
         }
     }
@@ -418,16 +387,19 @@ fun TwoTextField(vm : LoginViewModel, navHostController: NavHostController,webVp
             }
         }
     }
-    val useCaptcha by DataStoreManager.useCaptcha.collectAsState(initial = useCaptcha())
-    val useCaptchaAuto by DataStoreManager.useCaptchaAuto.collectAsState(initial = true)
+    val jSession by vm.jSessionId.state.collectAsState()
+    // 跟随JSON
 
-    var onRefresh by remember { mutableStateOf(1) }
+//    val useCaptcha = if()
+
+    var onRefresh by remember { androidx.compose.runtime.mutableIntStateOf(1) }
     var loading by remember { mutableStateOf(false) }
     var status by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(status) {
         status?.let { showToast(it) }
     }
+    val scope = rememberCoroutineScope()
 
 
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -504,45 +476,45 @@ fun TwoTextField(vm : LoginViewModel, navHostController: NavHostController,webVp
             )
         }
         val captchaUI = @Composable {
-            Spacer(modifier = Modifier.height(20.dp))
-            RowHorizontal {
-                TextField(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = 25.dp),
-                    value = inputCode,
-                    onValueChange = { inputCode = it },
-                    label = { Text("图片验证码" ) },
-                    singleLine = true,
-                    shape = MaterialTheme.shapes.medium,
-                    colors = textFiledTransplant(),
-                    leadingIcon = { Icon( painterResource(R.drawable.password), contentDescription = "Localized description") },
-                    trailingIcon = {
-                        Box(modifier = Modifier.padding(5.dp)) {
-                            ImageCodeUI(webVpn,vm, onRefresh =onRefresh ) {
-                                inputCode = it
+            Column {
+                Spacer(modifier = Modifier.height(20.dp))
+                RowHorizontal {
+                    TextField(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(horizontal = 25.dp),
+                        value = inputCode,
+                        onValueChange = { inputCode = it },
+                        label = { Text("图片验证码" ) },
+                        singleLine = true,
+                        shape = MaterialTheme.shapes.medium,
+                        colors = textFiledTransplant(),
+                        leadingIcon = { Icon( painterResource(R.drawable.password), contentDescription = "Localized description") },
+                        trailingIcon = {
+                            Box(modifier = Modifier.padding(5.dp)) {
+                                ImageCodeUI(webVpn,vm, onRefresh =onRefresh ) {
+                                    inputCode = it
+                                }
                             }
-                        }
-                    },
-                    supportingText = if(!switch_open) {
-                        {
-                            Text("点击下载模型文件以启用自动填充", modifier = Modifier.clickable {
-                                showBottomSheet = true
-                            })
-                        }
-                    } else null
-                )
+                        },
+                        supportingText = if(!switch_open) {
+                            {
+                                Text("点击下载模型文件以启用自动填充", modifier = Modifier.clickable {
+                                    showBottomSheet = true
+                                })
+                            }
+                        } else null
+                    )
+                }
             }
         }
-        if(useCaptchaAuto) {
-            if(useCaptcha()) {
-                captchaUI()
-            }
-        } else {
+        CommonNetworkScreen(jSession,isFullScreen = false, onReload = { }, loadingText = "正在检查是否需要图片验证码") {
+            val useCaptcha = (jSession as UiState.Success).data.needCaptcha
             if(useCaptcha) {
                 captchaUI()
             }
         }
+
 
         Spacer(modifier = Modifier.height(25.dp))
 
@@ -555,7 +527,7 @@ fun TwoTextField(vm : LoginViewModel, navHostController: NavHostController,webVp
             ) {
                 Button(
                     onClick = {
-                        val cookie = SharedPrefs.prefs.getString("cookie", "")
+                        val cookie = SharedPrefs.prefs.getString("LOGIN_FLAVORING", "")
                         if (cookie != null) loginClick(vm,username,inputAES,inputCode,webVpn, onRefresh = { onRefresh++ }, onLoad = { loading = it }, onResult = { status = it})
                     },
                     modifier = Modifier.fillMaxWidth().scale(scale.value).let { if(isAnonymity()) it.weight(.5f) else it },
@@ -564,12 +536,13 @@ fun TwoTextField(vm : LoginViewModel, navHostController: NavHostController,webVp
                 ) { Text( "登录") }
 
                 if(isAnonymity()) {
+                    saveBoolean("SWITCHFASTSTART",true,true)
                     Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP))
 
 
                     FilledTonalButton(
                         onClick = {
-                            navHostController.navigateAndClear(MainNav.GUEST.name)
+                            Starter.goToMain()
                         },
                         shape = MaterialTheme.shapes.medium,
                         modifier = Modifier.fillMaxWidth().scale(scale2.value).weight(.5f),

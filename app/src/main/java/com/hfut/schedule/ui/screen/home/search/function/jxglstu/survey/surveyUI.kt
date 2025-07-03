@@ -30,11 +30,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.jxglstu.forStdLessonSurveySearchVms
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
@@ -57,13 +59,14 @@ import kotlinx.coroutines.launch
 fun SurveyUI(vm : NetWorkViewModel, hazeState: HazeState,code : String?= null) {
 
     var semester by remember { mutableIntStateOf(getSemseter()) }
+    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
 
     val uiState by vm.surveyListData.state.collectAsState()
     val refreshNetwork: suspend () -> Unit = {
         val cookie = if (!vm.webVpn) prefs.getString(
             "redirect",
             ""
-        ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
+        ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
 
         cookie?.let {
             vm.surveyListData.clear()

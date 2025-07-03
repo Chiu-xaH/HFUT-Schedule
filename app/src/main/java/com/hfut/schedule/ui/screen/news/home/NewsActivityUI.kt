@@ -117,6 +117,13 @@ fun NewsActivityUI(vm: NetWorkViewModel) {
         ),
                     title = { Text("通知公告") },
                     actions = {
+                        if(targetPage == NewsBarItems.News) {
+                            IconButton(onClick = {
+                                showToast("部分公告需要连接校园网才可阅读（对外私密）")
+                            }) {
+                                Icon(painterResource(R.drawable.info), contentDescription = "")
+                            }
+                        }
                         if(targetPage == NewsBarItems.XuanCheng) {
                             IconButton(onClick = {
                                 showToast("正在开发")

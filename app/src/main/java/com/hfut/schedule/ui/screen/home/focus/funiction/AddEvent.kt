@@ -254,6 +254,7 @@ private fun SharedTransitionScope.SurfaceUI(
     BackHandler {
         showChange(false)
     }
+    val scope = rememberCoroutineScope()
     Scaffold(
 //        containerColor = Color.Transparent,
         modifier = Modifier
@@ -275,7 +276,13 @@ private fun SharedTransitionScope.SurfaceUI(
                     actions = {
                         Row {
                             if(getPersonInfo().username != null && !isSupabase)
-                                FilledTonalButton(onClick = { loginSupabaseWithCheck(jwt,refreshToken,vm) { loading = it } }) {
+                                FilledTonalButton(onClick = {
+                                    scope.launch {
+                                        loading = true
+                                        loginSupabaseWithCheck(jwt,refreshToken,vm)
+                                        loading = false
+                                    }
+                                }) {
                                     Text("云端共建")
                                 }
                             IconButton(

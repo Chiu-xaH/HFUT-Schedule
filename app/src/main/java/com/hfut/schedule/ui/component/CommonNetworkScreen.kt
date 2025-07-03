@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.development.getExceptionDetail
 import com.hfut.schedule.logic.util.development.getKeyStackTrace
+import com.hfut.schedule.logic.util.network.state.LISTEN_ERROR_CODE
 import com.hfut.schedule.logic.util.network.state.PARSE_ERROR_CODE
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.network.state.UiState
@@ -96,6 +97,16 @@ fun CommonNetworkScreen(
                                 }) {
                                     Text( "上报开发者")
                                 }
+                        }
+                        LISTEN_ERROR_CODE -> {
+                            StatusUI(R.drawable.arrow_split,e?.message ?: "网络请求顺序出错 请联系开发者")
+                            Spacer(Modifier.height(APP_HORIZONTAL_DP*1.5f))
+                            Button(onClick = {
+                                showToast("请截图并注明功能，发送邮件")
+                                Starter.emailMe()
+                            }) {
+                                Text( "上报开发者")
+                            }
                         }
                         401 -> {
                             StatusUI(R.drawable.login, "登录状态失效")
@@ -205,5 +216,33 @@ suspend fun <T> onListenStateHolder(
             }
         }
         else -> {}
+    }
+}
+
+
+suspend fun <T> onListenStateHolderForNetwork(
+    response : StateHolder<T>,
+    onSuccess : suspend (T) -> Unit
+) = withContext(Dispatchers.IO) {
+    // 只收集第一次流
+    val state = response.state.first()
+    when (state) {
+        is UiState.Success -> {
+            val data = state.data
+            onSuccess(data)
+        }
+        is UiState.Error -> {
+            val codeInt = state.code
+            val e = state.exception
+            response.emitError(e,codeInt)
+        }
+        is UiState.Loading -> {
+            response.emitError(Exception("本操作依赖于上一网络请求，上一网络请求处于加载状态"),LISTEN_ERROR_CODE)
+            return@withContext
+        }
+        is UiState.Prepare -> {
+            response.emitError(Exception("本操作依赖于上一网络请求，上一网络请求处于未发起"),LISTEN_ERROR_CODE)
+            return@withContext
+        }
     }
 }

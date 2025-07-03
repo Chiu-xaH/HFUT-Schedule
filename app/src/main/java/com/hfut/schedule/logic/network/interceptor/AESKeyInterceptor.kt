@@ -23,7 +23,7 @@ class AESKeyInterceptor : Interceptor {
     // Log.d("测试2",cookiekey)
         // 如果cookieValue不为空，就将其保存到SharedPreferences中
 
-        SharedPrefs.saveString("cookie", cookiekey)
+        SharedPrefs.saveString("LOGIN_FLAVORING", cookiekey)
 
 
         return response

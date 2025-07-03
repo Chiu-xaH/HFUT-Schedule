@@ -9,6 +9,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -21,12 +22,13 @@ import com.hfut.schedule.ui.component.custom.ScrollText
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.screen.supabase.login.loginSupabaseWithCheck
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun Supabase(vm: NetWorkViewModel) {
     val jwt by DataStoreManager.supabaseJwtFlow.collectAsState(initial = "")
     val refreshToken by DataStoreManager.supabaseRefreshTokenFlow.collectAsState(initial = "")
-
+    val scope = rememberCoroutineScope()
     var loading by remember { mutableStateOf(false) }
 
     TransplantListItem(
@@ -47,7 +49,11 @@ fun Supabase(vm: NetWorkViewModel) {
             }
         },
         modifier = Modifier.clickable {
-            loginSupabaseWithCheck(jwt,refreshToken,vm) { loading = it }
+           scope.launch {
+               loading = true
+               loginSupabaseWithCheck(jwt,refreshToken,vm)
+               loading = false
+           }
         }
     )
 }

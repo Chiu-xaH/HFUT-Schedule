@@ -72,12 +72,10 @@ fun GradeScreen(ifSaved : Boolean, vm : NetWorkViewModel) {
     val hazeState = rememberHazeState(blurEnabled = blur)
     val navController = rememberNavController()
     val context = LocalActivity.current
-    val animation by remember { mutableIntStateOf(prefs.getInt("ANIMATION", AppAnimationManager.ANIMATION_SPEED)) }
 
     var showSearch by remember { mutableStateOf(false) }
 
     var showBottomSheet by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     val currentAnimationIndex by DataStoreManager.animationTypeFlow.collectAsState(initial = 0)
     var targetPage by remember { mutableStateOf(GradeBarItems.GRADE) }
