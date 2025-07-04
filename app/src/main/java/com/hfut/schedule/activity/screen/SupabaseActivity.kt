@@ -1,7 +1,9 @@
 package com.hfut.schedule.activity.screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -24,9 +26,9 @@ class SupabaseActivity : BaseActivity() {
     @Composable
     override fun UI() {
         if(getPersonInfo().username == null) {
-            Box(modifier = Modifier.fillMaxSize()) {
+            Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface)) {
                 Box(modifier = Modifier.align(Alignment.Center)){
-                    StatusUI(R.drawable.visibility_off,"非合肥工业大学学生禁止使用")
+                    StatusUI(R.drawable.visibility_off,"请先刷新登录状态证明是合肥工业大学在校生")
                 }
             }
         } else {

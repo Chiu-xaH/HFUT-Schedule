@@ -113,95 +113,95 @@ fun CommunityCourseTableUI(
                             when (j) {
                                 0 -> {
                                     when(text.section) {
-                                        1 -> {
+                                        1,2 -> {
                                             tableAll[0].add(text)
                                         }
-                                        3 -> {
+                                        3,4 -> {
                                             tableAll[7].add(text)
                                         }
-                                        5 -> {
+                                        5,6 -> {
                                             tableAll[14].add(text)
                                         }
-                                        7 -> {
+                                        7,8 -> {
                                             tableAll[21].add(text)
                                         }
-                                        9 -> {
+                                        9,10,11 -> {
                                             tableAll[28].add(text)
                                         }
                                     }
                                 }
                                 1 -> {
                                     when(text.section) {
-                                        1 -> {
+                                        1,2 -> {
                                             tableAll[1].add(text)
                                         }
-                                        3 -> {
+                                        3,4 -> {
                                             tableAll[8].add(text)
                                         }
-                                        5 -> {
+                                        5,6 -> {
                                             tableAll[15].add(text)
                                         }
-                                        7 -> {
+                                        7,8 -> {
                                             tableAll[22].add(text)
                                         }
-                                        9 -> {
+                                        9,10,11 -> {
                                             tableAll[29].add(text)
                                         }
                                     }
                                 }
                                 2 -> {
                                     when(text.section) {
-                                        1 -> {
+                                        1,2 -> {
                                             tableAll[2].add(text)
                                         }
-                                        3 -> {
+                                        3,4 -> {
                                             tableAll[9].add(text)
                                         }
-                                        5 -> {
+                                        5,6 -> {
                                             tableAll[16].add(text)
                                         }
-                                        7 -> {
+                                        7,8 -> {
                                             tableAll[23].add(text)
                                         }
-                                        9 -> {
+                                        9,10,11 -> {
                                             tableAll[30].add(text)
                                         }
                                     }
                                 }
                                 3 -> {
                                     when(text.section) {
-                                        1 -> {
+                                        1,2 -> {
                                             tableAll[3].add(text)
                                         }
-                                        3 -> {
+                                        3,4 -> {
                                             tableAll[10].add(text)
                                         }
-                                        5 -> {
+                                        5,6 -> {
                                             tableAll[17].add(text)
                                         }
-                                        7 -> {
+                                        7,8 -> {
                                             tableAll[24].add(text)
                                         }
-                                        9 -> {
+                                        9,10,11 -> {
                                             tableAll[31].add(text)
                                         }
                                     }
                                 }
                                 4 -> {
                                     when(text.section) {
-                                        1 -> {
+                                        1,2 -> {
                                             tableAll[4].add(text)
                                         }
-                                        3 -> {
+                                        3,4 -> {
                                             tableAll[11].add(text)
                                         }
-                                        5 -> {
+                                        5,6 -> {
                                             tableAll[18].add(text)
                                         }
-                                        7 -> {
+                                        7,8 -> {
                                             tableAll[25].add(text)
                                         }
-                                        9 -> {
+                                        9,10,11 -> {
                                             tableAll[32].add(text)
                                         }
                                     }
@@ -209,19 +209,19 @@ fun CommunityCourseTableUI(
                                 5 -> {
                                     Handler(Looper.getMainLooper()).post { vmUI.findNewCourse.value = text.name.isNotEmpty() }
                                     when(text.section) {
-                                        1 -> {
+                                        1,2 -> {
                                             tableAll[5].add(text)
                                         }
-                                        3 -> {
+                                        3,4 -> {
                                             tableAll[12].add(text)
                                         }
-                                        5 -> {
+                                        5,6 -> {
                                             tableAll[19].add(text)
                                         }
-                                        7 -> {
+                                        7,8 -> {
                                             tableAll[26].add(text)
                                         }
-                                        9 -> {
+                                        9,10,11 -> {
                                             tableAll[33].add(text)
                                         }
                                     }
@@ -229,19 +229,19 @@ fun CommunityCourseTableUI(
                                 6 -> {
                                     Handler(Looper.getMainLooper()).post { vmUI.findNewCourse.value = text.name.isNotEmpty() }
                                     when(text.section) {
-                                        1 -> {
+                                        1,2 -> {
                                             tableAll[6].add(text)
                                         }
-                                        3 -> {
+                                        3,4 -> {
                                             tableAll[13].add(text)
                                         }
-                                        5 -> {
+                                        5,6 -> {
                                             tableAll[20].add(text)
                                         }
-                                        7 -> {
+                                        7,8 -> {
                                             tableAll[27].add(text)
                                         }
-                                        9 -> {
+                                        9,10,11 -> {
                                             tableAll[34].add(text)
                                         }
                                     }
@@ -251,95 +251,95 @@ fun CommunityCourseTableUI(
                             when (j) {
                                 0 -> {
                                     when(text.section) {
-                                        1 -> {
+                                        1,2 -> {
                                             table[0].add(text)
                                         }
-                                        3 -> {
+                                        3,4 -> {
                                             table[5].add(text)
                                         }
-                                        5 -> {
+                                        5,6 -> {
                                             table[10].add(text)
                                         }
-                                        7 -> {
+                                        7,8 -> {
                                             table[15].add(text)
                                         }
-                                        9 -> {
+                                        9,10,11 -> {
                                             table[20].add(text)
                                         }
                                     }
                                 }
                                 1 -> {
                                     when(text.section) {
-                                        1 -> {
+                                        1,2 -> {
                                             table[1].add(text)
                                         }
-                                        3 -> {
+                                        3,4 -> {
                                             table[6].add(text)
                                         }
-                                        5 -> {
+                                        5,6 -> {
                                             table[11].add(text)
                                         }
-                                        7 -> {
+                                        7,8 -> {
                                             table[16].add(text)
                                         }
-                                        9 -> {
+                                        9,10,11 -> {
                                             table[21].add(text)
                                         }
                                     }
                                 }
                                 2 -> {
                                     when(text.section) {
-                                        1 -> {
+                                        1,2 -> {
                                             table[2].add(text)
                                         }
-                                        3 -> {
+                                        3,4 -> {
                                             table[7].add(text)
                                         }
-                                        5 -> {
+                                        5,6 -> {
                                             table[12].add(text)
                                         }
-                                        7 -> {
+                                        7,8 -> {
                                             table[17].add(text)
                                         }
-                                        9 -> {
+                                        9,10,11 -> {
                                             table[22].add(text)
                                         }
                                     }
                                 }
                                 3 -> {
                                     when(text.section) {
-                                        1 -> {
+                                        1,2 -> {
                                             table[3].add(text)
                                         }
-                                        3 -> {
+                                        3,4 -> {
                                             table[8].add(text)
                                         }
-                                        5 -> {
+                                        5,6 -> {
                                             table[13].add(text)
                                         }
-                                        7 -> {
+                                        7,8 -> {
                                             table[18].add(text)
                                         }
-                                        9 -> {
+                                        9,10,11 -> {
                                             table[23].add(text)
                                         }
                                     }
                                 }
                                 4 -> {
                                     when(text.section) {
-                                        1 -> {
+                                        1,2 -> {
                                             table[4].add(text)
                                         }
-                                        3 -> {
+                                        3,4 -> {
                                             table[9].add(text)
                                         }
-                                        5 -> {
+                                        5,6 -> {
                                             table[14].add(text)
                                         }
-                                        7 -> {
+                                        7,8 -> {
                                             table[19].add(text)
                                         }
-                                        9 -> {
+                                        9,10,11 -> {
                                             table[24].add(text)
                                         }
                                     }

@@ -13,6 +13,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.util.network.ParseJsons.useCaptcha
 import com.hfut.schedule.logic.util.other.AppVersion
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.util.AppAnimationManager
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -44,7 +45,9 @@ object DataStoreManager {
     private val USE_DEFAULT_CARD_PASSWORD = booleanPreferencesKey("use_default_card_password")
     private val DEFAULT_CALENDAR_ACCOUNT = longPreferencesKey("default_calendar_account")
     private val COURSE_TABLE_TIME = stringPreferencesKey("course_table_time")
+    private val COURSE_TABLE_TIME_NEXT = stringPreferencesKey("course_table_time_next")
     private val WEBVPN_COOKIE = stringPreferencesKey("webvpn_cookie")
+    private val FIRST_USE = booleanPreferencesKey("first_use")
 
 
     enum class ColorMode(val code : Int) {
@@ -166,9 +169,19 @@ object DataStoreManager {
             preferences[COURSE_TABLE_TIME] = value
         }
     }
+    suspend fun saveCourseTableNext(value: String) {
+        dataStore.edit { preferences ->
+            preferences[COURSE_TABLE_TIME_NEXT] = value
+        }
+    }
     suspend fun saveWebVpnCookie(value: String) {
         dataStore.edit { preferences ->
             preferences[WEBVPN_COOKIE] = value
+        }
+    }
+    suspend fun saveFastStart(value: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[FIRST_USE] = value
         }
     }
 
@@ -266,9 +279,17 @@ object DataStoreManager {
         .map { preferences ->
             preferences[COURSE_TABLE_TIME] ?: ""
         }
+    val courseTableTimeNext: Flow<String> = dataStore.data
+        .map { preferences ->
+            preferences[COURSE_TABLE_TIME_NEXT] ?: ""
+        }
     val webVpnCookie: Flow<String> = dataStore.data
         .map { preferences ->
             preferences[WEBVPN_COOKIE] ?: ""
+        }
+    val firstStart: Flow<Boolean> = dataStore.data
+        .map { preferences ->
+            preferences[FIRST_USE] ?: prefs.getBoolean("SWITCHFASTSTART",prefs.getString("TOKEN","")?.isNotEmpty() ?: false)
         }
     /* 用法
     val XXX by DataStoreManager.XXX.collectAsState(initial = 默认值)

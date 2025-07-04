@@ -20,6 +20,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -67,7 +68,7 @@ enum class TotalCourseDataSource {
 @Composable
 fun CourseTotalUI(dataSource : TotalCourseDataSource, sortType: Boolean, vm : NetWorkViewModel, hazeState: HazeState) {
 
-    val list by produceState(initialValue = emptyList<lessons>()) {
+    val list by produceState(initialValue = emptyList<lessons>(),key1 = dataSource) {
         when(dataSource) {
             TotalCourseDataSource.MINE -> {
                 prefs.getString("courses","")?.let { value = vm.parseDatumCourse(it) }
@@ -82,6 +83,7 @@ fun CourseTotalUI(dataSource : TotalCourseDataSource, sortType: Boolean, vm : Ne
             }
         }
     }
+
     val isSearch = dataSource == TotalCourseDataSource.SEARCH
 
     var input by remember { mutableStateOf("") }

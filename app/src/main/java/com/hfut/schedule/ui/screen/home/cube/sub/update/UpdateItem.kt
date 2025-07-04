@@ -24,7 +24,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-07-04") },
+                overlineContent = { Text(text = "2025-07-05") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -62,20 +62,27 @@ fun VersionInfo() {
         // 下版本规划
 //        UpdateItems("优化 下学期课程表与新重构的课表的对齐", null, UpdateType.OPTIMIZE)
 //        UpdateItems("重构 通知公告，现在，将新增通知公告细分为按学院、教务处等")
-        UpdateItems("重构 网络请求层，重新进行封装，使用Flow代替LiveData，优化潜在的内存泄漏问题，增加不同状态下的展示", "进度: 完成71/总99")//
-        UpdateItems("重构 课程表起始日期的判断逻辑")
-        UpdateItems("新增 支持自动检测是否需要图片验证码")//
-        UpdateItems("新增 外地访问(WEBVPN)在登陆状态内自动检查")//
+//        UpdateItems("重构 课程表起始日期的判断逻辑")
+        UpdateItems("重构 网络请求层，重新进行封装，使用Flow代替LiveData，优化潜在的内存泄漏问题，增加不同状态下的展示", "进度: 完成71/总99")
+        UpdateItems("重构 外地访问(WEBVPN)的逻辑,使其支持在登陆状态内自动检查")
+        UpdateItems("重构 下学期课程表,使其与其他课表保持一致的功能","使其修复了作息不一致、首次进入无显示、不支持冲突课程显示等问题")
+        UpdateItems("新增 支持自动检测是否需要图片验证码")
         UpdateItems("修复 教务课程表在第一学期翡翠湖校区和第二学期合肥校区由于作息时间与宣城校区不一致而导致显示缺失的Bug，同时重构教务课程表显示课程逻辑为根据各自作息表")
-        UpdateItems("修复 日历账户设置在未申请日历权限前进入崩溃的Bug")//
-        UpdateItems("修复 材料与化工学院之间图标一致的Bug","为材料学院选了一个新的图标")//
-        UpdateItems("修复 呱呱物联因平台该换HOST无法使用的问题")//
-        UpdateItems("修复 共建平台登录时密码错误或未注册时仍加载的Bug")//
+        UpdateItems("修复 日历账户设置在未申请日历权限前进入崩溃的Bug")
+        UpdateItems("修复 材料与化工学院之间图标一致的Bug","为材料学院选了一个新的图标")
+        UpdateItems("修复 呱呱物联因平台该换HOST无法使用的问题")
+        UpdateItems("修复 共建平台登录时密码错误或未注册时仍加载的Bug")
         UpdateItems("修复 课程汇总下学期按钮无法切换的Bug")
-        UpdateItems("修复 上个版本造成的一卡通账单翻页无效的Bug")//
-        UpdateItems("移除 游客模式，与其合并","经过前期对网络层的重构，已经不需要单独开一个游客界面了")//
-        UpdateItems("优化 下学期课程表在未开放入口时的点击操作")//
-        UpdateItems("优化 部分区域的引导提示(共建平台注册、通知公告)")//
+        UpdateItems("修复 上个版本造成的一卡通账单翻页无效的Bug")
+        UpdateItems("移除 游客模式，与其合并","经过前期对网络层的重构，已经不需要单独开一个游客界面了")
+        UpdateItems("优化 下学期课程表在未开放入口时的点击操作")
+        UpdateItems("优化 课程表对节数的判断逻辑")
+        UpdateItems("优化 部分区域的引导提示(共建平台注册、通知公告)")
+        UpdateItems("优化 将成绩Activity移除,集成与一体中")
+        UpdateItems("优化 下学期课程表的背景由于实时模糊而显示不清晰的情况")
+        UpdateItems("优化 部分其他细节的逻辑")
+
+
 //        UpdateItems("新增 洗衣机中的空闲设备", "数据源：海乐生活，适用于翡翠湖和宣城校区")
 //        UpdateItems("新增 一卡通-统计中消费预测与统计功能的本地化分析")
 //        UpdateItems("新增 开发者选项","可供有能力者使用某些功能")

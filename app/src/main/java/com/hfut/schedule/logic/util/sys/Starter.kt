@@ -8,16 +8,12 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.activity.MainActivity
 import com.hfut.schedule.activity.screen.CardActivity
 import com.hfut.schedule.activity.screen.FixActivity
-import com.hfut.schedule.activity.screen.GradeActivity
 import com.hfut.schedule.activity.screen.NewsActivity
 import com.hfut.schedule.activity.screen.ShowerActivity
 import com.hfut.schedule.activity.screen.SuccessActivity
 import com.hfut.schedule.activity.screen.SupabaseActivity
 import com.hfut.schedule.logic.enumeration.ShowerScreen
 import com.hfut.schedule.logic.enumeration.SupabaseScreen
-import com.hfut.schedule.logic.util.network.state.WebVpn
-import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 
 object Starter {
     //通过包名启动第三方应用
@@ -133,15 +129,6 @@ object Starter {
     fun emailMe() {
         val it = Intent(Intent.ACTION_SENDTO, "mailto:zsh0908@outlook.com".toUri())
         it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        MyApplication.context.startActivity(it)
-    }
-    @JvmStatic
-    fun startGrade(vm : NetWorkViewModel, isUnRefreshStatus : Boolean) {
-        val it = Intent(MyApplication.context, GradeActivity::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            WebVpn.webVpn = vm.webVpn
-            putExtra("saved",isUnRefreshStatus)
-        }
         MyApplication.context.startActivity(it)
     }
     @JvmStatic

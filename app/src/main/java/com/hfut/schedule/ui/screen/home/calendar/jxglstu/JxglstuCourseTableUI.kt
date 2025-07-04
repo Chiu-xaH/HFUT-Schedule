@@ -56,37 +56,38 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Observer
 import com.google.gson.Gson
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
-import com.google.gson.JsonPrimitive
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.model.community.LoginCommunityResponse
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
+import com.hfut.schedule.logic.model.jxglstu.CourseUnitBean
+import com.hfut.schedule.logic.model.jxglstu.LessonTimesResponse
 import com.hfut.schedule.logic.model.jxglstu.datumResponse
-import com.hfut.schedule.logic.util.network.state.CasInHFUT
 import com.hfut.schedule.logic.util.network.ParseJsons.isNextOpen
+import com.hfut.schedule.logic.util.network.state.CasInHFUT
 import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.logic.util.parse.SemseterParser
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveInt
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
-import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.LargeCard
-import com.hfut.schedule.ui.component.custom.LoadingUI
-import com.hfut.schedule.ui.component.TransplantListItem
- 
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.LargeCard
+import com.hfut.schedule.ui.component.TransplantListItem
+import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.custom.LoadingUI
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.DetailInfos
 import com.hfut.schedule.ui.screen.home.calendar.examToCalendar
 import com.hfut.schedule.ui.screen.home.calendar.getScheduleDate
 import com.hfut.schedule.ui.screen.home.calendar.next.parseCourseName
+import com.hfut.schedule.ui.screen.home.getJxglstuCookie
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getTotalCourse
 import com.hfut.schedule.ui.style.HazeBottomSheet
-import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.hfut.schedule.viewmodel.ui.UIViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -96,18 +97,38 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
-//val distinctUnit<T> = { list : List<SnapshotStateList<String>> ->
-//    for(t in list) {
-//        val uniqueItems = t.distinct()
-//        t.clear()
-//        t.addAll(uniqueItems)
-//    }
-//}
-//val clearUnit<T> = { list : List<SnapshotStateList<String>> ->
-//    for(t in list) {
-//        t.clear()
-//    }
-//}
+fun parseTimeTable(json : String,isNext : Boolean = false) : List<CourseUnitBean> {
+    try {
+        if(json.isEmpty()) {
+            // 使用预置的作息表
+            val campus = getPersonInfo().school ?: return emptyList()
+            if(campus.contains("宣城")) {
+                return MyApplication.XC_TXL1
+            } else if(campus.contains("翡翠湖")) {
+                val upOrDown = SemseterParser.parseSemseterUpOrDown(SemseterParser.getSemseter() + if(isNext) 20 else 0)
+                return when(upOrDown) {
+                    1 -> MyApplication.FCH1
+                    2 -> MyApplication.FCH2
+                    else -> emptyList()
+                }
+            } else if(campus.contains("屯溪路")) {
+                val upOrDown = SemseterParser.parseSemseterUpOrDown(SemseterParser.getSemseter() + if(isNext) 20 else 0)
+                return when(upOrDown) {
+                    1 -> MyApplication.XC_TXL1
+                    2 -> MyApplication.TXL2
+                    else -> emptyList()
+                }
+            } else {
+                return emptyList()
+            }
+        } else {
+            return Gson().fromJson(json, LessonTimesResponse::class.java).result.courseUnitList
+        }
+    } catch (e : Exception) {
+        return emptyList()
+    }
+}
+
 // 去重
 fun <T>distinctUnit(list : List<SnapshotStateList<T>>) {
     for(t in list) {
@@ -183,7 +204,13 @@ fun JxglstuCourseTableUI(
         )
     }
 
-    fun refreshUI(showAll : Boolean) {
+    val times by DataStoreManager.courseTableTime.collectAsState(initial = "")
+    var timeTable by remember { mutableStateOf(emptyList<CourseUnitBean>()) }
+    LaunchedEffect(times) {
+        timeTable = parseTimeTable(times)
+    }
+
+    fun refreshUI(showAll : Boolean,timeList : List<CourseUnitBean>) {
         // 清空
         if(showAll) {
             clearUnit(tableAll)
@@ -225,207 +252,207 @@ fun JxglstuCourseTableUI(
                     }
                     if(showAll) {
                         if (item.weekday == 1) {
-                            if (item.startTime == 800) {
+                            if (item.startTime == timeList[0].startTime || item.startTime == timeList[1].startTime) {
                                 tableAll[0].add(text)
                             }
-                            if (item.startTime == 1010) {
+                            if (item.startTime == timeList[2].startTime || item.startTime == timeList[3].startTime) {
                                 tableAll[7].add(text)
                             }
-                            if (item.startTime == 1400) {
+                            if (item.startTime == timeList[4].startTime || item.startTime == timeList[5].startTime) {
                                 tableAll[14].add(text)
                             }
-                            if (item.startTime == 1600) {
+                            if (item.startTime == timeList[6].startTime || item.startTime == timeList[7].startTime) {
                                 tableAll[21].add(text)
                             }
-                            if (item.startTime == 1900) {
+                            if (item.startTime == timeList[8].startTime || item.startTime == timeList[9].startTime || item.startTime == timeList[10].startTime) {
                                 tableAll[28].add(text)
                             }
                         }
                         if (item.weekday == 2) {
-                            if (item.startTime == 800) {
+                            if (item.startTime == timeList[0].startTime || item.startTime == timeList[1].startTime) {
                                 tableAll[1].add(text)
                             }
-                            if (item.startTime == 1010) {
+                            if (item.startTime == timeList[2].startTime || item.startTime == timeList[3].startTime) {
                                 tableAll[8].add(text)
                             }
-                            if (item.startTime == 1400) {
+                            if (item.startTime == timeList[4].startTime || item.startTime == timeList[5].startTime) {
                                 tableAll[15].add(text)
                             }
-                            if (item.startTime == 1600) {
+                            if (item.startTime == timeList[6].startTime || item.startTime == timeList[7].startTime) {
                                 tableAll[22].add(text)
                             }
-                            if (item.startTime == 1900) {
+                            if (item.startTime == timeList[8].startTime || item.startTime == timeList[9].startTime || item.startTime == timeList[10].startTime) {
                                 tableAll[29].add(text)
                             }
                         }
                         if (item.weekday == 3) {
-                            if (item.startTime == 800) {
+                            if (item.startTime == timeList[0].startTime || item.startTime == timeList[1].startTime) {
                                 tableAll[2].add(text)
                             }
-                            if (item.startTime == 1010) {
+                            if (item.startTime == timeList[2].startTime || item.startTime == timeList[3].startTime) {
                                 tableAll[9].add(text)
                             }
-                            if (item.startTime == 1400) {
+                            if (item.startTime == timeList[4].startTime || item.startTime == timeList[5].startTime) {
                                 tableAll[16].add(text)
                             }
-                            if (item.startTime == 1600) {
+                            if (item.startTime == timeList[6].startTime || item.startTime == timeList[7].startTime) {
                                 tableAll[23].add(text)
                             }
-                            if (item.startTime == 1900) {
+                            if (item.startTime == timeList[8].startTime || item.startTime == timeList[9].startTime || item.startTime == timeList[10].startTime) {
                                 tableAll[30].add(text)
                             }
                         }
                         if (item.weekday == 4) {
-                            if (item.startTime == 800) {
+                            if (item.startTime == timeList[0].startTime || item.startTime == timeList[1].startTime) {
                                 tableAll[3].add(text)
                             }
-                            if (item.startTime == 1010) {
+                            if (item.startTime == timeList[2].startTime || item.startTime == timeList[3].startTime) {
                                 tableAll[10].add(text)
                             }
-                            if (item.startTime == 1400) {
+                            if (item.startTime == timeList[4].startTime || item.startTime == timeList[5].startTime) {
                                 tableAll[17].add(text)
                             }
-                            if (item.startTime == 1600) {
+                            if (item.startTime == timeList[6].startTime || item.startTime == timeList[7].startTime) {
                                 tableAll[24].add(text)
                             }
-                            if (item.startTime == 1900) {
+                            if (item.startTime == timeList[8].startTime || item.startTime == timeList[9].startTime || item.startTime == timeList[10].startTime) {
                                 tableAll[31].add(text)
                             }
                         }
                         if (item.weekday == 5) {
-                            if (item.startTime == 800) {
+                            if (item.startTime == timeList[0].startTime || item.startTime == timeList[1].startTime) {
                                 tableAll[4].add(text)
                             }
-                            if (item.startTime == 1010) {
+                            if (item.startTime == timeList[2].startTime || item.startTime == timeList[3].startTime) {
                                 tableAll[11].add(text)
                             }
-                            if (item.startTime == 1400) {
+                            if (item.startTime == timeList[4].startTime || item.startTime == timeList[5].startTime) {
                                 tableAll[18].add(text)
                             }
-                            if (item.startTime == 1600) {
+                            if (item.startTime == timeList[6].startTime || item.startTime == timeList[7].startTime) {
                                 tableAll[25].add(text)
                             }
-                            if (item.startTime == 1900) {
+                            if (item.startTime == timeList[8].startTime || item.startTime == timeList[9].startTime || item.startTime == timeList[10].startTime) {
                                 tableAll[32].add(text)
                             }
                         }
                         if (item.weekday == 6) {
-                            if (item.startTime == 800) {
+                            if (item.startTime == timeList[0].startTime || item.startTime == timeList[1].startTime) {
                                 tableAll[5].add(text)
                             }
-                            if (item.startTime == 1010) {
+                            if (item.startTime == timeList[2].startTime || item.startTime == timeList[3].startTime) {
                                 tableAll[12].add(text)
                             }
-                            if (item.startTime == 1400) {
+                            if (item.startTime == timeList[4].startTime || item.startTime == timeList[5].startTime) {
                                 tableAll[19].add(text)
                             }
-                            if (item.startTime == 1600) {
+                            if (item.startTime == timeList[6].startTime || item.startTime == timeList[7].startTime) {
                                 tableAll[26].add(text)
                             }
-                            if (item.startTime == 1900) {
+                            if (item.startTime == timeList[8].startTime || item.startTime == timeList[9].startTime || item.startTime == timeList[10].startTime) {
                                 tableAll[33].add(text)
                             }
                         }
                         if (item.weekday == 7) {
-                            if (item.startTime == 800) {
+                            if (item.startTime == timeList[0].startTime || item.startTime == timeList[1].startTime) {
                                 tableAll[6].add(text)
                             }
-                            if (item.startTime == 1010) {
+                            if (item.startTime == timeList[2].startTime || item.startTime == timeList[3].startTime) {
                                 tableAll[13].add(text)
                             }
-                            if (item.startTime == 1400) {
+                            if (item.startTime == timeList[4].startTime || item.startTime == timeList[5].startTime) {
                                 tableAll[20].add(text)
                             }
-                            if (item.startTime == 1600) {
+                            if (item.startTime == timeList[6].startTime || item.startTime == timeList[7].startTime) {
                                 tableAll[27].add(text)
                             }
-                            if (item.startTime == 1900) {
+                            if (item.startTime == timeList[8].startTime || item.startTime == timeList[9].startTime || item.startTime == timeList[10].startTime) {
                                 tableAll[34].add(text)
                             }
                         }
                     } else {
                         if (item.weekday == 1) {
-                            if (item.startTime == 800) {
+                            if (item.startTime == timeList[0].startTime || item.startTime == timeList[1].startTime) {
                                 table[0].add(text)
                             }
-                            if (item.startTime == 1010) {
+                            if (item.startTime == timeList[2].startTime || item.startTime == timeList[3].startTime) {
                                 table[5].add(text)
                             }
-                            if (item.startTime == 1400) {
+                            if (item.startTime == timeList[4].startTime || item.startTime == timeList[5].startTime) {
                                 table[10].add(text)
                             }
-                            if (item.startTime == 1600) {
+                            if (item.startTime == timeList[6].startTime || item.startTime == timeList[7].startTime) {
                                 table[15].add(text)
                             }
-                            if (item.startTime == 1900) {
+                            if (item.startTime == timeList[8].startTime || item.startTime == timeList[9].startTime || item.startTime == timeList[10].startTime) {
                                 table[20].add(text)
                             }
                         }
                         if (item.weekday == 2) {
-                            if (item.startTime == 800) {
+                            if (item.startTime == timeList[0].startTime || item.startTime == timeList[1].startTime) {
                                 table[1].add(text)
                             }
-                            if (item.startTime == 1010) {
+                            if (item.startTime == timeList[2].startTime || item.startTime == timeList[3].startTime) {
                                 table[6].add(text)
                             }
-                            if (item.startTime == 1400) {
+                            if (item.startTime == timeList[4].startTime || item.startTime == timeList[5].startTime) {
                                 table[11].add(text)
                             }
-                            if (item.startTime == 1600) {
+                            if (item.startTime == timeList[6].startTime || item.startTime == timeList[7].startTime) {
                                 table[16].add(text)
                             }
-                            if (item.startTime == 1900) {
+                            if (item.startTime == timeList[8].startTime || item.startTime == timeList[9].startTime || item.startTime == timeList[10].startTime) {
                                 table[21].add(text)
                             }
                         }
                         if (item.weekday == 3) {
-                            if (item.startTime == 800) {
+                            if (item.startTime == timeList[0].startTime || item.startTime == timeList[1].startTime) {
                                 table[2].add(text)
                             }
-                            if (item.startTime == 1010) {
+                            if (item.startTime == timeList[2].startTime || item.startTime == timeList[3].startTime) {
                                 table[7].add(text)
                             }
-                            if (item.startTime == 1400) {
+                            if (item.startTime == timeList[4].startTime || item.startTime == timeList[5].startTime) {
                                 table[12].add(text)
                             }
-                            if (item.startTime == 1600) {
+                            if (item.startTime == timeList[6].startTime || item.startTime == timeList[7].startTime) {
                                 table[17].add(text)
                             }
-                            if (item.startTime == 1900) {
+                            if (item.startTime == timeList[8].startTime || item.startTime == timeList[9].startTime || item.startTime == timeList[10].startTime) {
                                 table[22].add(text)
                             }
                         }
                         if (item.weekday == 4) {
-                            if (item.startTime == 800) {
+                            if (item.startTime == timeList[0].startTime || item.startTime == timeList[1].startTime) {
                                 table[3].add(text)
                             }
-                            if (item.startTime == 1010) {
+                            if (item.startTime == timeList[2].startTime || item.startTime == timeList[3].startTime) {
                                 table[8].add(text)
                             }
-                            if (item.startTime == 1400) {
+                            if (item.startTime == timeList[4].startTime || item.startTime == timeList[5].startTime) {
                                 table[13].add(text)
                             }
-                            if (item.startTime == 1600) {
+                            if (item.startTime == timeList[6].startTime || item.startTime == timeList[7].startTime) {
                                 table[18].add(text)
                             }
-                            if (item.startTime == 1900) {
+                            if (item.startTime == timeList[8].startTime || item.startTime == timeList[9].startTime || item.startTime == timeList[10].startTime) {
                                 table[23].add(text)
                             }
                         }
                         if (item.weekday == 5) {
-                            if (item.startTime == 800) {
+                            if (item.startTime == timeList[0].startTime || item.startTime == timeList[1].startTime) {
                                 table[4].add(text)
                             }
-                            if (item.startTime == 1010) {
+                            if (item.startTime == timeList[2].startTime || item.startTime == timeList[3].startTime) {
                                 table[9].add(text)
                             }
-                            if (item.startTime == 1400) {
+                            if (item.startTime == timeList[4].startTime || item.startTime == timeList[5].startTime) {
                                 table[14].add(text)
                             }
-                            if (item.startTime == 1600) {
+                            if (item.startTime == timeList[6].startTime || item.startTime == timeList[7].startTime) {
                                 table[19].add(text)
                             }
-                            if (item.startTime == 1900) {
+                            if (item.startTime == timeList[8].startTime || item.startTime == timeList[9].startTime || item.startTime == timeList[10].startTime) {
                                 table[24].add(text)
                             }
                         }
@@ -444,19 +471,19 @@ fun JxglstuCourseTableUI(
         }
     }
 
-    LaunchedEffect(showAll,loading,currentWeek) {
-        refreshUI(showAll)
+    LaunchedEffect(showAll,loading,currentWeek,times) {
+        refreshUI(showAll,timeTable)
     }
 
 
 //////////////////////////////////////////////////////////////////////////////////
    if(load) {
-       val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
+//       val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
 
-       val cookie = if (!webVpn) prefs.getString(
-            "redirect",
-            ""
-        ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
+//       val cookie = if (!webVpn) prefs.getString(
+//            "redirect",
+//            ""
+//        ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
         var num2 = 1
         val ONE = CasInHFUT.casCookies
         val TGC = prefs.getString("TGC", "")
@@ -536,8 +563,10 @@ fun JxglstuCourseTableUI(
 
         if (nextBoolean) saveInt("FIRST", 1)
 
-
        LaunchedEffect(Unit) {
+           val cookie = getJxglstuCookie(vm)
+           // 等待读取本地Cookie
+//           if(webVpnCookie.isEmpty() && webVpn) return@LaunchedEffect
            if(loading == false) return@LaunchedEffect
            cookie?: return@LaunchedEffect
            vm.getStudentId(cookie)
@@ -884,7 +913,6 @@ fun JxglstuCourseTableUI(
                 }
             }
         }
-
 }
 
 fun getNewWeek() : Long {

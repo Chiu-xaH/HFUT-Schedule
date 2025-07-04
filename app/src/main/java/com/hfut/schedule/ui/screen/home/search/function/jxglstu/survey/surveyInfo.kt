@@ -48,6 +48,7 @@ import com.hfut.schedule.ui.component.custom.LittleDialog
  
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.onListenStateHolder
+import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.RowHorizontal
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -60,13 +61,9 @@ import kotlinx.coroutines.withContext
 @Composable
 fun SurveyInfoUI(id : Int, vm: NetWorkViewModel,scope : CoroutineScope,onDismiss : () -> Unit) {
     val uiState by vm.surveyData.state.collectAsState()
-    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
 
     val refreshNetwork: suspend () -> Unit = {
-        val cookie = if (!vm.webVpn) prefs.getString(
-            "redirect",
-            ""
-        ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
+        val cookie = getJxglstuCookie(vm)
         cookie?.let {
             vm.surveyData.clear()
             vm.getSurveyToken(it,id.toString())
@@ -181,14 +178,10 @@ private fun SurveyList(vm: NetWorkViewModel, scope: CoroutineScope,onResult : ()
 
 @SuppressLint("SuspiciousIndentation")
 suspend fun selectMode(vm : NetWorkViewModel, mode : PostMode,bean: SurveyResponse,comment: String = "好") = withContext(Dispatchers.IO) {
-
-    val cookie = if (!vm.webVpn) prefs.getString(
-        "redirect",
-        ""
-    ) else MyApplication.WEBVPN_COOKIE_HEADER + DataStoreManager.webVpnCookie.first()
-//    val token = prefs.getString("SurveyCookie","")
     // 主线程监听 StateFlow
     onListenStateHolder(vm.surveyToken) { token ->
+        val cookie = getJxglstuCookie(vm)
+//    val token = prefs.getString("SurveyCookie","")
         when(mode) {
             PostMode.NORMAL -> {
                 //vm.postSurvey("$cookie;$token", postResultNormal(vm))

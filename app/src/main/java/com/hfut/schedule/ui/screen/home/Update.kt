@@ -23,6 +23,16 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+suspend fun getJxglstuCookie(vm: NetWorkViewModel) : String? {
+    var cookie : String?
+    if(vm.webVpn) {
+        val webVpnCookie = DataStoreManager.webVpnCookie.first{ it.isNotEmpty() }
+        cookie = MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
+    } else {
+        cookie =  prefs.getString("redirect", "")
+    }
+    return cookie
+}
 // 应用冷启动主界面时的网络请求
 suspend fun initNetworkRefresh(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel, ifSaved : Boolean) = withContext(
     Dispatchers.IO) {
@@ -32,9 +42,9 @@ suspend fun initNetworkRefresh(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI
     val showToday = prefs.getBoolean("SWITCHTODAY",true)
     val showWeb = prefs.getBoolean("SWITCHWEB",isXuanCheng)
     val showCard = prefs.getBoolean("SWITCHCARD",true)
-    val webVpnCookie = DataStoreManager.webVpnCookie.first()
+    val webVpnCookie = DataStoreManager.webVpnCookie.first{ it.isNotEmpty() }
 
-    val cookie = if(!vm.webVpn) prefs.getString("redirect", "") else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
+    val cookie =  getJxglstuCookie(vm)
     // 刷新个人接口
     launch { vm2.getMyApi() }
     // 用于更新ifSaved
@@ -42,10 +52,18 @@ suspend fun initNetworkRefresh(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI
         vm.getStudentId(cookie!!)
         val studentId = (vm.studentId.state.value as? UiState.Success)?.data
         if(studentId == null) {
+            // 切换到WEBVPN模式尝试
+            vm.webVpn = true
+            vm.updateServices()
             val c = MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
             vm.getStudentId(c)
-            val studentId = (vm.studentId.state.value as? UiState.Success)?.data ?: return@launch
-            vm.webVpn = true
+            val studentId = (vm.studentId.state.value as? UiState.Success)?.data
+            if(studentId == null) {
+                // 复原
+                vm.webVpn = false
+                vm.updateServices()
+                return@launch
+            }
             launch { vm.getBizTypeId(c,studentId) }
             launch { vm.getExamJXGLSTU(c) }
         } else {
@@ -91,7 +109,7 @@ suspend fun initNetworkRefresh(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI
 
 //更新教务课表与课程汇总
 suspend fun updateCourses(vm: NetWorkViewModel, vmUI: UIViewModel) = withContext(Dispatchers.IO) {
-    val webVpnCookie = DataStoreManager.webVpnCookie.first()
+    val webVpnCookie = DataStoreManager.webVpnCookie.first { it.isNotEmpty() }
 
     val cookie = if (!vm.webVpn) {
             prefs.getString("redirect", "") ?: return@withContext

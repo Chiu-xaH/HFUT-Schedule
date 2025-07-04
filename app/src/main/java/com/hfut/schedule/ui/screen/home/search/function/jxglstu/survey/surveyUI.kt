@@ -48,6 +48,7 @@ import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.PaddingForPageControllerButton
  
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
@@ -59,15 +60,10 @@ import kotlinx.coroutines.launch
 fun SurveyUI(vm : NetWorkViewModel, hazeState: HazeState,code : String?= null) {
 
     var semester by remember { mutableIntStateOf(getSemseter()) }
-    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
 
     val uiState by vm.surveyListData.state.collectAsState()
     val refreshNetwork: suspend () -> Unit = {
-        val cookie = if (!vm.webVpn) prefs.getString(
-            "redirect",
-            ""
-        ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
-
+        val cookie = getJxglstuCookie(vm)
         cookie?.let {
             vm.surveyListData.clear()
             vm.getSurveyList(it,semester)

@@ -48,6 +48,7 @@ import com.hfut.schedule.ui.component.custom.ScrollText
 import com.hfut.schedule.ui.component.TransplantListItem
  
 import com.hfut.schedule.ui.component.cardNormalColor
+import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -60,15 +61,15 @@ fun ProgramPerformance(vm : NetWorkViewModel, hazeState: HazeState) {
     var showBottomSheet by remember { mutableStateOf(false) }
     var moduleIndex by remember { mutableIntStateOf(-1) }
     var title by remember { mutableStateOf("完成情况") }
-    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
+//    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
 
-    val cookie = if (!vm.webVpn) prefs.getString(
-        "redirect",
-        ""
-    ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
+//    val cookie = if (!vm.webVpn) prefs.getString(
+//        "redirect",
+//        ""
+//    ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
     val uiState by vm.programPerformanceData.state.collectAsState()
     val refreshNetwork: suspend () -> Unit = {
-
+        val cookie = getJxglstuCookie(vm)
         cookie?.let {
             // 禁用每次加载 特殊 数据较大 省流量
             if(uiState !is UiState.Success) {

@@ -53,8 +53,9 @@ import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.custom.ScrollText
 import com.hfut.schedule.ui.component.StatusUI2
 import com.hfut.schedule.ui.component.StyleCardListItem
- 
-  
+import com.hfut.schedule.ui.screen.home.getJxglstuCookie
+
+
 import com.hfut.schedule.ui.screen.home.search.function.other.life.countFunc
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.HazeBottomSheet
@@ -71,13 +72,8 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String, hazeState: HazeState) {
 
     var id by remember { mutableIntStateOf(0) }
     val uiState by vm.transferData.state.collectAsState()
-    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
-
     val refreshNetwork: suspend () -> Unit = {
-        val cookie = if (!vm.webVpn) prefs.getString(
-            "redirect",
-            ""
-        ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
+        val cookie = getJxglstuCookie(vm)
         cookie?.let {
             vm.transferData.clear()
             vm.getTransfer(it,batchId)
@@ -287,18 +283,8 @@ data class ErrorText(val textZh : String)
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun TransferStatusUI(vm : NetWorkViewModel, batchId: String, id: Int, phoneNumber : String) {
-
-//    var loading by remember { mutableStateOf(true) }
-    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
-//
-//    var msg  by remember { mutableStateOf("") }
-    var cookie =
-        if (!vm.webVpn) prefs.getString(
-            "redirect",
-            ""
-        ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
-
     val refreshNetwork : suspend () -> Unit = {
+        val cookie = getJxglstuCookie(vm)
         cookie?.let {
             vm.postTransferResponse.clear()
             vm.fromCookie.clear()

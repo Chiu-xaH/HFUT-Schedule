@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -27,7 +28,9 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.jxglstu.lessons
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.logic.util.network.ParseJsons.isNextOpen
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.AnimationCardListItem
+import com.hfut.schedule.ui.component.CARD_NORMAL_DP
 
 import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.custom.ScrollText
@@ -78,6 +81,7 @@ fun CourseTotal(vm : NetWorkViewModel, hazeState: HazeState) {
                                     Text(text = if(next) "下学期" else "本学期")
                                 }
                             }
+                            Spacer(Modifier.width(APP_HORIZONTAL_DP/3))
                             FilledTonalButton(
                                 onClick = { sortType = !sortType },) {
                                 Text(text = if(sortType) "开课时间" else "学分高低")

@@ -66,6 +66,7 @@ import com.hfut.schedule.ui.component.custom.LoadingUI
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.onListenStateHolder
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.courseSearch.ApiForCourseSearch
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.HazeBottomSheet
@@ -81,13 +82,13 @@ import kotlin.plus
 fun ProgramScreen(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState) {
 
     var showBottomSheet_Performance by remember { mutableStateOf(false) }
-    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
-
-    val cookie =
-        if (!vm.webVpn) prefs.getString(
-            "redirect",
-            ""
-        ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
+//    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
+//
+//    val cookie =
+//        if (!vm.webVpn) prefs.getString(
+//            "redirect",
+//            ""
+//        ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
 
 
 
@@ -120,6 +121,7 @@ fun ProgramScreen(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState) 
 
     LaunchedEffect(Unit) {
         if(!ifSaved) {
+            val cookie = getJxglstuCookie(vm)
             cookie?.let {
                 launch {
                     vm.programData.clear()

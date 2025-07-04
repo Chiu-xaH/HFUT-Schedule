@@ -1,6 +1,7 @@
 package com.hfut.schedule.viewmodel.network
 
 import android.util.Base64
+import android.util.Log
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -104,6 +105,7 @@ import com.hfut.schedule.logic.network.servicecreator.OneServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.StuServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.SupabaseServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.ZJGDBillServiceCreator
+import com.hfut.schedule.logic.util.development.getKeyStackTrace
 import com.hfut.schedule.logic.util.network.Encrypt
 import com.hfut.schedule.logic.util.network.state.CasInHFUT
 import com.hfut.schedule.logic.util.network.state.StateHolder
@@ -147,8 +149,15 @@ import retrofit2.awaitResponse
 
 // 106个函数
 class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
-    private val jxglstuJSON = JxglstuJSONServiceCreator.create(JxglstuService::class.java,webVpn)
-    private val jxglstuHTML = JxglstuHTMLServiceCreator.create(JxglstuService::class.java,webVpn)
+    private fun createJSONService(): JxglstuService {
+        return JxglstuJSONServiceCreator.create(JxglstuService::class.java, webVpn)
+    }
+
+    private fun createHTMLService(): JxglstuService {
+        return JxglstuHTMLServiceCreator.create(JxglstuService::class.java, webVpn)
+    }
+    private var jxglstuJSON = createJSONService()
+    private var jxglstuHTML = createHTMLService()
     private val oneGoto = OneGotoServiceCreator.create(LoginService::class.java)
     private val one = OneServiceCreator.create(OneService::class.java)
     private val huiXin = ZJGDBillServiceCreator.create(ZJGDBillService::class.java)
@@ -158,7 +167,10 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     private val myAPI = MyServiceCreator.create(MyService::class.java)
     private val stu = StuServiceCreator.create(StuService::class.java)
     private val supabase = SupabaseServiceCreator.create(SupabaseService::class.java)
-
+    fun updateServices() {
+        jxglstuJSON = createJSONService()
+        jxglstuHTML = createHTMLService()
+    }
     // prefs.getInt("STUDENTID",0)
     val studentId = StateHolder<Int>()
     val lessonIds = StateHolder<lessonResponse>()
@@ -334,7 +346,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
     val postTransferResponse = StateHolder<String>()
     suspend fun postTransfer(cookie: String, batchId: String, id : String, phoneNumber : String) {
-        onListenStateHolderForNetwork(studentId) { sId ->
+        onListenStateHolderForNetwork(studentId,postTransferResponse) { sId ->
             launchRequestSimple(
                 holder = postTransferResponse,
                 request = {
@@ -376,7 +388,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         cookie: String,
         batchId: String,
         id : String,
-    ) = onListenStateHolderForNetwork(studentId) { sId ->
+    ) = onListenStateHolderForNetwork(studentId,fromCookie) { sId ->
         launchRequestSimple(
             holder = fromCookie,
             request = {
@@ -403,7 +415,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         cookie: String,
         batchId: String,
         id : String,
-    ) = onListenStateHolderForNetwork(studentId) { sId ->
+    ) = onListenStateHolderForNetwork(studentId,cancelTransferResponse) { sId ->
         launchRequestSimple(
             holder = cancelTransferResponse,
             request = {
@@ -452,8 +464,8 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
     val selectCourseData = MutableLiveData<String?>()
     suspend fun getSelectCourse(cookie: String) {
-        onListenStateHolderForNetwork(studentId) { sId ->
-            onListenStateHolderForNetwork(bizTypeIdResponse) { bizTypeId ->
+        onListenStateHolderForNetwork<Int,Unit>(studentId,null) { sId ->
+            onListenStateHolderForNetwork<Int,Unit>(bizTypeIdResponse,null) { bizTypeId ->
                 val call = jxglstuJSON.getSelectCourse(bizTypeId,sId.toString(), cookie)
 
                 call.enqueue(object : Callback<ResponseBody> {
@@ -499,7 +511,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
     val requestIdData = MutableLiveData<String?>()
     suspend fun getRequestID(cookie: String, lessonId : String, courseId : String, type : String) {
-        onListenStateHolderForNetwork(studentId) { sId ->
+        onListenStateHolderForNetwork<Int,Unit>(studentId,null) { sId ->
             val call = jxglstuJSON.getRequestID(sId.toString(),lessonId,courseId,cookie,type)
 
             call.enqueue(object : Callback<ResponseBody> {
@@ -516,7 +528,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
     val selectedData = MutableLiveData<String?>()
     suspend fun getSelectedCourse(cookie: String, courseId : String) {
-        onListenStateHolderForNetwork(studentId) { sId ->
+        onListenStateHolderForNetwork<Int,Unit>(studentId,null) { sId ->
             val call = jxglstuJSON.getSelectedCourse(sId.toString(),courseId,cookie)
 
             call.enqueue(object : Callback<ResponseBody> {
@@ -534,7 +546,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
     val selectResultData = MutableLiveData<String?>()
     suspend fun postSelect(cookie: String,requestId : String) {
-        onListenStateHolderForNetwork(studentId) { sId ->
+        onListenStateHolderForNetwork<Int,Unit>(studentId,null) { sId ->
             val call = jxglstuJSON.postSelect(sId.toString(), requestId,cookie)
 
             call.enqueue(object : Callback<ResponseBody> {
@@ -551,7 +563,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
 // 转专业 ////////////////////////////////////////////////////////////////////////////////////////////////
     val transferData = StateHolder<TransferResponse>()
-    suspend fun getTransfer(cookie: String,batchId: String) = onListenStateHolderForNetwork(studentId) { sId ->
+    suspend fun getTransfer(cookie: String,batchId: String) = onListenStateHolderForNetwork(studentId,transferData) { sId ->
         launchRequestSimple(
             holder = transferData,
             request = { jxglstuJSON.getTransfer(cookie, true, batchId, sId).awaitResponse() },
@@ -563,7 +575,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     } catch (e : Exception) { throw e }
 
     val transferListData = StateHolder<List<ChangeMajorInfo>>()
-    suspend fun getTransferList(cookie: String) = onListenStateHolderForNetwork(studentId) { sId ->
+    suspend fun getTransferList(cookie: String) = onListenStateHolderForNetwork(studentId,transferListData) { sId ->
         launchRequestSimple(
             holder = transferListData,
             request = { jxglstuHTML.getTransferList(cookie, sId).awaitResponse() },
@@ -598,7 +610,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
 
     val myApplyData = StateHolder<MyApplyResponse>()
-    suspend fun getMyApply(cookie: String,batchId: String) = onListenStateHolderForNetwork(studentId) { sId ->
+    suspend fun getMyApply(cookie: String,batchId: String) = onListenStateHolderForNetwork(studentId,myApplyData) { sId ->
         launchRequestSimple(
             holder = myApplyData,
             request = { jxglstuJSON.getMyTransfer(cookie, batchId, sId).awaitResponse() },
@@ -610,7 +622,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     } catch (e : Exception) { throw e }
 
     val myApplyInfoData = StateHolder<MyApplyInfoBean>()
-    suspend fun getMyApplyInfo(cookie: String, listId: Int) = onListenStateHolderForNetwork(studentId) { sId ->
+    suspend fun getMyApplyInfo(cookie: String, listId: Int) = onListenStateHolderForNetwork(studentId,myApplyInfoData) { sId ->
         launchRequestSimple(
             holder = myApplyInfoData,
             request = { jxglstuHTML.getMyTransferInfo(cookie, listId, sId).awaitResponse() },
@@ -690,7 +702,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     }
 
     val jxglstuGradeData = StateHolder<List<GradeResponseJXGLSTU>>()
-    suspend fun getGradeFromJxglstu(cookie: String, semester: Int?) = onListenStateHolderForNetwork(studentId) { sId ->
+    suspend fun getGradeFromJxglstu(cookie: String, semester: Int?) = onListenStateHolderForNetwork(studentId,jxglstuGradeData) { sId ->
         launchRequestSimple(
             holder = jxglstuGradeData,
             request = { jxglstuHTML.getGrade(cookie, sId.toString(), semester).awaitResponse() },
@@ -748,7 +760,10 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
     suspend fun getStudentId(cookie : String) = launchRequestSimple(
         holder = studentId,
-        request = { jxglstuJSON.getStudentId(cookie).awaitResponse() },
+        request = {
+            Log.d("webVpnMode",webVpn.toString())
+            jxglstuJSON.getStudentId(cookie).awaitResponse()
+                  },
         transformRedirect = { headers -> parseStudentId(headers) },
         transformSuccess = { _,_ -> -1 }
     ) 
@@ -771,10 +786,13 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             if (headers["Location"].toString().contains(i)) {
                 return headers["Location"].toString().substringAfter(i).toInt()
 //            saveInt("STUDENTID",sId ?: 0)
+            } else if(headers["Location"].toString().contains("/login")){
+                throw Exception("登陆状态失效")
             } else {
-                throw Exception(headers["Location"])
+                throw Exception(headers["Location"].toString())
             }
         } catch (e : Exception) {
+            Log.e("cookieee", getKeyStackTrace(e))
             throw e
         }
     }
@@ -840,7 +858,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     }
 
     val datumData = StateHolder<String>()
-    suspend fun getDatum(cookie : String,lessonIdList : List<Int>) = onListenStateHolderForNetwork(studentId){ sId ->
+    suspend fun getDatum(cookie : String,lessonIdList : List<Int>) = onListenStateHolderForNetwork(studentId,datumData){ sId ->
         val lessonIdsArray = JsonArray()
         lessonIdList.forEach { lessonIdsArray.add(JsonPrimitive(it)) }
         val jsonObject = JsonObject().apply {
@@ -887,7 +905,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 //    }
 //
     suspend fun getInfo(cookie : String) {
-        onListenStateHolderForNetwork(studentId) { sId ->
+        onListenStateHolderForNetwork<Int,Unit>(studentId,null) { sId ->
             val call = jxglstuHTML.getInfo(cookie,sId.toString())
 
             call.enqueue(object : Callback<ResponseBody> {
@@ -932,7 +950,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     }
 
     val programData = StateHolder<ProgramResponse>()
-    suspend fun getProgram(cookie: String) = onListenStateHolderForNetwork(studentId) { sId ->
+    suspend fun getProgram(cookie: String) = onListenStateHolderForNetwork(studentId,programData) { sId ->
         launchRequestSimple(
             holder = programData,
             request = { jxglstuJSON.getProgram(cookie, sId.toString()).awaitResponse() },
@@ -961,7 +979,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     } catch (e : Exception) { throw e }
 
     val programPerformanceData = StateHolder<ProgramBean>()
-    suspend fun getProgramPerformance(cookie: String) = onListenStateHolderForNetwork(studentId) { sId ->
+    suspend fun getProgramPerformance(cookie: String) = onListenStateHolderForNetwork(studentId,programPerformanceData) { sId ->
         launchRequestSimple(
             holder = programPerformanceData,
             request = { jxglstuJSON.getProgramPerformance(cookie, sId).awaitResponse() },
@@ -982,7 +1000,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         courseName : String?,
         semester : Int,
         courseId : String?
-    ) = onListenStateHolderForNetwork(studentId) { sId ->
+    ) = onListenStateHolderForNetwork(studentId,courseSearchResponse) { sId ->
         launchRequestSimple(
             holder = courseSearchResponse,
             request = {
@@ -1015,7 +1033,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     }
 
     val surveyListData = StateHolder<List<forStdLessonSurveySearchVms>>()
-    suspend fun getSurveyList(cookie: String, semester : Int) = onListenStateHolderForNetwork(studentId) { sId ->
+    suspend fun getSurveyList(cookie: String, semester : Int) = onListenStateHolderForNetwork(studentId,surveyListData) { sId ->
         launchRequestSimple(
             holder = surveyListData,
             request = {
@@ -1039,7 +1057,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     } catch (e : Exception) { throw e }
 
     val surveyToken = StateHolder<String>()
-    suspend fun getSurveyToken(cookie: String, id : String) = onListenStateHolderForNetwork(studentId) { sId ->
+    suspend fun getSurveyToken(cookie: String, id : String) = onListenStateHolderForNetwork(studentId,surveyToken) { sId ->
         launchRequestSimple(
             holder = surveyToken,
             request = {
@@ -1070,7 +1088,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     }
 
     suspend fun getPhoto(cookie : String){
-        onListenStateHolderForNetwork(studentId) { sId ->
+        onListenStateHolderForNetwork<Int,Unit>(studentId,null) { sId ->
             val call = jxglstuJSON.getPhoto(cookie,sId.toString())
 
             call.enqueue(object : Callback<ResponseBody> {
@@ -1531,7 +1549,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
     val jxglstuExamCode = MutableLiveData<Int>()
     suspend fun getExamJXGLSTU(cookie: String) {
-        onListenStateHolderForNetwork(studentId) { sId ->
+        onListenStateHolderForNetwork<Int,Unit>(studentId,null) { sId ->
             val call = jxglstuJSON.getExam(cookie,sId.toString())
 
             call.enqueue(object : Callback<ResponseBody> {
@@ -1746,7 +1764,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     suspend fun getDatumNext(cookie : String, lessonIdList: List<Int>) {
 //        val lessonIdsArray = JsonArray()
 //        this@NetWorkViewModel.lessonIds.value?.forEach {lessonIdsArray.add(JsonPrimitive(it))}
-        onListenStateHolderForNetwork(studentId) { sId ->
+        onListenStateHolderForNetwork<Int,Unit>(studentId,null) { sId ->
             val lessonIdsArray = JsonArray()
             lessonIdList.forEach { lessonIdsArray.add(JsonPrimitive(it)) }
             val jsonObject = JsonObject().apply {

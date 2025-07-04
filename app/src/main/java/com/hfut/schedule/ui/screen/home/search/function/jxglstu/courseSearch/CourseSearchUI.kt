@@ -52,6 +52,7 @@ import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.PrepareSearchUI
+import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.CourseTotalUI
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.TotalCourseDataSource
@@ -68,9 +69,9 @@ fun CourseSearchUI(vm : NetWorkViewModel, hazeState: HazeState) {
     var className by remember { mutableStateOf( getPersonInfo().classes ?: "") }
     var courseName by remember { mutableStateOf("") }
     var courseId by remember { mutableStateOf("") }
-    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
-
-    val cookie = if (!vm.webVpn) prefs.getString("redirect", "") else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
+//    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
+//
+//    val cookie = if (!vm.webVpn) prefs.getString("redirect", "") else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
 
 
     var showSearch by remember { mutableStateOf(true) }
@@ -79,6 +80,7 @@ fun CourseSearchUI(vm : NetWorkViewModel, hazeState: HazeState) {
     var firstSearch by remember { mutableStateOf(true) }
 
     val refreshNetwork : suspend () -> Unit = {
+        val cookie = getJxglstuCookie(vm)
         cookie?.let {
             vm.courseSearchResponse.clear()
             if(firstSearch) firstSearch = false
@@ -311,13 +313,14 @@ fun CourseSearchUI(vm : NetWorkViewModel, hazeState: HazeState) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ApiForCourseSearch(vm: NetWorkViewModel, courseName : String?, courseId : String?, showBottomSheet : Boolean, hazeState: HazeState, onDismissRequest :  () -> Unit) {
-    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
+//    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
 
-    val cookie = if (!vm.webVpn) prefs.getString("redirect", "")
-    else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
+//    val cookie = if (!vm.webVpn) prefs.getString("redirect", "")
+//    else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
     if(showBottomSheet) {
         var semester by remember { mutableIntStateOf(getSemseter()) }
         val refreshNetwork : suspend () -> Unit = {
+            val cookie = getJxglstuCookie(vm)
             cookie?.let {
                 vm.courseSearchResponse.clear()
                 vm.searchCourse(it, null, courseName, semester,courseId)

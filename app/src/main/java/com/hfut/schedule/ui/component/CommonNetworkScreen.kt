@@ -65,7 +65,7 @@ fun CommonNetworkScreen(
             val e = uiState.exception
             val codeInt = uiState.code
             val ui =  @Composable {
-                Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.verticalScroll(rememberScrollState()))  {
+                Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = if(isFullScreen) Modifier.verticalScroll(rememberScrollState()) else Modifier)  {
                     when(codeInt) {
                         PARSE_ERROR_CODE -> {
                             var showDetail by remember { mutableStateOf(false) }
@@ -121,7 +121,7 @@ fun CommonNetworkScreen(
                             StatusUI(R.drawable.lock, "禁止操作 可能原因: 密码不正确或无权利进行操作")
                         }
                         in 500..599 -> {
-                            StatusUI(R.drawable.net, "服务器错误 可能的原因: \n1.智慧社区(Community)接口登陆状态失效,需重新刷新登陆状态\n2.对方API发生变更，APP对接失败\n3.对方暂时关闭了API(如选课等周期性活动)")
+                            StatusUI(R.drawable.net, "500错误 可能的原因: \n1.智慧社区(Community)接口登陆状态失效,需重新刷新登陆状态\n2.API发生变更，APP对接失败\n3.暂时关闭了API(如选课、转专业等周期性活动)")
                         }
                         else -> {
                             // 网络出错
@@ -195,7 +195,7 @@ suspend fun <T> onListenStateHolder(
                         "禁止操作 可能原因: 密码不正确或无权利进行操作"
                     }
                     in 500..599 -> {
-                        "服务器错误 可能的原因: \n1.智慧社区(Community)接口登陆状态失效,需重新刷新登陆状态\n2.对方API发生变更，APP对接失败\n3.对方暂时关闭了API(如选课等周期性活动)"
+                        "500错误 可能的原因: \n1.智慧社区(Community)接口登陆状态失效,需重新刷新登陆状态\n2.API发生变更，APP对接失败\n3.暂时关闭了API(如选课、转专业等周期性活动)"
                     }
                     else -> {
                         // 网络出错
@@ -220,8 +220,9 @@ suspend fun <T> onListenStateHolder(
 }
 
 
-suspend fun <T> onListenStateHolderForNetwork(
+suspend fun <T,F> onListenStateHolderForNetwork(
     response : StateHolder<T>,
+    resultHolder : StateHolder<F>?,
     onSuccess : suspend (T) -> Unit
 ) = withContext(Dispatchers.IO) {
     // 只收集第一次流
@@ -234,15 +235,15 @@ suspend fun <T> onListenStateHolderForNetwork(
         is UiState.Error -> {
             val codeInt = state.code
             val e = state.exception
-            response.emitError(e,codeInt)
+            resultHolder?.emitError(e,codeInt) ?: e?.message?.let { showToast(it) }
         }
         is UiState.Loading -> {
-            response.emitError(Exception("本操作依赖于上一网络请求，上一网络请求处于加载状态"),LISTEN_ERROR_CODE)
-            return@withContext
+            val t = "本操作依赖于上一网络请求，上一网络请求处于加载状态"
+            resultHolder?.emitError(Exception(t),LISTEN_ERROR_CODE) ?: showToast(t)
         }
         is UiState.Prepare -> {
-            response.emitError(Exception("本操作依赖于上一网络请求，上一网络请求处于未发起"),LISTEN_ERROR_CODE)
-            return@withContext
+            val t = "本操作依赖于上一网络请求，上一网络请求处于未发起"
+            resultHolder?.emitError(Exception(t),LISTEN_ERROR_CODE) ?: showToast(t)
         }
     }
 }

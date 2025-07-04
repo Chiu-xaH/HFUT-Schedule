@@ -25,9 +25,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,6 +42,7 @@ import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.development.CrashHandler
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.Starter.emailMe
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
@@ -57,21 +60,17 @@ import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FixUI(innerPadding : PaddingValues, vm : LoginViewModel, vm2 : NetWorkViewModel, hazeState: HazeState) {
-    var showDialog by remember { mutableStateOf(false) }
-    val switch_faststart = SharedPrefs.prefs.getBoolean("SWITCHFASTSTART",
-        SharedPrefs.prefs.getString("TOKEN","")?.isNotEmpty() ?: false)
-    var faststart by remember { mutableStateOf(switch_faststart) }
-    SharedPrefs.saveBoolean("SWITCHFASTSTART", SharedPrefs.prefs.getString("TOKEN", "")?.isNotEmpty() ?: false, faststart)
+    val firstStart by DataStoreManager.firstStart.collectAsState(initial = prefs.getBoolean("SWITCHFASTSTART",prefs.getString("TOKEN","")?.isNotEmpty() ?: false))
 
-    val switch_api = SharedPrefs.prefs.getBoolean("SWITCHMYAPI", apiCheck())
+    val switch_api = prefs.getBoolean("SWITCHMYAPI", apiCheck())
     var showapi by remember { mutableStateOf(switch_api) }
     SharedPrefs.saveBoolean("SWITCHMYAPI", false, showapi)
-
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
 
     if (showBottomSheet) {
@@ -131,12 +130,11 @@ fun FixUI(innerPadding : PaddingValues, vm : LoginViewModel, vm2 : NetWorkViewMo
 
 
 
-
         TransplantListItem(
             headlineContent = { Text(text = "快速启动") },
             leadingContent = { Icon(painterResource(R.drawable.speed), contentDescription = "Localized description",) },
-            trailingContent = { Switch(checked = faststart, onCheckedChange = {faststartch -> faststart = faststartch }) },
-            modifier = Modifier.clickable { faststart = !faststart }
+            trailingContent = { Switch(checked = firstStart, onCheckedChange = { scope.launch { DataStoreManager.saveFastStart(!firstStart) } }) },
+            modifier = Modifier.clickable { scope.launch { DataStoreManager.saveFastStart(!firstStart) } }
         )
 
         TransplantListItem(
@@ -152,11 +150,6 @@ fun FixUI(innerPadding : PaddingValues, vm : LoginViewModel, vm2 : NetWorkViewMo
             modifier = Modifier.clickable{ Starter.startWebUrl(MyApplication.GITEE_UPDATE_URL + "releases/tag/Android") }
         )
 
-//        ListItem(
-//            headlineContent = { Text(text = "抹掉数据") },
-//            leadingContent = { Icon(painterResource(R.drawable.delete), contentDescription = "Localized description",) },
-//            modifier = Modifier.clickable{ showDialog = true }
-//        )
         BugShare()
 
         TransplantListItem(
@@ -226,7 +219,7 @@ fun BugShare() {
         overlineContent = {
             if (logs != null) {
                 if (logs.substringBefore("*").contains("-")) {
-                    if (logs != null) {
+                    if (true) {
                         Text(text = "已保存 ${logs.substringBefore("*")}")
                     }
                 }
@@ -247,7 +240,7 @@ fun BugShare() {
 //                    Log.d("s",logs.toString())
                     if (logs != null) {
                         if (logs.substringBefore("*").contains("-")) {
-                            if (logs != null) showDialog = true else showToast("日志为空")
+                            if (true) showDialog = true else showToast("日志为空")
                         } else showToast("日志为空")
                     } else showToast("日志为空")
                 }) { Icon(painter = painterResource(id =  R.drawable.ios_share ), contentDescription = "") }

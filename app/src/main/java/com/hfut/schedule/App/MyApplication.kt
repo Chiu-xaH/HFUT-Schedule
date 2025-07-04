@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import androidx.compose.ui.unit.dp
+import com.hfut.schedule.logic.model.jxglstu.CourseUnitBean
 
 class MyApplication : Application() {
     companion object {
@@ -25,7 +26,7 @@ class MyApplication : Application() {
         // WEBVPN 校外访问
         const val WEBVPN_URL = "https://webvpn.hfut.edu.cn/"
         // 教务系统-WEBVPN 校外访问
-        const val JXGLSTU_WEBVPN_URL = WEBVPN_URL + "/http/" + "77726476706e69737468656265737421faef469034247d1e760e9cb8d6502720ede479/eams5-student/"
+        const val JXGLSTU_WEBVPN_URL = WEBVPN_URL + "http/" + "77726476706e69737468656265737421faef469034247d1e760e9cb8d6502720ede479/eams5-student/"
         // 通知公告
         const val NEWS_URL = "https://news.hfut.edu.cn/"
         // 合工大教务 微信UNI-APP
@@ -105,6 +106,59 @@ class MyApplication : Application() {
         const val EMAIL = "@mail.hfut.edu.cn"
         // WEBVPN COOKIE前缀
         const val WEBVPN_COOKIE_HEADER = "wengine_vpn_ticketwebvpn_hfut_edu_cn="
+        // 预置作息
+        val XC_TXL1: List<CourseUnitBean> = listOf(
+            CourseUnitBean("第一节", 800, 850, "08:00", "08:50"),
+            CourseUnitBean("第二节", 900, 950, "09:00", "09:50"),
+            CourseUnitBean("第三节", 1010, 1100, "10:10", "11:00"),
+            CourseUnitBean("第四节", 1110, 1200, "11:10", "12:00"),
+            CourseUnitBean("第五节", 1400, 1450, "14:00", "14:50"),
+            CourseUnitBean("第六节", 1500, 1550, "15:00", "15:50"),
+            CourseUnitBean("第七节", 1600, 1650, "16:00", "16:50"),
+            CourseUnitBean("第八节", 1700, 1750, "17:00", "17:50"),
+            CourseUnitBean("第九节", 1900, 1950, "19:00", "19:50"),
+            CourseUnitBean("第十节", 2000, 2050, "20:00", "20:50"),
+            CourseUnitBean("第十一节", 2100, 2150, "21:00", "21:50")
+        )
+        val FCH1: List<CourseUnitBean> = listOf(
+            CourseUnitBean("第一节", 810, 900, "08:10", "09:00"),
+            CourseUnitBean("第二节", 910, 1000, "09:10", "10:00"),
+            CourseUnitBean("第三节", 1020, 1110, "10:20", "11:10"),
+            CourseUnitBean("第四节", 1120, 1210, "11:20", "12:10"),
+            CourseUnitBean("第五节", 1400, 1450, "14:00", "14:50"),
+            CourseUnitBean("第六节", 1500, 1550, "15:00", "15:50"),
+            CourseUnitBean("第七节", 1600, 1650, "16:00", "16:50"),
+            CourseUnitBean("第八节", 1700, 1750, "17:00", "17:50"),
+            CourseUnitBean("第九节", 1900, 1950, "19:00", "19:50"),
+            CourseUnitBean("第十节", 2000, 2050, "20:00", "20:50"),
+            CourseUnitBean("第十一节", 2100, 2150, "21:00", "21:50")
+        )
+        val TXL2: List<CourseUnitBean> = listOf(
+            CourseUnitBean("第一节", 800, 850, "08:00", "08:50"),
+            CourseUnitBean("第二节", 900, 950, "09:00", "09:50"),
+            CourseUnitBean("第三节", 1010, 1100, "10:10", "11:00"),
+            CourseUnitBean("第四节", 1110, 1200, "11:10", "12:00"),
+            CourseUnitBean("第五节", 1430, 1520, "14:30", "15:20"),
+            CourseUnitBean("第六节", 1530, 1620, "15:30", "16:20"),
+            CourseUnitBean("第七节", 1630, 1720, "16:30", "17:20"),
+            CourseUnitBean("第八节", 1730, 1820, "17:30", "18:20"),
+            CourseUnitBean("第九节", 1900, 1950, "19:00", "19:50"),
+            CourseUnitBean("第十节", 2000, 2050, "20:00", "20:50"),
+            CourseUnitBean("第十一节", 2100, 2150, "21:00", "21:50")
+        )
+        val FCH2: List<CourseUnitBean> = listOf(
+            CourseUnitBean("第一节", 810, 900, "08:10", "09:00"),
+            CourseUnitBean("第二节", 910, 1000, "09:10", "10:00"),
+            CourseUnitBean("第三节", 1020, 1110, "10:20", "11:10"),
+            CourseUnitBean("第四节", 1120, 1210, "11:20", "12:10"),
+            CourseUnitBean("第五节", 1400, 1450, "14:00", "14:50"),
+            CourseUnitBean("第六节", 1500, 1550, "15:00", "15:50"),
+            CourseUnitBean("第七节", 1600, 1650, "16:00", "16:50"),
+            CourseUnitBean("第八节", 1700, 1750, "17:00", "17:50"),
+            CourseUnitBean("第九节", 1900, 1950, "19:00", "19:50"),
+            CourseUnitBean("第十节", 2000, 2050, "20:00", "20:50"),
+            CourseUnitBean("第十一节", 2100, 2150, "21:00", "21:50")
+        )
     }
 
     override fun onCreate() {

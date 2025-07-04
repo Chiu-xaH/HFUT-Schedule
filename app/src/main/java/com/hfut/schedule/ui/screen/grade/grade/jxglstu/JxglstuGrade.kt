@@ -70,6 +70,7 @@ import com.hfut.schedule.ui.component.cardNormalColor
 import com.hfut.schedule.ui.component.chart.RadarChart
 import com.hfut.schedule.ui.component.chart.RadarData
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.survey.SurveyUI
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.textFiledTransplant
@@ -77,6 +78,7 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
@@ -84,10 +86,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel, showSearch : Boolean, hazeState: HazeState) {
     val uiState by vm.jxglstuGradeData.state.collectAsState()
-    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
 
     val refreshNetwork: suspend () -> Unit = {
-        val cookie = if(!vm.webVpn) prefs.getString("redirect", "")  else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
+        val cookie = getJxglstuCookie(vm)
         cookie?.let {
             vm.jxglstuGradeData.clear()
             vm.getGradeFromJxglstu(cookie,null)

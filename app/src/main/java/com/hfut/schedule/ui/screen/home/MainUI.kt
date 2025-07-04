@@ -53,6 +53,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -66,6 +67,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.Observer
+import androidx.navigation.NavHost
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -115,6 +118,7 @@ import com.hfut.schedule.ui.screen.home.search.function.my.notification.Notifica
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.getNotifications
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.CourseTotalForApi
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.LabUI
+import com.hfut.schedule.ui.screen.login.MainNav
 import com.hfut.schedule.ui.screen.supabase.login.ApiToSupabase
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.bottomBarBlur
@@ -143,10 +147,11 @@ fun MainScreen(
     vmUI : UIViewModel,
     celebrationText : String?,
     webVpn : Boolean,
-    isLogin : Boolean
+    isLogin : Boolean,
+    navHostTopController : NavHostController,
 ) {
     val navController = rememberNavController()
-    var isEnabled by remember { mutableStateOf(!isLogin) }
+    var isEnabled by rememberSaveable(MainNav.HOME.name) { mutableStateOf(!isLogin) }
     val switch = prefs.getBoolean("SWITCH",true)
     var showlable by remember { mutableStateOf(switch) }
     val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
@@ -164,7 +169,7 @@ fun MainScreen(
     ) }
 
     // 按下底栏按钮后，要准备去的导航
-    var targetPage by remember { mutableStateOf(
+    var targetPage by rememberSaveable(MainNav.HOME.name) { mutableStateOf(
         if(isLogin) COURSES
         else when (prefs.getBoolean("SWITCHFOCUS",true)) {
             true -> FOCUS
@@ -287,14 +292,15 @@ fun MainScreen(
             val json = prefs.getString("json","")
             if (json != null) {
                 if (card == "请登录刷新" || !json.contains("课")) {
-                    showToast("正在后台登录其他接口，请稍作等待再切换界面")
-                    delay(8000)
-                    isEnabled = true
-                } else {
+                    showToast("正在后台登录其他接口,请等待提示Community登录成功和一卡通登陆成功后,再切换界面")
+//                    delay(8000)
+//                        isEnabled = true
+//                } else {
                     delay(3000)
-                    isEnabled = true
-                }
+//                    isEnabled = true
+//                }
             }
+                }
         }
     }
     // 保存上一页页码 用于决定左右动画
@@ -429,6 +435,28 @@ fun MainScreen(
 //            Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP))
 //        }
 //    }
+    LaunchedEffect(ifSaved) {
+        if(ifSaved == false) {
+            isEnabled = true
+        }
+        // 等待加载完毕可切换标签
+//        if(isLogin) {
+//            if(!webVpn) ifSaved = false
+//            val card = prefs.getString("card", "")
+//            val json = prefs.getString("json","")
+//            if (json != null) {
+//                if (card == "请登录刷新" || !json.contains("课")) {
+//                    showToast("正在后台登录其他接口，请稍作等待再切换界面")
+//                    delay(8000)
+//                    if(ifSaved)
+//                        isEnabled = true
+//                } else {
+//                    delay(3000)
+//                    isEnabled = true
+//                }
+//            }
+//        }
+    }
 
 
     Box(modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {
@@ -642,7 +670,7 @@ fun MainScreen(
                 }
                 composable(SEARCH.name) {
                     Scaffold {
-                        SearchScreen(vm,ifSaved,innerPadding,vmUI,searchText, hazeState = hazeState)
+                        SearchScreen(vm,ifSaved,innerPadding,vmUI,searchText, hazeState = hazeState, navController = navHostTopController)
                     }
                 }
                 composable(SETTINGS.name) {

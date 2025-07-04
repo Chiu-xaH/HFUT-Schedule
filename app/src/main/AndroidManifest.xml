@@ -73,11 +73,7 @@
             android:exported="true"
             android:label="@string/title_activity_fix"
             android:theme="@style/Theme.App" />
-        <activity
-            android:name=".activity.screen.GradeActivity"
-            android:exported="true"
-            android:label="@string/title_activity_grade"
-            android:theme="@style/Theme.App" />
+
 
         <provider
             android:name="androidx.core.content.FileProvider"

@@ -37,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -67,11 +68,11 @@ import dev.chrisbanes.haze.rememberHazeState
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GradeScreen(ifSaved : Boolean, vm : NetWorkViewModel) {
+fun GradeScreen(ifSaved : Boolean, vm : NetWorkViewModel,navTopController : NavHostController) {
     val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val navController = rememberNavController()
-    val context = LocalActivity.current
+//    val context = LocalActivity.current
 
     var showSearch by remember { mutableStateOf(false) }
 
@@ -136,7 +137,7 @@ fun GradeScreen(ifSaved : Boolean, vm : NetWorkViewModel) {
                                 Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")
                             }
                             IconButton(onClick = {
-                                context?.finish()
+                                navTopController.popBackStack()
                             }) {
                                 Icon(Icons.Filled.Close, contentDescription = "")
                             }

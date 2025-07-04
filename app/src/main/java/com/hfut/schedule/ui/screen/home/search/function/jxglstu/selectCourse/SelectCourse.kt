@@ -91,6 +91,7 @@ import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.WebDialog
+import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.ui.UIViewModel
@@ -104,10 +105,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun SelectCourse(ifSaved : Boolean, vm : NetWorkViewModel, hazeState: HazeState, vmUI: UIViewModel) {
     var showBottomSheet by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+//    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     var showBottomSheet_info by remember { mutableStateOf(false) }
-    val sheetState_info = rememberModalBottomSheetState()
+//    val sheetState_info = rememberModalBottomSheetState()
     val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
 
     val scope = rememberCoroutineScope()
@@ -226,17 +227,19 @@ fun SelectShuoming() {
 fun selectCourseListLoading(vm : NetWorkViewModel, hazeState: HazeState) {
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
-    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
-
-    val cookie = if (!vm.webVpn) prefs.getString(
-        "redirect",
-        ""
-    ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
+//    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
+//
+//    val cookie = if (!vm.webVpn) prefs.getString(
+//        "redirect",
+//        ""
+//    ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
 
     val scope = rememberCoroutineScope()
     if(refresh) {
         loading = true
+
         CoroutineScope(Job()).launch{
+            val cookie = getJxglstuCookie(vm)
             async { cookie?.let { vm.verify(cookie) } }.await()
             async {
                 Handler(Looper.getMainLooper()).post{
@@ -430,13 +433,9 @@ fun SelectCourseInfoLoad(courseId : Int, vm: NetWorkViewModel, hazeState: HazeSt
 //
     var input by remember { mutableStateOf("") }
     val uiState by vm.selectCourseInfoData.state.collectAsState()
-    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
 
     val refreshNetwork: suspend () -> Unit = {
-        val cookie = if (!vm.webVpn) prefs.getString(
-            "redirect",
-            ""
-        ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
+        val cookie = getJxglstuCookie(vm)
         cookie?.let {
             vm.selectCourseInfoData.clear()
             vm.getSelectCourseInfo(it,courseId)
@@ -555,7 +554,10 @@ private fun SelectCourseInfo(vm: NetWorkViewModel,courseId : Int, search : Strin
         items(searchList.size) {item ->
             val lists = searchList[item]
             var stdCount by remember { mutableStateOf("0") }
-            LaunchedEffect(lists.id) {
+            LaunchedEffect(lists.id,webVpnCookie) {
+                if(vm.webVpn) {
+                    if(webVpnCookie.isEmpty()) return@LaunchedEffect
+                }
                 async { cookie?.let { vm.getSCount(it,lists.id) } }.await()
                 async {
                     Handler(Looper.getMainLooper()).post{
@@ -621,17 +623,18 @@ fun selectCourseResultLoad(vm : NetWorkViewModel, courseId : Int, lessonId : Int
     var refresh by remember { mutableStateOf(true) }
     var statusText by remember { mutableStateOf("提交中") }
     var statusBoolean by remember { mutableStateOf(false) }
-    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
+//    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
 
-    val cookie = if (!vm.webVpn) prefs.getString(
-        "redirect",
-        ""
-    ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
+//    val cookie = if (!vm.webVpn) prefs.getString(
+//        "redirect",
+//        ""
+//    ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
     val scope = rememberCoroutineScope()
 
     if(refresh) {
         loading = true
         CoroutineScope(Job()).launch{
+            val cookie = getJxglstuCookie(vm)
             async { cookie?.let { vm.getRequestID(it,lessonId.toString(),courseId.toString(), type) } }.await()
             async {
                 Handler(Looper.getMainLooper()).post{
@@ -843,17 +846,18 @@ fun courseInfo(num : Int, lists : List<SelectCourseInfo>, vm: NetWorkViewModel, 
 fun HaveSelectedCourseLoad(vm: NetWorkViewModel, courseId: Int, hazeState: HazeState) {
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
-    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
+//    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
 
-    val cookie = if (!vm.webVpn) prefs.getString(
-        "redirect",
-        ""
-    ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
+//    val cookie = if (!vm.webVpn) prefs.getString(
+//        "redirect",
+//        ""
+//    ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
 
 
     if(refresh) {
         loading = true
         CoroutineScope(Job()).launch{
+            val cookie = getJxglstuCookie(vm)
             async { cookie?.let { vm.getSelectedCourse(it, prefs.getString("courseIDS",null).toString())} }.await()
             async {
                 Handler(Looper.getMainLooper()).post{

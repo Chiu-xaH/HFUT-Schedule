@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.activity.compose.LocalActivity
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContent
@@ -109,13 +110,24 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 //登录方法，auto代表前台调用
-private fun loginClick(vm : LoginViewModel, username : String, inputAES : String, code : String, webVpn : Boolean, onRefresh : () -> Unit, onLoad : (Boolean) -> Unit, onResult : (String) -> Unit) {
-    val cookie = prefs.getString(if(!webVpn)"cookie" else "webVpnKey", "")
+private fun loginClick(
+    vm : LoginViewModel,
+    username : String,
+    inputAES : String,
+    code : String,
+    webVpn : Boolean,
+    onRefresh : () -> Unit,
+    onLoad : (Boolean) -> Unit,
+    onResult : (String) -> Unit
+) {
+    val cookie = prefs.getString(if(!webVpn)"LOGIN_FLAVORING" else "webVpnKey", "")
     val outputAES = cookie?.let { it1 -> Encrypt.encryptAES(inputAES, it1) }
-    val ONE = "LOGIN_FLAVORING=$cookie"
+    val c = "LOGIN_FLAVORING=$cookie"
+
 
     //登陆判定机制
     CoroutineScope(Job()).launch {
@@ -127,7 +139,7 @@ private fun loginClick(vm : LoginViewModel, username : String, inputAES : String
         async {
             //登录
             if (username.length != 10) showToast("请输入正确的账号")
-            else outputAES?.let { it1 -> vm.login(username, it1,ONE,code,webVpn) }
+            else outputAES?.let { it1 -> vm.login(username, it1,c,code,webVpn) }
         }.await()
         async { onLoad(true) }.await()
         async {
@@ -224,7 +236,7 @@ fun ImageCodeUI(webVpn : Boolean, vm: LoginViewModel, onRefresh: Int = 1, onResu
         }
 
         // webVpn开关变化时重载
-        LaunchedEffect(webVpn,onRefresh) {
+        LaunchedEffect(webVpn,onRefresh,cookies) {
             imageUrl = "$url?timestamp=${System.currentTimeMillis()}"
         }
         // 请求图片
@@ -528,7 +540,9 @@ fun TwoTextField(vm : LoginViewModel, navHostController: NavHostController,webVp
                 Button(
                     onClick = {
                         val cookie = SharedPrefs.prefs.getString("LOGIN_FLAVORING", "")
-                        if (cookie != null) loginClick(vm,username,inputAES,inputCode,webVpn, onRefresh = { onRefresh++ }, onLoad = { loading = it }, onResult = { status = it})
+                        if (cookie != null) {
+                            loginClick(vm,username,inputAES,inputCode,webVpn, onRefresh = { onRefresh++ }, onLoad = { loading = it }, onResult = { status = it})
+                        }
                     },
                     modifier = Modifier.fillMaxWidth().scale(scale.value).let { if(isAnonymity()) it.weight(.5f) else it },
                     interactionSource = interactionSource,
@@ -536,13 +550,13 @@ fun TwoTextField(vm : LoginViewModel, navHostController: NavHostController,webVp
                 ) { Text( "登录") }
 
                 if(isAnonymity()) {
-                    saveBoolean("SWITCHFASTSTART",true,true)
                     Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP))
-
-
                     FilledTonalButton(
                         onClick = {
-                            Starter.goToMain()
+                            scope.launch {
+                                DataStoreManager.saveFastStart(true)
+                                Starter.goToMain()
+                            }
                         },
                         shape = MaterialTheme.shapes.medium,
                         modifier = Modifier.fillMaxWidth().scale(scale2.value).weight(.5f),

@@ -22,7 +22,7 @@ fun getKeyStackTrace(e: Throwable): String {
     val appStackLine = lines.firstOrNull { it.trim().startsWith("at $appPackage") }?.trim()
 
     return if (appStackLine != null) {
-        "原因: $firstLine\n位置: $appStackLine\n提示: 报错并未一定代码有误，有可能是登录失效，无法获取信息"
+        "原因: $firstLine\n位置: $appStackLine"
     } else {
         firstLine
     }

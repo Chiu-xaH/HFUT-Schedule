@@ -35,9 +35,11 @@ import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
+import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
+import kotlinx.coroutines.flow.first
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -187,13 +189,9 @@ private fun TransferListUI(vm: NetWorkViewModel, hazeState: HazeState) {
         }
     }
     val uiState by vm.transferListData.state.collectAsState()
-    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
 
     val refreshNetwork: suspend () -> Unit = {
-        val cookie = if (!vm.webVpn) prefs.getString(
-            "redirect",
-            ""
-        ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
+        val cookie = getJxglstuCookie(vm)
         cookie?.let {
             vm.transferListData.clear()
             vm.getTransferList(it)

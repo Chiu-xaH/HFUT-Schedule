@@ -54,6 +54,7 @@ import com.hfut.schedule.ui.component.StatusUI2
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.onListenStateHolder
+import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.other.life.countFunc
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.HazeBottomSheet
@@ -66,12 +67,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun MyApplyListUI(vm: NetWorkViewModel, batchId : String, hazeState: HazeState) {
     var indexs by remember { mutableIntStateOf(0) }
-    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
-
-    val cookie =if (!vm.webVpn) prefs.getString(
-        "redirect",
-        ""
-    ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
 
     var showBottomSheet_apply by remember { mutableStateOf(false) }
 
@@ -102,6 +97,7 @@ fun MyApplyListUI(vm: NetWorkViewModel, batchId : String, hazeState: HazeState) 
 
 
     val refreshNetwork: suspend () -> Unit = {
+        val cookie = getJxglstuCookie(vm)
         cookie?.let {
             vm.myApplyData.clear()
             vm.getMyApply(it,batchId)
@@ -178,18 +174,11 @@ fun MyApplyListUI(vm: NetWorkViewModel, batchId : String, hazeState: HazeState) 
 
 @Composable
 fun MyApply(vm: NetWorkViewModel, batchId : String, indexs : Int) {
-    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
-
-    val cookie =
-        if (!vm.webVpn) prefs.getString(
-            "redirect",
-            ""
-        ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
-
 
 
     val uiState1 by vm.myApplyData.state.collectAsState()
     val refreshNetwork1 = suspend {
+        val cookie = getJxglstuCookie(vm)
         cookie?.let {
             vm.myApplyData.clear()
             vm.getMyApply(it,batchId)
@@ -206,6 +195,8 @@ fun MyApply(vm: NetWorkViewModel, batchId : String, indexs : Int) {
     var loading = uiState1 !is UiState.Success
     val refreshNetwork2 : suspend () -> Unit = {
         onListenStateHolder(vm.myApplyData) { data ->
+            val cookie = getJxglstuCookie(vm)
+
             val list = data.models
             val id = if(list.isNotEmpty() == true) {
                 list[indexs].id
@@ -356,13 +347,9 @@ fun MyApply(vm: NetWorkViewModel, batchId : String, indexs : Int) {
 @Composable
 private fun TransferCancelStatusUI(vm : NetWorkViewModel, batchId: String, id: Int) {
     val uiState by vm.cancelTransferResponse.state.collectAsState()
-    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
 
     val refreshNetwork: suspend () -> Unit = {
-        var cookie = if (!vm.webVpn) prefs.getString(
-            "redirect",
-            ""
-        ) else MyApplication.WEBVPN_COOKIE_HEADER +webVpnCookie
+        val cookie = getJxglstuCookie(vm)
         cookie?.let {
             vm.cancelTransferResponse.clear()
             vm.cancelTransfer(it,batchId,id.toString())

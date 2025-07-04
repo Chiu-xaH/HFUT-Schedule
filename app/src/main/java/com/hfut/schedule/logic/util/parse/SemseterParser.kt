@@ -5,6 +5,17 @@ import com.hfut.schedule.logic.util.network.ParseJsons.getMy
 
 object SemseterParser {
     @JvmStatic
+    fun parseSemseterUpOrDown(semster : Int) : Int {
+        val codes = (semster - 4) / 10
+        var upordown = 0
+        if(codes % 4 == 1) {
+            upordown = 2
+        } else if(codes % 4 == 3) {
+            upordown = 1
+        }
+        return  upordown
+    }
+    @JvmStatic
     fun parseSemseter(semster : Int) : String {
         val codes = (semster - 4) / 10
         val year = 2017

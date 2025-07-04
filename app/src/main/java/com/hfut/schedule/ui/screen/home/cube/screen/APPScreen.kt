@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -39,6 +40,8 @@ import com.hfut.schedule.ui.screen.home.cube.Screen
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.TransplantListItem
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.isSuccessTransfer
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
 
@@ -57,10 +60,8 @@ fun APPScreen(navController: NavController,
         val showFocus by DataStoreManager.showCloudFocusFlow.collectAsState(initial = true)
         val switch_focus = prefs.getBoolean("SWITCHFOCUS",true)
         var showfocus by remember { mutableStateOf(switch_focus) }
-        val switch_faststart = SharedPrefs.prefs.getBoolean("SWITCHFASTSTART",
-            prefs.getString("TOKEN","")?.isNotEmpty() ?: false)
-        var faststart by remember { mutableStateOf(switch_faststart) }
-        saveBoolean("SWITCHFASTSTART", prefs.getString("TOKEN","")?.isNotEmpty() ?: false,faststart)
+
+        val firstStart by DataStoreManager.firstStart.collectAsState(initial = prefs.getBoolean("SWITCHFASTSTART",prefs.getString("TOKEN","")?.isNotEmpty() ?: false))
 
         val switch_startUri = prefs.getBoolean("SWITCHSTARTURI",true)
         var showStartUri by remember { mutableStateOf(switch_startUri) }
@@ -77,8 +78,8 @@ fun APPScreen(navController: NavController,
         saveBoolean("SWITCHFOCUS",true,showfocus)
 //        var showBottomSheet_card by remember { mutableStateOf(false) }
 
-        val switch_default = prefs.getInt("SWITCH_DEFAULT_CALENDAR", CourseType.JXGLSTU.code)
-        var currentDefaultCalendar by remember { mutableStateOf(switch_default) }
+        val switch_default = prefs.getInt("SWITCH_DEFAULT_CALENDAR", if(isSuccessTransfer()) CourseType.JXGLSTU.code else CourseType.COMMUNITY.code)
+        var currentDefaultCalendar by remember { mutableIntStateOf(switch_default) }
         saveInt("SWITCH_DEFAULT_CALENDAR",currentDefaultCalendar)
 
         val scope = rememberCoroutineScope()
@@ -207,8 +208,8 @@ fun APPScreen(navController: NavController,
                 headlineContent = { Text(text = "快速启动") },
                 supportingContent = { Text(text = "打开后,再次打开应用时将默认打开免登录二级界面,而不是登陆教务页面,但您仍可通过查询中心中的选项以登录") },
                 leadingContent = { Icon(painterResource(R.drawable.speed), contentDescription = "Localized description",) },
-                trailingContent = { Switch(checked = faststart, onCheckedChange = {faststartch -> faststart = faststartch }) },
-                modifier = Modifier.clickable { faststart = !faststart }
+                trailingContent = { Switch(checked = firstStart, onCheckedChange = { scope.launch { DataStoreManager.saveFastStart(!firstStart) } }) },
+                modifier = Modifier.clickable { scope.launch { DataStoreManager.saveFastStart(!firstStart) } }
             )
 //            TransplantListItem(
 //                headlineContent = { Text(text = "支付验证") },

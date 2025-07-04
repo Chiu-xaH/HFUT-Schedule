@@ -3,9 +3,7 @@ package com.hfut.schedule.ui.screen.home.search.function.jxglstu.nextCourse
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -21,21 +19,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
-import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.network.ParseJsons.isNextOpen
 import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.ui.screen.home.calendar.next.DatumUI
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.CourseTotalForApi
-import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.custom.ScrollText
-import com.hfut.schedule.ui.component.TransplantListItem
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.WebDialog
-import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.component.custom.BottomSheetTopBar
+import com.hfut.schedule.ui.component.custom.ScrollText
+import com.hfut.schedule.ui.screen.home.calendar.next.JxglstuCourseTableUINext
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.CourseTotalForApi
+import com.hfut.schedule.ui.style.CustomBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import dev.chrisbanes.haze.HazeState
@@ -67,18 +64,15 @@ fun NextCourse(ifSaved : Boolean, vmUI : UIViewModel, vm : NetWorkViewModel, haz
     )
 
     if (showBottomSheet_next) {
-        HazeBottomSheet (
+        CustomBottomSheet (
             onDismissRequest = { showBottomSheet_next = false },
-//            sheetState = sheetState_next,
-//            shape = bottomSheetRound(sheetState_next),
             showBottomSheet = showBottomSheet_next,
-            hazeState = hazeState
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    HazeBottomSheetTopBar("下学期课程表") {
+                    BottomSheetTopBar("下学期课程表") {
                         Row {
                             CourseTotalForApi(vm=vm, next=next, onNextChange = { next = !next}, hazeState = hazeState)
                             TextButton(onClick = { showAll = !showAll }) {
@@ -92,8 +86,7 @@ fun NextCourse(ifSaved : Boolean, vmUI : UIViewModel, vm : NetWorkViewModel, haz
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    DatumUI(showAll, innerPadding, vmUI,vm, hazeState)
-                    Spacer(modifier = Modifier.height(20.dp))
+                    JxglstuCourseTableUINext(showAll,vm,vmUI,hazeState)
                 }
             }
         }

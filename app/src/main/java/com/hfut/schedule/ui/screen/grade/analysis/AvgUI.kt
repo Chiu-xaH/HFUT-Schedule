@@ -80,7 +80,7 @@ fun AvgGrade(vm: NetWorkViewModel) {
             refreshNetwork()
         }
     }
-    CommonNetworkScreen(uiState, onReload = refreshNetwork) {
+    CommonNetworkScreen(uiState, isFullScreen = false,onReload = refreshNetwork) {
         val resultAvg = (uiState as UiState.Success).data
         MyCustomCard(hasElevation = false, containerColor = cardNormalColor()) {
             Text(text = "我的水平", modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP, vertical = 8.dp), color = MaterialTheme.colorScheme.primary)
@@ -152,7 +152,7 @@ fun AllGrade(vm: NetWorkViewModel) {
             refreshNetwork()
         }
     }
-    CommonNetworkScreen(uiState, onReload = refreshNetwork) {
+    CommonNetworkScreen(uiState,isFullScreen = false, onReload = refreshNetwork) {
         val list = (uiState as UiState.Success).data
         Column {
             for (index in list.indices) {

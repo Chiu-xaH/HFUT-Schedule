@@ -1,5 +1,6 @@
 package com.hfut.schedule.viewmodel.network
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
@@ -45,9 +46,9 @@ class LoginViewModel : ViewModel() {
 
     var TICKET = MutableLiveData<String?>()
     suspend fun login(username : String, password : String, keys : String, imageCode : String, webVpn : Boolean) =
-        onListenStateHolderForNetwork(jSessionId) { jId ->
+        onListenStateHolderForNetwork<CasGetFlavorBean,Unit>(jSessionId,null) { jId ->
             if(webVpn) {
-                onListenStateHolderForNetwork(webVpnTicket) { ticket ->
+                onListenStateHolderForNetwork<String,Unit>(webVpnTicket,null) { ticket ->
                     val call = execution.value?.let { LoginWebVpn.loginWebVpn(cookie ="wengine_vpn_ticketwebvpn_hfut_edu_cn=${ticket}",username =username, password =password,execution= it, code = imageCode) }
 
                     call?.enqueue(object : Callback<ResponseBody> {
@@ -126,7 +127,7 @@ class LoginViewModel : ViewModel() {
 //    }
 
     val webVpnTicket = StateHolder<String>()
-    suspend fun getKeyWebVpn() = onListenStateHolderForNetwork(webVpnTicket) { ticket ->
+    suspend fun getKeyWebVpn() = onListenStateHolderForNetwork<String, Unit>(webVpnTicket,null) { ticket ->
         val call = LoginWebVpn.getKeyWebVpn("show_vpn=1; show_fast=0; heartbeat=1; show_faq=0; wengine_vpn_ticketwebvpn_hfut_edu_cn=${ticket}; refresh=1")
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -175,6 +176,7 @@ class LoginViewModel : ViewModel() {
         try {
             val ticket = headers.toString().substringAfter(MyApplication.WEBVPN_COOKIE_HEADER)
                 .substringBefore(";")
+            // 保存cookie
             DataStoreManager.saveWebVpnCookie(ticket)
             return ticket
 //            saveString("webVpnTicket",ticket)
@@ -203,7 +205,8 @@ class LoginViewModel : ViewModel() {
 //        })
 //    }
 
-    suspend fun loginJxglstu() = onListenStateHolderForNetwork(webVpnTicket) { ticket ->
+    suspend fun loginJxglstu() = onListenStateHolderForNetwork<String, Unit>(webVpnTicket,null) { ticket ->
+        Log.d("t",ticket)
         val call = LoginWebVpn.loginJxglstu("wengine_vpn_ticketwebvpn_hfut_edu_cn=${ticket}")
 
         call.enqueue(object : Callback<ResponseBody> {

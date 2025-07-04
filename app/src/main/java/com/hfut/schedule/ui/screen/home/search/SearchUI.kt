@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.Huixin
@@ -81,6 +82,7 @@ fun SearchScreen(
     innerPaddings : PaddingValues,
     vmUI : UIViewModel,
     input : String,
+    navController : NavHostController,
     hazeState: HazeState
 ) {
     //建立索引 <搜索关键词,功能>
@@ -91,7 +93,7 @@ fun SearchScreen(
         "校园网 慧新易校 缴费" to { LoginWeb(vmUI, false, vm,hazeState) },
         "教育邮箱" to { Mail(ifSaved, vm,vmUI,hazeState) },
         "一卡通 校园卡 账单 充值 缴费 慧新易校 合肥" to { Huixin() },
-        "成绩" to { Grade(vm, ifSaved) },
+        "成绩" to { Grade(ifSaved,navController) },
         "挂科率" to { FailRate(vm,hazeState) }, 
         "课程汇总" to { CourseTotal(vm,hazeState) }, 
         "个人信息" to { PersonUI(ifSaved,hazeState) }, 

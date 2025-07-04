@@ -46,25 +46,25 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomCourseTableSummary
-import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
-import com.hfut.schedule.logic.util.sys.addCourseToEvent
-import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.sys.delCourseEvents
 import com.hfut.schedule.logic.util.network.ParseJsons.isNextOpen
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
+import com.hfut.schedule.logic.util.sys.addCourseToEvent
+import com.hfut.schedule.logic.util.sys.delCourseEvents
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.screen.home.calendar.next.DatumUI
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.CourseTotalForApi
-import com.hfut.schedule.ui.component.custom.BottomSheetTopBar
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
+import com.hfut.schedule.ui.component.StyleCardListItem
+import com.hfut.schedule.ui.component.TransplantListItem
+import com.hfut.schedule.ui.component.WebDialog
+import com.hfut.schedule.ui.component.custom.BottomSheetTopBar
 import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.custom.LittleDialog
 import com.hfut.schedule.ui.component.custom.LoadingUI
-import com.hfut.schedule.ui.component.StyleCardListItem
-import com.hfut.schedule.ui.component.TransplantListItem
- 
-import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.WebDialog
+import com.hfut.schedule.ui.screen.home.calendar.next.JxglstuCourseTableUINext
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.CourseTotalForApi
+import com.hfut.schedule.ui.style.CustomBottomSheet
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
@@ -194,16 +194,15 @@ fun MultiScheduleSettings(
 
 
     if (showBottomSheet_next) {
-        HazeBottomSheet (
+        CustomBottomSheet (
             onDismissRequest = { showBottomSheet_next = false },
             showBottomSheet = showBottomSheet_next,
-            hazeState = hazeState
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    HazeBottomSheetTopBar("下学期课程表") {
+                    BottomSheetTopBar("下学期课程表") {
                         Row {
                             CourseTotalForApi(vm=vm, next=next, onNextChange = { next = !next}, hazeState = hazeState)
                             TextButton(onClick = { showAll = !showAll }) {
@@ -217,8 +216,7 @@ fun MultiScheduleSettings(
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    DatumUI(showAll, innerPadding, vmUI,vm,hazeState)
-                    Spacer(modifier = Modifier.height(20.dp))
+                    JxglstuCourseTableUINext(showAll,vm,vmUI,hazeState)
                 }
             }
         }
