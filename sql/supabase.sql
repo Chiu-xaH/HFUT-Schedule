@@ -115,15 +115,17 @@ $$ language sql stable;
 
 drop function if exists get_today_visit_count;
 
-create function get_today_visit_count()
-returns bigint
-security definer --
-as $$
-  select count(*)
-from user_app_usage
-where date_time >= (now() at time zone 'UTC+8')::date
-  and date_time < ((now() at time zone 'UTC+8')::date + interval '1 day');
-$$ language sql stable;
+CREATE FUNCTION get_today_visit_count()
+RETURNS bigint
+SECURITY DEFINER
+AS $$
+ SELECT COUNT(*)
+FROM user_app_usage
+WHERE (date_time AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Shanghai') >= date_trunc('day', CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Shanghai')
+  AND (date_time AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Shanghai') <  date_trunc('day', CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Shanghai') + INTERVAL '1 day';
+
+$$ LANGUAGE sql STABLE;
+
 
 CREATE TABLE "user_app_usage" (
   "date_time" TIMESTAMP NOT NULL DEFAULT NOW(),

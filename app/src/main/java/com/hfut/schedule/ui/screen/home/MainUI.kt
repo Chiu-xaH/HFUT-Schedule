@@ -261,10 +261,10 @@ fun MainScreen(
     }
 
     var today by remember { mutableStateOf(DateTimeManager.getToday()) }
-
-    val pagerState = rememberPagerState(pageCount = {2})
-
     val titles = listOf("重要安排","其他事项")
+
+    val pagerState = rememberPagerState(pageCount = { titles.size })
+
 
     var searchText by remember { mutableStateOf("") }
 
@@ -558,7 +558,7 @@ fun MainScreen(
                         )
                     }
                     when(targetPage) {
-                        COURSES -> ScheduleTopDate(showAll,today)
+                        COURSES -> ScheduleTopDate(showAll,today,swapUI == CourseType.JXGLSTU.code)
                         FOCUS -> CustomTabRow(pagerState, titles)
                         else -> {}
                     }

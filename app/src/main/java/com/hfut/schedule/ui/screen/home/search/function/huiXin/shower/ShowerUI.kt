@@ -116,7 +116,9 @@ private const val XUANCHENG_TAB = 1
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: HazeState) {
-    val pagerState = rememberPagerState(pageCount = { 2 }, initialPage =
+    val titles = remember { listOf("合肥","宣城") }
+
+    val pagerState = rememberPagerState(pageCount = { titles.size }, initialPage =
         when(getCampus()) {
             Campus.XUANCHENG -> XUANCHENG_TAB
             Campus.HEFEI -> HEFEI_TAB
@@ -241,7 +243,6 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
             }
         }
 
-    val titles = remember { listOf("合肥","宣城") }
 
     var loading by remember { mutableStateOf(false) }
 

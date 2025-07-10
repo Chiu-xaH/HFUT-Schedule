@@ -61,13 +61,14 @@ private const val XUANCHENG_TAB = 1
 
 @Composable
 fun WeatherScreen(vm: NetWorkViewModel) {
-    val pagerState = rememberPagerState(pageCount = { 2 }, initialPage =
+    val titles = remember { listOf("合肥","宣城") }
+
+    val pagerState = rememberPagerState(pageCount = { titles.size }, initialPage =
         when(getCampus()) {
             Campus.XUANCHENG -> XUANCHENG_TAB
             Campus.HEFEI -> HEFEI_TAB
         }
     )
-    val titles = remember { listOf("合肥","宣城") }
     CustomTabRow(pagerState,titles)
     HorizontalPager(state = pagerState) { page ->
         Column (modifier = Modifier.fillMaxSize()) {

@@ -84,6 +84,8 @@ import com.hfut.schedule.ui.screen.home.calendar.getScheduleDate
 import com.hfut.schedule.ui.screen.home.calendar.next.parseCourseName
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getJxglstuStartDate
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getStartWeekFromCommunity
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getTotalCourse
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -97,7 +99,7 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
-fun parseTimeTable(json : String,isNext : Boolean = false) : List<CourseUnitBean> {
+suspend fun parseTimeTable(json : String, isNext : Boolean = false) : List<CourseUnitBean> {
     try {
         if(json.isEmpty()) {
             // 使用预置的作息表
@@ -194,13 +196,19 @@ fun JxglstuCourseTableUI(
     val tableAll = remember { List(42) { mutableStateListOf<String>() } }
 
     val dateList  =  getScheduleDate(showAll, today)
-    val examList  = examToCalendar()
+    var examList by remember { mutableStateOf(examToCalendar()) }
 
     var currentWeek by rememberSaveable {
         mutableLongStateOf(
-            if(DateTimeManager.weeksBetween > 20) {
+            if(DateTimeManager.weeksBetweenJxglstu > 20) {
                 getNewWeek()
-            } else DateTimeManager.weeksBetween
+            } else if(DateTimeManager.weeksBetweenJxglstu < 1) {
+                onDateChange(getJxglstuStartDate())
+                examList = emptyList()
+                1L
+            } else {
+                DateTimeManager.weeksBetweenJxglstu
+            }
         )
     }
 
@@ -841,9 +849,13 @@ fun JxglstuCourseTableUI(
                             if (shouldShowAddButton) {
                                 ExtendedFloatingActionButton(
                                     onClick = {
-                                        currentWeek = DateTimeManager.weeksBetween
-//                                        refreshUI(showAll)
-                                        onDateChange(LocalDate.now())
+                                        if(DateTimeManager.weeksBetweenJxglstu < 1) {
+                                            currentWeek = 1
+                                            onDateChange(getJxglstuStartDate())
+                                        } else {
+                                            currentWeek = DateTimeManager.weeksBetweenJxglstu
+                                            onDateChange(LocalDate.now())
+                                        }
                                     },
                                 ) {
                                     AnimatedContent(
@@ -923,7 +935,7 @@ fun getNewWeek() : Long {
         val weeksBetweenJxglstu = ChronoUnit.WEEKS.between(firstWeekStartJxglstu, DateTimeManager.getToday()) + 1
         weeksBetweenJxglstu  //固定本周
     } catch (_ : Exception) {
-        DateTimeManager.weeksBetween
+        DateTimeManager.weeksBetweenJxglstu
     }
 }
 

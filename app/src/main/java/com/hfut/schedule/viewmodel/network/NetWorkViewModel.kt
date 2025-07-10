@@ -13,6 +13,9 @@ import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.enumeration.LibraryItems
 import com.hfut.schedule.logic.enumeration.LoginType
+import com.hfut.schedule.logic.model.AcademicNewsResponse
+import com.hfut.schedule.logic.model.AcademicType
+import com.hfut.schedule.logic.model.AcademicXCType
 import com.hfut.schedule.logic.model.ForecastAllBean
 import com.hfut.schedule.logic.model.NewsResponse
 import com.hfut.schedule.logic.model.PayData
@@ -171,7 +174,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         jxglstuJSON = createJSONService()
         jxglstuHTML = createHTMLService()
     }
-    // prefs.getInt("STUDENTID",0)
     val studentId = StateHolder<Int>()
     val lessonIds = StateHolder<lessonResponse>()
     val token = MutableLiveData<String>()
@@ -182,6 +184,25 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     val workSearchResult = StateHolder<WorkSearchResponse>()
     suspend fun searchWorks(keyword: String?, page: Int = 1,type: Int,campus: Campus) = Repository.searchWorks(keyword,page,type,campus,workSearchResult)
 // Supabase ////////////////////////////////////////////////////////////////////////////////////////////////
+    val supabaseTodayVisitResp = StateHolder<Int>()
+    val supabaseUserCountResp = StateHolder<Int>()
+
+    suspend fun getTodayVisit() = launchRequestSimple(
+        holder = supabaseTodayVisitResp,
+        request = { supabase.getTodayVisitCount().awaitResponse() },
+        transformSuccess = { _,body -> parseTodayVisit(body) }
+    )
+    private fun parseTodayVisit(body : String) : Int = try {
+        body.toInt()
+    } catch (e : Exception) { throw e }
+
+    suspend fun getUserCount() = launchRequestSimple(
+        holder = supabaseUserCountResp,
+        request = { supabase.getUserCount().awaitResponse() },
+        transformSuccess = { _,body -> parseTodayVisit(body) }
+    )
+
+
     val supabaseRegResp = MutableLiveData<String?>()
     fun supabaseReg(password: String) = Repository.makeRequest(supabase.reg(user = SupabaseUserLoginBean(password = password)),supabaseRegResp)
 
@@ -671,10 +692,16 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 // 新闻 ////////////////////////////////////////////////////////////////////////////////////////////////
     val newsResult = StateHolder<List<NewsResponse>>()
     suspend fun searchNews(title : String,page: Int = 1) = Repository.searchNews(title,page,newsResult)
-    val newsXuanChengResult = StateHolder<List<XuanquNewsItem>>()
+
+    val newsXuanChengResult = StateHolder<List<NewsResponse>>()
     fun searchXuanChengNews(title : String, page: Int = 1) = Repository.searchXuanChengNews(title,page)
     suspend fun getXuanChengNews(page: Int) = Repository.getXuanChengNews(page,newsXuanChengResult)
 
+    val academicResp = StateHolder<AcademicNewsResponse>()
+    suspend fun getAcademicNews(type: AcademicType, page: Int = 1,totalPage : Int? = null) = Repository.getAcademic(type,totalPage,page,academicResp)
+
+    val academicXCResp = StateHolder<List<NewsResponse>>()
+    suspend fun getAcademicXCNews(type: AcademicXCType, page: Int = 1) = Repository.getAcademicXC(type,page,academicXCResp)
 // 核心业务 ////////////////////////////////////////////////////////////////////////////////////////////////
     fun gotoCommunity(cookie : String) {
 

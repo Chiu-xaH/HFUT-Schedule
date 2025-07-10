@@ -2,6 +2,8 @@ package com.hfut.schedule.logic.util.parse
 
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.network.ParseJsons.getMy
+import com.hfut.schedule.logic.util.storage.DataStoreManager
+import kotlinx.coroutines.flow.first
 
 object SemseterParser {
     @JvmStatic
@@ -70,11 +72,29 @@ object SemseterParser {
     }
 
     @JvmStatic
-    fun getSemseter() : Int {
+    suspend fun getSemseter() : Int {
+        try {
+            val autoTerm = DataStoreManager.autoTerm.first()
+            if(autoTerm) {
+                return reverseGetSemester(DateTimeManager.Date_yyyy_MM) ?: 0
+            } else {
+                val autoTermValue = DataStoreManager.autoTermValue.first()
+                return autoTermValue
+            }
+        } catch (e : Exception) {
+            return getMy()!!.semesterId.toInt()
+        }
+    }
+    @JvmStatic
+    fun getSemseterWithoutSuspend() : Int {
         return try {
             reverseGetSemester(DateTimeManager.Date_yyyy_MM) ?: 0
-        } catch (e:Exception) {
+        } catch (e : Exception) {
             getMy()!!.semesterId.toInt()
         }
     }
+
+    fun plusSemseter(semster: Int) : Int = semster+20
+    fun subSemseter(semster: Int) : Int = semster-20
+
 }

@@ -46,7 +46,6 @@ import com.hfut.schedule.ui.component.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.PagingController
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.WebDialog
-  
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
 import com.hfut.schedule.ui.style.HazeBottomSheet
@@ -126,7 +125,7 @@ private fun WorkSearchUI(vm : NetWorkViewModel,campus: Campus) {
         WorkSearchType.POSITION,
         WorkSearchType.ANNOUNCEMENT
     ) }
-    val pagerState = rememberPagerState(pageCount = { 7 })
+    val pagerState = rememberPagerState(pageCount = { types.size })
     var input by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
 

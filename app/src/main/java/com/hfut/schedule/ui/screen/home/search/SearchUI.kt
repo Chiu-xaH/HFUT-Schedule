@@ -103,7 +103,7 @@ fun SearchScreen(
         "寝室卫生评分 寝室卫生分数" to { DormitoryScoreXuanCheng(vm,hazeState) },  
         "消息中心 通知中心 收纳" to { NotificationsCenter(hazeState) }, 
         "教师评教 教师教评" to { Survey(ifSaved, vm,hazeState) }, 
-        "通知公告 新闻" to { News() },
+        "通知公告 新闻 教务处" to { News() },
         "培养方案" to { Program(vm, ifSaved,hazeState) },
         "图书馆 座位预约 借阅" to { LibraryItem(vm,hazeState) },
         "校车" to { SchoolBus() },
@@ -129,6 +129,7 @@ fun SearchScreen(
         "云端共建平台 信息共建 日程 网课 网址导航" to { Supabase(vm) },
         "洗衣机 慧新易校 缴费" to { Washing(hazeState) },
         "作息" to { TermInfo(hazeState) },
+//        "作息" to { Academic() }
         )
 
     val funcList = funcMaps.values.toList()

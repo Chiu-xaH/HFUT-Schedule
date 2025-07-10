@@ -69,7 +69,9 @@ private const val XUANCHENG_TAB = 1
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WashingUI() {
-    val pagerState = rememberPagerState(pageCount = { 2 }, initialPage =
+    val titles = remember { listOf("合肥","宣城") }
+
+    val pagerState = rememberPagerState(pageCount = { titles.size }, initialPage =
         when(getCampus()) {
             Campus.XUANCHENG -> XUANCHENG_TAB
             Campus.HEFEI -> HEFEI_TAB
@@ -78,7 +80,6 @@ fun WashingUI() {
     val auth = prefs.getString("auth","")
     var showDialogWeb by remember { mutableStateOf(false) }
     WebDialog(showDialogWeb, url = MyApplication.HUIXIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${FeeType.WASHING_HEFEI.code}&name=pays&paymentUrl=${MyApplication.HUIXIN_URL}plat&token=" + auth, title = "慧新易校",showChanged = { showDialogWeb = false }, showTop = false)
-    val titles = remember { listOf("合肥","宣城") }
 
 
     //布局///////////////////////////////////////////////////////////////////////////

@@ -1,7 +1,5 @@
 package com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse
 
-import android.util.Log
-import androidx.compose.runtime.mutableStateListOf
 import com.google.gson.Gson
 import com.hfut.schedule.logic.model.community.CourseResult
 import com.hfut.schedule.logic.model.community.CourseTotalResponse
@@ -72,7 +70,7 @@ fun getFormCommunity(friendUserName : String? = null): CourseResult? {
 }
 
 
-fun getStartWeek() : LocalDate {
+fun getStartWeekFromCommunity() : LocalDate {
     try {
         val start = getFormCommunity()!!.start.substringBefore(" ")
         return LocalDate.parse(start)

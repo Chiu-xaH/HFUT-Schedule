@@ -95,9 +95,9 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
     val hazeState = rememberHazeState(blurEnabled = blur)
     val navController = rememberNavController()
     var bottomBarItems by remember { mutableStateOf(CardBarItems.HOME) }
-
-    val pagerState = rememberPagerState(pageCount = { 4 })
     val titles = remember { listOf("概况", "日", "月","年") }
+
+    val pagerState = rememberPagerState(pageCount = { titles.size })
 
     var refresh by remember { mutableStateOf(false) }
 

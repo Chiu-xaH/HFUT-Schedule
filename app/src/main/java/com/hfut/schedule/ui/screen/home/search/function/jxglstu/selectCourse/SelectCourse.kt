@@ -403,34 +403,6 @@ fun SelectCourseList(vm: NetWorkViewModel, hazeState: HazeState) {
 
 @Composable
 fun SelectCourseInfoLoad(courseId : Int, vm: NetWorkViewModel, hazeState: HazeState) {
-//    var loading by remember { mutableStateOf(true) }
-//    var refresh by remember { mutableStateOf(true) }
-//    val cookie = if (!vm.webVpn) prefs.getString(
-//        "redirect",
-//        ""
-//    ) else "wengine_vpn_ticketwebvpn_hfut_edu_cn=" + prefs.getString("webVpnTicket", "")
-
-
-
-//    if(refresh) {
-//        loading = true
-//        CoroutineScope(Job()).launch{
-//            async { cookie?.let { vm.getSelectCourseInfo(it,courseId) } }.await()
-//            async {
-//                Handler(Looper.getMainLooper()).post{
-//                    vm.selectCourseInfoData.observeForever { result ->
-//                        if (result != null) {
-//                            if (result.contains("nameZh")) {
-//                                loading = false
-//                                refresh = false
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-//
     var input by remember { mutableStateOf("") }
     val uiState by vm.selectCourseInfoData.state.collectAsState()
 
@@ -502,22 +474,14 @@ private fun SelectCourseInfo(vm: NetWorkViewModel,courseId : Int, search : Strin
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
             autoShape = false,
+            isFullExpand = false,
             hazeState = hazeState,
             showBottomSheet = showBottomSheet
         ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("选课结果", isPaddingStatusBar = false)
-                },
-            ) { innerPadding ->
-                Column(modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()) {
-                    selectCourseResultLoad(vm,courseId,lessonId, SelectType.add.name)
-                    Spacer(modifier = Modifier.height(20.dp))
-                }
+            Column() {
+                HazeBottomSheetTopBar("选课结果", isPaddingStatusBar = false)
+                selectCourseResultLoad(vm,courseId,lessonId, SelectType.add.name)
+                Spacer(modifier = Modifier.height(20.dp))
             }
         }
     }

@@ -93,14 +93,14 @@ fun DormitoryScoreUI(vm : NetWorkViewModel) {
     var showitem4 by remember { mutableStateOf(false) }
 
     var menuOffset by remember { mutableStateOf<DpOffset?>(null) }
+    val titles = remember { listOf("合肥","宣城") }
 
-    val pagerState = rememberPagerState(pageCount = { 2 }, initialPage =
+    val pagerState = rememberPagerState(pageCount = { titles.size }, initialPage =
         when(getCampus()) {
             Campus.XUANCHENG -> XUANCHENG_TAB
             Campus.HEFEI -> HEFEI_TAB
         }
     )
-    val titles = remember { listOf("合肥","宣城") }
 
     menuOffset?.let {
         DropdownMenu(expanded = showitem, onDismissRequest = { showitem = false }, offset = it) {

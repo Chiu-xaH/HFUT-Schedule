@@ -59,47 +59,55 @@ import kotlinx.coroutines.launch
 @Composable
 fun SurveyUI(vm : NetWorkViewModel, hazeState: HazeState,code : String?= null) {
 
-    var semester by remember { mutableIntStateOf(getSemseter()) }
-
+    var semester by remember { mutableStateOf<Int?>(null) }
+    LaunchedEffect(Unit) {
+        semester = getSemseter()
+    }
     val uiState by vm.surveyListData.state.collectAsState()
     val refreshNetwork: suspend () -> Unit = {
-        val cookie = getJxglstuCookie(vm)
-        cookie?.let {
-            vm.surveyListData.clear()
-            vm.getSurveyList(it,semester)
+        if(semester != null) {
+            val cookie = getJxglstuCookie(vm)
+            cookie?.let {
+                vm.surveyListData.clear()
+                vm.getSurveyList(it, semester!!)
+            }
         }
     }
 
     LaunchedEffect(semester) {
-        refreshNetwork()
+        if(semester != null)
+            refreshNetwork()
     }
 
     val scope = rememberCoroutineScope()
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
         Box(modifier = Modifier.fillMaxSize()) {
             CourseSurveyListUI(vm,hazeState = hazeState, scope,code,refresh = refreshNetwork)
-            FloatingActionButton(
-                onClick = { semester -= 20 },
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
-                ,
-            ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
+            if(semester != null) {
+                FloatingActionButton(
+                    onClick = { semester = semester!! - 20 },
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
+                    ,
+                ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
 
 
-            ExtendedFloatingActionButton(
-                onClick = { scope.launch { refreshNetwork() } },
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
-            ) { Text(text = parseSemseter(semester),) }
+                ExtendedFloatingActionButton(
+                    onClick = { scope.launch { refreshNetwork() } },
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
+                ) { Text(text = parseSemseter(semester!!),) }
 
-            FloatingActionButton(
-                onClick = { semester += 20 },
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
-            ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
+                FloatingActionButton(
+                    onClick = { semester = semester!! + 20 },
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
+                ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
+            }
+
         }
     }
 }

@@ -3,8 +3,10 @@ package com.hfut.schedule.logic.network.repo
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.logic.model.AcademicNewsResponse
+import com.hfut.schedule.logic.model.AcademicType
+import com.hfut.schedule.logic.model.AcademicXCType
 import com.hfut.schedule.logic.model.ForecastAllBean
-import com.hfut.schedule.logic.model.ForecastBean
 import com.hfut.schedule.logic.model.ForecastResponse
 import com.hfut.schedule.logic.model.GithubBean
 import com.hfut.schedule.logic.model.NewsResponse
@@ -22,8 +24,9 @@ import com.hfut.schedule.logic.model.guagua.GuaguaBillsResponse
 import com.hfut.schedule.logic.model.guagua.UseCodeResponse
 import com.hfut.schedule.logic.model.toVercelForecastRequestBody
 import com.hfut.schedule.logic.model.zjgd.BillBean
+import com.hfut.schedule.logic.network.api.AcademicService
+import com.hfut.schedule.logic.network.api.AcademicXCService
 import com.hfut.schedule.logic.network.api.DormitoryScore
-import com.hfut.schedule.logic.network.api.FWDTService
 import com.hfut.schedule.logic.network.api.GiteeService
 import com.hfut.schedule.logic.network.api.GithubRawService
 import com.hfut.schedule.logic.network.api.GithubService
@@ -35,6 +38,8 @@ import com.hfut.schedule.logic.network.api.TeachersService
 import com.hfut.schedule.logic.network.api.VercelForecastService
 import com.hfut.schedule.logic.network.api.WorkService
 import com.hfut.schedule.logic.network.api.XuanChengService
+import com.hfut.schedule.logic.network.servicecreator.AcademicServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.AcademicXCServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.DormitoryScoreServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.GiteeServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.GithubRawServiceCreator
@@ -76,6 +81,7 @@ import retrofit2.HttpException
 import retrofit2.Response
 import retrofit2.awaitResponse
 import java.util.Locale
+
 // Repo迁移计划
 object Repository {
     private val loginWebHefei = LoginWebHefeiServiceCreator.create(LoginWebsService::class.java)
@@ -92,6 +98,8 @@ object Repository {
     private val githubRaw = GithubRawServiceCreator.create(GithubRawService::class.java)
     private val guaGua = GuaGuaServiceCreator.create(GuaGuaService::class.java)
     private val forecast = VercelForecastServiceCreator.create(VercelForecastService::class.java)
+    private val academic = AcademicServiceCreator.create(AcademicService::class.java)
+    private val academicXC = AcademicXCServiceCreator.create(AcademicXCService::class.java)
 
 //    private val lePaoYun = LePaoYunServiceCreator.create(LePaoYunService::class.java)
 
@@ -313,14 +321,14 @@ object Repository {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
-    suspend fun getXuanChengNews(page: Int,newsXuanChengResult : StateHolder<List<XuanquNewsItem>>) = launchRequestSimple(
+    suspend fun getXuanChengNews(page: Int,newsXuanChengResult : StateHolder<List<NewsResponse>>) = launchRequestSimple(
         holder = newsXuanChengResult,
         request = { xuanCheng.getNotications(page = page.let { if(it <= 1)  ""  else  it.toString()  }).awaitResponse() },
         transformSuccess = { _,html -> parseNewsXuanCheng(html) }
     )
 
     @JvmStatic
-    private fun parseNewsXuanCheng(html : String) : List<XuanquNewsItem> = try {
+    private fun parseNewsXuanCheng(html : String) : List<NewsResponse> = try {
         val document = Jsoup.parse(html)
         document.select("ul.news_list > li").map { element ->
             val titleElement = element.selectFirst("span.news_title a")
@@ -328,7 +336,7 @@ object Repository {
             val url = titleElement?.attr("href") ?: "未知URL"
             val date = element.selectFirst("span.news_meta")?.text() ?: "未知日期"
 
-            XuanquNewsItem(title, date, url)
+            NewsResponse(title, date, url)
         }
     } catch (e : Exception) { throw e }
 
@@ -378,6 +386,68 @@ object Repository {
         newsList
     } catch (e : Exception) { throw e }
 
+    suspend fun getAcademic(type: AcademicType, totalPage : Int? = null,page: Int = 1,holder : StateHolder<AcademicNewsResponse>) = launchRequestSimple(
+        holder = holder,
+        request = {
+            if(totalPage == null || totalPage == page) {
+                academic.getNews("${type.type}.htm").awaitResponse()
+            } else {
+                academic.getNews("${type.type}/${totalPage - page + 1}.htm").awaitResponse()
+            }
+        },
+        transformSuccess = { _, json -> parseAcademicNews(json) },
+    )
+    @JvmStatic
+    private fun parseAcademicNews(html : String) : AcademicNewsResponse = try {
+        val document: Document = Jsoup.parse(html)
+
+        // 提取新闻列表
+        val newsList = mutableListOf<NewsResponse>()
+        val newsElements = document.select("a.l3-news--item")
+
+        for (element in newsElements) {
+            val link = element.attr("href")  // 相对链接，可拼接 baseUrl
+            val title = element.selectFirst("div.l3-news--title")?.text() ?: ""
+            val date = element.selectFirst("div.l3-news--month")?.text() ?: ""
+
+            newsList.add(NewsResponse(title = title, date = date, link = link))
+        }
+
+        // 提取总页数，例如最后的“110”
+        val pageText = document.select("span.p_no a").map { it.text() }
+        val maxPage = pageText.mapNotNull { it.toIntOrNull() }.maxOrNull() ?: 1
+
+        AcademicNewsResponse(news = newsList, totalPage = maxPage)
+    } catch (e : Exception) { throw e }
+
+
+    suspend fun getAcademicXC(type: AcademicXCType,page: Int = 1,holder : StateHolder<List<NewsResponse>>) = launchRequestSimple(
+        holder = holder,
+        request = { academicXC.getNews(type.type,page).awaitResponse() },
+        transformSuccess = { _, json -> parseAcademicNewsXC(json) },
+    )
+    @JvmStatic
+    private fun parseAcademicNewsXC(html : String) : List<NewsResponse> = try {
+        val document = Jsoup.parse(html)
+        val newsList = mutableListOf<NewsResponse>()
+
+        // 找到所有<tr class="articlelist2_tr">
+        val rows = document.select("tr.articlelist2_tr")
+        for (row in rows) {
+            val aTag = row.selectFirst("a.articlelist1_a_title")
+            val dateTd = row.selectFirst("td[align=right]")
+
+            if (aTag != null && dateTd != null) {
+                val title = aTag.attr("title").replace("\u00a0", " ") // 替换不间断空格
+                val link = aTag.attr("href")
+                val date = dateTd.text()
+
+                newsList.add(NewsResponse(title, date, link))
+            }
+        }
+
+        newsList
+    } catch (e : Exception) { throw e }
 
     @JvmStatic
     private fun parseElectric(result : String) : String = try {

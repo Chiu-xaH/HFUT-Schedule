@@ -129,7 +129,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
 
 
     val titles = remember { listOf("合肥","宣城") }
-    val pagerState = rememberPagerState(pageCount = { 2 }, initialPage =
+    val pagerState = rememberPagerState(pageCount = { titles.size }, initialPage =
         when(getCampus()) {
             Campus.XUANCHENG -> XUANCHENG_TAB
             Campus.HEFEI -> HEFEI_TAB

@@ -120,6 +120,9 @@ fun CommonNetworkScreen(
                         403 -> {
                             StatusUI(R.drawable.lock, "禁止操作 可能原因: 密码不正确或无权利进行操作")
                         }
+                        404 -> {
+                            EmptyUI("404 未找到")
+                        }
                         in 500..599 -> {
                             StatusUI(R.drawable.net, "500错误 可能的原因: \n1.智慧社区(Community)接口登陆状态失效,需重新刷新登陆状态\n2.API发生变更，APP对接失败\n3.暂时关闭了API(如选课、转专业等周期性活动)")
                         }
@@ -131,6 +134,8 @@ fun CommonNetworkScreen(
                                 StatusUI(R.drawable.link_off, "网络连接失败")
                             } else if(eMsg?.contains("10000ms") == true) {
                                 StatusUI(R.drawable.link_off, "网络连接超时")
+                            } else if(eMsg?.contains("The coroutine scope") == true) {
+                                StatusUI(R.drawable.rotate_right, "操作过快,前面的请求尚未完成\n(若为教务相关功能,请回到聚焦页面下拉刷新)")
                             } else {
                                 ErrorUI("错误 $code $e")
                             }

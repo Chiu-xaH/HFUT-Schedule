@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
@@ -80,9 +81,12 @@ fun StatusUI2(painter : ImageVector, text : String, padding : Dp = APP_HORIZONTA
         Spacer(Modifier.height(padding))
 
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-            Text(text, color = MaterialTheme.colorScheme.primary,modifier = Modifier.padding(
-                horizontal = APP_HORIZONTAL_DP
-            ))
+            Text(
+                text,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
+                textAlign = TextAlign.Center
+            )
         }
     }
 }

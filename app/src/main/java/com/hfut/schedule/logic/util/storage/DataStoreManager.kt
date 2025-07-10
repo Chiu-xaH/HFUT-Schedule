@@ -13,6 +13,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.util.network.ParseJsons.useCaptcha
 import com.hfut.schedule.logic.util.other.AppVersion
+import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.util.AppAnimationManager
 import kotlinx.coroutines.flow.Flow
@@ -48,6 +49,9 @@ object DataStoreManager {
     private val COURSE_TABLE_TIME_NEXT = stringPreferencesKey("course_table_time_next")
     private val WEBVPN_COOKIE = stringPreferencesKey("webvpn_cookie")
     private val FIRST_USE = booleanPreferencesKey("first_use")
+    private val AUTO_TERM = booleanPreferencesKey("auto_term")
+    private val AUTO_TERM_VALUE = intPreferencesKey("auto_term_value")
+    private val JXGLSTU_START_DATE = intPreferencesKey("jxglstu_start_date")
 
 
     enum class ColorMode(val code : Int) {
@@ -184,6 +188,18 @@ object DataStoreManager {
             preferences[FIRST_USE] = value
         }
     }
+    suspend fun saveAutoTerm(value: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[AUTO_TERM] = value
+        }
+    }
+    suspend fun saveAutoTermValue(value: Int) {
+        dataStore.edit { preferences ->
+            preferences[AUTO_TERM_VALUE] = value
+        }
+    }
+
+
 
 
 
@@ -286,6 +302,14 @@ object DataStoreManager {
     val webVpnCookie: Flow<String> = dataStore.data
         .map { preferences ->
             preferences[WEBVPN_COOKIE] ?: ""
+        }
+    val autoTerm: Flow<Boolean> = dataStore.data
+        .map { preferences ->
+            preferences[AUTO_TERM] ?: true
+        }
+    val autoTermValue: Flow<Int> = dataStore.data
+        .map { preferences ->
+            preferences[AUTO_TERM_VALUE] ?: getSemseter()
         }
     val firstStart: Flow<Boolean> = dataStore.data
         .map { preferences ->

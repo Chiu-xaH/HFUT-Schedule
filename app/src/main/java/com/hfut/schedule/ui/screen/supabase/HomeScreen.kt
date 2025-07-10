@@ -79,8 +79,9 @@ fun SupabaseHome(vm : NetWorkViewModel,navHostController: NavHostController,vmUI
     val hazeState = rememberHazeState(blurEnabled = blur)
     var bottomBarItems by remember { mutableStateOf(SupabaseScreen.HOME) }
     val navController = rememberNavController()
-    val pagerState = rememberPagerState(pageCount = { 2 })
     val titles = listOf("日程","网址导航")
+
+    val pagerState = rememberPagerState(pageCount = { titles.size })
 
     val isAddUIExpanded by remember { derivedStateOf { vmUI.isAddUIExpandedSupabase } }
     val isAddUIExpandedS by remember { derivedStateOf { vmUI.isAddUIExpanded } }

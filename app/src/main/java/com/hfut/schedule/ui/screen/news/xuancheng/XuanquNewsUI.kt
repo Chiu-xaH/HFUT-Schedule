@@ -62,7 +62,7 @@ fun XuanquNewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                         overlineContent = { Text(item.date) },
                         leadingContent = { Text((index+1).toString()) },
                         modifier = Modifier.clickable {
-                            url = item.url
+                            url = item.link
                             showDialog = true
                         },
                         index = index

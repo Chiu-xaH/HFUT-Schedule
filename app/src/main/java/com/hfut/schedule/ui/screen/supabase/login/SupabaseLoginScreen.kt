@@ -64,6 +64,7 @@ import kotlinx.coroutines.launch
 
 private const val TAB_LOGIN = 0
 private const val TAB_REG = 1
+private const val SIZE_TAB = TAB_REG + 1
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -72,12 +73,12 @@ fun SupabaseLoginScreen(vm : NetWorkViewModel,vmUI: UIViewModel,navHostControlle
     val context = LocalActivity.current
     var hidden by rememberSaveable { mutableStateOf(true) }
     var loading by rememberSaveable { mutableStateOf(false) }
+    val titles = remember { listOf("登录","注册") }
 
 
-    val pagerState = rememberPagerState(pageCount = { 2 })
+    val pagerState = rememberPagerState(pageCount = { titles.size })
 
     var isReg by remember { mutableStateOf(false) }
-    val titles = remember { listOf("登录","注册") }
 
     val username by remember { mutableStateOf(getPersonInfo().username + MyApplication.EMAIL) }
     var password by remember { mutableStateOf(prefs.getString("SupabasePsk","") ?: "") }
@@ -137,7 +138,7 @@ fun SupabaseLoginScreen(vm : NetWorkViewModel,vmUI: UIViewModel,navHostControlle
         Column(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
             Spacer(modifier = Modifier.height(5.dp))
 
-            CustomTabRow(pagerState,titles, modifier = Modifier.padding(horizontal = 20.dp))
+            CustomTabRow(pagerState,titles, 20.dp)
 
             Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
 

@@ -11,8 +11,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,6 +27,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -32,16 +40,19 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
 import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
+import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseterWithoutSuspend
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveBoolean
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveInt
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.screen.home.cube.Screen
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.isSuccessTransfer
+import com.hfut.schedule.ui.style.RowHorizontal
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
 
@@ -83,6 +94,8 @@ fun APPScreen(navController: NavController,
         saveInt("SWITCH_DEFAULT_CALENDAR",currentDefaultCalendar)
 
         val scope = rememberCoroutineScope()
+        val autoTerm by DataStoreManager.autoTerm.collectAsState(initial = true)
+        val autoTermValue by DataStoreManager.autoTermValue.collectAsState(initial = getSemseterWithoutSuspend())
 
 
         DividerTextExpandedWith("偏好") {
@@ -197,13 +210,6 @@ fun APPScreen(navController: NavController,
             )
         }
         DividerTextExpandedWith("配置") {
-//            TransplantListItem(
-//                headlineContent = { Text(text = "云端聚焦卡片") },
-//                supportingContent = { Text(text = "打开后,将会显示开发者分发的聚焦卡片，如果觉得与自行添加的卡片混合起来比较乱，可选择关闭") },
-//                leadingContent = { Icon(painterResource(R.drawable.cloud_download), contentDescription = "Localized description",) },
-//                trailingContent = { Switch(checked = showFocus, onCheckedChange = { scope.launch { DataStoreManager.saveShowCloudFocus(!showFocus) }}) },
-//                modifier = Modifier.clickable { scope.launch { DataStoreManager.saveShowCloudFocus(!showFocus) } }
-//            )
             TransplantListItem(
                 headlineContent = { Text(text = "快速启动") },
                 supportingContent = { Text(text = "打开后,再次打开应用时将默认打开免登录二级界面,而不是登陆教务页面,但您仍可通过查询中心中的选项以登录") },
@@ -211,14 +217,6 @@ fun APPScreen(navController: NavController,
                 trailingContent = { Switch(checked = firstStart, onCheckedChange = { scope.launch { DataStoreManager.saveFastStart(!firstStart) } }) },
                 modifier = Modifier.clickable { scope.launch { DataStoreManager.saveFastStart(!firstStart) } }
             )
-//            TransplantListItem(
-//                headlineContent = { Text(text = "支付验证") },
-//                supportingContent = {
-//                    Text(text = "调用校园卡进行网电缴费时,启用生物识别快速验证")
-//                },
-//                leadingContent = { Icon(painterResource(R.drawable.lock), contentDescription = "Localized description",) },
-//                modifier = Modifier.clickable { navController.navigate(Screen.LockScreen.route) }
-//            )
             TransplantListItem(
                 headlineContent = { Text(text = "默认日程账户") },
                 supportingContent = {
@@ -237,23 +235,53 @@ fun APPScreen(navController: NavController,
             )
 
             TransplantListItem(
-                headlineContent = { Text(text = "学期") },
+                headlineContent = { Text(text = "自动计算学期") },
                 leadingContent = {
                     Icon(painter = painterResource(id = R.drawable.approval), contentDescription = "")
                 },
                 supportingContent = {
                     Column {
-                        Text(text = "全局学期 ${parseSemseter(getSemseter())}", fontWeight = FontWeight.Bold)
-                        Text(text = "其他部分功能如教评、成绩等需要在全局学期下切换学期的，可在相应功能区切换\n由本地函数计算，每年的2~7月为第二学期，8~次1月为第一学期")
+                        Text(text = parseSemseter(if(autoTerm) getSemseterWithoutSuspend() else autoTermValue), fontWeight = FontWeight.Bold)
+                        Text(text = "全局学期主控教务课程表等信息，其他部分功能如教评等可在相应功能区自由切换学期\n由本地函数计算，每年的2~7月为第二学期，8~次1月为第一学期")
                     }
+                },
+                trailingContent = {
+                    Switch(checked = autoTerm, onCheckedChange = { scope.launch { DataStoreManager.saveAutoTerm(!autoTerm) }})
+                },
+                modifier = Modifier.clickable {
+                    scope.launch { DataStoreManager.saveAutoTerm(!autoTerm) }
                 }
             )
-//            TransplantListItem(
-//                headlineContent = { Text(text = "BenchMark(编译优化)") },
-//                supportingContent = { Text(text = "通过记录用户使用习惯，空闲时间预编译常用部分，以加速应用(效果不显著)") },
-//                leadingContent = { Icon(painterResource(R.drawable.rocket_launch), contentDescription = "Localized description",) },
-//                trailingContent = { Switch(checked = false, onCheckedChange = {}, enabled = false) },
-//            )
+            if(!autoTerm) {
+                RowHorizontal {
+                    FilledTonalButton (
+                        onClick = { scope.launch {
+                            if(autoTermValue >= 0) {
+                                DataStoreManager.saveAutoTermValue(autoTermValue-20)
+                            }
+                        } }
+                    ) {
+                        Icon(Icons.Filled.KeyboardArrowLeft,null)
+                    }
+                    Spacer(Modifier.width(APP_HORIZONTAL_DP))
+                    FilledTonalButton(
+                        onClick = { scope.launch {
+                            DataStoreManager.saveAutoTermValue(getSemseter())
+                        } }
+                    ) {
+                        Icon(painterResource(R.drawable.refresh),null)
+                    }
+                    Spacer(Modifier.width(APP_HORIZONTAL_DP))
+                    FilledTonalButton(
+                        onClick = { scope.launch {
+                            DataStoreManager.saveAutoTermValue(autoTermValue+20)
+                        } }
+                    ) {
+                        Icon(Icons.Filled.KeyboardArrowRight,null)
+                    }
+                }
+            }
+
             Spacer(Modifier.height(innerPaddings.calculateBottomPadding()))
 
         }

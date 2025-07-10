@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.screen.fix.about
 
+import android.accessibilityservice.GestureDescription
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -40,6 +41,7 @@ import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.URLImage
  
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import kotlinx.coroutines.launch
 
 private data class Build(
     val languages : List<String>,
@@ -47,34 +49,56 @@ private data class Build(
     val ui : String,
     val jetpack : String
 )
+private val backgroundArticle = listOf(
+    "自小被Android吸引，2023年高考后，怀揣着好奇，开启了我的学习路线",
+    "简单学习C语言后，跟随《第一行代码》踏上了Android之路，最终于大一10月份完成一本书的学习，跃跃欲试",
+    "根据平常的使用频率，决定做一个课表APP以练手，起名：肥工课程表，仓库建立与2023年10月16日",
+    "作为我的第一个从0开始、无指导的项目，以及薄弱的知识储备，一些现在看起来很简单的问题还是攻克了好久",
+    "在一节大学生心理健康课上成功显示课程表，此时是2023年11月2日",
+    "频繁的闪退崩溃使我意识到能力仍很薄弱，这个项目不能就此终止，改名：肥工教务通",
+    "在不断更新、迭代、重构的过程中，功能不断增多，健壮性提高，我的能力也与日俱增",
+    "大一下，更名为：聚在工大",
+    "大二上，转入了计算机与信息学院",
+    "感谢使用，故事仍在继续..."
+)
+private val openSourceProjects = listOf(
+    OpenSource("Okhttp","网络请求","https://github.com/square/okhttp"),
+    OpenSource("Retrofit","网络请求","https://github.com/square/retrofit"),
+    OpenSource("Gson", "JSON解析","https://github.com/google/gson"),
+    OpenSource("Jsoup", "XML/HTML解析","https://github.com/jhy/jsoup"),
+    OpenSource("Zxing", "二维码","https://github.com/zxing/zxing"),
+    OpenSource("Haze" ,"层级实时模糊","https://github.com/chrisbanes/haze"),
+    OpenSource("Accompanist" ,"用做实现透明状态栏","https://github.com/google/accompanist"),
+    OpenSource("Glide", "加载网络图片","https://github.com/bumptech/glide"),
+    OpenSource("EdDSA Java" ,"加密(供和风天气API使用)","https://github.com/str4d/ed25519-java"),
+    OpenSource("Konfetti" ,"礼花效果","https://github.com/DanielMartinus/Konfetti"),
+    OpenSource("Tesseract4Android" ,"封装Tesseract4(供图片验证码OCR)","https://github.com/adaptech-cz/Tesseract4Android"),
+    OpenSource("Bsdiff-Lib" , "增量更新","https://github.com/Chiu-xaH/Bsdiff-Lib")
+)
+private val dependencies = Build(
+    jetpack = "Jetpack Compose",
+    ui = "Material Design 3 (Material You)",
+    languages = listOf("Kotlin"),
+    build = listOf( "Gradle","OpenJDK 17"),
+)
+private data class OpenSource(val name : String,val description: String,val url : String?)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun About(vm : NetWorkViewModel) {
-    val openSourceProjects = listOf(
-        "Okhttp" to "网络请求",
-        "Retrofit" to "网络请求",
-        "Gson" to "JSON解析",
-        "Jsoup" to "XML/HTML解析",
-        "Zxing" to "二维码",
-        "Haze" to "实时模糊(SDK>=33)",
-        "Accompanist" to "用做实现透明状态栏",
-        "Glide" to "网络图片",
-        "EdDSA Java" to "加密(供和风天气API使用)",
-        "Konfetti" to "礼花动画",
-        "Tesseract4Android" to "封装Tesseract4(供图片验证码识别)",
-        "Bsdiff-Lib" to "增量更新"
-    )
-    val dependencies = Build(
-        jetpack = "Jetpack Compose",
-        ui = "Material Design 3 (Material You)",
-        languages = listOf("Kotlin","Java"),
-        build = listOf( "Gradle 8.3 With Groovy","OpenJDK 17"),
-    )
-
     LaunchedEffect(Unit) {
-        vm.githubStarsData.clear()
-        vm.getStarNum()
+        launch {
+            vm.githubStarsData.clear()
+            vm.getStarNum()
+        }
+        launch {
+            vm.supabaseTodayVisitResp.clear()
+            vm.getTodayVisit()
+        }
+        launch {
+            vm.supabaseUserCountResp.clear()
+            vm.getUserCount()
+        }
     }
     var starsNum by remember { mutableStateOf("") }
     val uiState by vm.githubStarsData.state.collectAsState()
@@ -84,6 +108,9 @@ fun About(vm : NetWorkViewModel) {
             starsNum = (uiState as UiState.Success).data.toString()
         }
     }
+    val userCount by vm.supabaseUserCountResp.state.collectAsState()
+    val todayVisitCount by vm.supabaseTodayVisitResp.state.collectAsState()
+
 
     Party(
         show = !loading
@@ -91,7 +118,14 @@ fun About(vm : NetWorkViewModel) {
         androidx.compose.material3.Scaffold(
             containerColor = Color.Transparent,
             topBar = {
-                HazeBottomSheetTopBar("关于")
+                HazeBottomSheetTopBar("关于") {
+                    FilledTonalButton(
+                        enabled = userCount is UiState.Success && todayVisitCount is UiState.Success,
+                        onClick = { }
+                    ) {
+                        Text("今日流量 ${(todayVisitCount as? UiState.Success)?.data ?: ""} | 总用户 ${(userCount as? UiState.Success)?.data ?: ""}")
+                    }
+                }
             },
             bottomBar = {
                 Row(modifier = Modifier.padding(APP_HORIZONTAL_DP),horizontalArrangement = Arrangement.Center) {
@@ -111,7 +145,7 @@ fun About(vm : NetWorkViewModel) {
                             .fillMaxWidth()
                             .weight(.5f)
                     ) {
-                        Text("最新版本")
+                        Text("Github")
                     }
                 }
             },
@@ -129,7 +163,7 @@ fun About(vm : NetWorkViewModel) {
                             URLImage(url = MyApplication.GITHUB_USER_IMAGE_URL + MyApplication.GITHUB_USER_ID, width = 50.dp, height = 50.dp)
                         },
                         supportingContent = {
-                            Text("一名热爱安卓的开发者,宣城校区23级计算机科学与技术专业(转)本科生")
+                            Text("一名热爱安卓的开发者,宣城校区23级计算机科学与技术专业(原地球信息科学与技术专业)本科生")
                         },
                         trailingContent = {
                             FilledTonalIconButton(
@@ -146,12 +180,12 @@ fun About(vm : NetWorkViewModel) {
 
                 DividerTextExpandedWith("构建") {
                     TransplantListItem(
-                        headlineContent = { Text("Kotlin / Java") },
-                        overlineContent = { Text("主语言") }
+                        headlineContent = { Text("Kotlin/Java,C") },
+                        overlineContent = { Text("语言") }
                     )
                     TransplantListItem(
                         headlineContent = { Text(dependencies.ui) },
-                        overlineContent = { Text("UI设计") }
+                        overlineContent = { Text("UI") }
                     )
                     TransplantListItem(
                         headlineContent = { Text(dependencies.jetpack) },
@@ -169,18 +203,32 @@ fun About(vm : NetWorkViewModel) {
                     for(index in openSourceProjects.indices step 2) {
                         Row {
                             TransplantListItem(
-                                headlineContent = { Text(openSourceProjects[index].first) },
-                                supportingContent = { Text(openSourceProjects[index].second) },
-                                modifier = Modifier.weight(.5f)
+                                headlineContent = { Text(openSourceProjects[index].name) },
+                                supportingContent = { Text(openSourceProjects[index].description) },
+                                modifier = Modifier.weight(.5f).clickable{
+                                    openSourceProjects[index].url?.let { Starter.startWebUrl(it) }
+                                }
                             )
                             if(index+1 < openSourceProjects.size)
                                 TransplantListItem(
-                                    headlineContent = { Text(openSourceProjects[index+1].first) },
-                                    supportingContent = { Text(openSourceProjects[index+1].second) },
-                                    modifier = Modifier.weight(.5f)
+                                    headlineContent = { Text(openSourceProjects[index+1].name) },
+                                    supportingContent = { Text(openSourceProjects[index+1].description) },
+                                    modifier = Modifier.weight(.5f).clickable {
+                                        openSourceProjects[index+1].url?.let { Starter.startWebUrl(it) }
+                                    }
                                 )
                         }
 
+                    }
+                }
+
+                DividerTextExpandedWith("创作背景") {
+                    for(i in backgroundArticle.indices) {
+                        TransplantListItem(
+                            headlineContent = {
+                                Text(backgroundArticle[i] + ".")
+                            }
+                        )
                     }
                 }
             }

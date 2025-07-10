@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.sp
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.weeksBetween
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.weeksBetweenJxglstu
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
  
@@ -63,6 +64,7 @@ import com.hfut.schedule.ui.screen.home.calendar.jxglstu.clearUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.distinctUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.getNewWeek
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getStartWeekFromCommunity
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.viewmodel.ui.UIViewModel
@@ -81,11 +83,17 @@ fun CommunityCourseTableUI(
     vm : NetWorkViewModel,
     hazeState: HazeState
 ) {
+    var examList by remember { mutableStateOf(examToCalendar()) }
+
     //切换周数
     var currentWeek by rememberSaveable {
         mutableLongStateOf(
             if(weeksBetween > 20) {
                 getNewWeek()
+            } else if(weeksBetween < 1) {
+                onDateChange(getStartWeekFromCommunity())
+                examList = emptyList()
+                1
             } else weeksBetween
         )
     }
@@ -400,7 +408,6 @@ fun CommunityCourseTableUI(
         }
     }
     val dateList  = getScheduleDate(showAll,today)
-    val examList  = examToCalendar()
 
     Column(modifier = Modifier.fillMaxSize()) {
             Box {
@@ -519,8 +526,13 @@ fun CommunityCourseTableUI(
                     if (shouldShowAddButton) {
                         ExtendedFloatingActionButton(
                             onClick = {
-                                currentWeek = weeksBetween
-                                onDateChange(LocalDate.now())
+                                if(weeksBetween < 1) {
+                                    currentWeek = 1
+                                    onDateChange(getStartWeekFromCommunity())
+                                } else {
+                                    currentWeek = weeksBetween
+                                    onDateChange(LocalDate.now())
+                                }
                             },
                         ) {
                             AnimatedContent(
@@ -582,7 +594,7 @@ fun CommunityCourseTableUI(
 }
 
 @Composable
-fun ScheduleTopDate(showAll: Boolean,today : LocalDate) {
+fun ScheduleTopDate(showAll: Boolean,today : LocalDate,isJxglstu : Boolean) {
     val mondayOfCurrentWeek = today.minusDays(today.dayOfWeek.value - 1L)
     val todayDate = DateTimeManager.Date_yyyy_MM_dd
 
@@ -607,7 +619,15 @@ fun ScheduleTopDate(showAll: Boolean,today : LocalDate) {
                     }
                 }
 
-                if (weeksBetween > 0)
+                if (
+//                    if(isJxglstu) {
+//                        weeksBetweenJxglstu
+//                    } else {
+//                        weeksBetween
+//                    }
+//                > 0
+                    true
+                    )
                     Text(
                         text = date.substringAfter("-"),
                         textAlign = TextAlign.Center,

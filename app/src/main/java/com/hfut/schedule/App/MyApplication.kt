@@ -94,6 +94,10 @@ class MyApplication : Application() {
         const val ALUMNI_URL = "https://xypt.hfut.edu.cn/"
         // 体育平台
         const val PE_URL = "https://bdlp.hfut.edu.cn/"
+        // 教务处
+        const val ACADEMIC_URL = "https://jwc.hfut.edu.cn/"
+        // 宣城校区 教务处
+        const val XC_ACADEMIC_URL = "https://xcjwb.hfut.edu.cn/"
         // Supabase
         const val SUPABASE_URL = "https://uadgxvstybecnhqemxvj.supabase.co/"
         // Vercel

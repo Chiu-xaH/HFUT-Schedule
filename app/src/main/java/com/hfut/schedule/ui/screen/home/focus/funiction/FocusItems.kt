@@ -264,7 +264,6 @@ fun CommunityTodayCourseItem(list : courseDetailDTOList, vm : NetWorkViewModel, 
 
     val switchShowEnded = prefs.getBoolean("SWITCHSHOWENDED",true)
 
-    val week = DateTimeManager.weeksBetween.toInt()
 
     var weekday = DateTimeManager.dayWeek
     if(weekday == 0) weekday = 7
@@ -516,7 +515,12 @@ fun CustomItemUI(item: CustomEventDTO,isFuture: Boolean,activity: Activity,hazeS
 fun TimeStampItem() = BottomTip(getTimeStamp())
 
 @Composable
-fun TermTip() = BottomTip(parseSemseter(getSemseter()))
+fun TermTip() {
+    val v by produceState(initialValue = "") {
+        value = parseSemseter(getSemseter())
+    }
+    BottomTip(v)
+}
 
 @Composable
 fun TodayUI(hazeState: HazeState,vm: NetWorkViewModel) {

@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.logic.util.parse.SemseterParser
 import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
 import com.hfut.schedule.logic.util.storage.DataStoreManager
@@ -76,15 +77,20 @@ fun CourseSearchUI(vm : NetWorkViewModel, hazeState: HazeState) {
 
     var showSearch by remember { mutableStateOf(true) }
 
-    var semester by remember { mutableIntStateOf(getSemseter()) }
+    var semester by remember { mutableStateOf<Int?>(null) }
+    LaunchedEffect(Unit) {
+        semester = getSemseter()
+    }
     var firstSearch by remember { mutableStateOf(true) }
 
     val refreshNetwork : suspend () -> Unit = {
-        val cookie = getJxglstuCookie(vm)
-        cookie?.let {
-            vm.courseSearchResponse.clear()
-            if(firstSearch) firstSearch = false
-            vm.searchCourse(it, className, courseName, semester,courseId)
+        if(semester != null) {
+            val cookie = getJxglstuCookie(vm)
+            cookie?.let {
+                vm.courseSearchResponse.clear()
+                if(firstSearch) firstSearch = false
+                vm.searchCourse(it, className, courseName, semester!!,courseId)
+            }
         }
     }
     val scope = rememberCoroutineScope()
@@ -94,7 +100,8 @@ fun CourseSearchUI(vm : NetWorkViewModel, hazeState: HazeState) {
     }
     if(!firstSearch) {
         LaunchedEffect(semester) {
-            refreshNetwork()
+            if(semester != null)
+                refreshNetwork()
         }
     }
 
@@ -264,46 +271,50 @@ fun CourseSearchUI(vm : NetWorkViewModel, hazeState: HazeState) {
                 }
                 Spacer(modifier = Modifier.height(20.dp))
             }
-            AnimatedVisibility(
-                visible = !loading,
-                enter = scaleIn(),
-                exit = scaleOut(),
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
-            ) {
-                FloatingActionButton(
-                    onClick = { semester -= 20 },
-                ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
-            }
+            if(semester != null){
+                AnimatedVisibility(
+                    visible = !loading,
+                    enter = scaleIn(),
+                    exit = scaleOut(),
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
+                ) {
+                    FloatingActionButton(
+                        onClick = { semester = semester!! - 20 },
+                    ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
+                }
 
 
-            AnimatedVisibility(
-                visible = !loading,
-                enter = scaleIn(),
-                exit = scaleOut(),
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
-            ) {
-                ExtendedFloatingActionButton(
-                    onClick = {
-                        semester = getSemseter()
-                    },
-                ) { Text(text = parseSemseter(semester),) }
-            }
+                AnimatedVisibility(
+                    visible = !loading,
+                    enter = scaleIn(),
+                    exit = scaleOut(),
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
+                ) {
+                    ExtendedFloatingActionButton(
+                        onClick = {
+                            scope.launch {
+                                semester = getSemseter()
+                            }
+                        },
+                    ) { semester?.let { Text(text = parseSemseter(it)) } }
+                }
 
-            AnimatedVisibility(
-                visible = !loading,
-                enter = scaleIn(),
-                exit = scaleOut(),
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
-            ) {
-                FloatingActionButton(
-                    onClick = { semester += 20 },
-                ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
+                AnimatedVisibility(
+                    visible = !loading,
+                    enter = scaleIn(),
+                    exit = scaleOut(),
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
+                ) {
+                    FloatingActionButton(
+                        onClick = { semester = semester!! + 20 },
+                    ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
+                }
             }
         }
     }
@@ -318,20 +329,27 @@ fun ApiForCourseSearch(vm: NetWorkViewModel, courseName : String?, courseId : St
 //    val cookie = if (!vm.webVpn) prefs.getString("redirect", "")
 //    else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
     if(showBottomSheet) {
-        var semester by remember { mutableIntStateOf(getSemseter()) }
+        var semester by remember { mutableStateOf<Int?>(null) }
+        LaunchedEffect(Unit) {
+            semester = getSemseter()
+        }
         val refreshNetwork : suspend () -> Unit = {
-            val cookie = getJxglstuCookie(vm)
-            cookie?.let {
-                vm.courseSearchResponse.clear()
-                vm.searchCourse(it, null, courseName, semester,courseId)
+            if(semester != null) {
+                val cookie = getJxglstuCookie(vm)
+                cookie?.let {
+                    vm.courseSearchResponse.clear()
+                    vm.searchCourse(it, null, courseName, semester!!,courseId)
+                }
             }
+
         }
         val uiState by vm.courseSearchResponse.state.collectAsState()
         LaunchedEffect(semester) {
-            refreshNetwork()
+            if(semester != null)
+                refreshNetwork()
         }
         val loading = uiState is UiState.Loading
-
+        val scope = rememberCoroutineScope()
         HazeBottomSheet (
             onDismissRequest = onDismissRequest,
             showBottomSheet = showBottomSheet,
@@ -355,51 +373,63 @@ fun ApiForCourseSearch(vm: NetWorkViewModel, courseName : String?, courseId : St
                         }
                         Spacer(modifier = Modifier.height(20.dp))
                     }
-                    AnimatedVisibility(
-                        visible = !loading,
-                        enter = scaleIn(),
-                        exit = scaleOut(),
-                        modifier = Modifier
-                            .align(Alignment.BottomStart)
-                            .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
-                    ) {
-                        FloatingActionButton(
-                            onClick = {
-                                semester -= 20
-                            },
-                        ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
-                    }
+                    if(semester != null) {
+                        AnimatedVisibility(
+                            visible = !loading,
+                            enter = scaleIn(),
+                            exit = scaleOut(),
+                            modifier = Modifier
+                                .align(Alignment.BottomStart)
+                                .padding(
+                                    horizontal = APP_HORIZONTAL_DP,
+                                    vertical = APP_HORIZONTAL_DP
+                                )
+                        ) {
+                            FloatingActionButton(
+                                onClick = {
+                                    semester = semester!! - 20
+                                },
+                            ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
+                        }
 
 
-                    AnimatedVisibility(
-                        visible = !loading,
-                        enter = scaleIn(),
-                        exit = scaleOut(),
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
-                    ) {
-                        ExtendedFloatingActionButton(
-                            onClick = {
-                                semester = getSemseter()
-                            },
-                        ) { Text(text = parseSemseter(semester),) }
+                        AnimatedVisibility(
+                            visible = !loading,
+                            enter = scaleIn(),
+                            exit = scaleOut(),
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .padding(
+                                    horizontal = APP_HORIZONTAL_DP,
+                                    vertical = APP_HORIZONTAL_DP
+                                )
+                        ) {
+                            ExtendedFloatingActionButton(
+                                onClick = {
+                                    scope.launch{ semester = getSemseter() }
+                                },
+                            ) { Text(text = parseSemseter(semester!!),) }
+                        }
+
+                        AnimatedVisibility(
+                            visible = !loading,
+                            enter = scaleIn(),
+                            exit = scaleOut(),
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .padding(
+                                    horizontal = APP_HORIZONTAL_DP,
+                                    vertical = APP_HORIZONTAL_DP
+                                )
+                        ) {
+                            FloatingActionButton(
+                                onClick = {
+                                    semester = semester!! + 20
+                                },
+                            ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
+                        }
                     }
 
-                    AnimatedVisibility(
-                        visible = !loading,
-                        enter = scaleIn(),
-                        exit = scaleOut(),
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
-                    ) {
-                        FloatingActionButton(
-                            onClick = {
-                                semester += 20
-                            },
-                        ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
-                    }
                 }
             }
         }

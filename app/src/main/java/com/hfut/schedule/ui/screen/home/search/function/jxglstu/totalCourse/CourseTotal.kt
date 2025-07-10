@@ -24,19 +24,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.google.gson.Gson
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.model.jxglstu.lessonResponse
 import com.hfut.schedule.logic.model.jxglstu.lessons
-import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.logic.util.network.ParseJsons.isNextOpen
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.formatter_YYYY_MM_DD
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.AnimationCardListItem
-import com.hfut.schedule.ui.component.CARD_NORMAL_DP
-
+import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.custom.ScrollText
-import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
+import java.time.LocalDate
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -142,6 +145,19 @@ fun TermFirstlyInfo(list: List<lessons>, isSearch : Boolean) {
     )
 }
 
+fun getJxglstuStartDate(): LocalDate {
+    try {
+        val list = parseDatumCourse(prefs.getString("courses","")!!)
+        return LocalDate.parse(list[0].semester.startDate, formatter_YYYY_MM_DD)
+    } catch (e : Exception) {
+        return getStartWeekFromCommunity()
+    }
+}
+private fun parseDatumCourse(result: String) : List<lessons> = try {
+    Gson().fromJson(result,lessonResponse::class.java).lessons
+} catch (e : Exception) {
+    emptyList<lessons>()
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -22,12 +22,18 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -38,7 +44,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -53,38 +58,59 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.NewsBarItems
+import com.hfut.schedule.logic.model.AcademicType
 import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.util.network.Encrypt
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.logic.util.sys.datetime.getCelebration
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.AnimationCardListItem
 import com.hfut.schedule.ui.component.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.CenterScreen
 import com.hfut.schedule.ui.component.CommonNetworkScreen
+import com.hfut.schedule.ui.component.DevelopingUI
 import com.hfut.schedule.ui.component.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.PagingController
+import com.hfut.schedule.ui.component.Party
+import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.WebDialog
-import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.custom.CustomTabRow
+import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.screen.grade.GradeScreen
+import com.hfut.schedule.ui.screen.home.MainScreen
+import com.hfut.schedule.ui.screen.login.LoginScreen
+import com.hfut.schedule.ui.screen.login.MainNav
+import com.hfut.schedule.ui.screen.login.UseAgreementScreen
+import com.hfut.schedule.ui.screen.news.academic.AcademicTotalScreen
+import com.hfut.schedule.ui.screen.news.academic.AcademicXCScreen
 import com.hfut.schedule.ui.screen.news.department.SchoolsUI
 import com.hfut.schedule.ui.screen.news.xuancheng.XuanquNewsUI
+import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.bottomBarBlur
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.ui.style.topBarBlur
+import com.hfut.schedule.ui.style.topBarTransplantColor
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
 import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import dev.chrisbanes.haze.haze
+import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 import org.json.JSONArray
+
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -102,34 +128,61 @@ fun NewsActivityUI(vm: NetWorkViewModel) {
             currentPage = targetPage.page
         }
     }
+    val newsTitles = listOf("总","宣城校区")
+    val newsPagerState = rememberPagerState(pageCount = { newsTitles.size })
+    var showBottomSheet by remember { mutableStateOf(false) }
+    if (showBottomSheet ) {
+        HazeBottomSheet (
+            onDismissRequest = { showBottomSheet = false },
+            hazeState = hazeState,
+            isFullExpand = true,
+            autoShape = false,
+            showBottomSheet = showBottomSheet
+        ) {
+            Column(){
+                HazeBottomSheetTopBar("选择校区", isPaddingStatusBar = false)
 
-
-
+                StyleCardListItem(
+                    headlineContent = {
+                        Text("宣城校区教务处")
+                    },
+                    modifier = Modifier.clickable {
+                        Starter.startWebUrl(MyApplication.XC_ACADEMIC_URL)
+                    }
+                )
+                StyleCardListItem(
+                    headlineContent = {
+                        Text("总教务处")
+                    },
+                    modifier = Modifier.clickable {
+                        Starter.startWebUrl(MyApplication.ACADEMIC_URL)
+                    }
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+            }
+        }
+    }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            Column {
+            Column(modifier = Modifier.topBarBlur(hazeState)) {
                 TopAppBar(
-                    modifier = Modifier.topBarBlur(hazeState,),
-                    colors = topAppBarColors(
-        containerColor = Color.Transparent,
-        titleContentColor = MaterialTheme.colorScheme.primary
-        ),
+                    colors = topBarTransplantColor(),
                     title = { Text("通知公告") },
                     actions = {
-                        if(targetPage == NewsBarItems.News) {
-                            IconButton(onClick = {
-                                showToast("部分公告需要连接校园网才可阅读（对外私密）")
-                            }) {
-                                Icon(painterResource(R.drawable.info), contentDescription = "")
+                        if(targetPage == NewsBarItems.Academic) {
+                            IconButton(
+                                onClick = {
+                                    showBottomSheet = true
+                                }
+                            ) {
+                                Icon(painterResource(R.drawable.net),null)
                             }
                         }
-                        if(targetPage == NewsBarItems.XuanCheng) {
-                            IconButton(onClick = {
-                                showToast("正在开发")
-                            }) {
-                                Icon(Icons.Filled.Search, contentDescription = "")
-                            }
+                        IconButton(onClick = {
+                            showToast("部分公告需要连接校园网才可阅读（对外私密）")
+                        }) {
+                            Icon(painterResource(R.drawable.info), contentDescription = "")
                         }
                         IconButton(onClick = {
                             context?.finish()
@@ -138,6 +191,12 @@ fun NewsActivityUI(vm: NetWorkViewModel) {
                         }
                     }
                 )
+                if(targetPage != NewsBarItems.School) {
+                    CustomTabRow(
+                        pagerState = newsPagerState,
+                        titles = newsTitles
+                    )
+                }
             }
         },
         bottomBar = {
@@ -148,15 +207,15 @@ fun NewsActivityUI(vm: NetWorkViewModel) {
 
                     val items = listOf(
                         NavigationBarItemData(
-                            NewsBarItems.News.name,"全校", painterResource(R.drawable.star), painterResource(
+                            NewsBarItems.News.name,"通知公告", painterResource(R.drawable.star), painterResource(
                                 R.drawable.star_filled)
                         ),
                         NavigationBarItemData(
-                            NewsBarItems.XuanCheng.name,"宣城校区", painterResource(R.drawable.star_half), painterResource(
+                            NewsBarItems.Academic.name,"教务处", painterResource(R.drawable.star_half), painterResource(
                                 R.drawable.star_filled)
                         ),
                         NavigationBarItemData(
-                            NewsBarItems.School.name,"学院", painterResource(R.drawable.school),
+                            NewsBarItems.School.name,"各级学院", painterResource(R.drawable.school),
                             painterResource(R.drawable.school_filled)
                         )
                     )
@@ -176,15 +235,18 @@ fun NewsActivityUI(vm: NetWorkViewModel) {
                             interactionSource = interactionSource,
                             onClick = {
                                 //     atEnd = !atEnd
-                                if(currentAnimationIndex == 2) {
-                                    targetPage = when(item) {
-                                        items[0] -> NewsBarItems.News
-                                        items[1] -> NewsBarItems.XuanCheng
-                                        items[2] -> NewsBarItems.School
-                                        else -> NewsBarItems.News
-                                    }
+                                targetPage = when(item) {
+                                    items[0] -> NewsBarItems.News
+                                    items[1] -> NewsBarItems.Academic
+                                    items[2] -> NewsBarItems.School
+                                    else -> NewsBarItems.News
                                 }
-                                if (!selected) { navController.navigateAndSave( route) }
+                                if (!selected) { navController.navigateAndSave(route) }
+
+//                                if(route != NewsBarItems.Academic.name) {
+//                                } else {
+//                                    /
+//                                }
                             },
                             label = { Text(text = item.label) },
                             icon = {
@@ -206,15 +268,18 @@ fun NewsActivityUI(vm: NetWorkViewModel) {
             startDestination = NewsBarItems.News.name,
             enterTransition = { animation.enter },
             exitTransition = { animation.exit },
-            modifier = Modifier.haze(state = hazeState)) {
+            modifier = Modifier.hazeSource(state = hazeState)
+        ) {
             composable(NewsBarItems.News.name) {
                 Scaffold {
-                    NewsUI(innerPadding,vm)
+                    NewsScreen(innerPadding,vm,newsPagerState)
+//                    NewsUI(innerPadding,vm)
                 }
             }
-            composable(NewsBarItems.XuanCheng.name) {
+            composable(NewsBarItems.Academic.name) {
                 Scaffold {
-                    XuanquNewsUI(innerPadding, vm)
+                    AcademicScreen(innerPadding,vm,newsPagerState)
+//                    XuanquNewsUI(innerPadding, vm)
                 }
             }
             composable(NewsBarItems.School.name) {
@@ -222,6 +287,26 @@ fun NewsActivityUI(vm: NetWorkViewModel) {
                     SchoolsUI(innerPadding)
                 }
             }
+        }
+    }
+}
+private const val TAB_TOTAL = 0
+private const val TAB_XC = 1
+@Composable
+fun NewsScreen(innerPadding : PaddingValues,vm : NetWorkViewModel,pagerState : PagerState) {
+    HorizontalPager(state = pagerState) { page ->
+        when(page) {
+            TAB_TOTAL -> NewsUI(innerPadding,vm)
+            TAB_XC -> XuanquNewsUI(innerPadding, vm)
+        }
+    }
+}
+@Composable
+fun AcademicScreen(innerPadding : PaddingValues,vm : NetWorkViewModel,pagerState : PagerState) {
+    HorizontalPager(state = pagerState) { page ->
+        when(page) {
+            TAB_TOTAL -> AcademicTotalScreen(innerPadding,vm)
+            TAB_XC -> AcademicXCScreen(innerPadding,vm)
         }
     }
 }
@@ -354,3 +439,4 @@ fun transferToPostData(text : String, page : Int = 1)  : String {
     val updatedJsonString = jsonArray.toString()
     return Encrypt.encodeToBase64(updatedJsonString)
 }
+

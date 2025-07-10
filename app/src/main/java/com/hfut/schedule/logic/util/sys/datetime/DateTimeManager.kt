@@ -1,7 +1,8 @@
 package com.hfut.schedule.logic.util.sys.datetime
 
 import com.hfut.schedule.logic.util.sys.DateTimeBean
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getStartWeek
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getJxglstuStartDate
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getStartWeekFromCommunity
 import java.text.SimpleDateFormat
 import java.time.Duration
 import java.time.LocalDate
@@ -47,12 +48,14 @@ object DateTimeManager {
     val Date_dd: String = simpleFormatter_Day.format(date)
     val Date_yyyy: String = simpleFormatter_Year.format(date)
     val Date_yyyy_MM_dd: String = simpleFormatter_YYYY_MM_DD.format(date)
-
-    // 周数 社区课表
-    private val firstWeekStart: LocalDate = getStartWeek()
-    val weeksBetween = ChronoUnit.WEEKS.between(firstWeekStart, today) + 1
     private var dayOfWeek = Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
 
+    // 周数 社区课表
+    private val firstWeekStart: LocalDate = getStartWeekFromCommunity()
+    val weeksBetween = ChronoUnit.WEEKS.between(firstWeekStart, today) + 1
+    // 周数 教务课表
+    private val firstWeekStartJxglstu: LocalDate = getJxglstuStartDate()
+    val weeksBetweenJxglstu = ChronoUnit.WEEKS.between(firstWeekStartJxglstu, today) + 1
     //周几
     val dayWeek = dayOfWeek - 1
 
