@@ -138,7 +138,9 @@ fun SupabaseLoginScreen(vm : NetWorkViewModel,vmUI: UIViewModel,navHostControlle
         Column(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
             Spacer(modifier = Modifier.height(5.dp))
 
-            CustomTabRow(pagerState,titles, 20.dp)
+            Column(modifier = Modifier.padding(horizontal = 25.dp-APP_HORIZONTAL_DP)) {
+                CustomTabRow(pagerState,titles)
+            }
 
             Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
 
@@ -201,7 +203,7 @@ fun SupabaseLoginScreen(vm : NetWorkViewModel,vmUI: UIViewModel,navHostControlle
                                 TextField(
                                     modifier = Modifier
                                         .weight(1f)
-                                        .padding(horizontal = 25.dp),
+                                        .padding(horizontal = APP_HORIZONTAL_DP),
                                     value = password2,
                                     onValueChange = { password2 = it },
                                     label = { Text("确认密码") },

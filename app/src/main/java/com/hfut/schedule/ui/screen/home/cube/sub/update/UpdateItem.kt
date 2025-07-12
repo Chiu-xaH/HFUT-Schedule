@@ -24,7 +24,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-07-12") },
+                overlineContent = { Text(text = "2025-07-13") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -61,22 +61,16 @@ fun VersionInfo() {
 //        UpdateItems("优化 层级转场时的圆角", null, UpdateType.OPTIMIZE)
         // 下版本规划
 //        UpdateItems("重构 网络请求层，重新进行封装，使用Flow代替LiveData，优化潜在的内存泄漏问题，增加不同状态下的展示", "进度: 剩余29")
-        UpdateItems("新增 海乐生活", "位于 查询中心-洗衣机，适用于翡翠湖和宣城校区")
-        UpdateItems("新增 对内测版本和开发设备运行的识别")
-        UpdateItems("新增 寝室信息","位于 查询中心-个人信息")
-        UpdateItems("新增 校园地图","位于 查询中心-生活服务")
-        UpdateItems("修复 上版本造成的页面切换组件上下间距异常的问题")
 //        UpdateItems("新增 一卡通-统计中消费预测与统计功能的本地化分析")
-
+//        UpdateItems("新增 学工系统","位于 查询中心-学工系统，现在，将一些今日校园的功能以网页集成入了应用内")
 //        UpdateItems("新增 开发者选项","可供有能力者使用某些功能")
 //        UpdateItems("修复 体测平台、报修打开白屏的Bug")
-
+        UpdateItems("优化 分页组件背景框的滑动跟手效果")
         // v5.0 2025-07+ 远期规划
 //        UpdateItems("新增 磁钉体系", "位于 选项-应用行为，构建全局磁钉体系，任何支持的界面向边缘滑动即可缩放为磁钉最小化", UpdateType.ADD)
 //        UpdateItems("重构 CAS登录", "完全重写底层，使其支持更多平台的边界接入，修复部分功能登陆失败的Bug、修复外地访问下无法使用邮箱等功能的Bug、修复偶见无法登录教务的Bug、优化刷新登陆状态后仍需等待较长时间才可操作的逻辑、支持对外开放API等", UpdateType.RENEW)
 //        UpdateItems("重构 全局转场动画体系", "现在，转场时的动画完全重写，优化整体观感，并优化首次展开时动画卡顿的问题", UpdateType.RENEW)
 //        UpdateItems("新增 动画速度挡位调节", null, UpdateType.ADD)
-//        UpdateItems("新增 学工系统", null, UpdateType.ADD)
     }
 }
 
