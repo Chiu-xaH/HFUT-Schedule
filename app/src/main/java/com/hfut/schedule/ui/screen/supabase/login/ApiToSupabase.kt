@@ -18,6 +18,7 @@ import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.ui.component.LoadingIcon
 import com.hfut.schedule.ui.component.RotatingIcon
 import com.hfut.schedule.ui.component.onListenStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -63,7 +64,7 @@ fun ApiToSupabase(vm : NetWorkViewModel) {
         colors = IconButtonDefaults.iconButtonColors(contentColor = MaterialTheme.colorScheme.primary)
     ) {
         if(loading) {
-            RotatingIcon(R.drawable.progress_activity)
+            LoadingIcon()
         } else {
             BadgedBox(
                 badge = {

@@ -17,6 +17,12 @@ import com.hfut.schedule.logic.model.AcademicNewsResponse
 import com.hfut.schedule.logic.model.AcademicType
 import com.hfut.schedule.logic.model.AcademicXCType
 import com.hfut.schedule.logic.model.ForecastAllBean
+import com.hfut.schedule.logic.model.HaiLeDeviceDetailBean
+import com.hfut.schedule.logic.model.HaiLeDeviceDetailRequestBody
+import com.hfut.schedule.logic.model.HaiLeNearPositionBean
+import com.hfut.schedule.logic.model.HaiLeNearPositionRequestDTO
+import com.hfut.schedule.logic.model.HaiLeTradeBean
+import com.hfut.schedule.logic.model.HaiLeTradeListRequestDTO
 import com.hfut.schedule.logic.model.NewsResponse
 import com.hfut.schedule.logic.model.PayData
 import com.hfut.schedule.logic.model.PayResponse
@@ -41,6 +47,11 @@ import com.hfut.schedule.logic.model.community.BookPositionBean
 import com.hfut.schedule.logic.model.community.BookPositionResponse
 import com.hfut.schedule.logic.model.community.BorrowRecords
 import com.hfut.schedule.logic.model.community.BorrowResponse
+import com.hfut.schedule.logic.model.community.DormitoryBean
+import com.hfut.schedule.logic.model.community.DormitoryInfoBean
+import com.hfut.schedule.logic.model.community.DormitoryInfoResponse
+import com.hfut.schedule.logic.model.community.DormitoryResponse
+import com.hfut.schedule.logic.model.community.DormitoryUser
 import com.hfut.schedule.logic.model.community.FailRateRecord
 import com.hfut.schedule.logic.model.community.FailRateResponse
 import com.hfut.schedule.logic.model.community.GradeAllResponse
@@ -51,6 +62,8 @@ import com.hfut.schedule.logic.model.community.GradeResponseJXGLSTU
 import com.hfut.schedule.logic.model.community.GradeResult
 import com.hfut.schedule.logic.model.community.LibRecord
 import com.hfut.schedule.logic.model.community.LibraryResponse
+import com.hfut.schedule.logic.model.community.MapBean
+import com.hfut.schedule.logic.model.community.MapResponse
 import com.hfut.schedule.logic.model.community.TodayResponse
 import com.hfut.schedule.logic.model.community.TodayResult
 import com.hfut.schedule.logic.model.jxglstu.CourseSearchResponse
@@ -177,6 +190,16 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     val studentId = StateHolder<Int>()
     val lessonIds = StateHolder<lessonResponse>()
     val token = MutableLiveData<String>()
+
+
+    val haiLeNearPositionResp = StateHolder<List<HaiLeNearPositionBean>>()
+    suspend fun getHaiLeNearPosition(bean : HaiLeNearPositionRequestDTO) = Repository.getHaiLeNear(bean,haiLeNearPositionResp)
+
+    val haiLeDeviceDetailResp = StateHolder<List<HaiLeDeviceDetailBean>>()
+    suspend fun getHaiLeDeviceDetail(bean : HaiLeDeviceDetailRequestBody) = Repository.getHaiLDeviceDetail(bean,haiLeDeviceDetailResp)
+
+    val haiLeTradeListResp = StateHolder<List<HaiLeTradeBean>>()
+    suspend fun getHaiLeTradeList(bean : HaiLeTradeListRequestDTO) = Repository.getHaiLTradeList(bean,haiLeTradeListResp)
 
     val githubStarsData = StateHolder<Int>()
     suspend fun getStarNum() = Repository.getStarNum(githubStarsData)
@@ -777,13 +800,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     } catch (e : Exception) {
         throw e
     }
-
-//    {
-//        sId?.let { Repository.makeRequest(
-//            call = jxglstuHTML.getBizTypeId(cookie,it),
-//            liveData = bizTypeIdResponse
-//        ) }
-//    }
 
     suspend fun getStudentId(cookie : String) = launchRequestSimple(
         holder = studentId,
@@ -1683,6 +1699,38 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         })
     }
 
+    val dormitoryFromCommunityResp = StateHolder<DormitoryBean>()
+    suspend fun getDormitory(token : String) = launchRequestSimple(
+        holder = dormitoryFromCommunityResp,
+        request = { community.getDormitory(token).awaitResponse() },
+        transformSuccess = { _,json -> parseDormitory(json) }
+    )
+    private fun parseDormitory(result : String) : DormitoryBean = try {
+        if (result.contains("操作成功")) {
+            val list = Gson().fromJson(result, DormitoryResponse::class.java).result
+            if(list.isEmpty()) throw Exception("无住宿信息") else list[0]
+        }
+        else
+            throw Exception(result)
+    } catch (e : Exception) { throw e }
+
+    val dormitoryInfoFromCommunityResp = StateHolder<List<DormitoryUser>>()
+    suspend fun getDormitoryInfo(token : String) = onListenStateHolderForNetwork(dormitoryFromCommunityResp,dormitoryInfoFromCommunityResp) { d ->
+        launchRequestSimple(
+            holder = dormitoryInfoFromCommunityResp,
+            request = { community.getDormitoryInfo(token,d.campus,d.room,d.dormitory).awaitResponse() },
+            transformSuccess = { _,json -> parseDormitoryInfo(json) }
+        )
+    }
+    private fun parseDormitoryInfo(result : String) : List<DormitoryUser> = try {
+        if (result.contains("操作成功")) {
+            val list1 = Gson().fromJson(result, DormitoryInfoResponse::class.java).result.profileList
+            list1.flatMap { it.userList }
+        }
+        else
+            throw Exception(result)
+    } catch (e : Exception) { throw e }
+
     val addFriendApplyResponse = StateHolder<String>()
     suspend fun addFriendApply(token : String, username : String) = launchRequestSimple(
         holder = addFriendApplyResponse,
@@ -1705,6 +1753,19 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     private fun parseApplyFriends(result : String) : List<ApplyingLists?> = try {
         if(result.contains("success"))
             Gson().fromJson(result,ApplyingResponse::class.java).result.records
+        else
+            throw Exception(result)
+    } catch (e : Exception) { throw e }
+
+    val mapsResponse = StateHolder<List<MapBean>>()
+    suspend fun getMaps(token : String) = launchRequestSimple(
+        holder = mapsResponse,
+        request = { community.getCampusMap(token).awaitResponse() },
+        transformSuccess = { _,json -> parseMaps(json) }
+    )
+    private fun parseMaps(result : String) : List<MapBean> = try {
+        if(result.contains("操作成功"))
+            Gson().fromJson(result, MapResponse::class.java).result
         else
             throw Exception(result)
     } catch (e : Exception) { throw e }

@@ -59,6 +59,7 @@ import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.onListenStateHolder
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.LoadingIcon
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.DetailInfos
 import com.hfut.schedule.ui.screen.home.cube.apiCheck
@@ -305,7 +306,7 @@ fun CommunityTodayCourseItem(list : courseDetailDTOList, vm : NetWorkViewModel, 
                         )
                     }
                     ONGOING -> {
-                        RotatingIcon(R.drawable.progress_activity)
+                        LoadingIcon()
                     }
                     ENDED -> {
                         Icon(
@@ -691,7 +692,7 @@ fun JxglstuTodayCourseItem(item : JxglstuCourseSchedule, hazeState: HazeState, t
                         )
                     }
                     ONGOING -> {
-                        RotatingIcon(R.drawable.progress_activity)
+                        LoadingIcon()
                     }
                     ENDED -> {
                         Icon(

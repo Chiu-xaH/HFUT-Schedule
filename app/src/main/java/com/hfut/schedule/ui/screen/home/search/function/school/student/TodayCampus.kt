@@ -36,6 +36,8 @@ import com.hfut.schedule.ui.component.custom.LoadingUI
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.ui.component.StatusUI2
+import com.hfut.schedule.ui.component.WebDialog
+import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
 import com.hfut.schedule.ui.style.ColumnVertical
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -46,6 +48,11 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ToadyCampus(ifSaved : Boolean,vm: NetWorkViewModel){
+    var url by remember { mutableStateOf("https://stu.hfut.edu.cn/xsfw/sys/swmjxjapp/*default/index.do?wxType=1") }
+
+    var showDialog by remember { mutableStateOf(false) }
+    WebDialog(showDialog,{ showDialog = false },url, cookie = """
+    """.trimIndent())
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
     TransplantListItem(
@@ -53,6 +60,7 @@ fun ToadyCampus(ifSaved : Boolean,vm: NetWorkViewModel){
         headlineContent = { Text(text = "学工系统") },
         leadingContent = { Icon(painter = painterResource(id = R.drawable.handshake), contentDescription = "") },
         modifier = Modifier.clickable {
+//            showDialog = true
 //            showBottomSheet = true
             Starter.startLaunchAPK("com.wisedu.cpdaily","今日校园")
 

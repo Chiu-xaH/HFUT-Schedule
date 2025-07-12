@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
+import com.hfut.schedule.ui.component.LoadingIcon
 import com.hfut.schedule.ui.component.RotatingIcon
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.style.HazeBottomSheet
@@ -43,7 +44,7 @@ fun Shower(vm: NetWorkViewModel, hazeState: HazeState) {
         headlineContent = { Text(text = "洗浴") },
         leadingContent = {
             if(loading) {
-                RotatingIcon(R.drawable.progress_activity)
+                LoadingIcon()
             } else {
                 Icon(painterResource(id = R.drawable.bathtub), contentDescription = "")
             }

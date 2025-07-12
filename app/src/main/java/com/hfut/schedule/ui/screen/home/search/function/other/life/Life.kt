@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -32,19 +34,14 @@ import dev.chrisbanes.haze.HazeState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Life(vm : NetWorkViewModel, hazeState: HazeState) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
 
 
     TransplantListItem(
         headlineContent = { ScrollText(text = "生活服务") },
         leadingContent = { Icon(painter = painterResource(id = R.drawable.near_me), contentDescription = null) },
-     //       overlineContent = { ScrollText(text = "高德地图SDK测试") },
         modifier = Modifier.clickable {
-//            MyToast("暂未开发")
-            countFunc = 0
                 showBottomSheet = true
-//            startLife()
         }
     )
 
@@ -54,8 +51,6 @@ fun Life(vm : NetWorkViewModel, hazeState: HazeState) {
             onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet,
             hazeState = hazeState,
-//            sheetState = sheetState,
-//            shape = bottomSheetRound(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
@@ -65,48 +60,10 @@ fun Life(vm : NetWorkViewModel, hazeState: HazeState) {
                 },) { innerPadding ->
                 Column(
                     modifier = Modifier
-                        .padding(innerPadding)
+                        .padding(innerPadding).verticalScroll(rememberScrollState())
                         .fillMaxSize()
                 ) {
-                    WeatherScreen(vm)
-                    Spacer(modifier = Modifier.height(20.dp))
-                }
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ApiFromLife(vm: NetWorkViewModel, hazeState: HazeState) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var showBottomSheet by remember { mutableStateOf(false) }
-
-    IconButton(onClick = {
-        countFunc = 0
-        showBottomSheet = true
-    }) {
-        Icon(painterResource(id = R.drawable.near_me), contentDescription = null, tint = MaterialTheme.colorScheme.primary)
-    }
-
-    if (showBottomSheet) {
-        HazeBottomSheet (
-            onDismissRequest = { showBottomSheet = false },
-            showBottomSheet = showBottomSheet,
-            hazeState = hazeState
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("生活服务")
-                },) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    WeatherScreen(vm)
+                    LifeScreen(vm)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }

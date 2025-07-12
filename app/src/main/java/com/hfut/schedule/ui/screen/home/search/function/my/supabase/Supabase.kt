@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter.loginSupabase
+import com.hfut.schedule.ui.component.LoadingIcon
 import com.hfut.schedule.ui.component.RotatingIcon
 import com.hfut.schedule.ui.component.custom.ScrollText
 import com.hfut.schedule.ui.component.TransplantListItem
@@ -35,7 +36,7 @@ fun Supabase(vm: NetWorkViewModel) {
         headlineContent = { ScrollText(text = "信息共建") },
         leadingContent = {
             if(loading) {
-                RotatingIcon(R.drawable.progress_activity)
+                LoadingIcon()
             } else {
                 Icon(painterResource(id = R.drawable.cloud), contentDescription = "")
             }

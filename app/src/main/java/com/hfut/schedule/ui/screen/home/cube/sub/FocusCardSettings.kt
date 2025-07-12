@@ -1,10 +1,8 @@
 package com.hfut.schedule.ui.screen.home.cube.sub
 
 import android.annotation.SuppressLint
-import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -52,22 +50,23 @@ import com.hfut.schedule.logic.model.zjgd.FeeResponse
 import com.hfut.schedule.logic.model.zjgd.FeeType
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.formatDecimal
-import com.hfut.schedule.logic.util.sys.datetime.isHoliday
-import com.hfut.schedule.logic.util.sys.datetime.isSpecificWorkDay
-import com.hfut.schedule.logic.util.sys.datetime.isSpecificWorkDayTomorrow
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
-import com.hfut.schedule.ui.component.custom.BottomSheetTopBar
-import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
+import com.hfut.schedule.logic.util.sys.datetime.isHoliday
+import com.hfut.schedule.logic.util.sys.datetime.isSpecificWorkDay
+import com.hfut.schedule.logic.util.sys.datetime.isSpecificWorkDayTomorrow
+import com.hfut.schedule.ui.component.LoadingIcon
 import com.hfut.schedule.ui.component.MyCustomCard
 import com.hfut.schedule.ui.component.RotatingIcon
-import com.hfut.schedule.ui.component.custom.ScrollText
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.cardNormalColor
+import com.hfut.schedule.ui.component.custom.BottomSheetTopBar
+import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.custom.ScrollText
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.focus.funiction.TodayUI
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.card.SchoolCardItem
@@ -77,12 +76,12 @@ import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getWebIn
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.shower.getInGuaGua
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
-import com.hfut.schedule.ui.screen.home.search.function.other.life.WeatherScreen
+import com.hfut.schedule.ui.screen.home.search.function.other.life.LifeScreen
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.ui.util.AppAnimationManager
-import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.hfut.schedule.viewmodel.ui.UIViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -96,32 +95,32 @@ fun FocusCardSettings(innerPadding : PaddingValues) {
     var showBottomSheet by remember { mutableStateOf(false) }
     var sheetState = rememberModalBottomSheetState()
 
-    val switch_ele = SharedPrefs.prefs.getBoolean("SWITCHELE", getCampus() == Campus.XUANCHENG)
+    val switch_ele = prefs.getBoolean("SWITCHELE", getCampus() == Campus.XUANCHENG)
     var showEle by remember { mutableStateOf(switch_ele) }
     SharedPrefs.saveBoolean("SWITCHELE", true, showEle)
 
-    val switch_web = SharedPrefs.prefs.getBoolean("SWITCHWEB", getCampus() == Campus.XUANCHENG)
+    val switch_web = prefs.getBoolean("SWITCHWEB", getCampus() == Campus.XUANCHENG)
     var showWeb by remember { mutableStateOf(switch_web) }
     SharedPrefs.saveBoolean("SWITCHWEB", true, showWeb)
 
-    val switch_card = SharedPrefs.prefs.getBoolean("SWITCHCARD", true)
+    val switch_card = prefs.getBoolean("SWITCHCARD", true)
     var showCard by remember { mutableStateOf(switch_card) }
     SharedPrefs.saveBoolean("SWITCHCARD", true, showCard)
 
-    val switch_today = SharedPrefs.prefs.getBoolean("SWITCHTODAY", true)
+    val switch_today = prefs.getBoolean("SWITCHTODAY", true)
     var showToday by remember { mutableStateOf(switch_today) }
     SharedPrefs.saveBoolean("SWITCHTODAY", true, showToday)
 
 
-    val switch_card_add = SharedPrefs.prefs.getBoolean("SWITCHCARDADD", true)
+    val switch_card_add = prefs.getBoolean("SWITCHCARDADD", true)
     var showCardAdd by remember { mutableStateOf(switch_card_add) }
     SharedPrefs.saveBoolean("SWITCHCARDADD", true, showCardAdd)
 
-    val switch_countDown = SharedPrefs.prefs.getBoolean("SWITCHCOUNTDOWN", false)
+    val switch_countDown = prefs.getBoolean("SWITCHCOUNTDOWN", false)
     var showCountDown by remember { mutableStateOf(switch_countDown) }
     SharedPrefs.saveBoolean("SWITCHCOUNTDOWN", false, showCountDown)
 
-    val switch_shortCut = SharedPrefs.prefs.getBoolean("SWITCHSHORTCUT", false)
+    val switch_shortCut = prefs.getBoolean("SWITCHSHORTCUT", false)
     var showShortCut by remember { mutableStateOf(switch_shortCut) }
     SharedPrefs.saveBoolean("SWITCHSHORTCUT", false, showShortCut)
 
@@ -226,8 +225,6 @@ fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) {
     val showToday = prefs.getBoolean("SWITCHTODAY",true)
     val showWeb = prefs.getBoolean("SWITCHWEB",getCampus() == Campus.XUANCHENG)
     val showCard = prefs.getBoolean("SWITCHCARD",true)
-    val showCountDown = prefs.getBoolean("SWITCHCOUNTDOWN",false)
-    val showShortCut = prefs.getBoolean("SWITCHSHORTCUT",false)
     var loading by remember { mutableStateOf(false) }
     val showShower by DataStoreManager.showFocusShower.collectAsState(initial = true)
     val showWeather by DataStoreManager.showFocusWeatherWarn.collectAsState(initial = true)
@@ -246,10 +243,10 @@ fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) {
                 },) { innerPadding ->
                 Column(
                     modifier = Modifier
-                        .padding(innerPadding)
+                        .padding(innerPadding).verticalScroll(rememberScrollState())
                         .fillMaxSize()
                 ) {
-                    WeatherScreen(vm)
+                    LifeScreen(vm)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
@@ -295,7 +292,7 @@ fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) {
                             TransplantListItem(
                                 headlineContent = { Text(text = "正在核对登录") },
                                 leadingContent = {
-                                    RotatingIcon(R.drawable.progress_activity)
+                                    LoadingIcon()
                                 }
                             )
                         } else {
@@ -345,20 +342,7 @@ fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) {
             }
         }
 }
-//废弃旧的方法
-fun getWeb(vm : NetWorkViewModel,vmUI: UIViewModel)  {
-//    CoroutineScope(Job()).launch {
-//        Handler(Looper.getMainLooper()).post{
-//            vm.infoWebValue.observeForever { result ->
-//                if (result != null)
-//                    if(result.contains("flow")) {
-//                        vmUI.webValue.value = getWebInfoOld(result)
-//                        saveString("memoryWeb", vmUI.webValue.value?.flow)
-//                    }
-//            }
-//        }
-//    }
-}
+
 
 fun getWebInfoFromHuiXin(vm: NetWorkViewModel, vmUI : UIViewModel)  {
     val auth = prefs.getString("auth","")

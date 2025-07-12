@@ -294,7 +294,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
             },
             sheetState = sheetState_Washing,
         ) {
-            WashingUI()
+            WashingUI(vm,hazeState)
         }
     }
 

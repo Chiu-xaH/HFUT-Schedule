@@ -8,6 +8,10 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPerson
 enum class Campus(val description : String) {
     HEFEI("合肥"),XUANCHENG("宣城")
 }
+enum class CampusDetail(val description : String) {
+    TXL("屯溪路"),FCH("翡翠湖"),XC("宣城")
+}
+
 fun getCampus() : Campus {
     return if(getPersonInfo().school?.contains("宣城") == true) {
         Campus.XUANCHENG

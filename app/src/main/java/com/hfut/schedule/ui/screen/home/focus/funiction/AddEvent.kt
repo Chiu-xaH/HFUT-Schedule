@@ -104,6 +104,7 @@ import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.cardNormalColor
   
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.LoadingIcon
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.EventCampus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getEventCampus
@@ -500,7 +501,7 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
             if(!updateLoading)
                 Text(if(enabled) "添加" else "关闭")
             else
-                RotatingIcon(R.drawable.progress_activity)
+                LoadingIcon()
         }
         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
             DividerTextExpandedWith("预览") {

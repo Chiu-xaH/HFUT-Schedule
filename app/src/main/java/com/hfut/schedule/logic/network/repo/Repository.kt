@@ -1,5 +1,6 @@
 package com.hfut.schedule.logic.network.repo
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
@@ -9,6 +10,16 @@ import com.hfut.schedule.logic.model.AcademicXCType
 import com.hfut.schedule.logic.model.ForecastAllBean
 import com.hfut.schedule.logic.model.ForecastResponse
 import com.hfut.schedule.logic.model.GithubBean
+import com.hfut.schedule.logic.model.HaiLeDeviceDetailBean
+import com.hfut.schedule.logic.model.HaiLeDeviceDetailRequestBody
+import com.hfut.schedule.logic.model.HaiLeDeviceDetailResponse
+import com.hfut.schedule.logic.model.HaiLeNearPositionBean
+import com.hfut.schedule.logic.model.HaiLeNearPositionRequestBody
+import com.hfut.schedule.logic.model.HaiLeNearPositionRequestDTO
+import com.hfut.schedule.logic.model.HaiLeNearPositionResponse
+import com.hfut.schedule.logic.model.HaiLeTradeBean
+import com.hfut.schedule.logic.model.HaiLeTradeListRequestDTO
+import com.hfut.schedule.logic.model.HaiLeTradeListResponse
 import com.hfut.schedule.logic.model.NewsResponse
 import com.hfut.schedule.logic.model.QWeatherNowBean
 import com.hfut.schedule.logic.model.QWeatherResponse
@@ -31,6 +42,7 @@ import com.hfut.schedule.logic.network.api.GiteeService
 import com.hfut.schedule.logic.network.api.GithubRawService
 import com.hfut.schedule.logic.network.api.GithubService
 import com.hfut.schedule.logic.network.api.GuaGuaService
+import com.hfut.schedule.logic.network.api.HaiLeWashingService
 import com.hfut.schedule.logic.network.api.LoginWebsService
 import com.hfut.schedule.logic.network.api.NewsService
 import com.hfut.schedule.logic.network.api.QWeatherService
@@ -45,6 +57,7 @@ import com.hfut.schedule.logic.network.servicecreator.GiteeServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.GithubRawServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.GithubServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.GuaGuaServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.HaiLeWashingServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.Login.LoginWeb2ServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.Login.LoginWebHefeiServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.Login.LoginWebServiceCreator
@@ -100,6 +113,7 @@ object Repository {
     private val forecast = VercelForecastServiceCreator.create(VercelForecastService::class.java)
     private val academic = AcademicServiceCreator.create(AcademicService::class.java)
     private val academicXC = AcademicXCServiceCreator.create(AcademicXCService::class.java)
+    private val haiLe = HaiLeWashingServiceCreator.create(HaiLeWashingService::class.java)
 
 //    private val lePaoYun = LePaoYunServiceCreator.create(LePaoYunService::class.java)
 
@@ -499,6 +513,7 @@ object Repository {
         transformSuccess = { _, json -> parseWeatherNow(json) }
     )
 
+
     @JvmStatic
     private fun parseWeatherNow(json : String) : QWeatherNowBean = try {
         if(json.contains("200"))
@@ -540,6 +555,51 @@ object Repository {
             }
         })
     }
+
+    suspend fun getHaiLeNear(bean : HaiLeNearPositionRequestDTO,holder : StateHolder<List<HaiLeNearPositionBean>>) = launchRequestSimple(
+        holder = holder,
+        request = { haiLe.getNearPlaces(bean.toRequestBody()).awaitResponse() },
+        transformSuccess = { _, json -> parseHaiLeNear(json) }
+    )
+
+    @JvmStatic
+    private fun parseHaiLeNear(result: String): List<HaiLeNearPositionBean> = try {
+        if(result.contains("success")) {
+            Gson().fromJson(result, HaiLeNearPositionResponse::class.java).data.items
+        } else {
+            throw Exception(result)
+        }
+    } catch (e: Exception) { throw e }
+
+    suspend fun getHaiLDeviceDetail(bean : HaiLeDeviceDetailRequestBody,holder : StateHolder<List<HaiLeDeviceDetailBean>>) = launchRequestSimple(
+        holder = holder,
+        request = { haiLe.getDeviceDetail(bean).awaitResponse() },
+        transformSuccess = { _, json -> parseHaiLeDeviceDetail(json) }
+    )
+
+    @JvmStatic
+    private fun parseHaiLeDeviceDetail(result: String): List<HaiLeDeviceDetailBean> = try {
+        if(result.contains("success")) {
+            Gson().fromJson(result, HaiLeDeviceDetailResponse::class.java).data.items
+        } else {
+            throw Exception(result)
+        }
+    } catch (e: Exception) { throw e }
+
+    suspend fun getHaiLTradeList(bean : HaiLeTradeListRequestDTO,holder : StateHolder<List<HaiLeTradeBean>>) = launchRequestSimple(
+        holder = holder,
+        request = { haiLe.getTradeList(bean.toRequestBody()).awaitResponse() },
+        transformSuccess = { _, json -> parseHaiLeTradeList(json) }
+    )
+
+    @JvmStatic
+    private fun parseHaiLeTradeList(result: String): List<HaiLeTradeBean> = try {
+        if(result.contains("success")) {
+            Gson().fromJson(result, HaiLeTradeListResponse::class.java).data.items
+        } else {
+            throw Exception(result)
+        }
+    } catch (e: Exception) { throw e }
 
     suspend fun guaGuaLogin(phoneNumber : String, password : String,loginResult : StateHolder<GuaGuaLoginResponse>) = launchRequestSimple(
         holder = loginResult,

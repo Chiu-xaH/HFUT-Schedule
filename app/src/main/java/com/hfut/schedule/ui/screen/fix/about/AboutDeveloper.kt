@@ -50,16 +50,17 @@ private data class Build(
     val jetpack : String
 )
 private val backgroundArticle = listOf(
-    "自小被Android吸引，2023年高考后，怀揣着好奇，开启了我的学习路线",
+    "我自小被Android吸引，2023年高考后，怀揣着好奇，开启了我的学习路线",
     "简单学习C语言后，跟随《第一行代码》踏上了Android之路，最终于大一10月份完成一本书的学习，跃跃欲试",
     "根据平常的使用频率，决定做一个课表APP以练手，起名：肥工课程表，仓库建立与2023年10月16日",
     "作为我的第一个从0开始、无指导的项目，以及薄弱的知识储备，一些现在看起来很简单的问题还是攻克了好久",
     "在一节大学生心理健康课上成功显示课程表，此时是2023年11月2日",
     "频繁的闪退崩溃使我意识到能力仍很薄弱，这个项目不能就此终止，改名：肥工教务通",
-    "在不断更新、迭代、重构的过程中，功能不断增多，健壮性提高，我的能力也与日俱增",
+    "在不断更新、迭代、重构的过程中，功能增多，稳定性提高",
     "大一下，更名为：聚在工大",
-    "大二上，转入了计算机与信息学院",
-    "感谢使用，故事仍在继续..."
+    "大二上，从地球信息科学与技术专业转入了计算机科学与技术专业",
+    "感谢使用，故事仍在继续...",
+    "开发者 Chiu-xaH"
 )
 private val openSourceProjects = listOf(
     OpenSource("Okhttp","网络请求","https://github.com/square/okhttp"),
@@ -163,7 +164,7 @@ fun About(vm : NetWorkViewModel) {
                             URLImage(url = MyApplication.GITHUB_USER_IMAGE_URL + MyApplication.GITHUB_USER_ID, width = 50.dp, height = 50.dp)
                         },
                         supportingContent = {
-                            Text("一名热爱安卓的开发者,宣城校区23级计算机科学与技术专业(原地球信息科学与技术专业)本科生")
+                            Text("一名热爱安卓的开发者,宣城校区23级本科生")
                         },
                         trailingContent = {
                             FilledTonalIconButton(

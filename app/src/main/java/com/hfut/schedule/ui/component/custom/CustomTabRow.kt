@@ -52,7 +52,7 @@ fun CustomTabRow(pagerState: PagerState, titles: List<String>,padding : Dp = 10.
 @Composable
 private fun CustomNormalTabRow(pagerState: PagerState, titles: List<String>, padding : Dp = 10.dp) {
     val scope = rememberCoroutineScope()
-    Column(modifier = Modifier.background(Color.Transparent).padding(padding)) {
+    Column(modifier = Modifier.background(Color.Transparent).padding(horizontal = padding)) {
         SecondaryTabRow(
             selectedTabIndex = pagerState.currentPage,
             containerColor = Color.Transparent,

@@ -23,6 +23,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,6 +39,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
@@ -51,17 +53,19 @@ import com.hfut.schedule.ui.component.DepartmentIcons
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.style.appBlur
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import kotlinx.coroutines.flow.first
 import org.jsoup.Jsoup
 import kotlin.collections.get
 
 
-@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun PersonItems(ifSaved : Boolean) {
+fun PersonItems(vm : NetWorkViewModel) {
 
     val photo = prefs.getString("photo",null)
 
@@ -86,15 +90,25 @@ fun PersonItems(ifSaved : Boolean) {
     val endDate = getPersonInfo().endDate
     val majorDirection = getPersonInfo().majorDirection
     val studyTime = getPersonInfo().studyTime
-    val motionBlur by DataStoreManager.motionBlurFlow.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
 
     var show by remember { mutableStateOf(false) }
-    val blurSize by animateDpAsState(targetValue = if (!show) 10.dp else 0.dp, label = "")
     var show2 by remember { mutableStateOf(false) }
-    val blurSize2 by animateDpAsState(targetValue = if (!show2) 10.dp else 0.dp, label = "")
-    val scope = rememberCoroutineScope()
     val cardPsk by produceState(initialValue = "") {
         value = getCardPsk() ?: ""
+    }
+    val uiState by vm.dormitoryFromCommunityResp.state.collectAsState()
+    val uiState2 by vm.dormitoryInfoFromCommunityResp.state.collectAsState()
+    val refreshNetwork : suspend () -> Unit = {
+        prefs.getString("TOKEN","")?.let {
+            vm.dormitoryFromCommunityResp.clear()
+            vm.getDormitory(it)
+            if(vm.dormitoryFromCommunityResp.state.first() is UiState.Success) {
+                vm.getDormitoryInfo(it)
+            }
+        }
+    }
+    LaunchedEffect(Unit) {
+        refreshNetwork()
     }
     Scaffold(
         containerColor = Color.Transparent,
@@ -107,7 +121,6 @@ fun PersonItems(ifSaved : Boolean) {
                 .verticalScroll(rememberScrollState())
                 .fillMaxSize()
         ) {
-
             DividerTextExpandedWith(text = "账号信息") {
                 name?.let {
                     TransplantListItem(
@@ -226,7 +239,6 @@ fun PersonItems(ifSaved : Boolean) {
                 }
 
             }
-
 
             DividerTextExpandedWith(text = "密码信息") {
                 TransplantListItem(
@@ -497,6 +509,37 @@ fun PersonItems(ifSaved : Boolean) {
                     )
                 }
 
+            }
+
+            DividerTextExpandedWith("寝室信息") {
+                CommonNetworkScreen(uiState,isFullScreen = false, onReload = refreshNetwork) {
+                    val data = (uiState as UiState.Success).data
+                    Column {
+                        TransplantListItem(
+                            headlineContent = { Text(data.campus_dictText + " " + data.dormitory.substringBefore("（") + " " + data.room)},
+                            overlineContent = { Text("所在寝室") },
+                            leadingContent = {
+                                Icon(painterResource(R.drawable.bed),null)
+                            }
+                        )
+                        CommonNetworkScreen(uiState2,isFullScreen = false, onReload = refreshNetwork) {
+                            val data2 = (uiState2 as UiState.Success).data
+                            Column {
+                                for(i in data2) {
+                                    TransplantListItem(
+                                        headlineContent = {
+                                            Text(i.realname + " | " + i.username)
+                                        },
+                                        overlineContent = { Text("寝室成员") },
+                                        leadingContent = {
+                                            Icon(painterResource(R.drawable.group),null)
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }

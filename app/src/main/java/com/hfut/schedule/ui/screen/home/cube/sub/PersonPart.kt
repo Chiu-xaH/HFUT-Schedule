@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
@@ -38,6 +39,7 @@ import com.hfut.schedule.ui.component.DepartmentIcons
 import com.hfut.schedule.ui.component.MyCustomCard
 import com.hfut.schedule.ui.component.custom.ScrollText
 import com.hfut.schedule.ui.component.TransplantListItem
+import com.hfut.schedule.ui.style.ColumnVertical
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -71,10 +73,20 @@ fun PersonPart() {
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.person), contentDescription = "")},
                     headlineContent = { Text(text = getPersonInfo().name ?: "游客")  },
                     trailingContent = {
-                        if(startDate != null && endDate != null && startDate != "" && endDate != "") {
-                            Text(text = "已过 ${formatDecimal(DateTimeManager.getPercent(startDate,endDate),1)}%")
-                        } else { null }
-                        },
+                        Row {
+                            ColumnVertical {
+                                if(AppVersion.isInDebugRunning()) {
+                                    Text("运行在开发设备")
+                                }
+                                if(AppVersion.isPreview()) {
+                                    Text("内部测试版本")
+                                }
+                                if(startDate != null && endDate != null && startDate != "" && endDate != "") {
+                                    Text(text = "已过 ${formatDecimal(DateTimeManager.getPercent(startDate,endDate),1)}%")
+                                } else { null }
+                            }
+                        }
+                                      },
 //                    colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                     modifier = Modifier.clickable {
                         expandItems = !expandItems

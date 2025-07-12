@@ -86,7 +86,7 @@ fun MainHost(networkVm : NetWorkViewModel, loginVm : LoginViewModel, uiVm : UIVi
             }
         } else { // 否则进入的是主界面
             //上传用户统计数据
-            if(switchUpload && value == 0 && !AppVersion.isPreview()) {
+            if(switchUpload && value == 0 && !AppVersion.isPreview() && !AppVersion.isInDebugRunning()) {
                 launch {
                     networkVm.postUser()
                     value++

@@ -103,5 +103,5 @@ data class SupabaseUsageEntity(
     @SerializedName("department") val department : String = getPersonInfo().department ?: "空",
     @SerializedName("app_version_name") val appVersionName : String = AppVersion.getVersionName(),
     @SerializedName("app_version_code") val appVersionCode : Int = AppVersion.getVersionCode(),
-    @SerializedName("device_name") val deviceName : String = Build.MODEL
+    @SerializedName("device_name") val deviceName : String = AppVersion.deviceName
 )

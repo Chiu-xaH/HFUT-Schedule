@@ -85,12 +85,10 @@ fun WeChatGo(hazeState : HazeState) {
     val list1 = listOf(
         ItemBean("校务行","亮点功能: 官方成绩单",R.drawable.article),
         ItemBean("第二课堂",null,R.drawable.school),
-        ItemBean("快宝驿站","亮点功能: 宣城校区寄件",R.drawable.delivery_truck_speed),
         ItemBean("合工大智慧学生社区线上平台","亮点功能: 今日校园(学工平台)",R.drawable.handshake),
-        ItemBean("合工大校友服务平台",null,R.drawable.local_library),
-        ItemBean("智慧团建",null,R.drawable.flag),
-        ItemBean("爱印通","亮点功能: 宣城校区打印店",R.drawable.print),
-        ItemBean("呱呱物联","大多数接口已经被聚在工大集成",R.drawable.bathtub),
+        ItemBean("合工大校友服务平台","亮点功能: 校友卡回校",R.drawable.local_library),
+        ItemBean("呱呱物联","洗浴用，大多数接口已经被聚在工大集成",R.drawable.bathtub),
+        ItemBean("海乐生活","洗衣机用，部分接口已经被聚在工大集成，支付相关功能仍需使用微信",R.drawable.laundry),
         ItemBean("合工大信息查询","大多数接口已经被聚在工大集成",R.drawable.search)
     )
     val list2 = listOf(

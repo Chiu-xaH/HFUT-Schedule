@@ -87,4 +87,18 @@ interface CommunityService {
     data class RequestApplyingJson(val id: String,val status : Int = 1) //0代表拒绝 1代表同意
     @POST("api/business/coursefriendapply/edit")
     fun checkApplying(@Header("X-Access-Token") token : String, @Body requestJson: RequestApplyingJson) : Call<ResponseBody>
+    // 获取寝室
+    @GET("api//mobile/profileDormitory/studentLocate")
+    fun getDormitory(@Header("X-Access-Token") token : String) : Call<ResponseBody>
+    // 获取寝室信息
+    @GET("api//mobile/profileDormitory/list")
+    fun getDormitoryInfo(
+        @Header("X-Access-Token") token : String,
+        @Query("campus") campus : String,
+        @Query("room") room : String,
+        @Query("dormitory") dormitory : String
+    ) : Call<ResponseBody>
+    // 校区地图
+    @GET("api//mobile/community/forumRunMap/runMapListQuery")
+    fun getCampusMap(@Header("X-Access-Token") token : String) : Call<ResponseBody>
 }

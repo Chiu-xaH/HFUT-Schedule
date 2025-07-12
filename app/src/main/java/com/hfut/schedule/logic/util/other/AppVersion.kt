@@ -1,6 +1,7 @@
 package com.hfut.schedule.logic.util.other
 
 import android.content.pm.PackageManager
+import android.os.Build
 import com.hfut.schedule.App.MyApplication
 
 object AppVersion {
@@ -10,7 +11,6 @@ object AppVersion {
     }
     private val packageName = MyApplication.context.packageManager.getPackageInfo(MyApplication.context.packageName,0)
 
-    fun isPreview() : Boolean = getVersionName().contains("Preview")
 
     private fun getSplitVersionCode() : Int {
         var versionCode = 0
@@ -58,7 +58,10 @@ object AppVersion {
 
     val CAN_DYNAMIC_COLOR = sdkInt >= 31
 
+    val deviceName: String = Build.MODEL
 
+    fun isInDebugRunning() : Boolean = deviceName.startsWith("sdk_gphone") == true
+    fun isPreview() : Boolean = getVersionName().contains("Preview")
 
     /*
     * 安卓15 35

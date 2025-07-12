@@ -24,7 +24,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-07-10") },
+                overlineContent = { Text(text = "2025-07-12") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -60,15 +60,13 @@ fun VersionInfo() {
 //        UpdateItems("优化 添加聚焦卡片适用范围的添加班级逻辑", null, UpdateType.OPTIMIZE)
 //        UpdateItems("优化 层级转场时的圆角", null, UpdateType.OPTIMIZE)
         // 下版本规划
-//        UpdateItems("重构 网络请求层，重新进行封装，使用Flow代替LiveData，优化潜在的内存泄漏问题，增加不同状态下的展示", "进度: 完成71/总99")
-//        UpdateItems("新增 洗衣机中的空闲设备", "数据源：海乐生活，适用于翡翠湖和宣城校区")
+//        UpdateItems("重构 网络请求层，重新进行封装，使用Flow代替LiveData，优化潜在的内存泄漏问题，增加不同状态下的展示", "进度: 剩余29")
+        UpdateItems("新增 海乐生活", "位于 查询中心-洗衣机，适用于翡翠湖和宣城校区")
+        UpdateItems("新增 对内测版本和开发设备运行的识别")
+        UpdateItems("新增 寝室信息","位于 查询中心-个人信息")
+        UpdateItems("新增 校园地图","位于 查询中心-生活服务")
+        UpdateItems("修复 上版本造成的页面切换组件上下间距异常的问题")
 //        UpdateItems("新增 一卡通-统计中消费预测与统计功能的本地化分析")
-        UpdateItems("新增 教务处","位于 查询中心-通知公告")
-        UpdateItems("新增 自定义全局学期","位于 选项-应用行为-配置")
-        UpdateItems("修复 选课结果的界面异常Bug")
-        UpdateItems("优化 就业信息界面选项卡占用过宽的布局")
-        UpdateItems("优化 操作过快时的提示")
-        UpdateItems("优化 未开学时课程表默认从负数翻页的问题，并支持日期的显示")
 
 //        UpdateItems("新增 开发者选项","可供有能力者使用某些功能")
 //        UpdateItems("修复 体测平台、报修打开白屏的Bug")

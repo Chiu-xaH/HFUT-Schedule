@@ -18,11 +18,12 @@ import com.hfut.schedule.R
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.bottomSheetRound
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PersonUI(ifSaved : Boolean,hazeState: HazeState) {
+fun PersonUI(vm : NetWorkViewModel,hazeState: HazeState) {
     var showBottomSheet_Person by remember { mutableStateOf(false) }
 
     TransplantListItem(
@@ -38,7 +39,7 @@ fun PersonUI(ifSaved : Boolean,hazeState: HazeState) {
                 showBottomSheet_Person = false
             }, hazeState = hazeState,
             showBottomSheet = showBottomSheet_Person
-        ) { PersonItems(ifSaved) }
+        ) { PersonItems(vm) }
     }
 }
 

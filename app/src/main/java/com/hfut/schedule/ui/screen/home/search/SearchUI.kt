@@ -96,7 +96,7 @@ fun SearchScreen(
         "成绩" to { Grade(ifSaved,navController) },
         "挂科率" to { FailRate(vm,hazeState) }, 
         "课程汇总" to { CourseTotal(vm,hazeState) }, 
-        "个人信息" to { PersonUI(ifSaved,hazeState) }, 
+        "个人信息" to { PersonUI(vm,hazeState) },
         "网址导航 实验室 收纳" to { WebUI(hazeState) }, 
         "洗浴 洗澡 呱呱物联 慧新易校 缴费" to { Shower(vm,hazeState) }, 
         "选课" to { SelectCourse(ifSaved, vm,hazeState,vmUI) },
@@ -127,9 +127,8 @@ fun SearchScreen(
 //        "校友 毕业" to { Alumni() },
         "国家法定节假日 假期 节日" to { Holiday(hazeState) },
         "云端共建平台 信息共建 日程 网课 网址导航" to { Supabase(vm) },
-        "洗衣机 慧新易校 缴费" to { Washing(hazeState) },
+        "洗衣机 洗鞋机 烘干机 慧新易校 海乐生活 缴费" to { Washing(vm,hazeState) },
         "作息" to { TermInfo(hazeState) },
-//        "作息" to { Academic() }
         )
 
     val funcList = funcMaps.values.toList()

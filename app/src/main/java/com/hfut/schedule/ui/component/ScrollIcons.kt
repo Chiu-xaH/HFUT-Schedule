@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.painterResource
+import com.hfut.schedule.R
 
 @Composable
 fun RotatingIcon(icon: Int) {
@@ -35,3 +36,6 @@ fun RotatingIcon(icon: Int) {
         modifier = Modifier.rotate(rotation)
     )
 }
+
+@Composable
+fun LoadingIcon() = RotatingIcon(R.drawable.progress_activity)
