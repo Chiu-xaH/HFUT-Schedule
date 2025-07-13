@@ -2,13 +2,19 @@ package com.hfut.schedule.ui.screen.home.search.function.other.life
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -17,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -25,14 +32,13 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.QWeatherNowBean
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.BottomTip
-import com.hfut.schedule.ui.component.DevelopingUI
+import com.hfut.schedule.ui.component.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.LoadingLargeCard
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
-import com.hfut.schedule.ui.component.custom.CustomTabRow
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
 import com.hfut.schedule.ui.screen.home.search.function.other.life.QWeatherLevel.DEFAULT
@@ -46,8 +52,6 @@ fun getLocation(campus : Campus = getCampus()) : String = when(campus) {
     Campus.HEFEI -> "101220101"
 }
 var countFunc = 0
-private const val HEFEI_TAB = 0
-private const val XUANCHENG_TAB = 1
 
 @Composable
 fun LifeScreen(vm: NetWorkViewModel) {
@@ -62,29 +66,15 @@ fun LifeScreen(vm: NetWorkViewModel) {
 
 @Composable
 private fun WeatherScreen(vm: NetWorkViewModel) {
-    val titles = remember { listOf("合肥","宣城") }
-
-    val pagerState = rememberPagerState(pageCount = { titles.size }, initialPage =
-        when(getCampus()) {
-            Campus.XUANCHENG -> XUANCHENG_TAB
-            Campus.HEFEI -> HEFEI_TAB
-        }
-    )
-    CustomTabRow(pagerState,titles)
-    HorizontalPager(state = pagerState) { page ->
-        Column {
-            LifeUIS(vm, campus = when(page) {
-                HEFEI_TAB -> Campus.HEFEI
-                XUANCHENG_TAB -> Campus.XUANCHENG
-                else -> getCampus()
-            })
-        }
+    Column {
+        LifeUIS(vm)
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun LifeUIS(vm : NetWorkViewModel,campus: Campus) {
+private fun LifeUIS(vm : NetWorkViewModel) {
+    var campus by remember { mutableStateOf(getCampus()) }
     val uiState by vm.qWeatherResult.state.collectAsState()
     val uiStateWarn by vm.weatherWarningData.state.collectAsState()
     val showWeather by DataStoreManager.showFocusWeatherWarn.collectAsState(initial = true)
@@ -103,10 +93,10 @@ private fun LifeUIS(vm : NetWorkViewModel,campus: Campus) {
         refreshNetwork()
     }
 
-    val cityName = remember { when (campus) {
+    val cityName = when (campus) {
         Campus.HEFEI -> "合肥"
         Campus.XUANCHENG -> "宣城"
-    } }
+    } + "市"
     var data by remember { mutableStateOf( QWeatherNowBean("XX","XX","晴","X风","X","XX","XXX")) }
 
     LaunchedEffect(uiState) {
@@ -124,9 +114,9 @@ private fun LifeUIS(vm : NetWorkViewModel,campus: Campus) {
             leftTop = {
                 QWeatherIcon(data.icon.toIntOrNull())
             },
-            rightTop = {
-                Text(text = cityName)
-            }
+//            rightTop = {
+//                Text(text = cityName)
+//            }
         ) {
             Row {
                 TransplantListItem(
@@ -156,10 +146,30 @@ private fun LifeUIS(vm : NetWorkViewModel,campus: Campus) {
                         Icon(painterResource(id = R.drawable.air), contentDescription = null)
                     },
                     trailingContent = {
-                        Button(onClick = {
-                            showToast("正在开发")
+                        OutlinedButton (onClick = {
+                            campus = when(campus) {
+                                Campus.HEFEI -> Campus.XUANCHENG
+                                Campus.XUANCHENG -> Campus.HEFEI
+                            }
                         }) {
-                            Text(text = "天气详情")
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.KeyboardArrowLeft,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Text(
+                                    text = cityName,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                )
+                                Icon(
+                                    imageVector = Icons.Default.KeyboardArrowRight,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
                         }
                     },
                     modifier = Modifier
@@ -172,9 +182,9 @@ private fun LifeUIS(vm : NetWorkViewModel,campus: Campus) {
         val list = (uiStateWarn as UiState.Success).data
         if(list.isNotEmpty()) {
             DividerTextExpandedWith("气象预警") {
-                LazyColumn {
-                    items(list.size, key = { it }) { index ->
-                        with(list[index]) {
+                Column {
+                    for(i in list) {
+                        with(i) {
                             StyleCardListItem(
                                 headlineContent = { Text(title) },
                                 supportingContent = { Text(text) },
@@ -187,7 +197,7 @@ private fun LifeUIS(vm : NetWorkViewModel,campus: Campus) {
             }
         }
     }
-
+    Spacer(Modifier.height(APP_HORIZONTAL_DP/2))
     BottomTip("数据来源 和风天气")
 }
 

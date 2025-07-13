@@ -51,7 +51,7 @@ object DataStoreManager {
     private val FIRST_USE = booleanPreferencesKey("first_use")
     private val AUTO_TERM = booleanPreferencesKey("auto_term")
     private val AUTO_TERM_VALUE = intPreferencesKey("auto_term_value")
-    private val JXGLSTU_START_DATE = intPreferencesKey("jxglstu_start_date")
+    private val TODAY_CAMPUS_TIP = booleanPreferencesKey("today_campus_tip")
 
 
     enum class ColorMode(val code : Int) {
@@ -198,6 +198,11 @@ object DataStoreManager {
             preferences[AUTO_TERM_VALUE] = value
         }
     }
+    suspend fun saveTodayCampusTip(value: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[TODAY_CAMPUS_TIP] = value
+        }
+    }
 
 
 
@@ -314,6 +319,10 @@ object DataStoreManager {
     val firstStart: Flow<Boolean> = dataStore.data
         .map { preferences ->
             preferences[FIRST_USE] ?: prefs.getBoolean("SWITCHFASTSTART",prefs.getString("TOKEN","")?.isNotEmpty() ?: false)
+        }
+    val todayCampusTip: Flow<Boolean> = dataStore.data
+        .map { preferences ->
+            preferences[TODAY_CAMPUS_TIP] ?: true
         }
     /* 用法
     val XXX by DataStoreManager.XXX.collectAsState(initial = 默认值)

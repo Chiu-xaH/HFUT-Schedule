@@ -2,9 +2,15 @@ package com.hfut.schedule.ui.screen.home.search.function.other.life
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -15,13 +21,26 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.dp
+import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.R
+import com.hfut.schedule.logic.model.community.NodeV
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.other.loadImage
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.CommonNetworkScreen
+import com.hfut.schedule.ui.component.DividerTextExpandedWith
+import com.hfut.schedule.ui.component.SmallCard
+import com.hfut.schedule.ui.component.TransplantListItem
+import com.hfut.schedule.ui.component.URLImage
 import com.hfut.schedule.ui.component.WebDialog
 import com.hfut.schedule.ui.component.custom.CustomTabRow
+import com.hfut.schedule.ui.component.custom.ScrollText
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.CampusDetail
 import com.hfut.schedule.ui.style.RowHorizontal
@@ -64,16 +83,6 @@ fun SchoolMapScreen(vm : NetWorkViewModel) {
     }
     val uiState by vm.mapsResponse.state.collectAsState()
 
-//    var showBottomSheet by remember { mutableStateOf(false) }
-//    if (showBottomSheet) {
-//        HazeBottomSheet (
-//            onDismissRequest = { showBottomSheet = false },
-//            showBottomSheet = showBottomSheet,
-//            hazeState = hazeState,
-//        ) {
-//
-//        }
-//    }
     var showDialog by remember { mutableStateOf(false) }
     var title by remember { mutableStateOf("校区地图") }
     var url by remember { mutableStateOf("") }
@@ -88,21 +97,51 @@ fun SchoolMapScreen(vm : NetWorkViewModel) {
             val bean = list.find { it.name.contains(campus.description) } ?: return@CommonNetworkScreen
             val cUrl = bean.currentMap
             val name = bean.name
+            val nodes = bean.nodeVOList.toMutableList()
+            nodes.add(NodeV("..."))
             val imageState = loadImage(cUrl)
-            imageState.value?.let { bitmap ->
-                RowHorizontal {
-                    Image(
-                        bitmap = bitmap.asImageBitmap(),
-                        contentDescription = null,
-                        modifier = Modifier.padding(APP_HORIZONTAL_DP).clickable {
-                            // 点击全屏预览
-                            url = cUrl
-                            title = name
-                            showDialog = true
-                        },
-                        contentScale = ContentScale.Fit
-                    )
+            Column {
+                imageState.value?.let { bitmap ->
+                    RowHorizontal {
+                        Image(
+                            bitmap = bitmap.asImageBitmap(),
+                            contentDescription = null,
+                            modifier = Modifier.padding(APP_HORIZONTAL_DP).clickable {
+                                // 点击全屏预览
+                                url = cUrl
+                                title = name
+                                showDialog = true
+                            },
+                            contentScale = ContentScale.Fit
+                        )
+                    }
                 }
+//                for(j in nodes.indices step 2) {
+//                    val item1 = nodes[j]
+//                    Row(Modifier.padding(horizontal = 12.dp)) {
+//                        SmallCard(modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp).weight(.5f)) {
+//                            TransplantListItem(
+//                                leadingContent = {
+//                                    Text((j+1).toString())
+//                                },
+//                                headlineContent = { ScrollText(item1.name) },
+//                            )
+//                        }
+//                        if(j + 1 < nodes.size) {
+//                            val item2 = nodes[j+1]
+//                            SmallCard(modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp).weight(.5f)) {
+//                                TransplantListItem(
+//                                    leadingContent = {
+//                                        Text((j+1+1).toString())
+//                                    },
+//                                    headlineContent = { ScrollText(item2.name) },
+//                                )
+//                            }
+//                        } else {
+//                            Spacer(Modifier.width(1.dp).weight(.5f))
+//                        }
+//                    }
+//                }
             }
         }
     }

@@ -101,4 +101,7 @@ interface CommunityService {
     // 校区地图
     @GET("api//mobile/community/forumRunMap/runMapListQuery")
     fun getCampusMap(@Header("X-Access-Token") token : String) : Call<ResponseBody>
+    // 学工系统列表
+    @GET("api//mobile/community/application/listApplication")
+    fun getStuApps(@Header("X-Access-Token") token : String) : Call<ResponseBody>
 }

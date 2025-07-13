@@ -1,8 +1,13 @@
 package com.hfut.schedule.ui.component.custom
 
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDp
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.absoluteOffset
@@ -34,6 +39,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -143,9 +149,17 @@ private fun CustomSlidingTabRow2(
             divider = {}
         ) {
             titles.forEachIndexed { index, title ->
+                val interactionSource = remember { MutableInteractionSource() }
+                val isPressed by interactionSource.collectIsPressedAsState()
+                val scale = animateFloatAsState(
+                    targetValue = if (isPressed) 0.8f else 1f, // 按下时为0.9，松开时为1
+                    animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
+                    label = " " // 使用弹簧动画
+                )
                 val selected = pagerState.currentPage == index
                 Tab(
                     selected = selected,
+                    interactionSource = interactionSource,
                     text = {
                         Text(
                             text = title,
@@ -153,7 +167,7 @@ private fun CustomSlidingTabRow2(
                             style = TextStyle(fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal)
                         )
                     },
-                    modifier = Modifier.padding(5.dp).zIndex(1f),
+                    modifier = Modifier.scale(scale.value).padding(5.dp).zIndex(1f),
                     onClick = {
                         scope.launch {
                             pagerState.animateScrollToPage(index)
@@ -308,9 +322,17 @@ private fun CustomScrollTabRow2(
                 divider = {}
             ) {
                 titles.forEachIndexed { index, title ->
+                    val interactionSource = remember { MutableInteractionSource() }
+                    val isPressed by interactionSource.collectIsPressedAsState()
+                    val scale = animateFloatAsState(
+                        targetValue = if (isPressed) 0.8f else 1f, // 按下时为0.9，松开时为1
+                        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
+                        label = " " // 使用弹簧动画
+                    )
                     val selected = pagerState.currentPage == index
                     Tab(
                         selected = selected,
+                        interactionSource = interactionSource,
                         text = {
                             Text(
                                 text = title,
@@ -318,7 +340,7 @@ private fun CustomScrollTabRow2(
                                 style = TextStyle(fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal)
                             )
                         },
-                        modifier = Modifier.padding(5.dp).zIndex(1f),
+                        modifier = Modifier.scale(scale.value).padding(5.dp).zIndex(1f),
                         onClick = {
                             scope.launch {
                                 pagerState.animateScrollToPage(index)

@@ -64,6 +64,8 @@ import com.hfut.schedule.logic.model.community.LibRecord
 import com.hfut.schedule.logic.model.community.LibraryResponse
 import com.hfut.schedule.logic.model.community.MapBean
 import com.hfut.schedule.logic.model.community.MapResponse
+import com.hfut.schedule.logic.model.community.StuAppBean
+import com.hfut.schedule.logic.model.community.StuAppsResponse
 import com.hfut.schedule.logic.model.community.TodayResponse
 import com.hfut.schedule.logic.model.community.TodayResult
 import com.hfut.schedule.logic.model.jxglstu.CourseSearchResponse
@@ -1769,6 +1771,23 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         else
             throw Exception(result)
     } catch (e : Exception) { throw e }
+
+    val stuAppsResponse = StateHolder<List<StuAppBean>>()
+    suspend fun getStuApps(token : String) = launchRequestSimple(
+        holder = stuAppsResponse,
+        request = { community.getStuApps(token).awaitResponse() },
+        transformSuccess = { _,json -> parseStuApps(json) }
+    )
+    private fun parseStuApps(result : String) : List<StuAppBean> = try {
+        if(result.contains("操作成功")) {
+            val list = Gson().fromJson(result, StuAppsResponse::class.java).result
+            val totalList = list.flatMap { it.subList }
+            totalList.filter { it.url?.startsWith(MyApplication.STU_URL) == true }
+        }
+        else
+            throw Exception(result)
+    } catch (e : Exception) { throw e }
+
 
     val booksChipData = StateHolder<List<BorrowRecords>>()
     suspend fun communityBooks(token : String,type : LibraryItems,page : Int = 1) = launchRequestSimple(

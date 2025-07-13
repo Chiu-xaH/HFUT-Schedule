@@ -46,7 +46,7 @@ class SupabaseActivity : BaseActivity() {
             ) {
                 // 登录
                 composable(SupabaseScreen.LOGIN.name) {
-                    SupabaseLoginScreen(super.networkVm,super.uiVm,navController)
+                    SupabaseLoginScreen(super.networkVm,navController)
                 }
                 // 主UI
                 composable(SupabaseScreen.HOME.name) {

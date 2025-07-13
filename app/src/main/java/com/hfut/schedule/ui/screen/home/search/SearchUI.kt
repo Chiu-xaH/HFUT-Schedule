@@ -121,7 +121,7 @@ fun SearchScreen(
         "学费 费用 欠缴学费" to { Pay(vm,hazeState) },
         "实习" to { Practice(ifSaved) }, 
         "微信专区 校友 毕业 第二课堂 今日校园 学工系统 请假 助学金 奖学金 贫困 寝室 心理 日常 空教室 教务 同班同学 快递 取件码 团员 团建" to { WeChatGo(hazeState) },
-        "今日校园 学工系统 请假 助学金 奖学金 贫困 寝室 心理 日常" to { ToadyCampus(ifSaved,vm) }, 
+        "今日校园 学工系统 请假 助学金 奖学金 贫困 寝室 心理 日常" to { ToadyCampus(hazeState,vm) },
         "大创 大学生创新创业" to { IETP() }, 
         "就业 实习 春招 双选 秋招" to { Work(hazeState,vm) },
 //        "校友 毕业" to { Alumni() },

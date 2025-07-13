@@ -64,12 +64,11 @@ import kotlinx.coroutines.launch
 
 private const val TAB_LOGIN = 0
 private const val TAB_REG = 1
-private const val SIZE_TAB = TAB_REG + 1
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SupabaseLoginScreen(vm : NetWorkViewModel,vmUI: UIViewModel,navHostController: NavHostController) {
+fun SupabaseLoginScreen(vm : NetWorkViewModel,navHostController: NavHostController) {
     val context = LocalActivity.current
     var hidden by rememberSaveable { mutableStateOf(true) }
     var loading by rememberSaveable { mutableStateOf(false) }

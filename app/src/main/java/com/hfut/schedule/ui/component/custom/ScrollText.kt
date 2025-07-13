@@ -6,11 +6,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.style.TextDecoration
 import kotlinx.coroutines.delay
 
 @Composable
-fun ScrollText(text : String) {
+fun ScrollText(
+    text : String,
+    modifier: Modifier = Modifier,
+    textDecoration: TextDecoration? = null,
+) {
     val scrollState = rememberScrollState()
     LaunchedEffect(key1 = text ) {
         delay(500L)
@@ -21,7 +25,7 @@ fun ScrollText(text : String) {
 
     Text(
         text = text,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
-        modifier = Modifier.horizontalScroll(scrollState))
+        modifier = modifier.horizontalScroll(scrollState),
+        textDecoration = textDecoration,
+    )
 }
