@@ -24,7 +24,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-07-13") },
+                overlineContent = { Text(text = "2025-07-14") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -62,10 +62,9 @@ fun VersionInfo() {
         // 下版本规划
 //        UpdateItems("重构 网络请求层，重新进行封装，使用Flow代替LiveData，优化潜在的内存泄漏问题，增加不同状态下的展示", "进度: 剩余29")
 //        UpdateItems("新增 一卡通-统计中消费预测与统计功能的本地化分析")
-        UpdateItems("新增 学工系统/今日校园","位于 查询中心-学工系统，现在，将今日校园的一些功能集成入了应用内，但是登录功能还在做，目前暂时跳转到浏览器登录")
-        UpdateItems("修复 上版本加入地图后，点击天气预警崩溃的Bug")
-        UpdateItems("优化 分页组件背景框的滑动跟手效果")
-        UpdateItems("优化 部分界面的显示")
+//        UpdateItems("新增 学工系统/今日校园的登录")
+        UpdateItems("新增 根据代号进入隐藏的转专业、选课入口")
+        UpdateItems("优化 考试按时间排序")
 
 //        UpdateItems("新增 开发者选项","可供有能力者使用某些功能")
 //        UpdateItems("修复 体测平台、报修打开白屏的Bug")

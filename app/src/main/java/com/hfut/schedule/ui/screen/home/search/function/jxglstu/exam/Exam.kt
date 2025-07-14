@@ -185,7 +185,16 @@ fun JxglstuExamUI(item : Map<String,String>,status : Boolean) {
                     },
                     trailingContent = {
                         if(isFinished) Text(text = "已结束")
-                        else if(examDateNum == newToday) Text("今日")
+                        else {
+                            if(examDateNum == newToday) Text("今日")
+                            else {
+                                time?.substringBefore(" ")?.let {
+//                                                Row(horizontalArrangement = Arrangement.Center) {
+                                    Text("${DateTimeManager.daysBetween(it)}天")
+//                                                }
+                                }
+                            }
+                        }
                     },
                     modifier = Modifier.clickable {},
                 )

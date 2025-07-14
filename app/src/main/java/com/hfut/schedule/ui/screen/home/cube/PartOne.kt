@@ -110,6 +110,8 @@ sealed class Screen(val route: String) {
     data object FIxAboutScreen : Screen(DetailSettings.FIxAbout.name)
     data object FIxScreen : Screen(FixBarItems.Fix.name)
     data object DebugScreen : Screen("DEBUG")
+    data object DeveloperScreen : Screen("Developer")
+
     data object DownloadScreen : Screen("Download")
     data object CalendarScreen : Screen("Calendar")
     data object LockScreen : Screen("Lock")

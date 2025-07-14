@@ -33,6 +33,17 @@ suspend fun getJxglstuCookie(vm: NetWorkViewModel) : String? {
     }
     return cookie
 }
+
+suspend fun getStorageJxglstuCookie(isWebVpn : Boolean) : String? {
+    var cookie : String?
+    if(isWebVpn) {
+        val webVpnCookie = DataStoreManager.webVpnCookie.first{ it.isNotEmpty() }
+        cookie = MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
+    } else {
+        cookie =  prefs.getString("redirect", "")
+    }
+    return cookie
+}
 // 应用冷启动主界面时的网络请求
 suspend fun initNetworkRefresh(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel, ifSaved : Boolean) = withContext(
     Dispatchers.IO) {

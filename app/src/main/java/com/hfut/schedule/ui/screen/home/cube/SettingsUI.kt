@@ -23,6 +23,7 @@ import com.hfut.schedule.ui.screen.fix.fix.FixUI
 import com.hfut.schedule.ui.screen.home.cube.screen.APPScreen
 import com.hfut.schedule.ui.screen.home.cube.screen.NetWorkScreen
 import com.hfut.schedule.ui.screen.home.cube.screen.UIScreen
+import com.hfut.schedule.ui.screen.home.cube.sub.DeveloperScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.DownloadMLUI
 import com.hfut.schedule.ui.screen.home.cube.sub.EditPasswordScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.FocusCardSettings
@@ -112,6 +113,11 @@ fun SettingsScreen(vm : NetWorkViewModel
                 composable(Screen.DownloadScreen.route) {
                     Scaffold {
                         DownloadMLUI(innerPaddings)
+                    }
+                }
+                composable(Screen.DeveloperScreen.route) {
+                    Scaffold {
+                        DeveloperScreen(vm,innerPaddings)
                     }
                 }
                 composable(Screen.CalendarScreen.route) {

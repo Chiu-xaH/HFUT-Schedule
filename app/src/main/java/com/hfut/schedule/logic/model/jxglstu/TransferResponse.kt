@@ -3,7 +3,7 @@ package com.hfut.schedule.logic.model.jxglstu
 data class TransferResponse(val data : List<TransferData>)
 data class TransferData(val registrationConditions : String?,
                         val id : Int,
-                    //    val changeMajorBatch : changeMajorBatch,
+                        val changeMajorBatch : changeMajorBatch?,
                         val department : courseType,
                         val major : courseType,
                         val preparedStdCount : Int,
@@ -11,9 +11,12 @@ data class TransferData(val registrationConditions : String?,
 data class changeMajorBatch(val nameZh : String,
                             val applyStartTime : String,
                             val applyEndTime : String,
+                            val submitStartTime : String,
+                            val submitEndTime : String,
                             val enrollStartTime : String,
                             val enrollEndTime : String,
                             val inGrade : String,
+                            val bulletin : String?,
                             val applyLimitCount : Int)
 
 data class MyApplyResponse(val models : List<MyApplyModels>)

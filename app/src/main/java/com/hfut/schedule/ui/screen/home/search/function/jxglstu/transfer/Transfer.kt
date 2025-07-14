@@ -2,7 +2,10 @@ package com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -11,8 +14,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -30,13 +36,18 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
+import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.AnimationCardListItem
+import com.hfut.schedule.ui.component.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
+import com.hfut.schedule.ui.component.custom.CustomTextField
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.flow.first
@@ -157,6 +168,7 @@ private fun TransferListUI(vm: NetWorkViewModel, hazeState: HazeState) {
             }
         }
     }
+    var isHidden by remember { mutableStateOf(false) }
 
 
     if (showBottomSheet) {
@@ -183,7 +195,7 @@ private fun TransferListUI(vm: NetWorkViewModel, hazeState: HazeState) {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    TransferUI(vm,batchId,hazeState)
+                    TransferUI(vm,batchId,hazeState,isHidden)
                 }
             }
         }
@@ -201,6 +213,7 @@ private fun TransferListUI(vm: NetWorkViewModel, hazeState: HazeState) {
     LaunchedEffect(Unit) {
         refreshNetwork()
     }
+    var input by remember { mutableStateOf("") }
 
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
         val transferList = (uiState as UiState.Success).data
@@ -211,8 +224,12 @@ private fun TransferListUI(vm: NetWorkViewModel, hazeState: HazeState) {
                 AnimationCardListItem(
                     headlineContent = { Text(data.title) },
                     supportingContent = { Text("申请日期 " + data.applicationDate + "\n转专业时期 " + data.admissionDate) },
-                    trailingContent = { Icon(Icons.Filled.ArrowForward,null) },
+//                    trailingContent = { Icon(Icons.Filled.ArrowForward,null) },
+                    trailingContent = {
+                        Text("代号 " + data.batchId)
+                    },
                     modifier = Modifier.clickable {
+                        isHidden = false
                         title = data.title
                         batchId = data.batchId
                         showBottomSheet = true
@@ -220,6 +237,45 @@ private fun TransferListUI(vm: NetWorkViewModel, hazeState: HazeState) {
                     index = index
                 )
 //                }
+            }
+            item {
+                AnimationCardListItem(
+                    index = transferList.size,
+                    headlineContent = {
+                        Text("手动输入代号查看被隐藏掉的转专业入口")
+                    },
+                    supportingContent = {
+                        Column {
+                            Text("合肥校区和宣城校区之间转专业入口互相不可见，但可以通过输入代号进入，代号位于右上角\n免责声明：只供看，不要报异地校区的志愿，后果自负\n示例：1,3,21,42,43,61,101等...")
+                            Spacer(Modifier.height(APP_HORIZONTAL_DP/2))
+                            Row {
+                                TextField(
+                                    modifier = Modifier
+                                        .weight(1f),
+                                    value = input,
+                                    onValueChange = { input = it },
+                                    label = { Text("输入数字代号") },
+                                    trailingIcon = {
+                                        IconButton(onClick = {
+                                            if(input.toIntOrNull() != null) {
+                                                isHidden = true
+                                                title = "${input}入口"
+                                                batchId = input
+                                                showBottomSheet = true
+                                            } else {
+                                                showToast("必须为数字")
+                                            }
+                                        }) {
+                                            Icon(Icons.Default.ArrowForward,null)
+                                        }
+                                    },
+                                    shape = MaterialTheme.shapes.medium,
+                                    colors = textFiledTransplant(),
+                                )
+                            }
+                        }
+                    }
+                )
             }
         }
     }

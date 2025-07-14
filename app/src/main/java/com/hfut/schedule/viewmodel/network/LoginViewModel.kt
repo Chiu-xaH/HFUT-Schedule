@@ -19,6 +19,7 @@ import com.hfut.schedule.logic.network.repo.Repository.launchRequestSimple
 import com.hfut.schedule.logic.util.network.state.CasInHFUT
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.ui.component.onListenStateHolderForNetwork
 import okhttp3.Headers
@@ -70,6 +71,7 @@ class LoginViewModel : ViewModel() {
                 }
             } else {
                 val cookies : String = sessionLiveData.value  + jId.jSession +";" + keys
+                SharedPrefs.saveString("CAS_COOKIE",cookies)
                 CasInHFUT.casCookies = cookies
 
                 val call = execution.value?.let { Login.login(cookie = cookies,username = username, password = password,execution = it,code = imageCode) }

@@ -202,9 +202,9 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
 
         if(cubeShow) {
             TransplantListItem(
-                headlineContent = { Text(text = "开发者功能") },
+                headlineContent = { Text(text = "开发者选项") },
                 supportingContent = { Text(text = "一些可用于有经验用户的选项")},
-                modifier = Modifier.clickable { showToast("正在开发") },
+                modifier = Modifier.clickable { navController.navigate(Screen.DeveloperScreen.route) },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "")}
             )
 

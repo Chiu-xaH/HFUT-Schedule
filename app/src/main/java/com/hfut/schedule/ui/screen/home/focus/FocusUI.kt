@@ -44,6 +44,7 @@ import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.JxglstuCourseSchedule
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.custom.RefreshIndicator
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.cube.sub.FocusCard
@@ -167,7 +168,9 @@ fun TodayScreen(
     LaunchedEffect(Unit) {
         // 冷启动
         launch {
+            refreshing = true
             initNetworkRefresh(vm,vm2,vmUI,ifSaved)
+            refreshing = false
         }
         // 加载数据库
         launch {

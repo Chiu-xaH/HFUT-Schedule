@@ -73,7 +73,7 @@ fun getExamJXGLSTU() : List<Map<String,String>>{
         */
         val filteredData = data.filter {
             isValidDateTime(it["日期时间"] ?: "")
-        }
+        }.sortedBy { it["日期时间"] }
         return filteredData
     } catch (e:Exception) {
         e.printStackTrace()

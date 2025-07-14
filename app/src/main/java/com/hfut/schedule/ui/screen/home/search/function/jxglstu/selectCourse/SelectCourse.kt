@@ -26,6 +26,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import com.hfut.schedule.ui.component.custom.LoadingUI
@@ -87,11 +88,13 @@ import com.hfut.schedule.ui.component.EmptyUI
 import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.custom.LittleDialog
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.AnimationCardListItem
 import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.WebDialog
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
+import com.hfut.schedule.ui.style.ColumnVertical
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.ui.UIViewModel
@@ -285,8 +288,9 @@ fun selectCourseListLoading(vm : NetWorkViewModel, hazeState: HazeState) {
 fun SelectCourseList(vm: NetWorkViewModel, hazeState: HazeState) {
     val list = getSelectCourseList(vm)
     var courseId by remember { mutableIntStateOf(0) }
-    var name by remember { mutableStateOf("选课") }
+    var nameTitle by remember { mutableStateOf("选课") }
     var showBottomSheet by remember { mutableStateOf(false) }
+    var input by remember { mutableStateOf("") }
 
     var showBottomSheet_selected by remember { mutableStateOf(false) }
 
@@ -323,7 +327,7 @@ fun SelectCourseList(vm: NetWorkViewModel, hazeState: HazeState) {
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    HazeBottomSheetTopBar(name) {
+                    HazeBottomSheetTopBar(nameTitle) {
                         FilledTonalButton(onClick = {
                             showBottomSheet_selected = true
                         },) {
@@ -340,63 +344,116 @@ fun SelectCourseList(vm: NetWorkViewModel, hazeState: HazeState) {
             }
         }
     }
+    val ui = @Composable {
+        AnimationCardListItem(
+            index = list.size,
+            headlineContent = {
+                Text("手动输入代号查看被隐藏掉的选课入口")
+            },
+            supportingContent = {
+                Column {
+                    Text("一些不符合自身条件的选课入口例如异地校区不会显示，但可以通过输入代号进入，代号位于右上角\n免责声明：只供看，不要乱选课，后果自负")
+                    Spacer(Modifier.height(APP_HORIZONTAL_DP/2))
+                    Row {
+                        TextField(
+                            modifier = Modifier
+                                .weight(1f),
+                            value = input,
+                            onValueChange = { input = it },
+                            label = { Text("输入数字代号") },
+                            trailingIcon = {
+                                IconButton(onClick = {
+                                    input.toIntOrNull()?.let { i ->
+                                        courseId = i
+                                        SharedPrefs.saveString("courseIDS", i.toString())
+                                        nameTitle = "入口$i"
+                                        showBottomSheet = true
+                                    } ?: showToast("必须为数字")
+                                }) {
+                                    Icon(Icons.Default.ArrowForward,null)
+                                }
+                            },
+                            shape = MaterialTheme.shapes.medium,
+                            colors = textFiledTransplant(),
+                        )
+                    }
+                }
+            }
+        )
+    }
 
     if(list.isNotEmpty()) {
         LazyColumn {
             items(list.size) { item ->
+                val data = list[item]
                 var expand by remember { mutableStateOf(false) }
-
-                AnimationCustomCard (Modifier.clickable {
-                    courseId = list[item].id
-                    SharedPrefs.saveString("courseIDS", list[item].id.toString())
-                    name = list[item].name
-                    showBottomSheet = true
-                },
-                    index = item,
-                    hasElevation = false,
-                    containerColor = cardNormalColor()
-                ) {
-                    TransplantListItem(
-                        headlineContent = { Text(text = list[item].name) },
-                        overlineContent = { Text(text = list[item].selectDateTimeText)},
-                        trailingContent = { FilledTonalIconButton(onClick = { expand = !expand }) {
-                            Icon(painter = painterResource(id = if(expand) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "")
-                        }},
-                    )
-                    AnimatedVisibility(
-                        visible = expand,
-                        enter = slideInVertically(
-                            initialOffsetY = { -40 }
-                        ) + expandVertically(
-                            expandFrom = Alignment.Top
-                        ) + scaleIn(
-                            transformOrigin = TransformOrigin(0.5f, 0f)
-                        ) + fadeIn(initialAlpha = 0.3f),
-                        exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
+                with(data) {
+                    AnimationCustomCard (Modifier.clickable {
+                        courseId = id
+                        SharedPrefs.saveString("courseIDS", id.toString())
+                        nameTitle = name
+                        showBottomSheet = true
+                    },
+                        index = item,
+                        hasElevation = false,
+                        containerColor = cardNormalColor()
                     ) {
-                        Column {
-                            TransplantListItem(
-                                headlineContent = { Text(text = "选课公告") },
-                                supportingContent = {
-                                    Text(text = list[item].bulletin)
-                                }
-                            )
-                            TransplantListItem(
-                                headlineContent = { Text(text = "选课规则") },
-                                supportingContent = {
-                                    for (i in list[item].addRulesText) {
-                                        Text(text = "$i ")
+                        TransplantListItem(
+                            headlineContent = { Text(text = name) },
+                            overlineContent = { Text(text = selectDateTimeText)},
+                            trailingContent = {
+                                ColumnVertical {
+                                    FilledTonalIconButton(onClick = { expand = !expand }) {
+                                        Icon(painter = painterResource(id = if(expand) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "")
                                     }
+                                    Text("代号 $id")
                                 }
-                            )
+
+                            },
+                        )
+                        AnimatedVisibility(
+                            visible = expand,
+                            enter = slideInVertically(
+                                initialOffsetY = { -40 }
+                            ) + expandVertically(
+                                expandFrom = Alignment.Top
+                            ) + scaleIn(
+                                transformOrigin = TransformOrigin(0.5f, 0f)
+                            ) + fadeIn(initialAlpha = 0.3f),
+                            exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
+                        ) {
+                            Column {
+                                TransplantListItem(
+                                    headlineContent = { Text(text = "选课公告") },
+                                    supportingContent = {
+                                        Text(text = bulletin)
+                                    }
+                                )
+                                TransplantListItem(
+                                    headlineContent = { Text(text = "选课规则") },
+                                    supportingContent = {
+                                        for (i in addRulesText) {
+                                            Text(text = "$i ")
+                                        }
+                                    }
+                                )
+                            }
                         }
                     }
                 }
+
+            }
+            item {
+                ui()
             }
         }
     } else {
         CenterScreen {
-            EmptyUI("当前无选课")
+            Column {
+                EmptyUI("当前无选课")
+                Spacer(Modifier.height(APP_HORIZONTAL_DP))
+                ui()
+            }
         }
     }
 }

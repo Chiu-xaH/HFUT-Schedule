@@ -30,7 +30,7 @@ enum class EventCampus  {
 }
 
 fun getMyTransfer(list : List<MyApplyModels>?,index : Int) : TransferData {
-    val n = TransferData(null,0, courseType(""), courseType(""),0,0)
+    val n = TransferData(null,0,null, courseType(""), courseType(""),0,0)
     return try {
         list?.get(index)?.changeMajorSubmit ?: n
     } catch (e : Exception) {

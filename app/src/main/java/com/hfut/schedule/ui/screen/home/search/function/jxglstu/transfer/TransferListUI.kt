@@ -65,7 +65,7 @@ import dev.chrisbanes.haze.HazeState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TransferUI(vm: NetWorkViewModel, batchId: String, hazeState: HazeState) {
+fun TransferUI(vm: NetWorkViewModel, batchId: String, hazeState: HazeState,isHidden : Boolean = false) {
     var showBottomSheet by remember { mutableStateOf(false) }
     var showBottomSheet_select by remember { mutableStateOf(false) }
     var telephone by remember { mutableStateOf("") }
@@ -247,6 +247,25 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String, hazeState: HazeState) {
             Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
 
             LazyColumn {
+                if(list.isNotEmpty()) {
+                    item {
+                        val item = list[0].changeMajorBatch ?: return@item
+                        StyleCardListItem(
+                            headlineContent = {
+                                Text(if(isHidden) item.nameZh else "提示")
+                            },
+                            trailingContent = {
+                                Text("代号 $batchId")
+                            },
+                            supportingContent = {
+                                item.bulletin?.let {
+                                    Text(it)
+                                }
+                            },
+                            overlineContent = { Text("申请 " + item.submitStartTime.replace("T"," ").substringBefore(".") + " ~ " + item.submitEndTime.replace("T"," ").substringBefore(".") + "\n审核 " + item.applyStartTime.replace("T"," ").substringBefore(".") + " ~ " + item.applyEndTime.replace("T"," ").substringBefore(".") ) },
+                            )
+                    }
+                }
                 items(searchList.size, key = { it }) {item ->
                     val dataItem = searchList[item]
                     var department = dataItem.department.nameZh
